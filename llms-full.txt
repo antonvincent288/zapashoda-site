@@ -1,0 +1,923 @@
+# Запас хода
+
+> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 137 моделей 2019–2026, ввезённых в РФ. Мини-приложение с каталогом аксессуаров: https://t.me/zapashoda_ev_bot/app
+
+## Разделы
+
+- [Каталог моделей](https://zapashoda-ev.ru/index.html): 137 моделей EV в РФ: разъёмы, мощности, боли, решения
+- [Руководства по проблемам](https://zapashoda-ev.ru/pains.html): 12 практических руководств с решениями
+- [Новости](https://zapashoda-ev.ru/news/): Лента: цифры, зима, зарядка, новые модели
+- [Карта зарядных станций](https://zapashoda-ev.ru/charging/): Зарядные станции по данным OpenStreetMap
+- [VIN-справочник](https://zapashoda-ev.ru/vin/): Структура VIN, коды года, проверка истории для EV в РФ
+- [О проекте](https://zapashoda-ev.ru/about.html): Методика и источники справочника
+
+## Популярные модели
+
+- [Zeekr 001 / 001 FR](https://zapashoda-ev.ru/models/zeekr-001-001-fr.html): разъёмы GB/T AC / GB/T DC
+- [Zeekr 007 / 007GT](https://zapashoda-ev.ru/models/zeekr-007-007gt.html): разъёмы GB/T AC (1 фаза) / GB/T DC 800V
+- [Zeekr 7X / X / MIX](https://zapashoda-ev.ru/models/zeekr-7x-x-mix.html): разъёмы GB/T AC / GB/T DC (7X — 800V)
+- [Li Auto L6 / L7 / L8 / L9 (2022–2025)](https://zapashoda-ev.ru/models/li-auto-l6-l7-l8-l9-2022-2025.html): разъёмы GB/T AC (1 фаза) / GB/T DC
+- [Voyah Free EVR (гибрид)](https://zapashoda-ev.ru/models/voyah-free-evr-gibrid.html): разъёмы GB/T AC / GB/T DC
+- [Avatr 11 / 12 (официально RU)](https://zapashoda-ev.ru/models/avatr-11-12-ofitsialno-ru.html): разъёмы Type 2 / CCS2
+- [Xiaomi SU7 / SU7 Ultra](https://zapashoda-ev.ru/models/xiaomi-su7-su7-ultra.html): разъёмы GB/T AC / GB/T DC (Max — 800V)
+- [BYD Song Plus EV](https://zapashoda-ev.ru/models/byd-song-plus-ev.html): разъёмы GB/T AC / GB/T DC
+- [BYD Yuan Plus / Atto 3 / Yuan Up / Pro](https://zapashoda-ev.ru/models/byd-yuan-plus-atto-3-yuan-up-pro.html): разъёмы GB/T (CN) / Type 2 (EU) / GB/T (CN) / CCS2 (EU)
+- [Geely EX5 / Monjaro Hi-P (PHEV)](https://zapashoda-ev.ru/models/geely-ex5-monjaro-hi-p-phev.html): разъёмы GB/T (уточнить RU-поставку) / GB/T
+- [Geely Galaxy E5 / E8 / TT](https://zapashoda-ev.ru/models/geely-galaxy-e5-e8-tt.html): разъёмы GB/T AC / GB/T DC
+- [Deepal S07 (RU официальная)](https://zapashoda-ev.ru/models/deepal-s07-ru-ofitsialnaya.html): разъёмы GB/T AC / GB/T DC
+- [Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA](https://zapashoda-ev.ru/models/evolute-i-jet-i-pro-i-space-i-joy-i-joa.html): разъёмы Type 2 / CCS2
+- [Moskvich 3e / 6](https://zapashoda-ev.ru/models/moskvich-3e-6.html): разъёмы Type 2 / CCS2
+- [Tesla Model 3 / Y (EU)](https://zapashoda-ev.ru/models/tesla-model-3-y-eu.html): разъёмы Type 2 / CCS2
+- [VW ID.3 / ID.4 / ID.5 / ID.Buzz](https://zapashoda-ev.ru/models/vw-id-3-id-4-id-5-id-buzz.html): разъёмы Type 2 / CCS2
+- [Nissan Leaf ZE1 (JP / EU)](https://zapashoda-ev.ru/models/nissan-leaf-ze1-jp-eu.html): разъёмы Type 1 (JP) / Type 2 (EU) / CHAdeMO
+
+## Руководства по проблемам
+
+- [Не заряжается электромобиль: 10 причин и что делать](https://zapashoda-ev.ru/pain/ne-zaryazhaetsya.html): От кабеля и порта до OBC, заземления и прошивки станции. Пошаговая диагностика.
+- [Подогрев батареи электромобиля: зачем нужен и как включить](https://zapashoda-ev.ru/pain/podogrev-batarei.html): Как холодная батарея режет скорость зарядки и запас хода; предпрогрев от сети и в пути.
+- [Зарядка электромобиля от розетки 220В: время, проводка, безопасность](https://zapashoda-ev.ru/pain/zaryadka-ot-rozetki.html): Сколько реально даёт розетка, какая проводка нужна, почему вышибает автоматы.
+- [Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T](https://zapashoda-ev.ru/pain/adapter-gbt.html): Какие переходники нужны, как не купить несовместимый, что с батареей питания адаптера.
+- [Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть](https://zapashoda-ev.ru/pain/zapas-hoda-zimoy.html): Физика мороза, отопители, предпрогрев, шины и стиль вождения.
+- [Кабель зарядки не отдаёт из порта: что делать](https://zapashoda-ev.ru/pain/kabel-ne-otdaet.html): Почему замок не разблокирует коннектор и где аварийный тросик.
+- [12-вольтовый аккумулятор электромобиля: главная тайная боль](https://zapashoda-ev.ru/pain/12v-akb.html): Почему садится, какие машины чаще страдают (BYD, Voyah, MG, Kia EV6, Hongqi) и что делать.
+- [Лючок зарядки не открывается на морозе и тугой механизм](https://zapashoda-ev.ru/pain/lyuchok.html): Аварийные тросики, прогрев, смазка механизма.
+- [Удлинитель и кабель для зарядки электромобиля](https://zapashoda-ev.ru/pain/udlinitel.html): Сечение, автоматы, почему дешёвый удлинитель опасен.
+- [Как заряжать электромобиль из США или Кореи в России](https://zapashoda-ev.ru/pain/type1-ccs1.html): Type 1/CCS1: переходники, замена порта, радикальный кейс с перекодировкой.
+- [Tesla в России: зарядка, адаптеры, Supercharger](https://zapashoda-ev.ru/pain/tesla.html): EU vs US версии, адаптеры, прогрев батареи на морозе.
+- [CHAdeMO: Leaf и другие японские EV](https://zapashoda-ev.ru/pain/chademo.html): Сети CHAdeMO, деградация от быстрых зарядок, мониторинг батареи.
+
+## Свежие новости
+
+- [Сколько живёт батарея электромобиля: факты вместо страшилок](https://zapashoda-ev.ru/news/2026-10-31-skolko-zhivet-batareya.html): Деградация 10–15% за 5–7 лет при нормальной эксплуатации. Что реально убивает батарею.
+- [5 ошибок новичка зимой на электромобиле](https://zapashoda-ev.ru/news/2026-10-30-5-oshibok-novichka-zimoy.html): Ловить 100% на морозе, гонять на 90+, игнорировать подогрев — разбираем по пунктам.
+- [Разъёмы GB/T: как заряжать китайский электромобиль в России](https://zapashoda-ev.ru/news/2026-10-30-gbt-kak-zaryazhat-kitajcev.html): У Zeekr, Voyah, BYD и Li Auto свой разъём. Рассказываем, какие адаптеры нужны и почему.
+- [Карта зарядных станций теперь на сайте](https://zapashoda-ev.ru/news/2026-10-30-karta-zaryadnyh-stancij.html): Живая карта ЗУ по данным OpenStreetMap: Москва, СПб, Казань, Екатеринбург и другие города.
+- [VIN, ЭПТС и СБКТС: что проверить перед покупкой параллельного импорта](https://zapashoda-ev.ru/news/2026-10-30-vin-epts-sbkts-proverka.html): Совпадение VIN на кузове и в ЭПТС, наличие СБКТС, бесплатная проверка ГИБДД — чек-лист.
+- [Заявленный запас хода и реальный: почему WLTP врёт на 20–35%](https://zapashoda-ev.ru/news/2026-10-30-wltp-vs-realnost.html): WLTP, EPA и CLTC считают по-разному. Реальный пробег — на 20–35% меньше заявленного.
+- [Адаптер Type 2 → GB/T: главный аксессуар китайского EV](https://zapashoda-ev.ru/news/2026-10-29-adapter-type2-gbt-glavnyj.html): Без него китайский электромобиль не зарядится от наших станций. На что смотреть при выборе.
+- [Сколько стоит 100 км на электромобиле: считаем в рублях](https://zapashoda-ev.ru/news/2026-10-29-stoimost-100-km.html): Дома ночью — 250–350 ₽ за 100 км. На быстрой станции — в разы дороже. Разбор с цифрами.
+- [Зимой электромобиль теряет до 30–40% запаса хода. Что делать](https://zapashoda-ev.ru/news/2026-10-29-zima-30-40-procentov.html): Минус за окном — минус километры на приборке. Приёмы, которые возвращают часть запаса хода.
+
+
+# ПОЛНЫЙ ТЕКСТ РУКОВОДСТВ
+
+## Не заряжается электромобиль: 10 причин и что делать
+
+От кабеля и порта до OBC, заземления и прошивки станции. Пошаговая диагностика.
+
+### Заряд не стартует / сессия прерывается: сбой хендшейка авто-станция (несовместимость прошивок, особенно китайские EV и старые станции) [UN-03]
+Кому: Все EV, чаще GB/T
+Решение: Отсоединить кабель, подождать, переподключить; попробовать другую станцию; обновлять прошивку станции (если оператор позволяет); если проблема только с одной станцией — дело в ней, не в машине
+Источники: ( https://butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeekr_byd_i_geely_kotorye_mozhno_reshit_samostoyatel">butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeek ) ( https://chinacarservice.by/kompaniya/news/pochemu-elektromobil-ne-zaryazhaetsya-vozmozhnye-prichiny-i-reshenie-problemy/">chinacarservice.by/kompaniya/news/pochemu-elektromobil-ne-zaryazhaetsy ) ( https://myelectrocar.ru/zarjadka/vopros-i-otvet/ev-ne-zaryazhaetsya-fast-charge">myelectrocar.ru/zarjadka/vopros-i-otvet/ev-ne-zaryazhaetsya-fast-charg )
+
+### Кабель не отдаёт из порта после зарядки (замок не разблокировал) [UN-04]
+Кому: Zeekr 001/X, BYD Atto 3, многие EV
+Решение: Разблокировать авто, убедиться, что сессия завершена; аварийная разблокировка порта (тросик/кнопка в лючке)
+Источники: ( https://butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeekr_byd_i_geely_kotorye_mozhno_reshit_samostoyatel">butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeek )
+
+### 12В АКБ садится (12V battery drain): после обновлений ПО, при простое, ключ рядом с авто — каскад ошибок, машина «не оживает» [BAT-04]
+Кому: Все EV (BYD, Voyah, MG, Kia EV6/Ioniq ICCU, Hongqi, Evolute — брак АКБ)
+Решение: Мультиметр раз в месяц, клеммы/масса чистить; убирать ключ на >15 м от авто; при долгом простое отключать массу; для Kia EV6/Ioniq5 — замена ICCU по гарантии; у Evolute — замена бракованных АКБ
+Источники: ( https://dzen.ru/a/aMpA-1RwWGlX1s-U">dzen.ru/a/aMpA-1RwWGlX1s-U ) ( https://xn--80aaagkscw6aak8a.xn--p1ai/blog/voyah-free-problemy/">xn--80aaagkscw6aak8a.xn--p1ai/blog/voyah-free-problemy/ ) ( https://www.drive2.ru/l/740075230415815824/">www.drive2.ru/l/740075230415815824/ ) ( https://www.drive2.ru/l/692422396468003475/">www.drive2.ru/l/692422396468003475/ ) ( https://dzen.ru/a/ZdZSvOP6TXCbCoKh">dzen.ru/a/ZdZSvOP6TXCbCoKh )
+
+## Подогрев батареи электромобиля: зачем нужен и как включить
+
+Как холодная батарея режет скорость зарядки и запас хода; предпрогрев от сети и в пути.
+
+### Медленная зарядка в сильный мороз: холодная батарея принимает малый ток, зарядка в 1,5-2 раза дольше [UN-01]
+Кому: Все EV, особенно GB/T и LFP
+Решение: Предварительный подогрев батареи перед DC (по навигации к станции или из приложения); приезжать на зарядку с тёплой батареей (после поездки); утренняя 15-минутная подзарядка — как «прогрев»
+Источники: ( https://www.drive2.ru/o/b/667947542511643213/">www.drive2.ru/o/b/667947542511643213/ ) ( https://chinacarservice.by/kompaniya/news/zaryadka-elektromobilya-zimoy-kak-zaryazhat-v-moroz/">chinacarservice.by/kompaniya/news/zaryadka-elektromobilya-zimoy-kak-za )
+
+### Потеря запаса хода зимой: -35..45% при -20°C (LFP), -25..35% (NMC); короткие поездки усугубляют (батарея не успевает прогреться) [ZM-01]
+Кому: Все EV
+Решение: Предпрогрев от сети; подогрев сидений/руля вместо печки; гараж/паркинг; таймер зарядки; поездки >20 км дают прогрев самоходом; агрессивный стиль +25-30% расхода; давление шин +0,3 бара = -3..5%
+Источники: ( https://www.drive2.ru/b/738275329881160680/">www.drive2.ru/b/738275329881160680/ ) ( https://ev-expert.by/articles/kak-podgotovit-elektromobil-k-zime-polnoe-rukovodstvo/">ev-expert.by/articles/kak-podgotovit-elektromobil-k-zime-polnoe-rukovo ) ( https://abw.by/news/experience/2022/11/07/zapas-hoda-padaet-no-eto-tolko-chast-problemy-kak-reshautsya-zimnie-bedy-elektromobilei">abw.by/news/experience/2022/11/07/zapas-hoda-padaet-no-eto-tolko-chast )
+
+## Зарядка электромобиля от розетки 220В: время, проводка, безопасность
+
+Сколько реально даёт розетка, какая проводка нужна, почему вышибает автоматы.
+
+### Зарядка от розетки 220В медленная (2,8-3,5 кВт) — на любой GB/T-машине [GB-07]
+Кому: GB/T (Китай)
+Решение: Домашняя станция 7 кВт (отдельная линия, автомат 32А); для Li/EREV — штатные схемы от 220В работают, но медленно
+Источники: ( https://dzen.ru/a/aOzsu1Nb5W3J9wl8">dzen.ru/a/aOzsu1Nb5W3J9wl8 )
+
+### Перегрев кабеля/розетки при зарядке от удлинителя и на слабой проводке; вышибает автоматы [GB-08]
+Кому: GB/T (Китай) + все EV
+Решение: Отдельная линия 3х6 мм², автомат 32А, не заряжать через тонкий удлинитель; ограничение тока зарядки (регулировка 8-16А) на слабой проводке; станция с динамической балансировкой нагрузки
+Источники: ( https://www.drive2.ru/l/679190048905627201/">www.drive2.ru/l/679190048905627201/ ) ( https://www.chinamobil.ru/dongfeng/voyah/free/?view=chats&chat=voyah-chat&topic=11517&pageid=448">www.chinamobil.ru/dongfeng/voyah/free/?view=chats&amp;chat=voyah-chat&amp;topi ) ( https://abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobili-i-kakie-zaryadnye-stancii-byvaut-obyasnyaet-greenlightby">abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobi )
+
+## Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T
+
+Какие переходники нужны, как не купить несовместимый, что с батареей питания адаптера.
+
+### Приехал на ЭЗС — нечем зарядиться: у китайских EV оба порта GB/T (AC и DC), на станции с Type2/CCS2 без переходника не зарядиться [GB-01]
+Кому: Все GB/T (Китай)
+Решение: Возить адаптер Type2→GB/T AC (на AC) и на DC искать станции с пистолетом GB/T; на CCS2-трассе — DC-адаптер CCS2→GB/T. Уточнять, у станции «столбик» без кабеля или с кабелем
+Источники: ( https://abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobili-i-kakie-zaryadnye-stancii-byvaut-obyasnyaet-greenlightby">abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobi )
+
+### Ожидание «22 кВт на станции — получу 22 кВт» не оправдывается: 95% китайских EV с однофазным OBC ~7 кВт; трёхфазная станция даёт лишь треть [GB-02]
+Кому: GB/T (Китай)
+Решение: Перед покупкой станции проверять фазность OBC своей модели (см. лист «Модели»); не покупать трёхфазную станцию для однофазной машины
+Источники: ( https://abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobili-i-kakie-zaryadnye-stancii-byvaut-obyasnyaet-greenlightby">abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobi )
+
+### DC-адаптер CCS2→GB/T привередлив: несовместим с частью станций (разные протоколы PLC/CAN, эмуляция сигналов) [GB-04]
+Кому: GB/T (Китай)
+Решение: Выбирать адаптеры последних версий с обновляемой прошивкой и подтверждённой совместимостью (ABB, Siemens, Alpitronic и др.); держать прошивку актуальной; перед покупкой спрашивать список протестированных станций
+Источники: ( https://www.drive2.ru/l/666984095447779018/">www.drive2.ru/l/666984095447779018/ ) ( https://evniculus.eu/ru/blogs/journal/everything-you-need-to-know-about-the-ccs2-to-gbt-adapters-charging-chinese-electric-vehicles-in-europe">evniculus.eu/ru/blogs/journal/everything-you-need-to-know-about-the-cc )
+
+### Батарейка в DC-адаптере садится за 3-5 сессий, у некоторых версий нет отсека для замены [GB-05]
+Кому: GB/T (Китай)
+Решение: Выбирать версию адаптера с заменяемым отсеком АКБ 18650 и/или авточарджа; заряжать от встроенного разъёма заранее (медленно)
+Источники: ( https://www.drive2.ru/l/666984095447779018/">www.drive2.ru/l/666984095447779018/ )
+
+### Слабая сеть зарядок GB/T DC — большинство ЭЗС CCS2/Type2 [GB-06]
+Кому: GB/T (Китай)
+Решение: Планировать маршрут через PlugShare/2Charge с фильтром по разъёму GB/T; с адаптером CCS2→GB/T открывается вся CCS2-сеть
+Источники: ( https://dzen.ru/a/aOzsu1Nb5W3J9wl8">dzen.ru/a/aOzsu1Nb5W3J9wl8 )
+
+## Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть
+
+Физика мороза, отопители, предпрогрев, шины и стиль вождения.
+
+### Потеря запаса хода зимой: -35..45% при -20°C (LFP), -25..35% (NMC); короткие поездки усугубляют (батарея не успевает прогреться) [ZM-01]
+Кому: Все EV
+Решение: Предпрогрев от сети; подогрев сидений/руля вместо печки; гараж/паркинг; таймер зарядки; поездки >20 км дают прогрев самоходом; агрессивный стиль +25-30% расхода; давление шин +0,3 бара = -3..5%
+Источники: ( https://www.drive2.ru/b/738275329881160680/">www.drive2.ru/b/738275329881160680/ ) ( https://ev-expert.by/articles/kak-podgotovit-elektromobil-k-zime-polnoe-rukovodstvo/">ev-expert.by/articles/kak-podgotovit-elektromobil-k-zime-polnoe-rukovo ) ( https://abw.by/news/experience/2022/11/07/zapas-hoda-padaet-no-eto-tolko-chast-problemy-kak-reshautsya-zimnie-bedy-elektromobilei">abw.by/news/experience/2022/11/07/zapas-hoda-padaet-no-eto-tolko-chast )
+
+### Холодная батарея не даёт полной динамики; авто ограничивает мощность [ZM-02]
+Кому: Все EV
+Решение: Это защита, а не поломка; после прогрева возвращается. Предпрогрев из приложения
+Источники: ( https://butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeekr_byd_i_geely_kotorye_mozhno_reshit_samostoyatel">butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeek )
+
+### LFP-батареи теряют до 30-40% при -20°C — норма химии, не брак (BYD Blade) [BAT-03]
+Кому: BYD и другие LFP
+Решение: 7 способов сократить потери до 25%: предпрогрев, локальный обогрев, шины, стиль вождения; зимой не ниже 5% заряда
+Источники: ( https://www.drive2.ru/b/738275329881160680/">www.drive2.ru/b/738275329881160680/ )
+
+## Кабель зарядки не отдаёт из порта: что делать
+
+Почему замок не разблокирует коннектор и где аварийный тросик.
+
+### Кабель не отдаёт из порта после зарядки (замок не разблокировал) [UN-04]
+Кому: Zeekr 001/X, BYD Atto 3, многие EV
+Решение: Разблокировать авто, убедиться, что сессия завершена; аварийная разблокировка порта (тросик/кнопка в лючке)
+Источники: ( https://butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeekr_byd_i_geely_kotorye_mozhno_reshit_samostoyatel">butikavto.by/news/tipichnye_oshibki_elektromobiley_problemy_tesla_zeek )
+
+## 12-вольтовый аккумулятор электромобиля: главная тайная боль
+
+Почему садится, какие машины чаще страдают (BYD, Voyah, MG, Kia EV6, Hongqi) и что делать.
+
+### 12В АКБ садится (12V battery drain): после обновлений ПО, при простое, ключ рядом с авто — каскад ошибок, машина «не оживает» [BAT-04]
+Кому: Все EV (BYD, Voyah, MG, Kia EV6/Ioniq ICCU, Hongqi, Evolute — брак АКБ)
+Решение: Мультиметр раз в месяц, клеммы/масса чистить; убирать ключ на >15 м от авто; при долгом простое отключать массу; для Kia EV6/Ioniq5 — замена ICCU по гарантии; у Evolute — замена бракованных АКБ
+Источники: ( https://dzen.ru/a/aMpA-1RwWGlX1s-U">dzen.ru/a/aMpA-1RwWGlX1s-U ) ( https://xn--80aaagkscw6aak8a.xn--p1ai/blog/voyah-free-problemy/">xn--80aaagkscw6aak8a.xn--p1ai/blog/voyah-free-problemy/ ) ( https://www.drive2.ru/l/740075230415815824/">www.drive2.ru/l/740075230415815824/ ) ( https://www.drive2.ru/l/692422396468003475/">www.drive2.ru/l/692422396468003475/ ) ( https://dzen.ru/a/ZdZSvOP6TXCbCoKh">dzen.ru/a/ZdZSvOP6TXCbCoKh )
+
+## Лючок зарядки не открывается на морозе и тугой механизм
+
+Аварийные тросики, прогрев, смазка механизма.
+
+### Лючок зарядки примерзает / не открывается на морозе [UN-05]
+Кому: GB/T (Китай), все EV
+Решение: Прогрев порта из приложения до выезда (Muskvich 3e: 40 мин в розетке → оттаивает); если лючок не открывается — аварийный тросик (Li Auto L7)
+Источники: ( https://ev-start.ru/reviews/vygonyaem-elektricheskiy-moskvich-na-moroz/">ev-start.ru/reviews/vygonyaem-elektricheskiy-moskvich-na-moroz/ ) ( https://www.tiktok.com/discover/%D0%BA%D0%B0%D0%BA-%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8C-%D0%BB%D1%8E%D0%BA-%D0%BD%D0%B0-li-7">www.tiktok.com/discover/%D0%BA%D0%B0%D0%BA-%D0%BE%D1%82%D0%BA%D1%80%D1 )
+
+### Смазка лючка: тугой механизм, на морозе щель примораживается [ZV-01]
+Кому: Zeekr, Voyah
+Решение: Периодически обрабатывать механизм лючка/петли смазкой (SKU 17)
+Решение собрано по отзывам владельцев на профильных форумах и сервисах
+
+## Удлинитель и кабель для зарядки электромобиля
+
+Сечение, автоматы, почему дешёвый удлинитель опасен.
+
+### Перегрев кабеля/розетки при зарядке от удлинителя и на слабой проводке; вышибает автоматы [GB-08]
+Кому: GB/T (Китай) + все EV
+Решение: Отдельная линия 3х6 мм², автомат 32А, не заряжать через тонкий удлинитель; ограничение тока зарядки (регулировка 8-16А) на слабой проводке; станция с динамической балансировкой нагрузки
+Источники: ( https://www.drive2.ru/l/679190048905627201/">www.drive2.ru/l/679190048905627201/ ) ( https://www.chinamobil.ru/dongfeng/voyah/free/?view=chats&chat=voyah-chat&topic=11517&pageid=448">www.chinamobil.ru/dongfeng/voyah/free/?view=chats&amp;chat=voyah-chat&amp;topi ) ( https://abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobili-i-kakie-zaryadnye-stancii-byvaut-obyasnyaet-greenlightby">abw.by/news/partnership/2025/06/04/kak-zaryazhat-kitaiskie-elektromobi )
+
+### Не хватает длины кабеля на парковке [UN-06]
+Кому: Все EV, особенно габаритные (Zeekr 001)
+Решение: Кабель 10 м (SKU 15) или удлинитель GB/T (SKU 14); заранее замерить парковку
+Источники: ( https://www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html">www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html )
+
+## Как заряжать электромобиль из США или Кореи в России
+
+Type 1/CCS1: переходники, замена порта, радикальный кейс с перекодировкой.
+
+### Type1/CCS1 (США/Корея) не подключаются к российским станциям без переходника: AC Type2→Type1 (~8 тыс), DC CCS2→CCS1 (250 кВт) [T1-01]
+Кому: Type1/CCS1 (US/KR/JP)
+Решение: Комплект: Type2→Type1 адаптер + CCS2→CCS1 DC-адаптер; для Leaf — CHAdeMO-станции; HomePlug/Powerline-адаптеры мешают зарядке (MG ZS EV кейс)
+Источники: ( https://elli.npoelm.ru/blog/tipy-razemov-zaryadnyh-stanciy">elli.npoelm.ru/blog/tipy-razemov-zaryadnyh-stanciy ) ( https://export-motors.com/blog/elektromobili-iz-korei">export-motors.com/blog/elektromobili-iz-korei ) ( https://www.mg-rover.org/threads/mg-zs-ev-serious-charging-issue-found.869548/page-3">www.mg-rover.org/threads/mg-zs-ev-serious-charging-issue-found.869548/ )
+
+### США-версии: CCS1 рассчитан на 110В-сеть — в РФ заряжается 14 ч вместо 8; американские Tesla с разъёмом NACS не влезают в Type2 станции [T1-02]
+Кому: Американские EV/Tesla US
+Решение: Для Tesla US — адаптеры Type2→Tesla (до 15 тыс) и CCS2→Tesla (до 35 тыс; новые Tesla согласуют протокол сами); CHAdeMO→Tesla (до 80 тыс, сняты с производства 2021); радикально — замена порта CCS1→CCS2 с перекодировкой блоков (VAGnetic, Подольск)
+Источники: ( https://dzen.ru/a/Y-aiDB3dfg5-GEcf">dzen.ru/a/Y-aiDB3dfg5-GEcf ) ( https://vk.ru/wall-178874211_397">vk.ru/wall-178874211_397 ) ( https://electro.cars/tpost/848ds6nxj1-kak-pravilno-zaryazhat-elektromobil-tesl">electro.cars/tpost/848ds6nxj1-kak-pravilno-zaryazhat-elektromobil-tesl )
+
+### Адаптер по току: станция 60А при адаптере 32А может перегореть/расплавиться [T1-03]
+Кому: Все, кто использует адаптеры
+Решение: Проверять номинал тока адаптера (на корпусе); ставить ток на станции ниже номинала адаптера
+Источники: ( https://dzen.ru/a/Y-aiDB3dfg5-GEcf">dzen.ru/a/Y-aiDB3dfg5-GEcf )
+
+## Tesla в России: зарядка, адаптеры, Supercharger
+
+EU vs US версии, адаптеры, прогрев батареи на морозе.
+
+### Tesla на морозе: батарея <40% и -22°C — зарядка не стартует до прогрева [TS-01]
+Кому: Tesla (все)
+Решение: Прогрев через навигацию к Supercharger (заранее закладывает нагрев); precondition из приложения; ждать прогрева на станции
+Источники: ( https://habr.com/ru/news/708122/">habr.com/ru/news/708122/ )
+
+### Supercharger-сеть в РФ частная/дефицитная; американские версии с NACS не совместимы со станциями напрямую [TS-02]
+Кому: Tesla в РФ
+Решение: CCS2-станции с адаптером (для EU Tesla — родные); частные Supercharger (Сколково); дома — станция Type2 7-22 кВт
+Источники: ( https://autoreview.ru/news/pervaya-chastnaya-zaryadka-tesla-supercharger-v-rossii-chto-dal-she">autoreview.ru/news/pervaya-chastnaya-zaryadka-tesla-supercharger-v-ros ) ( https://electro.cars/tpost/848ds6nxj1-kak-pravilno-zaryazhat-elektromobil-tesl">electro.cars/tpost/848ds6nxj1-kak-pravilno-zaryazhat-elektromobil-tesl )
+
+## CHAdeMO: Leaf и другие японские EV
+
+Сети CHAdeMO, деградация от быстрых зарядок, мониторинг батареи.
+
+### Leaf: выбивает/не заряжает на CHAdeMO в мокрую погоду [LEAF-01]
+Кому: Nissan Leaf
+Решение: Диагностика (частая проблема заземления станции/кабеля); использовать 7-22 кВт AC; видео-разбор: youtube Bz2mefcEEHQ
+Источники: ( https://www.youtube.com/watch?v=Bz2mefcEEHQ">www.youtube.com/watch?v=Bz2mefcEEHQ )
+
+### Leaf: у батареи нет жидкостного охлаждения — скоростная зарядка «поджаривает» ячейки; нельзя в жару быструю зарядку, не хранить на 100% [LEAF-02]
+Кому: Nissan Leaf
+Решение: Long Life Mode (лимит 80%); хранить 40-60%; быструю — не чаще раза в неделю; фирменное масло редуктора (1,5 л)
+Источники: ( https://auto.onliner.by/2025/10/06/nedorogo-pomenyal-batareyu">auto.onliner.by/2025/10/06/nedorogo-pomenyal-batareyu ) ( https://www.drom.ru/info/misc/nissan-leaf-92876.html">www.drom.ru/info/misc/nissan-leaf-92876.html )
+
+### Деградация батареи от частых быстрых зарядок (CHAdeMO 50 кВт без охлаждения — особенно Leaf: -10..15% за 50 циклов) [BAT-01]
+Кому: Nissan Leaf, все с пассивным охлаждением
+Решение: Быстрая зарядка не чаще 1 раза в неделю; заряжать до 80%; Leaf Spy Pro для контроля SOH; парковка в тени летом; хранить при 30-50%
+Источники: ( https://nissan-expert.vercel.app/articles/n/ni/nissan-lif-emkost-batarei.html">nissan-expert.vercel.app/articles/n/ni/nissan-lif-emkost-batarei.html )
+
+# МОДЕЛИ: РАЗЪЁМЫ
+
+## Zeekr 001 / 001 FR (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 11 кВт (до 02.2023) / 7 кВт (после) | DC-мощность: 10–80% ~15–30 мин (до 200+ кВт)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Zeekr 007 / 007GT (2024–2026, BEV, Китай (CN))
+AC: GB/T AC (1 фаза) | DC: GB/T DC 800V | OBC: 7 кВт | DC-мощность: до 500 кВт (4,5C)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Zeekr 7X / X / MIX (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (7X — 800V) | OBC: уточнить | DC-мощность: уточнить (7X ~360 кВт)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Zeekr 009 / 009 Grand (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить (11 кВт?) | DC-мощность: уточнить (~200 кВт)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Zeekr 8X / 9X (2025–2026, EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Li Auto ONE (2020–2022, EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 7 кВт (1 фаза) | DC-мощность: уточнить
+Для зарядки: Адаптер Type2→GB/T premium (SKU 1); переходник штатного ЗУ GB/T→220В (SKU 18); портативка 3,5 кВт (SKU 10). DC на трассе — SKU 6 по потребности (гибрид не зависит от станций); удлинитель GB/T (SKU 14); смазка (SKU 17).
+
+## Li Auto L6 / L7 / L8 / L9 (2022–2025) (2022–2026, EREV, Китай (CN))
+AC: GB/T AC (1 фаза) | DC: GB/T DC | OBC: 7 кВт (1 фаза) | DC-мощность: до 90 кВт по DC-порту
+Для зарядки: Адаптер Type2→GB/T premium (SKU 1); переходник штатного ЗУ GB/T→220В (SKU 18); портативка 3,5 кВт (SKU 10). DC на трассе — SKU 6 по потребности (гибрид не зависит от станций); удлинитель GB/T (SKU 14); смазка (SKU 17).
+
+## Li Auto Mega (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V | OBC: уточнить | DC-мощность: высокая (5C, 800V)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Li Auto i6 / i8 (2025–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Voyah Free EVR (гибрид) (2022–2026, EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 6,6–7 кВт (1 фаза; 2024–25), 11 кВт — опция | DC-мощность: до 80 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Voyah Free EV (ранние официальные RU) (2022–2023, BEV, RU (офиц.))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт (3 фазы) | DC-мощность: уточнить
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Voyah Dream / Dreamer (PHEV) (2023–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 6,6 кВт (1 фаза, уточнить) | DC-мощность: до 80 кВт (уточнить)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Voyah Passion / Passion S (2023–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (уточнить) | OBC: 6,6 кВт (уточнить) | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Voyah Courage (2025–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Voyah Taishan (2025–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Avatr 11 / 12 (официально RU) (2024–2026, BEV, RU (офиц.))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: до 240 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Avatr 07 (параллельный) (2024–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## AITO M5 / M7 (2023–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить (~75–100 кВт)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## AITO M9 (2024–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## M-Hero 917 EV / EVR (2023–2026, BEV/EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 7 кВт (ЗУ — опция) | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Xiaomi SU7 / SU7 Ultra (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (Max — 800V) | OBC: 11 кВт (уточнить фазы) | DC-мощность: ~200 кВт (стандарт), выше на Max
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Xiaomi YU7 (2025–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V (Max) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## FAW Bestune NAT (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Changan Qiyuan A05 / A06 / A07 (2024–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (уточнить) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Changan Qiyuan Q05 / Q06 / Q07 (2025–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — (уточнить) | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Changan Nevo E07 (2025–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Han EV / Song L (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~100–150 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Song Plus EV (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Song Plus DM-i / Sealion 05 (2022–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — (у большинства нет DC) | OBC: 3,3–6,6 кВт (1 фаза) | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## BYD Tang EV / Tang DM-i (2020–2026, BEV/PHEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (только EV) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Yuan Plus / Atto 3 / Yuan Up / Pro (2022–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: 7 кВт (CN) | DC-мощность: ~50–70 кВт (CN)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Seal (2023–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: уточнить | DC-мощность: ~150 кВт (CN)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Dolphin (2023–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: уточнить | DC-мощность: ~60 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Seagull (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~40–60 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Qin Plus DM-i (2022–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: 3,3 кВт | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## BYD Fangchengbao Bao 5 / Bao 8 (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (уточнить) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Denza (BYD) D9 EV / D9 DM-i (2022–2026, BEV/PHEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (только EV) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BYD Yangwang U8 / U9 (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Deepal S07 (RU официальная) (2025–2026, EREV, RU (офиц.))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить (1 фаза) | DC-мощность: до 93 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Deepal L07 / S05 / S09 (2025–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Deepal G318 (RU официальная) (2025–2026, EREV, RU (офиц.))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Xpeng P7 / P5 / G3 (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~100–200 кВт (уточнить)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Xpeng G9 / G6 (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V | OBC: уточнить | DC-мощность: до 240–480 кВт (на S4-станциях)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Neta U / V / X (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~100 кВт (уточнить)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Leapmotor T03 (2023–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: 6,6 кВт | DC-мощность: ~45 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Leapmotor C10 / C11 / C01 / B10 / A05 (2023–2026, BEV/EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~100–180 кВт (уточнить)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Ora Good Cat / 03 (2022–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Ora R1 / Black Cat / 07 (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (уточнить) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Geely Geometry C / A (2020–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~60–80 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Geely Galaxy E5 / E8 / TT (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Geely Galaxy L7 / Starship 7 (PHEV) (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — (уточнить) | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Geely EX5 / Monjaro Hi-P (PHEV) (2025–2026, BEV/PHEV, RU/CN)
+AC: GB/T (уточнить RU-поставку) | DC: GB/T | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Lynk & Co 01 PHEV (EU-версия) (2019–2023, PHEV, Европа (EU))
+AC: Type 2 AC | DC: — (DC нет) | OBC: 6,6 кВт | DC-мощность: —
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Lynk & Co 08 / 900 (CN) (2024–2026, EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Hongqi E-QM5 (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить (~60–100 кВт)
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Hongqi E-HS9 (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 11 кВт (чаще) | DC-мощность: 110–140 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Hongqi EH7 / HS7 EV / HS3 EV (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Livan X3 Pro / S6 Pro (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA (2022–2026, BEV, RU (сборка))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт (1 фаза) | DC-мощность: уточнить
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Moskvich 3e / 6 (2023–2026, BEV, RU (сборка))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт | DC-мощность: ~80 кВт (уточнить)
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## JAC e-JS1 / e-JS4 / iEVS4 (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Skywell ET5 / EL5 (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## SWM G01 EV и др. (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Kaiyi E5 EV / X3 EV (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Wuling / Hongguang Mini EV / Air EV (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: — (нет DC) | OBC: ~3,3 кВт | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Dongfeng eπ 008 / Aeolus (Nami, Forthing) (2024–2026, EREV/BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC (уточнить) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## GAC Aion S Plus / Aion V (2023–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Seres 5 / SF5 (2022–2026, BEV/EREV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Exeed Exlantix ET / ES (Sterra) (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## IM Motors LS6 / L7 (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC 800V | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## iCAR 03 (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Luxeed (Chery/Huawei) R7 (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Stelato (BAIC/Huawei) S9 (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Onvo (NIO) L60 (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Lotus Eletre / Emeya (2023–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: 11 кВт | DC-мощность: 300+ кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## HiPhi X / Z (2021–2024, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: 7–11 кВт | DC-мощность: 100+ кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Roewe D7 и др. (2024–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Toyota bZ4X (CN-версия) (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: ~150 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Lexus UX300e (CN-версия) (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Honda M-NV / e:NS1 / e:NP1 (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## VW ID.6 (CN-версия) (2022–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## BMW iX3 (CN-версия) (2021–2026, BEV, Китай (CN))
+AC: GB/T AC | DC: GB/T DC | OBC: 11 кВт | DC-мощность: ~100 кВт
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## Jetour T1 / T2 PHEV (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — (уточнить) | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Chery Tiggo 7/8/9 C-DM PHEV (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — (уточнить) | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Jaecoo 7 PHEV (2025–2026, PHEV, RU/CN)
+AC: GB/T AC (уточнить RU-версию) | DC: — | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Haval H6 PHEV (2023–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Tank 500 Hi4-T (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: 6,6 кВт (уточнить) | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Exeed RX PHEV (2024–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## BYD Han DM-i / Tang DM-i (2022–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## VW Tayron L (CN, PHEV) (2025–2026, PHEV, Китай (CN))
+AC: GB/T AC | DC: — | OBC: уточнить | DC-мощность: —
+Для зарядки: Только AC-порт (быстрой зарядки DC нет): адаптер Type2→GB/T (SKU 1 / 8) на городских Type 2-станциях; от розетки — портативка SKU 10. DC-адаптер (SKU 6) не нужен — физически нечему подключаться.
+
+## Tesla Model 3 / Y (EU) (2019–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт (3 фазы) | DC-мощность: до 250 кВт (V3)
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Tesla Model S / X (EU) (2019–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: до 250 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## VW ID.3 / ID.4 / ID.5 / ID.Buzz (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: 135–170 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Skoda Enyaq (2021–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: до 135 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Audi e-tron / Q4 e-tron / Q8 e-tron (2019–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: до 150 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Mercedes EQC / EQA / EQB / EQE / EQS (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: 110–200 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## BMW i3 / i4 / iX / iX1 (2019–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: 100–200 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Mini Cooper SE (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: ~50 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Peugeot e-208 / e-2008 / e-3008 (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7–11 кВт | DC-мощность: ~100 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Citroën ë-C4 / ë-SpaceTourer (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7–11 кВт | DC-мощность: ~100 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Opel Corsa-e / Mokka-e (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7–11 кВт | DC-мощность: ~100 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Fiat 500e (2021–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: ~85 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Dacia Spring (2021–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт | DC-мощность: ~30 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Renault Zoe (2019–2023, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 (только фаза 2, ~50 кВт) / ранние без DC | OBC: 22 кВт (3 фазы) | DC-мощность: 50 кВт (фаза 2)
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Renault Megane e-Tech / Kangoo E-Tech (2022–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7–22 кВт | DC-мощность: ~130 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Volvo XC40 Recharge / C40 / EX40 (2021–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: ~150 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Volvo XC90 / XC60 T8 (PHEV) (2019–2026, PHEV, Европа (EU))
+AC: Type 2 AC | DC: CCS2 (у части, ~50 кВт) | OBC: 11 кВт (3 фазы) | DC-мощность: ~50 кВт (уточнить)
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Polestar 2 / 3 / 4 (2021–2026, BEV, EU (сборка CN))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: 150–250 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## MG ZS EV / MG5 (EU) (2020–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт | DC-мощность: ~75 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## MG 4 (Mulan) (2023–2026, BEV, CN / EU)
+AC: GB/T (CN) / Type 2 (EU) | DC: GB/T (CN) / CCS2 (EU) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).
+
+## MG HS PHEV / MG 07 (CN) (2023–2026, PHEV, EU / CN)
+AC: Type 2 (EU) / GB/T (CN) | DC: — | OBC: 7 кВт | DC-мощность: —
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Cupra Born (2022–2026, BEV, Европа (EU))
+AC: Type 2 | DC: CCS2 | OBC: 11 кВт | DC-мощность: ~135 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Jaguar I-Pace (2019–2026, BEV, EU / US)
+AC: Type 2 (EU) / Type 1 (US) | DC: CCS2 (EU) / CCS1 (US) | OBC: 11 кВт | DC-мощность: ~100 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Porsche Taycan (2020–2026, BEV, EU / US)
+AC: Type 2 (EU) / Type 1 (US) | DC: CCS2 (EU) / CCS1 (US) | OBC: 11 кВт | DC-мощность: до 270 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Smart EQ fortwo / #1 (2020–2026, BEV, EU / CN)
+AC: Type 2 (EU) / GB/T (CN) | DC: CCS2 (EU) / GB/T (CN) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Hyundai Ioniq 5 / Ioniq 6 (KR) (2022–2026, BEV, Корея (KR))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт (Type 1 — 1 фаза) | DC-мощность: до 240 кВт (800V E-GMP)
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Hyundai Kona Electric (KR) (2019–2026, BEV, Корея (KR))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: ~75–100 кВт
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Kia EV6 (KR) (2022–2026, BEV, Корея (KR))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: до 240 кВт (800V)
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Kia EV9 (KR) (2023–2026, BEV, Корея (KR))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: до 240 кВт (800V)
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Kia Niro EV / e-Niro (2019–2026, BEV, KR / EU)
+AC: Type 1 (KR) / Type 2 (EU) | DC: CCS1 (KR) / CCS2 (EU) | OBC: 7 кВт | DC-мощность: 75–100 кВт
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Kia Soul EV (ранние) (2019–2021, BEV, Корея (KR))
+AC: Type 1 | DC: CHAdeMO | OBC: 7 кВт | DC-мощность: 60–75 кВт
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+## Genesis GV60 / Electrified G80 / GV70 (2022–2026, BEV, Корея (KR))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: до 240 кВт (800V)
+Для зарядки: Корейский рынок: AC Type 1, DC CCS1. Нужны адаптеры ВНЕ текущего каталога: Type 1→Type 2 (AC) и CCS1→CCS2 (DC) — потенциальные новые SKU. На GB/T-станциях напрямую не работает. Европейская версия той же модели — решение как у европейских.
+
+## Tesla Model 3 / Y / S / X (US) (2019–2026, BEV, США (US))
+AC: NACS / J1772 (AC) | DC: NACS | OBC: ~7 кВт (в сети 220В) | DC-мощность: до 250 кВт
+Для зарядки: Tesla US: AC J1772/NACS, DC NACS (сеть Supercharger в РФ закрыта). Быстрая зарядка: адаптер NACS→CCS2/Type 2 (SKU 7). AC: адаптер J1772→Type 2 вне каталога.
+
+## Chevrolet Bolt EV / EUV (2019–2026, BEV, США (US))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: 55–100 кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## Ford Mustang Mach-E (US) / F-150 Lightning (2021–2026, BEV, США (US))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: ~150 кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## Rivian R1T / R1S (2022–2026, BEV, США (US))
+AC: Type 1 / NACS (новые) | DC: CCS1 / NACS (новые) | OBC: 7 кВт | DC-мощность: 200+ кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## Lucid Air (2022–2026, BEV, США (US))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: ~300 кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## GMC Hummer EV (2022–2026, BEV, США (US))
+AC: Type 1 | DC: CCS1 | OBC: 7 кВт | DC-мощность: ~350 кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## Nissan Ariya (US) (2023–2026, BEV, США (US))
+AC: Type 1 | DC: CCS1 | OBC: 7–11 кВт | DC-мощность: ~130 кВт
+Для зарядки: США: AC Type 1 (J1772), DC CCS1. Адаптеры вне каталога: Type 1→Type 2 (AC), CCS1→CCS2 (DC). На GB/T-станциях не работает.
+
+## Nissan Leaf ZE1 (JP / EU) (2019–2026, BEV, Япония (JP) / EU)
+AC: Type 1 (JP) / Type 2 (EU) | DC: CHAdeMO | OBC: 6,6 кВт (JP) | DC-мощность: ~50 кВт
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+## Nissan Sakura (2022–2026, BEV, Япония (JP))
+AC: Type 1 | DC: CHAdeMO | OBC: ~3 кВт | DC-мощность: ~50 кВт
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+## Mitsubishi Outlander PHEV (JP / EU) (2019–2026, PHEV, Япония (JP) / EU)
+AC: Type 1 (JP) / Type 2 (EU) | DC: CHAdeMO | OBC: 3,7–7 кВт | DC-мощность: ~50 кВт
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+## Mitsubishi i-MiEV (2019–2021, BEV, Япония (JP))
+AC: Type 1 | DC: CHAdeMO | OBC: 3,7 кВт | DC-мощность: ~50 кВт
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+## Nissan Ariya (JP) (2023–2026, BEV, Япония (JP))
+AC: Type 2 | DC: CCS2 | OBC: 7–11 кВт | DC-мощность: ~130 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Toyota bZ4X (JP) (2022–2026, BEV, Япония (JP))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт | DC-мощность: ~150 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Lexus RZ (JP) (2023–2026, BEV, Япония (JP))
+AC: Type 2 | DC: CCS2 | OBC: 7 кВт | DC-мощность: ~150 кВт
+Для зарядки: Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).
+
+## Mazda MX-30 (2021–2026, BEV, JP / EU)
+AC: Type 2 | DC: CCS2 (поздние) / CHAdeMO (ранние JP) | OBC: уточнить | DC-мощность: уточнить
+Для зарядки: Япония: AC Type 1, DC CHAdeMO. AC: адаптер Type 1→Type 2 (вне каталога). DC: только CHAdeMO-станции (сеть сокращается; на CCS2 через адаптер не решить).
+
+# НОВОСТИ
+
+## Сколько живёт батарея электромобиля: факты вместо страшилок (2026-10-31)
+Деградация 10–15% за 5–7 лет при нормальной эксплуатации. Что реально убивает батарею.
+
+Миф «батарея умрёт за 5 лет» — один из главных барьеров при покупке. Разбираем, что говорят данные.
+
+<b>Реальная деградация.</b> При нормальной эксплуатации батарея теряет 10–15% ёмкости за 5–7 лет. Это не «умрёт», это «проедет на 10–15% меньше». Гарантии производителей — обычно 8 лет или 160 000 км на 70% ёмкости.
+
+<b>Что реально убивает батарею:</b> регулярная зарядка до 100% в жару (особенно долгое стояние заряженной на солнце) и глубокие разряды до нуля. Для батарей LFP правила мягче — их можно заряжать до 100%.
+
+<b>Что делать:</b> держите уровень 20–80% для повседневной езды (кроме дальних поездок), не оставляйте машину надолго заряженной на 100% в жару, проверяйте SOH при покупке с пробегом.
+
+По 12-вольтовому АКБ (тоже частая боль) — <a href='/pain/12v-akb.html'>отдельное руководство</a>.
+
+## 5 ошибок новичка зимой на электромобиле (2026-10-30)
+Ловить 100% на морозе, гонять на 90+, игнорировать подогрев — разбираем по пунктам.
+
+Первая зима на EV у многих проходит по одному сценарию: паника из-за просевшего запаса хода и попытка «зарядиться до 100% как можно чаще». Разбираем типичные ошибки.
+
+<b>1. Ждать паспортного запаса хода.</b> Зимой ориентируйтесь на 60–70% от заявленного — планируйте маршруты с запасом.
+
+<b>2. Игнорировать предпрогрев.</b> Прогрев батареи от сети перед выездом возвращает и скорость зарядки, и запас хода. Батарея, прогретая до 15–20°C, заряжается быстрее и отдаёт больше.
+
+<b>3. Ловить 100% на морозе.</b> Последние 10% заряжаются медленно и почти бесполезны зимой — обычно выгоднее уехать с 80–90%.
+
+<b>4. Ездить на 90+.</b> На трассе скорость 120+ км/ч съедает заряд в разы быстрее, чем 90. На морозе — ещё сильнее.
+
+<b>5. Забывать про кабель.</b> Застывший кабель и примерзший лючок — классика. Про лючок и кабель — в руководствах.
+
+Все приёмы по зиме — в <a href='/pain/zapas-hoda-zimoy.html'>руководстве</a>.
+
+## Разъёмы GB/T: как заряжать китайский электромобиль в России (2026-10-30)
+У Zeekr, Voyah, BYD и Li Auto свой разъём. Рассказываем, какие адаптеры нужны и почему.
+
+Машины, ввезённые из Китая, заряжаются через разъём GB/T — китайский стандарт. Он отличается от европейских Type 2/CCS2, которые стоят на наших станциях.
+
+<b>Дома.</b> Для медленной зарядки от Type 2-станции нужен адаптер <b>Type 2 → GB/T</b>. Обычные домашние сети в России работают на 22 кВт — адаптер должен тянуть ту же мощность, иначе получите 3–7 кВт вместо положенных.
+
+<b>На трассе.</b> Для быстрой зарядки на CCS2-станциях нужен DC-адаптер <b>CCS2 → GB/T</b>. Это отдельная, более дорогая история: он работает с жидкостным охлаждением и тянуть большие мощности.
+
+<b>Проверьте свой порт.</b> Разъём зависит от рынка вывоза, а не от марки. Машины для Европы часто имеют Type 2/CCS2 без адаптеров — смотрите фото лючка или VIN.
+
+Полное руководство — <a href='/pain/adapter-gbt.html'>«Адаптеры для китайских электромобилей»</a>.
+
+## Карта зарядных станций теперь на сайте (2026-10-30)
+Живая карта ЗУ по данным OpenStreetMap: Москва, СПб, Казань, Екатеринбург и другие города.
+
+На сайте появилась <a href='/charging/'>карта зарядных станций</a> — живые данные открытой базы OpenStreetMap. Выбирайте город из списка — покажем зарядки в этой области с операторами и разъёмами.
+
+<b>Что умеет:</b> клик по станции — оператор и типы разъёмов (если размечены в OSM). Данные пополняются самими пользователями — база открытая, карту можно дополнять.
+
+<b>Нюанс:</b> покрытие в мегаполисах хорошее, в малых городах — частичное. Для маршрутов используйте карту вместе с навигатором, а не вместо него.
+
+Как не ошибиться с разъёмом на станции — в <a href='/pain/adapter-gbt.html'>руководстве по адаптерам</a>.
+
+## VIN, ЭПТС и СБКТС: что проверить перед покупкой параллельного импорта (2026-10-30)
+Совпадение VIN на кузове и в ЭПТС, наличие СБКТС, бесплатная проверка ГИБДД — чек-лист.
+
+Покупка машины параллельного импорта (Zeekr, Li Auto, Avatr, Voyah) — это в первую очередь проверка документов, а не пробег. Главные точки проверки.
+
+<b>VIN должен совпадать посимвольно</b> в трёх местах: на кузове (лобовое стекло, проём двери), на табличке и в ЭПТС. Расхождение — стоп-сигнал: либо «перебитый», либо машина в залоге/аресте.
+
+<b>СБКТС и ЭПТС.</b> Для постановки на учёт нужен сертификат безопасности конструкции (СБКТС) и электронный ПТС, оформленные легально на импортёра. Без СБКТС не поставят на учёт — проверяйте до оплаты.
+
+<b>Бесплатная проверка ГИБДД.</b> По VIN на сайте гибдд.рф: история регистраций, ДТП, розыск, ограничения. Это первый шаг перед любой покупкой с пробегом.
+
+<b>Код модельного года.</b> 10-й символ VIN — код года выпуска: сверяйте с годом в ЭПТС.
+
+Полный VIN-справочник с таблицей кодов года — <a href='/vin/'>в нашем разделе VIN</a>.
+
+## Заявленный запас хода и реальный: почему WLTP врёт на 20–35% (2026-10-30)
+WLTP, EPA и CLTC считают по-разному. Реальный пробег — на 20–35% меньше заявленного.
+
+Паспортный запас хода и реальный — два разных числа. Пять водителей на одинаковых Zeekr 001 проедут от 350 до 500 км на одном заряде — и это нормально.
+
+<b>Почему так.</b> Цифры с завода считаются по тестовым циклам: WLTP (Европа), EPA (США), CLTC (Китай). Китайский CLTC самый оптимистичный: тест идёт при 23°C, без печки, со скоростью до 120 км/ч. Реальная жизнь в России — минус, печка, трасса, обледеневший асфальт.
+
+<b>Сколько вычитать:</b> к заявленным цифрам добавляйте 20–35% «сверху вниз» в городской езде и до 40% в зимней трассе. Планируйте маршрут по реальным числам, а не по бортовому компьютеру «до нуля».
+
+Потери зимой и что делать — в <a href='/pain/zapas-hoda-zimoy.html'>руководстве</a>.
+
+## Адаптер Type 2 → GB/T: главный аксессуар китайского EV (2026-10-29)
+Без него китайский электромобиль не зарядится от наших станций. На что смотреть при выборе.
+
+Если вы привезли Zeekr, Voyah, BYD или Li Auto из Китая — первое, что вам нужно, это адаптер Type 2 → GB/T для зарядки от наших станций и от розетки через портативную зарядку.
+
+<b>На что смотреть:</b> поддержка мощности вашей машины (для большинства хватает 22 кВт), качество штекеров и кабеля (зимой пластик трескается, контакт греется), наличие отдельной линии и автомата 32А для портативной зарядки.
+
+<b>Чего избегать:</b> дешёвые адаптеры без указания мощности и температуры эксплуатации. Китайские машины заряжаются и зимой — адаптер должен работать при -30°C, иначе получите «внезапно отвал». Проверяйте отзывы и уточняйте совместимость с вашей моделью — разъём зависит от рынка вывоза.
+
+Подробное руководство — <a href='/pain/adapter-gbt.html'>«Адаптеры для китайских электромобилей»</a>. Полный каталог с подбором под вашу модель — в <a href='https://t.me/zapashoda_ev_bot/app'>мини-приложении</a>.
+
+## Сколько стоит 100 км на электромобиле: считаем в рублях (2026-10-29)
+Дома ночью — 250–350 ₽ за 100 км. На быстрой станции — в разы дороже. Разбор с цифрами.
+
+Самый частый вопрос владельца EV в России — сколько реально стоит километр. Считаем.
+
+<b>Дома от розетки (ночью).</b> Потребление большинства EV — 15–20 кВт·ч на 100 км. При ночном тарифе 100 км обходится примерно в <b>250–350 ₽</b>. Это самый дешёвый способ ездить на электромобиле.
+
+<b>На быстрой зарядной станции.</b> Быстрая зарядка стоит в разы дороже: за 100 км на трассе готовьте <b>1000–2500 ₽</b> в зависимости от сети и мощности. Быстрая станция — про время, а не про экономию.
+
+<b>Вывод.</b> Готовьте ночную зарядку дома или у работы — тогда электричество действительно дешевле бензина. Быстрые станции оставьте для трассы.
+
+Что понадобится для домашней зарядки — в <a href='/pain/zaryadka-ot-rozetki.html'>руководстве про розетку 220В</a>.
+
+## Зимой электромобиль теряет до 30–40% запаса хода. Что делать (2026-10-29)
+Минус за окном — минус километры на приборке. Приёмы, которые возвращают часть запаса хода.
+
+Заявлено 500 — зимой проезжаете 320–350. Это не неисправность, это физика: на морозе батарея отдаёт меньше, а печка и подогревы едят энергию напрямую из батареи.
+
+<b>Откуда потери:</b> холодный электролит повышает внутреннее сопротивление, отопитель салона потребляет киловатты, шины на снегу катятся хуже. Итого до <b>30–40%</b> потери при -20°C.
+
+<b>Что делать:</b> заряжайте и прогревайте машину ПОД ЗАРЯДКОЙ перед выездом (предпрогрев от сети, не от батареи), включайте эко-режим, следите за давлением шин, паркуйте в тепле или хотя бы не на ветру.
+
+Полный разбор с таблицей потерь — в <a href='/pain/zapas-hoda-zimoy.html'>руководстве «Запас хода зимой»</a>.
+

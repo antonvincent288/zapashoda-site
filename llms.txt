@@ -1,0 +1,59 @@
+# Запас хода
+
+> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 137 моделей 2019–2026, ввезённых в РФ. Мини-приложение с каталогом аксессуаров: https://t.me/zapashoda_ev_bot/app
+
+## Разделы
+
+- [Каталог моделей](https://zapashoda-ev.ru/index.html): 137 моделей EV в РФ: разъёмы, мощности, боли, решения
+- [Руководства по проблемам](https://zapashoda-ev.ru/pains.html): 12 практических руководств с решениями
+- [Новости](https://zapashoda-ev.ru/news/): Лента: цифры, зима, зарядка, новые модели
+- [Карта зарядных станций](https://zapashoda-ev.ru/charging/): Зарядные станции по данным OpenStreetMap
+- [VIN-справочник](https://zapashoda-ev.ru/vin/): Структура VIN, коды года, проверка истории для EV в РФ
+- [О проекте](https://zapashoda-ev.ru/about.html): Методика и источники справочника
+
+## Популярные модели
+
+- [Zeekr 001 / 001 FR](https://zapashoda-ev.ru/models/zeekr-001-001-fr.html): разъёмы GB/T AC / GB/T DC
+- [Zeekr 007 / 007GT](https://zapashoda-ev.ru/models/zeekr-007-007gt.html): разъёмы GB/T AC (1 фаза) / GB/T DC 800V
+- [Zeekr 7X / X / MIX](https://zapashoda-ev.ru/models/zeekr-7x-x-mix.html): разъёмы GB/T AC / GB/T DC (7X — 800V)
+- [Li Auto L6 / L7 / L8 / L9 (2022–2025)](https://zapashoda-ev.ru/models/li-auto-l6-l7-l8-l9-2022-2025.html): разъёмы GB/T AC (1 фаза) / GB/T DC
+- [Voyah Free EVR (гибрид)](https://zapashoda-ev.ru/models/voyah-free-evr-gibrid.html): разъёмы GB/T AC / GB/T DC
+- [Avatr 11 / 12 (официально RU)](https://zapashoda-ev.ru/models/avatr-11-12-ofitsialno-ru.html): разъёмы Type 2 / CCS2
+- [Xiaomi SU7 / SU7 Ultra](https://zapashoda-ev.ru/models/xiaomi-su7-su7-ultra.html): разъёмы GB/T AC / GB/T DC (Max — 800V)
+- [BYD Song Plus EV](https://zapashoda-ev.ru/models/byd-song-plus-ev.html): разъёмы GB/T AC / GB/T DC
+- [BYD Yuan Plus / Atto 3 / Yuan Up / Pro](https://zapashoda-ev.ru/models/byd-yuan-plus-atto-3-yuan-up-pro.html): разъёмы GB/T (CN) / Type 2 (EU) / GB/T (CN) / CCS2 (EU)
+- [Geely EX5 / Monjaro Hi-P (PHEV)](https://zapashoda-ev.ru/models/geely-ex5-monjaro-hi-p-phev.html): разъёмы GB/T (уточнить RU-поставку) / GB/T
+- [Geely Galaxy E5 / E8 / TT](https://zapashoda-ev.ru/models/geely-galaxy-e5-e8-tt.html): разъёмы GB/T AC / GB/T DC
+- [Deepal S07 (RU официальная)](https://zapashoda-ev.ru/models/deepal-s07-ru-ofitsialnaya.html): разъёмы GB/T AC / GB/T DC
+- [Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA](https://zapashoda-ev.ru/models/evolute-i-jet-i-pro-i-space-i-joy-i-joa.html): разъёмы Type 2 / CCS2
+- [Moskvich 3e / 6](https://zapashoda-ev.ru/models/moskvich-3e-6.html): разъёмы Type 2 / CCS2
+- [Tesla Model 3 / Y (EU)](https://zapashoda-ev.ru/models/tesla-model-3-y-eu.html): разъёмы Type 2 / CCS2
+- [VW ID.3 / ID.4 / ID.5 / ID.Buzz](https://zapashoda-ev.ru/models/vw-id-3-id-4-id-5-id-buzz.html): разъёмы Type 2 / CCS2
+- [Nissan Leaf ZE1 (JP / EU)](https://zapashoda-ev.ru/models/nissan-leaf-ze1-jp-eu.html): разъёмы Type 1 (JP) / Type 2 (EU) / CHAdeMO
+
+## Руководства по проблемам
+
+- [Не заряжается электромобиль: 10 причин и что делать](https://zapashoda-ev.ru/pain/ne-zaryazhaetsya.html): От кабеля и порта до OBC, заземления и прошивки станции. Пошаговая диагностика.
+- [Подогрев батареи электромобиля: зачем нужен и как включить](https://zapashoda-ev.ru/pain/podogrev-batarei.html): Как холодная батарея режет скорость зарядки и запас хода; предпрогрев от сети и в пути.
+- [Зарядка электромобиля от розетки 220В: время, проводка, безопасность](https://zapashoda-ev.ru/pain/zaryadka-ot-rozetki.html): Сколько реально даёт розетка, какая проводка нужна, почему вышибает автоматы.
+- [Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T](https://zapashoda-ev.ru/pain/adapter-gbt.html): Какие переходники нужны, как не купить несовместимый, что с батареей питания адаптера.
+- [Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть](https://zapashoda-ev.ru/pain/zapas-hoda-zimoy.html): Физика мороза, отопители, предпрогрев, шины и стиль вождения.
+- [Кабель зарядки не отдаёт из порта: что делать](https://zapashoda-ev.ru/pain/kabel-ne-otdaet.html): Почему замок не разблокирует коннектор и где аварийный тросик.
+- [12-вольтовый аккумулятор электромобиля: главная тайная боль](https://zapashoda-ev.ru/pain/12v-akb.html): Почему садится, какие машины чаще страдают (BYD, Voyah, MG, Kia EV6, Hongqi) и что делать.
+- [Лючок зарядки не открывается на морозе и тугой механизм](https://zapashoda-ev.ru/pain/lyuchok.html): Аварийные тросики, прогрев, смазка механизма.
+- [Удлинитель и кабель для зарядки электромобиля](https://zapashoda-ev.ru/pain/udlinitel.html): Сечение, автоматы, почему дешёвый удлинитель опасен.
+- [Как заряжать электромобиль из США или Кореи в России](https://zapashoda-ev.ru/pain/type1-ccs1.html): Type 1/CCS1: переходники, замена порта, радикальный кейс с перекодировкой.
+- [Tesla в России: зарядка, адаптеры, Supercharger](https://zapashoda-ev.ru/pain/tesla.html): EU vs US версии, адаптеры, прогрев батареи на морозе.
+- [CHAdeMO: Leaf и другие японские EV](https://zapashoda-ev.ru/pain/chademo.html): Сети CHAdeMO, деградация от быстрых зарядок, мониторинг батареи.
+
+## Свежие новости
+
+- [Сколько живёт батарея электромобиля: факты вместо страшилок](https://zapashoda-ev.ru/news/2026-10-31-skolko-zhivet-batareya.html): Деградация 10–15% за 5–7 лет при нормальной эксплуатации. Что реально убивает батарею.
+- [5 ошибок новичка зимой на электромобиле](https://zapashoda-ev.ru/news/2026-10-30-5-oshibok-novichka-zimoy.html): Ловить 100% на морозе, гонять на 90+, игнорировать подогрев — разбираем по пунктам.
+- [Разъёмы GB/T: как заряжать китайский электромобиль в России](https://zapashoda-ev.ru/news/2026-10-30-gbt-kak-zaryazhat-kitajcev.html): У Zeekr, Voyah, BYD и Li Auto свой разъём. Рассказываем, какие адаптеры нужны и почему.
+- [Карта зарядных станций теперь на сайте](https://zapashoda-ev.ru/news/2026-10-30-karta-zaryadnyh-stancij.html): Живая карта ЗУ по данным OpenStreetMap: Москва, СПб, Казань, Екатеринбург и другие города.
+- [VIN, ЭПТС и СБКТС: что проверить перед покупкой параллельного импорта](https://zapashoda-ev.ru/news/2026-10-30-vin-epts-sbkts-proverka.html): Совпадение VIN на кузове и в ЭПТС, наличие СБКТС, бесплатная проверка ГИБДД — чек-лист.
+- [Заявленный запас хода и реальный: почему WLTP врёт на 20–35%](https://zapashoda-ev.ru/news/2026-10-30-wltp-vs-realnost.html): WLTP, EPA и CLTC считают по-разному. Реальный пробег — на 20–35% меньше заявленного.
+- [Адаптер Type 2 → GB/T: главный аксессуар китайского EV](https://zapashoda-ev.ru/news/2026-10-29-adapter-type2-gbt-glavnyj.html): Без него китайский электромобиль не зарядится от наших станций. На что смотреть при выборе.
+- [Сколько стоит 100 км на электромобиле: считаем в рублях](https://zapashoda-ev.ru/news/2026-10-29-stoimost-100-km.html): Дома ночью — 250–350 ₽ за 100 км. На быстрой станции — в разы дороже. Разбор с цифрами.
+- [Зимой электромобиль теряет до 30–40% запаса хода. Что делать](https://zapashoda-ev.ru/news/2026-10-29-zima-30-40-procentov.html): Минус за окном — минус километры на приборке. Приёмы, которые возвращают часть запаса хода.
