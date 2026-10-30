@@ -4,9 +4,13 @@ import json, os
 def art_ld(title, desc, url):
     return json.dumps({'@context':'https://schema.org','@type':'Article','headline':title,'description':desc,'inLanguage':'ru','author':{'@type':'Organization','name':'Запас хода'},'publisher':{'@type':'Organization','name':'Запас хода'},'mainEntityOfPage':url}, ensure_ascii=False)
 
+def faq_ld(qa):
+    return '<script type="application/ld+json">' + json.dumps({'@context':'https://schema.org','@type':'FAQPage','mainEntity':[{'@type':'Question','name':q,'acceptedAnswer':{'@type':'Answer','text':a}} for q,a in qa]}, ensure_ascii=False) + '</script>'
+
 def _enh(body, rel, title, kind='Руководство'):
     import artv3, build
-    return artv3.art_enhance(body, build.SITE_DOMAIN + rel, title, build.BUILD_DATE, kind)
+    from datetime import date as _d
+    return artv3.art_enhance(body, build.SITE_DOMAIN + rel, title, _d.today().isoformat(), kind)
 
 def _cta(model, extra=''):
     import catalog
