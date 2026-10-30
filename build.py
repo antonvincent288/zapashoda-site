@@ -40,6 +40,8 @@ UNIVERSAL = ['UN-01','UN-02','UN-03','UN-04','UN-05','UN-06','ZM-01','ZM-02','ZM
  'BAT-02','BAT-04','BAT-05','ST-01','ST-02','ST-03','ST-04','T1-03']
 PHEV_UNIVERSAL = ['PHEV-01','PHEV-03']
 
+from artv3 import art_enhance
+
 def classify(m):
     ac = (m.get('ac') or ''); dc = (m.get('dc') or '')
     if 'GB/T' in ac or 'GB/T' in dc: return 'GB/T'
@@ -266,6 +268,76 @@ h1{margin-top:28px}
 #order-form button{width:100%;margin-top:8px}
 .of-send{padding:13px !important;font-size:15.5px !important}
 @media(max-width:640px){.of-grid{grid-template-columns:1fr}}
+/* --- article v3 --- */
+.art-progress{position:fixed;top:0;left:0;height:3px;width:100%;z-index:90;pointer-events:none}
+.art-progress i{display:block;height:100%;width:0;background:var(--lime);transition:width .1s linear}
+.art-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 8px;color:var(--muted);font-size:13.5px}
+.art-meta .kind{background:rgba(0,113,227,.1);color:var(--lime);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.art-meta .dot{opacity:.5}
+.art-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media(min-width:1020px){.art-grid{grid-template-columns:216px minmax(0,1fr);gap:34px}}
+.art-toc{display:none}
+@media(min-width:1020px){.art-toc{display:block;position:sticky;top:78px;align-self:start;font-size:13.5px;max-height:calc(100vh - 100px);overflow:auto}}
+.art-toc .t{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 8px;font-weight:600}
+.art-toc ol{list-style:none;margin:0;padding:0}
+.art-toc a{display:block;padding:6px 10px;border-radius:9px;color:var(--muted);text-decoration:none;line-height:1.4}
+.art-toc a:hover{color:var(--ink);background:rgba(0,0,0,.04)}
+.art-toc a.on{color:var(--lime);font-weight:600;background:rgba(0,113,227,.08)}
+.toc-num{display:inline-block;width:20px;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.7}
+.art-tocmob{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:14px 0 2px;font-size:14.5px;max-width:680px}
+@media(min-width:1020px){.art-tocmob{display:none}}
+.art-tocmob summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;justify-content:space-between}
+.art-tocmob summary::-webkit-details-marker{display:none}
+.art-tocmob summary::after{content:'▾';color:var(--muted)}
+.art-tocmob[open] summary::after{content:'▴'}
+.art-tocmob ol{margin:10px 0 2px;padding-left:20px;line-height:1.6}
+.art-tocmob a{color:var(--muted);text-decoration:none}
+.art-body{max-width:680px}
+.art-body p{margin:0 0 14px;line-height:1.66;font-size:16.5px}
+.art-body h2{font-size:clamp(21px,2.8vw,26px);margin:38px 0 12px;letter-spacing:-.015em;scroll-margin-top:76px}
+.art-body h3{font-size:17.5px;margin:26px 0 8px}
+.art-body ul,.art-body ol{margin:0 0 14px;padding-left:22px;line-height:1.62}
+.art-body li{margin:5px 0}
+.art-body a{color:var(--lime);text-decoration:underline;text-decoration-color:rgba(0,113,227,.35);text-underline-offset:2.5px}
+.art-body a:hover{text-decoration-color:var(--lime)}
+.art-body blockquote{border-left:3px solid var(--lime);padding:2px 0 2px 16px;color:var(--muted);font-size:15.5px;margin:16px 0}
+.art-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.art-body th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid var(--ink);padding:9px 10px}
+.art-body td{border-bottom:1px solid var(--line);padding:9px 10px}
+.art-body code{background:rgba(0,0,0,.05);border-radius:6px;padding:2px 6px;font-size:14px}
+.art-body img{max-width:100%;border-radius:14px}
+.art-body .pain-card,.art-body .card{max-width:680px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0;max-width:760px}
+.kv>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kv .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kv .v{font-weight:700;font-size:15px;margin-top:4px;line-height:1.4}
+.callout{border:1px solid rgba(0,113,227,.22);background:#F5F9FF;border-radius:14px;padding:13px 16px;margin:14px 0;font-size:14.5px;line-height:1.55;max-width:680px}
+.callout.warn{border-color:rgba(255,159,10,.3);background:#FFF8EC}
+.callout.ok{border-color:rgba(10,125,51,.25);background:#F0F9EB}
+.callout b:first-child{display:block;margin-bottom:3px}
+.steps{list-style:none;padding:0;margin:16px 0;counter-reset:st}
+.steps li{position:relative;padding:14px 18px 14px 56px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 10px;counter-increment:st}
+.steps li::before{content:counter(st);position:absolute;left:14px;top:15px;width:28px;height:28px;border-radius:50%;background:var(--lime);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.steps b{display:block;margin-bottom:3px}
+.steps p{margin:0;font-size:14.5px;color:var(--muted)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:16px 0}
+.svc-card{display:flex;flex-direction:column;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.svc-card:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}
+.svc-ico{font-size:26px;line-height:1}
+.svc-card h3{margin:0;font-size:16.5px}
+.svc-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.svc-card .go{margin-top:auto;padding-top:8px;color:var(--lime);font-size:13.5px;font-weight:600}
+.art-share{display:flex;align-items:center;gap:10px;margin:28px 0 10px;padding:16px 0 4px;border-top:1px solid var(--line);flex-wrap:wrap}
+.art-share .lbl{font-size:13.5px;color:var(--muted)}
+.shbtn{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--card);cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s;flex:none}
+.shbtn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.shbtn svg{width:18px;height:18px;fill:#1d1d1f}
+.shbtn.vk svg{fill:#0077FF}
+.shbtn.tg svg{fill:#229ED9}
+.shbtn.wa svg{fill:#25D366}
+.shbtn.copy.ok{background:#0a7d33;border-color:#0a7d33}
+.shbtn.copy.ok svg{fill:#fff}
+
 """
 
 LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
@@ -290,6 +362,12 @@ function sharePg(){var t=document.title,u=location.href;
  else{prompt('Скопируйте ссылку:',u);}
 }
 document.addEventListener('click',function(e){var a=e.target.closest('a.btn.share');if(a){e.preventDefault();sharePg();}});
+function shOpen(net){var t=document.title.replace(/ \| Запас хода$/,''),u=location.href.split('#')[0];
+if(net==='copy'){if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){var b=document.querySelector('.shbtn.copy');if(b){b.classList.add('ok');setTimeout(function(){b.classList.remove('ok');},1800);}});}else{prompt('Скопируйте ссылку:',u);}return;}
+var m={vk:'https://vk.com/share.php?url='+encodeURIComponent(u)+'&title='+encodeURIComponent(t),tg:'https://t.me/share/url?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(t),wa:'https://wa.me/?text='+encodeURIComponent(t+' '+u)};
+if(m[net]){window.open(m[net],'shwin','noopener,width=640,height=460');}}
+(function(){var pb=document.querySelector('.art-progress i');if(pb){var u=function(){var h=document.documentElement;var s=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?Math.min(100,s/mx*100):0)+'%';};window.addEventListener('scroll',u,{passive:true});u();}
+var tl=document.querySelectorAll('.art-toc a');if(tl.length&&'IntersectionObserver' in window){var map={};tl.forEach(function(a){var id=(a.getAttribute('href')||'').slice(1);var el=document.getElementById(id);if(el)map[id]=a;});var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){for(var k=0;k<tl.length;k++)tl[k].classList.remove('on');var a=map[en.target.id];if(a)a.classList.add('on');}});},{rootMargin:'-76px 0px -60% 0px'});Object.keys(map).forEach(function(id){io.observe(document.getElementById(id));});}})();
 </script>'''
 
 METRIKA_JS = ''
@@ -1148,7 +1226,7 @@ BUILD_DATE = None  # задаётся в main()
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
     blocks = ''.join('<div class="card"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
-    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
+    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a></div>'
     art_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": title,
@@ -1159,7 +1237,7 @@ def pain_article_page(sl, title, desc, pids, outdir):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, body, '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
+    write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
 
 def rel_models(rel_brands):
     out = []
@@ -1205,7 +1283,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/', SITE_DOMAIN+'/search.html']
     urls += [SITE_DOMAIN+'/catalog/index.html'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
-    urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html']
+    urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
