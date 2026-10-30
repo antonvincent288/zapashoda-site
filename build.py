@@ -120,6 +120,7 @@ nav a.on{opacity:1;background:rgba(0,0,0,.08);font-weight:600}
 .banner{background:#FFF3E0;border-bottom:1px solid rgba(0,0,0,.08)}
 .banner a,.banner{display:block;color:#8A5A00;font-size:14px;font-weight:600;text-align:center;padding:9px 14px;text-decoration:none}
 .banner a:hover{background:#FFE9C7}
+.tldr{background:#F0F9EB;border:1px solid #B8DFC8;border-radius:12px;padding:12px 16px;margin:14px 0;font-size:15px;line-height:1.55}
 a:focus-visible,button:focus-visible,.search:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:10px}
 h1{font-size:clamp(30px,5vw,44px);line-height:1.12;letter-spacing:-.03em;font-weight:700;margin:44px 0 14px}
 .lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:760px}
@@ -455,6 +456,49 @@ def model_page(m, outdir):
      '<tr><td>Рынок вывоза</td><td>' + html.escape(str(m.get("market"))) + '</td></tr>')
     sol_block = html.escape(str(m['sol'])) if m.get('sol') else ''
     note = html.escape(str(m['note'])) if m.get('note') else ''
+    # Таблица «сколько реально занимает зарядка» на примере батареи 60 кВт·ч
+    obc_s = str(m.get('obc') or '')
+    dcp_s = str(m.get('dcp') or '')
+    def _num(s):
+        t = ''
+        for ch in s:
+            if ch.isdigit() or ch in ',.':
+                t += ch
+            elif t and (ch in ' 	-–'):
+                break
+        t = t.strip(',. ')
+        try: return float(t.replace(',', '.'))
+        except Exception: return None
+    obc_n = _num(obc_s) if obc_s else None
+    dcp_n = _num(dcp_s) if dcp_s else None
+    import re as _re2
+    CAP = 60
+    if obc_n:
+        socket_kw = min(obc_n, 3.3)
+        t_sock = CAP / socket_kw
+        ac7 = min(obc_n, 7.0); t_ac7 = CAP / ac7
+        if obc_n <= 7.5:
+            ac3 = 'даст только ' + _fmt1(ac7) + ' кВт (однофазный OBC)'
+            t_ac3 = t_ac7
+        else:
+            ac3 = 'использует OBC ' + _fmt1(obc_n) + ' кВт'
+            t_ac3 = CAP / obc_n
+        rows2 = ('<tr><td>Розетка 220 В</td><td>' + _fmt1(socket_kw) + ' кВт (ограничение OBC/розетки)</td><td>Портативное ЗУ + отдельная линия, автомат 32А</td><td>≈ ' + _fmt1(t_sock) + ' ч</td></tr>'
+         '<tr><td>Станция 7 кВт (AC, 1ф)</td><td>' + _fmt1(ac7) + ' кВт</td><td>Штатный кабель Type 2 / GB/T</td><td>≈ ' + _fmt1(t_ac7) + ' ч</td></tr>'
+         '<tr><td>Станция 11–22 кВт (AC, 3ф)</td><td>' + ac3 + '</td><td>Три фазы у парковки</td><td>≈ ' + _fmt1(t_ac3) + ' ч</td></tr>')
+    else:
+        rows2 = ''
+    if dcp_n and ('мин' in dcp_s or 'Мин' in dcp_s):
+        rows2 += '<tr><td>Быстрая станция (DC)</td><td>' + html.escape(dcp_s) + '</td><td>Пистолет ' + html.escape(str(m.get('dc') or '—')) + ' на станции</td><td>по данным модели</td></tr>'
+    elif dcp_n and ('кВт' in dcp_s) and dcp_n >= 40:
+        t80 = 48.0 / dcp_n * 60
+        rows2 += '<tr><td>Быстрая станция (DC)</td><td>до ' + _fmt1(dcp_n) + ' кВт</td><td>Пистолет ' + html.escape(str(m.get('dc') or '—')) + ' на станции</td><td>0→80% ≈ ' + str(int(round(t80))) + ' мин</td></tr>'
+    if rows2:
+        chg_table = ('<h2>Сколько занимает зарядка на практике</h2>'
+         '<p class="note">Время посчитано для батареи 60 кВт·ч; для своей машины умножьте на её ёмкость. Реальная скорость зависит от температуры батареи и загрузки станции.</p>'
+         '<div class="tw"><table><tr><th>Вариант</th><th>Мощность на машине</th><th>Что нужно</th><th>Время</th></tr>' + rows2 + '</table></div>')
+    else:
+        chg_table = ''
     srcrow = ('<p class="src">Источник спецификации: <a href="' + m["src"] + '">' + re.sub(r"^https?://(www\\.)?","",str(m["src"])) + '</a></p>') if m.get('src') and str(m['src']).startswith('http') else ''
     vin_link = ''
     if m['brand'].strip() in VIN_BRANDS:
@@ -479,6 +523,7 @@ def model_page(m, outdir):
     parts.append('<p><span class="tag lime">' + m['years'] + '</span><span class="tag">' + m['type'] + '</span><span class="tag">' + grp + '</span><span class="tag">' + m['freq'] + ' ввоз</span></p>')
     parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
     parts.append('<h2>Разъёмы и мощность зарядки</h2><div class="tw"><table>' + rows + '</table></div>')
+    if chg_table: parts.append(chg_table)
     parts.append(vin_link)
     if sol_block:
         parts.append('<div class="card"><h3>Что понадобится для зарядки</h3><p>' + sol_block + '</p></div>')
@@ -492,7 +537,7 @@ def model_page(m, outdir):
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     write_page(os.path.join(outdir, sl),
-        pname + ' — какой разъём зарядки, типичные проблемы и решения | Запас хода',
+        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + ' — какой разъём зарядки, проблемы и решения | Запас хода',
         'Разъёмы AC/DC ' + pname + ' (' + m["years"] + '), зарядка от розетки и на станциях, реальные проблемы владельцев и проверенные решения. ' + grp + '-стандарт, ' + m["freq"] + ' ввоз в РФ.',
         body, '/' + sl, og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
         crumbs=[('/','Модели'),('',pname)])
@@ -558,6 +603,7 @@ def news_page(it, outdir, news_map):
         "description": it.get('teaser') or it['title'],
         "inLanguage": "ru",
         "datePublished": it['date'] + 'T06:00:00+03:00',
+        "dateModified": BUILD_DATE,
         "author": {"@type": "Organization", "name": SITE_NAME},
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + news_slug_page(it)
@@ -722,6 +768,9 @@ def llms_files(outdir, news):
             txt += '- [' + m['brand'] + ' ' + m['model'] + '](' + SITE_DOMAIN + '/models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html): разъёмы ' + str(m.get('ac') or '?') + ' / ' + str(m.get('dc') or '?') + '\n'
     txt += '\n## Руководства по проблемам\n\n'
     for sl,t,d,_ in PAIN_ARTICLES: txt += '- [' + t + '](' + SITE_DOMAIN + '/pain/' + sl + '.html): ' + d + '\n'
+    txt += '\n## Быстрые ответы (краткие выводы для цитирования)\n\n'
+    for sl,t,d,pids in PAIN_ARTICLES:
+        txt += '- ' + t + ' → ' + tl_short(pids) + ' Подробно с источниками: ' + SITE_DOMAIN + '/pain/' + sl + '.html\n'
     if news:
         txt += '\n## Свежие новости\n\n'
         for it in news[:20]: txt += '- [' + it['title'] + '](' + SITE_DOMAIN + news_slug_page(it) + '): ' + (it.get('teaser') or '') + '\n'
@@ -826,15 +875,30 @@ def pains_index(outdir):
         'Не заряжается, подогрев батареи, зарядка от розетки, адаптеры GB/T и CCS2, кабель не отдаёт, 12В АКБ, CHAdeMO — решения с источниками.',
         '<h1>Типичные проблемы электромобилей и их решения</h1><p class="lede">Руководства по самым частым болям владельцев — со ссылками на первоисточники.</p><div class="grid">'+arts+'</div>', '/pains.html')
 
+def _fmt1(x):
+    s = ('%.1f' % x).rstrip('0').rstrip('.').replace('.', ',')
+    return s
+
+def tl_short(pids, maxs=2):
+    out = []
+    for i in pids[:2]:
+        s = PAINS[i]['sol'].split('. ')[0].strip()
+        if len(s) > 160: s = s[:157].rstrip() + '…'
+        out.append(s)
+    return '. '.join(out) + '.'
+
+BUILD_DATE = None  # задаётся в main()
+
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
     blocks = ''.join('<div class="card"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
-    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и боли конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
+    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и боли конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
     art_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": title,
         "description": 'Практическое руководство: ' + desc,
         "inLanguage": "ru",
+        "dateModified": BUILD_DATE,
         "author": {"@type": "Organization", "name": SITE_NAME},
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
@@ -888,10 +952,13 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
     urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
-    return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc></url>' for u in urls) + '</urlset>'
+    lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
+    return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc>'+lm+'</url>' for u in urls) + '</urlset>'
 
 def main():
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
+    global BUILD_DATE
+    BUILD_DATE = date.today().isoformat()
     repo_root = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(repo_root, 'data')
     os.makedirs(outdir, exist_ok=True)
