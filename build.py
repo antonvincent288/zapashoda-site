@@ -203,11 +203,11 @@ h1{margin-top:28px}
 
 LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
-NAV = [("/index.html","Модели"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
+NAV = [("/","Модели"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
 
 def header_html(active):
     links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
-    return '<header><div class="hwrap"><a class="brand" href="/index.html" title="Запас хода">'+LOGO_SVG+'<span>Запас хода</span></a><nav>'+links+'</nav></div></header>'
+    return '<header><div class="hwrap"><a class="brand" href="/" title="Запас хода">'+LOGO_SVG+'<span>Запас хода</span></a><nav>'+links+'</nav></div></header>'
 
 FOOTER = ('<footer><div class="wrap"><div>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. '
  '137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. '
@@ -490,7 +490,7 @@ def model_page(m, outdir):
         pname + ' — какой разъём зарядки, типичные проблемы и решения | Запас хода',
         'Разъёмы AC/DC ' + pname + ' (' + m["years"] + '), зарядка от розетки и на станциях, реальные проблемы владельцев и проверенные решения. ' + grp + '-стандарт, ' + m["freq"] + ' ввоз в РФ.',
         body, '/' + sl, og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
-        crumbs=[('/index.html','Модели'),('',pname)])
+        crumbs=[('/','Модели'),('',pname)])
     return sl
 
 # ================= НОВОСТИ =================
@@ -687,7 +687,7 @@ def search_page(outdir, index_items):
 # ================= LLMS.TXT =================
 def llms_files(outdir, news):
     canon = [
-      ('Каталог моделей', '/index.html', '137 моделей EV в РФ: разъёмы, мощности, боли, решения'),
+      ('Каталог моделей', '/', '137 моделей EV в РФ: разъёмы, мощности, боли, решения'),
       ('Руководства по проблемам', '/pains.html', '12 практических руководств с решениями'),
       ('Новости', '/news/', 'Лента: цифры, зима, зарядка, новые модели'),
       ('Карта зарядных станций', '/charging/', 'Зарядные станции по данным OpenStreetMap'),
@@ -805,7 +805,7 @@ def pains_index(outdir):
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
     blocks = ''.join('<div class="card"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
-    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и боли конкретных моделей: '+rel_html+'. Полный каталог — <a href="/index.html">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
+    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и боли конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
     write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, body, '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)])
 
 def rel_models(rel_brands):
@@ -840,7 +840,7 @@ def misc_pages(outdir):
     with open(os.path.join(outdir,'robots.txt'),'w',encoding='utf-8') as f:
         f.write('User-agent: *\nAllow: /\nSitemap: '+SITE_DOMAIN+'/sitemap.xml\n')
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
-    body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/index.html">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
+    body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html')
 
 def build_sitemap(slugs_model, news, vin_slugs):
