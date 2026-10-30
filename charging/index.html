@@ -55,6 +55,12 @@ function sharePg(){var t=document.title,u=location.href;
  else{prompt('Скопируйте ссылку:',u);}
 }
 document.addEventListener('click',function(e){var a=e.target.closest('a.btn.share');if(a){e.preventDefault();sharePg();}});
+function shOpen(net){var t=document.title.replace(/ \| Запас хода$/,''),u=location.href.split('#')[0];
+if(net==='copy'){if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){var b=document.querySelector('.shbtn.copy');if(b){b.classList.add('ok');setTimeout(function(){b.classList.remove('ok');},1800);}});}else{prompt('Скопируйте ссылку:',u);}return;}
+var m={vk:'https://vk.com/share.php?url='+encodeURIComponent(u)+'&title='+encodeURIComponent(t),tg:'https://t.me/share/url?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(t),wa:'https://wa.me/?text='+encodeURIComponent(t+' '+u)};
+if(m[net]){window.open(m[net],'shwin','noopener,width=640,height=460');}}
+(function(){var pb=document.querySelector('.art-progress i');if(pb){var u=function(){var h=document.documentElement;var s=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?Math.min(100,s/mx*100):0)+'%';};window.addEventListener('scroll',u,{passive:true});u();}
+var tl=document.querySelectorAll('.art-toc a');if(tl.length&&'IntersectionObserver' in window){var map={};tl.forEach(function(a){var id=(a.getAttribute('href')||'').slice(1);var el=document.getElementById(id);if(el)map[id]=a;});var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){for(var k=0;k<tl.length;k++)tl[k].classList.remove('on');var a=map[en.target.id];if(a)a.classList.add('on');}});},{rootMargin:'-76px 0px -60% 0px'});Object.keys(map).forEach(function(id){io.observe(document.getElementById(id));});}})();
 </script><script>
 var OF_GAS='https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec';
 function ofCart(){try{return JSON.parse(sessionStorage.getItem('of_items')||'[]')}catch(e){return[]}}
