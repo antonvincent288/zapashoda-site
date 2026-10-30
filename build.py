@@ -250,7 +250,7 @@ if BANNER_TEXT:
 YANDEX_META = '<meta name="yandex-verification" content="' + YANDEX_VER + '">' if YANDEX_VER else ''
 GSC_META = '<meta name="google-site-verification" content="' + GSC_VER + '">' if GSC_VER else ''
 
-def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None):
+def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
     crumbs_html = ''
@@ -283,7 +283,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
      '<link rel="stylesheet" href="/style.css">'
-     '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + METRIKA_JS +
+     '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
      '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + '</main>' + FOOTER + SHARE_JS + '</body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(doc)
 
@@ -552,10 +552,20 @@ def news_page(it, outdir, news_map):
      '<a class="btn ghost" href="' + TG_BOT_APP + '">Каталог аксессуаров</a>'
      '<a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
+    news_ld = '<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "Article",
+        "headline": it['title'],
+        "description": it.get('teaser') or it['title'],
+        "inLanguage": "ru",
+        "datePublished": it['date'] + 'T06:00:00+03:00',
+        "author": {"@type": "Organization", "name": SITE_NAME},
+        "publisher": {"@type": "Organization", "name": SITE_NAME},
+        "mainEntityOfPage": SITE_DOMAIN + news_slug_page(it)
+    }, ensure_ascii=False) + '</script>'
     write_page(os.path.join(outdir,'news',sl_file), it['title'] + ' | Запас хода',
         it.get('teaser') or it['title'], body, news_slug_page(it),
         og='/assets/og/n-'+it['date']+'-'+it['slug']+'.png',
-        crumbs=[('/news/','Новости'),('',it['title'])])
+        crumbs=[('/news/','Новости'),('',it['title'])], extra_ld=news_ld)
 
 def news_index(items, outdir):
     cards = ''
@@ -699,7 +709,7 @@ def llms_files(outdir, news):
       ('VIN-справочник', '/vin/', 'Структура VIN, коды года, проверка истории для EV в РФ'),
       ('О проекте', '/about.html', 'Методика и источники справочника'),
     ]
-    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 137 моделей 2019–2026, ввезённых в РФ. Мини-приложение с каталогом аксессуаров: https://t.me/zapashoda_ev_bot/app\n\n'
+    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 137 моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-10-30). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
     txt += '## Разделы\n\n'
     for t,u,d in canon: txt += '- [' + t + '](' + SITE_DOMAIN + u + '): ' + d + '\n'
     txt += '\n## Популярные модели\n\n'
@@ -797,9 +807,18 @@ def home_page(outdir):
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Каталог в мини-приложении</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
      '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
      'document.querySelectorAll(".grid .mcard").forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?"":"none"});});</script>')
+    web_ld = '<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "WebSite",
+        "name": SITE_NAME,
+        "url": SITE_DOMAIN + '/',
+        "inLanguage": "ru",
+        "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 137 моделей",
+        "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
+    }, ensure_ascii=False) + '</script>'
+
     write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, боли и решения для 137 моделей EV в России',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
-        body, '/')
+        body, '/', extra_ld=web_ld)
 
 def pains_index(outdir):
     arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
@@ -811,7 +830,16 @@ def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
     blocks = ''.join('<div class="card"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
     body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и боли конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, body, '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)])
+    art_ld = '<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "Article",
+        "headline": title,
+        "description": 'Практическое руководство: ' + desc,
+        "inLanguage": "ru",
+        "author": {"@type": "Organization", "name": SITE_NAME},
+        "publisher": {"@type": "Organization", "name": SITE_NAME},
+        "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
+    }, ensure_ascii=False) + '</script>'
+    write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, body, '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
 
 def rel_models(rel_brands):
     out = []
@@ -843,7 +871,12 @@ def vin_hub(outdir):
 
 def misc_pages(outdir):
     with open(os.path.join(outdir,'robots.txt'),'w',encoding='utf-8') as f:
-        f.write('User-agent: *\nAllow: /\nSitemap: '+SITE_DOMAIN+'/sitemap.xml\n')
+        ai_bots = ['GPTBot','OAI-SearchBot','ChatGPT-User','ClaudeBot','PerplexityBot','Perplexity-User','Google-Extended','Applebot','Applebot-Extended','CCBot','meta-externalagent','Bytespider','Amazonbot','YandexGPT','AliceBot']
+        lines = ['User-agent: *', 'Allow: /']
+        for b in ai_bots:
+            lines += ['User-agent: ' + b, 'Allow: /']
+        lines += ['Sitemap: ' + SITE_DOMAIN + '/sitemap.xml', 'Host: ' + SITE_DOMAIN.replace('https://','')]
+        f.write('\n'.join(lines) + '\n')
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
     body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html')
