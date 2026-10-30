@@ -5,7 +5,7 @@ on:
     - cron: "13 */3 * * *"
   push:
     branches: [main]
-    paths: ["data/**", "build.py", "style.css"]
+    paths: ["data/**", "build.py", "services.py", "artv3.py", "catalog.py", "style.css"]
   workflow_dispatch:
 
 permissions:
