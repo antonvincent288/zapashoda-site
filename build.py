@@ -682,12 +682,20 @@ DOCS_MODELS = {
   'deepal-g318-ru-ofitsialnaya': [
     ('Руководство по эксплуатации Deepal G318 (RU, официальное)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_G318.pdf', '8,8 МБ'),
   ],
+  'deepal-l07-s05-s09': [
+    ('Руководство пользователя Deepal S05 (RU)', 'https://deepal-club.ru/attachments/manual_ru_deepal_s05-pdf.736/', '2,5 МБ'),
+  ],
+
   'geely-ex5-monjaro-hi-p-phev': [
     ('Руководство по эксплуатации Geely Monjaro (RU)', 'https://tochka-geely.by/wp-content/uploads/2025/12/rukovodstvo-po-ekspluataczii-monjaro.pdf', '5 МБ'),
     ('Руководство по эксплуатации Geely KX11 PHEV (Monjaro PHEV, RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_KX11_PHEV.pdf', '74 МБ'),
     ('Руководство по мультимедийной системе Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/Monjaro%20Multimedia%20Manual.pdf', '3 МБ'),
     ('Сервисная книжка Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/service-book.pdf', '1,3 МБ'),
   ],
+  'haval-h6-phev': [
+    ('Руководство пользователя Haval H6 PHEV (RU, изд. 08.2025)', 'https://cis.haval-motor.kz/userdata/items/items_88/file_ru.pdf', '3,2 МБ'),
+  ],
+
   'hongqi-e-hs9': [
     ('E-HS9 — руководство пользователя (RUS)', 'https://chats.chinamobil.ru/files/hongqi-club-chat/applicationpdf/E-HS9%20%E2%80%94%20User%20Manual%20(RUS).pdf', '81 МБ'),
   ],
@@ -717,6 +725,20 @@ DOCS_MODELS = {
     ('Руководство по эксплуатации Jetour T2 (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20User%20Manual%20Russian.pdf', '181 МБ'),
     ('Jetour T2 — электрические схемы (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D1%81%D1%85%D0%B5%D0%BC%D1%8B%20(RU).pdf', '53 МБ'),
   ],
+  'jaecoo-7-phev': [
+    ('Jaecoo 7 PHEV — Manual (EN, SHS)', 'https://jaecooforums.com/assets/docs/Jaecoo-J7-PHEV-User-Manual.pdf', '8,7 МБ'),
+  ],
+
+  'leapmotor-c10-c11-c01-b10-a05': [
+    ('Leapmotor C10 EV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10---documents/1782892031691c10_user_manual-(1).pdf?sfvrsn=b3fd07c1_53', '4,3 МБ'),
+    ('Leapmotor C10 REEV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10-hybrid-ev/1782892047939c10_hev_user_manual.pdf?sfvrsn=ed8d7ba3_50', '5,8 МБ'),
+    ('Leapmotor B10 EV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/b10---2024/1782892039310b10_user_manual-(1).pdf?sfvrsn=97798b08_49', '5,7 МБ'),
+  ],
+
+  'leapmotor-t03': [
+    ('Leapmotor T03 — Manual (EN, изд. 11.2025)', 'https://www.leapmotor.net/docs/default-source/t03-library/t03usermanual2025-11-2025_present_compressed.pdf?sfvrsn=ce743b1_56', '4,2 МБ'),
+  ],
+
   'kia-ev6-kr': [
     ('Kia EV6 (2025) — руководство пользователя (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV6_25MY_RUS.pdf', '11 МБ'),
   ],
