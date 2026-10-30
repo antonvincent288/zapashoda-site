@@ -21,6 +21,7 @@ def _toc_html(h2s):
     return ''.join(items)
 
 def art_enhance(body, url, title, date='', kind='Руководство'):
+    date = date if isinstance(date, str) and date else ''
     plain = re.sub(r'<[^>]+>', ' ', body)
     minutes = max(1, round(len(plain.split()) / 180))
     t = re.sub(r' \| Запас хода$', '', title)
