@@ -88,6 +88,7 @@ def load_site_config():
 
 SITE_CFG = load_site_config()
 YANDEX_VER = str(SITE_CFG.get('yandex_verification') or '79d8950dea086669')
+GSC_VER = str(SITE_CFG.get('google_verification') or 'ayY4fy8RmSecTxpY6d7ywTzvntcGg0ptd_MQ4b-m4cI')
 METRIKA_ID = int(SITE_CFG.get('metrika_id') or 0)
 BANNER_TEXT = str(SITE_CFG.get('banner_text') or '')
 BANNER_LINK = str(SITE_CFG.get('banner_link') or '')
@@ -247,6 +248,7 @@ if BANNER_TEXT:
 
 
 YANDEX_META = '<meta name="yandex-verification" content="' + YANDEX_VER + '">' if YANDEX_VER else ''
+GSC_META = '<meta name="google-site-verification" content="' + GSC_VER + '">' if GSC_VER else ''
 
 def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None):
     d = os.path.dirname(path)
@@ -279,7 +281,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:type" content="article"><meta property="og:image" content="' + SITE_DOMAIN + og + '">'
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
-     '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META +
+     '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
      '<link rel="stylesheet" href="/style.css">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + METRIKA_JS +
      '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + '</main>' + FOOTER + SHARE_JS + '</body></html>')
