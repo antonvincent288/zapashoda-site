@@ -123,3 +123,47 @@ h1{margin-top:28px}
 #order-form input,#order-form textarea{width:100%;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:9px;font-size:14.5px;font-family:inherit;background:#fff}
 #order-form button{width:100%;margin-top:6px}
 @media(max-width:640px){.sku-grid{grid-template-columns:1fr}}
+/* --- shop v2 --- */
+.shop-hero{padding:22px 0 2px}
+.shop-filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:13.5px;cursor:pointer;user-select:none;white-space:nowrap}
+.chip.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:14px 0 10px}
+.pc-card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:transform .15s ease, box-shadow .15s ease}
+.pc-card:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}
+.pc-media{background:linear-gradient(135deg,#f2f2f4,#e8e8ec);display:flex;align-items:center;justify-content:center;height:96px;font-size:44px;position:relative;text-decoration:none}
+.pc-emoji{filter:saturate(1.1)}
+.pc-tag{position:absolute;top:10px;left:10px;background:rgba(29,29,31,.85);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px}
+.pc-tag.pc-need{background:#0a7d33}
+.pc-hit{position:absolute;top:10px;right:10px;background:var(--lime);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px;font-weight:700}
+.pc-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.pc-name{font-weight:700;font-size:15px;line-height:1.35;text-decoration:none}
+.pc-specs{list-style:none;margin:8px 0 0;padding:0}
+.pc-specs li{font-size:12.5px;color:var(--muted);line-height:1.55;display:flex;gap:6px}
+.pc-specs li::before{content:"•";color:var(--lime)}
+.pc-bottom{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pc-price{font-weight:800;font-size:16.5px}
+.pc-act{display:flex;align-items:center;gap:10px}
+.pc-link{font-size:12.5px;color:var(--lime);text-decoration:none}
+.pc-btn{padding:8px 14px;border-radius:10px;background:#1d1d1f;color:#fff;font-size:13px;cursor:pointer;user-select:none;border:0}
+.pc-btn:hover{background:#000}
+.pc-cartbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);z-index:60;display:none}
+.pc-cartbar .wrap{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pc-cartbar .pc-total{font-weight:800}
+.pc-cartbar .pc-go{margin-left:auto}
+.p-hero{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:6px 0 2px}
+.faq-q{border-top:1px dashed var(--line);padding:10px 0}
+.faq-q:first-child{border-top:0}
+.faq-q p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.of-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.of-grid .full{grid-column:1/-1}
+.of-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px;flex-wrap:wrap}
+.of-qty{display:flex;align-items:center;gap:8px;margin-left:auto}
+.of-qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;line-height:1}
+.of-qty span{min-width:20px;text-align:center;font-weight:700}
+.of-total{font-weight:800;font-size:15.5px;text-align:right;margin-top:10px}
+.of-ok{background:#eef8ee;border:1px solid #bfe3bf;border-radius:12px;padding:12px 14px;color:#1d6b1d;font-size:14px;margin-top:10px}
+#order-form input,#order-form textarea{width:100%;padding:11px 13px;margin:6px 0;border:1px solid var(--line);border-radius:11px;font-size:15px;font-family:inherit;background:#fff}
+#order-form button{width:100%;margin-top:8px}
+.of-send{padding:13px !important;font-size:15.5px !important}
+@media(max-width:640px){.of-grid{grid-template-columns:1fr}}
