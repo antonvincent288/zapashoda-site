@@ -449,6 +449,61 @@ def vin_brand_page(brand, outdir):
         crumbs=[('/vin/','VIN'),('',brand)])
     return sl
 
+DOCS_ZEEKR = {
+  'zeekr-001-001-fr': [
+    ('Руководство по эксплуатации Zeekr 001 (RU, 2024)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/RU-Zeekr-001-All-New-2024-Manual.pdf', '46 МБ'),
+    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+  ],
+  'zeekr-7x-x-mix': [
+    ('Руководство по эксплуатации Zeekr X (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20X%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B5%20.pdf', 'большой скан'),
+    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+  ],
+  'zeekr-009-009-grand': [
+    ('Zeekr 009 user manual (EN)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20009%20user%20manual%20(ENG).pdf', '2,2 МБ'),
+    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+  ],
+  'default': [
+    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+  ],
+}
+DOCS_VOYAH = {
+  'voyah-free-evr-gibrid': [
+    ('Руководство по эксплуатации VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 МБ'),
+    ('Руководство по эксплуатации Voyah Free Sport Edition (RU)', 'https://pnevma.ru/bardachok/wp-content/uploads/2025/02/voyah-manual-free-.pdf', '6,5 МБ'),
+    ('Руководство пользователя VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
+  ],
+  'voyah-free-ev-rannie-ofitsialnye-ru': [
+    ('Руководство по эксплуатации VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 МБ'),
+    ('Руководство пользователя VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
+  ],
+  'voyah-dream-dreamer-phev': [
+    ('Руководство по эксплуатации Voyah Dream / Dreamer (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B4%D0%BB%D1%8F%20voyah-dream.pdf', '3,3 МБ'),
+  ],
+  'voyah-passion-passion-s': [
+    ('Руководство по эксплуатации Voyah Passion (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/Voyah%20Passion%20%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F.pdf', '6 МБ'),
+  ],
+}
+DOCS_VOYAH_UNI = [
+  ('Руководство пользователя адаптера ELECTWAY CCS2→GB/T (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B5%D1%80%D0%B0_ELECTWAY_CCS2_GB_T.pdf', ''),
+  ('Руководство пользователя портативного ЗУ Enjoe (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%BF%D0%BE%D1%80%D1%82%D0%B0%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_Enjoe.pdf', ''),
+]
+BRAND_SITES = {
+  'Zeekr': 'https://www.zeekrlife.com/global/',
+  'Voyah': 'https://voyah.ru/',
+  'BYD': 'https://www.byd.com/eu',
+  'Denza (BYD)': 'https://denza.ru/',
+  'Avatr': 'https://avatr.ru/',
+  'Geely': 'https://www.geely.ru/',
+  'Changan': 'https://changan.ru/',
+  'Xiaomi': 'https://www.mi.com/ru/',
+  'Kia': 'https://www.kia.ru/',
+  'Hyundai': 'https://www.hyundai.ru/',
+  'Toyota': 'https://toyota.ru/',
+  'MG': 'https://mg-russia.ru/',
+  'Evolute': 'https://evolute.pro/',
+  'Li Auto': 'https://lixiang-russia.ru/',
+}
+
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
@@ -533,7 +588,37 @@ def model_page(m, outdir):
     parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
     parts.append('<h2>Разъёмы и мощность зарядки</h2><div class="tw"><table>' + rows + '</table></div>')
     if chg_table: parts.append(chg_table)
+    docs_block = ''
+    docs_items = []
+    sl_key = slug(m['brand']) + '-' + slug(m['model'])
+    mkey = sl_key
+    if mkey.startswith('zeekr-'):
+        zitem = DOCS_ZEEKR.get(mkey)
+        if zitem: docs_items += zitem
+        else: docs_items += DOCS_ZEEKR.get('default', [])
+    if mkey.startswith('voyah-'):
+        docs_items += DOCS_VOYAH_UNI
+        vitem = DOCS_VOYAH.get(mkey)
+        if vitem: docs_items = vitem + docs_items
+    if not docs_items and m['brand'] in BRAND_SITES and BRAND_SITES[m['brand']]:
+        pass  # 3 гайда ниже всегда
+    guides = '<a href="/pain/stoimost-zaryadki.html">Сколько стоит зарядка</a> · <a href="/pain/zaryadka-na-trasse.html">Зарядка на трассе</a> · <a href="/pain/domashnie-stancii.html">Домашние станции</a>'
+    if docs_items:
+        docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
+        site = BRAND_SITES.get(m['brand'])
+        site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
+        docs_block = ('<h2>Документы и материалы</h2><div class="card docs"><ul>' + docs_links + '</ul>'
+          '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
+          + site_html + '</div>')
+    else:
+        site = BRAND_SITES.get(m['brand'])
+        site_html = ('<p class="note">Официальный сайт производителя: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
+        docs_block = ('<h2>Документы и материалы</h2><div class="card docs">'
+          '<p class="note">Официальное руководство по эксплуатации хранится у дилера и на сайте марки; у параллельного импорта просите сканы у продавца или в клубных чатах.</p>'
+          '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div>')
+
     parts.append(vin_link)
+    parts.append(docs_block)
     if sol_block:
         parts.append('<div class="card"><h3>Что понадобится для зарядки</h3><p>' + sol_block + '</p></div>')
     if note:
