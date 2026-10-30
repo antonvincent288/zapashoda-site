@@ -104,3 +104,9 @@ h1{margin-top:28px}
 .grid,.grid2{grid-template-columns:1fr}
 .card{padding:18px}
 }
+.stlist{margin:8px 0 24px}
+.strow{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.strow b{font-size:15px;color:var(--ink)}
+.staddr{color:var(--muted);font-size:14px}
+.sttag{color:var(--muted);font-size:13px;background:rgba(0,0,0,.04);border-radius:6px;padding:1px 7px}
+.stlink{margin-left:auto;font-size:14px;color:var(--lime);text-decoration:none;white-space:nowrap}
