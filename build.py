@@ -846,10 +846,10 @@ def misc_pages(outdir):
 def build_sitemap(slugs_model, news, vin_slugs):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/', SITE_DOMAIN+'/search.html']
-    urls += [SITE_DOMAIN+'/'+s.replace('.html','') for s in slugs_model]
+    urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
-    urls += [SITE_DOMAIN+'/'+s.replace('.html','') for s in vin_slugs]
+    urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
     return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc></url>' for u in urls) + '</urlset>'
 
 def main():
