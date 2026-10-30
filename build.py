@@ -487,6 +487,107 @@ DOCS_VOYAH_UNI = [
   ('Руководство пользователя адаптера ELECTWAY CCS2→GB/T (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B5%D1%80%D0%B0_ELECTWAY_CCS2_GB_T.pdf', ''),
   ('Руководство пользователя портативного ЗУ Enjoe (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%BF%D0%BE%D1%80%D1%82%D0%B0%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_Enjoe.pdf', ''),
 ]
+DOCS_MODELS = {
+  'avatr-11-12-ofitsialno-ru': [
+    ('Руководство пользователя Avatr 11 (RU)', 'https://avatr.by/img/tech/AVATR11-manual.pdf', '3,1 МБ'),
+    ('Руководство пользователя Avatr 12 (RU)', 'https://avatr.by/img/tech/AVATR12-manual.pdf', '6,2 МБ'),
+    ('Avatr 11 — Manual (RU, перевод 2022)', 'https://chats.chinamobil.ru/files/avatr-club-chat/applicationpdf/Avatr%2011%20%E2%80%94%20Manual%20(RU,%202022).pdf', '8 МБ'),
+  ],
+  'avatr-07-parallelnyy': [
+    ('Руководство пользователя Avatr 07 (RU)', 'https://avatr.by/img/tech/AVATR07-manual.pdf', '6,2 МБ'),
+  ],
+  'li-auto-l6-l7-l8-l9-2022-2025': [
+    ('Руководство Li L9 (RU, перевод)', 'https://chats.chinamobil.ru/files/lixiang-li-l7-l8-l9/applicationpdf/L9%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20(RU).pdf', '52 МБ'),
+    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+  ],
+  'li-auto-one': [
+    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+  ],
+  'li-auto-mega': [
+    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+  ],
+  'li-auto-i6-i8': [
+    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+  ],
+  'xiaomi-yu7': [
+    ('Руководство пользователя Xiaomi YU7 (RU)', 'https://yu7.site/assets/yu7-user-manual-ru.pdf', '96 МБ'),
+    ('Руководство пользователя Xiaomi YU7 (EN)', 'https://yu7.site/assets/yu7-user-manual-en.pdf', '96 МБ'),
+    ('Руководство пользователя Xiaomi YU7 (CN, оригинал)', 'https://yu7.site/assets/yu7-user-manual-cn.pdf', '52 МБ'),
+  ],
+  'xiaomi-su7-su7-ultra': [
+    ('Xiaomi SU7 — руководство по ремонту (RU, сервисный, машинный перевод)', 'https://yu7.site/assets/SU7_Repair_Manual_RU_clean.pdf', '85 МБ'),
+    ('Инструкция к зарядному устройству Xiaomi (RU)', 'https://yu7.site/assets/charging/xiaomi-charger-manual-ru.pdf', '0,6 МБ'),
+  ],
+  'byd-han-ev-song-l': [
+    ('Руководство по эксплуатации BYD Han EV (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/HAN%20EV%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D1%8D%D0%BA%D1%81%D0%BF%D0%BB.pdf', '51 МБ'),
+  ],
+  'byd-song-plus-ev': [
+    ('BYD Song Plus EV 2023 Champion Edition — руководство (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20Song%20Plus%20EV2023%20Champion%20Edition%20user%20manual%20(RU).pdf', '8,6 МБ'),
+    ('Инструкция: зарядная станция BYD 7 кВт (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%98%D0%BD%D1%81%D1%82%D1%80.%20%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%B0%D1%8F%20%D1%81%D1%82%D0%B0%D0%BD%D1%86%D0%B8%D1%8F%20BYD%207%D0%BA%D0%92%D1%82.pdf', ''),
+  ],
+  'byd-song-plus-dm-i-sealion-05': [
+    ('Руководство пользователя BYD Song Plus DM-i (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_BYD_SONG_PLUS.pdf', '59 МБ'),
+  ],
+  'byd-yuan-plus-atto-3-yuan-up-pro': [
+    ('Руководство по эксплуатации BYD Atto 3 / Yuan Plus (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%202022.pdf', '7,9 МБ'),
+    ('Руководство пользователя BYD Yuan Pro / S1 (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/Byd%20S1%20(yuan%20pro)%20User%20Manual.pdf', '11 МБ'),
+    ('BYD Atto 3 / Yuan Plus (EN, 2022)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%20(EN,%202022).pdf', '3,4 МБ'),
+  ],
+  'byd-seal': [
+    ("BYD Seal Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/584dac99-9035-4e65-9354-42c1b8162793/BYD-SEAL-OWNER%E2%80%98s-MANUAL-NZ_11_2023_web.pdf', '2,1 МБ'),
+  ],
+  'byd-dolphin': [
+    ("BYD Dolphin Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/81ddab61-b06e-4761-bb8d-9f897c9a7901/BYD-DOLPHIN-Owner%27s-Manual_NZ_09_2023_website.pdf', '2,7 МБ'),
+  ],
+  'deepal-s07-ru-ofitsialnaya': [
+    ('Руководство по эксплуатации Deepal S07 (RU, официальное)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_S07.pdf', '9,2 МБ'),
+  ],
+  'deepal-g318-ru-ofitsialnaya': [
+    ('Руководство по эксплуатации Deepal G318 (RU, официальное)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_G318.pdf', '8,8 МБ'),
+  ],
+  'geely-ex5-monjaro-hi-p-phev': [
+    ('Руководство по эксплуатации Geely Monjaro (RU)', 'https://tochka-geely.by/wp-content/uploads/2025/12/rukovodstvo-po-ekspluataczii-monjaro.pdf', '5 МБ'),
+    ('Руководство по эксплуатации Geely KX11 PHEV (Monjaro PHEV, RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_KX11_PHEV.pdf', '74 МБ'),
+    ('Руководство по мультимедийной системе Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/Monjaro%20Multimedia%20Manual.pdf', '3 МБ'),
+    ('Сервисная книжка Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/service-book.pdf', '1,3 МБ'),
+  ],
+  'hongqi-e-hs9': [
+    ('E-HS9 — руководство пользователя (RUS)', 'https://chats.chinamobil.ru/files/hongqi-club-chat/applicationpdf/E-HS9%20%E2%80%94%20User%20Manual%20(RUS).pdf', '81 МБ'),
+  ],
+  'livan-x3-pro-s6-pro': [
+    ('Руководство по эксплуатации Livan X3 Pro (RU)', 'https://wiki.cars7.ru/images/f/fb/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_Livan_X3_PRO.pdf', '3,7 МБ'),
+    ('Руководство по эксплуатации Livan С6 Pro (RU, официальный)', 'https://livan-motors.ru/storage/model/manuals/sUUmTOe15K7LnEPRsxN5loebOAV5PGGAtfejFVkt.pdf', '62 МБ'),
+  ],
+  'evolute-i-jet-i-pro-i-space-i-joy-i-joa': [
+    ('Руководство по эксплуатации Evolute i-Pro (RU, официальное)', 'https://www.evolute.ru/media-link/i-pro-manual', 'PDF'),
+    ('Руководство по эксплуатации Evolute i-Jet (RU, официальное)', 'https://www.evolute.ru/media-link/i-jet-manual', 'PDF'),
+    ('Руководство по эксплуатации Evolute i-Sky (RU, официальное)', 'https://www.evolute.ru/media-link/i-sky-manual', 'PDF'),
+    ('Руководство по эксплуатации Evolute i-Space (RU, официальное)', 'https://www.evolute.ru/media-link/i-space-manual', 'PDF'),
+    ('Руководство по эксплуатации Evolute i-Joy (RU, официальное)', 'https://www.evolute.ru/media-link/i-joy-manual', 'PDF'),
+    ('Руководство по эксплуатации Evolute i-Van (RU, официальное)', 'https://www.evolute.ru/media-link/i-van-manual', 'PDF'),
+    ('Evolute i-Space 2026 — руководство (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2026.pdf', '17,5 МБ'),
+    ('Evolute i-Space 2025 — руководство (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2025.pdf', '17,7 МБ'),
+    ('Evolute i-Space — сервисная книжка 2026 (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_service_book_2026.pdf', '0,3 МБ'),
+  ],
+  'moskvich-3e-6': [
+    ('Руководство по эксплуатации Москвич 3е (RU, официальное)', 'https://storage.yandexcloud.net/s3-moskvich-new/files/1f10/69/64202b5bbba76346f456cb2b49f230a55a1f26d4.pdf', 'PDF'),
+  ],
+  'exeed-exlantix-et-es-sterra': [
+    ('Руководство по эксплуатации Exlantix ET (RU)', 'https://disk.yandex.ru/i/V8VqTHVy1FkGCA', 'Яндекс.Диск'),
+    ('Сервисная книжка Exlantix ET (RU)', 'https://disk.yandex.ru/i/-Ek84tjM4FjU3w', 'Яндекс.Диск'),
+  ],
+  'jetour-t1-t2-phev': [
+    ('Руководство по эксплуатации Jetour T2 (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20User%20Manual%20Russian.pdf', '181 МБ'),
+    ('Jetour T2 — электрические схемы (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D1%81%D1%85%D0%B5%D0%BC%D1%8B%20(RU).pdf', '53 МБ'),
+  ],
+  'kia-ev6-kr': [
+    ('Kia EV6 (2025) — руководство пользователя (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV6_25MY_RUS.pdf', '11 МБ'),
+  ],
+  'kia-ev9-kr': [
+    ('Kia EV9 (2025) — руководство пользователя (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV9_25MY_RUS.pdf', '13 МБ'),
+  ],
+}
+
 BRAND_SITES = {
   'Zeekr': 'https://www.zeekrlife.com/global/',
   'Voyah': 'https://voyah.ru/',
@@ -502,6 +603,11 @@ BRAND_SITES = {
   'MG': 'https://mg-russia.ru/',
   'Evolute': 'https://evolute.pro/',
   'Li Auto': 'https://lixiang-russia.ru/',
+  'Deepal': 'https://deepal-motors.ru/',
+  'Exeed': 'https://exeed.ru/',
+  'Hongqi': 'https://hongqi.ru/service/manuals',
+  'Livan': 'https://livan-motors.ru/',
+  'Moskvich': 'https://moskvich.ru/',
 }
 
 def model_page(m, outdir):
@@ -600,8 +706,8 @@ def model_page(m, outdir):
         docs_items += DOCS_VOYAH_UNI
         vitem = DOCS_VOYAH.get(mkey)
         if vitem: docs_items = vitem + docs_items
-    if not docs_items and m['brand'] in BRAND_SITES and BRAND_SITES[m['brand']]:
-        pass  # 3 гайда ниже всегда
+    if mkey in DOCS_MODELS:
+        docs_items = DOCS_MODELS[mkey] + docs_items
     guides = '<a href="/pain/stoimost-zaryadki.html">Сколько стоит зарядка</a> · <a href="/pain/zaryadka-na-trasse.html">Зарядка на трассе</a> · <a href="/pain/domashnie-stancii.html">Домашние станции</a>'
     if docs_items:
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
