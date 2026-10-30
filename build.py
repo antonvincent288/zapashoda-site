@@ -67,6 +67,33 @@ SITE_NAME = "Запас хода"
 TG_CHANNEL = "https://t.me/zapashoda_ev"
 TG_BOT_APP = "https://t.me/zapashoda_ev_bot/app"
 
+# ===== КОНФИГУРАЦИЯ (правится через админку /admin/ или вручную в data/site_config.json) =====
+def load_site_config():
+    cfg = {
+      "metrika_id": 0,            # номер счётчика Яндекс.Метрики; 0 = не подключена
+      "banner_text": "",          # текст объявления сверху (пусто = баннера нет)
+      "banner_link": "",          # ссылка баннера (пусто = просто текст)
+      "phone": "",                # телефон для связи (пусто = не показывать)
+      "hero_title": "",           # свой заголовок главной (пусто = стандартный)
+      "hero_sub": "",             # свой подзаголовок главной
+    }
+    try:
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
+        if os.path.exists(p):
+            with open(p, encoding='utf-8') as f:
+                cfg.update({k: v for k, v in json.load(f).items() if k in cfg})
+    except Exception:
+        pass
+    return cfg
+
+SITE_CFG = load_site_config()
+METRIKA_ID = int(SITE_CFG.get('metrika_id') or 0)
+BANNER_TEXT = str(SITE_CFG.get('banner_text') or '')
+BANNER_LINK = str(SITE_CFG.get('banner_link') or '')
+CFG_PHONE = str(SITE_CFG.get('phone') or '')
+CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
+CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
+
 # ================= APPLE-ДИЗАЙН =================
 CSS = r""":root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.07);--lime:#0071e3;--lime-ink:#ffffff;--max:1040px}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -88,6 +115,9 @@ nav a.on{opacity:1;background:rgba(0,0,0,.08);font-weight:600}
 .crumbs a:hover{opacity:1;color:var(--ink)}
 .crumbs .crumb-sep{color:var(--muted);opacity:.5}
 .crumbs .crumb-cur{color:var(--ink);font-weight:600}
+.banner{background:#FFF3E0;border-bottom:1px solid rgba(0,0,0,.08)}
+.banner a,.banner{display:block;color:#8A5A00;font-size:14px;font-weight:600;text-align:center;padding:9px 14px;text-decoration:none}
+.banner a:hover{background:#FFE9C7}
 a:focus-visible,button:focus-visible,.search:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:10px}
 h1{font-size:clamp(30px,5vw,44px);line-height:1.12;letter-spacing:-.03em;font-weight:700;margin:44px 0 14px}
 .lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:760px}
@@ -194,6 +224,27 @@ function sharePg(){var t=document.title,u=location.href;
 document.addEventListener('click',function(e){var a=e.target.closest('a.btn.share');if(a){e.preventDefault();sharePg();}});
 </script>'''
 
+METRIKA_JS = ''
+if METRIKA_ID > 0:
+    METRIKA_JS = (
+      '<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};'
+      'm[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return;}'
+      'k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})'
+      '(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");'
+      'ym(' + str(METRIKA_ID) + ', "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });</script>'
+      '<noscript><div><img src="https://mc.yandex.ru/watch/' + str(METRIKA_ID) + '" style="position:absolute;left:-9999px" alt=""></div></noscript>'
+    )
+
+BANNER_HTML = ''
+if BANNER_TEXT:
+    _bt = html.escape(BANNER_TEXT)
+    if BANNER_LINK:
+        BANNER_HTML = '<div class="banner"><a href="' + html.escape(BANNER_LINK) + '" rel="nofollow noopener">' + _bt + '</a></div>'
+    else:
+        BANNER_HTML = '<div class="banner">' + _bt + '</div>'
+
+
+
 def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
@@ -227,8 +278,8 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">'
      '<link rel="stylesheet" href="/style.css">'
-     '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs +
-     '</head><body>' + header_html(canonical_rel) + '<main>' + crumbs_html + body + '</main>' + FOOTER + SHARE_JS + '</body></html>')
+     '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + METRIKA_JS +
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + '</main>' + FOOTER + SHARE_JS + '</body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(doc)
 
 def src_html(p):
@@ -731,8 +782,8 @@ def home_page(outdir):
             pop_cards += '<a class="mcard" href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html"><b>'+html.escape(m["brand"]+" "+m["model"])+'</b><span>'+m["years"]+' · '+m["type"]+' · '+m["freq"]+' ввоз</span></a>'
     model_cards = ''.join('<a class="mcard" href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html"><b>'+html.escape(m["brand"]+" "+m["model"])+'</b><span>'+m["years"]+' · '+m["type"]+' · '+m["freq"]+' ввоз</span></a>' for m in sorted(MODELS, key=lambda x:(x['freq']!='Массовый', x['brand'], x['model'])))
     body = ('<div class="hero"><div class="kicker">Справочник</div>'
-     '<h1>Как зарядить и чем лечить ваш электромобиль</h1>'
-     '<p class="lede">Разъёмы, реальные проблемы и проверенные решения для 137 моделей, ввезённых в Россию в 2019–2026: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO.</p>'
+     '<h1>' + html.escape(CFG_HERO_TITLE or 'Как зарядить и чем лечить ваш электромобиль') + '</h1>'
+     '<p class="lede">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения для 137 моделей, ввезённых в Россию в 2019–2026: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO.') + '</p>'
      '<div class="ctas"><a class="btn lime" href="' + TG_BOT_APP + '">Открыть каталог аксессуаров</a><a class="btn ghost" href="/news/">Читать новости</a></div></div>'
      '<input class="search" id="q" placeholder="Начните вводить марку или модель: Zeekr, BYD, Leaf…">'
      '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
@@ -816,6 +867,13 @@ def main():
         dst = os.path.join(outdir,'assets','leaflet')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(lf, dst)
+    # админка (неиндексируемая)
+    adir = os.path.join(repo_root,'admin')
+    if os.path.isdir(adir):
+        adst = os.path.join(outdir,'admin')
+        if os.path.isdir(adst): shutil.rmtree(adst)
+        shutil.copytree(adir, adst)
+        with open(os.path.join(outdir,'admin','robots.txt'),'w',encoding='utf-8') as f: f.write('User-agent: *\nDisallow: /admin/\n')
     news = load_news(data_dir)
     news_map = load_news_map(data_dir)
     print('Новостей в базе:', len(news))
