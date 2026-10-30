@@ -217,6 +217,7 @@ FOOTER = ('<footer><div class="wrap"><div>Запас хода — практик
  '<div><a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
 
 SHARE_JS = '''<script>
+try{var p=location.pathname;if(p.endsWith("/index.html")){var q=location.search+location.hash;history.replaceState(null,"",p.slice(0,-10)+q);}}catch(e){}
 function sharePg(){var t=document.title,u=location.href;
  if(navigator.share){navigator.share({title:t,url:u}).catch(function(){});}
  else if(navigator.clipboard){navigator.clipboard.writeText(t+' — '+u).then(function(){alert('Ссылка скопирована');});}
