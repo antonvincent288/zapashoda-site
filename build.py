@@ -633,6 +633,11 @@ DOCS_MODELS = {
   'avatr-07-parallelnyy': [
     ('Руководство пользователя Avatr 07 (RU)', 'https://avatr.by/img/tech/AVATR07-manual.pdf', '6,2 МБ'),
   ],
+  'aito-m5-m7': [
+    ('AITO M5 — Manual (RU, дистрибьютор МБ РУС)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M5%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8 МБ'),
+    ('AITO M7 — Manual (RU, дистрибьютор МБ РУС)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M7%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8,8 МБ'),
+  ],
+
   'li-auto-l6-l7-l8-l9-2022-2025': [
     ('Руководство Li L9 (RU, перевод)', 'https://chats.chinamobil.ru/files/lixiang-li-l7-l8-l9/applicationpdf/L9%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20(RU).pdf', '52 МБ'),
     ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
@@ -686,6 +691,10 @@ DOCS_MODELS = {
     ('Руководство пользователя Deepal S05 (RU)', 'https://deepal-club.ru/attachments/manual_ru_deepal_s05-pdf.736/', '2,5 МБ'),
   ],
 
+  'gac-aion-s-plus-aion-v': [
+    ('Руководство пользователя GAC AION V (RU, изд. 07.2025)', 'https://gac-club.ru/attachments/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8-aion-v-pdf.2849/', '14,4 МБ'),
+  ],
+
   'geely-ex5-monjaro-hi-p-phev': [
     ('Руководство по эксплуатации Geely Monjaro (RU)', 'https://tochka-geely.by/wp-content/uploads/2025/12/rukovodstvo-po-ekspluataczii-monjaro.pdf', '5 МБ'),
     ('Руководство по эксплуатации Geely KX11 PHEV (Monjaro PHEV, RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_KX11_PHEV.pdf', '74 МБ'),
@@ -737,6 +746,10 @@ DOCS_MODELS = {
 
   'leapmotor-t03': [
     ('Leapmotor T03 — Manual (EN, изд. 11.2025)', 'https://www.leapmotor.net/docs/default-source/t03-library/t03usermanual2025-11-2025_present_compressed.pdf?sfvrsn=ce743b1_56', '4,2 МБ'),
+  ],
+
+  'skywell-et5-el5': [
+    ('Мультимедийная система Skywell ET-5/HT-i (RU)', 'https://expocar.ru/wp-content/themes/expocar/img/skywell/RUKOVODSTVO_multimedia.pdf', '3,1 МБ'),
   ],
 
   'kia-ev6-kr': [
