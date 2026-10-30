@@ -200,7 +200,14 @@ h1{margin-top:28px}
 .hero{padding:36px 0 4px}
 .grid,.grid2{grid-template-columns:1fr}
 .card{padding:18px}
-}"""
+}
+.stlist{margin:8px 0 24px}
+.strow{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.strow b{font-size:15px;color:var(--ink)}
+.staddr{color:var(--muted);font-size:14px}
+.sttag{color:var(--muted);font-size:13px;background:rgba(0,0,0,.04);border-radius:6px;padding:1px 7px}
+.stlink{margin-left:auto;font-size:14px;color:var(--lime);text-decoration:none;white-space:nowrap}
+"""
 
 LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
@@ -656,70 +663,51 @@ CITIES = [
  ('Алматы','43.17,76.80,43.32,76.99')]
 
 def map_page(outdir):
-    city_btns = ''.join('<button class="cbtn" data-bbox="' + bb + '">' + c + '</button>' for c,bb in CITIES)
+    city_btns = ''.join('<button class="cbtn" data-ci="' + str(k) + '">' + c + '</button>' for k, (c,bb) in enumerate(CITIES))
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Живая карта зарядной инфраструктуры по данным OpenStreetMap. Выберите город — покажем станции, операторов и разъёмы.</p></div>'
+     '<p class="lede">Карта зарядной инфраструктуры на Яндекс.Картах. Выберите город — покажем станции с адресами, операторами и разъёмами.</p></div>'
      '<div class="cbtns">' + city_btns + '</div>'
      '<div id="map" class="nmap"></div>'
      '<p class="note" id="mstat">Загрузка данных…</p>'
+     '<h2>Станции в выбранном городе</h2>'
+     '<div id="stlist" class="stlist"><p class="note">Выберите город, чтобы увидеть список с адресами.</p></div>'
      '<h2>Как пользоваться картой</h2>'
-     '<div class="card"><p>Данные — открытая база OpenStreetMap: зарядки размечают сами пользователи, покрытие в мегаполисах хорошее, в малых городах — частичное. '
-     'Станция кликабельна: покажет оператора и типы разъёмов, если они указаны в данных.</p>'
-     '<p class="note">Не видите станцию, которая есть в реальности? Её можно добавить в OSM за пару минут — база открытая.</p></div>'
+     '<div class="card"><p>Каждая точка — зарядная станция. Клик по метке покажет название, адрес (если есть в базе) и разъёмы. '
+     'Данные — открытая база OpenStreetMap, покрытие в мегаполисах хорошее, в малых городах — частичное.</p></div>'
      '<p class="note">Данные © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). База обновляется автоматически.</p>'
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/pains.html">Проблемы и решения</a></div>'
-     '<link rel="stylesheet" href="/assets/leaflet/leaflet.css">'
-     '<script src="/assets/leaflet/leaflet.js"></script>'
+     '<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>'
      '<script>'
-     'var map=L.map("map",{preferCanvas:true}).setView([55.75,37.6],10);'
-     'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);'
-     'var markers=[],ALL=null;'
-     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}'
-     'function showBbox(bbox){var p=bbox.split(",");clearM();map.fitBounds([[p[0],p[1]],[p[2],p[3]]]);'
-     'if(!ALL){document.getElementById("mstat").textContent="Загрузка данных…";fetch("/charging/stations.json").then(function(r){return r.json()}).then(function(d){ALL=d;draw();}).catch(function(){document.getElementById("mstat").textContent="Не удалось загрузить список станций";});return;}draw();}'
-     'function draw(){if(!ALL)return;var b=map.getBounds();var n=0;ALL.forEach(function(s){if(s.lat>=b.getSouth()&&s.lat<=b.getNorth()&&s.lon>=b.getWest()&&s.lon<=b.getEast()){n++;if(markers.length<3000){var txt="<b>"+s.n+"</b>"+(s.c?"<br>Портов: "+s.c:"")+(s.s&&s.s.length?"<br>Разъёмы: "+s.s.join(", "):"");var m=L.marker([s.lat,s.lon]).addTo(map).bindPopup(txt);markers.push(m);}}});'
-     'document.getElementById("mstat").textContent="Станций в области: "+n+(ALL.updated?(" · данные от "+ALL.updated):"");}'
-     'map.on("moveend",function(){if(ALL)draw();});'
-     'document.querySelectorAll(".cbtn").forEach(function(b){b.addEventListener("click",function(){showBbox(b.dataset.bbox)})});'
-     'showBbox("' + CITIES[0][1] + '");'
+     'var CITIES=' + json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False) + ';'
+     'var ALL=null,om=null,mymap=null;'
+     'function ymapsInit(){mymap=new ymaps.Map("map",{center:[55.75,37.6],zoom:10,controls:["zoomControl"]});'
+     'om=new ymaps.ObjectManager({clusterize:true,gridSize:48});'
+     'om.clusters.options.set("preset","islands#invertedBlueClusterIcons");'
+     'om.objects.options.set("preset","islands#blueIcon");'
+     'mymap.geoObjects.add(om);'
+     'fetch("/charging/stations.json").then(function(r){return r.json()}).then(function(d){ALL=d;var fc={type:"FeatureCollection",features:d.stations.map(function(s,i){var txt="<b>"+s.n+"</b>"+(s.a?"<br>Адрес: "+s.a:"")+(s.c?"<br>Портов: "+s.c:"")+(s.s&&s.s.length?"<br>Разъёмы: "+s.s.join(", "):"")+(s.a||s.c||s.s&&s.s.length?"":"<br>Детали в базе OSM")+", <a href=\'https://yandex.ru/maps/?pt="+s.lon+","+s.lat+"&z=17\' target=\'_blank\' rel=\'noopener\'>открыть в Яндекс.Картах</a>";return {type:"Feature",id:i,geometry:{type:"Point",coordinates:[s.lon,s.lat]},properties:{balloonContent:txt,iconCaption:s.n}}})});om.add(fc);showCity(0);}).catch(function(){document.getElementById("mstat").textContent="Не удалось загрузить список станций";});}'
+     'function showCity(idx){var bb=CITIES[idx][1].split(",");'
+     'mymap.setBounds([[parseFloat(bb[0]),parseFloat(bb[1])],[parseFloat(bb[2]),parseFloat(bb[3])]],{checkZoomRange:true});'
+     'var la1=parseFloat(bb[0]),la2=parseFloat(bb[2]),lo1=parseFloat(bb[1]),lo2=parseFloat(bb[3]);'
+     'om.setFilter(function(o){var c=o.geometry.coordinates;return c[0]>=lo1&&c[0]<=lo2&&c[1]>=la1&&c[1]<=la2;});'
+     'renderList(bb);}'
+     'function renderList(bb){if(!ALL)return;var la1=parseFloat(bb[0]),la2=parseFloat(bb[2]),lo1=parseFloat(bb[1]),lo2=parseFloat(bb[3]);'
+     'var hits=[];ALL.stations.forEach(function(s){if(s.lat>=la1&&s.lat<=la2&&s.lon>=lo1&&s.lon<=lo2)hits.push(s);});'
+     'var city=CITIES.filter(function(c){return c[1]===bb.join(",")})[0][0];'
+     'var lim=hits.slice(0,50);var html="<p class=\"note\">Найдено станций: <b>"+hits.length+"</b>"+(ALL.updated?" · данные от "+ALL.updated:"")+"</p>";'
+     'html+=lim.map(function(s){return "<div class=\"strow\"><b>"+s.n+"</b>"+(s.a?"<span class=\"staddr\">"+s.a+"</span>":"")+(s.c?"<span class=\"sttag\">Портов: "+s.c+"</span>":"")+(s.s&&s.s.length?"<span class=\"sttag\">Разъёмы: "+s.s.join(", ")+"</span>":"")+"<a class=\"stlink\" href=\"https://yandex.ru/maps/?pt="+s.lon+","+s.lat+"&z=17\" target=\"_blank\" rel=\"noopener\">На карте ↗</a></div>";}).join("");'
+     'if(hits.length>lim.length)html+="<p class=\"note\">Показаны первые 50 из "+hits.length+" — остальные на карте.</p>";'
+     'document.getElementById("stlist").innerHTML=html;'
+     'document.getElementById("mstat").textContent="Станций в области: "+hits.length+(ALL.updated?(" · данные от "+ALL.updated):"");}'
+     'if(document.getElementById("map")){ymaps.ready(ymapsInit);}'
+     'document.querySelectorAll(".cbtn").forEach(function(b){b.addEventListener("click",function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});'
      '</script>')
     write_page(os.path.join(outdir,'charging','index.html'), 'Карта зарядных станций для электромобилей | Запас хода',
-        'Живая карта зарядных станций по данным OpenStreetMap: Москва, Санкт-Петербург, Екатеринбург, Казань и другие города. Операторы и разъёмы.',
+        'Карта зарядных станций на Яндекс.Картах: Москва, Санкт-Петербург, Екатеринбург, Казань и другие города. Список станций с адресами, операторами и разъёмами.',
         body, '/charging/', crumbs=[('', 'Карта ЗУ')])
 
-def map_page(outdir):
-    city_btns = ''.join('<button class="cbtn" data-bbox="' + bb + '">' + c + '</button>' for c,bb in CITIES)
-    body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Живая карта зарядной инфраструктуры по данным OpenStreetMap. Выберите город — покажем станции, операторов и разъёмы.</p></div>'
-     '<div class="cbtns">' + city_btns + '</div>'
-     '<div id="map" class="nmap"></div>'
-     '<p class="note" id="mstat">Загрузка данных…</p>'
-     '<h2>Как пользоваться картой</h2>'
-     '<div class="card"><p>Данные — открытая база OpenStreetMap: зарядки размечают сами пользователи, покрытие в мегаполисах хорошее, в малых городах — частичное. '
-     'Станция кликабельна: покажет оператора и типы разъёмов, если они указаны в данных.</p>'
-     '<p class="note">Не видите станцию, которая есть в реальности? Её можно добавить в OSM за пару минут — база открытая.</p></div>'
-     '<p class="note">Данные © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). База обновляется автоматически.</p>'
-     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/pains.html">Проблемы и решения</a></div>'
-     '<link rel="stylesheet" href="/assets/leaflet/leaflet.css">'
-     '<script src="/assets/leaflet/leaflet.js"></script>'
-     '<script>'
-     'var map=L.map("map",{preferCanvas:true}).setView([55.75,37.6],10);'
-     'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);'
-     'var markers=[],ALL=null;'
-     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}'
-     'function showBbox(bbox){var p=bbox.split(",");clearM();map.fitBounds([[p[0],p[1]],[p[2],p[3]]]);'
-     'if(!ALL){document.getElementById("mstat").textContent="Загрузка данных…";fetch("/charging/stations.json").then(function(r){return r.json()}).then(function(d){ALL=d;draw();}).catch(function(){document.getElementById("mstat").textContent="Не удалось загрузить список станций";});return;}draw();}'
-     'function draw(){if(!ALL)return;var b=map.getBounds();var n=0;ALL.forEach(function(s){if(s.lat>=b.getSouth()&&s.lat<=b.getNorth()&&s.lon>=b.getWest()&&s.lon<=b.getEast()){n++;if(markers.length<3000){var txt="<b>"+s.n+"</b>"+(s.c?"<br>Портов: "+s.c:"")+(s.s&&s.s.length?"<br>Разъёмы: "+s.s.join(", "):"");var m=L.marker([s.lat,s.lon]).addTo(map).bindPopup(txt);markers.push(m);}}});'
-     'document.getElementById("mstat").textContent="Станций в области: "+n+(ALL.updated?(" · данные от "+ALL.updated):"");}'
-     'map.on("moveend",function(){if(ALL)draw();});'
-     'document.querySelectorAll(".cbtn").forEach(function(b){b.addEventListener("click",function(){showBbox(b.dataset.bbox)})});'
-     'showBbox("' + CITIES[0][1] + '");'
-     '</script>')
-    write_page(os.path.join(outdir,'charging','index.html'), 'Карта зарядных станций для электромобилей | Запас хода',
-        'Живая карта зарядных станций по данным OpenStreetMap: Москва, Санкт-Петербург, Екатеринбург, Казань и другие города. Операторы и разъёмы.',
-        body, '/charging/', crumbs=[('', 'Карта ЗУ')])
 
-# ================= ПОИСК =================
+
 def search_page(outdir, index_items):
     js = json.dumps(index_items, ensure_ascii=False)
     body = ('<div class="hero"><div class="kicker">Поиск</div><h1>Поиск по справочнику</h1>'
