@@ -342,7 +342,7 @@ h1{margin-top:28px}
 
 LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
-NAV = [("/","Модели"),("/catalog/","Каталог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
+NAV = [("/","Модели"),("/catalog/","Каталог"),("/blog/","Блог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
 
 def header_html(active):
     links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
@@ -1319,6 +1319,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/', SITE_DOMAIN+'/search.html']
     urls += [SITE_DOMAIN+'/catalog/index.html'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
+    urls += [SITE_DOMAIN+'/blog/index.html'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1431,6 +1432,7 @@ def main():
     og_gen(outdir, jobs)
     catalog.catalog_build(outdir)
     services.services_build(outdir, write_page)
+    services.blog_build(outdir, write_page)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
