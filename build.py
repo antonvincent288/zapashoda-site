@@ -348,7 +348,10 @@ VIN_STRUCT += '<p>• в <b>документах</b>: ПТС, СТС, ЭПТС, 
 VIN_STRUCT += '<p>У части китайских EV продублирован на наклейке в проёме лючка зарядки — удобно сверять при подключении адаптера.</p></div>'
 VIN_STRUCT += '<h2>Проверка VIN перед покупкой (особенно параллельный импорт)</h2><div class="card">'
 VIN_STRUCT += '<p><b>1. Сверьте VIN во всех местах.</b> VIN на кузове, на табличке и в документах должен совпадать посимвольно. Перебитый VIN — главная красная флаговая история.</p>'
-VIN_STRUCT += '<p><b>2. Бесплатная проверка ГИБДД.</b> На сайте <a href="https://гибдд.рф/check/auto">гибдд.рф</a> по VIN бесплатно: история регистраций, ДТП, розыск, ограничения. Это первый шаг всегда.</p>'
+VIN_STRUCT += '<p><b>2. Проверка истории по VIN.</b> Основной бесплатный сервис — <a href="https://гибдд.рф/check/auto">сайт ГИБДД</a> (история регистраций, ДТП, розыск, ограничения). Сервис ГИБДД периодически бывает недоступен — тогда используйте альтернативы:</p>'
+VIN_STRUCT += '<p>— <a href="https://reestr-zalogov.ru/search">Реестр залогов ФНП</a> — бесплатно: машина в залоге или нет;</p>'
+VIN_STRUCT += '<p>— <a href="https://autoteka.ru/">Автотека</a> или <a href="https://avtocod.ru/">Автокод</a> — платно, но подробный отчёт (ДТП, пробег, объявления) и работает всегда;</p>'
+VIN_STRUCT += '<p>— <a href="https://vinformer.su/">Vinformer</a> — бесплатная расшифровка комплектации по VIN.</p>'
 VIN_STRUCT += '<p><b>3. ЭПТС и СБКТС.</b> У машин параллельного импорта (Zeekr, Li Auto, Avatr и др.) должен быть электронный ПТС и свидетельство о безопасности конструкции (СБКТС), оформленные на импортёра. Без СБКТС машину не поставят на учёт. Проверьте, что ЭПТС выпущен легально и на этот VIN.</p>'
 VIN_STRUCT += '<p><b>4. Код года по 10-й позиции.</b> Сверьте с годом в ЭПТС: расхождение — повод задуматься о легальности ввоза или «омоложении» машины.</p>'
 VIN_STRUCT += '<p><b>5. Расшифровка комплектации.</b> Точную расшифровку опций по VIN даёт дилер марки или официальный сервис по запросу — в интернет-справочниках встречаются ошибки.</p></div>'
@@ -370,7 +373,7 @@ def vin_brand_page(brand, outdir):
         parts.append('<h2>Модели ' + html.escape(brand) + ' в нашей базе</h2><div class="grid2">' + cards + '</div>')
     parts.append('<h2>Что проверить по VIN ' + html.escape(brand) + ' перед покупкой</h2><div class="card">')
     parts.append('<p>Машины ' + html.escape(brand) + ' в РФ чаще всего ввезены по параллельному импорту или из Кореи — значит, ключевые проверки: совпадение VIN на кузове и в ЭПТС, наличие СБКТС, история ДТП по базе ГИБДД, код модельного года на 10-й позиции.</p>')
-    parts.append('<p>Проверить историю бесплатно: <a href="https://гибдд.рф/check/auto">сервис ГИБДД по VIN</a>. Расшифровку комплектации — у дилера марки.</p></div>')
+    parts.append('<p>Проверить историю: <a href="https://гибдд.рф/check/auto">сервис ГИБДД по VIN</a> (бесплатно, иногда недоступен) или <a href="https://reestr-zalogov.ru/search">реестр залогов ФНП</a>, <a href="https://autoteka.ru/">Автотека</a>. Расшифровку комплектации — у дилера марки.</p></div>')
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     sl = 'vin/'+slug(brand)+'.html'
@@ -557,7 +560,7 @@ def map_page(outdir):
      'var map=L.map("map").setView([55.75,37.6],10);'
      'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);'
      'var markers=[];'
-     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}var OV_HOSTS=["https://maps.mail.ru/osm/tools/overpass/api/interpreter","https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];function fetchOverpass(q){var chain=Promise.reject();OV_HOSTS.forEach(function(h){chain=chain.catch(function(){return fetch(h,{method:"POST",body:"data="+encodeURIComponent(q)}).then(function(r){if(!r.ok)throw new Error("http "+r.status);return r.json()});});});return chain;}'
+     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}var OV_HOSTS=["https://maps.mail.ru/osm/tools/overpass/api/interpreter","https://overpass.osm.ch/api/interpreter","https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];function ovTry(h,q,ms){return new Promise(function(res,rej){var done=false,t=setTimeout(function(){if(!done){done=true;rej(new Error("timeout"))}},ms);fetch(h,{method:"POST",body:"data="+encodeURIComponent(q)}).then(function(r){if(done)return;if(r.ok){done=true;res(r.json())}else{done=true;rej(new Error("http "+r.status))}},function(e){if(!done){done=true;rej(e)}});});}function fetchOverpass(q){var chain=Promise.reject();var order=[];for(var a=0;a<2;a++)for(var i=0;i<OV_HOSTS.length;i++)order.push(OV_HOSTS[i]);order.forEach(function(h){chain=chain.catch(function(){return ovTry(h,q,12000);});});return chain;}'
      'function loadBbox(bbox){var p=bbox.split(",");clearM();document.getElementById("mstat").textContent="Загрузка…";'
      'map.fitBounds([[p[0],p[1]],[p[2],p[3]]]);'
      'var q="[out:json][timeout:25];node[amenity=charging_station]("+bbox+");out tags center 400;";'
@@ -595,7 +598,7 @@ def map_page(outdir):
      'var map=L.map("map").setView([55.75,37.6],10);'
      'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);'
      'var markers=[];'
-     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}var OV_HOSTS=["https://maps.mail.ru/osm/tools/overpass/api/interpreter","https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];function fetchOverpass(q){var chain=Promise.reject();OV_HOSTS.forEach(function(h){chain=chain.catch(function(){return fetch(h,{method:"POST",body:"data="+encodeURIComponent(q)}).then(function(r){if(!r.ok)throw new Error("http "+r.status);return r.json()});});});return chain;}'
+     'function clearM(){markers.forEach(function(m){map.removeLayer(m)});markers=[];}var OV_HOSTS=["https://maps.mail.ru/osm/tools/overpass/api/interpreter","https://overpass.osm.ch/api/interpreter","https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];function ovTry(h,q,ms){return new Promise(function(res,rej){var done=false,t=setTimeout(function(){if(!done){done=true;rej(new Error("timeout"))}},ms);fetch(h,{method:"POST",body:"data="+encodeURIComponent(q)}).then(function(r){if(done)return;if(r.ok){done=true;res(r.json())}else{done=true;rej(new Error("http "+r.status))}},function(e){if(!done){done=true;rej(e)}});});}function fetchOverpass(q){var chain=Promise.reject();var order=[];for(var a=0;a<2;a++)for(var i=0;i<OV_HOSTS.length;i++)order.push(OV_HOSTS[i]);order.forEach(function(h){chain=chain.catch(function(){return ovTry(h,q,12000);});});return chain;}'
      'function loadBbox(bbox){var p=bbox.split(",");clearM();document.getElementById("mstat").textContent="Загрузка…";'
      'map.fitBounds([[p[0],p[1]],[p[2],p[3]]]);'
      'var q="[out:json][timeout:25];node[amenity=charging_station]("+bbox+");out tags center 400;";'
