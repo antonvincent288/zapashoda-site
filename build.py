@@ -24,6 +24,48 @@ MODELS.append({"n": 138, "brand": "Toyota", "model": "bZ3X", "years": "2025–20
  "freq": "Средний",
  "note": "Самый частый разъёмный запрос по всем новинкам (Wordstat ~370 показов/мес по разъёмным фразам). Платформа GAC-Toyota: подробный разбор — статья «Toyota bZ3X и bZ4X: какой разъём зарядки».",
  "src": "/blog/toyota-bz3x-bz4x-razyom.html"})
+MODELS.append({"n": 139, "brand": "Kia", "model": "EV2", "years": "2026–", "type": "BEV",
+ "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить (EU)", "dcp": "уточнить",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
+ "freq": "Редкий",
+ "note": "Компактный городской BEV (EU, 2026). Спецификации зарядки сверяйте по руководству; RU-мануал 26MY доступен.",
+ "src": "kia.ee (Kia Baltic, RU)"})
+MODELS.append({"n": 140, "brand": "Kia", "model": "EV3", "years": "2025–", "type": "BEV",
+ "market": "Европа (EU) / RU-комплектации", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт (3 фазы, до 10,5)", "dcp": "~101 кВт (58,3 кВт·ч) / ~128 кВт (81,4 кВт·ч)",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
+ "freq": "Средний",
+ "note": "Оба порта: AC Type 2 и DC CCS2 (порт спереди справа). Батареи: 58,3 / 81,4 кВт·ч (NMC). V2L 3,6 кВт.",
+ "src": "evspecs.org; kia.co.nz"})
+MODELS.append({"n": 141, "brand": "Kia", "model": "EV4", "years": "2026–", "type": "BEV",
+ "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт", "dcp": "~100 кВт (Standard Range; Long Range уточнить)",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). V2L до 3,6 кВт — отдельный V2L-адаптер Type 2.",
+ "freq": "Редкий",
+ "note": "Седан (58,3 кВт·ч NMC Standard Range; Long Range — уточнить). V2L 3,6 кВт.",
+ "src": "zecar.com"})
+MODELS.append({"n": 142, "brand": "Kia", "model": "EV4 Fastback", "years": "2026–", "type": "BEV",
+ "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт", "dcp": "уточнить",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). V2L до 3,6 кВт — отдельный V2L-адаптер Type 2.",
+ "freq": "Редкий",
+ "note": "Fastback-версия EV4. Спецификации сверяйте по руководству.",
+ "src": "kia.ee (Kia Baltic, RU)"})
+MODELS.append({"n": 143, "brand": "Kia", "model": "EV5", "years": "2024–", "type": "BEV",
+ "market": "Китай (CN) — RU параллельный импорт", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 кВт (однофазный)", "dcp": "~120–141 кВт (64,2 кВт·ч) / до ~160 кВт (81,4 кВт·ч LFP)",
+ "sol": "GB/T (китайская сборка для ввоза в РФ): Type 2-станции — адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). V2L до 3,6 кВт — адаптер в порт GB/T (аналог SKU 11 — вне каталога). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).",
+ "freq": "Средний",
+ "note": "AC-порт однофазный до 7 кВт — трёхфазные станции прибавки не дают. V2L до 3,6 кВт через адаптер в порт GB/T. Батареи: 64,2 LFP (530 км CLTC) / 81,4 LFP (555 км CLTC).",
+ "src": "greenlight.by; auto.ru; Wikipedia"})
+MODELS.append({"n": 144, "brand": "Kia", "model": "PV5", "years": "2025–", "type": "BEV",
+ "market": "Европа (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить", "dcp": "уточнить",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
+ "freq": "Средний",
+ "note": "PBV-фургон/пассажир (Kia PV5). RU-мануал 26MY доступен.",
+ "src": "kia.ee (Kia Baltic, RU)"})
+MODELS.append({"n": 145, "brand": "Kia", "model": "PV5 Cargo", "years": "2025–", "type": "BEV",
+ "market": "Европа (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить", "dcp": "уточнить",
+ "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
+ "freq": "Средний",
+ "note": "Cargo-версия Kia PV5. RU-мануал 26MY общий с пассажирской.",
+ "src": "kia.ee (Kia Baltic, RU)"})
 
 BRAND_PAINS = {
  'Zeekr': ['ZE-01','ZE-02','ZE-03','ZE-04','ZV-01'], 'Voyah': ['VO-01','VO-02','VO-03','VO-04','VO-05','VO-06','ZV-01'],
@@ -605,7 +647,7 @@ def _comments_enabled(path):
     if p.endswith('index.html'):
         return False
     rel = '/'.join(p.split('/')[-2:])
-    for pref in ('models/', 'pain/', 'blog/', 'news/', 'services/'):
+    for pref in ('models/', 'pain/', 'blog/', 'news/', 'services/', 'catalog/'):
         if rel.startswith(pref):
             return True
     return False
@@ -869,6 +911,27 @@ DOCS_VOYAH_UNI = [
   ('Руководство пользователя портативного ЗУ Enjoe (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%BF%D0%BE%D1%80%D1%82%D0%B0%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_Enjoe.pdf', ''),
 ]
 DOCS_MODELS = {
+'kia-ev2': [
+    ('Kia EV2 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV2_QVe_2026_RU.pdf', '13,3 МБ'),
+  ],
+'kia-ev3': [
+    ('Kia EV3 — Руководство пользователя (RU, 25MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV3_25MY_RUS.pdf', '12,0 МБ'),
+  ],
+'kia-ev4': [
+    ('Kia EV4 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_SZe_26MY_RUS.pdf', '7,8 МБ'),
+  ],
+'kia-ev4-fastback': [
+    ('Kia EV4 Fastback — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_CT_26MY_RUS.pdf', '11,7 МБ'),
+  ],
+'kia-ev5': [
+    ('Kia EV5 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV5_26MY_RUS.pdf', '12,8 МБ'),
+  ],
+'kia-pv5': [
+    ('Kia PV5 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 МБ'),
+  ],
+'kia-pv5-cargo': [
+    ('Kia PV5 / PV5 Cargo — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 МБ'),
+  ],
   'avatr-11-12-ofitsialno-ru': [
     ('Руководство пользователя Avatr 11 (RU)', 'https://avatr.by/img/tech/AVATR11-manual.pdf', '3,1 МБ'),
     ('Руководство пользователя Avatr 12 (RU)', 'https://avatr.by/img/tech/AVATR12-manual.pdf', '6,2 МБ'),
