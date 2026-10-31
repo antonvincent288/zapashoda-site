@@ -92,7 +92,7 @@ def catalog_build(outdir):
     cats = ''.join('<span class="chip" data-cat="' + c + '" onclick="ofFilter(this)">' + c + '</span>' for c in order)
     grid = ''.join(shop_card_html(p) for p in sorted_p)
     hero = ('<div class="shop-hero"><h1>Каталог аксессуаров для зарядки</h1>'
-      '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Подбор под вашу модель — <a href="/">на страницах моделей</a>. Заявка за минуту, оплата — дилеру при получении.</p>'
+      '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Подбор под вашу модель — <a href="/">на страницах моделей</a>. Заявка за минуту, оплата — дилеру при получении. Дилерам и автосалонам — <a href="/b2b/">прайс и условия</a>.</p>'
       '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div></div>')
 
     phev_links = ' · '.join('<a href="/models/'+s+'.html">'+t+'</a>' for s,t in [
