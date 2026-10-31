@@ -17,6 +17,13 @@ DATA_B64 = "H4sIACMo5GoC/+y9C3Mb15Uu+lf65JRSZAVNvAESqtQURdGSbVGWRUlWfOuUq0m2yA5B
 DATA = json.loads(gzip.decompress(base64.b64decode(DATA_B64.encode("ascii"))).decode("utf-8"))
 PAINS = DATA["pains"]
 MODELS = DATA["models"]
+# Toyota bZ3X — добавлена отдельной моделью (Wordstat-спрос «bZ3X разъём» — лидер среди новинок)
+MODELS.append({"n": 138, "brand": "Toyota", "model": "bZ3X", "years": "2025–2026", "type": "BEV",
+ "market": "Китай (CN)", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 кВт (однофазный)", "dcp": "~100 кВт",
+ "sol": "Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).",
+ "freq": "Средний",
+ "note": "Самый частый разъёмный запрос по всем новинкам (Wordstat ~370 показов/мес по разъёмным фразам). Платформа GAC-Toyota: подробный разбор — статья «Toyota bZ3X и bZ4X: какой разъём зарядки».",
+ "src": "/blog/toyota-bz3x-bz4x-razyom.html"})
 
 BRAND_PAINS = {
  'Zeekr': ['ZE-01','ZE-02','ZE-03','ZE-04','ZV-01'], 'Voyah': ['VO-01','VO-02','VO-03','VO-04','VO-05','VO-06','ZV-01'],
@@ -471,7 +478,7 @@ def header_html(active):
     nav_links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
     off_links = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in NAV)
     return ('<header id="zs-header">'
-      '<div class="zs-topbar"><div class="container"><div>Запас хода — практика владения электромобилем в России: 137 моделей EV</div>'
+      '<div class="zs-topbar"><div class="container"><div>Запас хода — практика владения электромобилем в России: ' + str(len(MODELS)) + ' моделей EV</div>'
       '<div style="display:flex;gap:16px;flex-wrap:wrap">'+top_links+'</div></div></div>'
       '<div class="zs-nav"><div class="container">'
       '<a class="zs-brand" href="/" title="Запас хода">'+LOGO_SVG+'Запас хода <span>EV</span></a>'
@@ -495,11 +502,11 @@ def _fcol(title, items):
 FOOTER = ('<footer>'
  '<div class="fcols">'
  + _fcol('Каталог', [('/catalog/','Каталог аксессуаров'),('/catalog/','Адаптеры'),('/catalog/','Кабели и удлинители'),('/catalog/','Зарядки и станции'),('/quiz/','Подбор за 30 секунд'),('/b2b/','Дилерам')])
- + _fcol('Справочник', [('/models/','137 моделей EV'),('/vin/','VIN-проверка'),('/charging/','Карта зарядных станций'),('/pains.html','Проблемы и решения'),('/forum/','Форум сообщества')])
+ + _fcol('Справочник', [('/models/', str(len(MODELS)) + ' моделей EV'),('/vin/','VIN-проверка'),('/charging/','Карта зарядных станций'),('/pains.html','Проблемы и решения'),('/forum/','Форум сообщества')])
  + _fcol('Материалы', [('/blog/','Блог и гайды'),('/news/','Новости EV'),('/services/','Услуги'),('/ev-services.html','Автосервисы'),('/about.html','О проекте')])
  + _fcol('Контакты', [('https://t.me/zapashoda_ev','Telegram-канал'),('https://t.me/zapashoda_ev_bot/app','Мини-приложение'),('/feed.xml','RSS-лента'),('/llms.txt','llms.txt')])
  + '</div>'
- '<div class="fdesc"><p>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. 137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. При поломке высоковольтной системы обращайтесь в специализированный сервис.</p>'
+ '<div class="fdesc"><p>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. ' + str(len(MODELS)) + ' моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. При поломке высоковольтной системы обращайтесь в специализированный сервис.</p>'
  '<p>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> (ODbL), запросы через Overpass API.</p></div>'
  '<div class="fbot"><div>© Запас хода, 2026. Справочник по зарядке электромобилей в России.</div>'
  '<div class="fsoc"><a href="https://t.me/zapashoda_ev" rel="noopener" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 15.9 8.9 20a.6.6 0 0 0 .96.51l2.3-1.98 3.94 2.9c.52.29 1.12-.02 1.23-.62l2.66-13.4c.14-.72-.5-1.3-1.17-1.03L3.4 10.2c-.68.26-.67 1.2.01 1.45l4.13 1.38.05.02 9.83-5.62c.28-.16.55.2.3.41z"/></svg></a></div></div>'
@@ -809,7 +816,7 @@ def vin_brand_page(brand, outdir):
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
       '<div class="md:w-2/3 w-full">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все 137 моделей + чек-лист покупки</h3>'
+      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все ' + str(len(MODELS)) + ' моделей + чек-лист покупки</h3>'
       '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
       '</div><div class="md:w-auto w-full">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
@@ -1188,7 +1195,7 @@ def model_page(m, outdir):
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
       '<div class="md:w-2/3 w-full">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все 137 моделей + чек-лист покупки</h3>'
+      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все ' + str(len(MODELS)) + ' моделей + чек-лист покупки</h3>'
       '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
       '</div><div class="md:w-auto w-full">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
@@ -1397,19 +1404,19 @@ def search_page(outdir, index_items):
      'if(!hits.length)out="<p class=note>Ничего не нашлось. Попробуйте другое слово.</p>";}'
      'document.getElementById("res").innerHTML=out;});</script>')
     write_page(os.path.join(outdir,'search.html'), 'Поиск | Запас хода',
-        'Поиск по 137 моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html')
+        'Поиск по ' + str(len(MODELS)) + ' моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html')
 
 # ================= LLMS.TXT =================
 def llms_files(outdir, news):
     canon = [
-      ('Каталог моделей', '/', '137 моделей EV в РФ: разъёмы, мощности, проблемы, решения'),
+      ('Каталог моделей', '/', '' + str(len(MODELS)) + ' моделей EV в РФ: разъёмы, мощности, проблемы, решения'),
       ('Руководства по проблемам', '/pains.html', '12 практических руководств с решениями'),
       ('Новости', '/news/', 'Лента: цифры, зима, зарядка, новые модели'),
       ('Карта зарядных станций', '/charging/', 'Зарядные станции по данным OpenStreetMap'),
       ('VIN-справочник', '/vin/', 'Структура VIN, коды года, проверка истории для EV в РФ'),
       ('О проекте', '/about.html', 'Методика и источники справочника'),
     ]
-    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 137 моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-10-30). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
+    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: ' + str(len(MODELS)) + ' моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-10-30). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
     txt += '## Разделы\n\n'
     for t,u,d in canon: txt += '- [' + t + '](' + SITE_DOMAIN + u + '): ' + d + '\n'
     txt += '\n## Популярные модели\n\n'
@@ -1616,7 +1623,7 @@ def home_page(outdir, news=None):
       '<div class="rounded-lg break-words bg-gray-100" style="padding:52px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-1/2 w-full">'
-      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · 137 моделей в России</span>'
+      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · ' + str(len(MODELS)) + ' моделей в России</span>'
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5">' + html.escape(CFG_HERO_TITLE or 'Как зарядить ваш электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
       '<div class="flex gap-3 flex-wrap">'
@@ -1635,11 +1642,11 @@ def home_page(outdir, news=None):
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-2/3 w-full">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h2 class="text-lg text-gray-900 font-semibold my-3">Гид по зарядке и разъёмам: 137 моделей</h2>'
+      '<h2 class="text-lg text-gray-900 font-semibold my-3">Гид по зарядке и разъёмам: ' + str(len(MODELS)) + ' моделей</h2>'
       '<p class="text-sm text-gray-600" style="max-width:640px">Разъёмы и мощность зарядки каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов. Собран из реальных кейсов владельцев — можно перешлать другу, который выбирает электромобиль.</p>'
       '</div><div class="md:w-auto w-full md:text-right">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
-      '<p class="text-xs text-gray-500 mt-2">12 страниц · 0,1 МБ</p>'
+      '<p class="text-xs text-gray-500 mt-2">PDF · 0,1 МБ · можно перешлать другу</p>'
       '</div></div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Popular Products</h2></div></div>'
@@ -1654,7 +1661,7 @@ def home_page(outdir, news=None):
       + ''.join(_tpl_bundle_card(b) for b in catalog.BUNDLES) +
       '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Трендовые модели <a class="see-all" href="/models/">все ' + str(len(MODELS)) + ' →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + pop_cards + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Бренды</h2></div></div>'
@@ -1785,6 +1792,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
     urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
+    urls += [SITE_DOMAIN+'/'+tid+'.html' for tid,_,_,_ in _forum_seed()]
     lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
     return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc>'+lm+'</url>' for u in urls) + '</urlset>'
 
