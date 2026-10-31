@@ -82,6 +82,59 @@ def blog_build(outdir, write_page):
         if faq: ld += faq_ld(faq)
         write_page(os.path.join(outdir,'blog',sl+'.html'), t + ' | Запас хода', d, _enh(f, '/blog/' + sl + '.html', t), '/blog/' + sl + '.html', crumbs=[('/blog/index.html','Блог'),('', t)], extra_ld=ld)
 
+
+def b2b_build(outdir, write_page):
+    """Страница для дилеров и автосалонов: прайс и условия. Форма шлёт тот же канал GAS (t=site_order), поле model маркирует B2B."""
+    from catalog import GAS_URL as _GAS
+    form_html = (
+      '<form id="b2b-form" class="card"><h3>Запросить прайс</h3>'
+      '<p class="note">Прайс и условия пришлём по указанным контактам в течение рабочего дня. Заявка ни к чему не обязывает.</p>'
+      '<div class="of-grid"><input required name="company" autocomplete="organization" placeholder="Компания"></div>'
+      '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя и должность"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram"></div>'
+      '<div class="of-grid"><input name="city" placeholder="Город"><select name="profile">'
+      '<option value="Автосалон">Автосалон</option>'
+      '<option value="Сервис">Автосервис</option>'
+      '<option value="Сеть розницы">Сеть розницы</option>'
+      '<option value="Дропшип / маркетплейс">Дропшип / маркетплейс</option>'
+      '<option value="Другое">Другое</option></select>'
+      '<select name="volume"><option value="Объём: до 10 шт/мес">до 10 шт/мес</option>'
+      '<option value="Объём: 10–50 шт/мес">10–50 шт/мес</option>'
+      '<option value="Объём: 50+ шт/мес">50+ шт/мес</option></select></div>'
+      '<textarea name="comment" rows="2" placeholder="Какие позиции интересуют: адаптеры, кабели, станции, V2L"></textarea>'
+      '<button class="btn lime of-send" type="submit">Запросить прайс</button>'
+      '<div id="b2b-status"></div></form>'
+      '<script>document.addEventListener("DOMContentLoaded",function(){var f=document.getElementById("b2b-form");if(!f)return;'
+      'f.addEventListener("submit",function(e){e.preventDefault();'
+      'var d={t:"site_order",model:"B2B — запрос прайса дилера",items:[],total:0,'
+      'name:f.company.value+" / "+f.name.value,phone:f.phone.value,city:f.city.value,'
+      'comment:"Профиль: "+f.profile.value+"; "+f.volume.value+". "+(f.comment.value||"")};'
+      'var st=document.getElementById("b2b-status");st.innerHTML=\'<p class="note">Отправляем…</p>\';'
+      'fetch("' + _GAS + '", {method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})'
+      '.then(function(r){return r.json()}).then(function(){'
+      'st.innerHTML=\'<div class="of-ok">✓ Отправлено! Прайс и условия придут в течение рабочего дня по указанным контактам.</div>\';f.reset()})'
+      '.catch(function(){st.innerHTML=\'<p class="note">Не удалось отправить — напишите в Telegram: @zapashoda_ev.</p>\'})})});</script>')
+    body = ('<h1>Дилерам и автосалонам: прайс и условия по аксессуарам зарядки</h1>'
+      '<p class="lede">Продаваете электромобили и гибриды из Китая? Тогда адаптер Type 2 → GB/T — не опция, а комплект: без него у клиента конфликт со станциями в первый же день. Комплектуем машины и залы аксессуарами зарядки — от адаптеров до настенных станций.</p>'
+      '<h2>Что получает дилер</h2>'
+      '<ul><li><b>Комплектация машины.</b> Клиент уезжает с рабочим комплектом зарядки под свои разъёмы — меньше негатива и возвратов, выше средний чек.</li>'
+      '<li><b>Готовая витрина знаний.</b> 137 страниц моделей с разъёмами, типовыми болями и решениями — ваш консультант отвечает клиенту со ссылкой на материал, а не «на пальцах». Использовать можно свободно.</li>'
+      '<li><b>Понятный ассортимент.</b> Что должно быть в зале для GB/T-парка, а что — только под заказ: в <a href="/catalog/index.html">каталоге</a> каждая позиция со спецификациями и пояснением.</li></ul>'
+      '<h2>Как работаем</h2><ol class="steps">'
+      '<li><b>Заявка.</b><p>Форма ниже или сообщение в Telegram. Достаточно профиля и города.</p></li>'
+      '<li><b>Прайс и условия.</b><p>Пришлём в течение рабочего дня: позиции, дилерские цены, условия по объёму и доставке.</p></li>'
+      '<li><b>Пилот.</b><p>Начинаем с пробной партии под ваш зал — проверяем спрос без больших обязательств.</p></li>'
+      '<li><b>Постоянная схема.</b><p>График поставки, обновления каталога и материалы для консультантов — по договорённости.</p></li>'
+      '</ol>'
+      '<h2>Частые вопросы</h2>'
+      '<div class="faq-q"><b>Работаете с регионами?</b><p>Да. Доставка через транспортные компании; условия зависят от объёма — уточним при запросе прайса.</p></div>'
+      '<div class="faq-q"><b>Какие документы?</b><p>Работаем стандартно: счёт, договор — по запросу. НДС-детали уточняются при оформлении.</p></div>'
+      '<div class="faq-q"><b>Какой минимальный объём?</b><p>Зависит от позиций. Для пилота по адаптерам и расходным позициям он небольшой — пришлём расчёт вместе с прайсом.</p></div>'
+      '<div class="faq-q"><b>Мы продаём только гибриды (PHEV), им это нужно?</b><p>Нужно, но по-другому: гибриду хватает портативки или станции 3,5–7,4 кВт и кабеля, DC-адаптер не обязателен. Разбор сегмента — в нашем <a href="/blog/phev-rossiya-2026.html">гиде по PHEV</a>.</p></div>'
+      + form_html)
+    desc = 'Прайс и условия для дилеров и автосалонов: адаптеры Type 2 → GB/T, DC-адаптеры, кабели, зарядки и станции для EV и PHEV. Комплектация машин, дилерские цены, пилотная партия.'
+    ld = '<script type="application/ld+json">' + art_ld('Прайс и условия для дилеров', desc, '/b2b/index.html') + '</script>'
+    write_page(os.path.join(outdir,'b2b','index.html'), 'Прайс и условия для дилеров: аксессуары зарядки EV и PHEV | Запас хода', desc, body, '/b2b/index.html', crumbs=[('', 'Дилерам')], extra_ld=ld)
+
 def services_build(outdir, write_page):
     os.makedirs(os.path.join(outdir,'services'), exist_ok=True)
     idx_body = ('<h1>Услуги: зарядная инфраструктура для электромобиля</h1>'
