@@ -353,3 +353,8 @@ img{max-width:100%;height:auto}
 .pz-fits{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 @media (max-width:900px){.pz-hero{grid-template-columns:1fr}.pz-buy{position:static}.pz-gallery{min-height:280px}}
 @media (max-width:520px){.pc-grid{grid-template-columns:repeat(2,1fr);gap:8px}.pc-media{height:120px;padding:8px}.pc-spec-line{display:none}.pc-name{font-size:13px;min-height:34px}.pc-price{font-size:17px}}
+
+/* --- фото товаров в Ozon-карточках --- */
+.pc-media img{width:100%;height:100%;object-fit:contain}
+.pz-gallery img{width:100%;max-width:440px;height:auto}
+.pz-gallery{padding:20px}
