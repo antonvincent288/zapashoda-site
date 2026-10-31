@@ -81,22 +81,24 @@ def order_form_html(pname):
 
 def shop_card_html(p, badge=None):
     tag = TAGS.get(p['id'])
-    specs = ''.join('<li>' + k + ': ' + html.escape(str(v)) + '</li>' for k, v in SPECS.get(p['id'], [])[:3])
+    specs = ''.join('<span>' + html.escape(str(k)) + ' ' + html.escape(str(v)) + '</span>' for k, v in SPECS.get(p['id'], [])[:3])
     bd = ('<span class="pc-tag pc-need">' + BADGE_TXT[badge] + '</span>' if badge else '')
     hit = ('<span class="pc-hit">' + tag + '</span>' if tag else '')
-    return ('<div class="pc-card" data-cat="' + p['cat'] + '" data-ln="' + ln_of(p) + '">'
-      '<a class="pc-media" href="/catalog/' + p['slug'] + '.html" aria-label="' + html.escape(p['name']) + '"><span class="pc-emoji">' + p['emoji'] + '</span><span class="pc-tag">' + p['cat'] + '</span>' + hit + bd + '</a>'
+    return ('<div class="pc-card" data-cat="' + p['cat'] + '" data-ln="' + ln_of(p) + '" data-price="' + str(p['price']) + '">'
+      '<a class="pc-media" href="/catalog/' + p['slug'] + '.html" aria-label="' + html.escape(p['name']) + '"><span class="pc-emoji">' + p['emoji'] + '</span>' + hit + bd + '</a>'
       '<div class="pc-body"><a class="pc-name" href="/catalog/' + p['slug'] + '.html">' + html.escape(p['name']) + '</a>'
-      '<ul class="pc-specs">' + specs + '</ul>'
+      '<div class="pc-spec-line">' + specs + '</div>'
       '<div class="pc-bottom"><span class="pc-price">' + fmt_price(p['price']) + '</span>'
-      '<span class="pc-act"><a class="pc-link" href="/catalog/' + p['slug'] + '.html">Подробнее</a><span class="pc-btn sku-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span></span></div></div></div>')
+      '<span class="pc-act"><span class="pc-btn sku-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span><a class="pc-link" href="/catalog/' + p['slug'] + '.html">Подробнее →</a></span></div></div></div>')
 
 def catalog_block_for(m, pname):
     skus = MODEL_SKU.get(m['brand'] + '|' + m['model'], [])
     if not skus:
         return ''
     cards = bundle_card_html(bundle_for(m)) + ''.join(shop_card_html(PIDX[i['id']], i['badge']) for i in skus)
-    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Полный каталог: <a href="/catalog/index.html">все аксессуары</a>.</p><div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
+    mline = 'gbt' if ('GB/T' in str(m.get('dc', '')) or 'GB/T' in str(m.get('ac', ''))) else 'eu'
+    qmodel = html.escape(pname).replace(' ', '%20').replace('&', '%26')
+    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Весь каталог: <a href="/catalog/index.html?line=' + mline + '&model=' + qmodel + '">аксессуары для ' + html.escape(pname) + '</a>.</p><div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
 
 def faq_html(p):
     qs = FAQS.get(p['cat'], []) + [['Как оформляется заявка','Отправляете заявку с телефоном — подтверждаем наличие и доставку в ваш город через ближайший салон-дилера. Оплата — при получении, без предоплаты.']]
@@ -115,6 +117,28 @@ def fits_for(p, limit=14):
     fits.sort(key=lambda x: 0 if x['freq']=='Массовый' else 1)
     return ', '.join('<a href="/models/' + slug(mm['brand']) + '-' + slug(mm['model']) + '.html">' + html.escape(mm['brand'] + ' ' + mm['model']) + '</a>' for mm in fits[:limit])
 
+# Преселект с модельных страниц: /catalog/?line=gbt&model=Zeekr%20001
+PRESELECT_JS = ("<script>(function(){"
+  "var q=new URLSearchParams(location.search),model=q.get('model'),line=q.get('line'),cat=q.get('cat');"
+  "if(model){var b=document.createElement('div');b.className='pc-model-banner';"
+  "b.textContent='Аксессуары для: ';var sb=document.createElement('b');sb.textContent=model;b.appendChild(sb);"
+  "var x=document.createElement('button');x.setAttribute('aria-label','Сбросить');x.textContent='\\u2715';"
+  "x.addEventListener('click',function(){location.replace('/catalog/')});b.appendChild(x);"
+  "var fr=document.getElementById('pc-filters');fr&&fr.parentNode.insertBefore(b,fr);}"
+  "if(line&&line!=='all'){[].forEach.call(document.querySelectorAll('#ln-filters .chip'),function(c){if(c.getAttribute('data-ln')===line)ofLineFilter(c);});}"
+  "if(cat){[].forEach.call(document.querySelectorAll('#pc-filters .chip'),function(c){if(c.getAttribute('data-cat')===cat)ofFilter(c);});}"
+  "function upd(){var vis=0;[].forEach.call(document.querySelectorAll('.pc-card'),function(c){if(c.style.display!=='none')vis++;});"
+  "var e=document.getElementById('pc-count');if(e)e.textContent='Найдено: '+vis;}"
+  "upd();var g=document.querySelector('.pc-grid');"
+  "if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{attributes:true,attributeFilter:['style']});"
+  "var sel=document.getElementById('pc-sort');if(sel)sel.addEventListener('change',function(){"
+  "var g2=document.querySelector('.pc-grid');if(!g2)return;var cards=[].slice.call(g2.children),v=sel.value;"
+  "if(v==='asc')cards.sort(function(a,b){return (+a.getAttribute('data-price')||0)-(+b.getAttribute('data-price')||0);});"
+  "else if(v==='desc')cards.sort(function(a,b){return (+b.getAttribute('data-price')||0)-(+a.getAttribute('data-price')||0);});"
+  "cards.forEach(function(c){g2.appendChild(c);});});"
+  "})();</script>")
+
+
 def catalog_build(outdir):
     os.makedirs(os.path.join(outdir,'catalog'), exist_ok=True)
     order = ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары']
@@ -124,11 +148,12 @@ def catalog_build(outdir):
     cats = ''.join('<span class="chip" data-cat="' + c + '" onclick="ofFilter(this)">' + c + '</span>' for c in order)
     grid = ''.join(shop_card_html(p) for p in sorted_p)
     hero = ('<div class="shop-hero"><h1>Каталог аксессуаров для зарядки</h1>'
-      '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Подбор под вашу модель — <a href="/">на страницах моделей</a>. Заявка за минуту, оплата — дилеру при получении. Дилерам и автосалонам — <a href="/b2b/">прайс и условия</a>.</p>'
-      '<p class="note">Не знаете, с чего начать? <a href="/quiz/">Подбор за 30 секунд</a> — марка и модель, дальше покажем.</p>'
-      '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div><div class="shop-filters" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div></div>')
+      '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Заявка за минуту, оплата — дилеру при получении.</p>'
+      '<div class="ctas"><a class="btn lime" href="/quiz/">Подбор за 30 секунд</a><a class="btn ghost" href="/b2b/">Дилерам — прайс</a></div>'
+      '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div><div class="shop-filters" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
+      '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div></div>')
 
-    phev_links = ' · '.join('<a href="/models/'+s+'.html">'+t+'</a>' for s,t in [
+    phev_links = ''.join('<a class="fchip" href="/models/'+s+'.html">'+t+'</a>' for s,t in [
         ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),
         ('byd-song-plus-dm-i-sealion-05','BYD Song Plus DM-i'),
         ('chery-tiggo-7-8-9-c-dm-phev','Chery Tiggo C-DM'),
@@ -137,10 +162,10 @@ def catalog_build(outdir):
         ('tank-500-hi4-t','Tank 500 Hi4-T'),
         ('jetour-t1-t2-phev','Jetour T1 / T2'),
         ('mitsubishi-outlander-phev-jp-eu','Outlander PHEV')])
-    phev_block = ('<div class="callout ok" style="margin:26px 0"><b>Гибриды и PHEV — самая быстрорастущая часть «зелёного» рынка России.</b> '
-      'Для гибрида хватает домашней зарядки 3,5–7,4 кВт, и адаптер нужен только если у вашей версии разъём GB/T. '
-      '<a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a> · Подбор под модель: '+phev_links+'.</div>')
-    body = hero + phev_block + '<div class="pc-grid">' + grid + '</div>' + order_form_html('Каталог аксессуаров')
+    phev_block = ('<h2 style="margin-top:34px">Подборка для гибридов (PHEV)</h2>'
+      '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
+      '<div class="fsec">' + phev_links + '</div>')
+    body = hero + '<div class="pc-grid">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
     WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/index.html', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
