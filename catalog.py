@@ -40,11 +40,12 @@ def bundle_card_html(b):
     save = b['was'] - b['price']
     return ('<div class="pc-card pc-bundle" data-cat="Комплекты" data-ln="' + b['line'] + ' phev">'
       '<a class="pc-media"><span class="pc-hit">Выгоднее</span>' + (('<img src="/assets/sku/bundle-set.png" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async">') if b['id'] == 'b-gbt' else SKU_ART['Комплекты']) + '</a>'
-      '<div class="pc-body"><span class="pc-name">' + html.escape(b['name']) + '</span>'
+      '<div class="pc-body"><span class="pc-cat">Комплект</span>'
+      '<span class="pc-name">' + html.escape(b['name']) + '</span>'
       '<div class="pc-price">' + fmt_price(b['price']) + ' <s class="pc-was">' + fmt_price(b['was']) + '</s></div>'
-      '<p class="pc-desc">В комплекте: ' + html.escape(items_txt) + '. Экономия ' + fmt_price(save) + ' против покупки по отдельности.</p>'
-      '<span class="pc-btn sku-add pc-add" onclick="ofAddB(\'' + b['id'] + '\',this)">В заявку</span>'
-      '<span class="pc-seller">Продавец: «Запас хода»</span></div></div>')
+      '<p class="pc-desc" style="font-size:12.5px;color:#5c6c75;margin:4px 0 0;line-height:1.45">В комплекте: ' + html.escape(items_txt) + '. Экономия ' + fmt_price(save) + '.</p>'
+      '<div class="pc-bottom"><span></span><span class="pc-btn sku-add pc-add" onclick="ofAddB(\'' + b['id'] + '\',this)">В заявку</span></div>'
+      '<span class="pc-seller">Оплата — дилеру при получении</span></div></div>')
 CATEXT = json.loads('{"Адаптеры": "В России основная сеть — станции Type 2 (медленная) и CCS2 (быстрая). Машины из Китая с разъёмом GB/T к ним напрямую не подключаются — нужен адаптер. Обратный адаптер (GB/T → Type 2) выручает на китайских GB/T-станциях частных комплексов и гаражных паркингов.", "Кабели": "Кабель заменяет «шнур от станции»: у многих станций кабеля нет или он короткий. Кабель Type 2–GB/T соединяет станцию с китайской машиной напрямую — без лишнего адаптера в цепи. Для GB/T-машин также нужны специальные удлинители — бытовые не подходят.", "Зарядки": "Портативная зарядка живёт в багажнике: дом, дача, поездка, аварийный случай. Для GB/T-машин это основной способ зарядки от розетки — штатные комплекты часто не втыкаются в российские розетки.", "Станции": "Домашняя станция превращает зарядку в рутину: пришёл, воткнул, утром полный. Станция 2-в-1 имеет и Type 2, и GB/T — для семьи или парковки с машинами разных стандартов.", "V2L": "V2L (Vehicle-to-Load) — машина как мобильный генератор: чайник на пикнике, обогреватель, инструменты. Нужна поддержка V2L у самой машины.", "Аксессуары": "Мелочи, на которые не смотрят, пока не понадобится: смазка для примерзающего лючка зимой, органайзер, чтобы кабель не царапал крыло."}')
 FAQS = json.loads('{"Адаптеры": [["Адаптер греется — это нормально?", "Небольшой нагрев на максимальном токе нормален. Если корпус горячее 60–70 °C или плавится вилка — снимайте и меняйте: дешёвые адаптеры без термозащиты ставить не стоит."], ["Можно ли оставить адаптер на станции на ночь?", "Да, для медленной зарядки это штатный сценарий. Перед зимней зарядкой очистите контакты от снега и наледи."], ["Чем премиум-версия отличается от базовой?", "Материалом корпуса и фиксацией: премиум держит плотнее и рассчитан на ежедневную зарядку, базовый — запасной или редких поездок."]], "Кабели": [["Какой длины кабель выбрать?", "Измерьте расстояние от парковки до станции и прибавьте запас 1–2 м на перекладывание. 5 м хватает в 80% случаев, 7–10 м — для глубоких паркомест и габаритных машин."], ["Кабель греется в месте соединения?", "Слабый контакт — снимите, осмотрите штыри на оплавление. Если есть следы перегрева — кабель под замену."], ["Можно ли через кабель заряжать обычную розетку?", "Нет: кабель Type 2–GB/T — только между станцией и машиной. От розетки заряжает портативное зарядное устройство."]], "Зарядки": [["Можно ли заряжать от обычной розетки?", "Портативка 3,5 кВт — да, от бытовой 220 В с 16 А. 7-киловаттной нужна силовая розетка (CEE 380 В). Обычная бытовая розетка должна быть целой, с заземлением и без тройников."], ["Сколько времени занимает зарядка от розетки?", "3,5 кВт добавляет примерно 15–20 км хода за час ночёвки; 7 кВт (силовая розетка) — 30–40 км в час. Точные цифры — на странице вашей модели."], ["Портативку можно оставить на морозе?", "Да, но не заряжайте в сильный мороз с мокрыми контактами — дайте разъёму оттаять и просохнуть."]], "Станции": [["Нужен ли электрик для установки станции?", "Да: выделенная линия, автомат и УЗО ставит электромонтажник. Мы помогаем подобрать станцию и даём инструкцию монтажнику — смотрите раздел «Услуги»."], ["Чем 2-в-1 лучше двух станций?", "Одна розетка с двумя разъёмами вместо двух блоков на щитке: дешевле, меньше оборудования,зарядка и «европейской», и «китайской» машины из одной точки."], ["RFID-разблокировка зачем?", "Чтобы посторонние не начинали зарядку со станции без вашего ключа — актуально для дворов и открытых парковок."]], "V2L": [["Моя машина поддерживает V2L?", "Проверьте на странице модели или в мануале: чаще поддерживают свежие Zeekr, Li, BYD. Если V2L-порта нет — адаптер не добавит эту функцию."], ["Можно ли питать дом от машины?", "Через V2L-кабель — небольшие нагрузки (чайник, свет, ноутбук). Как резерв дома на 10 кВт — это уже оборудование другого класса."]], "Аксессуары": [["Смазка действительно нужна?", "Да: зимой заглушка лючка и уплотнители примерзают, силиконовая смазка решает это за 10 секунд и стоит копейки."], ["Держатель куда ставить?", "На лючок или стену гаража — кабель не путается и не волочится по земле."]]}')
 BADGE_TXT = {'need':'Нужно','opt':'Опционально'}
@@ -71,7 +72,7 @@ def cart_bar_html():
 
 def order_form_html(pname):
     return of_data_js(pname) + cart_bar_html() + (
-      '<form id="order-form" class="card"><h3>Оформить заявку</h3>'
+      '<form id="order-form" class="lcard"><h3>Оформить заявку</h3>'
       '<p class="note">Оплата — дилеру при получении. Заявка ни к чему не обязывает: подтвердим наличие и свяжемся с вами.</p>'
       '<div id="of-items"><div class="note">Корзина пуста — выберите позиции из каталога выше.</div></div>'
       '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram"></div>'
@@ -93,16 +94,18 @@ def art_for(p):
 
 def shop_card_html(p, badge=None):
     tag = TAGS.get(p['id'])
-    specs = ''.join('<span>' + html.escape(str(k)) + ' ' + html.escape(str(v)) + '</span>' for k, v in SPECS.get(p['id'], [])[:2])
+    sp = SPECS.get(p['id'], [])
+    spec1 = (html.escape(str(sp[0][0])) + ': ' + html.escape(str(sp[0][1]))) if sp else ''
     bd = ('<span class="pc-tag pc-need">' + BADGE_TXT[badge] + '</span>' if badge else '')
     hit = ('<span class="pc-hit">' + tag + '</span>' if tag else '')
     return ('<div class="pc-card" data-cat="' + p['cat'] + '" data-ln="' + ln_of(p) + '" data-price="' + str(p['price']) + '">'
       '<a class="pc-media" href="/catalog/' + p['slug'] + '.html" aria-label="' + html.escape(p['name']) + '">' + art_for(p) + hit + bd + '</a>'
-      '<div class="pc-body"><a class="pc-name" href="/catalog/' + p['slug'] + '.html">' + html.escape(p['name']) + '</a>'
-      '<div class="pc-price">' + fmt_price(p['price']) + '</div>'
-      '<div class="pc-spec-line">' + specs + '</div>'
-      '<span class="pc-btn sku-add pc-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span>'
-      '<span class="pc-seller">Продавец: «Запас хода»</span></div></div>')
+      '<div class="pc-body"><span class="pc-cat">' + html.escape(p['cat']) + '</span>'
+      '<a class="pc-name" href="/catalog/' + p['slug'] + '.html">' + html.escape(p['name']) + '</a>'
+      '<div class="pc-spec-line"><span>' + spec1 + '</span></div>'
+      '<div class="pc-bottom"><span class="pc-price">' + fmt_price(p['price']) + '</span>'
+      '<span class="pc-btn sku-add pc-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span></div>'
+      '<span class="pc-seller">Оплата — дилеру при получении</span></div></div>')
 def catalog_block_for(m, pname):
     skus = MODEL_SKU.get(m['brand'] + '|' + m['model'], [])
     if not skus:
@@ -116,7 +119,7 @@ def faq_html(p):
     qs = FAQS.get(p['cat'], []) + [['Как оформляется заявка','Отправляете заявку с телефоном — подтверждаем наличие и доставку в ваш город через ближайший салон-дилера. Оплата — при получении, без предоплаты.']]
     items = ''.join('<div class="faq-q"><b>' + q + '</b><p>' + a + '</p></div>' for q, a in qs)
     ld = json.dumps({'@context':'https://schema.org','@type':'FAQPage','mainEntity':[{'@type':'Question','name':q,'acceptedAnswer':{'@type':'Answer','text':a}} for q, a in qs]}, ensure_ascii=False)
-    return '<h2>Частые вопросы</h2><div class="card">' + items + '</div><script type="application/ld+json">' + ld + '</script>'
+    return '<h2>Частые вопросы</h2><div class="lcard">' + items + '</div><script type="application/ld+json">' + ld + '</script>'
 
 def product_ld(p, url):
     return json.dumps({'@context':'https://schema.org','@type':'Product','name':p['name'],'description':p['descLong'][:300],'brand':{'@type':'Brand','name':'Запас хода'},'offers':{'@type':'Offer','price':str(p['price']),'priceCurrency':'RUB','availability':'https://schema.org/InStock','url':SITE + url}}, ensure_ascii=False)
@@ -157,11 +160,15 @@ def catalog_build(outdir):
         sorted_p += [p for p in PRODUCTS if p['cat'] == cat]
     cats = ''.join('<span class="chip" data-cat="' + c + '" onclick="ofFilter(this)">' + c + '</span>' for c in order)
     grid = ''.join(shop_card_html(p) for p in sorted_p)
-    hero = ('<div class="shop-hero"><h1>Каталог аксессуаров для зарядки</h1>'
-      '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Заявка за минуту, оплата — дилеру при получении.</p>'
-      '<div class="ctas"><a class="btn lime" href="/quiz/">Подбор за 30 секунд</a><a class="btn ghost" href="/b2b/">Дилерам — прайс</a></div>'
+    hero = ('<div class="fc-hero" style="margin-top:18px;padding:38px 36px">'
+      '<span class="fc-hero-badge">Каталог · 26 позиций · оплата дилеру при получении</span>'
+      '<h1 style="color:#fff;margin:14px 0 10px;font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-.02em">Каталог аксессуаров для зарядки</h1>'
+      '<p style="color:rgba(255,255,255,.88);max-width:640px;margin:0 0 20px;font-size:16px;line-height:1.55">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Заявка за минуту, оплата — дилеру при получении.</p>'
+      '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+      '<a class="btn" style="background:#fff;color:#001e2b;font-weight:700" href="/quiz/">Подбор за 30 секунд</a>'
+      '<a class="btn" style="border:1px solid rgba(255,255,255,.5);color:#fff" href="/b2b/">Дилерам — прайс</a></div></div>'
       '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div><div class="shop-filters" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
-      '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div></div>')
+      '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div>')
 
     phev_links = ''.join('<a class="fchip" href="/models/'+s+'.html">'+t+'</a>' for s,t in [
         ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),

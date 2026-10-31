@@ -99,120 +99,169 @@ CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
 CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
 
 # ================= APPLE-ДИЗАЙН =================
-CSS = r""":root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.07);--lime:#0071e3;--lime-ink:#ffffff;--max:1040px}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased;font-size:16px}
-a{color:inherit}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
-main{max-width:var(--max);margin:0 auto;padding:6px 22px 20px}
-header{position:sticky;top:0;z-index:50;background:rgba(245,245,247,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
-.hwrap{max-width:var(--max);margin:0 auto;padding:0 22px;height:52px;display:flex;align-items:center;gap:20px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:17px;color:var(--ink);letter-spacing:-.01em}
-.brand svg{display:block;flex:none}
-nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end;min-width:0}
-nav a{color:var(--ink);opacity:.72;text-decoration:none;font-size:13.5px;padding:7px 12px;border-radius:999px;transition:opacity .15s,background .15s}
-nav a:hover{opacity:1;background:rgba(0,0,0,.06)}
-nav a.on{opacity:1;background:rgba(0,0,0,.08);font-weight:600}
+CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#0aad0a;--lime-ink:#fff;--max:1240px}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+/* ==== header (FreshCart) ==== */
+header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.04)}
+.zs-topbar{background:#21313c;color:#c1c7c6;font-size:13px}
+.zs-topbar .container{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;padding-bottom:6px}
+.zs-topbar a{color:#c1c7c6;text-decoration:none}
+.zs-topbar a:hover{color:#fff}
+.zs-nav{padding:14px 0 10px}
+.zs-nav .container{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.zs-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#001e2b}
+.zs-brand span{background:#0aad0a;color:#fff;border-radius:8px;font-size:11px;font-weight:700;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase}
+.zs-search{flex:1 1 320px;max-width:560px;position:relative}
+.zs-search input{width:100%;border:1px solid var(--line);border-radius:.5rem;padding:11px 44px 11px 14px;font-size:15px;background:#fff}
+.zs-search input:focus{outline:none;border-color:#0aad0a;box-shadow:0 0 0 .25rem rgba(10,173,10,.25)}
+.zs-search button{position:absolute;right:0;top:0;padding:12px;border:0;background:none;cursor:pointer;color:#5c6c75}
+.zs-act{display:flex;align-items:center;gap:14px;margin-left:auto}
+.zs-act a{color:#21313c;text-decoration:none;font-size:14px;font-weight:600}
+.zs-act a:hover{color:#0aad0a}
+.zs-burger{display:none;border:1px solid var(--line);background:#fff;border-radius:.5rem;padding:9px 11px;cursor:pointer}
+.zs-burger span{display:block;width:20px;height:2px;background:#21313c;margin:4px 0;border-radius:2px}
+nav.zs-links{border-top:1px solid var(--line);background:#fff}
+nav.zs-links .container{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
+nav.zs-links a{color:#21313c;text-decoration:none;font-size:13.5px;font-weight:500;padding:9px 13px;border-radius:.5rem;white-space:nowrap}
+nav.zs-links a:hover{background:#f0f3f2;color:#0aad0a}
+nav.zs-links a.on{color:#0aad0a;font-weight:700;background:#e8ffe6}
+@media(max-width:1023px){
+ .zs-search{display:none}
+ .zs-burger{display:block}
+ .zs-act{gap:8px}
+ nav.zs-links{display:none}
+}
+.zs-off{position:fixed;top:0;right:-320px;width:300px;max-width:86vw;height:100%;background:#fff;z-index:120;transition:right .25s ease;overflow-y:auto;box-shadow:-8px 0 30px rgba(0,0,0,.12)}
+.zs-off.open{right:0}
+.zs-off .off-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.zs-off .off-h b{font-size:16px}
+.zs-off .off-x{border:0;background:#f0f3f2;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:18px;color:#21313c}
+.zs-off ul{list-style:none;margin:0;padding:10px}
+.zs-off li a{display:block;padding:11px 12px;border-radius:8px;color:#21313c;text-decoration:none;font-size:15px;font-weight:500}
+.zs-off li a:hover{background:#e8ffe6;color:#0aad0a}
+.zs-off .off-foot{padding:12px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.zs-mask{position:fixed;inset:0;background:rgba(0,30,43,.5);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s}
+.zs-mask.open{opacity:1;pointer-events:auto}
+/* ==== breadcrumbs ==== */
 .crumbs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0 0;font-size:13px;color:var(--muted)}
 .crumbs a{color:var(--muted);text-decoration:none;opacity:.85}
 .crumbs a:hover{opacity:1;color:var(--ink)}
 .crumbs .crumb-sep{color:var(--muted);opacity:.5}
 .crumbs .crumb-cur{color:var(--ink);font-weight:600}
-.banner{background:#FFF3E0;border-bottom:1px solid rgba(0,0,0,.08)}
-.banner a,.banner{display:block;color:#8A5A00;font-size:14px;font-weight:600;text-align:center;padding:9px 14px;text-decoration:none}
-.banner a:hover{background:#FFE9C7}
-.tldr{background:#F0F9EB;border:1px solid #B8DFC8;border-radius:12px;padding:12px 16px;margin:14px 0;font-size:15px;line-height:1.55}
-a:focus-visible,button:focus-visible,.search:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:10px}
-h1{font-size:clamp(30px,5vw,44px);line-height:1.12;letter-spacing:-.03em;font-weight:700;margin:44px 0 14px}
-.lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:760px}
-h2{font-size:clamp(22px,3.4vw,30px);letter-spacing:-.018em;font-weight:700;margin:48px 0 14px;scroll-margin-top:70px}
+nav.crumbs{margin:18px 0 0;justify-content:flex-start}
+/* ==== legacy content bridge ==== */
+main{max-width:var(--max);margin:0 auto;padding:6px 22px 20px}
+h1{font-size:clamp(30px,4.5vw,42px);line-height:1.12;letter-spacing:-.03em;font-weight:800;margin:44px 0 14px;color:#001e2b}
+h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.018em;font-weight:700;margin:48px 0 14px;scroll-margin-top:80px;color:#001e2b}
 h3{font-size:17.5px;font-weight:600;margin:20px 0 8px;letter-spacing:-.01em}
+h4{font-size:16px;font-weight:600;margin:16px 0 8px}
 p{margin:10px 0;max-width:740px;line-height:1.75}
-.note{color:var(--muted);font-size:14px;max-width:740px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05)}
-.card h3{margin-top:0}
-.sol{background:rgba(0,113,227,.07);border-radius:14px;padding:14px 18px;margin-top:12px;font-size:15px}
-.pain-id{display:inline-block;background:#f0f0f3;color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:780px}
+.note{color:var(--muted);font-size:14px;max-width:760px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:8px}
+.banner{background:#e8ffe6;border:1px solid #b5f0a4;border-radius:.75rem;padding:12px 16px;font-size:13.5px;color:#0d7e0f;margin:14px 0}
+.banner a,.banner{display:block;color:#0d7e0f;font-size:14px;font-weight:600;text-align:center;padding:10px 14px;text-decoration:none}
+.banner a:hover{background:#cefdca}
+.tldr{background:#f0fff0;border:1px solid #b5f0a4;border-radius:.75rem;padding:12px 16px;margin:14px 0;font-size:15px;line-height:1.55}
+.lcard,.card{background:var(--card);border:1px solid var(--line);border-radius:.75rem;padding:22px 24px;margin:14px 0;box-shadow:0 1px 2px rgba(0,30,43,.04)}
+.lcard h3{margin-top:0}
+.sol{background:rgba(10,173,10,.06);border-radius:.75rem;padding:14px 18px;margin-top:12px;font-size:15px}
+.pain-id{display:inline-block;background:#f0f3f2;color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
 .tag{border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:12.5px;color:var(--muted);font-weight:500;background:#fff;display:inline-block;margin:0 6px 8px 0}
-.tag.lime{background:var(--lime);color:var(--lime-ink);border-color:transparent;font-weight:600}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:opacity .2s;cursor:pointer;border:none}
-.btn:hover{opacity:.88}
-.btn.lime{background:var(--lime);color:var(--lime-ink);box-shadow:0 8px 24px rgba(0,113,227,.18)}
-.btn.ghost{background:#e8e8ed;color:var(--ink)}
-.btn.ghost:hover{background:#dfdfdF}
+.tag.lime{background:var(--lime);color:#fff;border-color:transparent;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:.5rem;font-weight:600;font-size:15px;text-decoration:none;transition:.2s;cursor:pointer;border:1px solid transparent}
+.btn:hover{opacity:.9}
+.btn.lime{background:var(--lime);color:#fff;box-shadow:0 8px 20px rgba(10,173,10,.22)}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:#0aad0a;color:#0aad0a;opacity:1}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.mcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;text-decoration:none;color:inherit;display:block;transition:transform .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05)}
-.mcard:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
-.mcard b{font-size:15.5px;letter-spacing:-.01em;display:block}
+.mcard{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:20px 22px;text-decoration:none;color:inherit;display:block;transition:.2s;box-shadow:0 1px 2px rgba(0,30,43,.04)}
+.mcard:hover{transform:translateY(-3px);border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12)}
+.mcard b{font-size:15.5px;letter-spacing:-.01em;display:block;color:#001e2b}
 .mcard span{display:block;font-size:13.5px;color:var(--muted);margin-top:6px}
-.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;border:1px solid var(--line);border-radius:14px;background:#fff}
+.mcard2{background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:.2s}
+.mcard2:hover{transform:translateY(-3px);border-color:#0aad0a;box-shadow:0 10px 28px rgba(10,173,10,.14)}
+.mcard2-media{background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mcard2-media img{width:100%;aspect-ratio:1200/630;object-fit:cover}
+.mcard2-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+.mcard2-body b{color:#001e2b;font-size:15.5px}
+.mcard2-specs{display:flex;gap:6px;flex-wrap:wrap}
+.mcard2-specs span{background:#f0f3f2;color:#5c6c75;font-size:11.5px;padding:2px 8px;border-radius:999px}
+.mcard2-link{color:#0aad0a;font-size:13px;font-weight:600;margin-top:auto}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:16px 0}
+.tool{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:16px;text-decoration:none;color:inherit;transition:.2s}
+.tool:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12);transform:translateY(-2px)}
+.tool svg{width:38px;height:38px;flex:none;background:#0aad0a;border-radius:.6rem;padding:8px;box-sizing:border-box}
+.tool-body b{display:block;font-size:15px;color:#001e2b}
+.tool-body span{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}
+.brand-strip{display:flex;flex-wrap:wrap;gap:8px}
+.brand-strip a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-size:13.5px;text-decoration:none;color:var(--ink);transition:.15s}
+.brand-strip a:hover{border-color:#0aad0a;color:#0aad0a}
+.brand-strip a span{color:#0aad0a;font-weight:700;margin-left:4px}
+.see-all{font-size:13.5px;color:#0aad0a;font-weight:600;margin-left:8px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;border:1px solid var(--line);border-radius:.75rem;background:#fff}
 .tw table{min-width:520px;border:none}
 table{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff}
 td,th{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;white-space:nowrap}
 tr:last-child td{border-bottom:0}
-.kicker{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.hero{padding:58px 0 4px;max-width:860px}
-.hero h1{margin-top:0}
-.hero .ctas{margin-top:26px}
-.search{width:100%;max-width:560px;padding:14px 20px;border-radius:999px;border:1px solid var(--line);font-size:16px;background:#fff;margin:24px 0 8px;display:block}
-.search:focus{outline:none;border-color:transparent;box-shadow:0 0 0 3px rgba(0,113,227,.25)}
-.banner{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:13.5px;color:var(--muted);margin:14px 0}
-.faq{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:10px 0}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#0aad0a;margin-bottom:8px}
+.search{width:100%;max-width:560px;padding:14px 20px;border-radius:.5rem;border:1px solid var(--line);font-size:16px;background:#fff;margin:24px 0 8px;display:block}
+.search:focus{outline:none;border-color:transparent;box-shadow:0 0 0 3px rgba(10,173,10,.25)}
+.faq{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:16px 20px;margin:10px 0}
 .faq summary{cursor:pointer;font-weight:600}
 .faq p{margin-top:10px;font-size:14.5px}
 .newsdate{font-size:13px;color:var(--muted);font-weight:500}
-.newscard{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .15s,border-color .15s}
-.newscard:hover{transform:translateY(-3px);border-color:#d0d0d6}
+.newscard{background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:.2s}
+.newscard:hover{transform:translateY(-3px);border-color:#0aad0a;box-shadow:0 10px 28px rgba(10,173,10,.14)}
 .newscard img{width:100%;display:block;aspect-ratio:1200/630;object-fit:cover;background:#111}
 .newscard .inner{padding:18px 20px 20px}
-.newscard b{font-size:16px;letter-spacing:-.01em;display:block;line-height:1.35}
+.newscard b{font-size:16px;letter-spacing:-.01em;display:block;line-height:1.35;color:#001e2b}
 .newscard span{display:block;font-size:13.5px;color:var(--muted);margin-top:8px}
-.nmap{height:540px;border-radius:18px;overflow:hidden;border:1px solid var(--line);margin:16px 0;background:#e5e3df}
+.nmap{height:540px;border-radius:.75rem;overflow:hidden;border:1px solid var(--line);margin:16px 0;background:#e5e3df}
 .leaflet-container{font:inherit;background:#e5e3df}
 .src{font-size:12.5px;color:var(--muted);margin-top:10px}
 .src a{color:var(--muted);text-decoration:underline;word-break:break-all}
 .back{display:inline-block;margin:20px 0 0;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500}
-.back:hover{color:var(--ink)}
+.back:hover{color:#0aad0a}
 .cbtns{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
-.cbtn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:9px 18px;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,transform .15s}
-.cbtn:hover{background:#f0f0f3;transform:translateY(-1px)}
+.cbtn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:.5rem;padding:9px 18px;font-size:14px;font-weight:500;cursor:pointer;transition:.15s}
+.cbtn:hover{border-color:#0aad0a;color:#0aad0a;transform:translateY(-1px)}
 hr.sep{border:0;border-top:1px solid var(--line);margin:34px 0}
-footer{border-top:1px solid var(--line);margin-top:72px;padding:36px 0 64px;color:var(--muted);font-size:13px}
-footer .wrap{display:flex;flex-direction:column;gap:10px}
-footer a{color:var(--muted)}
+/* footer */
+footer{background:#f0f3f2;border-top:1px solid var(--line);margin-top:72px;padding:48px 0 32px;color:var(--muted);font-size:13.5px}
+footer .fcols{max-width:var(--max);margin:0 auto;padding:0 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:32px}
+footer h6{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#001e2b;margin:0 0 14px}
+footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+footer li a{color:var(--muted);text-decoration:none;font-size:13.5px}
+footer li a:hover{color:#0aad0a}
+footer .fbot{max-width:var(--max);margin:28px auto 0;padding:20px 22px 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+footer .fbot .fsoc{display:flex;gap:8px}
+footer .fbot .fsoc a{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;background:#fff}
+footer .fbot .fsoc a:hover{border-color:#0aad0a;color:#0aad0a}
+footer .fdesc{max-width:var(--max);margin:0 auto;padding:0 22px 26px}
+footer .fdesc p{max-width:none;font-size:13px;color:var(--muted);margin:0 0 6px;line-height:1.6}
+footer .fdesc a{color:var(--muted)}
 @media(max-width:720px){
-.hwrap{gap:8px;padding:0 12px;height:48px}
-.brand{font-size:15px;flex:0 0 auto}
-.brand span{display:none}
-nav{margin-left:0;flex:1 1 auto;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;justify-content:flex-start}
-nav::-webkit-scrollbar{display:none}
-nav a{padding:8px 11px;font-size:12.5px;white-space:nowrap;flex:0 0 auto}
 main{padding:4px 16px 16px}
 h1{margin-top:28px}
-.hero{padding:36px 0 4px}
-.grid,.grid2{grid-template-columns:1fr}
-.card{padding:18px}
-.crumbs{font-size:12px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-.crumbs::-webkit-scrollbar{display:none}
-.crumbs a{white-space:nowrap}}
-main{padding:4px 16px 16px}
-h1{margin-top:28px}
-.hero{padding:36px 0 4px}
-.grid,.grid2{grid-template-columns:1fr}
-.card{padding:18px}
+.grid,.grid2,.tgrid{grid-template-columns:1fr}
+.lcard{padding:18px}
+footer .fcols{grid-template-columns:1fr 1fr;gap:22px}
+footer .fbot{flex-direction:column;align-items:flex-start}
 }
 .stlist{margin:8px 0 24px}
 .strow{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
 .strow b{font-size:15px;color:var(--ink)}
 .staddr{color:var(--muted);font-size:14px}
 .sttag{color:var(--muted);font-size:13px;background:rgba(0,0,0,.04);border-radius:6px;padding:1px 7px}
-.stlink{margin-left:auto;font-size:14px;color:var(--lime);text-decoration:none;white-space:nowrap}/* --- каталог --- */
+.stlink{margin-left:auto;font-size:14px;color:var(--lime);text-decoration:none;white-space:nowrap}
+/* ==== catalog cards ==== */
 .sku-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin:14px 0}
-.sku-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05)}
+.sku-card{background:var(--card);border:1px solid var(--line);border-radius:.75rem;padding:18px;box-shadow:0 1px 2px rgba(0,30,43,.04)}
 .sku-top{display:flex;gap:10px;align-items:flex-start}
 .sku-emoji{font-size:26px;line-height:1}
 .sku-name{font-weight:700;font-size:15.5px;line-height:1.3}
@@ -221,36 +270,48 @@ h1{margin-top:28px}
 .sku-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .sku-actions .btn{font-size:14px;padding:9px 14px}
 .sku-add{cursor:pointer;user-select:none}
-#order-form input,#order-form textarea{width:100%;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:9px;font-size:14.5px;font-family:inherit;background:#fff}
+#order-form input,#order-form textarea{width:100%;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:.5rem;font-size:14.5px;font-family:inherit;background:#fff}
 #order-form button{width:100%;margin-top:6px}
 @media(max-width:640px){.sku-grid{grid-template-columns:1fr}}
-/* --- shop v2 --- */
-.shop-hero{padding:22px 0 2px}
+.shop-hero{padding:26px 0 2px}
 .shop-filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
-.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:13.5px;cursor:pointer;user-select:none;white-space:nowrap}
-.chip.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
-.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:14px 0 10px}
-.pc-card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:transform .15s ease, box-shadow .15s ease}
-.pc-card:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}
-.pc-media{background:linear-gradient(135deg,#f2f2f4,#e8e8ec);display:flex;align-items:center;justify-content:center;height:96px;font-size:44px;position:relative;text-decoration:none}
-.pc-emoji{filter:saturate(1.1)}
-.pc-tag{position:absolute;top:10px;left:10px;background:rgba(29,29,31,.85);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px}
-.pc-tag.pc-need{background:#0a7d33}
-.pc-hit{position:absolute;top:10px;right:10px;background:var(--lime);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px;font-weight:700}
-.pc-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
-.pc-name{font-weight:700;font-size:15px;line-height:1.35;text-decoration:none}
-.pc-specs{list-style:none;margin:8px 0 0;padding:0}
+.chip{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13.5px;cursor:pointer;user-select:none;white-space:nowrap;font-weight:500;color:var(--ink);transition:.15s}
+.chip:hover{border-color:#0aad0a;color:#0aad0a}
+.chip.on{background:#0aad0a;color:#fff;border-color:#0aad0a;font-weight:600}
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin:18px 0 10px}
+.pc-card{background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;display:flex;flex-direction:column;transition:.2s;position:relative}
+.pc-card:hover{transform:translateY(-3px);border-color:#0aad0a;box-shadow:0 12px 32px rgba(10,173,10,.14)}
+.pc-media{background:#fff;display:flex;align-items:center;justify-content:center;position:relative;text-decoration:none;overflow:hidden}
+.pc-media img{width:100%;aspect-ratio:1/1;object-fit:contain;padding:18px;transition:transform .25s}
+.pc-card:hover .pc-media img{transform:scale(1.05)}
+.pc-tag{position:absolute;top:10px;left:10px;background:rgba(33,49,60,.9);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px;font-weight:600}
+.pc-tag.pc-need{background:#0aad0a}
+.pc-hit{position:absolute;top:10px;right:10px;background:#0aad0a;color:#fff;font-size:11px;padding:3px 9px;border-radius:999px;font-weight:700;letter-spacing:.02em}
+.pc-bundle .pc-media{background:#f0fff0}
+.pc-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1;gap:4px}
+.pc-cat{font-size:11.5px;color:#5c6c75;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.pc-name{font-weight:700;font-size:14.5px;line-height:1.35;text-decoration:none;color:#001e2b;display:block}
+.pc-specs{list-style:none;margin:6px 0 0;padding:0}
 .pc-specs li{font-size:12.5px;color:var(--muted);line-height:1.55;display:flex;gap:6px}
-.pc-specs li::before{content:"•";color:var(--lime)}
+.pc-specs li::before{content:"•";color:#0aad0a}
+.pc-spec-line{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+.pc-spec-line span{display:block}
 .pc-bottom{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.pc-price{font-weight:800;font-size:16.5px}
+.pc-price{font-weight:800;font-size:16.5px;color:#001e2b}
+.pc-was{color:#5c6c75;font-weight:500;font-size:13px;margin-left:6px}
 .pc-act{display:flex;align-items:center;gap:10px}
-.pc-link{font-size:12.5px;color:var(--lime);text-decoration:none}
-.pc-btn{padding:8px 14px;border-radius:10px;background:#1d1d1f;color:#fff;font-size:13px;cursor:pointer;user-select:none;border:0}
-.pc-btn:hover{background:#000}
-.pc-cartbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);z-index:60;display:none}
+.pc-link{font-size:12.5px;color:#0aad0a;text-decoration:none;font-weight:600}
+.pc-link:hover{text-decoration:underline}
+.pc-btn{padding:9px 16px;border-radius:.5rem;background:#0aad0a;color:#fff;font-size:13px;cursor:pointer;user-select:none;border:0;font-weight:600;transition:.15s}
+.pc-btn:hover{background:#0d7e0f}
+.pc-seller{font-size:11.5px;color:#5c6c75;margin-top:6px}
+.pc-model-banner{background:#e8ffe6;border:1px solid #b5f0a4;color:#0d7e0f;border-radius:.75rem;padding:12px 16px;font-size:14.5px;font-weight:600;margin:16px 0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc-model-banner button{border:0;background:rgba(10,173,10,.12);border-radius:6px;padding:2px 10px;cursor:pointer;color:#0d7e0f;font-size:14px}
+.pc-toolbar{display:flex;align-items:center;gap:14px;margin:8px 0 4px;font-size:13.5px;color:var(--muted);flex-wrap:wrap}
+.pc-sort{font-size:13.5px;color:var(--muted)}
+.pc-cartbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,30,43,.1);z-index:60;display:none}
 .pc-cartbar .wrap{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.pc-cartbar .pc-total{font-weight:800}
+.pc-cartbar .pc-total{font-weight:800;color:#001e2b}
 .pc-cartbar .pc-go{margin-left:auto}
 .p-hero{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:6px 0 2px}
 .faq-q{border-top:1px dashed var(--line);padding:10px 0}
@@ -260,31 +321,55 @@ h1{margin-top:28px}
 .of-grid .full{grid-column:1/-1}
 .of-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px;flex-wrap:wrap}
 .of-qty{display:flex;align-items:center;gap:8px;margin-left:auto}
-.of-qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;line-height:1}
+.of-qty button{width:26px;height:26px;border-radius:.5rem;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;line-height:1}
 .of-qty span{min-width:20px;text-align:center;font-weight:700}
-.of-total{font-weight:800;font-size:15.5px;text-align:right;margin-top:10px}
-.of-ok{background:#eef8ee;border:1px solid #bfe3bf;border-radius:12px;padding:12px 14px;color:#1d6b1d;font-size:14px;margin-top:10px}
-#order-form input,#order-form textarea{width:100%;padding:11px 13px;margin:6px 0;border:1px solid var(--line);border-radius:11px;font-size:15px;font-family:inherit;background:#fff}
+.of-total{font-weight:800;font-size:15.5px;text-align:right;margin-top:10px;color:#001e2b}
+.of-ok{background:#f0fff0;border:1px solid #b5f0a4;border-radius:.75rem;padding:12px 14px;color:#0d7e0f;font-size:14px;margin-top:10px}
+#order-form input,#order-form textarea{width:100%;padding:11px 13px;margin:6px 0;border:1px solid var(--line);border-radius:.5rem;font-size:15px;font-family:inherit;background:#fff}
 #order-form button{width:100%;margin-top:8px}
 .of-send{padding:13px !important;font-size:15.5px !important}
 @media(max-width:640px){.of-grid{grid-template-columns:1fr}}
+/* ---- product page (pz) ---- */
+.pz-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin:22px 0 8px;align-items:start}
+.pz-gallery{background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:320px}
+.pz-gallery img{width:100%;max-width:480px;object-fit:contain;padding:24px}
+.pz-buy{display:flex;flex-direction:column;gap:10px}
+.pz-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pz-badges .pc-hit{position:static}
+.fbadge{background:#f0f3f2;color:#5c6c75;font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500}
+.pz-buy h1{margin:6px 0 4px}
+.pz-price{font-weight:800;font-size:32px;color:#0aad0a;letter-spacing:-.02em}
+.pz-ctas{margin:8px 0 0}
+.pz-btn{font-size:16px;padding:14px 28px}
+.pz-delivery{font-size:13.5px;color:var(--muted);line-height:1.5}
+.pz-perks{display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;background:#fff}
+.pz-perks span{font-size:13.5px;color:var(--ink)}
+.pz-perks span::before{content:"✓";color:#0aad0a;font-weight:700;margin-right:8px}
+.pz-ask{font-size:13.5px;color:#0aad0a;text-decoration:none;font-weight:600}
+.pz-sec{margin:26px 0}
+.spec-table td:first-child{color:#5c6c75;width:38%;font-size:13.5px}
+.pz-fits{display:flex;flex-wrap:wrap;gap:8px}
+.fchip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;text-decoration:none;color:var(--ink)}
+.fchip:hover{border-color:#0aad0a;color:#0aad0a}
+.fsec{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:860px){.pz-hero{grid-template-columns:1fr}}
 /* --- article v3 --- */
 .art-progress{position:fixed;top:0;left:0;height:3px;width:100%;z-index:90;pointer-events:none}
 .art-progress i{display:block;height:100%;width:0;background:var(--lime);transition:width .1s linear}
 .art-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 8px;color:var(--muted);font-size:13.5px}
-.art-meta .kind{background:rgba(0,113,227,.1);color:var(--lime);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.art-meta .kind{background:rgba(10,173,10,.1);color:var(--lime);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
 .art-meta .dot{opacity:.5}
 .art-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 @media(min-width:1020px){.art-grid{grid-template-columns:216px minmax(0,1fr);gap:34px}}
 .art-toc{display:none}
-@media(min-width:1020px){.art-toc{display:block;position:sticky;top:78px;align-self:start;font-size:13.5px;max-height:calc(100vh - 100px);overflow:auto}}
+@media(min-width:1020px){.art-toc{display:block;position:sticky;top:96px;align-self:start;font-size:13.5px;max-height:calc(100vh - 120px);overflow:auto}}
 .art-toc .t{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 8px;font-weight:600}
 .art-toc ol{list-style:none;margin:0;padding:0}
-.art-toc a{display:block;padding:6px 10px;border-radius:9px;color:var(--muted);text-decoration:none;line-height:1.4}
-.art-toc a:hover{color:var(--ink);background:rgba(0,0,0,.04)}
-.art-toc a.on{color:var(--lime);font-weight:600;background:rgba(0,113,227,.08)}
+.art-toc a{display:block;padding:6px 10px;border-radius:.5rem;color:var(--muted);text-decoration:none;line-height:1.4}
+.art-toc a:hover{color:var(--ink);background:#f0f3f2}
+.art-toc a.on{color:var(--lime);font-weight:600;background:rgba(10,173,10,.08)}
 .toc-num{display:inline-block;width:20px;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.7}
-.art-tocmob{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:14px 0 2px;font-size:14.5px;max-width:680px}
+.art-tocmob{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:12px 16px;margin:14px 0 2px;font-size:14.5px;max-width:680px}
 @media(min-width:1020px){.art-tocmob{display:none}}
 .art-tocmob summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;justify-content:space-between}
 .art-tocmob summary::-webkit-details-marker{display:none}
@@ -294,65 +379,130 @@ h1{margin-top:28px}
 .art-tocmob a{color:var(--muted);text-decoration:none}
 .art-body{max-width:680px}
 .art-body p{margin:0 0 14px;line-height:1.66;font-size:16.5px}
-.art-body h2{font-size:clamp(21px,2.8vw,26px);margin:38px 0 12px;letter-spacing:-.015em;scroll-margin-top:76px}
+.art-body h2{font-size:clamp(21px,2.8vw,26px);margin:38px 0 12px;letter-spacing:-.015em;scroll-margin-top:90px}
 .art-body h3{font-size:17.5px;margin:26px 0 8px}
 .art-body ul,.art-body ol{margin:0 0 14px;padding-left:22px;line-height:1.62}
 .art-body li{margin:5px 0}
-.art-body a{color:var(--lime);text-decoration:underline;text-decoration-color:rgba(0,113,227,.35);text-underline-offset:2.5px}
+.art-body a{color:#0aad0a;text-decoration:underline;text-decoration-color:rgba(10,173,10,.35);text-underline-offset:2.5px}
 .art-body a:hover{text-decoration-color:var(--lime)}
 .art-body blockquote{border-left:3px solid var(--lime);padding:2px 0 2px 16px;color:var(--muted);font-size:15.5px;margin:16px 0}
 .art-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
 .art-body th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid var(--ink);padding:9px 10px}
 .art-body td{border-bottom:1px solid var(--line);padding:9px 10px}
 .art-body code{background:rgba(0,0,0,.05);border-radius:6px;padding:2px 6px;font-size:14px}
-.art-body img{max-width:100%;border-radius:14px}
-.art-body .pain-card,.art-body .card{max-width:680px}
+.art-body img{max-width:100%;border-radius:.75rem}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0;max-width:760px}
-.kv>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kv>div{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px}
 .kv .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.kv .v{font-weight:700;font-size:15px;margin-top:4px;line-height:1.4}
-.callout{border:1px solid rgba(0,113,227,.22);background:#F5F9FF;border-radius:14px;padding:13px 16px;margin:14px 0;font-size:14.5px;line-height:1.55;max-width:680px}
+.kv .v{font-weight:700;font-size:15px;margin-top:4px;line-height:1.4;color:#001e2b}
+.callout{border:1px solid rgba(10,173,10,.25);background:#f0fff0;border-radius:.75rem;padding:13px 16px;margin:14px 0;font-size:14.5px;line-height:1.55;max-width:680px}
 .callout.warn{border-color:rgba(255,159,10,.3);background:#FFF8EC}
 .callout.ok{border-color:rgba(10,125,51,.25);background:#F0F9EB}
 .callout b:first-child{display:block;margin-bottom:3px}
 .steps{list-style:none;padding:0;margin:16px 0;counter-reset:st}
-.steps li{position:relative;padding:14px 18px 14px 56px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 10px;counter-increment:st}
+.steps li{position:relative;padding:14px 18px 14px 56px;border:1px solid var(--line);border-radius:.75rem;background:#fff;margin:0 0 10px;counter-increment:st}
 .steps li::before{content:counter(st);position:absolute;left:14px;top:15px;width:28px;height:28px;border-radius:50%;background:var(--lime);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
 .steps b{display:block;margin-bottom:3px}
 .steps p{margin:0;font-size:14.5px;color:var(--muted)}
 .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:16px 0}
-.svc-card{display:flex;flex-direction:column;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
-.svc-card:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}
+.svc-card{display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:18px;text-decoration:none;color:var(--ink);transition:.2s}
+.svc-card:hover{transform:translateY(-2px);border-color:#0aad0a;box-shadow:0 10px 28px rgba(10,173,10,.14)}
 .svc-ico{font-size:26px;line-height:1}
 .svc-card h3{margin:0;font-size:16.5px}
 .svc-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
-.svc-card .go{margin-top:auto;padding-top:8px;color:var(--lime);font-size:13.5px;font-weight:600}
+.svc-card .go{margin-top:auto;padding-top:8px;color:#0aad0a;font-size:13.5px;font-weight:600}
 .art-share{display:flex;align-items:center;gap:10px;margin:28px 0 10px;padding:16px 0 4px;border-top:1px solid var(--line);flex-wrap:wrap}
 .art-share .lbl{font-size:13.5px;color:var(--muted)}
-.shbtn{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--card);cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s;flex:none}
-.shbtn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
-.shbtn svg{width:18px;height:18px;fill:#1d1d1f}
+.shbtn{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;transition:.2s;flex:none}
+.shbtn:hover{transform:translateY(-2px);border-color:#0aad0a;box-shadow:0 6px 16px rgba(10,173,10,.16)}
+.shbtn svg{width:18px;height:18px;fill:#21313c}
 .shbtn.vk svg{fill:#0077FF}
 .shbtn.tg svg{fill:#229ED9}
 .shbtn.wa svg{fill:#25D366}
-.shbtn.copy.ok{background:#0a7d33;border-color:#0a7d33}
+.shbtn.copy.ok{background:#0aad0a;border-color:#0aad0a}
 .shbtn.copy.ok svg{fill:#fff}
-
+.comments{margin:40px 0 10px;max-width:740px}
+.comments h2{font-size:22px}
+#comments .c-item{border:1px solid var(--line);border-radius:.75rem;padding:12px 16px;margin:10px 0;background:#fff}
+#comments .c-item b{color:#001e2b}
+#comments .c-date{color:#5c6c75;font-size:12px;margin-left:8px}
+#comments .c-item p{margin:6px 0 0;font-size:14.5px;max-width:none}
+#comments .c-empty{color:var(--muted);font-size:14px}
+#comments form{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;margin-top:14px}
+#comments input,#comments textarea{width:100%;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:.5rem;font-size:14.5px;font-family:inherit;background:#fff;box-sizing:border-box}
+#comments textarea{min-height:88px;resize:vertical}
+#comments button{width:auto;padding:11px 22px}
+#comments #c-note{font-size:13px;color:var(--muted);margin-top:8px;max-width:none}
+/* ==== FreshCart home blocks ==== */
+.fc-hero{background:linear-gradient(115deg,#0d3b12 0%,#0aad0a 70%,#37ea31 130%);border-radius:1rem;color:#fff;overflow:hidden}
+.fc-hero-in{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;padding:48px 44px;align-items:center}
+.fc-hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:700;letter-spacing:.02em}
+.fc-hero-side{display:flex;justify-content:flex-end}
+.fc-hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:.9rem;padding:18px 22px;backdrop-filter:blur(6px);display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fc-hero-kpi b{display:block;font-size:26px;font-weight:800;color:#fff;line-height:1.1}
+.fc-hero-kpi span{font-size:12px;color:rgba(255,255,255,.85)}
+@media(max-width:860px){.fc-hero-in{grid-template-columns:1fr;padding:32px 22px}.fc-hero-side{display:none}}
+.fc-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.fc-cat a{display:block;background:#fff;border:1px solid var(--line);border-radius:.75rem;transition:.2s;text-decoration:none}
+.fc-cat a:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.14);transform:translateY(-2px)}
+.fc-feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.fc-feat{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:16px 18px;transition:.2s}
+.fc-feat:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12);transform:translateY(-2px)}
+.fc-feat-ico{width:42px;height:42px;background:#0aad0a;border-radius:.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.fc-hits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.fc-hits .card-product{margin:0}
+.fc-minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.fc-mini{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;transition:.2s}
+.fc-mini:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12);transform:translateY(-2px)}
+/* misc utilities */
+.text-decoration-none a, a.text-decoration-none{text-decoration:none}
+.small{font-size:85%}
 """
 
-LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
+LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0aad0a"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
-NAV = [("/models/","Модели"),("/catalog/","Каталог"),("/blog/","Блог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
+NAV = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/forum/","Форум"),("/blog/","Блог"),("/news/","Новости"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/b2b/","Дилерам"),("/about.html","О проекте")]
 
 def header_html(active):
-    links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
-    return '<header><div class="hwrap"><a class="brand" href="/" title="Запас хода">'+LOGO_SVG+'<span>Запас хода</span></a><nav>'+links+'</nav></div></header>'
+    top_links = ('<a href="/catalog/">Каталог аксессуаров</a>'
+      '<a href="/b2b/">Оптовым дилерам</a>'
+      '<a href="'+TG_CHANNEL+'">Telegram</a>')
+    nav_links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
+    off_links = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in NAV)
+    return ('<header id="zs-header">'
+      '<div class="zs-topbar"><div class="container"><div>Запас хода — практика владения электромобилем в России: 137 моделей EV</div>'
+      '<div style="display:flex;gap:16px;flex-wrap:wrap">'+top_links+'</div></div></div>'
+      '<div class="zs-nav"><div class="container">'
+      '<a class="zs-brand" href="/" title="Запас хода">'+LOGO_SVG+'Запас хода <span>EV</span></a>'
+      '<form class="zs-search" action="/search.html" method="get" role="search">'
+      '<input type="search" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
+      '<button type="submit" aria-label="Найти"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
+      '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">Подбор за 30 сек</a>'
+      '<button class="zs-burger" type="button" data-open-menu aria-label="Меню"><span></span><span></span><span></span></button></div>'
+      '</div></div>'
+      '<nav class="zs-links" aria-label="Основные разделы"><div class="container">'+nav_links+'</div></nav>'
+      '<div class="zs-off" id="zs-off" aria-hidden="true">'
+      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu aria-label="Закрыть">✕</button></div>'
+      '<ul>'+off_links+'</ul>'
+      '<div class="off-foot">Справочник EV · зарядка без лишних сложностей</div></div>'
+      '<div class="zs-mask" id="zs-mask" data-close-menu></div></header>')
 
-FOOTER = ('<footer><div class="wrap"><div>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. '
- '137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. '
- 'При поломке высоковольтной системы обращайтесь в специализированный сервис.</div>'
- '<div>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL), запросы через Overpass API.</div>'
- '<div><a href="/quiz/">Подбор</a> · <a href="/b2b/">Дилерам</a> · <a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
+def _fcol(title, items):
+    lis = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in items)
+    return '<div><h6>'+title+'</h6><ul>'+lis+'</ul></div>'
+
+FOOTER = ('<footer>'
+ '<div class="fcols">'
+ + _fcol('Каталог', [('/catalog/','Каталог аксессуаров'),('/catalog/','Адаптеры'),('/catalog/','Кабели и удлинители'),('/catalog/','Зарядки и станции'),('/quiz/','Подбор за 30 секунд'),('/b2b/','Дилерам')])
+ + _fcol('Справочник', [('/models/','137 моделей EV'),('/vin/','VIN-проверка'),('/charging/','Карта зарядных станций'),('/pains.html','Проблемы и решения'),('/forum/','Форум сообщества')])
+ + _fcol('Материалы', [('/blog/','Блог и гайды'),('/news/','Новости EV'),('/services/','Услуги'),('/ev-services.html','Автосервисы'),('/about.html','О проекте')])
+ + _fcol('Контакты', [('https://t.me/zapashoda_ev','Telegram-канал'),('https://t.me/zapashoda_ev_bot/app','Мини-приложение'),('/feed.xml','RSS-лента'),('/llms.txt','llms.txt')])
+ + '</div>'
+ '<div class="fdesc"><p>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. 137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. При поломке высоковольтной системы обращайтесь в специализированный сервис.</p>'
+ '<p>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> (ODbL), запросы через Overpass API.</p></div>'
+ '<div class="fbot"><div>© Запас хода, 2026. Справочник по зарядке электромобилей в России.</div>'
+ '<div class="fsoc"><a href="https://t.me/zapashoda_ev" rel="noopener" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 15.9 8.9 20a.6.6 0 0 0 .96.51l2.3-1.98 3.94 2.9c.52.29 1.12-.02 1.23-.62l2.66-13.4c.14-.72-.5-1.3-1.17-1.03L3.4 10.2c-.68.26-.67 1.2.01 1.45l4.13 1.38.05.02 9.83-5.62c.28-.16.55.2.3.41z"/></svg></a></div></div>'
+ '</footer>')
 
 SHARE_JS = '''<script>
 try{var p=location.pathname;if(p.endsWith("/index.html")){var q=location.search+location.hash;history.replaceState(null,"",p.slice(0,-10)+q);}}catch(e){}
@@ -500,9 +650,12 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
+     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+     '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">'
+     '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + (BUILD_DATE or '1') + '">'
      '<link rel="stylesheet" href="/style.css?v=' + (BUILD_DATE or '1') + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + catalog.ORDER_JS + '</body></html>')
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '</body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
@@ -617,13 +770,13 @@ for _i in range(0, len(VIN_YEAR), 3):
     _vin_rows += '<tr>'+_cells+'</tr>'
 VIN_STRUCT += _vin_rows + '</table></div>'
 VIN_STRUCT += '<p class="note">Буквы I, O, Q, U, Z и цифра 0 в коде года не используются — чтобы не путать с 0, 1, 2 и V.</p>'
-VIN_STRUCT += '<h2>Где искать VIN на электромобиле</h2><div class="card">'
+VIN_STRUCT += '<h2>Где искать VIN на электромобиле</h2><div class="lcard">'
 VIN_STRUCT += '<p>У EV табличка с VIN обычно в тех же местах, что и у обычных машин:</p>'
 VIN_STRUCT += '<p>• в нижнем углу <b>лобового стекла</b> со стороны водителя (виден снаружи);</p>'
 VIN_STRUCT += '<p>• на <b>шильдике в проёме водительской двери</b> (B-стойка);</p>'
 VIN_STRUCT += '<p>• в <b>документах</b>: ПТС, СТС, ЭПТС, договор купли-продажи, СБКТС.</p>'
 VIN_STRUCT += '<p>У части китайских EV продублирован на наклейке в проёме лючка зарядки — удобно сверять при подключении адаптера.</p></div>'
-VIN_STRUCT += '<h2>Проверка VIN перед покупкой (особенно параллельный импорт)</h2><div class="card">'
+VIN_STRUCT += '<h2>Проверка VIN перед покупкой (особенно параллельный импорт)</h2><div class="lcard">'
 VIN_STRUCT += '<p><b>1. Сверьте VIN во всех местах.</b> VIN на кузове, на табличке и в документах должен совпадать посимвольно. Перебитый VIN — главная красная флаговая история.</p>'
 VIN_STRUCT += '<p><b>2. Проверка истории по VIN.</b> Основной бесплатный сервис — <a href="https://гибдд.рф/check/auto">сайт ГИБДД</a> (история регистраций, ДТП, розыск, ограничения). Сервис ГИБДД периодически бывает недоступен — тогда используйте альтернативы:</p>'
 VIN_STRUCT += '<p>— <a href="https://reestr-zalogov.ru/search">Реестр залогов ФНП</a> — бесплатно: машина в залоге или нет;</p>'
@@ -643,12 +796,12 @@ def vin_brand_page(brand, outdir):
     parts.append('<a class="back" href="/vin/">← Все бренды VIN-справочника</a>')
     parts.append('<h1>VIN ' + html.escape(brand) + ': где табличка, код года и проверка истории</h1>')
     parts.append('<p class="lede">Код производителя, позиция модельного года и места расположения таблички у ' + html.escape(brand) + ', ввезённых в Россию.</p>')
-    parts.append('<div class="card"><h3>Страна сборки и код завода</h3><p><span class="tag lime">' + html.escape(country) + '</span></p><p>' + html.escape(note) + '</p>')
+    parts.append('<div class="lcard"><h3>Страна сборки и код завода</h3><p><span class="tag lime">' + html.escape(country) + '</span></p><p>' + html.escape(note) + '</p>')
     parts.append('<p class="note">Первый символ VIN соответствует региону производства: L — Китай, J — Япония, K — Корея, W — Германия, X — Россия/СНГ.</p></div>')
     parts.append(VIN_STRUCT)
     if cards:
         parts.append('<h2>Модели ' + html.escape(brand) + ' в нашей базе</h2><div class="grid2">' + cards + '</div>')
-    parts.append('<h2>Что проверить по VIN ' + html.escape(brand) + ' перед покупкой</h2><div class="card">')
+    parts.append('<h2>Что проверить по VIN ' + html.escape(brand) + ' перед покупкой</h2><div class="lcard">')
     parts.append('<p>Машины ' + html.escape(brand) + ' в РФ чаще всего ввезены по параллельному импорту или из Кореи — значит, ключевые проверки: совпадение VIN на кузове и в ЭПТС, наличие СБКТС, история ДТП по базе ГИБДД, код модельного года на 10-й позиции.</p>')
     parts.append('<p>Проверить историю: <a href="https://гибдд.рф/check/auto">сервис ГИБДД по VIN</a> (бесплатно, иногда недоступен) или <a href="https://reestr-zalogov.ru/search">реестр залогов ФНП</a>, <a href="https://autoteka.ru/">Автотека</a>. Расшифровку комплектации — у дилера марки.</p></div>')
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
@@ -863,7 +1016,7 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
     has_min = bool(obc_n) and bool(dcp_n) and ('мин' in (dcp_s or ''))
     dc_kw = (dcp_n if (dcp_n and dcp_n >= 40 and not has_min) else 0)
     html_out = ('<h2>Калькулятор зарядки для вашей машины</h2>'
-      '<div class="card" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
+      '<div class="lcard" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
       '<p class="note">Подставьте ёмкость своей батареи и тариф — расчёт обновится на ходу. Мощности — пределы именно этой модели.</p>'
       '<div class="of-grid">'
       '<label>Батарея, кВт·ч <input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1"></label>'
@@ -900,7 +1053,7 @@ def model_page(m, outdir):
     pname = m['brand'] + ' ' + m['model']
     sl = 'models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html'
     pain_html = ''.join(
-        '<div class="card"><span class="pain-id">' + i + '</span><h3>' + html.escape(PAINS[i]["pain"]) + '</h3>'
+        '<div class="lcard"><span class="pain-id">' + i + '</span><h3>' + html.escape(PAINS[i]["pain"]) + '</h3>'
         '<p class="note">Кому актуально: ' + html.escape(PAINS[i]["who"]) + '</p>'
         '<div class="sol"><b>Решение:</b> ' + html.escape(PAINS[i]["sol"]) + '</div>'
         '<p class="src">' + src_html(PAINS[i]) + '</p></div>' for i in ids)
@@ -957,7 +1110,7 @@ def model_page(m, outdir):
     srcrow = ('<p class="src">Источник спецификации: <a href="' + m["src"] + '">' + re.sub(r"^https?://(www\\.)?","",str(m["src"])) + '</a></p>') if m.get('src') and str(m['src']).startswith('http') else ''
     vin_link = ''
     if m['brand'].strip() in VIN_BRANDS:
-        vin_link = ('<div class="card"><h3>VIN и история машины</h3><p>Владеете или выбираете с пробегом? Смотрите страницу '
+        vin_link = ('<div class="lcard"><h3>VIN и история машины</h3><p>Владеете или выбираете с пробегом? Смотрите страницу '
           '<a href="/vin/'+slug(m['brand'])+'.html">VIN ' + html.escape(m['brand']) + '</a>: где табличка, код модельного года на 10-й позиции, '
           'бесплатная проверка ГИБДД и что проверить в ЭПТС/СБКТС у параллельного импорта.</p></div>')
     faq = ('<details class="faq"><summary>Каким разъёмом заряжается ' + html.escape(pname) + '?</summary>'
@@ -999,20 +1152,20 @@ def model_page(m, outdir):
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<h2>Документы и материалы</h2><div class="card docs"><ul>' + docs_links + '</ul>'
+        docs_block = ('<h2>Документы и материалы</h2><div class="lcard docs"><ul>' + docs_links + '</ul>'
           '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
           + site_html + '</div>')
     else:
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт производителя: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<h2>Документы и материалы</h2><div class="card docs">'
+        docs_block = ('<h2>Документы и материалы</h2><div class="lcard docs">'
           '<p class="note">Официальное руководство по эксплуатации хранится у дилера и на сайте марки; у параллельного импорта просите сканы у продавца или в клубных чатах.</p>'
           '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div>')
 
     parts.append(vin_link)
     parts.append(docs_block)
     if sol_block:
-        parts.append('<div class="card"><h3>Что понадобится для зарядки</h3><p>' + sol_block + '</p></div>')
+        parts.append('<div class="lcard"><h3>Что понадобится для зарядки</h3><p>' + sol_block + '</p></div>')
     cat_block = catalog.catalog_block_for(m, pname)
     if cat_block: parts.append(cat_block)
     if note:
@@ -1201,7 +1354,7 @@ document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click
      '<h2>Станции в выбранном городе</h2>'
      '<div id="stlist" class="stlist"><p class="note">Выберите город, чтобы увидеть список с адресами.</p></div>'
      '<h2>Как пользоваться картой</h2>'
-     '<div class="card"><p>Каждая точка — зарядная станция. Клик по метке покажет название, адрес (если есть в базе) и разъёмы. '
+     '<div class="lcard"><p>Каждая точка — зарядная станция. Клик по метке покажет название, адрес (если есть в базе) и разъёмы. '
      'Покрытие в мегаполисах хорошее, в малых городах — частичное; станцию можно добавить в OSM за пару минут.</p></div>'
      '<p class="note">База данных © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). Картографическая основа © Яндекс. База обновляется автоматически.</p>'
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/pains.html">Проблемы и решения</a></div>'
@@ -1320,8 +1473,14 @@ def og_gen(outdir, jobs):
 # ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
 
 def home_page(outdir, news=None):
-    feat_slugs = {'phev-rossiya-2026','rukovodstva-na-russkom','zeekr-001-razyom-i-problemy'}
-    blog_cards = ''.join('<a class="mcard" href="/blog/'+sl+'.html"><b>'+html.escape(t)+'</b><span>'+html.escape(d)+'</span></a>' for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
+    blog_cards = ''.join(
+        ('<div class="card-product fc-w60"><div class="flex flex-col gap-3 p-4">'
+         '<a class="text-decoration-none text-gray-500" href="/blog/"><small>Блог</small></a>'
+         '<h3 class="text-base font-semibold"><a href="/blog/'+sl+'.html" style="color:#001e2b;text-decoration:none">'+html.escape(t)+'</a></h3>'
+         '<p class="text-gray-600 text-sm" style="margin:0">'+html.escape(d)+'</p>'
+         '<a class="text-green-600 font-semibold text-sm" href="/blog/'+sl+'.html" style="text-decoration:none">Читать гайд →</a>'
+         '</div></div>') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
     news_cards = ''
     if news:
         try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
@@ -1329,34 +1488,37 @@ def home_page(outdir, news=None):
         for it in ns:
             tt = html.escape(str(it.get('title',''))[:120])
             dd = html.escape(str(it.get('teaser',''))[:150])
-            news_cards += '<a class="mcard" href="'+news_slug_page(it)+'"><b>'+tt+'</b><span>'+dd+'</span></a>'
-    news_extra = '<a class="mcard" href="/news/"><b>Все новости →</b><span>Лента рынка электромобилей — обновляется несколько раз в день</span></a>'
-    art_cards = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+html.escape(title)+'</b><span>'+html.escape(desc)+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
+            news_cards += ('<div class="card-product fc-w30"><div class="flex flex-col gap-3 p-4">'
+              '<a class="text-decoration-none text-gray-500" href="/news/"><small>Новости</small></a>'
+              '<h3 class="text-base font-semibold"><a href="'+news_slug_page(it)+'" style="color:#001e2b;text-decoration:none">'+tt+'</a></h3>'
+              '<p class="text-gray-600 text-sm" style="margin:0">'+dd+'</p></div></div>')
+    CAT_ICONS = {
+      'Адаптеры': '<path d="M7 12h6a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H9" /><path d="M13 12H7a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4h2" /><path d="M7 8h10" /><path d="M9 4v4" /><path d="M9 16v4" /><path d="M15 4v2" /><path d="M15 14v2" /><path d="M9 4h6v4" />',
+      'Кабели': '<path d="M9 4v8a3 3 0 0 0 3 3h6" /><path d="M9 4h-4v8h4z" /><path d="M18 19l2-2-2-2" /><path d="M20 17h-2" /><path d="M4 4h5v8H4z" />',
+      'Зарядки': '<path d="M12 3l-6 8h4l-2 9 8-11h-4l0-6" /><path d="M12 3l-2 0 2 6" />',
+      'Станции': '<rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 7h6v5a3 3 0 0 1-3 3v0a3 3 0 0 1-3-3z" /><path d="M12 15v4" />',
+      'V2L': '<path d="M8 8a4 4 0 1 1 8 0c0 2-1 3-2 4v2a2 2 0 0 1-4 0v-2c-1-1-2-2-2-4" /><path d="M10 18h4" />',
+      'Аксессуары': '<path d="M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /><path d="M8 8V6a4 4 0 0 1 8 0v2" />',
+    }
+    def cat_card(c):
+        ic = CAT_ICONS.get(c, CAT_ICONS['Аксессуары'])
+        return ('<div class="fc-cat"><a href="/catalog/"><div class="py-8 text-center">'
+          '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;color:#0aad0a">'+ic+'</svg>'
+          '<div class="text-base" style="color:#001e2b;font-weight:600">'+c+'</div></div></a></div>')
+    cats_html = ''.join(cat_card(c) for c in ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары'])
+    hits = catalog.shop_card_html(catalog.PIDX[1]) + catalog.shop_card_html(catalog.PIDX[5]) + catalog.shop_card_html(catalog.PIDX[19]) + catalog.shop_card_html(catalog.PIDX[23])
 
-    # --- плитки-инструменты (в стиле GCC main-grid) ---
-    def tool(href, title, sub, icon):
-        return ('<a class="tool" href="'+href+'">'+icon+'<span class="tool-body"><b>'+title+'</b><span>'+sub+'</span></span></a>')
-    ICONS = {
-      'cat': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 7V4h8v3" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 12h8M8 16h5" stroke="#fff" stroke-width="1.8"/></svg>',
-      'quiz': '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="16.6" r="1.1" fill="#fff"/></svg>',
-      'map': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="11" r="2.2" fill="none" stroke="#fff" stroke-width="1.8"/></svg>',
-      'vin': '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M15.8 15.8 21 21" stroke="#fff" stroke-width="1.8"/></svg>',
-      'models': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l2-5h14l2 5" fill="none" stroke="#fff" stroke-width="1.8"/><rect x="3" y="13" width="18" height="4" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="7.5" cy="17.5" r="1.4" fill="#fff"/><circle cx="16.5" cy="17.5" r="1.4" fill="#fff"/></svg>',
-      'forum': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 9h8M8 12h5" stroke="#fff" stroke-width="1.8"/></svg>',
-      'blog': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 10h8M8 14h8M8 7h4" stroke="#fff" stroke-width="1.8"/></svg>',
-      'b2b': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" fill="none" stroke="#fff" stroke-width="1.8"/><rect x="9" y="13" width="6" height="7" fill="none" stroke="#fff" stroke-width="1.8"/></svg>'}
-    tools = ('<div class="tools-grid">'
-      + tool('/catalog/','Каталог аксессуаров','26 позиций: адаптеры, кабели, зарядки, станции. Заявка за минуту, оплата при получении.',ICONS['cat'])
-      + tool('/quiz/','Подбор за 30 секунд','Марка и модель — покажем, какие аксессуары нужны вашей машине.',ICONS['quiz'])
-      + tool('/charging/','Карта станций','Все зарядные станции России на карте: Type 2, CCS2, GB/T.',ICONS['map'])
-      + tool('/vin/','VIN-проверка','Марка, рынок поставки и разъёмы по VIN-номеру.',ICONS['vin'])
-      + tool('/models/','Все модели','137 моделей в РФ: разъёмы, OBC, мощность зарядки.',ICONS['models'])
-      + tool('/forum/','Форум сообщества','Задай вопрос о зарядке — отвечает редакция и владельцы.',ICONS['forum'])
-      + tool('/blog/','Блог и гайды','Гиды по зиме, PHEV, руководства на русском.',ICONS['blog'])
-      + tool('/b2b/','Дилерам','Прайс, оптовые условия и поставки комплектов.',ICONS['b2b'])
+    def ftr(href, title, sub, icon):
+        return ('<div class="fc-feat"><a href="'+href+'" style="text-decoration:none;color:inherit">'
+          '<div class="fc-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icon+'</svg></div>'
+          '<div><b style="color:#001e2b">'+title+'</b><p style="margin:4px 0 0;font-size:13.5px;color:#5c6c75;line-height:1.45">'+sub+'</p></div></a></div>')
+    feats = ('<div class="fc-feats">'
+      + ftr('/quiz/','Подбор за 30 секунд','Марка и модель — покажем, какие аксессуары нужны вашей машине.','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="16.6" r="1.1"/>')
+      + ftr('/charging/','Карта станций','Все зарядные станции России на карте: Type 2, CCS2, GB/T.','<path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z"/><circle cx="12" cy="11" r="2.2"/>')
+      + ftr('/vin/','VIN-проверка','Марка, рынок поставки и разъёмы по VIN-номеру.','<circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 21 21"/>')
+      + ftr('/forum/','Форум сообщества','Задай вопрос о зарядке — отвечает редакция и владельцы.','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>')
       + '</div>')
 
-    # --- трендовые модели (крупные карточки с обложками) ---
     pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Xiaomi SU7','BYD Song Plus EV','Tesla Model 3']
     pop_cards = ''
     for pn in pop_names:
@@ -1368,7 +1530,6 @@ def home_page(outdir, news=None):
         if m.get('years'): specs.append(html.escape(str(m['years'])))
         if m.get('type'): specs.append(html.escape(str(m['type'])))
         if m.get('ac'): specs.append('AC: '+html.escape(str(m['ac'])))
-        if m.get('dc'): specs.append('DC: '+html.escape(str(m['dc'])))
         spec_html = ''.join('<span>'+s+'</span>' for s in specs[:3])
         pop_cards += ('<a class="mcard2" href="/models/'+sl+'.html">'
           '<div class="mcard2-media"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" loading="lazy"></div>'
@@ -1376,27 +1537,42 @@ def home_page(outdir, news=None):
           '<div class="mcard2-specs">'+spec_html+'</div>'
           '<span class="mcard2-link">Разъёмы и аксессуары →</span></div></a>')
 
-    # --- брендовый ряд ---
+    art_cards = ''.join('<div class="fc-mini"><a href="/pain/'+sl+'.html" style="text-decoration:none;color:inherit"><b style="color:#001e2b">'+html.escape(title)+'</b><p style="margin:6px 0 0;font-size:13px;color:#5c6c75;line-height:1.45">'+html.escape(desc)+'</p></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
+
     bcounts = {}
     for m in MODELS:
         b = m['brand'].strip()
         bcounts[b] = bcounts.get(b, 0) + 1
     brand_html = ''.join('<a href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+' <span>'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
 
-    body = ('<div class="hero"><div class="kicker">Справочник EV</div>'
-     '<h1>' + html.escape(CFG_HERO_TITLE or 'Как зарядить и чем лечить ваш электромобиль') + '</h1>'
-     '<p class="lede">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения для 137 моделей, ввезённых в Россию в 2019–2026: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO.') + '</p>'
-     '<div class="ctas"><a class="btn lime" href="/quiz/">Подбор за 30 секунд</a><a class="btn ghost" href="/catalog/">Каталог аксессуаров</a></div></div>'
-     '<input class="search" id="q" placeholder="Начните вводить марку или модель: Zeekr, BYD, Leaf…">'
-     '<h2>Инструменты</h2>' + tools
-     + '<h2 id="models-list">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2><p class="note">Самые массовые электромобили в РФ: разъёмы, OBC и подбор аксессуаров.</p><div class="tgrid">' + pop_cards + '</div>'
-     + '<h2>Бренды</h2><div class="brand-strip">' + brand_html + '</div>'
-     + '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
-     + '<h2>Гайды в блоге</h2><div class="grid">' + blog_cards + '</div>'
-     + '<h2>Свежие новости EV</h2><div class="grid">' + (news_cards + news_extra) + '</div>'
-     + '<div class="cta"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
-     + '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
-       'document.querySelectorAll(".grid .mcard, .tgrid .mcard2, .tools-grid .tool").forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?"":"none"});});</script>')
+    body = ('<section class="fc-hero" style="margin-top:18px"><div class="fc-hero-in">'
+      '<div class="fc-hero-txt"><span class="fc-hero-badge">Справочник EV · 137 моделей в России</span>'
+      '<h1 style="color:#fff;margin:14px 0 12px;font-size:clamp(30px,4.6vw,46px);letter-spacing:-.03em;line-height:1.1;font-weight:800">' + html.escape(CFG_HERO_TITLE or 'Как зарядить ваш электромобиль в России') + '</h1>'
+      '<p style="color:rgba(255,255,255,.85);font-size:17px;max-width:520px;margin:0 0 22px;line-height:1.55">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с доставкой через дилера.') + '</p>'
+      '<div style="display:flex;gap:12px;flex-wrap:wrap">'
+      '<a class="btn" style="background:#fff;color:#001e2b;font-weight:700" href="/quiz/">Подбор за 30 секунд</a>'
+      '<a class="btn" style="border:1px solid rgba(255,255,255,.5);color:#fff" href="/catalog/">Каталог аксессуаров</a></div></div>'
+      '<div class="fc-hero-side" aria-hidden="true"><div class="fc-hero-card">'
+      '<div class="fc-hero-kpi"><b>137</b><span>моделей в базе</span></div>'
+      '<div class="fc-hero-kpi"><b>26</b><span>позиций в каталоге</span></div>'
+      '<div class="fc-hero-kpi"><b>1 900+</b><span>станций на карте</span></div>'
+      '<div class="fc-hero-kpi"><b>51</b><span>VIN-справочник</span></div></div></div>'
+      '</div></section>'
+      '<section style="margin-top:36px"><h2>Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2>'
+      '<div class="fc-cats">' + cats_html + '</div></section>'
+      '<section style="margin-top:30px">' + feats + '</section>'
+      '<section style="margin-top:30px"><h2>Хиты каталога</h2><p class="note">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>'
+      '<div class="fc-hits">' + hits + '</div></section>'
+      '<section style="margin-top:30px"><h2 id="models-list">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2>'
+      '<div class="tgrid">' + pop_cards + '</div></section>'
+      '<section style="margin-top:30px"><h2>Бренды</h2><div class="brand-strip">' + brand_html + '</div></section>'
+      '<section style="margin-top:30px"><h2>Частые проблемы — быстрые ответы <a class="see-all" href="/pains.html">все статьи →</a></h2>'
+      '<div class="fc-minis">' + art_cards + '</div></section>'
+      '<section style="margin-top:30px"><h2>Гайды в блоге <a class="see-all" href="/blog/">весь блог →</a></h2>'
+      '<div class="fc-hits">' + blog_cards + '</div></section>'
+      '<section style="margin-top:30px"><h2>Свежие новости EV <a class="see-all" href="/news/">все новости →</a></h2>'
+      '<div class="fc-hits">' + news_cards + '</div></section>'
+      '<div class="cta" style="margin-top:44px"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     web_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "WebSite",
         "name": SITE_NAME,
@@ -1427,11 +1603,22 @@ def tl_short(pids, maxs=2):
         out.append(s)
     return '. '.join(out) + '.'
 
+NAV_JS = """<script>(function(){
+var off=document.getElementById('zs-off'),mask=document.getElementById('zs-mask');
+function toggle(open){if(!off||!mask)return;off.classList.toggle('open',open);mask.classList.toggle('open',open);off.setAttribute('aria-hidden',open?'false':'true');document.body.style.overflow=open?'hidden':'';}
+document.addEventListener('click',function(e){
+ var o=e.target.closest('[data-open-menu]');if(o){toggle(true);return;}
+ var c=e.target.closest('[data-close-menu]');if(c){toggle(false);return;}
+ if(off&&off.classList.contains('open')&&!off.contains(e.target)){toggle(false);}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')toggle(false);});
+})();</script>"""
+
 BUILD_DATE = None  # задаётся в main()
 
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
-    blocks = ''.join('<div class="card"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
+    blocks = ''.join('<div class="lcard"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
     body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a></div>'
     art_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -1553,7 +1740,7 @@ def quiz_page(outdir):
       'var ps=window.OF_PRODUCTS||[];var hts="";'
       'x.skus.slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
       'if(p)hts+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});'
-      'var h=\'<div class="card"><h3>\'+b+\' \'+x.m+\'</h3>\''
+      'var h=\'<div class="lcard"><h3>\'+b+\' \'+x.m+\'</h3>\''
       '+\'<p class="note">Тип: \'+x.type+\' · AC: \'+(x.ac||"—")+\' · DC: \'+(x.dc||"—")+\'</p>\''
       '+\'<p>Что обычно докупают к этой модели:</p><ul>\'+hts+\'</ul>\''
       '+(bd?(\'<p class="note">📦 Готовый комплект: \'+bd.name+\' — \'+bd.price.toLocaleString("ru-RU")+\' ₽ (экономия \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' ₽)</p>\'):"")'
@@ -1566,7 +1753,7 @@ def quiz_page(outdir):
     form = _cat.order_form_html('Квиз: подберите модель выше')
     body = ('<h1>Подбор комплекта за 30 секунд</h1>'
       '<p class="lede">Выберите марку и модель — покажем разъёмы вашей машины, что докупить и где это есть в каталоге. Без звонков и анкет: результат сразу.</p>'
-      '<div class="card"><div class="of-grid">'
+      '<div class="lcard"><div class="of-grid">'
       '<label>Марка <select id="q-brand" onchange="qFillModel()"></select></label>'
       '<label>Модель <select id="q-model"></select></label>'
       '</div><button class="btn lime" onclick="qShow()">Показать подбор</button></div>'
@@ -1680,7 +1867,7 @@ try{fetch(G+'?action=threads').then(function(r){return r.json();}).then(function
 }).catch(function(){});}catch(e){}
 function viewThread(tid,title){
   var v=document.getElementById('f-view');
-  v.innerHTML='<div class="card fview"><h3>'+esc(title||'Тема')+'</h3><div id="fv-list"><p class="note">Загружаем ответы…</p></div>'
+  v.innerHTML='<div class="lcard fview"><h3>'+esc(title||'Тема')+'</h3><div id="fv-list"><p class="note">Загружаем ответы…</p></div>'
     +'<div class="fv-form"><input id="fv-name" maxlength="40" placeholder="Ваше имя">'
     +'<input id="fv-tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
     +'<textarea id="fv-text" maxlength="2000" placeholder="Ваш ответ…"></textarea>'
@@ -1844,6 +2031,12 @@ def main():
         dst = os.path.join(outdir,'assets','sku')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(sku_dir, dst)
+    # FreshCart theme css
+    fcc = os.path.join(repo_root,'assets','fc-theme.css')
+    if os.path.isfile(fcc):
+        fdst = os.path.join(outdir,'assets','fc-theme.css')
+        os.makedirs(os.path.dirname(fdst), exist_ok=True)
+        shutil.copy(fcc, fdst)
     # админка (неиндексируемая)
     adir = os.path.join(repo_root,'admin')
     if os.path.isdir(adir):
