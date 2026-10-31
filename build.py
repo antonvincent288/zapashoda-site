@@ -1204,7 +1204,19 @@ def og_gen(outdir, jobs):
     print('OG-карточек:', len(jobs))
 
 # ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
-def home_page(outdir):
+def home_page(outdir, news=None):
+
+    feat_slugs = {'phev-rossiya-2026','rukovodstva-na-russkom','zeekr-001-razyom-i-problemy'}
+    blog_cards = ''.join('<a class="mcard" href="/blog/'+sl+'.html"><b>'+html.escape(t)+'</b><span>'+html.escape(d)+'</span></a>' for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    news_cards = ''
+    if news:
+        try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
+        except Exception: ns = news[:3]
+        for it in ns:
+            tt = html.escape(str(it.get('title',''))[:120])
+            dd = html.escape(str(it.get('teaser',''))[:150])
+            news_cards += '<a class="mcard" href="'+news_slug_page(it)+'"><b>'+tt+'</b><span>'+dd+'</span></a>'
+    news_extra = '<a class="mcard" href="/news/"><b>Все новости →</b><span>Лента рынка электромобилей — обновляется несколько раз в день</span></a>'
     art_cards = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+html.escape(title)+'</b><span>'+html.escape(desc)+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
     pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Avatr 11','Xiaomi SU7','Changan Qiyuan A05','BYD Song Plus EV','BYD Yuan Plus','Geely EX5','Geely Galaxy E5','Deepal S07','Evolute i-Jet','Moskvich 3e','Tesla Model 3','VW ID.3','BMW i4','Nissan Leaf']
     pop_cards = ''
@@ -1220,6 +1232,8 @@ def home_page(outdir):
      '<div class="ctas"><a class="btn lime" href="' + TG_BOT_APP + '">Открыть каталог аксессуаров</a><a class="btn ghost" href="/news/">Читать новости</a></div></div>'
      '<input class="search" id="q" placeholder="Начните вводить марку или модель: Zeekr, BYD, Leaf…">'
      '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
+     '<h2>Гайды в блоге</h2><div class="grid">' + blog_cards + '</div>'
+     '<h2>Свежие новости EV</h2><div class="grid">' + (news_cards + news_extra) + '</div>'
      '<h2>Популярные модели</h2><p class="note">Разъёмы, мощность и решения по самым массовым машинам в РФ.</p><div class="grid">' + pop_cards + '</div>'
      '<h2 id="models-list">Все модели</h2><div class="grid">' + model_cards + '</div>'
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Каталог в мини-приложении</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
@@ -1377,7 +1391,7 @@ def main():
     news = load_news(data_dir)
     news_map = load_news_map(data_dir)
     print('Новостей в базе:', len(news))
-    home_page(outdir)
+    home_page(outdir, news)
     pains_index(outdir)
     slugs = [model_page(m, outdir) for m in MODELS]
     for sl,title,desc,pids in PAIN_ARTICLES:
