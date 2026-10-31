@@ -68,6 +68,7 @@ SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "https://zapashoda-ev.ru")
 SITE_NAME = "Запас хода"
 TG_CHANNEL = "https://t.me/zapashoda_ev"
 TG_BOT_APP = "https://t.me/zapashoda_ev_bot/app"
+GUIDE_PDF = "/assets/guide/zapashoda-guide-2026.pdf"
 
 # ===== КОНФИГУРАЦИЯ (правится через админку /admin/ или вручную в data/site_config.json) =====
 def load_site_config():
@@ -805,6 +806,14 @@ def vin_brand_page(brand, outdir):
     parts.append('<h2>Что проверить по VIN ' + html.escape(brand) + ' перед покупкой</h2><div class="lcard">')
     parts.append('<p>Машины ' + html.escape(brand) + ' в РФ чаще всего ввезены по параллельному импорту или из Кореи — значит, ключевые проверки: совпадение VIN на кузове и в ЭПТС, наличие СБКТС, история ДТП по базе ГИБДД, код модельного года на 10-й позиции.</p>')
     parts.append('<p>Проверить историю: <a href="https://гибдд.рф/check/auto">сервис ГИБДД по VIN</a> (бесплатно, иногда недоступен) или <a href="https://reestr-zalogov.ru/search">реестр залогов ФНП</a>, <a href="https://autoteka.ru/">Автотека</a>. Расшифровку комплектации — у дилера марки.</p></div>')
+    parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
+      '<div class="md:w-2/3 w-full">'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
+      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все 137 моделей + чек-лист покупки</h3>'
+      '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
+      '</div><div class="md:w-auto w-full">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
+      '</div></div></div>')
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     sl = 'vin/'+slug(brand)+'.html'
@@ -1176,6 +1185,14 @@ def model_page(m, outdir):
     parts.append(pain_html)
     parts.append(faq)
     parts.append(faq_ld)
+    parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
+      '<div class="md:w-2/3 w-full">'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
+      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все 137 моделей + чек-лист покупки</h3>'
+      '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
+      '</div><div class="md:w-auto w-full">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
+      '</div></div></div>')
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     write_page(os.path.join(outdir, sl),
@@ -1561,6 +1578,8 @@ def home_page(outdir, news=None):
       ('/forum/','Форум сообщества','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
       ('/models/','Все модели','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
       ('/b2b/','Дилерам','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
+      (GUIDE_PDF,'Гид PDF (бесплатно)','<path d="M12 4v10"/><path d="M7.5 9.5 12 14l4.5-4.5"/><path d="M5 20h14"/>'),
+      ('/blog/','Гайды и обзоры','<path d="M4 5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2z"/><path d="M8 9h8M8 13h5"/>'),
     ]))
     pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Xiaomi SU7','BYD Song Plus EV','Tesla Model 3']
     pop_cards = ''
@@ -1611,7 +1630,17 @@ def home_page(outdir, news=None):
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
-      '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + tools_html + '</div></div></section>'
+      '<div class="grid gap-4 grid-cols-2 md:grid-cols-4">' + tools_html + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+      '<div class="flex flex-wrap items-center gap-8">'
+      '<div class="md:w-2/3 w-full">'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
+      '<h2 class="text-lg text-gray-900 font-semibold my-3">Гид по зарядке и разъёмам: 137 моделей</h2>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">Разъёмы и мощность зарядки каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов. Собран из реальных кейсов владельцев — можно перешлать другу, который выбирает электромобиль.</p>'
+      '</div><div class="md:w-auto w-full md:text-right">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
+      '<p class="text-xs text-gray-500 mt-2">12 страниц · 0,1 МБ</p>'
+      '</div></div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Popular Products</h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 lg:gap-4 xl:grid-cols-4">' + hits + '</div></div></section>'
@@ -1828,6 +1857,7 @@ def quiz_page(outdir):
       '<label>Модель <select id="q-model"></select></label>'
       '</div><button class="btn lime" onclick="qShow()">Показать подбор</button></div>'
       '<div id="q-out"></div>'
+      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все 137 моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
       + js + form)
     desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
     write_page(os.path.join(outdir, 'quiz', 'index.html'),
@@ -2096,6 +2126,12 @@ def main():
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(lf, dst)
     # фото товаров каталога (assets/sku)
+    # PDF-гид (лид-магнит)
+    gdir = os.path.join(repo_root,'assets','guide')
+    if os.path.isdir(gdir):
+        gdst = os.path.join(outdir,'assets','guide')
+        if os.path.isdir(gdst): shutil.rmtree(gdst)
+        shutil.copytree(gdir, gdst)
     sku_dir = os.path.join(repo_root,'assets','sku')
     if os.path.isdir(sku_dir):
         dst = os.path.join(outdir,'assets','sku')
