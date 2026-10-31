@@ -94,7 +94,20 @@ def catalog_build(outdir):
     hero = ('<div class="shop-hero"><h1>Каталог аксессуаров для зарядки</h1>'
       '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Подбор под вашу модель — <a href="/">на страницах моделей</a>. Заявка за минуту, оплата — дилеру при получении.</p>'
       '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div></div>')
-    body = hero + '<div class="pc-grid">' + grid + '</div>' + order_form_html('Каталог аксессуаров')
+
+    phev_links = ' · '.join('<a href="/models/'+s+'.html">'+t+'</a>' for s,t in [
+        ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),
+        ('byd-song-plus-dm-i-sealion-05','BYD Song Plus DM-i'),
+        ('chery-tiggo-7-8-9-c-dm-phev','Chery Tiggo C-DM'),
+        ('jaecoo-7-phev','Jaecoo 7 PHEV'),
+        ('haval-h6-phev','Haval H6 PHEV'),
+        ('tank-500-hi4-t','Tank 500 Hi4-T'),
+        ('jetour-t1-t2-phev','Jetour T1 / T2'),
+        ('mitsubishi-outlander-phev-jp-eu','Outlander PHEV')])
+    phev_block = ('<div class="callout ok" style="margin:26px 0"><b>Гибриды и PHEV — самая быстрорастущая часть «зелёного» рынка России.</b> '
+      'Для гибрида хватает домашней зарядки 3,5–7,4 кВт, и адаптер нужен только если у вашей версии разъём GB/T. '
+      '<a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a> · Подбор под модель: '+phev_links+'.</div>')
+    body = hero + phev_block + '<div class="pc-grid">' + grid + '</div>' + order_form_html('Каталог аксессуаров')
     WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/index.html', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
