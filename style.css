@@ -358,3 +358,12 @@ img{max-width:100%;height:auto}
 .pc-media img{width:100%;height:100%;object-fit:contain}
 .pz-gallery img{width:100%;max-width:440px;height:auto}
 .pz-gallery{padding:20px}
+
+/* --- палитра GCC (marine/acid), фаза 1 --- */
+:root{--marine:#003a40;--acid:#c8ea95}
+h1,h2,h3{color:var(--marine)}
+.brand span{color:var(--marine)}
+.shop-hero{background:linear-gradient(180deg,#f4faef,#fff);border:1px solid var(--line);border-radius:20px;padding:26px}
+.pz-ask{color:var(--marine)}
+.fchip{border:1px solid var(--line);color:var(--marine);background:#f7fbf5}
+.fchip:hover{background:#eaf5df}
