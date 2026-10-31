@@ -500,7 +500,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
-     '<link rel="stylesheet" href="/style.css">'
+     '<link rel="stylesheet" href="/style.css?v=' + (BUILD_DATE or '1') + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
      '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + catalog.ORDER_JS + '</body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
