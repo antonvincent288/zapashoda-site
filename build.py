@@ -1318,8 +1318,8 @@ def og_gen(outdir, jobs):
     print('OG-карточек:', len(jobs))
 
 # ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
-def home_page(outdir, news=None):
 
+def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','rukovodstva-na-russkom','zeekr-001-razyom-i-problemy'}
     blog_cards = ''.join('<a class="mcard" href="/blog/'+sl+'.html"><b>'+html.escape(t)+'</b><span>'+html.escape(d)+'</span></a>' for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
     news_cards = ''
@@ -1332,27 +1332,71 @@ def home_page(outdir, news=None):
             news_cards += '<a class="mcard" href="'+news_slug_page(it)+'"><b>'+tt+'</b><span>'+dd+'</span></a>'
     news_extra = '<a class="mcard" href="/news/"><b>Все новости →</b><span>Лента рынка электромобилей — обновляется несколько раз в день</span></a>'
     art_cards = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+html.escape(title)+'</b><span>'+html.escape(desc)+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
-    pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Avatr 11','Xiaomi SU7','Changan Qiyuan A05','BYD Song Plus EV','BYD Yuan Plus','Geely EX5','Geely Galaxy E5','Deepal S07','Evolute i-Jet','Moskvich 3e','Tesla Model 3','VW ID.3','BMW i4','Nissan Leaf']
+
+    # --- плитки-инструменты (в стиле GCC main-grid) ---
+    def tool(href, title, sub, icon):
+        return ('<a class="tool" href="'+href+'">'+icon+'<span class="tool-body"><b>'+title+'</b><span>'+sub+'</span></span></a>')
+    ICONS = {
+      'cat': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 7V4h8v3" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 12h8M8 16h5" stroke="#fff" stroke-width="1.8"/></svg>',
+      'quiz': '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="16.6" r="1.1" fill="#fff"/></svg>',
+      'map': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="11" r="2.2" fill="none" stroke="#fff" stroke-width="1.8"/></svg>',
+      'vin': '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M15.8 15.8 21 21" stroke="#fff" stroke-width="1.8"/></svg>',
+      'models': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l2-5h14l2 5" fill="none" stroke="#fff" stroke-width="1.8"/><rect x="3" y="13" width="18" height="4" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="7.5" cy="17.5" r="1.4" fill="#fff"/><circle cx="16.5" cy="17.5" r="1.4" fill="#fff"/></svg>',
+      'forum': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 9h8M8 12h5" stroke="#fff" stroke-width="1.8"/></svg>',
+      'blog': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8 10h8M8 14h8M8 7h4" stroke="#fff" stroke-width="1.8"/></svg>',
+      'b2b': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" fill="none" stroke="#fff" stroke-width="1.8"/><rect x="9" y="13" width="6" height="7" fill="none" stroke="#fff" stroke-width="1.8"/></svg>'}
+    tools = ('<div class="tools-grid">'
+      + tool('/catalog/','Каталог аксессуаров','26 позиций: адаптеры, кабели, зарядки, станции. Заявка за минуту, оплата при получении.',ICONS['cat'])
+      + tool('/quiz/','Подбор за 30 секунд','Марка и модель — покажем, какие аксессуары нужны вашей машине.',ICONS['quiz'])
+      + tool('/charging/','Карта станций','Все зарядные станции России на карте: Type 2, CCS2, GB/T.',ICONS['map'])
+      + tool('/vin/','VIN-проверка','Марка, рынок поставки и разъёмы по VIN-номеру.',ICONS['vin'])
+      + tool('/models/','Все модели','137 моделей в РФ: разъёмы, OBC, мощность зарядки.',ICONS['models'])
+      + tool('/forum/','Форум сообщества','Задай вопрос о зарядке — отвечает редакция и владельцы.',ICONS['forum'])
+      + tool('/blog/','Блог и гайды','Гиды по зиме, PHEV, руководства на русском.',ICONS['blog'])
+      + tool('/b2b/','Дилерам','Прайс, оптовые условия и поставки комплектов.',ICONS['b2b'])
+      + '</div>')
+
+    # --- трендовые модели (крупные карточки с обложками) ---
+    pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Xiaomi SU7','BYD Song Plus EV','Tesla Model 3']
     pop_cards = ''
     for pn in pop_names:
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
-        if hit:
-            m = hit[0]
-            pop_cards += '<a class="mcard" href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html"><b>'+html.escape(m["brand"]+" "+m["model"])+'</b><span>'+m["years"]+' · '+m["type"]+' · '+m["freq"]+' ввоз</span></a>'
-    model_cards = ''.join('<a class="mcard" href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html"><b>'+html.escape(m["brand"]+" "+m["model"])+'</b><span>'+m["years"]+' · '+m["type"]+' · '+m["freq"]+' ввоз</span></a>' for m in sorted(MODELS, key=lambda x:(x['freq']!='Массовый', x['brand'], x['model'])))
-    body = ('<div class="hero"><div class="kicker">Справочник</div>'
+        if not hit: continue
+        m = hit[0]
+        sl = slug(m['brand'])+'-'+slug(m['model'])
+        specs = []
+        if m.get('years'): specs.append(html.escape(str(m['years'])))
+        if m.get('type'): specs.append(html.escape(str(m['type'])))
+        if m.get('ac'): specs.append('AC: '+html.escape(str(m['ac'])))
+        if m.get('dc'): specs.append('DC: '+html.escape(str(m['dc'])))
+        spec_html = ''.join('<span>'+s+'</span>' for s in specs[:3])
+        pop_cards += ('<a class="mcard2" href="/models/'+sl+'.html">'
+          '<div class="mcard2-media"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" loading="lazy"></div>'
+          '<div class="mcard2-body"><b>'+html.escape(m['brand']+' '+m['model'])+'</b>'
+          '<div class="mcard2-specs">'+spec_html+'</div>'
+          '<span class="mcard2-link">Разъёмы и аксессуары →</span></div></a>')
+
+    # --- брендовый ряд ---
+    bcounts = {}
+    for m in MODELS:
+        b = m['brand'].strip()
+        bcounts[b] = bcounts.get(b, 0) + 1
+    brand_html = ''.join('<a href="/models/'+slug(b)+'.html">'+html.escape(b)+' <span>'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
+
+    body = ('<div class="hero"><div class="kicker">Справочник EV</div>'
      '<h1>' + html.escape(CFG_HERO_TITLE or 'Как зарядить и чем лечить ваш электромобиль') + '</h1>'
      '<p class="lede">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения для 137 моделей, ввезённых в Россию в 2019–2026: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO.') + '</p>'
-     '<div class="ctas"><a class="btn lime" href="">/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="/news/">Читать новости</a></div></div>'
+     '<div class="ctas"><a class="btn lime" href="/quiz/">Подбор за 30 секунд</a><a class="btn ghost" href="/catalog/">Каталог аксессуаров</a></div></div>'
      '<input class="search" id="q" placeholder="Начните вводить марку или модель: Zeekr, BYD, Leaf…">'
-     '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
-     '<h2>Гайды в блоге</h2><div class="grid">' + blog_cards + '</div>'
-     '<h2>Свежие новости EV</h2><div class="grid">' + (news_cards + news_extra) + '</div>'
-     '<h2>Популярные модели</h2><p class="note">Разъёмы, мощность и решения по самым массовым машинам в РФ.</p><div class="grid">' + pop_cards + '</div>'
-     '<h2 id="models-list">Все модели <a class="see-all" href="/models/">полный указатель →</a></h2><div class="grid">' + model_cards + '</div>'
-     '<div class="cta"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
-     '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
-     'document.querySelectorAll(".grid .mcard").forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?"":"none"});});</script>')
+     '<h2>Инструменты</h2>' + tools
+     + '<h2 id="models-list">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2><p class="note">Самые массовые электромобили в РФ: разъёмы, OBC и подбор аксессуаров.</p><div class="tgrid">' + pop_cards + '</div>'
+     + '<h2>Бренды</h2><div class="brand-strip">' + brand_html + '</div>'
+     + '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
+     + '<h2>Гайды в блоге</h2><div class="grid">' + blog_cards + '</div>'
+     + '<h2>Свежие новости EV</h2><div class="grid">' + (news_cards + news_extra) + '</div>'
+     + '<div class="cta"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
+     + '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
+       'document.querySelectorAll(".grid .mcard, .tgrid .mcard2, .tools-grid .tool").forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?"":"none"});});</script>')
     web_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "WebSite",
         "name": SITE_NAME,
@@ -1361,7 +1405,6 @@ def home_page(outdir, news=None):
         "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 137 моделей",
         "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
     }, ensure_ascii=False) + '</script>'
-
     write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, проблемы и решения для 137 моделей EV в России',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
@@ -1770,6 +1813,7 @@ EX_CSS = EX_CSS + "\n/* --- форум v4 (карточки) --- */\n.fbar{displ
 EX_CSS = EX_CSS + "\n/* --- каталог Ozon v2: карточки и страница товара --- */\n.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:12px;margin:14px 0 10px}\n.pc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;position:relative;transition:box-shadow .15s ease}\n.pc-card:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.pc-card .pc-media{display:flex;align-items:center;justify-content:center;height:170px;background:#fff;padding:14px 10px;position:relative}\n.pc-media svg{width:76%;height:76%}\n.pc-hit{position:absolute;top:10px;left:10px;background:#005bff;color:#fff;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-tag{position:absolute;top:10px;right:10px;background:#fff7d6;color:#8a6d00;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}\n.pc-name{font-size:14px;font-weight:500;line-height:1.32;min-height:37px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);text-decoration:none}\n.pc-price{font-size:20px;font-weight:700;letter-spacing:-.02em}\n.pc-was{color:#86868b;font-weight:400;font-size:14px}\n.pc-spec-line{display:flex;flex-wrap:wrap;gap:5px}\n.pc-spec-line span{font-size:12px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}\n.pc-desc{font-size:13.5px;color:var(--muted);line-height:1.45;margin:0}\n.pc-btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:8px;background:var(--lime);color:#fff;font-weight:500;font-size:14px;cursor:pointer;width:100%;white-space:nowrap}\n.pc-btn:hover{opacity:.9}\n.pc-seller{font-size:12px;color:#86868b}\n.pz-hero{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;margin-top:18px}\n.pz-gallery{background:#fff;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:34px 24px;min-height:340px}\n.pz-gallery svg{width:100%;max-width:400px;height:auto}\n.pz-buy{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:76px}\n.pz-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\n.pz-badges .pc-hit,.pz-badges .pc-tag{position:static}\n.pz-buy h1{font-size:22px;line-height:1.3;margin:0;letter-spacing:-.02em}\n.pz-price{font-size:30px;font-weight:700;letter-spacing:-.03em}\n.pz-btn{height:48px;border-radius:12px;font-size:16px}\n.pz-delivery{font-size:13.5px;color:#5f5f66;background:#f5f5f7;border-radius:12px;padding:12px 14px;line-height:1.45}\n.pz-perks{display:grid;gap:7px;font-size:14px;color:#1d1d1f}\n.pz-perks span::before{content:'✓ ';color:var(--lime);font-weight:700}\n.pz-perks span:first-child::before{content:'🚚 '}\n.pz-perks b{color:#1d1d1f}\n.pz-ok::before{content:'✓ '}\n.pz-ask{font-size:14px;color:var(--lime);text-decoration:none}\n.pz-sec{margin-top:34px}\n.spec-table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}\n.spec-table td{padding:9px 14px;border-bottom:1px solid #f0f0f2;vertical-align:top}\n.spec-table tr:last-child td{border-bottom:none}\n.spec-table td:first-child{color:#86868b;width:42%}\n.pz-fits{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}\n@media (max-width:900px){.pz-hero{grid-template-columns:1fr}.pz-buy{position:static}.pz-gallery{min-height:280px}}\n@media (max-width:520px){.pc-grid{grid-template-columns:repeat(2,1fr);gap:8px}.pc-media{height:120px;padding:8px}.pc-spec-line{display:none}.pc-name{font-size:13px;min-height:34px}.pc-price{font-size:17px}}\n"
 EX_CSS = EX_CSS + "\n/* --- фото товаров в Ozon-карточках --- */\n.pc-media img{width:100%;height:100%;object-fit:contain}\n.pz-gallery img{width:100%;max-width:440px;height:auto}\n.pz-gallery{padding:20px}\n"
 EX_CSS = EX_CSS + "\n/* --- палитра GCC (marine/acid), фаза 1 --- */\n:root{--marine:#003a40;--acid:#c8ea95}\nh1,h2,h3{color:var(--marine)}\n.brand span{color:var(--marine)}\n.shop-hero{background:linear-gradient(180deg,#f4faef,#fff);border:1px solid var(--line);border-radius:20px;padding:26px}\n.pz-ask{color:var(--marine)}\n.fchip{border:1px solid var(--line);color:var(--marine);background:#f7fbf5}\n.fchip:hover{background:#eaf5df}\n"
+EX_CSS = EX_CSS + "\n/* --- главная в стиле GCC: инструменты, трендовые модели, бренды --- */\n.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(246px,1fr));gap:12px;margin:14px 0 8px}\n.tool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;text-decoration:none;transition:box-shadow .15s ease}\n.tool:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.tool svg{flex:none;width:40px;height:40px;border-radius:11px;background:var(--marine);padding:9px;box-sizing:border-box}\n.tool-body{display:flex;flex-direction:column;gap:4px}\n.tool b{display:block;color:var(--marine);font-size:15.5px;letter-spacing:-.01em}\n.tool-body>span{font-size:13.5px;color:#5f5f66;line-height:1.4}\n.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;margin:14px 0 8px}\n.mcard2{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s ease}\n.mcard2:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.mcard2-media{aspect-ratio:16/9;overflow:hidden;background:#f5f5f7}\n.mcard2-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}\n.mcard2:hover .mcard2-media img{transform:scale(1.03)}\n.mcard2-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}\n.mcard2-body>b{color:var(--marine);font-size:16px;letter-spacing:-.015em}\n.mcard2-specs{display:flex;flex-wrap:wrap;gap:5px}\n.mcard2-specs span{font-size:12px;background:#f5f5f7;border-radius:6px;padding:3px 8px;color:#5f5f66}\n.mcard2-link{font-size:13.5px;color:var(--marine);font-weight:600;margin-top:auto}\n.brand-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}\n.brand-strip a{font-size:13.5px;padding:8px 13px;border:1px solid var(--line);border-radius:12px;color:var(--marine);background:#fff;text-decoration:none;font-weight:500}\n.brand-strip a:hover{background:#f4faef}\n.brand-strip a span{color:#86868b;font-size:12px;margin-left:4px}\n@media (max-width:520px){.tools-grid{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}.tool svg{width:34px;height:34px;padding:7px}}\n"
 
 
 def main():
