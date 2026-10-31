@@ -367,3 +367,28 @@ h1,h2,h3{color:var(--marine)}
 .pz-ask{color:var(--marine)}
 .fchip{border:1px solid var(--line);color:var(--marine);background:#f7fbf5}
 .fchip:hover{background:#eaf5df}
+
+/* --- главная в стиле GCC: инструменты, трендовые модели, бренды --- */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(246px,1fr));gap:12px;margin:14px 0 8px}
+.tool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;text-decoration:none;transition:box-shadow .15s ease}
+.tool:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}
+.tool svg{flex:none;width:40px;height:40px;border-radius:11px;background:var(--marine);padding:9px;box-sizing:border-box}
+.tool-body{display:flex;flex-direction:column;gap:4px}
+.tool b{display:block;color:var(--marine);font-size:15.5px;letter-spacing:-.01em}
+.tool-body>span{font-size:13.5px;color:#5f5f66;line-height:1.4}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;margin:14px 0 8px}
+.mcard2{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s ease}
+.mcard2:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}
+.mcard2-media{aspect-ratio:16/9;overflow:hidden;background:#f5f5f7}
+.mcard2-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.mcard2:hover .mcard2-media img{transform:scale(1.03)}
+.mcard2-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.mcard2-body>b{color:var(--marine);font-size:16px;letter-spacing:-.015em}
+.mcard2-specs{display:flex;flex-wrap:wrap;gap:5px}
+.mcard2-specs span{font-size:12px;background:#f5f5f7;border-radius:6px;padding:3px 8px;color:#5f5f66}
+.mcard2-link{font-size:13.5px;color:var(--marine);font-weight:600;margin-top:auto}
+.brand-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.brand-strip a{font-size:13.5px;padding:8px 13px;border:1px solid var(--line);border-radius:12px;color:var(--marine);background:#fff;text-decoration:none;font-weight:500}
+.brand-strip a:hover{background:#f4faef}
+.brand-strip a span{color:#86868b;font-size:12px;margin-left:4px}
+@media (max-width:520px){.tools-grid{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}.tool svg{width:34px;height:34px;padding:7px}}
