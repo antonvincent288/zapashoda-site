@@ -342,7 +342,7 @@ h1{margin-top:28px}
 
 LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
-NAV = [("/","Модели"),("/catalog/","Каталог"),("/blog/","Блог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
+NAV = [("/models/","Модели"),("/catalog/","Каталог"),("/blog/","Блог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
 
 def header_html(active):
     links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
@@ -394,6 +394,79 @@ if BANNER_TEXT:
 YANDEX_META = '<meta name="yandex-verification" content="' + YANDEX_VER + '">' if YANDEX_VER else ''
 GSC_META = '<meta name="google-site-verification" content="' + GSC_VER + '">' if GSC_VER else ''
 
+# ====== ВНЕШНИЕ ССЫЛКИ: target=_blank (не уводим с сайта) ======
+def _ext_fix(doc):
+    try:
+        parts = re.split(r'(<script[^>]*>.*?</script>)', doc, flags=re.S)
+    except Exception:
+        return doc
+    def _fix(m):
+        attrs_all = (m.group(1) or "") + (m.group(3) or "")
+        if "target=" in attrs_all:
+            return m.group(0)
+        if "zapashoda-ev.ru" in m.group(2):
+            return m.group(0)
+        return "<a " + m.group(1) + 'href="' + m.group(2) + '"' + m.group(3) + ' target="_blank" rel="noopener">'
+    out = []
+    for k, part in enumerate(parts):
+        if k % 2 == 1:
+            out.append(part)
+        elif 'href="http' not in part:
+            out.append(part)
+        else:
+            out.append(re.sub(r'<a\s([^>]*?)href="(https?://[^"]+)"([^>]*)>', _fix, part))
+    return "".join(out)
+
+# ====== КОММЕНТАРИИ (GAS Forum backend, премодерация в Sheets) ======
+_COMMENTS_JS = """<script>(function(){
+var G='https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec';
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+var box=document.getElementById('comments');if(!box)return;var tid=box.getAttribute('data-thread');
+var list=document.getElementById('c-list');
+try{fetch(G+'?action=posts&thread='+encodeURIComponent(tid)).then(function(r){return r.json();}).then(function(d){
+ if(!d||!d.ok){list.innerHTML='';return;}
+ if(!d.posts||!d.posts.length){list.innerHTML='<p class="c-empty">Пока никто не написал — задайте вопрос первым.</p>';return;}
+ list.innerHTML=d.posts.map(function(p){var t=new Date(p.ts).toLocaleDateString('ru-RU');
+  return '<div class="c-item"><b>'+esc(p.name)+'</b><span class="c-date">'+t+'</span><p>'+esc(p.text)+'</p></div>';}).join('');
+}).catch(function(){list.innerHTML='';});}catch(e){}
+var fm=document.getElementById('c-form');if(!fm)return;
+fm.addEventListener('submit',function(ev){ev.preventDefault();
+ var fd=new FormData(fm),btn=fm.querySelector('button'),note=document.getElementById('c-note');
+ btn.disabled=true;btn.textContent='Отправляем…';
+ fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:tid,name:fd.get('name'),tg:fd.get('tg'),text:fd.get('text')})})
+ .then(function(r){return r.json();}).then(function(d){
+  btn.disabled=false;btn.textContent='Отправить';
+  if(d&&d.ok){fm.reset();note.textContent='Спасибо! Комментарий появится после проверки модератором.';}
+  else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}
+ }).catch(function(){btn.disabled=false;btn.textContent='Отправить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});
+});
+})();</script>"""
+
+def _comments_enabled(path):
+    p = path.replace('\\\\', '/')
+    if p.endswith('index.html'):
+        return False
+    rel = '/'.join(p.split('/')[-2:])
+    for pref in ('models/', 'pain/', 'blog/', 'news/', 'services/', 'forum/'):
+        if rel.startswith(pref):
+            return True
+    return False
+
+def _comments_html(path):
+    if not _comments_enabled(path):
+        return ''
+    p = path.replace('\\\\', '/').rstrip('/')
+    rel = '/'.join(p.split('/')[-2:])
+    tid = rel[:-5] if rel.endswith('.html') else rel
+    return ('<section class="comments" id="comments" data-thread="' + tid + '">'
+            '<h2>Обсуждение</h2><div id="c-list"></div>'
+            '<form id="c-form"><input name="name" maxlength="40" placeholder="Ваше имя" required>'
+            '<input name="tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
+            '<textarea name="text" maxlength="2000" placeholder="Вопрос, опыт, уточнение — напишите…" required></textarea>'
+            '<button class="btn lime" type="submit">Отправить</button>'
+            '<p id="c-note">Комментарий появится после проверки модератором.</p></form>'
+            + _COMMENTS_JS + '</section>')
+
 def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
@@ -419,6 +492,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
             ld_list.append(item)
         ld_crumbs = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[' + ','.join(ld_list) + ']}</script>'
     doc = ('<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+     '<meta name="color-scheme" content="light">'
      '<title>' + html.escape(title) + '</title>'
      '<meta name="description" content="' + html.escape(desc) + '">'
      '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">'
@@ -428,8 +502,8 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
      '<link rel="stylesheet" href="/style.css">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + '</main>' + FOOTER + SHARE_JS + catalog.ORDER_JS + '</body></html>')
-    with open(path,'w',encoding='utf-8') as f: f.write(doc)
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + catalog.ORDER_JS + '</body></html>')
+    with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
     links = [s for s in p['src'] if s.startswith('http')]
@@ -1269,14 +1343,14 @@ def home_page(outdir, news=None):
     body = ('<div class="hero"><div class="kicker">Справочник</div>'
      '<h1>' + html.escape(CFG_HERO_TITLE or 'Как зарядить и чем лечить ваш электромобиль') + '</h1>'
      '<p class="lede">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения для 137 моделей, ввезённых в Россию в 2019–2026: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO.') + '</p>'
-     '<div class="ctas"><a class="btn lime" href="' + TG_BOT_APP + '">Открыть каталог аксессуаров</a><a class="btn ghost" href="/news/">Читать новости</a></div></div>'
+     '<div class="ctas"><a class="btn lime" href="">/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="/news/">Читать новости</a></div></div>'
      '<input class="search" id="q" placeholder="Начните вводить марку или модель: Zeekr, BYD, Leaf…">'
      '<h2>Частые проблемы — быстрые ответы</h2><div class="grid">' + art_cards + '</div>'
      '<h2>Гайды в блоге</h2><div class="grid">' + blog_cards + '</div>'
      '<h2>Свежие новости EV</h2><div class="grid">' + (news_cards + news_extra) + '</div>'
      '<h2>Популярные модели</h2><p class="note">Разъёмы, мощность и решения по самым массовым машинам в РФ.</p><div class="grid">' + pop_cards + '</div>'
-     '<h2 id="models-list">Все модели</h2><div class="grid">' + model_cards + '</div>'
-     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Каталог в мини-приложении</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
+     '<h2 id="models-list">Все модели <a class="see-all" href="/models/">полный указатель →</a></h2><div class="grid">' + model_cards + '</div>'
+     '<div class="cta"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>'
      '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
      'document.querySelectorAll(".grid .mcard").forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?"":"none"});});</script>')
     web_ld = '<script type="application/ld+json">' + json.dumps({
@@ -1369,7 +1443,7 @@ def misc_pages(outdir):
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html')
 
 def build_sitemap(slugs_model, news, vin_slugs):
-    urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
+    urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/models/', SITE_DOMAIN+'/forum/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/', SITE_DOMAIN+'/search.html']
     urls += [SITE_DOMAIN+'/catalog/index.html'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
@@ -1461,7 +1535,153 @@ def quiz_page(outdir):
                '/quiz/index.html', crumbs=[('', 'Подбор')],
                extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/index.html') + '</script>')
 
+GAS_URL = 'https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec'
+
+# ====== УКАЗАТЕЛЬ МОДЕЛЕЙ /models/ ======
+def models_index(outdir):
+    groups = {}
+    types = []
+    for m in MODELS:
+        groups.setdefault(m['brand'], []).append(m)
+        if m.get('type') and m['type'] not in types:
+            types.append(m['type'])
+    chips_b = ''.join('<button class="fchip" data-k="b" data-v="' + html.escape(b) + '">' + html.escape(b) + '</button>' for b in sorted(groups))
+    chips_t = ''.join('<button class="fchip" data-k="t" data-v="' + html.escape(t) + '">' + html.escape(t) + '</button>' for t in types)
+    chips_p = ''.join('<button class="fchip" data-k="p" data-v="' + html.escape(g) + '">' + html.escape(g) + '</button>' for g in ['GB/T', 'Type 2/CCS2', 'Type 1/CCS1', 'JP/CHAdeMO'])
+    cards = []
+    for m in MODELS:
+        cards.append('<a class="mcard mi" href="/models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html"'
+                     ' data-b="' + html.escape(m['brand']) + '" data-t="' + html.escape(m.get('type', '')) + '" data-p="' + classify(m) + '">'
+                     '<b>' + html.escape(m['brand'] + ' ' + m['model']) + '</b><span>' + m.get('years', '') + ' · ' + m.get('type', '') + ' · ' + classify(m) + '</span></a>')
+    body = ('<div class="hero"><div class="kicker">Справочник</div><h1>Все модели в базе</h1>'
+            '<p class="lede">Фильтруйте по марке, типу и разъёму. На странице каждой модели: разъёмы зарядки, типичные проблемы, подходящие аксессуары и калькулятор зарядки.</p></div>'
+            '<div class="fsec"><button class="fchip on" data-k="all" data-v="">Все</button>' + chips_b + chips_t + chips_p + '</div>'
+            '<div class="grid" id="mi-grid">' + ''.join(cards) + '</div>'
+            '<script>(function(){var on={b:null,t:null,p:null};var grid=document.getElementById("mi-grid");'
+            'var chips=[].slice.call(document.querySelectorAll(".fchip"));'
+            'function apply(){[].forEach.call(grid.children,function(c){var ok=(!on.b||c.getAttribute("data-b")===on.b)&&(!on.t||c.getAttribute("data-t")===on.t)&&(!on.p||c.getAttribute("data-p")===on.p);c.style.display=ok?"":"none";});}'
+            'chips.forEach(function(ch){ch.addEventListener("click",function(){var k=ch.getAttribute("data-k");'
+            'if(k==="all"){on={b:null,t:null,p:null};chips.forEach(function(x){x.classList.toggle("on",x.getAttribute("data-k")==="all")});}'
+            'else{var v=ch.getAttribute("data-v");on[k]=(on[k]===v?null:v);'
+            'chips.forEach(function(x){if(x.getAttribute("data-k")==k)x.classList.toggle("on",x.getAttribute("data-v")===on[k]);});'
+            'chips.forEach(function(x){if(x.getAttribute("data-k")==="all")x.classList.remove("on");});}'
+            'apply();});});apply();})();</script>')
+    write_page(os.path.join(outdir, 'models', 'index.html'),
+               'Все модели в базе — разъёмы, проблемы, аксессуары — «Запас хода»',
+               'Полный указатель моделей в базе «Запас хода»: разъёмы зарядки (GB/T, Type 2/CCS2, CHAdeMO), типичные проблемы, подходящие аксессуары и калькулятор зарядки.',
+               body, '/models/', crumbs=[('/models/', 'Модели')])
+
+# ====== СОБСТВЕННЫЙ ФОРУМ + SEED-ТЕМЫ ======
+FORUM_SECTIONS = [('general', 'Общие вопросы'), ('charging', 'Зарядка и станции'), ('accessories', 'Аксессуары'), ('problems', 'Проблемы и ремонт'), ('market', 'Продам / куплю')]
+
+def _forum_seed():
+    seeds = [('forum/welcome', 'Задайте первый вопрос — разберём бесплатно', 'general',
+              'Сообщество владельцев электромобилей и гибридов: вопросы о зарядке, аксессуарах и эксплуатации. Отвечают редакция и владельцы.')]
+    for sl, title, desc, pids in PAIN_ARTICLES:
+        seeds.append(('forum/pain-' + sl, title, 'problems', desc))
+    seeds.append(('forum/gbt-vs-type2', 'GB/T или Type 2: чем заряжать китайский электромобиль', 'charging',
+                  'Чем отличаются разъёмы GB/T и Type 2, какие переходники нужны и что использовать дома и на трассе.'))
+    return seeds
+
+def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
+    sl_page = tid[len('forum/'):] + '.html'
+    glink = ''
+    if guide:
+        glink = '<div class="cta"><a class="btn lime" href="/pain/' + guide + '.html">Полный гайд по теме</a></div>'
+    body = ('<div class="hero"><div class="kicker">Сообщество</div><h1>' + html.escape(title) + '</h1>'
+            '<p class="lede">' + html.escape(desc) + '</p></div>' + glink
+            + '<p class="note">Ответы загружаются с сервера сообщества после публикации. Задайте свой вопрос в форме ниже — ответит редакция или владельцы.</p>'
+            + '<p><a href="/forum/">← Все темы форума</a></p>')
+    write_page(os.path.join(outdir, 'forum', sl_page),
+               title + ' — сообщество «Запас хода»',
+               desc[:152].rstrip() + ('…' if len(desc) > 152 else ''),
+               body, '/forum/' + sl_page, crumbs=[('/forum/', 'Сообщество')])
+
+def forum_build(outdir):
+    seeds = _forum_seed()
+    by_sec = {}
+    for tid, title, sec, desc in seeds:
+        by_sec.setdefault(sec, []).append((tid, title, desc))
+    cards = ''
+    for sec, name in FORUM_SECTIONS:
+        items = by_sec.get(sec, [])
+        if not items:
+            continue
+        cards += '<h2>' + name + '</h2>'
+        for tid, title, desc in items:
+            cards += ('<a class="fthread" href="/forum/' + tid[len('forum/'):] + '.html"><b>' + html.escape(title) + '</b>'
+                      '<span>' + html.escape(desc[:110]) + ('…' if len(desc) > 110 else '') + '</span></a>')
+    modal_html = ('<div class="fmodal" id="f-modal"><div class="fbox"><h3>Новая тема</h3>'
+                  '<select id="fm-sec"><option value="general">Общие вопросы</option><option value="charging">Зарядка и станции</option><option value="accessories">Аксессуары</option><option value="problems">Проблемы и ремонт</option><option value="market">Продам / куплю</option></select>'
+                  '<input id="fm-title" maxlength="120" placeholder="Заголовок темы (от 8 символов)">'
+                  '<input id="fm-name" maxlength="40" placeholder="Ваше имя">'
+                  '<input id="fm-tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
+                  '<textarea id="fm-text" maxlength="2000" placeholder="Опишите вопрос или ситуацию…"></textarea>'
+                  '<button class="btn lime" id="fm-send">Отправить</button><button class="btn ghost" id="fm-cancel">Отмена</button>'
+                  '<p id="fm-note" class="note">Тема появится после проверки модератором.</p></div></div>')
+    js = ('<script>(function(){var G=\'' + GAS_URL + '\';'
+          'function esc(s){return String(s||\'\').replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/"/g,\'&quot;\').replace(String.fromCharCode(39),\'&#39;\');return e;}'
+          'var md=document.getElementById(\'f-modal\');'
+          'document.getElementById(\'f-new\').addEventListener(\'click\',function(){md.classList.add(\'on\');});'
+          'document.getElementById(\'fm-cancel\').addEventListener(\'click\',function(){md.classList.remove(\'on\');});'
+          'document.getElementById(\'fm-send\').addEventListener(\'click\',function(){'
+          'var title=document.getElementById(\'fm-title\').value.trim(),text=document.getElementById(\'fm-text\').value.trim();'
+          'var note=document.getElementById(\'fm-note\');'
+          'if(title.length<8){note.textContent=\'Заголовок слишком короткий (минимум 8 символов).\';return;}'
+          'if(text.length<5){note.textContent=\'Опишите вопрос подробнее.\';return;}'
+          'var btn=document.getElementById(\'fm-send\');btn.disabled=true;btn.textContent=\'Отправляем…\';'
+          'fetch(G,{method:\'POST\',headers:{\'Content-Type\':\'text/plain\'},body:JSON.stringify({thread:\'new\',section:document.getElementById(\'fm-sec\').value,title:title,name:document.getElementById(\'fm-name\').value,tg:document.getElementById(\'fm-tg\').value,text:text})})'
+          '.then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent=\'Отправить\';'
+          'if(d&&d.ok){md.classList.remove(\'on\');document.getElementById(\'f-live-list\').insertAdjacentHTML(\'afterbegin\',\'<p class="note">Тема «\'+esc(title)+\'» отправлена на проверку — появится после одобрения.</p>\');}'
+          'else{note.textContent=\'Ошибка: \'+((d&&d.error)||\'повторите позже\');}})'
+          '.catch(function(){btn.disabled=false;btn.textContent=\'Отправить\';note.textContent=\'Не удалось отправить, попробуйте ещё раз.\';});});'
+          'var seed={};[].forEach.call(document.querySelectorAll(\'.fthread\'),function(a){seed[a.getAttribute(\'href\')]=1;});'
+          'try{fetch(G+\'?action=threads\').then(function(r){return r.json();}).then(function(d){'
+          'var box=document.getElementById(\'f-live-list\');'
+          'if(!d||!d.ok||!d.threads||!d.threads.length){box.innerHTML=\'<p class="note">Пока нет новых тем — создайте первую.</p>\';return;}'
+          'box.innerHTML=d.threads.slice(0,20).map(function(t){var live=\'forum/\'+t.thread+\'.html\';'
+          'return \'<div class="fthread frow" data-tid="\'+esc(t.thread)+\'" data-title="\'+esc(t.title)+\'"><b>\'+esc(t.title)+\'</b><span>\'+esc(t.section)+\' · \'+new Date(t.ts).toLocaleDateString(\'ru-RU\')+(seed[live]?\'\':\' · на проверке\')+\'</span></div>\';}).join(\'\');'
+          '[].forEach.call(box.querySelectorAll(\'.frow\'),function(el){el.addEventListener(\'click\',function(){viewThread(el.getAttribute(\'data-tid\'),el.getAttribute(\'data-title\'));});});'
+          '}).catch(function(){});}catch(e){}'
+          'function viewThread(tid,title){'
+          'var v=document.getElementById(\'f-view\');'
+          'v.innerHTML=\'<h2>\'+esc(title)+\'</h2><div id="fv-list">Загрузка…</div><div class="fv-form"><input id="fv-name" maxlength="40" placeholder="Ваше имя"><input id="fv-tg" maxlength="32" placeholder="Telegram @ (необязательно)"><textarea id="fv-text" maxlength="2000" placeholder="Ваш ответ…"></textarea><button class="btn lime" id="fv-send">Ответить</button><p id="fv-note" class="note">Ответ появится после проверки модератором.</p></div>\';'
+          'v.scrollIntoView({behavior:\'smooth\'});'
+          'try{fetch(G+\'?action=posts&thread=\'+encodeURIComponent(tid)).then(function(r){return r.json();}).then(function(d){'
+          'var l=document.getElementById(\'fv-list\');'
+          'if(d&&d.ok&&d.posts&&d.posts.length){l.innerHTML=d.posts.map(function(p){return \'<div class="fpost"><b>\'+esc(p.name)+\'</b><p>\'+esc(p.text)+\'</p></div>\';}).join(\'\');}'
+          'else{l.innerHTML=\'<p class="note">Пока нет ответов — напишите первым.</p>\';}}).catch(function(){});}catch(e){}'
+          'document.getElementById(\'fv-send\').addEventListener(\'click\',function(){'
+          'var btn=document.getElementById(\'fv-send\'),note=document.getElementById(\'fv-note\');'
+          'btn.disabled=true;btn.textContent=\'Отправляем…\';'
+          'fetch(G,{method:\'POST\',headers:{\'Content-Type\':\'text/plain\'},body:JSON.stringify({thread:tid,name:document.getElementById(\'fv-name\').value,tg:document.getElementById(\'fv-tg\').value,text:document.getElementById(\'fv-text\').value})})'
+          '.then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent=\'Ответить\';'
+          'if(d&&d.ok){note.textContent=\'Спасибо! Ответ появится после проверки модератором.\';document.getElementById(\'fv-text\').value=\'\';}'
+          'else{note.textContent=\'Ошибка: \'+((d&&d.error)||\'повторите позже\');}})'
+          '.catch(function(){btn.disabled=false;btn.textContent=\'Ответить\';note.textContent=\'Не удалось отправить, попробуйте ещё раз.\';});});}'
+          '})();</script>')
+    body = ('<div class="hero"><div class="kicker">Сообщество</div><h1>Форум «Запас хода»</h1>'
+            '<p class="lede">Задайте вопрос о зарядке, аксессуарах или проблеме — отвечают редакция и владельцы. Все ответы проходят модерацию.</p></div>'
+            '<div class="cta"><button class="btn lime" id="f-new">Создать тему</button></div>'
+            '<div id="f-live"><h2>Свежие темы сообщества</h2><div id="f-live-list"><p class="note">Загрузка…</p></div><div id="f-view"></div></div>'
+            + cards
+            + '<h2>Правила</h2><p class="note">По делу и без рекламы. Ссылки только по теме. Сообщения публикуются после проверки модератором.</p>'
+            + modal_html + js)
+    write_page(os.path.join(outdir, 'forum', 'index.html'),
+               'Форум сообщества — «Запас хода»',
+               'Форум владельцев электромобилей и гибридов: зарядка, станции, аксессуары, типичные проблемы и решения. Вопросы и ответы с модерацией.',
+               body, '/forum/', crumbs=[('/forum/', 'Сообщество')])
+    for tid, title, sec, desc in seeds:
+        guide = tid[len('forum/pain-'):] if tid.startswith('forum/pain-') else None
+        _forum_thread_page(tid, title, sec, desc, outdir, guide=guide)
+
+
+
+EX_CSS = "\n/* --- \u043a\u0440\u043e\u0441\u0441\u0431\u0440\u0430\u0443\u0437\u0435\u0440\u043d\u043e\u0441\u0442\u044c, \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u044b, \u0444\u043e\u0440\u0443\u043c (v2) --- */\n:root{color-scheme:light}\ninput:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fff inset;-webkit-text-fill-color:#1d1d1f;transition:background-color 99999s ease-in-out 0s}\ninput,select,textarea{min-height:40px}\nbutton{white-space:nowrap}\nimg{max-width:100%;height:auto}\n.see-all{font-size:14px;font-weight:500;color:#0071e3;text-decoration:none;margin-left:8px}\n.comments{margin-top:48px;padding-top:24px;border-top:1px solid #e5e5e7}\n.comments h2{font-size:22px;margin:0 0 12px}\n.c-item,.fpost{padding:12px 0;border-bottom:1px solid #f0f0f2}\n.c-item b,.fpost b{font-size:14px}\n.c-date{font-size:12px;color:#86868b;margin-left:8px}\n.c-item p,.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}\n.c-empty{color:#86868b;font-size:14px}\n#c-form,.fv-form{display:grid;gap:10px;margin-top:14px}\n#c-form input,#c-form textarea,.fv-form input,.fv-form textarea{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;font-family:inherit;box-sizing:border-box}\n#c-form textarea,.fv-form textarea{min-height:90px;resize:vertical}\n#c-note,#fv-note,#fm-note{font-size:12px;color:#86868b}\n.fsec{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}\n.fchip{padding:6px 14px;border:1px solid #d2d2d7;border-radius:999px;background:#fff;cursor:pointer;font-size:14px;font-family:inherit}\n.fchip.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}\n.fthread{display:block;padding:14px 16px;border:1px solid #e5e5e7;border-radius:14px;margin-bottom:10px;text-decoration:none;color:inherit;cursor:pointer}\n.fthread b{display:block}\n.fthread span{font-size:13px;color:#86868b}\n.fmodal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}\n.fmodal.on{display:flex}\n.fmodal .fbox{background:#fff;border-radius:20px;padding:20px;max-width:480px;width:92%;max-height:86vh;overflow:auto}\n.fmodal h3{margin:0 0 12px}\n.fmodal input,.fmodal textarea,.fmodal select{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;margin-bottom:10px;box-sizing:border-box;font-family:inherit}\n@media (max-width:380px){.ctas .btn{display:block;width:100%;margin:6px 0;text-align:center}}\n"
+
+
 def main():
+    global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
     catalog.init(write_page, MODELS, SITE_DOMAIN)
     global BUILD_DATE
@@ -1472,6 +1692,7 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
+    CSS = CSS + EX_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
@@ -1549,6 +1770,8 @@ def main():
     services.b2b_build(outdir, write_page)
     services.brands_build(outdir, write_page, MODELS)
     services.open_data_build(outdir, write_page)
+    models_index(outdir)
+    forum_build(outdir)
     quiz_page(outdir)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
