@@ -352,7 +352,7 @@ FOOTER = ('<footer><div class="wrap"><div>Запас хода — практик
  '137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. '
  'При поломке высоковольтной системы обращайтесь в специализированный сервис.</div>'
  '<div>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL), запросы через Overpass API.</div>'
- '<div><a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
+ '<div><a href="/b2b/">Дилерам</a> · <a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
 
 SHARE_JS = '''<script>
 try{var p=location.pathname;if(p.endsWith("/index.html")){var q=location.search+location.hash;history.replaceState(null,"",p.slice(0,-10)+q);}}catch(e){}
@@ -1334,6 +1334,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/catalog/index.html'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/blog/index.html'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
+    urls += [SITE_DOMAIN+'/b2b/index.html']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1447,6 +1448,7 @@ def main():
     catalog.catalog_build(outdir)
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
+    services.b2b_build(outdir, write_page)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
