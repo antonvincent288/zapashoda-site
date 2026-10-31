@@ -623,16 +623,17 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
     crumbs_html = ''
     ld_crumbs = ''
     if crumbs:
-        items = [("/", "Запас хода")] + list(crumbs)
+        items = [("/", "Главная")] + list(crumbs)
         parts = []
         for idx2, (href, label) in enumerate(items):
             last = (idx2 == len(items) - 1)
             lab = html.escape(str(label))
             if last:
-                parts.append('<span class="crumb-cur" aria-current="page">' + lab + '</span>')
+                parts.append('<li class="inline-flex items-center"><span class="text-gray-900 font-medium" aria-current="page">' + lab + '</span></li>')
             else:
-                parts.append('<a href="' + href + '">' + lab + '</a>')
-        crumbs_html = '<nav class="crumbs" aria-label="Хлебные крошки">' + ' <span class="crumb-sep">›</span> '.join(parts) + '</nav>'
+                parts.append('<li class="inline-flex items-center"><a class="text-gray-500 hover:text-green-600" href="' + href + '">' + lab + '</a>'
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-2 text-gray-400"><path d="M9 6l6 6-6 6"/></svg></li>')
+        crumbs_html = '<nav aria-label="Хлебные крошки"><ul class="flex flex-wrap items-center text-sm py-4">' + ''.join(parts) + '</ul></nav>'
         ld_list = []
         for idx2, (href, label) in enumerate(items):
             item = '{"@type":"ListItem","position":' + str(idx2 + 1) + ',"name":"' + html.escape(str(label)).replace('"','') + '"'
@@ -655,7 +656,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + (BUILD_DATE or '1') + '">'
      '<link rel="stylesheet" href="/style.css?v=' + (BUILD_DATE or '1') + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main>' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '</body></html>')
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '</body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
@@ -1102,22 +1103,22 @@ def model_page(m, outdir):
         t80 = 48.0 / dcp_n * 60
         rows2 += '<tr><td>Быстрая станция (DC)</td><td>до ' + _fmt1(dcp_n) + ' кВт</td><td>Пистолет ' + html.escape(str(m.get('dc') or '—')) + ' на станции</td><td>0→80% ≈ ' + str(int(round(t80))) + ' мин</td></tr>'
     if rows2:
-        chg_table = ('<h2>Сколько занимает зарядка на практике</h2>'
+        chg_table = ('<h2 class="text-lg text-gray-900 mt-8">Сколько занимает зарядка на практике</h2>'
          '<p class="note">Время посчитано для батареи 60 кВт·ч; для своей машины умножьте на её ёмкость. Реальная скорость зависит от температуры батареи и загрузки станции.</p>'
-         '<div class="tw"><table><tr><th>Вариант</th><th>Мощность на машине</th><th>Что нужно</th><th>Время</th></tr>' + rows2 + '</table></div>')
+         '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th class="px-6 py-3 text-xs uppercase text-gray-500">Вариант</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Мощность на машине</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Что нужно</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Время</th></tr>' + rows2 + '</table></div>')
     else:
         chg_table = ''
     srcrow = ('<p class="src">Источник спецификации: <a href="' + m["src"] + '">' + re.sub(r"^https?://(www\\.)?","",str(m["src"])) + '</a></p>') if m.get('src') and str(m['src']).startswith('http') else ''
     vin_link = ''
     if m['brand'].strip() in VIN_BRANDS:
-        vin_link = ('<div class="lcard"><h3>VIN и история машины</h3><p>Владеете или выбираете с пробегом? Смотрите страницу '
+        vin_link = ('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">VIN и история машины</h3><p>Владеете или выбираете с пробегом? Смотрите страницу '
           '<a href="/vin/'+slug(m['brand'])+'.html">VIN ' + html.escape(m['brand']) + '</a>: где табличка, код модельного года на 10-й позиции, '
           'бесплатная проверка ГИБДД и что проверить в ЭПТС/СБКТС у параллельного импорта.</p></div>')
-    faq = ('<details class="faq"><summary>Каким разъёмом заряжается ' + html.escape(pname) + '?</summary>'
+    faq = ('<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Каким разъёмом заряжается ' + html.escape(pname) + '?</summary>'
      '<p>AC: ' + html.escape(str(m.get("ac") or "—")) + '. DC: ' + html.escape(str(m.get("dc") or "—")) + '. Разъём зависит от рынка вывоза: ' + html.escape(str(m.get("market"))) + '.</p></details>'
-     '<details class="faq"><summary>Можно ли зарядить ' + html.escape(pname) + ' от обычной розетки 220В?</summary>'
+     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Можно ли зарядить ' + html.escape(pname) + ' от обычной розетки 220В?</summary>'
      '<p>Да, портативным зарядным устройством: обычная розетка даёт примерно 2,3–3,5 кВт. Паспортные «6–8 часов до 100%» относятся к станции 7 кВт — от розетки дольше. Нужны отдельная линия и автомат 32А.</p></details>'
-     '<details class="faq"><summary>Какие типичные проблемы у ' + html.escape(pname) + '?</summary><p>Смотрите блок «Проблемы и решения» выше — собрано по отзывам владельцев и профильных сервисов, со ссылками на первоисточники.</p></details>')
+     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Какие типичные проблемы у ' + html.escape(pname) + '?</summary><p>Смотрите блок «Проблемы и решения» выше — собрано по отзывам владельцев и профильных сервисов, со ссылками на первоисточники.</p></details>')
     faq_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "FAQPage",
         "mainEntity": [
@@ -1127,10 +1128,10 @@ def model_page(m, outdir):
         ]
     }, ensure_ascii=False) + '</script>'
     parts = []
-    parts.append('<h1>' + html.escape(pname) + ': какой разъём зарядки, типичные проблемы и решения</h1>')
-    parts.append('<p><span class="tag lime">' + m['years'] + '</span><span class="tag">' + m['type'] + '</span><span class="tag">' + grp + '</span><span class="tag">' + m['freq'] + ' ввоз</span></p>')
+    parts.append('<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight my-4">' + html.escape(pname) + ': какой разъём зарядки, типичные проблемы и решения</h1>')
+    parts.append('<p class="mt-3"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold mr-2">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' ввоз</span></p>')
     parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
-    parts.append('<h2>Разъёмы и мощность зарядки</h2><div class="tw"><table>' + rows + '</table></div>')
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">Разъёмы и мощность зарядки</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
     if chg_table: parts.append(chg_table)
     parts.append(calc_block(m, obc_n, dcp_n, obc_s, dcp_s))
     docs_block = ''
@@ -1152,7 +1153,7 @@ def model_page(m, outdir):
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<h2>Документы и материалы</h2><div class="lcard docs"><ul>' + docs_links + '</ul>'
+        docs_block = ('<h2 class="text-lg text-gray-900 mt-8">Документы и материалы</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
           '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
           + site_html + '</div>')
     else:
@@ -1165,13 +1166,13 @@ def model_page(m, outdir):
     parts.append(vin_link)
     parts.append(docs_block)
     if sol_block:
-        parts.append('<div class="lcard"><h3>Что понадобится для зарядки</h3><p>' + sol_block + '</p></div>')
+        parts.append('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">Что понадобится для зарядки</h3><p class="text-sm text-gray-600">' + sol_block + '</p></div>')
     cat_block = catalog.catalog_block_for(m, pname)
     if cat_block: parts.append(cat_block)
     if note:
         parts.append('<p class="note"><b>Примечание:</b> ' + note + '</p>')
     parts.append(srcrow)
-    parts.append('<h2>Проблемы и решения для владельцев</h2>')
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">Проблемы и решения для владельцев</h2>')
     parts.append(pain_html)
     parts.append(faq)
     parts.append(faq_ld)
@@ -1472,26 +1473,68 @@ def og_gen(outdir, jobs):
 
 # ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
 
+# ====== ШАБЛОННЫЕ КОМПОНЕНТЫ FreshCart ======
+
+def shop_tpl_card(p):
+    """Карточка товара как в FreshCart index.html (Popular Products), с хуками заявки."""
+    tag = catalog.TAGS.get(p['id'])
+    hit = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-green-600 text-white">' + html.escape(tag) + '</span></div>' if tag else '')
+    sp = catalog.SPECS.get(p['id'], [])
+    spec = html.escape(str(sp[0][1])) if sp else ''
+    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
+    f = catalog.SKU_IMG_FILES.get(p['id'])
+    img = f if f else '/assets/og/default.png'
+    return ('<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="' + html.escape(p['cat']) + '" data-ln="' + catalog.ln_of(p) + '" data-price="' + str(p['price']) + '">'
+      '<div class="flex-auto p-4">'
+      '<div class="text-center relative flex justify-center">' + hit +
+      '<a href="/catalog/' + p['slug'] + '.html"><img src="' + img + '" alt="' + html.escape(p['name']) + '" loading="lazy" decoding="async" class="w-full h-auto"></a></div>'
+      '<div class="flex flex-col gap-3">'
+      '<a href="/catalog/' + p['slug'] + '.html" class="text-decoration-none text-gray-500"><small>' + html.escape(p['cat']) + '</small></a>'
+      '<div class="flex flex-col gap-2"><h3 class="text-base truncate"><a href="/catalog/' + p['slug'] + '.html" class="text-gray-800">' + html.escape(p['name']) + '</a></h3></div>'
+      '<small class="text-gray-500 truncate" style="display:block">' + spec + '</small>'
+      '<div class="flex justify-between items-center">'
+      '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(p['price']) + '</span></div>'
+      + add_btn +
+      '</div></div></div></div>')
+
+def _tpl_bundle_card(b):
+    items_txt = ', '.join(catalog.PIDX[i]['name'].split(',')[0] for i in b['items'])
+    save = b['was'] - b['price']
+    img_tag = ('<img src="/assets/sku/bundle-set.png" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center text-5xl">📦</div>')
+    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
+    return ('<div class="flex-0 block w-full md:w-auto">'
+      '<div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product">'
+      '<div class="flex-auto p-4">'
+      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-red-600 text-white">Выгода ' + catalog.fmt_price(save) + '</span></div>' + img_tag + '</div>'
+      '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>Комплект</small></a>'
+      '<h3 class="text-base" style="white-space:normal"><span class="text-gray-800">' + html.escape(b['name']) + '</span></h3>'
+      '<small class="text-gray-500" style="display:block">В комплекте: ' + html.escape(items_txt) + '</small>'
+      '<div class="flex justify-between items-center">'
+      '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(b['price']) + '</span><span class="line-through text-gray-500 ml-2">' + catalog.fmt_price(b['was']) + '</span></div>'
+      + add_btn +
+      '</div></div></div></div></div>')
+
+def _tpl_blog_card(href, kind, title, teaser, img):
+    return ('<div><a href="' + href + '"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition overflow-hidden h-full">'
+      '<img src="' + img + '" alt="' + html.escape(str(title)) + '" loading="lazy" style="width:100%;aspect-ratio:1200/630;object-fit:cover">'
+      '<div class="p-4"><small class="text-gray-500">' + html.escape(kind) + '</small>'
+      '<h3 class="text-base font-semibold text-gray-800 mt-2" style="line-height:1.4">' + html.escape(str(title)) + '</h3>'
+      '<p class="text-sm text-gray-600 mt-2" style="margin:0">' + html.escape(str(teaser)) + '</p>'
+      '<span class="text-green-600 font-semibold text-sm inline-block mt-3">Читать →</span></div></a></div>')
+
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
-    blog_cards = ''.join(
-        ('<div class="card-product fc-w60"><div class="flex flex-col gap-3 p-4">'
-         '<a class="text-decoration-none text-gray-500" href="/blog/"><small>Блог</small></a>'
-         '<h3 class="text-base font-semibold"><a href="/blog/'+sl+'.html" style="color:#001e2b;text-decoration:none">'+html.escape(t)+'</a></h3>'
-         '<p class="text-gray-600 text-sm" style="margin:0">'+html.escape(d)+'</p>'
-         '<a class="text-green-600 font-semibold text-sm" href="/blog/'+sl+'.html" style="text-decoration:none">Читать гайд →</a>'
-         '</div></div>') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/default.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
     news_cards = ''
     if news:
         try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
         except Exception: ns = news[:3]
         for it in ns:
-            tt = html.escape(str(it.get('title',''))[:120])
-            dd = html.escape(str(it.get('teaser',''))[:150])
-            news_cards += ('<div class="card-product fc-w30"><div class="flex flex-col gap-3 p-4">'
-              '<a class="text-decoration-none text-gray-500" href="/news/"><small>Новости</small></a>'
-              '<h3 class="text-base font-semibold"><a href="'+news_slug_page(it)+'" style="color:#001e2b;text-decoration:none">'+tt+'</a></h3>'
-              '<p class="text-gray-600 text-sm" style="margin:0">'+dd+'</p></div></div>')
+            tt = str(it.get('title',''))[:120]
+            dd = str(it.get('teaser',''))[:150]
+            img = '/assets/og/' + (it.get('og') if it.get('og') else 'default.png')
+            news_cards += _tpl_blog_card(news_slug_page(it),'Новости',tt,dd,img)
+
     CAT_ICONS = {
       'Адаптеры': '<path d="M7 12h6a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H9" /><path d="M13 12H7a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4h2" /><path d="M7 8h10" /><path d="M9 4v4" /><path d="M9 16v4" /><path d="M15 4v2" /><path d="M15 14v2" /><path d="M9 4h6v4" />',
       'Кабели': '<path d="M9 4v8a3 3 0 0 0 3 3h6" /><path d="M9 4h-4v8h4z" /><path d="M18 19l2-2-2-2" /><path d="M20 17h-2" /><path d="M4 4h5v8H4z" />',
@@ -1502,23 +1545,23 @@ def home_page(outdir, news=None):
     }
     def cat_card(c):
         ic = CAT_ICONS.get(c, CAT_ICONS['Аксессуары'])
-        return ('<div class="fc-cat"><a href="/catalog/"><div class="py-8 text-center">'
-          '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;color:#0aad0a">'+ic+'</svg>'
-          '<div class="text-base" style="color:#001e2b;font-weight:600">'+c+'</div></div></a></div>')
+        return ('<div><a href="/catalog/"><div class="rounded-lg break-words border bg-white border-gray-300 transition duration-75 hover:transition hover:duration-500 ease-in-out hover:border-green-600 hover:shadow-md">'
+          '<div class="py-8 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mb-3 m-auto text-green-600">'+ic+'</svg>'
+          '<div class="text-base text-gray-800">'+c+'</div></div></div></a></div>')
     cats_html = ''.join(cat_card(c) for c in ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары'])
-    hits = catalog.shop_card_html(catalog.PIDX[1]) + catalog.shop_card_html(catalog.PIDX[5]) + catalog.shop_card_html(catalog.PIDX[19]) + catalog.shop_card_html(catalog.PIDX[23])
-
-    def ftr(href, title, sub, icon):
-        return ('<div class="fc-feat"><a href="'+href+'" style="text-decoration:none;color:inherit">'
-          '<div class="fc-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icon+'</svg></div>'
-          '<div><b style="color:#001e2b">'+title+'</b><p style="margin:4px 0 0;font-size:13.5px;color:#5c6c75;line-height:1.45">'+sub+'</p></div></a></div>')
-    feats = ('<div class="fc-feats">'
-      + ftr('/quiz/','Подбор за 30 секунд','Марка и модель — покажем, какие аксессуары нужны вашей машине.','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="16.6" r="1.1"/>')
-      + ftr('/charging/','Карта станций','Все зарядные станции России на карте: Type 2, CCS2, GB/T.','<path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z"/><circle cx="12" cy="11" r="2.2"/>')
-      + ftr('/vin/','VIN-проверка','Марка, рынок поставки и разъёмы по VIN-номеру.','<circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 21 21"/>')
-      + ftr('/forum/','Форум сообщества','Задай вопрос о зарядке — отвечает редакция и владельцы.','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>')
-      + '</div>')
-
+    hits = ''.join(shop_tpl_card(catalog.PIDX[i]) for i in [1,5,19,23])
+    def tool_tile(href, title, icon):
+        return ('<div><a href="'+href+'"><div class="rounded-lg break-words border bg-white border-gray-300 transition duration-75 hover:transition hover:duration-500 ease-in-out hover:border-green-600 hover:shadow-md">'
+          '<div class="py-6 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mb-3 m-auto text-green-600">'+icon+'</svg>'
+          '<div class="text-base text-gray-800 font-medium">'+title+'</div></div></div></a></div>')
+    tools_html = (''.join(tool_tile(u,t,i) for u,t,i in [
+      ('/quiz/','Подбор за 30 секунд','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="16.6" r="1.1"/>'),
+      ('/charging/','Карта станций','<path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z"/><circle cx="12" cy="11" r="2.2"/>'),
+      ('/vin/','VIN-проверка','<circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 21 21"/>'),
+      ('/forum/','Форум сообщества','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
+      ('/models/','Все модели','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
+      ('/b2b/','Дилерам','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
+    ]))
     pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Xiaomi SU7','BYD Song Plus EV','Tesla Model 3']
     pop_cards = ''
     for pn in pop_names:
@@ -1526,53 +1569,81 @@ def home_page(outdir, news=None):
         if not hit: continue
         m = hit[0]
         sl = slug(m['brand'])+'-'+slug(m['model'])
-        specs = []
-        if m.get('years'): specs.append(html.escape(str(m['years'])))
-        if m.get('type'): specs.append(html.escape(str(m['type'])))
-        if m.get('ac'): specs.append('AC: '+html.escape(str(m['ac'])))
-        spec_html = ''.join('<span>'+s+'</span>' for s in specs[:3])
-        pop_cards += ('<a class="mcard2" href="/models/'+sl+'.html">'
-          '<div class="mcard2-media"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" loading="lazy"></div>'
-          '<div class="mcard2-body"><b>'+html.escape(m['brand']+' '+m['model'])+'</b>'
-          '<div class="mcard2-specs">'+spec_html+'</div>'
-          '<span class="mcard2-link">Разъёмы и аксессуары →</span></div></a>')
-
-    art_cards = ''.join('<div class="fc-mini"><a href="/pain/'+sl+'.html" style="text-decoration:none;color:inherit"><b style="color:#001e2b">'+html.escape(title)+'</b><p style="margin:6px 0 0;font-size:13px;color:#5c6c75;line-height:1.45">'+html.escape(desc)+'</p></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
-
+        meta = html.escape(str(m.get('type') or '')) + ((', '+html.escape(str(m.get('years') or ''))) if m.get('years') else '')
+        pop_cards += ('<div><div class="relative rounded-lg break-words border bg-white border-gray-300 card-product">'
+          '<div class="flex-auto p-4"><div class="text-center relative flex justify-center">'
+          '<a href="/models/'+sl+'.html"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" loading="lazy" class="w-full h-auto"></a></div>'
+          '<div class="flex flex-col gap-3"><a href="/models/'+sl+'.html" class="text-decoration-none text-gray-500"><small>'+meta+'</small></a>'
+          '<h3 class="text-base truncate"><a href="/models/'+sl+'.html" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
+          '<div class="flex justify-between items-center"><small class="text-gray-500">'+html.escape(str(m.get('ac') or ''))+'</small>'
+          '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'.html">Разъёмы →</a></div>'
+          '</div></div></div></div>')
     bcounts = {}
     for m in MODELS:
         b = m['brand'].strip()
         bcounts[b] = bcounts.get(b, 0) + 1
-    brand_html = ''.join('<a href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+' <span>'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
-
-    body = ('<section class="fc-hero" style="margin-top:18px"><div class="fc-hero-in">'
-      '<div class="fc-hero-txt"><span class="fc-hero-badge">Справочник EV · 137 моделей в России</span>'
-      '<h1 style="color:#fff;margin:14px 0 12px;font-size:clamp(30px,4.6vw,46px);letter-spacing:-.03em;line-height:1.1;font-weight:800">' + html.escape(CFG_HERO_TITLE or 'Как зарядить ваш электромобиль в России') + '</h1>'
-      '<p style="color:rgba(255,255,255,.85);font-size:17px;max-width:520px;margin:0 0 22px;line-height:1.55">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с доставкой через дилера.') + '</p>'
-      '<div style="display:flex;gap:12px;flex-wrap:wrap">'
-      '<a class="btn" style="background:#fff;color:#001e2b;font-weight:700" href="/quiz/">Подбор за 30 секунд</a>'
-      '<a class="btn" style="border:1px solid rgba(255,255,255,.5);color:#fff" href="/catalog/">Каталог аксессуаров</a></div></div>'
-      '<div class="fc-hero-side" aria-hidden="true"><div class="fc-hero-card">'
-      '<div class="fc-hero-kpi"><b>137</b><span>моделей в базе</span></div>'
-      '<div class="fc-hero-kpi"><b>26</b><span>позиций в каталоге</span></div>'
-      '<div class="fc-hero-kpi"><b>1 900+</b><span>станций на карте</span></div>'
-      '<div class="fc-hero-kpi"><b>51</b><span>VIN-справочник</span></div></div></div>'
-      '</div></section>'
-      '<section style="margin-top:36px"><h2>Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2>'
-      '<div class="fc-cats">' + cats_html + '</div></section>'
-      '<section style="margin-top:30px">' + feats + '</section>'
-      '<section style="margin-top:30px"><h2>Хиты каталога</h2><p class="note">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>'
-      '<div class="fc-hits">' + hits + '</div></section>'
-      '<section style="margin-top:30px"><h2 id="models-list">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2>'
-      '<div class="tgrid">' + pop_cards + '</div></section>'
-      '<section style="margin-top:30px"><h2>Бренды</h2><div class="brand-strip">' + brand_html + '</div></section>'
-      '<section style="margin-top:30px"><h2>Частые проблемы — быстрые ответы <a class="see-all" href="/pains.html">все статьи →</a></h2>'
-      '<div class="fc-minis">' + art_cards + '</div></section>'
-      '<section style="margin-top:30px"><h2>Гайды в блоге <a class="see-all" href="/blog/">весь блог →</a></h2>'
-      '<div class="fc-hits">' + blog_cards + '</div></section>'
-      '<section style="margin-top:30px"><h2>Свежие новости EV <a class="see-all" href="/news/">все новости →</a></h2>'
-      '<div class="fc-hits">' + news_cards + '</div></section>'
-      '<div class="cta" style="margin-top:44px"><a class="btn lime" href="/catalog/">Каталог аксессуаров</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost" href="/charging/">Карта зарядных станций</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    brand_html = ''.join('<a class="inline-flex items-center px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-800 hover:border-green-600 hover:text-green-600 text-sm font-medium" href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+'<span class="ml-2 text-green-600 font-bold">'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
+    art_cards = ''.join('<div><a href="/pain/'+sl+'.html"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition p-4 h-full">'
+      '<small class="text-gray-500">Проблемы</small><h3 class="text-base font-semibold text-gray-800 mt-2">'+html.escape(title)+'</h3>'
+      '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
+    side_cards = ''
+    for pn in ['Zeekr 001','Li Auto L6']:
+        hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
+        if not hit: continue
+        m = hit[0]
+        sl = slug(m['brand'])+'-'+slug(m['model'])
+        side_cards += ('<a href="/models/'+sl+'.html"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" class="w-full h-auto rounded-lg border border-gray-200 shadow-sm"></a>')
+    body = ('<section class="mt-4"><div class="container">'
+      '<div class="rounded-lg break-words bg-gray-100" style="padding:52px 40px">'
+      '<div class="flex flex-wrap items-center gap-8">'
+      '<div class="md:w-1/2 w-full">'
+      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · 137 моделей в России</span>'
+      '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5">' + html.escape(CFG_HERO_TITLE or 'Как зарядить ваш электромобиль в России') + '</h1>'
+      '<p class="text-md text-gray-600" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
+      '<div class="flex gap-3 flex-wrap">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подбор за 30 секунд</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
+      '</div></div>'
+      '<div class="md:w-1/2 w-full grid gap-4 grid-cols-2">' + side_cards + '</div>'
+      '</div></div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
+      '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
+      '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + tools_html + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Popular Products</h2></div></div>'
+      '<div class="grid gap-4 grid-cols-2 lg:gap-4 xl:grid-cols-4">' + hits + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Комплекты — выгоднее по отдельности</h2></div></div>'
+      '<div class="block w-full xl:grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">'
+      '<div class="block w-full md:w-auto"><div class="rounded-lg" style="background:linear-gradient(135deg,#0d7e0f,#0aad0a);min-height:340px;padding:32px 24px;display:flex;flex-direction:column;justify-content:space-between">'
+      '<div><h3 class="text-lg text-white font-bold">Готовый комплект для вашей машины</h3>'
+      '<p class="text-white text-base mt-2">Адаптер + кабель + держатель + зимний набор. Оплата — дилеру при получении.</p></div>'
+      '<a href="/catalog/" class="btn bg-white text-gray-800 border-white">Смотреть комплекты</a></div></div>'
+      + ''.join(_tpl_bundle_card(b) for b in catalog.BUNDLES) +
+      '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Трендовые модели <a class="see-all" href="/models/">все 137 →</a></h2></div></div>'
+      '<div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + pop_cards + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Бренды</h2></div></div>'
+      '<div class="flex flex-wrap gap-3">' + brand_html + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Частые проблемы — быстрые ответы <a class="see-all" href="/pains.html">все статьи →</a></h2></div></div>'
+      '<div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">' + art_cards + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Гайды в блоге <a class="see-all" href="/blog/">весь блог →</a></h2></div></div>'
+      '<div class="grid gap-4 grid-cols-1 md:grid-cols-3">' + blog_cards + '</div></div></section>'
+      '<section class="lg:my-14 my-8"><div class="container">'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Свежие новости EV <a class="see-all" href="/news/">все новости →</a></h2></div></div>'
+      '<div class="grid gap-4 grid-cols-1 md:grid-cols-3">' + news_cards + '</div></div></section>'
+      '<section class="my-10"><div class="container"><div class="flex gap-3 flex-wrap">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700" href="/catalog/">Каталог аксессуаров</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="' + TG_CHANNEL + '">Канал «Запас хода»</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/charging/">Карта станций</a>'
+      '</div></div></section>')
     web_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "WebSite",
         "name": SITE_NAME,
@@ -1584,7 +1655,6 @@ def home_page(outdir, news=None):
     write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, проблемы и решения для 137 моделей EV в России',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
-
 def pains_index(outdir):
     arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
     write_page(os.path.join(outdir,'pains.html'), 'Проблемы и решения электромобилей | Запас хода',

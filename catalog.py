@@ -38,14 +38,19 @@ def bundle_for(m):
 def bundle_card_html(b):
     items_txt = ', '.join(PIDX[i]['name'].split(',')[0] for i in b['items'])
     save = b['was'] - b['price']
-    return ('<div class="pc-card pc-bundle" data-cat="Комплекты" data-ln="' + b['line'] + ' phev">'
-      '<a class="pc-media"><span class="pc-hit">Выгоднее</span>' + (('<img src="/assets/sku/bundle-set.png" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async">') if b['id'] == 'b-gbt' else SKU_ART['Комплекты']) + '</a>'
-      '<div class="pc-body"><span class="pc-cat">Комплект</span>'
-      '<span class="pc-name">' + html.escape(b['name']) + '</span>'
-      '<div class="pc-price">' + fmt_price(b['price']) + ' <s class="pc-was">' + fmt_price(b['was']) + '</s></div>'
-      '<p class="pc-desc" style="font-size:12.5px;color:#5c6c75;margin:4px 0 0;line-height:1.45">В комплекте: ' + html.escape(items_txt) + '. Экономия ' + fmt_price(save) + '.</p>'
-      '<div class="pc-bottom"><span></span><span class="pc-btn sku-add pc-add" onclick="ofAddB(\'' + b['id'] + '\',this)">В заявку</span></div>'
-      '<span class="pc-seller">Оплата — дилеру при получении</span></div></div>')
+    img_tag = ('<img src="/assets/sku/bundle-set.png" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else SKU_ART['Комплекты'])
+    return ('<div class="flex-0 block w-full md:w-auto" data-cat="Комплекты" data-ln="' + b['line'] + ' phev">'
+      '<div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product">'
+      '<div class="flex-auto p-4">'
+      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-red-600 text-white">Выгода ' + fmt_price(save) + '</span></div>' + img_tag + '</div>'
+      '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>Комплект</small></a>'
+      '<h3 class="text-base" style="white-space:normal"><span class="text-gray-800">' + html.escape(b['name']) + '</span></h3>'
+      '<small class="text-gray-500" style="display:block">В комплекте: ' + html.escape(items_txt) + '</small>'
+      '<div class="flex justify-between items-center">'
+      '<div><span class="text-gray-900 font-semibold">' + fmt_price(b['price']) + '</span><span class="line-through text-gray-500 ml-2">' + fmt_price(b['was']) + '</span></div>'
+      '<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 sku-add pc-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>'
+      '</div></div></div></div></div>')
+
 CATEXT = json.loads('{"Адаптеры": "В России основная сеть — станции Type 2 (медленная) и CCS2 (быстрая). Машины из Китая с разъёмом GB/T к ним напрямую не подключаются — нужен адаптер. Обратный адаптер (GB/T → Type 2) выручает на китайских GB/T-станциях частных комплексов и гаражных паркингов.", "Кабели": "Кабель заменяет «шнур от станции»: у многих станций кабеля нет или он короткий. Кабель Type 2–GB/T соединяет станцию с китайской машиной напрямую — без лишнего адаптера в цепи. Для GB/T-машин также нужны специальные удлинители — бытовые не подходят.", "Зарядки": "Портативная зарядка живёт в багажнике: дом, дача, поездка, аварийный случай. Для GB/T-машин это основной способ зарядки от розетки — штатные комплекты часто не втыкаются в российские розетки.", "Станции": "Домашняя станция превращает зарядку в рутину: пришёл, воткнул, утром полный. Станция 2-в-1 имеет и Type 2, и GB/T — для семьи или парковки с машинами разных стандартов.", "V2L": "V2L (Vehicle-to-Load) — машина как мобильный генератор: чайник на пикнике, обогреватель, инструменты. Нужна поддержка V2L у самой машины.", "Аксессуары": "Мелочи, на которые не смотрят, пока не понадобится: смазка для примерзающего лючка зимой, органайзер, чтобы кабель не царапал крыло."}')
 FAQS = json.loads('{"Адаптеры": [["Адаптер греется — это нормально?", "Небольшой нагрев на максимальном токе нормален. Если корпус горячее 60–70 °C или плавится вилка — снимайте и меняйте: дешёвые адаптеры без термозащиты ставить не стоит."], ["Можно ли оставить адаптер на станции на ночь?", "Да, для медленной зарядки это штатный сценарий. Перед зимней зарядкой очистите контакты от снега и наледи."], ["Чем премиум-версия отличается от базовой?", "Материалом корпуса и фиксацией: премиум держит плотнее и рассчитан на ежедневную зарядку, базовый — запасной или редких поездок."]], "Кабели": [["Какой длины кабель выбрать?", "Измерьте расстояние от парковки до станции и прибавьте запас 1–2 м на перекладывание. 5 м хватает в 80% случаев, 7–10 м — для глубоких паркомест и габаритных машин."], ["Кабель греется в месте соединения?", "Слабый контакт — снимите, осмотрите штыри на оплавление. Если есть следы перегрева — кабель под замену."], ["Можно ли через кабель заряжать обычную розетку?", "Нет: кабель Type 2–GB/T — только между станцией и машиной. От розетки заряжает портативное зарядное устройство."]], "Зарядки": [["Можно ли заряжать от обычной розетки?", "Портативка 3,5 кВт — да, от бытовой 220 В с 16 А. 7-киловаттной нужна силовая розетка (CEE 380 В). Обычная бытовая розетка должна быть целой, с заземлением и без тройников."], ["Сколько времени занимает зарядка от розетки?", "3,5 кВт добавляет примерно 15–20 км хода за час ночёвки; 7 кВт (силовая розетка) — 30–40 км в час. Точные цифры — на странице вашей модели."], ["Портативку можно оставить на морозе?", "Да, но не заряжайте в сильный мороз с мокрыми контактами — дайте разъёму оттаять и просохнуть."]], "Станции": [["Нужен ли электрик для установки станции?", "Да: выделенная линия, автомат и УЗО ставит электромонтажник. Мы помогаем подобрать станцию и даём инструкцию монтажнику — смотрите раздел «Услуги»."], ["Чем 2-в-1 лучше двух станций?", "Одна розетка с двумя разъёмами вместо двух блоков на щитке: дешевле, меньше оборудования,зарядка и «европейской», и «китайской» машины из одной точки."], ["RFID-разблокировка зачем?", "Чтобы посторонние не начинали зарядку со станции без вашего ключа — актуально для дворов и открытых парковок."]], "V2L": [["Моя машина поддерживает V2L?", "Проверьте на странице модели или в мануале: чаще поддерживают свежие Zeekr, Li, BYD. Если V2L-порта нет — адаптер не добавит эту функцию."], ["Можно ли питать дом от машины?", "Через V2L-кабель — небольшие нагрузки (чайник, свет, ноутбук). Как резерв дома на 10 кВт — это уже оборудование другого класса."]], "Аксессуары": [["Смазка действительно нужна?", "Да: зимой заглушка лючка и уплотнители примерзают, силиконовая смазка решает это за 10 секунд и стоит копейки."], ["Держатель куда ставить?", "На лючок или стену гаража — кабель не путается и не волочится по земле."]]}')
 BADGE_TXT = {'need':'Нужно','opt':'Опционально'}
@@ -68,18 +73,19 @@ def of_data_js(pname):
     return '<script>var OF_MODEL=' + json.dumps(pname, ensure_ascii=False) + ';var OF_PRODUCTS=' + plist + ';var OF_BUNDLES=' + json.dumps(BUNDLES, ensure_ascii=False) + ';</script>'
 
 def cart_bar_html():
-    return '<div class="pc-cartbar" id="pc-bar"><div class="wrap"><span id="pc-bar-txt">В заявке: 0 поз.</span><a class="btn lime pc-go" href="#order-form">Оформить заявку</a></div></div>'
+    return '<div class="pc-cartbar" id="pc-bar"><div class="wrap flex items-center gap-3 max-w-[1320px] mx-auto px-5 py-3"><span id="pc-bar-txt" class="text-sm font-semibold text-gray-900">В заявке: 0 поз.</span><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 pc-go ml-auto" href="#order-form">Оформить заявку</a></div></div>'
 
 def order_form_html(pname):
     return of_data_js(pname) + cart_bar_html() + (
-      '<form id="order-form" class="lcard"><h3>Оформить заявку</h3>'
-      '<p class="note">Оплата — дилеру при получении. Заявка ни к чему не обязывает: подтвердим наличие и свяжемся с вами.</p>'
-      '<div id="of-items"><div class="note">Корзина пуста — выберите позиции из каталога выше.</div></div>'
-      '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram"></div>'
-      '<div class="of-grid"><input name="city" placeholder="Город (доставка через салон-дилера)"></div>'
-      '<textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке"></textarea>'
-      '<button class="btn lime of-send" type="submit">Отправить заявку</button>'
-      '<div id="of-status"></div></form>')
+      '<section class="mt-10"><div class="rounded-lg break-words border bg-white border-gray-300 p-5">'
+      '<h3 class="text-lg font-bold text-gray-900">Оформить заявку</h3>'
+      '<p class="text-sm text-gray-500 mt-1">Оплата — дилеру при получении. Заявка ни к чему не обязывает: подтвердим наличие и свяжемся с вами.</p>'
+      '<div id="of-items" class="mt-3 text-sm text-gray-500"><div>Корзина пуста — выберите позиции из каталога выше.</div></div>'
+      '<div class="grid md:grid-cols-2 gap-3 mt-3"><input required name="name" autocomplete="name" placeholder="Имя" class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram" class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"></div>'
+      '<input name="city" placeholder="Город (доставка через салон-дилера)" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mt-3 focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-300">'
+      '<textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mt-3 focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"></textarea>'
+      '<button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 of-send w-full mt-3" type="submit">Отправить заявку</button>'
+      '<div id="of-status" class="text-sm mt-2"></div></div></section>')
 
 # --- SVG-иллюстрации товаров (Ozon-стиль, векторные) ---
 SKU_ART = json.loads('{"Адаптеры": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Адаптер\\"><rect x=\\"76\\" y=\\"78\\" width=\\"48\\" height=\\"44\\" rx=\\"10\\" fill=\\"#0071e3\\"/><rect x=\\"78\\" y=\\"80\\" width=\\"44\\" height=\\"14\\" rx=\\"6\\" fill=\\"#3f8ee8\\" opacity=\\".55\\"/><rect x=\\"34\\" y=\\"88\\" width=\\"34\\" height=\\"24\\" rx=\\"7\\" fill=\\"#1d1d1f\\"/><circle cx=\\"44\\" cy=\\"100\\" r=\\"2.6\\" fill=\\"#e8e8ed\\"/><circle cx=\\"52\\" cy=\\"96\\" r=\\"2.6\\" fill=\\"#e8e8ed\\"/><circle cx=\\"52\\" cy=\\"104\\" r=\\"2.6\\" fill=\\"#e8e8ed\\"/><circle cx=\\"60\\" cy=\\"100\\" r=\\"2.6\\" fill=\\"#e8e8ed\\"/><rect x=\\"132\\" y=\\"86\\" width=\\"38\\" height=\\"28\\" rx=\\"12\\" fill=\\"#1d1d1f\\"/><circle cx=\\"144\\" cy=\\"100\\" r=\\"3\\" fill=\\"#e8e8ed\\"/><circle cx=\\"152\\" cy=\\"94\\" r=\\"3\\" fill=\\"#e8e8ed\\"/><circle cx=\\"152\\" cy=\\"106\\" r=\\"3\\" fill=\\"#e8e8ed\\"/><circle cx=\\"160\\" cy=\\"100\\" r=\\"3\\" fill=\\"#e8e8ed\\"/><path d=\\"M68 100h8M124 100h8\\" stroke=\\"#d2d2d7\\" stroke-width=\\"6\\" stroke-linecap=\\"round\\"/><path d=\\"M42 128c22 12 94 12 116 0\\" stroke=\\"#d2d2d7\\" stroke-width=\\"3\\" fill=\\"none\\" stroke-linecap=\\"round\\" stroke-dasharray=\\"2 7\\"/></svg>", "Кабели": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Кабель\\"><path d=\\"M46 66c40-26 68-26 108 0-40 26-68 26-108 0Z\\" fill=\\"none\\" stroke=\\"#d2d2d7\\" stroke-width=\\"10\\"/><path d=\\"M46 78c40-26 68-26 108 0\\" fill=\\"none\\" stroke=\\"#0071e3\\" stroke-width=\\"10\\" stroke-linecap=\\"round\\"/><path d=\\"M46 90c40-26 68-26 108 0\\" fill=\\"none\\" stroke=\\"#1d1d1f\\" stroke-width=\\"10\\" stroke-linecap=\\"round\\"/><rect x=\\"24\\" y=\\"58\\" width=\\"26\\" height=\\"40\\" rx=\\"8\\" fill=\\"#1d1d1f\\"/><rect x=\\"150\\" y=\\"58\\" width=\\"26\\" height=\\"40\\" rx=\\"8\\" fill=\\"#0071e3\\"/><path d=\\"M30 46h14M156 46h14\\" stroke=\\"#1d1d1f\\" stroke-width=\\"8\\" stroke-linecap=\\"round\\"/></svg>", "Зарядки": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Портативная зарядка\\"><rect x=\\"58\\" y=\\"30\\" width=\\"84\\" height=\\"96\\" rx=\\"14\\" fill=\\"#1d1d1f\\"/><rect x=\\"66\\" y=\\"38\\" width=\\"68\\" height=\\"34\\" rx=\\"8\\" fill=\\"#3f4a55\\"/><text x=\\"100\\" y=\\"60\\" font-family=\\"Arial, sans-serif\\" font-size=\\"13\\" font-weight=\\"700\\" fill=\\"#fff\\" text-anchor=\\"middle\\">7 kW</text><circle cx=\\"84\\" cy=\\"88\\" r=\\"6\\" fill=\\"#0071e3\\"/><circle cx=\\"102\\" cy=\\"88\\" r=\\"6\\" fill=\\"#e8e8ed\\"/><circle cx=\\"120\\" cy=\\"88\\" r=\\"6\\" fill=\\"#e8e8ed\\"/><path d=\\"M100 126v22c0 12 8 20 20 20h12\\" stroke=\\"#1d1d1f\\" stroke-width=\\"7\\" fill=\\"none\\" stroke-linecap=\\"round\\"/><rect x=\\"128\\" y=\\"152\\" width=\\"34\\" height=\\"26\\" rx=\\"10\\" fill=\\"#1d1d1f\\"/><circle cx=\\"139\\" cy=\\"165\\" r=\\"3\\" fill=\\"#e8e8ed\\"/><circle cx=\\"151\\" cy=\\"165\\" r=\\"3\\" fill=\\"#e8e8ed\\"/></svg>", "Станции": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Зарядная станция\\"><rect x=\\"66\\" y=\\"24\\" width=\\"60\\" height=\\"140\\" rx=\\"14\\" fill=\\"#1d1d1f\\"/><rect x=\\"74\\" y=\\"34\\" width=\\"44\\" height=\\"26\\" rx=\\"6\\" fill=\\"#0071e3\\"/><circle cx=\\"96\\" cy=\\"76\\" r=\\"7\\" fill=\\"#e8e8ed\\"/><path d=\\"M126 60c18 4 26 14 26 30v58c0 8 6 12 12 12\\" stroke=\\"#1d1d1f\\" stroke-width=\\"8\\" fill=\\"none\\" stroke-linecap=\\"round\\"/><rect x=\\"136\\" y=\\"96\\" width=\\"18\\" height=\\"34\\" rx=\\"8\\" fill=\\"#0071e3\\"/><rect x=\\"136\\" y=\\"130\\" width=\\"18\\" height=\\"16\\" rx=\\"6\\" fill=\\"#d2d2d7\\"/></svg>", "V2L": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"V2L адаптер\\"><rect x=\\"62\\" y=\\"54\\" width=\\"76\\" height=\\"92\\" rx=\\"14\\" fill=\\"#1d1d1f\\"/><rect x=\\"76\\" y=\\"68\\" width=\\"48\\" height=\\"44\\" rx=\\"10\\" fill=\\"#3f4a55\\"/><circle cx=\\"88\\" cy=\\"82\\" r=\\"5\\" fill=\\"#e8e8ed\\"/><circle cx=\\"112\\" cy=\\"82\\" r=\\"5\\" fill=\\"#e8e8ed\\"/><circle cx=\\"100\\" cy=\\"94\\" r=\\"5\\" fill=\\"#e8e8ed\\"/><rect x=\\"92\\" y=\\"120\\" width=\\"16\\" height=\\"18\\" rx=\\"4\\" fill=\\"#0071e3\\"/><text x=\\"100\\" y=\\"146\\" font-family=\\"Arial, sans-serif\\" font-size=\\"12\\" font-weight=\\"700\\" fill=\\"#fff\\" text-anchor=\\"middle\\">220V</text></svg>", "Аксессуары": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Аксессуар\\"><rect x=\\"80\\" y=\\"58\\" width=\\"40\\" height=\\"92\\" rx=\\"12\\" fill=\\"#1d1d1f\\"/><rect x=\\"92\\" y=\\"42\\" width=\\"16\\" height=\\"20\\" rx=\\"4\\" fill=\\"#d2d2d7\\"/><rect x=\\"86\\" y=\\"78\\" width=\\"28\\" height=\\"44\\" rx=\\"8\\" fill=\\"#0071e3\\"/><path d=\\"M100 150v14\\" stroke=\\"#1d1d1f\\" stroke-width=\\"8\\" stroke-linecap=\\"round\\"/><path d=\\"M70 168c10 6 50 6 60 0\\" stroke=\\"#d2d2d7\\" stroke-width=\\"4\\" fill=\\"none\\" stroke-linecap=\\"round\\"/></svg>", "Комплекты": "<svg viewBox=\\"0 0 200 200\\" xmlns=\\"http://www.w3.org/2000/svg\\" role=\\"img\\" aria-label=\\"Комплект\\"><rect x=\\"44\\" y=\\"72\\" width=\\"112\\" height=\\"84\\" rx=\\"14\\" fill=\\"#1d1d1f\\"/><path d=\\"M44 96h112\\" stroke=\\"#3f4a55\\" stroke-width=\\"6\\"/><rect x=\\"88\\" y=\\"66\\" width=\\"24\\" height=\\"12\\" rx=\\"4\\" fill=\\"#d2d2d7\\"/><rect x=\\"58\\" y=\\"106\\" width=\\"40\\" height=\\"34\\" rx=\\"8\\" fill=\\"#0071e3\\"/><rect x=\\"106\\" y=\\"106\\" width=\\"40\\" height=\\"34\\" rx=\\"8\\" fill=\\"#3f4a55\\"/><circle cx=\\"70\\" cy=\\"122\\" r=\\"6\\" fill=\\"#e8e8ed\\"/><circle cx=\\"88\\" cy=\\"122\\" r=\\"6\\" fill=\\"#e8e8ed\\"/><path d=\\"M112 122h28\\" stroke=\\"#e8e8ed\\" stroke-width=\\"5\\" stroke-linecap=\\"round\\"/></svg>"}')
@@ -95,17 +101,22 @@ def art_for(p):
 def shop_card_html(p, badge=None):
     tag = TAGS.get(p['id'])
     sp = SPECS.get(p['id'], [])
-    spec1 = (html.escape(str(sp[0][0])) + ': ' + html.escape(str(sp[0][1]))) if sp else ''
-    bd = ('<span class="pc-tag pc-need">' + BADGE_TXT[badge] + '</span>' if badge else '')
-    hit = ('<span class="pc-hit">' + tag + '</span>' if tag else '')
-    return ('<div class="pc-card" data-cat="' + p['cat'] + '" data-ln="' + ln_of(p) + '" data-price="' + str(p['price']) + '">'
-      '<a class="pc-media" href="/catalog/' + p['slug'] + '.html" aria-label="' + html.escape(p['name']) + '">' + art_for(p) + hit + bd + '</a>'
-      '<div class="pc-body"><span class="pc-cat">' + html.escape(p['cat']) + '</span>'
-      '<a class="pc-name" href="/catalog/' + p['slug'] + '.html">' + html.escape(p['name']) + '</a>'
-      '<div class="pc-spec-line"><span>' + spec1 + '</span></div>'
-      '<div class="pc-bottom"><span class="pc-price">' + fmt_price(p['price']) + '</span>'
-      '<span class="pc-btn sku-add pc-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span></div>'
-      '<span class="pc-seller">Оплата — дилеру при получении</span></div></div>')
+    spec1 = html.escape(str(sp[0][1])) if sp else ''
+    bd = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">' + BADGE_TXT[badge] + '</span></div>' if badge else '')
+    hit = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-green-600 text-white">' + html.escape(tag) + '</span></div>' if tag else '')
+    return ('<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="' + p['cat'] + '" data-ln="' + ln_of(p) + '" data-price="' + str(p['price']) + '">'
+      '<div class="flex-auto p-4">'
+      '<div class="text-center relative flex justify-center">' + hit + bd +
+      '<a href="/catalog/' + p['slug'] + '.html" aria-label="' + html.escape(p['name']) + '">' + art_for(p) + '</a></div>'
+      '<div class="flex flex-col gap-3">'
+      '<a href="/catalog/' + p['slug'] + '.html" class="text-decoration-none text-gray-500"><small>' + html.escape(p['cat']) + '</small></a>'
+      '<div class="flex flex-col gap-2"><h3 class="text-base truncate"><a href="/catalog/' + p['slug'] + '.html" class="text-gray-800">' + html.escape(p['name']) + '</a></h3></div>'
+      '<small class="text-gray-500 truncate" style="display:block">' + spec1 + '</small>'
+      '<div class="flex justify-between items-center">'
+      '<div><span class="text-gray-900 font-semibold">' + fmt_price(p['price']) + '</span></div>'
+      '<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 sku-add pc-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>'
+      '</div></div></div></div>')
+
 def catalog_block_for(m, pname):
     skus = MODEL_SKU.get(m['brand'] + '|' + m['model'], [])
     if not skus:
@@ -160,15 +171,18 @@ def catalog_build(outdir):
         sorted_p += [p for p in PRODUCTS if p['cat'] == cat]
     cats = ''.join('<span class="chip" data-cat="' + c + '" onclick="ofFilter(this)">' + c + '</span>' for c in order)
     grid = ''.join(shop_card_html(p) for p in sorted_p)
-    hero = ('<div class="fc-hero" style="margin-top:18px;padding:38px 36px">'
-      '<span class="fc-hero-badge">Каталог · 26 позиций · оплата дилеру при получении</span>'
-      '<h1 style="color:#fff;margin:14px 0 10px;font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-.02em">Каталог аксессуаров для зарядки</h1>'
-      '<p style="color:rgba(255,255,255,.88);max-width:640px;margin:0 0 20px;font-size:16px;line-height:1.55">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Заявка за минуту, оплата — дилеру при получении.</p>'
-      '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-      '<a class="btn" style="background:#fff;color:#001e2b;font-weight:700" href="/quiz/">Подбор за 30 секунд</a>'
-      '<a class="btn" style="border:1px solid rgba(255,255,255,.5);color:#fff" href="/b2b/">Дилерам — прайс</a></div></div>'
-      '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div><div class="shop-filters" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
-      '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div>')
+    hero = ('<section class="mt-4"><div class="container">'
+      '<div class="rounded-lg break-words bg-gray-100" style="padding:44px 36px">'
+      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Каталог · 26 позиций · оплата дилеру при получении</span>'
+      '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5">Каталог аксессуаров для зарядки</h1>'
+      '<p class="text-md text-gray-600" style="max-width:640px;margin:0 0 20px">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Заявка за минуту, оплата — дилеру при получении.</p>'
+      '<div class="flex gap-3 flex-wrap">'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подбор за 30 секунд</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/b2b/">Дилерам — прайс</a>'
+      '</div></div></section>'
+      '<div class="flex flex-wrap gap-2 my-4" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div>'
+      '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
+            '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div>')
 
     phev_links = ''.join('<a class="fchip" href="/models/'+s+'.html">'+t+'</a>' for s,t in [
         ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),
@@ -182,7 +196,7 @@ def catalog_build(outdir):
     phev_block = ('<h2 style="margin-top:34px">Подборка для гибридов (PHEV)</h2>'
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
-    body = hero + '<div class="pc-grid">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
+    body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
     WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/index.html', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
@@ -191,29 +205,56 @@ def catalog_build(outdir):
         if p.get('note'):
             spec_rows += '<tr><td>Важно знать</td><td>' + html.escape(p['note']) + '</td></tr>'
         rel = [x for x in PRODUCTS if x['cat'] == p['cat'] and x['id'] != p['id']][:4]
-        rel_html = ('<h2>Похожие товары</h2><div class="pc-grid">' + ''.join(shop_card_html(x) for x in rel) + '</div>') if rel else ''
+        rel_html = ('<h2 class="text-lg text-gray-900 my-8">Похожие товары</h2><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + ''.join(shop_card_html(x) for x in rel) + '</div>') if rel else ''
         fh = fits_for(p)
-        hit_b = ('<span class="pc-hit pz-hit">' + tag + '</span>' if tag else '')
-        body = ('<div class="pz-hero">'
-          '<div class="pz-gallery">' + art_for(p) + '</div>'
-          '<div class="pz-buy">'
-          '<div class="pz-badges">' + hit_b + '<span class="fbadge">Продавец: «Запас хода»</span></div>'
-          '<h1>' + html.escape(p['name']) + '</h1>'
-          '<div class="pz-price">' + fmt_price(p['price']) + '</div>'
-          '<div class="ctas pz-ctas"><span class="btn lime pz-btn sku-add" onclick="ofAdd(' + str(p['id']) + ',this)">В заявку</span></div>'
-          '<div class="pz-delivery">Оплата — дилеру при получении. Заявка ни к чему не обязывает: подтвердим наличие и свяжемся с вами.</div>'
-          '<div class="pz-perks"><span><b>Доставка</b> в ваш город через салон-дилера</span>'
-          '<span>Проверка при получении</span>'
-          '<span>Консультация по разъёмам — бесплатно</span></div>'
-          '<a class="pz-ask" href="/forum/">Задать вопрос о товаре на форуме →</a>'
+        hit_b = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-green-600 text-white">' + tag + '</span></div>' if tag else '')
+        add_btn = ('<button type="button" class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 sku-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>В заявку</button>')
+        body = ('<section><div class="container">'
+          '<div class="flex flex-wrap">'
+          '<div class="md:w-1/2 w-full">'
+          '<div class="rounded-lg break-words border bg-white border-gray-300">'
+          '<div class="p-4"><div class="text-center relative flex justify-center">' + hit_b + art_for(p) + '</div></div>'
+          '</div>'
+          '<div class="grid grid-cols-4 gap-3 mt-3">'
+          '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-hidden">' + art_for(p) + '</div>'
+          '<div class="rounded-lg break-words border bg-white border-gray-300 flex items-center justify-center py-6"><span class="text-3xl">🚚</span></div>'
+          '<div class="rounded-lg break-words border bg-white border-gray-300 flex items-center justify-center py-6"><span class="text-3xl">✅</span></div>'
+          '<div class="rounded-lg break-words border bg-white border-gray-300 flex items-center justify-center py-6"><span class="text-3xl">💬</span></div>'
           '</div></div>'
-          '<div class="pz-sec"><h2>Характеристики</h2><table class="spec-table">' + spec_rows + '</table></div>'
-          '<div class="pz-sec"><h2>О товаре</h2><p>' + html.escape(p['descLong']) + '</p><p class="note">' + cat_intro(p) + '</p></div>'
-          + (('<div class="pz-sec"><h2>Подходит для</h2><p class="note">Разъёмы и подбор — на страницах моделей:</p><div class="pz-fits">' + fh + '</div></div>') if fh else '')
+          '<div class="md:w-1/2 w-full">'
+          '<div class="lg:pl-10 mt-6 md:mt-0">'
+          '<div class="flex flex-col gap-4">'
+          '<a href="/catalog/index.html" class="block text-green-600 text-sm">' + html.escape(p['cat']) + '</a>'
+          '<h1 class="text-2xl font-bold text-gray-900 leading-tight">' + html.escape(p['name']) + '</h1>'
+          '<div class="text-md">'
+          '<span class="text-gray-900 font-semibold text-xl">' + fmt_price(p['price']) + '</span>'
+          '</div>'
+          '<hr class="border-gray-300"/>'
+          '<div class="flex flex-wrap justify-start gap-2 items-center">'
+          '<div class="lg:w-1/2 md:w-2/3 w-full grid">' + add_btn + '</div>'
+          '<button type="button" class="btn inline-flex items-center gap-x-2 px-0 h-10 w-10 justify-center bg-white text-gray-800 border-gray-300 border hover:bg-gray-700 hover:border-gray-700 hover:text-white share" title="Поделиться" onclick="sharePg();return false;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10h14l-4 -4"/><path d="M17 14h-14l4 4"/></svg></button>'
+          '</div>'
+          '<p class="text-sm text-gray-500" style="margin:0">Оплата — дилеру при получении. Заявка ни к чему не обязывает: подтвердим наличие и свяжемся с вами.</p>'
+          '<div class="flex flex-col gap-2">'
+          '<small class="text-gray-700 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13l4 4 10-10"/></svg><span>Доставка в ваш город через салон-дилера</span></small>'
+          '<small class="text-gray-700 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13l4 4 10-10"/></svg><span>Проверка при получении</span></small>'
+          '<small class="text-gray-700 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13l4 4 10-10"/></svg><span>Консультация по разъёмам — бесплатно</span></small>'
+          '</div>'
+          '<a href="/forum/" class="text-green-600 text-sm">Задать вопрос о товаре на форуме →</a>'
+          '<hr class="border-gray-300"/>'
+          '<div class="table-responsive"><table class="text-left w-full"><tbody>' + spec_rows + '</tbody></table></div>'
+          '</div></div>'
+          '</div></div></section>'
+          '<section><div class="container">'
+          '<h2 class="text-lg text-gray-900 mt-8 mb-4">О товаре</h2>'
+          '<p class="text-base text-gray-700 leading-relaxed" style="max-width:760px">' + html.escape(p['descLong']) + '</p>'
+          '<p class="text-sm text-gray-500" style="max-width:760px">' + cat_intro(p) + '</p>'
+          + (('<h2 class="text-lg text-gray-900 mt-8 mb-4">Подходит для</h2><p class="text-sm text-gray-500">Разъёмы и подбор — на страницах моделей:</p><div class="pz-fits flex flex-wrap gap-2">' + fh + '</div>') if fh else '')
           + faq_html(p)
           + rel_html
           + order_form_html(p['name'])
-          + '<script type="application/ld+json">' + product_ld(p, url) + '</script>')
+          + '<script type="application/ld+json">' + product_ld(p, url) + '</script>'
+          + '</div></section>')
         WRITE_PAGE(os.path.join(outdir,'catalog', p['slug'] + '.html'), p['name'] + ' — заказать | Запас хода', (p['name'] + ': ' + p['desc'] + ' Подбор под модель, оплата дилеру при получении.')[:300], body, url, crumbs=[('/catalog/index.html','Каталог'),('',p['name'])])
 
 def of_filter_js():
