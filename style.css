@@ -237,3 +237,34 @@ h1{margin-top:28px}
 .shbtn.copy.ok{background:#0a7d33;border-color:#0a7d33}
 .shbtn.copy.ok svg{fill:#fff}
 
+
+/* --- кроссбраузерность, комменты, форум (v2) --- */
+:root{color-scheme:light}
+input:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fff inset;-webkit-text-fill-color:#1d1d1f;transition:background-color 99999s ease-in-out 0s}
+input,select,textarea{min-height:40px}
+button{white-space:nowrap}
+img{max-width:100%;height:auto}
+.see-all{font-size:14px;font-weight:500;color:#0071e3;text-decoration:none;margin-left:8px}
+.comments{margin-top:48px;padding-top:24px;border-top:1px solid #e5e5e7}
+.comments h2{font-size:22px;margin:0 0 12px}
+.c-item,.fpost{padding:12px 0;border-bottom:1px solid #f0f0f2}
+.c-item b,.fpost b{font-size:14px}
+.c-date{font-size:12px;color:#86868b;margin-left:8px}
+.c-item p,.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+.c-empty{color:#86868b;font-size:14px}
+#c-form,.fv-form{display:grid;gap:10px;margin-top:14px}
+#c-form input,#c-form textarea,.fv-form input,.fv-form textarea{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;font-family:inherit;box-sizing:border-box}
+#c-form textarea,.fv-form textarea{min-height:90px;resize:vertical}
+#c-note,#fv-note,#fm-note{font-size:12px;color:#86868b}
+.fsec{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.fchip{padding:6px 14px;border:1px solid #d2d2d7;border-radius:999px;background:#fff;cursor:pointer;font-size:14px;font-family:inherit}
+.fchip.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.fthread{display:block;padding:14px 16px;border:1px solid #e5e5e7;border-radius:14px;margin-bottom:10px;text-decoration:none;color:inherit;cursor:pointer}
+.fthread b{display:block}
+.fthread span{font-size:13px;color:#86868b}
+.fmodal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
+.fmodal.on{display:flex}
+.fmodal .fbox{background:#fff;border-radius:20px;padding:20px;max-width:480px;width:92%;max-height:86vh;overflow:auto}
+.fmodal h3{margin:0 0 12px}
+.fmodal input,.fmodal textarea,.fmodal select{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;margin-bottom:10px;box-sizing:border-box;font-family:inherit}
+@media (max-width:380px){.ctas .btn{display:block;width:100%;margin:6px 0;text-align:center}}
