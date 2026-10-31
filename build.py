@@ -782,6 +782,45 @@ BRAND_SITES = {
   'Moskvich': 'https://moskvich.ru/',
 }
 
+
+def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
+    """Интерактивный калькулятор зарядки: пользователь подставляет ёмкость батареи и тариф."""
+    cap_def = 25 if str(m.get('type')) == 'PHEV' else 60
+    has_min = bool(obc_n) and bool(dcp_n) and ('мин' in (dcp_s or ''))
+    dc_kw = (dcp_n if (dcp_n and dcp_n >= 40 and not has_min) else 0)
+    html_out = ('<h2>Калькулятор зарядки для вашей машины</h2>'
+      '<div class="card" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
+      '<p class="note">Подставьте ёмкость своей батареи и тариф — расчёт обновится на ходу. Мощности — пределы именно этой модели.</p>'
+      '<div class="of-grid">'
+      '<label>Батарея, кВт·ч <input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1"></label>'
+      '<label>Тариф, ₽/кВт·ч <input id="cc-tarif" type="number" value="5.50" step="0.1" min="0.5" max="40"></label>'
+      '<label>Расход, кВт·ч/100 км <input id="cc-cons" type="number" value="18" min="5" max="50" step="1"></label>'
+      '</div><div class="tw" id="cc-out"></div></div>')
+    js = (
+      '<script>(function(){var box=document.getElementById("chg-calc");if(!box)return;'
+      'var obc=parseFloat(box.getAttribute("data-obc")||"0")||0;'
+      'var dcw=parseFloat(box.getAttribute("data-dcp-kw")||"0")||0;'
+      'var dmin=box.getAttribute("data-dcp-min")||"";'
+      'function f1(x){return (Math.round(x*10)/10).toString().replace(".",",")}'
+      'function f0(x){return Math.round(x)}'
+      'function fmt(n){return n.toLocaleString("ru-RU")+" ₽"}'
+      'function recalc(){'
+      'var cap=parseFloat(document.getElementById("cc-cap").value)||60;'
+      'var tarif=parseFloat(document.getElementById("cc-tarif").value)||0;'
+      'var cons=parseFloat(document.getElementById("cc-cons").value)||18;'
+      'var rows="";'
+      'if(obc>0){var s1=Math.min(obc,3.3),t1=cap/s1;var s2=Math.min(obc,7),t2=cap/s2;'
+      'var s3=(obc<=7.5)?Math.min(obc,7):obc,t3=cap/s3;'
+      'rows+="<tr><td>Розетка 220 В</td><td>"+f1(s1)+" кВт</td><td>"+f1(t1)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";'
+      'rows+="<tr><td>Станция 7 кВт (AC)</td><td>"+f1(s2)+" кВт</td><td>"+f1(t2)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";'
+      'rows+="<tr><td>Станция 11–22 кВт (AC, 3ф)</td><td>"+f1(s3)+" кВт</td><td>"+f1(t3)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";}'
+      'if(dcw>0){rows+="<tr><td>Быстрая станция (DC)</td><td>"+f1(dcw)+" кВт</td><td>0→80% ≈ "+f0(48/dcw*60)+" мин</td><td>—</td></tr>";}'
+      'else if(dmin){rows+="<tr><td>Быстрая станция (DC)</td><td colspan=\\"3\\">по данным модели: "+dmin+"</td></tr>";}'
+      'rows+="<tr><td>100 км поездки (дома)</td><td>"+f1(cons)+" кВт·ч</td><td>—</td><td>"+fmt(cons*tarif)+"</td></tr>";'
+      'document.getElementById("cc-out").innerHTML="<table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";}'
+      '["cc-cap","cc-tarif","cc-cons"].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener("input",recalc)});recalc();})();</script>')
+    return html_out + js
+
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
@@ -866,6 +905,7 @@ def model_page(m, outdir):
     parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
     parts.append('<h2>Разъёмы и мощность зарядки</h2><div class="tw"><table>' + rows + '</table></div>')
     if chg_table: parts.append(chg_table)
+    parts.append(calc_block(m, obc_n, dcp_n, obc_s, dcp_s))
     docs_block = ''
     docs_items = []
     sl_key = slug(m['brand']) + '-' + slug(m['model'])
@@ -1335,6 +1375,8 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/blog/index.html'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
     urls += [SITE_DOMAIN+'/b2b/index.html']
+    urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
+    urls += [SITE_DOMAIN+'/open-data/index.html']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1449,6 +1491,8 @@ def main():
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
     services.b2b_build(outdir, write_page)
+    services.brands_build(outdir, write_page, MODELS)
+    services.open_data_build(outdir, write_page)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
