@@ -340,7 +340,7 @@ h1{margin-top:28px}
 
 """
 
-LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
+LOGO_SVG = '<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
 NAV = [("/models/","Модели"),("/catalog/","Каталог"),("/blog/","Блог"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/pains.html","Проблемы"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/about.html","О проекте")]
 
@@ -1381,7 +1381,7 @@ def home_page(outdir, news=None):
     for m in MODELS:
         b = m['brand'].strip()
         bcounts[b] = bcounts.get(b, 0) + 1
-    brand_html = ''.join('<a href="/models/'+slug(b)+'.html">'+html.escape(b)+' <span>'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
+    brand_html = ''.join('<a href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+' <span>'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
 
     body = ('<div class="hero"><div class="kicker">Справочник EV</div>'
      '<h1>' + html.escape(CFG_HERO_TITLE or 'Как зарядить и чем лечить ваш электромобиль') + '</h1>'
@@ -1608,7 +1608,8 @@ def models_index(outdir):
             'else{var v=ch.getAttribute("data-v");on[k]=(on[k]===v?null:v);'
             'chips.forEach(function(x){if(x.getAttribute("data-k")==k)x.classList.toggle("on",x.getAttribute("data-v")===on[k]);});'
             'chips.forEach(function(x){if(x.getAttribute("data-k")==="all")x.classList.remove("on");});}'
-            'apply();});});apply();})();</script>')
+            'apply();});});apply();})();'
+            'if(new URLSearchParams(location.search).get("brand")){var qb=new URLSearchParams(location.search).get("brand").toLowerCase();var b1=[].slice.call(document.querySelectorAll(".fchip[data-k=b]")).filter(function(x){return x.getAttribute("data-v").toLowerCase()===qb;})[0];if(b1)b1.click();}</script>')
     write_page(os.path.join(outdir, 'models', 'index.html'),
                'Все модели в базе — разъёмы, проблемы, аксессуары — «Запас хода»',
                'Полный указатель моделей в базе «Запас хода»: разъёмы зарядки (GB/T, Type 2/CCS2, CHAdeMO), типичные проблемы, подходящие аксессуары и калькулятор зарядки.',
