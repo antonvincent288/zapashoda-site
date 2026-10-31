@@ -282,3 +282,74 @@ img{max-width:100%;height:auto}
 .pc-model-banner{display:flex;align-items:center;gap:10px;background:#fff7d6;border:1px solid #f0e2a0;border-radius:12px;padding:10px 14px;margin:10px 0 0;font-size:14.5px}
 .pc-model-banner button{margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:15px;color:#86868b;padding:4px;font-family:inherit}
 .fchip{display:inline-block;text-decoration:none}
+/* --- форум v4 (карточки) --- */
+.fbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 4px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.fbar b{color:var(--ink)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:12px 0 8px}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease}
+.fcard:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}
+.fb-top{display:flex;align-items:center;gap:8px}
+.fbadge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#f5f5f7;color:#5f5f66;white-space:nowrap}
+.fb-guide{background:#e8f2ff;color:#0071e3}
+.fc-name{font-size:15.5px;font-weight:600;line-height:1.35}
+.fc-desc{font-size:13.5px;color:var(--muted);line-height:1.45}
+.fc-meta{font-size:12.5px;color:#86868b;margin-top:auto}
+.fempty{color:var(--muted);font-size:14px;padding:16px 0}
+.frow{cursor:pointer}
+.fpost{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:0 0 10px}
+.fpost b{font-size:14px}
+.fp-date{font-size:12px;color:#86868b;margin-left:8px}
+.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+.fanswers{margin-top:26px}
+.fask{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-top:16px;display:grid;gap:10px}
+.fask h3{margin:0}
+.fsimilar{margin-top:44px}
+.frules{display:grid;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:22px 0 8px;font-size:14.5px;color:#5f5f66}
+.frules b{color:var(--ink);margin-bottom:4px}
+.fview{margin-top:14px}
+.fview h3{font-size:19px;margin:0 0 10px}
+.fbtns{display:flex;gap:10px;flex-wrap:wrap}
+.fmodal .fbox select{appearance:auto}
+@media (max-width:640px){.fgrid{grid-template-columns:1fr}}
+/* --- каталог Ozon v2: карточки и страница товара --- */
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:12px;margin:14px 0 10px}
+.pc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;position:relative;transition:box-shadow .15s ease}
+.pc-card:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}
+.pc-card .pc-media{display:flex;align-items:center;justify-content:center;height:170px;background:#fff;padding:14px 10px;position:relative}
+.pc-media svg{width:76%;height:76%}
+.pc-hit{position:absolute;top:10px;left:10px;background:#005bff;color:#fff;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}
+.pc-tag{position:absolute;top:10px;right:10px;background:#fff7d6;color:#8a6d00;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}
+.pc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pc-name{font-size:14px;font-weight:500;line-height:1.32;min-height:37px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);text-decoration:none}
+.pc-price{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.pc-was{color:#86868b;font-weight:400;font-size:14px}
+.pc-spec-line{display:flex;flex-wrap:wrap;gap:5px}
+.pc-spec-line span{font-size:12px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}
+.pc-desc{font-size:13.5px;color:var(--muted);line-height:1.45;margin:0}
+.pc-btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:8px;background:var(--lime);color:#fff;font-weight:500;font-size:14px;cursor:pointer;width:100%;white-space:nowrap}
+.pc-btn:hover{opacity:.9}
+.pc-seller{font-size:12px;color:#86868b}
+.pz-hero{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;margin-top:18px}
+.pz-gallery{background:#fff;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:34px 24px;min-height:340px}
+.pz-gallery svg{width:100%;max-width:400px;height:auto}
+.pz-buy{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:76px}
+.pz-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pz-badges .pc-hit,.pz-badges .pc-tag{position:static}
+.pz-buy h1{font-size:22px;line-height:1.3;margin:0;letter-spacing:-.02em}
+.pz-price{font-size:30px;font-weight:700;letter-spacing:-.03em}
+.pz-btn{height:48px;border-radius:12px;font-size:16px}
+.pz-delivery{font-size:13.5px;color:#5f5f66;background:#f5f5f7;border-radius:12px;padding:12px 14px;line-height:1.45}
+.pz-perks{display:grid;gap:7px;font-size:14px;color:#1d1d1f}
+.pz-perks span::before{content:'✓ ';color:var(--lime);font-weight:700}
+.pz-perks span:first-child::before{content:'🚚 '}
+.pz-perks b{color:#1d1d1f}
+.pz-ok::before{content:'✓ '}
+.pz-ask{font-size:14px;color:var(--lime);text-decoration:none}
+.pz-sec{margin-top:34px}
+.spec-table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.spec-table td{padding:9px 14px;border-bottom:1px solid #f0f0f2;vertical-align:top}
+.spec-table tr:last-child td{border-bottom:none}
+.spec-table td:first-child{color:#86868b;width:42%}
+.pz-fits{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@media (max-width:900px){.pz-hero{grid-template-columns:1fr}.pz-buy{position:static}.pz-gallery{min-height:280px}}
+@media (max-width:520px){.pc-grid{grid-template-columns:repeat(2,1fr);gap:8px}.pc-media{height:120px;padding:8px}.pc-spec-line{display:none}.pc-name{font-size:13px;min-height:34px}.pc-price{font-size:17px}}
