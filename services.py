@@ -435,17 +435,22 @@ def brands_build(outdir, write_page, models):
             '<td>' + html.escape(str(m.get('freq') or '—')) + '</td></tr>' for m in bmodels)
         cards = ''.join(_card(_pidx[i]) for i in sku_ids)
         arts = ' · '.join('<a href="/blog/' + a + '.html">' + dict((sl, t) for sl, t, d in BLOG_ARTICLES).get(a, a) + '</a>' for a in art_links)
-        faq_html_b = ''.join('<div class="faq-q"><b>' + q + '</b><p>' + a2 + '</p></div>' for q, a2 in faqs)
-        body = ('<h1>' + html.escape(title) + '</h1>'
-          '<p class="lede">' + html.escape(intro) + '</p>'
-          '<p>' + html.escape(intro2) + '</p>'
-          '<p class="note">Типичные боли линейки: ' + html.escape(pains_line) + '</p>'
-          '<h2>Модели ' + html.escape(brand) + ' в России: разъёмы и частота ввоза</h2>'
-          '<div class="tw"><table><tr><th>Модель</th><th>Тип</th><th>AC / DC</th><th>Ввоз</th></tr>' + rows + '</table></div>'
-          '<h2>Что докупить</h2><div class="pc-grid">' + cards + '</div>'
-          '<h2>Гайды по моделям</h2><p>' + arts + '</p>'
-          '<h2>Частые вопросы</h2>' + faq_html_b
-          + _cta('Подбор комплекта под ' + brand))
+        faq_html_b = ''.join('<details class="p-4 my-2 border rounded bg-white"><summary class="font-semibold cursor-pointer">' + html.escape(q) + '</summary><p class="mt-2 text-sm text-gray-600">' + html.escape(a2) + '</p></details>' for q, a2 in faqs)
+        body = ('<section class="lg:my-10 my-6"><div class="container">'
+          '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+          '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · ' + html.escape(brand) + '</span>'
+          '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">' + html.escape(title) + '</h1>'
+          '<p class="text-sm text-gray-600" style="max-width:640px">' + html.escape(intro) + '</p>'
+          '</div>'
+          '<div class="my-6"><p class="text-gray-700">' + html.escape(intro2) + '</p>'
+          '<p class="text-sm text-gray-600 mt-2"><b>Типичные боли линейки:</b> ' + html.escape(pains_line) + '</p></div>'
+          '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Модели ' + html.escape(brand) + ' в России: разъёмы и частота ввоза</h2></div></div>'
+          '<div class="border bg-white overflow-x-auto"><table class="text-left w-full"><tr><th class="px-6 py-3">Модель</th><th class="px-6 py-3">Тип</th><th class="px-6 py-3">AC / DC</th><th class="px-6 py-3">Ввоз</th></tr>' + rows + '</table></div>'
+          '<div class="flex flex-wrap"><div class="md:w-full mb-6 mt-8"><h2 class="text-lg text-gray-900">Что докупить</h2></div></div>'
+          '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">' + cards + '</div>'
+          '<div class="my-8"><h2 class="text-lg text-gray-900">Гайды по моделям</h2><p class="text-gray-700 mt-2">' + arts + '</p></div>'
+          '<div class="my-8"><h2 class="text-lg text-gray-900">Частые вопросы</h2></div>' + faq_html_b
+          + _cta('Подбор комплекта под ' + brand) + '</div></section>')
         write_page(os.path.join(outdir, 'brands', bslug + '.html'),
                    title + ' | Запас хода', desc, body, '/brands/' + bslug + '.html',
                    crumbs=[('', brand)], extra_ld=faq_ld(faqs))

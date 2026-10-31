@@ -821,7 +821,7 @@ def vin_brand_page(brand, outdir):
       '</div><div class="md:w-auto w-full">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
       '</div></div></div>')
-    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/">Сравнить модели</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     sl = 'vin/'+slug(brand)+'.html'
     write_page(os.path.join(outdir, sl), 'VIN ' + brand + ': где табличка, код года, проверка истории — Запас хода',
@@ -1200,7 +1200,7 @@ def model_page(m, outdir):
       '</div><div class="md:w-auto w-full">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
       '</div></div></div>')
-    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Сравнить с другой моделью</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     write_page(os.path.join(outdir, sl),
         (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + ' — какой разъём зарядки, проблемы и решения | Запас хода',
@@ -1585,6 +1585,8 @@ def home_page(outdir, news=None):
       ('/forum/','Форум сообщества','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
       ('/models/','Все модели','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
       ('/b2b/','Дилерам','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
+      ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
+      ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
       (GUIDE_PDF,'Гид PDF (бесплатно)','<path d="M12 4v10"/><path d="M7.5 9.5 12 14l4.5-4.5"/><path d="M5 20h14"/>'),
       ('/blog/','Гайды и обзоры','<path d="M4 5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2z"/><path d="M8 9h8M8 13h5"/>'),
     ]))
@@ -1637,7 +1639,7 @@ def home_page(outdir, news=None):
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
-      '<div class="grid gap-4 grid-cols-2 md:grid-cols-4">' + tools_html + '</div></div></section>'
+      '<div class="grid gap-4 grid-cols-2 md:grid-cols-3">' + tools_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-2/3 w-full">'
@@ -1747,11 +1749,25 @@ def rel_models(rel_brands):
 
 def about_page(outdir, news):
     n = len(news)
+    facts = [(str(len(MODELS)), 'моделей с разъёмами', 'и мощностью зарядки'),
+             ('88', 'проблем владельцев', 'и проверенные решения'),
+             ('1 911', 'зарядных станций', 'на карте'),
+             (str(n), 'новостей рынка', 'в ленте')]
+    fact_cards = ''.join('<div class="flex-0 block w-full"><div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product"><div class="flex-auto p-4 text-center"><div class="text-2xl font-bold text-gray-900">'+f0+'</div><div class="text-sm text-gray-600 mt-1">'+f1+'</div><div class="text-xs text-gray-500">'+f2+'</div></div></div></div>' for f0,f1,f2 in facts)
     write_page(os.path.join(outdir,'about.html'), 'О проекте «Запас хода»', 'Как устроен справочник владения электромобилем: источники, методика, кто делает.',
-        '<h1>О проекте</h1><p class="lede">«Запас хода» — независимый справочник по практике владения электромобилем в России.</p>'
-        '<p>База: 137 моделей с типами подключения, реальные проблемы владельцев с форумов (Drive2, chinamobil, клубы брендов) и профильных сервисов. Каждое решение снабжено ссылкой на первоисточник. Карта зарядных станций — данные OpenStreetMap (ODbL).</p>'
+        '<section class="lg:my-10 my-6"><div class="container">'
+        '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+        '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · с 2026 года</span>'
+        '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">О проекте «Запас хода»</h1>'
+        '<p class="text-sm text-gray-600" style="max-width:640px">Независимый справочник по практике владения электромобилем в России: разъёмы каждой модели, реальные проблемы владельцев и проверенные решения.</p>'
+        '</div>'
+        '<div class="grid gap-4 grid-cols-2 md:grid-cols-4 my-8">' + fact_cards + '</div>'
+        '<div class="max-w-3xl space-y-4 text-gray-700">'
+        '<p>База: ' + str(len(MODELS)) + ' моделей с типами подключения, реальные проблемы владельцев с форумов (Drive2, chinamobil, клубы брендов) и профильных сервисов. Каждое решение снабжено ссылкой на первоисточник. Карта зарядных станций — данные OpenStreetMap (ODbL).</p>'
         '<p>Также у нас: Telegram-канал <a href="'+TG_CHANNEL+'">@zapashoda_ev</a> и мини-приложение с каталогом аксессуаров (<a href="'+TG_BOT_APP+'">открыть</a>). Новостей в ленте на момент сборки: '+str(n)+'.</p>'
-        '<p class="note">Проект ведёт поставщик зарядных комплектов для китайских и европейских EV: подбор, доставка по РФ, консультация.</p>', '/about.html')
+        '<p class="text-sm text-gray-500">Проект ведёт поставщик зарядных комплектов для китайских и европейских EV: подбор, доставка по РФ, консультация.</p>'
+        '<div class="flex flex-wrap gap-3"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подобрать комплект</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/compare/">Сравнить модели</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/assets/guide/zapashoda-guide-2026.pdf" download>⬇ PDF-гид</a></div>'
+        '</div></section>', '/about.html')
 
 def vin_hub(outdir):
     pop_first = ['Zeekr','Li Auto','BYD','Voyah','Avatr','Tesla','VW','BMW','Kia','Hyundai','Nissan','Xiaomi','Geely','Hongqi','Evolute','Moskvich','Audi','Mercedes','Skoda','MG']
@@ -1788,6 +1804,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
     urls += [SITE_DOMAIN+'/open-data/index.html']
     urls += [SITE_DOMAIN+'/quiz/index.html']
+    urls += [SITE_DOMAIN+'/compare/index.html']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1826,6 +1843,7 @@ def quiz_page(outdir):
         quiz_brands.setdefault(m['brand'].strip(), []).append({
             'm': m['model'], 'slug': slug(m['brand']) + '-' + slug(m['model']),
             'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
+            'obc': m.get('obc') or 'уточнить', 'dcp': m.get('dcp') or '—', 'freq': m.get('freq', ''),
             'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])],
         })
     qdata = json.dumps({'brands': quiz_brands, 'order': sorted(quiz_brands, key=lambda b: -len(quiz_brands[b]))}, ensure_ascii=False, separators=(',', ':'))
@@ -1847,24 +1865,29 @@ def quiz_page(outdir):
       'var ps=window.OF_PRODUCTS||[];var hts="";'
       'x.skus.slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
       'if(p)hts+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});'
-      'var h=\'<div class="lcard"><h3>\'+b+\' \'+x.m+\'</h3>\''
-      '+\'<p class="note">Тип: \'+x.type+\' · AC: \'+(x.ac||"—")+\' · DC: \'+(x.dc||"—")+\'</p>\''
+      'var h=\'<div class="rounded-lg break-words border bg-white border-gray-300 card-product p-4"><h3 class="font-semibold text-gray-900">\'+b+\' \'+x.m+\'</h3>\''
+      '+\'<p class="text-sm text-gray-600">Тип: \'+x.type+\' · AC: \'+(x.ac||"—")+\' · DC: \'+(x.dc||"—")+\'</p>\''
       '+\'<p>Что обычно докупают к этой модели:</p><ul>\'+hts+\'</ul>\''
-      '+(bd?(\'<p class="note">📦 Готовый комплект: \'+bd.name+\' — \'+bd.price.toLocaleString("ru-RU")+\' ₽ (экономия \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' ₽)</p>\'):"")'
+      '+(bd?(\'<p class="text-sm text-gray-600">📦 Готовый комплект: \'+bd.name+\' — \'+bd.price.toLocaleString("ru-RU")+\' ₽ (экономия \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' ₽)</p>\'):"")'
       '+\'<p><a class="btn lime" href="\'+url+\'">Открыть подбор для \'+b+\' \'+x.m+\' →</a></p>\''
-      '+\'<p class="note">На странице модели — полный SKU-блок, калькулятор зарядки и заявка.</p></div>\';'
+      '+\'<p class="text-sm text-gray-500">На странице модели — полный SKU-блок, калькулятор зарядки и заявка.</p></div>\';'
       'document.getElementById("q-out").innerHTML=h;'
       'try{window.OF_MODEL=b+" "+x.m;}catch(e){}'
       'document.getElementById("q-out").scrollIntoView({behavior:"smooth"});}'
       'document.addEventListener("DOMContentLoaded",function(){qFillBrand();qFillModel();});</script>')
     form = _cat.order_form_html('Квиз: подберите модель выше')
-    body = ('<h1>Подбор комплекта за 30 секунд</h1>'
-      '<p class="lede">Выберите марку и модель — покажем разъёмы вашей машины, что докупить и где это есть в каталоге. Без звонков и анкет: результат сразу.</p>'
-      '<div class="lcard"><div class="of-grid">'
-      '<label>Марка <select id="q-brand" onchange="qFillModel()"></select></label>'
-      '<label>Модель <select id="q-model"></select></label>'
-      '</div><button class="btn lime" onclick="qShow()">Показать подбор</button></div>'
-      '<div id="q-out"></div>'
+    body = ('<section class="lg:my-10 my-6"><div class="container">'
+      '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Подбор за 30 секунд</span>'
+      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Подбор комплекта зарядки под вашу модель</h1>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">Выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), что докупить и где это есть в каталоге. Без звонков и анкет: результат сразу.</p>'
+      '</div>'
+      '<div class="rounded-lg break-words border bg-white border-gray-300" style="padding:24px 28px;margin-top:16px">'
+      '<div class="of-grid">'
+      '<label class="text-sm text-gray-600">Марка <select id="q-brand" onchange="qFillModel()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '<label class="text-sm text-gray-600">Модель <select id="q-model" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="qShow()">Показать подбор</button></div>'
+      '<div id="q-out"></div></div></section>'
       + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все 137 моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
       + js + form)
     desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
@@ -1872,6 +1895,71 @@ def quiz_page(outdir):
                'Подбор комплекта за 30 секунд: адаптеры и зарядка под вашу модель | Запас хода', desc, body,
                '/quiz/index.html', crumbs=[('', 'Подбор')],
                extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/index.html') + '</script>')
+
+# ====== СРАВНЕНИЕ МОДЕЛЕЙ /compare/ ======
+def compare_page(outdir):
+    """Side-by-side сравнение двух моделей EV: разъёмы, мощность, ввоз, что докупить."""
+    import catalog as _cat
+    items = []
+    for m in MODELS:
+        items.append({
+            'slug': slug(m['brand']) + '-' + slug(m['model']),
+            'name': m['brand'] + ' ' + m['model'],
+            'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
+            'obc': m.get('obc') or 'уточнить', 'dcp': m.get('dcp') or '—',
+            'freq': m.get('freq', ''),
+            'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])],
+            'note': (m.get('note') or '')[:200],
+        })
+    cdata = json.dumps(items, ensure_ascii=False, separators=(',', ':'))
+    pdata = json.dumps([{'id': p['id'], 'name': p['name'], 'price': p['price'], 'slug': p['slug']} for p in _cat.PRODUCTS], ensure_ascii=False, separators=(',', ':'))
+    js = (
+      '<script>var CI=' + cdata + ';var CP=' + pdata + ';'
+      'function cFill(){var idx=CI.map(function(x,i){return x.name});'
+      '["c-a","c-b"].forEach(function(id){var sel=document.getElementById(id);var os="";'
+      'CI.forEach(function(x,i){os+=\'<option value="\'+i+\'">\'+x.name+\'</option>\'});sel.innerHTML=os;});}'
+      'function cGet(id){var i=parseInt(document.getElementById(id).value,10);return CI[i]||null;}'
+      'function cRow(label,va,vb){return \'<tr><td class="px-6 py-3 font-semibold">\'+label+\'</td><td class="px-6 py-3">\'+va+\'</td><td class="px-6 py-3">\'+vb+\'</td></tr>\';}'
+      'function cSkus(x){var ps=CP;var h="";(x.skus||[]).slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
+      'if(p)h+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});return h||\'<li>—</li>\';}'
+      'function cShow(){'
+      'var a=cGet("c-a"), b=cGet("c-b");if(!a||!b)return;'
+      'function link(x){return \'<a class="text-green-600 font-semibold" href="/models/\'+x.slug+\'.html">Страница модели →</a>\';}'
+      'var rows="";'
+      'rows+=cRow("Тип",a.type||"—",b.type||"—");'
+      'rows+=cRow("Разъём AC",a.ac||"—",b.ac||"—");'
+      'rows+=cRow("Разъём DC",a.dc||"—",b.dc||"—");'
+      'rows+=cRow("Бортовой зарядник (OBC)",a.obc,b.obc);'
+      'rows+=cRow("Мощность DC (пик)",a.dcp,b.dcp);'
+      'rows+=cRow("Частота ввоза в РФ",a.freq||"—",b.freq||"—");'
+      'rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">Что докупить</td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(a)+\'</ul></td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(b)+\'</ul></td></tr>\';'
+      'if(a.note||b.note)rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">Особенности</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(a.note||"—")+\'</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(b.note||"—")+\'</td></tr>\';'
+      'rows+=\'<tr><td></td><td class="px-6 py-3">\'+link(a)+\'</td><td class="px-6 py-3">\'+link(b)+\'</td></tr>\';'
+      'var h=\'<div class="border bg-white overflow-x-auto"><table class="text-left w-full"><tr><th class="px-6 py-3">Параметр</th><th class="px-6 py-3">\'+a.name+\'</th><th class="px-6 py-3">\'+b.name+\'</th></tr>\'+rows+\'</table></div>\';'
+      'document.getElementById("c-out").innerHTML=h;'
+      'document.getElementById("c-out").scrollIntoView({behavior:"smooth"});}'
+      'function cAuto(){var q=new URLSearchParams(location.search);var ia=CI.findIndex(function(x){return q.get("a")&&x.slug===q.get("a")});var ib=CI.findIndex(function(x){return q.get("b")&&x.slug===q.get("b")});if(ia>=0)document.getElementById("c-a").value=ia;if(ib>=0)document.getElementById("c-b").value=ib;if(ia>=0||ib>=0)cShow();}'
+      'document.addEventListener("DOMContentLoaded",function(){cFill();var b=document.getElementById("c-b");if(b.options.length>3)b.value="3";cShow();cAuto();});</script>')
+    body = ('<section class="lg:my-10 my-6"><div class="container">'
+      '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Инструмент · бесплатно</span>'
+      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Сравнение моделей EV: разъёмы и зарядка</h1>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">Выберите две модели — покажем разъёмы, бортовой зарядник, мощность DC, частоту ввоза в РФ и что докупить к каждой. Данные из базы справочника: ' + str(len(MODELS)) + ' моделей.</p>'
+      '</div>'
+      '<div class="rounded-lg break-words border bg-white border-gray-300" style="padding:24px 28px;margin-top:16px">'
+      '<div class="of-grid">'
+      '<label class="text-sm text-gray-600">Модель A <select id="c-a" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '<label class="text-sm text-gray-600">Модель B <select id="c-b" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="cShow()">Сравнить</button></div>'
+      '<div id="c-out" class="my-6"></div>'
+      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все ' + str(len(MODELS)) + ' моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
+      + js + '</div></section>')
+    desc = 'Сравните две модели электромобилей: разъёмы AC/DC, бортовой зарядник, мощность быстрой зарядки, частота ввоза в РФ и что докупить. 138 моделей.'
+    write_page(os.path.join(outdir, 'compare', 'index.html'),
+               'Сравнение моделей EV: разъёмы, мощность зарядки, что докупить | Запас хода', desc, body,
+               '/compare/index.html', crumbs=[('', 'Сравнение')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('Сравнение моделей EV: разъёмы и зарядка', desc, '/compare/index.html') + '</script>')
+
 
 GAS_URL = 'https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec'
 
@@ -2223,6 +2311,7 @@ def main():
     models_index(outdir)
     forum_build(outdir)
     quiz_page(outdir)
+    compare_page(outdir)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
