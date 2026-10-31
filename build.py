@@ -352,7 +352,7 @@ FOOTER = ('<footer><div class="wrap"><div>Запас хода — практик
  '137 моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. '
  'При поломке высоковольтной системы обращайтесь в специализированный сервис.</div>'
  '<div>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL), запросы через Overpass API.</div>'
- '<div><a href="/b2b/">Дилерам</a> · <a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
+ '<div><a href="/quiz/">Подбор</a> · <a href="/b2b/">Дилерам</a> · <a href="https://t.me/zapashoda_ev">Telegram-канал</a> · <a href="https://t.me/zapashoda_ev_bot/app">Мини-приложение</a> · <a href="/feed.xml">RSS</a> · <a href="/llms.txt">llms.txt</a></div></div></footer>')
 
 SHARE_JS = '''<script>
 try{var p=location.pathname;if(p.endsWith("/index.html")){var q=location.search+location.hash;history.replaceState(null,"",p.slice(0,-10)+q);}}catch(e){}
@@ -1377,6 +1377,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/b2b/index.html']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
     urls += [SITE_DOMAIN+'/open-data/index.html']
+    urls += [SITE_DOMAIN+'/quiz/index.html']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1404,6 +1405,61 @@ def favicon_files(outdir):
         _icon(32).save(os.path.join(outdir,'favicon.ico'), sizes=[(16,16),(32,32)])
     except Exception as e:
         print('favicon warn:', e)
+
+
+def quiz_page(outdir):
+    """Страница-квиз: марка → модель → разъёмы + что докупить + переход на страницу модели."""
+    import catalog as _cat
+    quiz_brands = {}
+    for m in MODELS:
+        quiz_brands.setdefault(m['brand'].strip(), []).append({
+            'm': m['model'], 'slug': slug(m['brand']) + '-' + slug(m['model']),
+            'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
+            'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])],
+        })
+    qdata = json.dumps({'brands': quiz_brands, 'order': sorted(quiz_brands, key=lambda b: -len(quiz_brands[b]))}, ensure_ascii=False, separators=(',', ':'))
+    qbundle = json.dumps(_cat.BUNDLES, ensure_ascii=False, separators=(',', ':'))
+    js = (
+      '<script>var QD=' + qdata + ';var QBD=' + qbundle + ';'
+      'function qFillBrand(){var bs=document.getElementById("q-brand");var os="";'
+      'QD.order.forEach(function(b){os+=\'<option value="\'+b+\'">\'+b+\' (\'+QD.brands[b].length+\')</option>\'});bs.innerHTML=os;}'
+      'function qFillModel(){var b=document.getElementById("q-brand").value;var ms=QD.brands[b];var os="";'
+      'ms.forEach(function(x,i){os+=\'<option value="\'+i+\'">\'+x.m+\' — \'+x.type+\'</option>\'});'
+      'document.getElementById("q-model").innerHTML=os;}'
+      'function qShow(){'
+      'var b=document.getElementById("q-brand").value;'
+      'var i=parseInt(document.getElementById("q-model").value,10);'
+      'var x=QD.brands[b][i];if(!x)return;'
+      'var slug=x.slug;var url="/models/"+slug+".html";'
+      'var line=(x.type==="PHEV")?"phev":((String(x.ac||"").indexOf("GB/T")>=0)?"gbt":"eu");'
+      'var bd=QBD.filter(function(y){return y.line===line})[0];'
+      'var ps=window.OF_PRODUCTS||[];var hts="";'
+      'x.skus.slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
+      'if(p)hts+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});'
+      'var h=\'<div class="card"><h3>\'+b+\' \'+x.m+\'</h3>\''
+      '+\'<p class="note">Тип: \'+x.type+\' · AC: \'+(x.ac||"—")+\' · DC: \'+(x.dc||"—")+\'</p>\''
+      '+\'<p>Что обычно докупают к этой модели:</p><ul>\'+hts+\'</ul>\''
+      '+(bd?(\'<p class="note">📦 Готовый комплект: \'+bd.name+\' — \'+bd.price.toLocaleString("ru-RU")+\' ₽ (экономия \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' ₽)</p>\'):"")'
+      '+\'<p><a class="btn lime" href="\'+url+\'">Открыть подбор для \'+b+\' \'+x.m+\' →</a></p>\''
+      '+\'<p class="note">На странице модели — полный SKU-блок, калькулятор зарядки и заявка.</p></div>\';'
+      'document.getElementById("q-out").innerHTML=h;'
+      'try{window.OF_MODEL=b+" "+x.m;}catch(e){}'
+      'document.getElementById("q-out").scrollIntoView({behavior:"smooth"});}'
+      'document.addEventListener("DOMContentLoaded",function(){qFillBrand();qFillModel();});</script>')
+    form = _cat.order_form_html('Квиз: подберите модель выше')
+    body = ('<h1>Подбор комплекта за 30 секунд</h1>'
+      '<p class="lede">Выберите марку и модель — покажем разъёмы вашей машины, что докупить и где это есть в каталоге. Без звонков и анкет: результат сразу.</p>'
+      '<div class="card"><div class="of-grid">'
+      '<label>Марка <select id="q-brand" onchange="qFillModel()"></select></label>'
+      '<label>Модель <select id="q-model"></select></label>'
+      '</div><button class="btn lime" onclick="qShow()">Показать подбор</button></div>'
+      '<div id="q-out"></div>'
+      + js + form)
+    desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
+    write_page(os.path.join(outdir, 'quiz', 'index.html'),
+               'Подбор комплекта за 30 секунд: адаптеры и зарядка под вашу модель | Запас хода', desc, body,
+               '/quiz/index.html', crumbs=[('', 'Подбор')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/index.html') + '</script>')
 
 def main():
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -1493,6 +1549,7 @@ def main():
     services.b2b_build(outdir, write_page)
     services.brands_build(outdir, write_page, MODELS)
     services.open_data_build(outdir, write_page)
+    quiz_page(outdir)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)

@@ -125,6 +125,7 @@ def catalog_build(outdir):
     grid = ''.join(shop_card_html(p) for p in sorted_p)
     hero = ('<div class="shop-hero"><h1>Каталог аксессуаров для зарядки</h1>'
       '<p class="lede">Адаптеры, кабели и зарядки для GB/T- и европейских электромобилей. Подбор под вашу модель — <a href="/">на страницах моделей</a>. Заявка за минуту, оплата — дилеру при получении. Дилерам и автосалонам — <a href="/b2b/">прайс и условия</a>.</p>'
+      '<p class="note">Не знаете, с чего начать? <a href="/quiz/">Подбор за 30 секунд</a> — марка и модель, дальше покажем.</p>'
       '<div class="shop-filters" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div><div class="shop-filters" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div></div>')
 
     phev_links = ' · '.join('<a href="/models/'+s+'.html">'+t+'</a>' for s,t in [
