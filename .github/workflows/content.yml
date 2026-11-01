@@ -1,0 +1,32 @@
+name: Content post
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: content-post
+  cancel-in-progress: true
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Post one content piece
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: '108142888'
+          CHANNEL_ID: '-1002316192115'
+        run: python scripts/content_bot.py
+      - name: Commit progress
+        run: |
+          git config user.name "zapashoda-bot"
+          git config user.email "bot@zapashoda-ev.ru"
+          git add scripts/published_content.json
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "[skip ci] content progress"
+          git push
