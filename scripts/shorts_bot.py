@@ -155,7 +155,9 @@ def process(c, pub, now):
     else:
         m = full_meta(c['url'])
         if not m:
+            print('full_meta failed for', vid)
             return False
+        print('check %s: license=%r views=%d dur=%s' % (vid, m.get('license'), int(m.get('view_count') or 0), m.get('duration')))
         if m.get('license') != CC:
             return False
         c['views'] = int(m.get('view_count') or 0)
