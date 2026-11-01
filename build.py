@@ -2215,6 +2215,96 @@ def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
                desc[:152].rstrip() + ('…' if len(desc) > 152 else ''),
                body, '/forum/' + sl_page, crumbs=[('/forum/', 'Сообщество')])
 
+def app_page(outdir):
+    """Telegram Mini App: /app/ — подбор модели, разъёмы, корзина, заявка через GAS."""
+    import catalog as _cat
+    brands = {}
+    for m in MODELS:
+        brands.setdefault(m['brand'].strip(), []).append({
+            'm': m['model'], 'slug': slug(m['brand']) + '-' + slug(m['model']),
+            'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
+            'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])][:6],
+        })
+    prod = {p['id']: {'n': p['name'], 'pr': p['price'], 'e': p.get('emoji', '🔌')} for p in _cat.PRODUCTS}
+    data = json.dumps({'brands': brands, 'order': sorted(brands, key=lambda b: -len(brands[b])), 'prod': prod}, ensure_ascii=False, separators=(',', ':'))
+    js = ("var D=" + data + ";var G='" + GAS_URL + "';"
+      "var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;"
+      "if(tg){try{tg.expand();tg.setHeaderColor('#f5f6f8');}catch(e){}}"
+      "function el(id){return document.getElementById(id);}"
+      "function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}"
+      "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
+      "var cart={},curModel='';"
+      "function screen1(){cart={};curModel='';renderCart();"
+      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода</div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
+      " renderBrands('');}"
+      "function renderBrands(q){var os='';"
+      " D.order.forEach(function(b){if(q&&b.toLowerCase().indexOf(q.toLowerCase())<0)return;"
+      " os+='<button class=\"a-row\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\" onkeydown=\"return aPickEnter(event,this)\" tabindex=\"0\"><span>🚗 '+esc(b)+'</span><span class=\"a-n\">'+D.brands[b].length+' мод.</span></button>';});"
+      " el('a-brands').innerHTML=os||'<p class=\"a-empty\">Ничего не нашлось — попробуйте иначе.</p>';}"
+      "function aPick(b){var os='';D.brands[b].forEach(function(x,i){"
+      " os+='<button class=\"a-row\" onclick=\"aModel(&quot;'+jq(b)+'&quot;,'+i+')\" tabindex=\"0\"><span>'+esc(x.m)+'</span><span class=\"a-n\">'+esc(x.type)+'</span></button>';});"
+      " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Все марки</button><div class=\"a-head\">'+esc(b)+'</div><div class=\"a-list\">'+os+'</div>';}"
+      "function aFilter(){renderBrands(el('a-q').value.trim());}"
+      "function aModel(b,i){var x=D.brands[b][i];cart={};curModel=b+' '+x.m;"
+      " (x.skus||[]).forEach(function(id){if(D.prod[id])cart[id]=1;});"
+      " el('app').innerHTML='<button class=\"a-back\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\">← '+esc(b)+'</button>'"
+      " +'<div class=\"a-head\">'+esc(b)+' '+esc(x.m)+'</div>'"
+      " +'<div class=\"a-cards\"><div class=\"a-card\"><b>🔌 Разъёмы</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span></div>'"
+      " +'<div class=\"a-card\"><b>🧰 Что докупить</b><div id=\"a-cart\"></div></div></div>'"
+      " +'<a class=\"a-link\" href=\"https://zapashoda-ev.ru/models/'+x.slug+'.html\" target=\"_blank\" rel=\"noopener\">Полный разбор модели на сайте →</a>'"
+      " +'<button class=\"a-btn\" onclick=\"screen3()\">Оформить заявку</button>';"
+      " renderCart();}"
+      "function renderCart(){var e2=el('a-cart');if(!e2)return;var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
+      " if(!ids.length){e2.innerHTML='<p class=\"a-empty\">Подбор пуст — добавьте позиции из рекомендаций.</p>';return;}"
+      " var os='';ids.forEach(function(id){var p=D.prod[id];"
+      " os+='<div class=\"a-item\"><span>'+p.e+' '+esc(p.n)+'</span><span class=\"a-qty\"><button onclick=\"aQty('+id+',-1)\">−</button><b>'+cart[id]+'</b><button onclick=\"aQty('+id+',1)\">+</button></span><b class=\"a-pr\">'+(p.pr*cart[id]).toLocaleString('ru-RU')+' ₽</b></div>';});"
+      " e2.innerHTML=os;}"
+      "function aQty(id,d){cart[id]=Math.max(0,(cart[id]||0)+d);if(!cart[id])delete cart[id];renderCart();}"
+      "function screen3(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
+      " var total=ids.reduce(function(s,id){return s+D.prod[id].pr*cart[id];},0);"
+      " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Сначала</button><div class=\"a-head\">Заявка</div>'"
+      " +'<div class=\"a-cards\" style=\"margin-top:6px\"><div class=\"a-card\"><div class=\"a-item\"><span>Позиций</span><b>'+(ids.length||0)+'</b></div><div class=\"a-item\"><span>Итого</span><b>'+(total||0).toLocaleString('ru-RU')+' ₽</b></div></div></div>'"
+      " +'<input id=\"a-name\" placeholder=\"Имя\"><input id=\"a-phone\" placeholder=\"Телефон\"><input id=\"a-city\" placeholder=\"Город\"><textarea id=\"a-note\" placeholder=\"Комментарий (необязательно)\"></textarea>'"
+      " +'<button class=\"a-btn\" id=\"a-send\" onclick=\"aSend()\">Отправить заявку</button>'"
+      " +'<p class=\"a-note\">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>';}"
+      "function aSend(){var n=el('a-name').value.trim(),ph=el('a-phone').value.trim(),c=el('a-city').value.trim();"
+      " if(n.length<2||ph.length<6){alert('Укажите имя и телефон — иначе не сможем связаться.');return;}"
+      " var btn=el('a-send');btn.disabled=true;btn.textContent='Отправляем…';"
+      " var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
+      " var items=ids.map(function(id){return {name:D.prod[id].n,qty:cart[id],price:D.prod[id].pr};});"
+      " fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({t:'miniapp',model:curModel,city:c,name:n,phone:ph,items:items,total:items.reduce(function(s,i){return s+i.price*i.qty;},0),comment:el('a-note').value,website:''})})"
+      " .then(function(r){return r.json();}).then(function(res){"
+      " if(res&&res.ok){el('app').innerHTML='<div class=\"a-head\">✅ Заявка принята</div><p class=\"a-sub\">Свяжемся в ближайшее время. Оплата — дилеру при получении.</p><button class=\"a-btn\" onclick=\"screen1()\">Начать заново</button>';}"
+      " else{btn.disabled=false;btn.textContent='Отправить заявку';alert('Не отправилось: '+((res&&res.error)||'попробуйте позже'));}})"
+      " .catch(function(){btn.disabled=false;btn.textContent='Отправить заявку';alert('Сеть недоступна — попробуйте позже.');});}"
+      "screen1();")
+    css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
+      ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
+      ".a-search{margin:12px 16px 4px}.a-search input{width:calc(100% - 28px);padding:12px 14px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit}"
+      ".a-list{margin:0 16px;display:grid;gap:8px;padding-bottom:24px}"
+      ".a-row,.a-back,.a-btn{border:1px solid #d9dfe5;background:#fff;border-radius:14px;padding:13px 16px;font-size:15px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-family:inherit;cursor:pointer;box-sizing:border-box;color:#15202b}"
+      ".a-row{width:100%;text-align:left}"
+      ".a-back{width:auto;display:inline-flex;padding:9px 14px;border-radius:999px;font-size:13.5px;color:#0a7a2f;margin:12px 16px 0}"
+      ".a-n{color:#5c6c75;font-size:12.5px;white-space:nowrap}"
+      ".a-cards{margin:0 16px;display:grid;gap:10px}"
+      ".a-card{background:#fff;border:1px solid #e2e7ec;border-radius:14px;padding:13px 15px;display:grid;gap:6px;font-size:14.5px}"
+      ".a-card b{font-size:14px}"
+      ".a-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f3;font-size:14px}"
+      ".a-item:last-child{border-bottom:none}.a-pr{white-space:nowrap}"
+      ".a-qty{display:inline-flex;gap:8px;align-items:center}.a-qty button{width:26px;height:26px;border-radius:8px;border:1px solid #d5dbe1;background:#fff;font-size:15px;cursor:pointer;font-family:inherit}"
+      ".a-btn{justify-content:center;background:#0aad0a;border-color:#0aad0a;color:#fff;font-weight:700;margin:14px 16px 0;width:calc(100% - 32px);font-size:16px;height:48px;border-radius:14px}"
+      ".a-note{margin:10px 20px;color:#7d8f95;font-size:12.5px}"
+      ".a-link{display:block;margin:14px 16px 0;color:#0a7a2f;font-weight:600;text-decoration:none;font-size:14.5px}"
+      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}"
+      "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
+      "textarea{min-height:64px;resize:vertical}"
+      "</style>")
+    body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
+    write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
+               'Подбор комплекта зарядки под вашу модель прямо в Telegram: разъёмы, что докупить, заявка с оплатой при получении.',
+               body, '/app/')
+    print('mini-app: /app/ готов')
+
 def forum_build(outdir):
     seeds = _forum_seed()
     brands_in_models = {}
@@ -2465,6 +2555,7 @@ def main():
     models_index(outdir)
     forum_build(outdir)
     quiz_page(outdir)
+    app_page(outdir)
     compare_page(outdir)
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
