@@ -2604,6 +2604,16 @@ def main():
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
     services.b2b_build(outdir, write_page)
+    # PDF-пакет для дилеров (static/b2b -> /b2b/)
+    bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
+    if os.path.isfile(bpdf):
+        os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
+        shutil.copy(bpdf, os.path.join(outdir,'b2b','paket-dileram.pdf'))
+    # PDF-пакет для дилеров (static/b2b -> /b2b/)
+    bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
+    if os.path.isfile(bpdf):
+        os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
+        shutil.copy(bpdf, os.path.join(outdir,'b2b','paket-dileram.pdf'))
     services.brands_build(outdir, write_page, MODELS)
     services.open_data_build(outdir, write_page)
     models_index(outdir)
