@@ -83,28 +83,29 @@ def inv_search(topic):
     return []
 
 def inv_video(c):
+    info = None
     for base in INV_INSTANCES:
         try:
             v = get_json(base + '/api/v1/videos/%s?fields=license,viewCount,title,author,authorId,formatStreams' % c['videoId'], timeout=20)
         except Exception as e:
             print('  [inv video fail] %s: %s %s' % (base, type(e).__name__, str(e)[:80]))
             continue
-        if not isinstance(v, dict):
-            print('  [inv video] %s: bad response %r' % (base, str(v)[:100]))
+        if not isinstance(v, dict) or not v.get('title'):
+            print('  [inv video] %s: bad response' % base)
             continue
-        if not v.get('formatStreams'):
-            print('  [inv video] %s: no formatStreams (%r)' % (base, str(v)[:120]))
-            continue
-        fs = [f for f in v['formatStreams'] if 'mp4' in (f.get('mimeType') or '')]
-        if not fs:
-            print('  [inv video] %s: no mp4 formats' % base)
-            continue
-        fs.sort(key=lambda f: int(f.get('height') or 0), reverse=True)
-        print('  [inv video] %s: OK itag %s %s' % (base, fs[0].get('itag'), fs[0].get('qualityLabel')))
-        return {'license': v.get('license'), 'views': int(v.get('viewCount') or 0),
+        info = {'license': v.get('license'), 'views': int(v.get('viewCount') or 0),
                 'title': v.get('title'), 'author': v.get('author'), 'ch': v.get('authorId'),
-                'stream_url': fs[0].get('url'), 'itag': fs[0].get('itag'), '_dl_base': base}
-    return None
+                'stream_url': None, '_dl_base': base}
+        fs = [f for f in (v.get('formatStreams') or []) if 'mp4' in (f.get('mimeType') or '')]
+        if fs:
+            fs.sort(key=lambda f: int(f.get('height') or 0), reverse=True)
+            info['stream_url'] = fs[0].get('url')
+            info['itag'] = fs[0].get('itag')
+            print('  [inv video] %s: OK itag %s %s (with stream)' % (base, fs[0].get('itag'), fs[0].get('qualityLabel')))
+        else:
+            print('  [inv video] %s: metadata OK, no stream (license=%r views=%s) — fallback to yt-dlp' % (base, info['license'], info['views']))
+        break
+    return info
 
 def inv_download(c, dst):
     bases = []
@@ -267,7 +268,7 @@ def process(c, pub, now):
         return False
     if pub.get('last_topic') == c['topic']:
         return False
-    if c['_src'] == 'inv':
+    if c['_src'] == 'inv' and c.get('stream_url'):
         clip = inv_download(c, '/tmp/clip.mp4')
     else:
         clip = ytdlp_download(c['url'], '/tmp/clip')
