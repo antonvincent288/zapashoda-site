@@ -1410,8 +1410,8 @@ function draw(){
       n++;
       if(mk<2500){
         mk++;
-        var txt='<b>'+s.n+'</b>'+(s.a?'<br>Адрес: '+s.a:'')+(s.c?'<br>Портов: '+s.c:'')+(s.s&&s.s.length?'<br>Разъёмы: '+s.s.join(', '):'');
-        var m=L.circleMarker([s.lat,s.lon],{radius:5,color:'#1e98ff',weight:1.5,fillColor:'#1e98ff',fillOpacity:0.85});
+        var txt='<b>'+s.n+'</b>'+(s.op?'<br>Сеть: '+s.op:'')+(s.a?'<br>Адрес: '+s.a:'')+(s.pw?'<br>Мощность: до '+s.pw+' кВт':'')+(s.c?'<br>Портов: '+s.c:'')+(s.s&&s.s.length?'<br>Разъёмы: '+s.s.join(', '):'');
+        var col=(s.pw&&s.pw>=50)?'#0aad0a':'#1e98ff';var m=L.circleMarker([s.lat,s.lon],{radius:5,color:col,weight:1.5,fillColor:col,fillOpacity:0.85});
         m.bindPopup(txt+'<br><a href="https://yandex.ru/maps/?pt='+s.lon+','+s.lat+'&z=17" target="_blank" rel="noopener">открыть в Яндекс.Картах</a>');
         m.bindTooltip(s.n,{direction:'top',offset:[0,-4]});
         layer.addLayer(m);
@@ -1427,7 +1427,7 @@ function renderList(bb){
   ALL.stations.forEach(function(s){if(s.lat>=la1&&s.lat<=la2&&s.lon>=lo1&&s.lon<=lo2)hits.push(s);});
   var lim=hits.slice(0,50);
   var html=`<p class="note">Найдено станций: <b>`+hits.length+`</b>`+(ALL.updated?` · данные от `+ALL.updated:``)+`</p>`;
-  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:``)+(s.c?`<span class="sttag">Портов: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Разъёмы: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">На карте ↗</a></div>`;}).join(``);
+  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:``)+(s.op?`<span class="sttag">Сеть: `+s.op+`</span>`:``)+(s.pw?`<span class="sttag">До `+s.pw+` кВт</span>`:``)+(s.c?`<span class="sttag">Портов: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Разъёмы: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">На карте ↗</a></div>`;}).join(``);
   if(hits.length>lim.length)html+=`<p class="note">Показаны первые 50 из `+hits.length+` — остальные на карте.</p>`;
   document.getElementById('stlist').innerHTML=html;
   document.getElementById('mstat').textContent='Станций в области: '+hits.length+(ALL.updated?(' · данные от '+ALL.updated):'');
@@ -1436,7 +1436,7 @@ initMap();
 document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click',function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});
 """ % json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False)
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, операторов и разъёмы, список с адресами — под картой.</p></div>'
+     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где она указана в базе).</p></div>'
      '<div class="cbtns">' + city_btns + '</div>'
      '<div id="map" class="nmap"></div>'
      '<p class="note" id="mstat">Загрузка данных…</p>'
