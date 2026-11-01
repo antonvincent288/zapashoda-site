@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v1.2: YouTube (Creative Commons) -> Telegram
-# Путь 1: yt-dlp ytsearchdate (может блокироваться антиботом на CI — тогда путь 2).
-# Путь 2: YouTube Data API v3 (секрет YT_API_KEY) — надёжный, с фильтром license=creativeCommon.
-import json, os, subprocess, glob, time, uuid
+# Шортс-автопилот v2.0: YouTube Creative Commons -> Telegram
+# Каскад источников: 1) Invidious API (поиск по просмотрам, лицензия, прямые mp4)
+# 2) yt-dlp (с фоллбеками player_client) 3) YouTube Data API (секрет YT_API_KEY)
+import json, os, subprocess, glob, time, uuid, re
 import urllib.request, urllib.parse
 
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '')
@@ -12,12 +12,18 @@ REPORT_CHAT = '108142888'
 MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '5000'))
 MAX_DUR = 61
 MAX_BYTES = 48 * 1024 * 1024
-SEARCH_LIMIT = 20
 FULL_CHECK_LIMIT = 8
 HERE = os.path.dirname(os.path.abspath(__file__))
 PUBLISHED = os.path.join(HERE, 'published.json')
 CC = 'Creative Commons Attribution license (reuse allowed)'
 
+INV_INSTANCES = [
+    'https://invidious.tiekoetter.com',
+    'https://invidious.nerdvpn.de',
+    'https://inv.nadeko.net',
+    'https://yt.chocolatemoo53.com',
+    'https://invidious.f5.si',
+]
 TOPICS = [
     'электромобиль зарядка',
     'электромобиль зимой',
@@ -36,6 +42,11 @@ def load_pub():
 def save_pub(p):
     json.dump(p, open(PUBLISHED, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
+def get_json(url, timeout=30):
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)', 'Accept': 'application/json'})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read())
+
 def tg(method, **params):
     url = 'https://api.telegram.org/bot%s/%s' % (TELEGRAM_TOKEN, method)
     req = urllib.request.Request(url, data=urllib.parse.urlencode(params).encode())
@@ -48,9 +59,63 @@ def tg(method, **params):
 def ytdlp(args, timeout=240):
     return subprocess.run(['yt-dlp'] + args, capture_output=True, text=True, timeout=timeout)
 
-def search_topic(topic):
-    r = ytdlp(['--dump-json', '--flat-playlist', '--no-playlist', '-I', '1:%d' % SEARCH_LIMIT,
-               'ytsearch%d:%s' % (SEARCH_LIMIT, topic)], timeout=180)
+# ---------- источник 1: Invidious ----------
+def inv_search(topic):
+    q = urllib.parse.quote(topic)
+    for base in INV_INSTANCES:
+        try:
+            data = get_json(base + '/api/v1/search?q=%s&type=video&sort_by=view_count&fields=videoId,title,author,authorId,lengthSeconds,viewCount,license' % q, timeout=20)
+            out = []
+            for i in data:
+                if not isinstance(i, dict) or not i.get('videoId'):
+                    continue
+                if i.get('lengthSeconds') and i['lengthSeconds'] > MAX_DUR:
+                    continue
+                out.append({'videoId': i['videoId'], 'topic': topic,
+                            'views': int(i.get('viewCount') or 0),
+                            'title': i.get('title'), 'author': i.get('author'),
+                            'ch': i.get('authorId'), 'license': i.get('license'),
+                            'url': 'https://www.youtube.com/shorts/' + i['videoId'],
+                            '_src': 'inv', '_base': base})
+            return out
+        except Exception as e:
+            print('  [inv search fail] %s: %s' % (base, type(e).__name__))
+    return []
+
+def inv_video(c):
+    try:
+        v = get_json(c['_base'] + '/api/v1/videos/%s?fields=license,viewCount,title,author,authorId,formatStreams' % c['videoId'], timeout=20)
+    except Exception as e:
+        print('  [inv video fail]', type(e).__name__)
+        return None
+    fs = [f for f in (v.get('formatStreams') or []) if 'mp4' in (f.get('mimeType') or '')]
+    if not fs:
+        return None
+    fs.sort(key=lambda f: int(f.get('height') or 0), reverse=True)
+    return {'license': v.get('license'), 'views': int(v.get('viewCount') or 0),
+            'title': v.get('title'), 'author': v.get('author'), 'ch': v.get('authorId'),
+            'stream_url': fs[0].get('url'), 'itag': fs[0].get('itag')}
+
+def inv_download(c, dst):
+    tries = [c['stream_url']]
+    tries.append(c['_base'] + '/latest_version?id=%s&itag=18&local=true' % c['videoId'])
+    for url in tries:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            data = urllib.request.urlopen(req, timeout=300).read()
+            if len(data) > MAX_BYTES or len(data) < 100000:
+                print('  [inv dl] bad size', len(data)); continue
+            open(dst, 'wb').write(data)
+            return dst
+        except Exception as e:
+            print('  [inv dl fail]', type(e).__name__, str(e)[:100])
+    return None
+
+# ---------- источник 2: yt-dlp ----------
+EXTRACTOR_FALLBACK = ['--extractor-args', 'youtube:player_client=ios,android_vr,tv_embedded']
+
+def ytdlp_search(topic):
+    r = ytdlp(['--dump-json', '--flat-playlist', '--no-playlist', '-I', '1:20', 'ytsearch20:' + topic], timeout=180)
     out = []
     for line in (r.stdout or '').splitlines():
         line = line.strip()
@@ -58,10 +123,17 @@ def search_topic(topic):
             try: out.append(json.loads(line))
             except Exception: pass
     if not out and (r.stderr or '').strip():
-        print('  [search diag]', (r.stderr or '').strip()[-400:].replace('\n', ' | '))
-    return out
-
-EXTRACTOR_FALLBACK = ['--extractor-args', 'youtube:player_client=android,web']
+        print('  [ytdlp search diag]', (r.stderr or '').strip()[-300:].replace('\n', ' | '))
+    cands = []
+    for e in out:
+        vid = e.get('id')
+        dur = e.get('duration')
+        if not vid or (dur and dur > MAX_DUR):
+            continue
+        cands.append({'videoId': vid, 'topic': topic, 'views': e.get('view_count') or 0,
+                      'title': e.get('title'), 'url': e.get('webpage_url') or ('https://www.youtube.com/shorts/' + vid),
+                      '_src': 'yt'})
+    return cands
 
 def full_meta(url):
     for extra in ([], EXTRACTOR_FALLBACK):
@@ -70,37 +142,46 @@ def full_meta(url):
             return json.loads((r.stdout or '').strip().splitlines()[-1])
         except Exception:
             if (r.stderr or '').strip():
-                print('  [meta diag]', (r.stderr or '').strip()[-320:].replace('\n', ' | '))
+                print('  [meta diag]', (r.stderr or '').strip()[-250:].replace('\n', ' | '))
     return None
 
+def ytdlp_download(url, dst):
+    for extra in ([], EXTRACTOR_FALLBACK):
+        r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
+                   '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
+        files = glob.glob(dst + '.*')
+        if files and r.returncode == 0:
+            f = files[0]
+            if os.path.getsize(f) > MAX_BYTES:
+                os.remove(f); return None
+            return f
+        if (r.stderr or '').strip():
+            print('  [dl diag]', (r.stderr or '').strip()[-250:].replace('\n', ' | '))
+    return None
+
+# ---------- источник 3: YouTube API ----------
 def api_search(topic):
-    """YouTube Data API: только CC, только шортсы, с реальными просмотрами."""
     if not YT_API_KEY:
         return []
     since = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() - 10*86400))
-    url = ('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&type=video'
-           '&order=viewCount&relevanceLanguage=ru&regionCode=RU&videoLicense=creativeCommon'
-           '&publishedAfter=%s&q=%s&key=%s' % (since, urllib.parse.quote(topic), YT_API_KEY))
     try:
-        s = json.load(urllib.request.urlopen(urllib.request.Request(url), timeout=30))
+        s = get_json('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&type=video'
+                     '&order=viewCount&relevanceLanguage=ru&regionCode=RU&videoLicense=creativeCommon'
+                     '&publishedAfter=%s&q=%s&key=%s' % (since, urllib.parse.quote(topic), YT_API_KEY), timeout=30)
     except Exception as e:
-        print('  [api search error]', topic, e)
-        return []
+        print('  [api search error]', type(e).__name__); return []
     ids = [i['id']['videoId'] for i in s.get('items', []) if i.get('id', {}).get('videoId')]
     if not ids:
         return []
     try:
-        v = json.load(urllib.request.urlopen(urllib.request.Request(
-            'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,status,contentDetails&id=%s&key=%s' % (','.join(ids), YT_API_KEY)), timeout=30))
-    except Exception as e:
-        print('  [api videos error]', e)
+        v = get_json('https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,status,contentDetails&id=%s&key=%s' % (','.join(ids), YT_API_KEY), timeout=30)
+    except Exception:
         return []
     out = []
     for it in v.get('items', []):
         if (it.get('status') or {}).get('license') != 'creativeCommon':
             continue
         dur = it.get('contentDetails', {}).get('duration') or 'PT0S'
-        import re
         m = re.match(r'PT(?:(\d+)M)?(?:(\d+)S)?', dur)
         secs = (int(m.group(1) or 0)*60 if m else 0) + (int(m.group(2) or 0) if m else 0)
         if secs and secs > MAX_DUR:
@@ -110,24 +191,10 @@ def api_search(topic):
                     'title': it.get('snippet', {}).get('title'),
                     'author': it.get('snippet', {}).get('channelTitle'),
                     'url': 'https://www.youtube.com/shorts/' + it['id'],
-                    '_api': True})
+                    '_src': 'api'})
     return out
 
-def download(url, dst):
-    for extra in ([], EXTRACTOR_FALLBACK):
-        r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
-                   '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
-        files = glob.glob(dst + '.*')
-        if files and r.returncode == 0:
-            f = files[0]
-            if os.path.getsize(f) > MAX_BYTES:
-                os.remove(f)
-                return None
-            return f
-        if (r.stderr or '').strip():
-            print('  [dl diag]', (r.stderr or '').strip()[-320:].replace('\n', ' | '))
-    return None
-
+# ---------- отправка ----------
 def send_video(path, caption, kb):
     boundary = uuid.uuid4().hex
     def field(name, val):
@@ -154,53 +221,64 @@ def num(n):
 
 def process(c, pub, now):
     vid = c['videoId']
-    if pub['ids'].get(vid) or c['views'] < MIN_VIEWS:
+    if pub['ids'].get(vid):
         return False
-    if c.get('_api'):
-        m = None
-    else:
+    if c['_src'] == 'inv':
+        v = inv_video(c)
+        if not v:
+            print('no usable source for', vid); return False
+        c['license'] = v['license']; c['views'] = v['views']
+        c['title'] = v['title']; c['author'] = v['author']; c['ch'] = v['ch']
+        c['stream_url'] = v['stream_url']; c['itag'] = v['itag']
+    elif c['_src'] == 'yt':
         m = full_meta(c['url'])
         if not m:
-            print('full_meta failed for', vid)
-            return False
-        print('check %s: license=%r views=%d dur=%s' % (vid, m.get('license'), int(m.get('view_count') or 0), m.get('duration')))
-        if m.get('license') != CC:
-            return False
-        c['views'] = int(m.get('view_count') or 0)
-        c['title'] = m.get('title')
-        author = m.get('uploader') or m.get('channel') or 'YouTube'
-        ch = m.get('channel_id') or m.get('uploader_id') or author
-    author = c.get('author') or (m.get('uploader') if m else 'YouTube')
-    ch = c.get('_ch') or (m.get('channel_id') if m else None) or author
+            print('full_meta failed for', vid); return False
+        c['license'] = m.get('license'); c['views'] = int(m.get('view_count') or 0)
+        c['title'] = m.get('title'); c['author'] = m.get('uploader') or m.get('channel')
+        c['ch'] = m.get('channel_id') or m.get('uploader_id')
+    # api-кандидаты приходят с уже проверенной лицензией creativeCommon
+    lic = c.get('license')
+    if lic and lic != CC:
+        print('skip %s: license=%r' % (vid, lic)); return False
+    if not lic:
+        print('skip %s: license unknown (не подтверждена CC)' % vid); return False
+    if c['views'] < MIN_VIEWS:
+        print('skip %s: views %d < %d' % (vid, c['views'], MIN_VIEWS)); return False
+    author = c.get('author') or 'YouTube'
+    ch = c.get('ch') or author
     if pub['authors'].get(ch, 0) and (now - pub['authors'][ch]) < 7 * 86400:
         return False
     if pub.get('last_topic') == c['topic']:
         return False
-    clip = download(c['url'], '/tmp/clip')
+    if c['_src'] == 'inv':
+        clip = inv_download(c, '/tmp/clip.mp4')
+    else:
+        clip = ytdlp_download(c['url'], '/tmp/clip')
     if not clip:
         print('download failed for', vid)
         return False
     caption = ('🎬 ' + short(c.get('title'), 80) + '\n\n'
-               '📺 Автор: ' + (author or 'YouTube') + ' · лицензия Creative Commons\n'
+               '📺 Автор: ' + author + ' · лицензия Creative Commons\n'
                + c['url'] + '\n\n#видео #ev')
     kb = {'inline_keyboard': [[
         {'text': '📺 Оригинал на YouTube', 'url': c['url']},
         {'text': '🔋 Открыть гид', 'url': 'https://t.me/zapashoda_ev_bot/app'}
     ]]}
     sent = send_video(clip, caption, kb)
+    try: os.remove(clip)
+    except Exception: pass
     if not sent.get('ok'):
         print('send failed for', vid, sent.get('description'))
         return False
     pub['ids'][vid] = {'title': c.get('title'), 'author': author, 'views': c['views'],
-                       'topic': c['topic'], 'ts': now}
+                       'topic': c['topic'], 'ts': now, 'src': c['_src']}
     pub['authors'][ch] = now
     pub['last_topic'] = c['topic']
     save_pub(pub)
-    try: os.remove(clip)
-    except Exception: pass
     tg('sendMessage', chat_id=REPORT_CHAT,
-       text='✅ Шортс опубликован: «%s»\nАвтор: %s · просмотры: %s\nТема: %s' % (
-           short(c.get('title'), 60), author, num(c['views']), c['topic']))
+       text='✅ Шортс опубликован: «%s»\nАвтор: %s · просмотры: %s\nТема: %s\nИсточник: %s' % (
+           short(c.get('title'), 60), author, num(c['views']), c['topic'], c['_src']))
     return True
 
 def main():
@@ -210,25 +288,15 @@ def main():
     now = time.time()
     candidates = []
     for topic in TOPICS:
-        items = []
-        flat = search_topic(topic)
-        for e in flat:
-            vid = e.get('id')
-            if not vid or pub['ids'].get(vid):
-                continue
-            dur = e.get('duration')
-            if dur and dur > MAX_DUR:
-                continue
-            items.append({'videoId': vid, 'topic': topic, 'views': e.get('view_count') or 0,
-                          'title': e.get('title'), 'url': e.get('webpage_url') or ('https://www.youtube.com/shorts/' + vid)})
-        if not flat and YT_API_KEY:
-            items = [x for x in api_search(topic) if not pub['ids'].get(x['videoId'])]
-        print('topic %r: flat=%d candidates=%d' % (topic, len(flat), len(items)))
-        candidates += items
-        time.sleep(2)
+        inv = [x for x in inv_search(topic) if not pub['ids'].get(x['videoId'])]
+        api = api_search(topic) if not inv else []
+        yt = ytdlp_search(topic) if (not inv and not api) else []
+        got = inv or api or yt
+        print('topic %r: inv=%d api=%d ytdlp=%d -> %d' % (topic, len(inv), len(api), len(yt), len(got)))
+        candidates += got
+        time.sleep(1)
     candidates.sort(key=lambda x: -x['views'])
     print('candidates total:', len(candidates))
-
     posted = False
     for c in candidates[:FULL_CHECK_LIMIT]:
         if process(c, pub, now):
@@ -237,10 +305,6 @@ def main():
     print('posted:', posted)
     if not posted:
         msg = 'ℹ️ Прогон: подходящих CC-шортсов не нашлось.'
-        if not YT_API_KEY:
-            msg += '\nПохоже, YouTube блокирует поиск без API-ключа на серверах GitHub. Добавьте секрет YT_API_KEY (бесплатный, 5 минут: console.cloud.google.com → проект → YouTube Data API v3 → Enable → API key) — после этого бот будет находить самые виральные CC-шортсы стабильно.'
-        else:
-            msg += ' Порог: %s. Можно снизить секретом MIN_VIEWS.' % num(MIN_VIEWS)
         tg('sendMessage', chat_id=REPORT_CHAT, text=msg)
     if not os.path.exists(PUBLISHED):
         save_pub(pub)
