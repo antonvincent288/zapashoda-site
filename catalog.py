@@ -179,7 +179,7 @@ def catalog_build(outdir):
       '<div class="flex gap-3 flex-wrap">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подбор за 30 секунд</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/b2b/">Дилерам — прайс</a>'
-      '</div></div></section>'
+      '</div></div></div></section>'
       '<div class="flex flex-wrap gap-2 my-4" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div>'
       '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
             '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div>')
@@ -244,7 +244,7 @@ def catalog_build(outdir):
           '<hr class="border-gray-300"/>'
           '<div class="table-responsive"><table class="text-left w-full"><tbody>' + spec_rows + '</tbody></table></div>'
           '</div></div>'
-          '</div></div></section>'
+          '</div></div></div></section>'
           '<section><div class="container">'
           '<h2 class="text-lg text-gray-900 mt-8 mb-4">О товаре</h2>'
           '<p class="text-base text-gray-700 leading-relaxed" style="max-width:760px">' + html.escape(p['descLong']) + '</p>'
