@@ -518,3 +518,89 @@ def open_data_build(outdir, write_page):
                'Открытые данные: зарядные станции России | Запас хода', desc, body,
                '/open-data/', crumbs=[('', 'Открытые данные')],
                extra_ld='<script type="application/ld+json">' + art_ld('Открытые данные: зарядные станции', desc, '/open-data/') + '</script>')
+
+
+def calculator_build(outdir, write_page):
+    title = 'Сколько стоит зарядить электромобиль — калькулятор | Запас хода'
+    desc = 'Посчитайте стоимость 100 км и месяца владения: домашняя ночная зарядка, городская станция, трасса. Сравнение с бензином и готовый результат для шаринга.'
+    presets = [
+        ("Zeekr 001", 100), ("Zeekr 007", 100), ("Zeekr X", 66), ("Zeekr 009", 116), ("Zeekr 7X", 93),
+        ("Li Auto L7/L8/L9 (EREV)", 43), ("Voyah Free (BEV)", 88), ("Voyah Dream", 108),
+        ("BYD Atto 3", 60), ("BYD Seal", 82), ("BYD Song Plus", 80),
+        ("Avatr 11", 116), ("Avatr 12", 94), ("Changan Deepal S07", 79),
+        ("Geely Geometry C", 70), ("Hongqi E-HS9", 99), ("MG4", 61), ("Xpeng P7", 86),
+    ]
+    opts = "".join('<option value="'+str(cap)+'">'+name+' — '+str(cap)+' кВт·ч</option>' for name, cap in presets)
+    faq = [
+        ("Сколько стоит зарядить электромобиль от розетки?",
+         "При ночном тарифе 2,5–3,5 ₽/кВт·ч и среднем расходе 16 кВт·ч/100 км — около 40–56 ₽ за 100 км. Это самый дешёвый способ; днём по городскому тарифу 5–7 ₽/кВт·ч — 80–112 ₽ за 100 км."),
+        ("Сколько стоит быстрая зарядка на трассе?",
+         "Тарифы DC-станций на трассах обычно 25–30 ₽/кВт·ч, то есть 400–480 ₽ за 100 км при расходе 16 кВт·ч/100 км. Быстрая зарядка в городе дешевле: 18–25 ₽/кВт·ч."),
+        ("Дешевле ли электромобиль, чем бензиновая машина?",
+         "По расходу энергии — обычно в 2–4 раза дешевле бензина при домашней ночной зарядке и сопоставимо с бензином при зарядке на трассе. Посчитайте свои цифры в калькуляторе — он учитывает ваш расход, тариф и пробег."),
+        ("От чего зависит стоимость зарядки?",
+         "Главное — тариф ₽/кВт·ч (дом/город/трасса) и реальный расход машины. Для китайских EV расход обычно 14–19 кВт·ч/100 км; зимой выше, летом ниже."),
+    ]
+    ld = ('<script type="application/ld+json">'
+          + json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+              {"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq
+          ]}, ensure_ascii=False) + '</script>')
+    body = ('<h1>Сколько стоит зарядить электромобиль: калькулятор</h1>'
+      '<p class="lede">Задайте расход своей машины, сцену зарядки и пробег — получите цену за 100 км, за месяц и сравнение с бензином. Результат можно отправить в чат одной кнопкой.</p>'
+      '<div class="lcard" id="calc">'
+      '<div class="of-grid"><label>Расход машины, кВт·ч/100 км: <b id="c-cons-v">16</b></label>'
+      '<input type="range" id="c-cons" min="10" max="25" step="0.5" value="16" style="width:100%"></div>'
+      '<div class="of-grid"><input type="number" id="c-km" min="100" step="50" value="1200" placeholder="Пробег в месяц, км"><input type="number" id="c-cap" min="20" max="200" step="1" value="60" placeholder="Ёмкость батареи, кВт·ч"></div>'
+      '<div class="of-grid"><select id="c-model"><option value="">Выбрать модель — подставить ёмкость</option>' + opts + '</select></div>'
+      '<div class="of-grid"><label>Где заряжаетесь</label><select id="c-scene">'
+      '<option value="3.0">Дома ночью (ночной тариф) — ~3 ₽/кВт·ч</option>'
+      '<option value="6.0">Дома днём (городской тариф) — ~6 ₽/кВт·ч</option>'
+      '<option value="14">Городская станция AC — ~14 ₽/кВт·ч</option>'
+      '<option value="21.5">Быстрая DC в городе — ~21,5 ₽/кВт·ч</option>'
+      '<option value="27.5" selected>Быстрая DC на трассе — ~27,5 ₽/кВт·ч</option>'
+      '<option value="custom">Свой тариф</option></select></div>'
+      '<div class="of-grid" id="c-custom-row" style="display:none"><input type="number" id="c-custom" min="0.5" step="0.5" value="12" placeholder="Свой тариф, ₽/кВт·ч"></div>'
+      '<div class="of-grid"><label>Для сравнения: бензин</label><input type="number" id="c-fuel" min="3" step="0.5" value="8" placeholder="Расход, л/100 км"><input type="number" id="c-fuelp" min="10" step="1" value="65" placeholder="Цена литра, ₽"></div>'
+      '<div class="kv" id="c-out"></div>'
+      '<p><button class="btn lime" id="c-share" type="button">Отправить результат в Telegram</button></p>'
+      '<p class="note">Тарифы — типичные диапазоны рынка на конец 2026 года: дом ночью 2,5–3,5, днём 5–7, городская AC 10–18, DC в городе 18–25, DC на трассе 25–30 ₽/кВт·ч. Точный тариф вашей сети смотрите в приложении оператора. Ёмкости моделей — ориентир по типовым комплектациям, сверьте со своей.</p>'
+      '</div>'
+      '<h2>Как считается</h2>'
+      '<p>Стоимость 100 км = расход (кВт·ч/100 км) × тариф (₽/кВт·ч). Стоимость месяца = цена 100 км × (пробег ÷ 100). Полная зарядка = ёмкость батареи × тариф — столько вы потратите за одну сессию от нуля до 100%. Сравнение с бензином считается по вашему расходу топлива и цене литра.</p>'
+      '<h2>Частые вопросы</h2>'
+      + "".join('<div class="faq-q"><b>'+q+'</b><p>'+a+'</p></div>' for q,a in faq)
+      + '<p><a class="btn lime" href="/quiz/">Подобрать комплект зарядки под свою машину</a> <a class="btn" href="/pain/stoimost-zaryadki.html">Подробный разбор цен по сценам</a></p>'
+      + '''<script>
+      function calcR() {
+        var cons=parseFloat(document.getElementById("c-cons").value);
+        var km=parseFloat(document.getElementById("c-km").value)||0;
+        var cap=parseFloat(document.getElementById("c-cap").value)||0;
+        var sel=document.getElementById("c-scene");
+        var custom=parseFloat(document.getElementById("c-custom").value)||0;
+        var tariff=sel.value==="custom"?custom:parseFloat(sel.value);
+        document.getElementById("c-cons-v").textContent=cons;
+        document.getElementById("c-custom-row").style.display=sel.value==="custom"?"":"none";
+        var per100=cons*tariff, perMonth=per100*km/100, full=cap*tariff;
+        var fuel=parseFloat(document.getElementById("c-fuel").value)||0;
+        var fuelp=parseFloat(document.getElementById("c-fuelp").value)||0;
+        var bper100=fuel*fuelp, bperMonth=bper100*km/100;
+        var f1=function(n){return Math.round(n).toLocaleString("ru-RU")+" ₽";};
+        var rows=[["100 км по выбранной сцене",f1(per100)],["Зарядка в месяц",f1(perMonth)],["Полная зарядка от нуля",f1(full)],
+                  ["Бензин: 100 км",f1(bper100)],["Бензин: месяц",f1(bperMonth)]];
+        document.getElementById("c-out").innerHTML=rows.map(function(r){return "<div><div class=\\"k\\">"+r[0]+"</div><div class=\\"v\\">"+r[1]+"</div></div>";}).join("");
+        var sh="Зарядка моего EV: "+f1(per100)+" за 100 км, "+f1(perMonth)+" в месяц. Посчитай свою: https://zapashoda-ev.ru/calculator/";
+        document.getElementById("c-share").onclick=function(){window.open("https://t.me/share/url?url="+encodeURIComponent("https://zapashoda-ev.ru/calculator/")+"&text="+encodeURIComponent(sh));};
+      }
+      document.addEventListener("DOMContentLoaded",function(){
+        ["c-cons","c-km","c-cap","c-scene","c-custom","c-fuel","c-fuelp"].forEach(function(id){
+          document.getElementById(id).addEventListener("input",calcR);
+          document.getElementById(id).addEventListener("change",calcR);
+        });
+        document.getElementById("c-model").addEventListener("change",function(){
+          if(this.value){document.getElementById("c-cap").value=this.value;}
+          calcR();
+        });
+        calcR();
+      });
+      </script>''')
+    write_page(os.path.join(outdir, 'calculator', 'index.html'), title, desc, body, '/calculator/', crumbs=[('', 'Калькулятор зарядки')], extra_ld=ld)

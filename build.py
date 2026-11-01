@@ -1825,6 +1825,7 @@ def pain_article_page(sl, title, desc, pids, outdir):
         city_costs = ('<h2>Сколько стоит 100 км в деньгах: сцены зарядки</h2>'
             + '<p class="note">Расчёт по среднему расходу 16 кВт·ч/100 км. Тарифы — типичные диапазоны по рынку на конец 2026 года; точные цены своей сети смотрите в её приложении, тарифы электроэнергии — в квитанции энергосбыта.</p>'
             + '<div class="tblwrap"><table><thead><tr><th>Сцена</th><th>Тариф</th><th>Стоимость 100 км</th></tr></thead><tbody>' + trs + '</tbody></table></div>'
+            + '<p><a class="btn lime" href="/calculator/">Посчитать под свою машину: калькулятор стоимости зарядки</a></p>'
             + '<h2>Города: где зарядка дешевле</h2>'
             + '<p>Меняется не столько тариф, сколько состав сетей. В Москве городская сеть «Энергия Москвы»: в карточках 2ГИС у неё указан тариф от 15 ₽/кВт·ч, исторически часть городских станций была бесплатной — актуальные условия всегда проверяйте в приложении оператора. В Санкт-Петербурге — свои городские и сетевые станции. В остальных регионах дешевле всего дома по ночному тарифу, дороже всего — быстрые станции на трассах. Список сетей и точек по городам — на <a href="/charging/">карте зарядных станций</a>.</p>'
             + '<p class="note">Быстрая прикидка: заряд «до полного» = ёмкость батареи × тариф. Батарея 60 кВт·ч дома ночью — 150-210 ₽, на быстрой трассовой — 1500-1800 ₽. Вот почему владельцы с домашней зарядкой платят за «топливо» в 5-10 раз меньше.</p>')
@@ -1902,6 +1903,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
     urls += [SITE_DOMAIN+'/b2b/']
+    urls += [SITE_DOMAIN+'/calculator/']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
     urls += [SITE_DOMAIN+'/open-data/']
     urls += [SITE_DOMAIN+'/quiz/']
@@ -2604,6 +2606,7 @@ def main():
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
     services.b2b_build(outdir, write_page)
+    services.calculator_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
