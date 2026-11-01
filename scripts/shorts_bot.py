@@ -208,14 +208,21 @@ def ytdlp_download(url, dst):
 def api_search(topic):
     if not YT_API_KEY:
         return []
-    since = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() - 10*86400))
+    since = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() - 30*86400))
     try:
         s = get_json('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&type=video'
-                     '&order=viewCount&relevanceLanguage=ru&regionCode=RU&videoLicense=creativeCommon'
+                     '&order=viewCount&relevanceLanguage=ru&videoLicense=creativeCommon'
                      '&publishedAfter=%s&q=%s&key=%s' % (since, urllib.parse.quote(topic), YT_API_KEY), timeout=30)
+    except urllib.error.HTTPError as e:
+        print('  [api search error] HTTP %s: %s' % (e.code, e.read()[:250].decode('utf-8','replace')))
+        return []
     except Exception as e:
-        print('  [api search error]', type(e).__name__); return []
+        print('  [api search error]', type(e).__name__, str(e)[:120]); return []
+    total = s.get('pageInfo', {}).get('totalResults')
     ids = [i['id']['videoId'] for i in s.get('items', []) if i.get('id', {}).get('videoId')]
+    if not ids:
+        print('  [api search] topic=%r totalResults=%s region=%s — CC за 10 дней не нашлось' % (topic, total, 'RU'))
+        return []
     if not ids:
         return []
     try:
@@ -340,7 +347,7 @@ def main():
         inv = [x for x in inv_search(topic) if not pub['ids'].get(x['videoId'])]
         api = api_search(topic) if not inv else []
         yt = ytdlp_search(topic) if (not inv and not api) else []
-        got = inv or api or yt
+        got = inv + api + yt
         print('topic %r: inv=%d api=%d ytdlp=%d -> %d' % (topic, len(inv), len(api), len(yt), len(got)))
         candidates += got
         time.sleep(1)
