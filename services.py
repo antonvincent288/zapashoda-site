@@ -96,7 +96,7 @@ ART_tipy_razyomov_zaryadki = (
 '<h2>Переходники: что покупать</h2>'
 '<p>Для GB/T-машины базовый набор: адаптер Type2→GB/T на 32 А (22 кВт, 3 фазы) — открывает большинство городских станций, цена примерно 4–9 тыс. ₽; опционально кабель Type2→GB/T для станций «с розеткой»; для быстрых зарядок CCS2→GB/T DC — 100–200 тыс. ₽, нужен для дальних поездок. Что выбрать под вашу модель — смотрите подбор в <a href="/catalog/">каталоге</a> и гайд <a href="/pain/adapter-gbt.html">«Адаптеры Type2→GB/T и CCS2→GB/T»</a>.</p>'
 '<h2>Сравнение: модели EV по разъёмам и мощности</h2>'
-'<p>Полное сравнение по моделям — разъёмы, бортовая мощность, время зарядки — в разделе <a href="/compare/">«Сравнение моделей»</a>. Карточки конкретных моделей: Zeekr 001 (<a href="/models/zeekr-001-razyom-i-problemy.html">гайд</a>), Voyah Free (<a href="/blog/voyah-free-osobennosti.html">особенности зарядки</a>), Geely EX5 (<a href="/blog/geely-ex5-zaryadka.html">зарядка</a>).</p>'
+'<p>Полное сравнение по моделям — разъёмы, бортовая мощность, время зарядки — в разделе <a href="/compare/">«Сравнение моделей»</a>. Карточки конкретных моделей: Zeekr 001 (<a href="/models/zeekr-001-001-fr.html">гайд</a>), Voyah Free (<a href="/blog/voyah-free-osobennosti.html">особенности зарядки</a>), Geely EX5 (<a href="/blog/geely-ex5-zaryadka.html">зарядка</a>).</p>'
 )
 
 FAQ_tipy_razyomov_zaryadki = [
