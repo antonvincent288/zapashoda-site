@@ -33,6 +33,34 @@ TOPICS = [
     'electric car winter',
 ]
 
+def dynamic_instances():
+    bases = []
+    try:
+        data = get_json('https://api.invidious.io/instances.json?sort_by=health', timeout=15)
+        for e in data:
+            if isinstance(e, list) and isinstance(e[1], dict) and e[1].get('type') == 'https' and e[1].get('api', True):
+                bases.append('https://' + e[0])
+    except Exception as e:
+        print('  [instances list fail]', type(e).__name__)
+    for b in INV_INSTANCES:
+        if b not in bases:
+            bases.append(b)
+    return bases
+
+def lemnos_license(vid):
+    """Unofficial YouTube API (yt.lemnoslife.com) без ключа — status.license"""
+    try:
+        v = get_json('https://yt.lemnoslife.com/youtube/v3/videos?part=status,statistics,contentDetails,snippet&id=%s' % vid, timeout=25)
+        it = (v.get('items') or [{}])[0]
+        st = it.get('status') or {}
+        lic = st.get('license')
+        if lic == 'creativeCommon':
+            return CC
+        return lic
+    except Exception as e:
+        print('  [lemnos fail]', type(e).__name__, str(e)[:90])
+        return None
+
 def load_pub():
     try:
         return json.load(open(PUBLISHED, encoding='utf-8'))
@@ -256,6 +284,9 @@ def process(c, pub, now):
         c['ch'] = m.get('channel_id') or m.get('uploader_id')
     # api-кандидаты приходят с уже проверенной лицензией creativeCommon
     lic = c.get('license')
+    if not lic:
+        lic = lemnos_license(vid)
+        c['license'] = lic
     if lic and lic != CC:
         print('skip %s: license=%r' % (vid, lic)); return False
     if not lic:
@@ -303,6 +334,7 @@ def main():
         print('TELEGRAM_TOKEN secret is missing'); return
     pub = load_pub()
     now = time.time()
+    INV_INSTANCES[:] = dynamic_instances()
     candidates = []
     for topic in TOPICS:
         inv = [x for x in inv_search(topic) if not pub['ids'].get(x['videoId'])]
