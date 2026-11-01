@@ -350,6 +350,13 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .fc-feat-ico{width:42px;height:42px;background:#0aad0a;border-radius:.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
 .fc-hits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .fc-hits .card-product{margin:0}
+/* выравнивание карточек (vol.6 fix) */
+.grid .mcard{display:flex;flex-direction:column;gap:8px}
+.mcard .mgo{margin-top:auto;color:#0aad0a;font-weight:600;font-size:13.5px;padding-top:8px}
+.card-product{display:flex;flex-direction:column}
+.card-product>.flex-auto{flex:1 1 auto;display:flex;flex-direction:column}
+.card-product>.flex-auto>.flex.flex-col{flex:1 1 auto}
+.card-product .justify-between{margin-top:auto;padding-top:10px;align-items:flex-end}
 .fc-minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
 .fc-mini{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;transition:.2s}
 .fc-mini:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12);transform:translateY(-2px)}

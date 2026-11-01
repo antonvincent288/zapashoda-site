@@ -1877,6 +1877,8 @@ small,
   .sm\:w-1\/2 {
     width: 50%;
   }
+
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 768px) {
 
@@ -1949,6 +1951,11 @@ small,
   .md\:text-left {
     text-align: left;
   }
+
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .md\:w-2\/3 { width: 66.666667%; }
+  .md\:text-right { text-align: right; }
 }
 @media (min-width: 1024px) {
 
@@ -2064,6 +2071,14 @@ small,
   .lg\:text-5xl {
     font-size: 3.052rem;
   }
+
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .lg\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .lg\:w-1\/2 { width: 50%; }
+  .lg\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+  .lg\:my-10 { margin-top: 2.5rem; margin-bottom: 2.5rem; }
 }
 @media (min-width: 1280px) {
 
@@ -3890,3 +3905,13 @@ h6 > a:hover,
 	border-color: rgb(10 173 10 / var(--tw-border-opacity));
 	border-radius: 0.5rem;
 }
+
+/* выравнивание карточек (fix 02.11) */
+.grid .mcard{display:flex;flex-direction:column;gap:8px}
+.mcard .mgo{margin-top:auto;color:#0aad0a;font-weight:600;font-size:13.5px;padding-top:8px}
+.card-product{display:flex;flex-direction:column}
+.card-product>.flex-auto{flex:1 1 auto;display:flex;flex-direction:column}
+.card-product>.flex-auto>.flex.flex-col{flex:1 1 auto}
+.card-product .justify-between{margin-top:auto;padding-top:10px;align-items:flex-end}
+.card-product h3{word-break:break-word}
+.card-product .btn{white-space:nowrap;flex-shrink:0}
