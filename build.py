@@ -2216,15 +2216,35 @@ def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
 
 def forum_build(outdir):
     seeds = _forum_seed()
+    brands_in_models = {}
+    for m in MODELS:
+        brands_in_models[m['brand'].strip()] = brands_in_models.get(m['brand'].strip(), 0) + 1
+    hubs = [('zeekr','Zeekr'), ('voyah','Voyah'), ('geely','Geely'), ('toyota','Toyota'), ('changan','Changan'), ('evolute','Evolute')]
+    comm = ''
+    for bslug, bname in hubs:
+        cnt = brands_in_models.get(bslug.capitalize(), brands_in_models.get(bname, 0))
+        # модели могут быть записаны как 'Zeekr','Voyah','Geely','Toyota','Changan','Evolute' или 'BYD' и др.
+        if not cnt:
+            for bk, bv in brands_in_models.items():
+                if bk.lower().startswith(bslug[:3]):
+                    cnt = bv; break
+        comm += ('<a class="fcomm" href="/brands/' + bslug + '.html"><span>' + bname + '</span><span class="n">' + str(cnt or '') + ' модел.</span></a>')
+    guides = [t for tid, t, sec, d in seeds if tid.startswith('forum/pain-')]
+    sl_of = {t: tid for tid, t, sec, d in seeds}
+    guides_html = ''
+    for t in guides[:8]:
+        tid = sl_of[t]
+        guides_html += ('<a class="fcomm" href="/' + tid + '.html"><span>' + html.escape(t[:44]) + ('…' if len(t) > 44 else '') + '</span></a>')
     cards = ''
     for tid, title, sec, desc in seeds:
         guide = tid.startswith('forum/pain-')
         meta = 'Гайд редакции · отвечаем бесплатно' if guide else 'Отвечает редакция · бесплатно'
-        cards += ('<a class="fcard" data-sec="' + sec + '" href="/forum/' + tid[len('forum/'):] + '.html">'
-                  '<span class="fb-top"><span class="fbadge' + (' fb-guide' if guide else '') + '">' + SEC_BADGES.get(sec, 'Тема') + '</span></span>'
-                  '<span class="fc-name">' + html.escape(title) + '</span>'
-                  '<span class="fc-desc">' + html.escape(desc[:150]) + ('…' if len(desc) > 150 else '') + '</span>'
-                  '<span class="fc-meta">' + meta + '</span></a>')
+        author = 'Редакция «Запас хода»' if guide else 'Вопрос сообщества'
+        cards += ('<a class="fcard2" data-sec="' + sec + '" href="/forum/' + tid[len('forum/'):] + '.html">'
+                  '<span class="fc2-b">' + SEC_BADGES.get(sec, 'Тема') + '</span>'
+                  '<span class="fc2-t">' + html.escape(title) + '</span>'
+                  '<span class="fc2-d">' + html.escape(desc[:170]) + ('…' if len(desc) > 170 else '') + '</span>'
+                  '<span class="fc2-m"><span class="fc2-a">' + author + '</span><span class="fc2-tag">' + meta + '</span></span></a>')
     chips = '<span class="fchip on" data-v="all" onclick="ffilter(this)">Все темы</span>'
     chips += ''.join('<span class="fchip" data-v="' + sec + '" onclick="ffilter(this)">' + name + '</span>' for sec, name in FORUM_SECTIONS)
     modal_html = ('<div class="fmodal" id="f-modal"><div class="fbox"><h3>Новая тема</h3>'
@@ -2236,16 +2256,40 @@ def forum_build(outdir):
                   '<div class="fbtns"><button class="btn lime" id="fm-send">Отправить</button><button class="btn ghost" id="fm-cancel">Отмена</button></div>'
                   '<p id="fm-note" class="note">Тема появится после проверки модератором — обычно в течение дня.</p></div></div>')
     js = ('<script>(function(){var G=\'' + GAS_URL + '\';' + _FORUM_JS + '})();</script>')
+    d2css = ('<style>'
+             '.f-wrap{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start;margin-top:18px}'
+             '.f-aside{position:sticky;top:76px}'
+             '.faside-box{background:#fff;border:1px solid #e5e5e7;border-radius:16px;padding:16px;margin-bottom:16px}'
+             '.faside-box h3{font-size:14px;letter-spacing:.4px;text-transform:uppercase;color:#5c6c75;margin:0 0 10px}'
+             '.fcomm{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:#1d2b27;text-decoration:none;font-size:14px}'
+             '.fcomm:hover{background:#f4f8f5}'
+             '.fcomm .n{color:#5c6c75;font-size:12px;white-space:nowrap}'
+             '.fcard2{display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid #e5e5e7;border-radius:16px;padding:18px 20px;text-decoration:none;color:inherit;transition:box-shadow .15s, transform .15s}'
+             '.fcard2:hover{box-shadow:0 10px 24px rgba(0,58,64,.10);transform:translateY(-2px)}'
+             '.fc2-b{align-self:flex-start;background:#eaf6df;color:#0a7a2f;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px}'
+             '.fc2-t{font-size:17px;font-weight:700;line-height:1.35;color:#12262b}'
+             '.fc2-d{font-size:14px;color:#42555c;line-height:1.5}'
+             '.fc2-m{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:2px;font-size:12.5px;color:#7d8f95}'
+             '.fc2-a{font-weight:600;color:#3c5359}'
+             '@media (max-width:880px){.f-wrap{grid-template-columns:1fr}.f-aside{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px}.faside-box{margin-bottom:0}}'
+             '</style>')
     body = ('<div class="hero"><div class="kicker">Сообщество</div><h1>Форум «Запас хода»</h1>'
-            '<p class="lede">Задайте вопрос о зарядке, аксессуарах или проблеме — отвечают редакция и владельцы. Все ответы проходят модерацию.</p></div>'
-            '<div class="ctas"><button class="btn lime" id="f-new">Задать вопрос</button></div>'
-            '<div class="fbar"><span class="fcount"><b>' + str(len(seeds)) + '</b> тем · отвечаем в течение дня</span></div>'
-            '<div class="fsec" id="f-chips">' + chips + '</div>'
-            '<div class="fgrid" id="f-grid">' + cards + '</div>'
-            '<div class="fempty" id="f-empty" style="display:none">В этом разделе пока нет тем — создайте первую.</div>'
-            '<div id="f-live"><h2>Свежие темы сообщества</h2><div id="f-live-list"><p class="note">Пока нет новых тем — создайте первую.</p></div><div id="f-view"></div></div>'
-            '<div class="frules"><b>Правила</b><span>По делу и без рекламы.</span><span>Ссылки только по теме.</span><span>Сообщения публикуются после проверки модератором.</span></div>'
-            + modal_html + js)
+            '<p class="lede">Лента тем по зарядке, аксессуарам и эксплуатации. Отвечают редакция и владельцы — с модерацией, без рекламы.</p></div>'
+            '<div class="ctas"><button class="btn lime" id="f-new">Задать вопрос</button>'
+            '<a class="btn ghost" href="/quiz/">Подобрать комплект за 30 сек</a></div>'
+            + d2css
+            + '<div class="f-wrap"><aside class="f-aside">'
+              '<div class="faside-box"><h3>Сообщества</h3>' + comm +
+              '<a class="fcomm" href="/models/"><span>Все модели</span><span class="n">145 →</span></a></div>'
+              '<div class="faside-box"><h3>Руководства</h3>' + guides_html + '</div>'
+              '</aside><div class="f-main">'
+              '<div class="fsec" id="f-chips">' + chips + '</div>'
+              '<div class="fgrid" id="f-grid">' + cards + '</div>'
+              '<div class="fempty" id="f-empty" style="display:none">В этом разделе пока нет тем — создайте первую.</div>'
+              '<div id="f-live"><h2>Свежие темы сообщества</h2><div id="f-live-list"><p class="note">Пока нет новых тем — создайте первую.</p></div><div id="f-view"></div></div>'
+              '<div class="frules"><b>Правила</b><span>По делу и без рекламы.</span><span>Ссылки только по теме.</span><span>Сообщения публикуются после проверки модератором.</span></div>'
+              '</div></div>'
+              + modal_html + js)
     write_page(os.path.join(outdir, 'forum', 'index.html'),
                'Форум сообщества — «Запас хода»',
                'Форум владельцев электромобилей и гибридов: зарядка, станции, аксессуары, типичные проблемы и решения. Вопросы и ответы с модерацией.',
