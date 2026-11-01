@@ -225,7 +225,7 @@ def cobalt_download(url, dst):
     return None
 
 def ytdlp_download(url, dst):
-    for extra in ([], EXTRACTOR_FALLBACK, POT_ARGS):
+    for extra in (POT_ARGS, [], EXTRACTOR_FALLBACK):
         r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
                    '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
         files = glob.glob(dst + '.*')
@@ -235,7 +235,9 @@ def ytdlp_download(url, dst):
                 os.remove(f); return None
             return f
         if (r.stderr or '').strip():
-            print('  [dl diag]', (r.stderr or '').strip()[-250:].replace('\n', ' | '))
+            st = (r.stderr or '').strip()
+            print('  [dl head]', ' || '.join([x for x in st.splitlines()[:14] if 'WARNING' not in x])[:600])
+            print('  [dl tail]', st[-400:].replace('\n', ' | '))
     return cobalt_download(url, dst)
 
 # ---------- источник 3: YouTube API ----------
