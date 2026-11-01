@@ -242,6 +242,8 @@ def api_search(topic):
                     'views': int((it.get('statistics') or {}).get('viewCount') or 0),
                     'title': it.get('snippet', {}).get('title'),
                     'author': it.get('snippet', {}).get('channelTitle'),
+                    'ch': (it.get('snippet') or {}).get('channelId'),
+                    'license': 'creativeCommon',
                     'url': 'https://www.youtube.com/shorts/' + it['id'],
                     '_src': 'api'})
     return out
