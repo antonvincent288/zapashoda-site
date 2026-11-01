@@ -1457,7 +1457,7 @@ initMap();
 document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click',function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});
 """ % json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False)
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — там, где они размечены в OpenStreetMap. Знаете станцию, которой нет на карте? Добавьте её в OpenStreetMap (openstreetmap.org) — она попадёт в нашу базу при следующем обновлении.</p></div>'
+     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — из разметки OpenStreetMap и обратного геокодирования по координатам (ближайший адрес — возможна неточность номера дома). Знаете станцию, которой нет на карте? Добавьте её в OpenStreetMap (openstreetmap.org) — она попадёт в нашу базу при следующем обновлении.</p></div>'
      '<div class="cbtns">' + city_btns + '</div>'
      '<div id="map" class="nmap"></div>'
      '<p class="note" id="mstat">Загрузка данных…</p>'
