@@ -2557,7 +2557,18 @@ def main():
     os.makedirs(os.path.dirname(dst_json), exist_ok=True)
     if os.path.isfile(st_src):
         shutil.copy(st_src, dst_json)
-        print('stations.json:', len(json.load(open(st_src, encoding='utf-8')).get('stations', [])), 'станций')
+        st_data = json.load(open(dst_json, encoding='utf-8'))
+        man_src = os.path.join(repo_root,'static','charging','manual_stations.json')
+        if os.path.isfile(man_src):
+            manual = json.load(open(man_src, encoding='utf-8'))
+            if isinstance(manual, dict): manual = manual.get('stations', [])
+            have = {(round(s['lat'],4), round(s['lon'],4)) for s in st_data.get('stations', [])}
+            for ms in manual:
+                if (round(ms['lat'],4), round(ms['lon'],4)) not in have:
+                    st_data['stations'].append(ms); have.add((round(ms['lat'],4), round(ms['lon'],4)))
+            json.dump(st_data, open(dst_json,'w',encoding='utf-8'), ensure_ascii=False)
+            print('manual stations: добавлено', len(manual))
+        print('stations.json:', len(st_data.get('stations', [])), 'станций')
     else:
         json.dump({'updated': BUILD_DATE, 'stations': []}, open(dst_json,'w',encoding='utf-8'), ensure_ascii=False)
         print('stations.json: пустой (нет static/charging/stations.json)')
