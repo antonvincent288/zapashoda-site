@@ -27,7 +27,8 @@ jobs:
       - name: Post one short
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          MIN_VIEWS: '10000'
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          MIN_VIEWS: '5000'
         run: python scripts/shorts_bot.py
       - name: Commit dedup
         run: |
