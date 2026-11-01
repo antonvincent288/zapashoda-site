@@ -381,7 +381,7 @@ def main():
     candidates = []
     for topic in TOPICS:
         inv = [x for x in inv_search(topic) if not pub['ids'].get(x['videoId'])]
-        api = api_search(topic) if not inv else []
+        api = api_search(topic)
         yt = ytdlp_search(topic) if (not inv and not api) else []
         got = inv + api + yt
         print('topic %r: inv=%d api=%d ytdlp=%d -> %d' % (topic, len(inv), len(api), len(yt), len(got)))

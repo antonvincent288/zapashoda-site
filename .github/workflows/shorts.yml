@@ -22,12 +22,12 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install yt-dlp + POT provider
+      - name: Install yt-dlp + EJS + POT provider
         run: |
-          pip install -q yt-dlp
-          npm install -g bgutil-ytdlp-pot-provider || true
-          (nohup bgutil-pot >/dev/null 2>&1 &) || true
-          sleep 5
+          pip install -q yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
+          docker run -d -p 4416:4416 --name pot brainicism/bgutil-ytdlp-pot-provider
+          sleep 8
+          curl -s http://127.0.0.1:4416/ping || true
       - name: Post one short
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
