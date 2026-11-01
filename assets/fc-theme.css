@@ -3915,3 +3915,7 @@ h6 > a:hover,
 .card-product .justify-between{margin-top:auto;padding-top:10px;align-items:flex-end}
 .card-product h3{word-break:break-word}
 .card-product .btn{white-space:nowrap;flex-shrink:0}
+
+/* art без TOC — на всю ширину (fix 02.11) */
+.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
+@media(min-width:1020px){.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}}
