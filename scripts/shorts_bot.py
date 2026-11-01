@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-# Шортс-автопилот «Запас хода»: YouTube (Creative Commons) -> Telegram
-# Кандидаты ищутся по темам, фильтруются: лицензия CC (легально при атрибуции),
-# длительность <=61 сек, просмотры >= MIN_VIEWS. Дедуп: scripts/published.json.
-import json, os, subprocess, sys, glob, time, uuid
+# Шортс-автопилот v1.1: YouTube (Creative Commons) -> Telegram
+# v1.1: (1) published.json создаётся всегда (пустые прогоны не красные);
+#       (2) фильтр просмотров перенесён на этап полных метаданных (flat-search
+#           часто не отдаёт view_count и терял всех кандидатов);
+#       (3) диагностика по темам в логе; (4) порог по умолчанию 5000.
+import json, os, subprocess, glob, time, uuid
 import urllib.request, urllib.parse
 
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '')
-CHANNEL_ID = '-1002316192115'          # канал
-REPORT_CHAT = '108142888'              # отчёты вам в личку
-MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '10000'))
+CHANNEL_ID = '-1002316192115'
+REPORT_CHAT = '108142888'
+MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '5000'))
 MAX_DUR = 61
-MAX_BYTES = 48 * 1024 * 1024           # лимит Bot API ~50 МБ
+MAX_BYTES = 48 * 1024 * 1024
+SEARCH_LIMIT = 20
+FULL_CHECK_LIMIT = 8
 HERE = os.path.dirname(os.path.abspath(__file__))
 PUBLISHED = os.path.join(HERE, 'published.json')
+CC = 'Creative Commons Attribution license (reuse allowed)'
 
 TOPICS = [
     'электромобиль зарядка',
@@ -20,22 +25,21 @@ TOPICS = [
     'запас хода электромобиля',
     'адаптер зарядки электромобиль',
     'ev charging shorts',
-    'electric car winter tips',
+    'electric car winter',
 ]
 
 def load_pub():
     try:
         return json.load(open(PUBLISHED, encoding='utf-8'))
     except Exception:
-        return {'ids': {}, 'authors': {}, 'last_topic': None, 'order': 0}
+        return {'ids': {}, 'authors': {}, 'last_topic': None}
 
 def save_pub(p):
     json.dump(p, open(PUBLISHED, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 def tg(method, **params):
     url = 'https://api.telegram.org/bot%s/%s' % (TELEGRAM_TOKEN, method)
-    data = urllib.parse.urlencode(params).encode()
-    req = urllib.request.Request(url, data=data)
+    req = urllib.request.Request(url, data=urllib.parse.urlencode(params).encode())
     try:
         return json.load(urllib.request.urlopen(req, timeout=40))
     except Exception as e:
@@ -46,19 +50,14 @@ def ytdlp(args, timeout=240):
     return subprocess.run(['yt-dlp'] + args, capture_output=True, text=True, timeout=timeout)
 
 def search_topic(topic):
-    """flat-поиск по теме (свежее вперёд), без скачивания"""
-    cmd = ['--dump-json', '--flat-playlist', '--no-playlist',
-           '-I', '1:14', 'ytsearchdate14:' + topic]
-    r = ytdlp(cmd, timeout=180)
+    r = ytdlp(['--dump-json', '--flat-playlist', '--no-playlist', '-I', '1:%d' % SEARCH_LIMIT,
+               'ytsearchdate%d:%s' % (SEARCH_LIMIT, topic)], timeout=180)
     out = []
     for line in (r.stdout or '').splitlines():
         line = line.strip()
-        if not line:
-            continue
-        try:
-            out.append(json.loads(line))
-        except Exception:
-            continue
+        if line:
+            try: out.append(json.loads(line))
+            except Exception: pass
     return out
 
 def full_meta(url):
@@ -82,15 +81,12 @@ def download(url, dst):
 
 def send_video(path, caption, kb):
     boundary = uuid.uuid4().hex
-    body = b''
     def field(name, val):
         return ('--%s\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n' % (boundary, name, val)).encode()
-    body += field('chat_id', CHANNEL_ID)
-    body += field('caption', caption)
-    body += field('reply_markup', json.dumps(kb, ensure_ascii=False))
-    body += field('supports_streaming', 'true')
-    body += field('width', '720')
-    body += ('--%s\r\nContent-Disposition: form-data; name="video"; filename="clip.mp4"\r\nContent-Type: video/mp4\r\n\r\n' % boundary).encode()
+    body = field('chat_id', CHANNEL_ID) + field('caption', caption) \
+         + field('reply_markup', json.dumps(kb, ensure_ascii=False)) \
+         + field('supports_streaming', 'true') \
+         + ('--%s\r\nContent-Disposition: form-data; name="video"; filename="clip.mp4"\r\nContent-Type: video/mp4\r\n\r\n' % boundary).encode()
     body += open(path, 'rb').read() + ('\r\n--%s--\r\n' % boundary).encode()
     url = 'https://api.telegram.org/bot%s/sendVideo' % TELEGRAM_TOKEN
     req = urllib.request.Request(url, data=body,
@@ -106,7 +102,7 @@ def short(s, n):
     return s if len(s) <= n else s[:n-1] + '…'
 
 def num(n):
-    return str(n).replace(',', ' ').replace('.0', '')
+    return str(n).replace(',', ' ')
 
 def main():
     if not TELEGRAM_TOKEN:
@@ -115,28 +111,42 @@ def main():
     now = time.time()
     candidates = []
     for topic in TOPICS:
+        found = kept = 0
         for e in search_topic(topic):
             vid = e.get('id')
-            dur = e.get('duration') or 0
-            views = e.get('view_count') or 0
             if not vid or pub['ids'].get(vid):
                 continue
+            found += 1
+            dur = e.get('duration')
+            views = e.get('view_count')
+            # на flat-этапе режем только по длительности; view_count тут часто None
             if dur and dur > MAX_DUR:
                 continue
-            if views < MIN_VIEWS:
-                continue
-            candidates.append({'videoId': vid, 'topic': topic, 'views': views,
+            candidates.append({'videoId': vid, 'topic': topic,
+                               'views': views or 0,
                                'url': e.get('webpage_url') or ('https://www.youtube.com/shorts/' + vid)})
+            kept += 1
+        print('topic %r: flat_found=%d kept=%d' % (topic, found, kept))
         time.sleep(2)
     candidates.sort(key=lambda x: -x['views'])
-    print('candidates:', len(candidates))
+    print('flat candidates total:', len(candidates))
 
     posted = False
-    for c in candidates[:6]:
+    checked = 0
+    for c in candidates[:FULL_CHECK_LIMIT]:
         m = full_meta(c['url'])
         if not m:
             continue
-        if m.get('license') != 'Creative Commons Attribution license (reuse allowed)':
+        checked += 1
+        lic = m.get('license')
+        views = int(m.get('view_count') or 0)
+        dur = m.get('duration') or 0
+        print('check %s: license=%r views=%d dur=%s' % (c['videoId'], lic, views, dur))
+        if lic != CC:
+            continue
+        if views < MIN_VIEWS:
+            continue
+        if dur and dur > MAX_DUR:
             continue
         author = m.get('uploader') or m.get('channel') or 'YouTube'
         ch = m.get('channel_id') or m.get('uploader_id') or author
@@ -146,6 +156,7 @@ def main():
             continue
         clip = download(c['url'], '/tmp/clip')
         if not clip:
+            print('download failed for', c['videoId'])
             continue
         caption = ('🎬 ' + short(m.get('title'), 80) + '\n\n'
                    '📺 Автор: ' + author + ' · лицензия Creative Commons\n'
@@ -159,8 +170,7 @@ def main():
             print('send failed for', c['videoId'], sent.get('description'))
             continue
         pub['ids'][c['videoId']] = {'title': m.get('title'), 'author': author,
-                                    'views': m.get('view_count'), 'topic': c['topic'],
-                                    'ts': now}
+                                    'views': views, 'topic': c['topic'], 'ts': now}
         pub['authors'][ch] = now
         pub['last_topic'] = c['topic']
         save_pub(pub)
@@ -168,12 +178,16 @@ def main():
         posted = True
         tg('sendMessage', chat_id=REPORT_CHAT,
            text='✅ Шортс опубликован: «%s»\nАвтор: %s · просмотры: %s\nТема: %s' % (
-               short(m.get('title'), 60), author, num(m.get('view_count') or 0), c['topic']))
+               short(m.get('title'), 60), author, num(views), c['topic']))
         break
 
+    print('checked full meta:', checked, '| posted:', posted)
     if not posted:
         tg('sendMessage', chat_id=REPORT_CHAT,
-           text='ℹ️ Этот прогон: подходящих CC-шортсов не нашлось (порог %s просмотров, 6 тем). Очередь ждёт пополнения — порог можно снизить в secrets MIN_VIEWS.' % num(MIN_VIEWS))
+           text='ℹ️ Прогон: подходящих CC-шортсов не нашлось (порог %s просмотров). Снижаем порог или расширяем темы — см. секрет MIN_VIEWS и TOPICS в скрипте.' % num(MIN_VIEWS))
+    # published.json должен существовать всегда — иначе commit-шаг красный
+    if not os.path.exists(PUBLISHED):
+        save_pub(pub)
 
 if __name__ == '__main__':
     main()
