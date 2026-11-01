@@ -296,7 +296,7 @@ def process(c, pub, now):
     if not lic:
         lic = lemnos_license(vid)
         c['license'] = lic
-    if lic and lic != CC:
+    if lic and lic not in (CC, 'creativeCommon'):
         print('skip %s: license=%r' % (vid, lic)); return False
     if not lic:
         print('skip %s: license unknown (не подтверждена CC)' % vid); return False
