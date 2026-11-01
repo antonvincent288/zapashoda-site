@@ -533,10 +533,24 @@ h1,h2,h3{color:var(--marine)}
 @media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:w-1\/2{width:50%}.md\:w-2\/3{width:66.666%}.md\:w-auto{width:auto}.md\:w-full{width:100%}.md\:mt-0{margin-top:0}.md\:text-right{text-align:right}}
 @media(min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.lg\:gap-4{gap:1rem}.lg\:my-10{margin-top:2.5rem;margin-bottom:2.5rem}.lg\:my-14{margin-top:3.5rem;margin-bottom:3.5rem}.lg\:pl-10{padding-left:2.5rem}.lg\:text-4xl{font-size:2.25rem;line-height:2.6rem}.lg\:w-1\/2{width:50%}}
 @media(min-width:1280px){.xl\:grid{display:grid}.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* --- восстановленные семантические классы (волна 2) --- */
+.pl-5{padding-left:1.25rem}.align-top{vertical-align:top}
+.hover\:duration-500{transition-duration:.5s}.hover\:transition{transition-property:all;transition-timing-function:ease}
+.art{position:relative;padding-left:20px}
+.art .art-progress{position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:6px;background:#e6f2e6;overflow:hidden}
+.art .art-progress i{display:block;width:100%;background:linear-gradient(180deg,#0aad0a,#03756c);height:100%}
+.lcard.docs{border-left:3px solid #f5b800;background:#fffdf5}
+.lcard.docs p.note{font-size:14px;color:#5c4a1a}
+.lcard.docs a{color:#0a7a2f;font-weight:600}
+
 /* --- восстановленные семантические классы --- */
 .hero{padding:34px 0 10px}
 .hero .kicker{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0a7a2f;background:#eaf6df;padding:5px 12px;border-radius:999px;margin-bottom:12px}
 .hero h1{font-size:clamp(28px,4.4vw,42px);line-height:1.14;margin:0 0 12px;color:#12262b}
 .hero .lede{font-size:clamp(16px,2vw,19px)}
+.f-main{min-width:0}
+.fc2-tag{color:#7d8f95;font-size:12px}
+.hwrap{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1320px;margin:0 auto;padding:14px 20px}
+.hwrap .brand{font-weight:700;color:#1d1d1f;text-decoration:none;font-size:16px}
 .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .table-responsive table{min-width:640px;width:100%;border-collapse:collapse}
