@@ -61,12 +61,17 @@ def search_topic(topic):
         print('  [search diag]', (r.stderr or '').strip()[-400:].replace('\n', ' | '))
     return out
 
+EXTRACTOR_FALLBACK = ['--extractor-args', 'youtube:player_client=android,web']
+
 def full_meta(url):
-    r = ytdlp(['--dump-json', '--no-playlist', '--no-warnings', url], timeout=120)
-    try:
-        return json.loads((r.stdout or '').strip().splitlines()[-1])
-    except Exception:
-        return None
+    for extra in ([], EXTRACTOR_FALLBACK):
+        r = ytdlp(['--dump-json', '--no-playlist', '--no-warnings'] + extra + [url], timeout=150)
+        try:
+            return json.loads((r.stdout or '').strip().splitlines()[-1])
+        except Exception:
+            if (r.stderr or '').strip():
+                print('  [meta diag]', (r.stderr or '').strip()[-320:].replace('\n', ' | '))
+    return None
 
 def api_search(topic):
     """YouTube Data API: только CC, только шортсы, с реальными просмотрами."""
@@ -109,18 +114,19 @@ def api_search(topic):
     return out
 
 def download(url, dst):
-    r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
-               '--max-filesize', '60M', '-o', dst, url], timeout=300)
-    files = glob.glob(dst + '.*')
-    if not files or r.returncode != 0:
+    for extra in ([], EXTRACTOR_FALLBACK):
+        r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
+                   '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
+        files = glob.glob(dst + '.*')
+        if files and r.returncode == 0:
+            f = files[0]
+            if os.path.getsize(f) > MAX_BYTES:
+                os.remove(f)
+                return None
+            return f
         if (r.stderr or '').strip():
-            print('  [download diag]', (r.stderr or '').strip()[-300:].replace('\n', ' | '))
-        return None
-    f = files[0]
-    if os.path.getsize(f) > MAX_BYTES:
-        os.remove(f)
-        return None
-    return f
+            print('  [dl diag]', (r.stderr or '').strip()[-320:].replace('\n', ' | '))
+    return None
 
 def send_video(path, caption, kb):
     boundary = uuid.uuid4().hex
