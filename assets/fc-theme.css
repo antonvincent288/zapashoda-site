@@ -3919,3 +3919,13 @@ h6 > a:hover,
 /* art без TOC — на всю ширину (fix 02.11) */
 .art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
 @media(min-width:1020px){.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}}
+
+/* статьи: широкая центрированная колонка вместо «прижато влево» (fix 02.11) */
+.art-body{max-width:980px;margin:0 auto;padding:0 8px}
+.art-body p{max-width:none}
+.art-body .lcard{margin-left:0;margin-right:0}
+.art-body h1,.art-body h2{max-width:none}
+.art-nogrid .art-body{max-width:1040px;margin:0 auto;padding:0 8px}
+@media(min-width:1020px){
+  .art-body{max-width:1010px}
+}
