@@ -55,6 +55,7 @@ def art_enhance(body, url, title, date='', kind='Руководство'):
     meta = ('<div class="art-meta"><span class="kind">' + html.escape(kind) + '</span><span class="dot">·</span>'
             '<span>' + str(minutes) + ' мин чтения</span><span class="dot">·</span>'
             '<span>Обновлено: ' + html.escape(date) + '</span></div>')
+    grid_cls = 'art-grid' if toc_desk else 'art-grid art-nogrid'
     return ('<div class="art"><div class="art-progress" aria-hidden="true"><i></i></div>'
             + head + meta + toc_mob
-            + '<div class="art-grid">' + toc_desk + '<div class="art-body">' + rest + share + '</div></div></div>')
+            + '<div class="' + grid_cls + '">' + toc_desk + '<div class="art-body">' + rest + share + '</div></div></div>')
