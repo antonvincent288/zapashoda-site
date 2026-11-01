@@ -1580,6 +1580,86 @@ def og_gen(outdir, jobs):
         img.save(p, 'PNG', optimize=True)
     print('OG-карточек:', len(jobs))
 
+
+def og_model_cards(outdir):
+    """Богатые OG-плашки моделей «Проверь свою машину»: бренд-палитра, разъёмы, мощность."""
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        print('PIL недоступен — модельные OG пропущены'); return
+    here = os.path.dirname(os.path.abspath(__file__))
+    fb = os.path.join(here, 'assets', 'fonts', 'DejaVuSans-Bold.ttf')
+    if not os.path.exists(fb):
+        fb = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+    if not os.path.exists(fb):
+        print('Шрифт не найден — модельные OG пропущены'); return
+    ogdir = os.path.join(outdir, 'assets', 'og')
+    os.makedirs(ogdir, exist_ok=True)
+    MARINE = (0, 58, 64); ACID = (200, 234, 149); WHITE = (245, 245, 247)
+    MUT = (140, 180, 184); LINE = (44, 100, 106); GREEN = (10, 173, 10)
+    f_badge = ImageFont.truetype(fb, 26); f_title = ImageFont.truetype(fb, 66)
+    f_fact = ImageFont.truetype(fb, 30); f_foot = ImageFont.truetype(fb, 27)
+    def _kw(s):
+        if not s: return None
+        mm = re.search(r'(?:до\s*)?~?\s*(\d[\d\s]{0,3}(?:\+\d+)?)\+?\s*кВт', s)
+        return mm.group(1).replace(' ', '') + ' кВт' if mm else None
+    def _facts(m):
+        fs = []
+        if m.get('ac'): fs.append('AC: ' + str(m['ac']))
+        if m.get('dc'):
+            d = 'DC: ' + str(m['dc'])
+            k = _kw(str(m.get('dcp') or ''))
+            if k: d += ' · до ' + k
+            fs.append(d)
+        ob = str(m.get('obc') or '')
+        if ob:
+            o = ob.split('/')[0].split('(')[0].strip()
+            if o and o not in ('—', '-'): fs.append('OBC: ' + (o if 'кВт' in o else o + ' кВт'))
+        return fs[:3]
+    n = 0
+    for m in MODELS:
+        sl = slug(m['brand']) + '-' + slug(m['model'])
+        rel = '/assets/og/m-' + sl + '.png'
+        img = Image.new('RGB', (1200, 630), MARINE)
+        dr = ImageDraw.Draw(img)
+        # логотип: зелёный скруглённый квадрат + белая молния
+        dr.rounded_rectangle([60, 54, 156, 150], radius=22, fill=GREEN)
+        dr.polygon([(109, 74), (76, 118), (98, 118), (90, 146), (124, 106), (101, 106), (113, 74)], fill=WHITE)
+        # бейдж
+        bt = 'ПРОВЕРЬ СВОЮ МАШИНУ'
+        tw = dr.textlength(bt, font=f_badge)
+        bx, by = 190, 62
+        dr.rounded_rectangle([bx, by, bx + tw + 40, by + 46], radius=10, fill=ACID)
+        dr.text((bx + 20, by + 7), bt, font=f_badge, fill=MARINE)
+        # название модели
+        title = m['brand'] + ' ' + m['model']
+        lines = []; cur = ''
+        for w in title.split():
+            t = (cur + ' ' + w).strip()
+            if dr.textlength(t, font=f_title) > 1000 and cur:
+                lines.append(cur); cur = w
+            else:
+                cur = t
+        if cur: lines.append(cur)
+        lines = lines[:2]
+        y = 196
+        for ln in lines:
+            dr.text((60, y), ln, font=f_title, fill=WHITE); y += 80
+        # факты
+        y += 14
+        for f in _facts(m):
+            s = f if len(f) <= 52 else f[:51].rstrip() + '…'
+            dr.text((60, y), s, font=f_fact, fill=ACID); y += 46
+        # футер
+        dr.line([60, 540, 1140, 540], fill=LINE, width=2)
+        dr.text((60, 566), 'ЗАПАС ХОДА · zapashoda-ev.ru · разъёмы, решения, аксессуары', font=f_foot, fill=MUT)
+        p = os.path.join(outdir, rel.lstrip('/'))
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        img.save(p, 'PNG', optimize=True)
+        n += 1
+    print('OG-моделей (богатые):', n)
+
+
 # ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
 
 # ====== ШАБЛОННЫЕ КОМПОНЕНТЫ FreshCart ======
@@ -2598,10 +2678,7 @@ def main():
     for sl,title,_,_ in PAIN_ARTICLES:
         jobs.append(('/assets/og/p-'+sl+'.png', title))
     og_gen(outdir, jobs)
-    # OG для моделей (145) — упрощённые (заголовок покороче)
-    for m in MODELS:
-        jobs.append(('/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png', m['brand']+' '+m['model']+' — разъёмы зарядки'))
-    og_gen(outdir, jobs)
+    og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     catalog.catalog_build(outdir)
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
