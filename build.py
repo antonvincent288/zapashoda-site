@@ -1304,6 +1304,17 @@ def model_page(m, outdir):
     parts.append(pain_html)
     parts.append(faq)
     parts.append(faq_ld)
+    model_ld = '<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "BlogPosting",
+        "headline": pname + ": зарядка в России — разъёмы, адаптеры, скорость",
+        "description": "Разъёмы и скорость зарядки " + pname + " на российских станциях: домашняя и быстрая зарядка, адаптеры, совместимость и типичные проблемы.",
+        "inLanguage": "ru",
+        "dateModified": BUILD_DATE,
+        "author": {"@type": "Organization", "name": SITE_NAME},
+        "publisher": {"@type": "Organization", "name": SITE_NAME},
+        "mainEntityOfPage": SITE_DOMAIN + "/models/" + slug(m['brand']) + "-" + slug(m['model']) + ".html"
+    }, ensure_ascii=False) + '</script>'
+    parts.append(model_ld)
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
       '<div class="md:w-2/3 w-full">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'

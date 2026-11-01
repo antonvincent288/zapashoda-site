@@ -163,6 +163,24 @@ PRESELECT_JS = ("<script>(function(){"
   "})();</script>")
 
 
+# SEO-блок каталога: транзакционные формулировки запросов (волна 5, 01.11)
+SEO_CAT = ('<section class="mt-6"><div class="container"><div class="rounded-lg break-words bg-gray-100" style="padding:30px 28px">'
+  '<h2 class="text-lg font-bold text-gray-900 mb-3">Как найти нужное: популярные запросы</h2>'
+  '<p class="text-sm text-gray-600" style="max-width:720px">Самые частые формулировки покупателей — и прямые ссылки на разделы каталога: '
+  '<b>купить адаптер type 2 gbt</b> (переходник для зарядки китайского электромобиля на городских станциях), '
+  '<b>адаптер ccs2 gbt</b> для быстрых станций, '
+  '<b>кабель type 2 gbt</b> для розеток без кабеля, '
+  '<b>переносная зарядка для электромобиля</b> (от бытовой розетки 3,5 кВт или от силовой 7 кВт) и '
+  '<b>удлинитель для зарядки электромобиля</b>. Подбор под конкретную модель — за 30 секунд в <a href="/quiz/">квизе</a>, оплата дилеру при получении.</p>'
+  '<ul class="text-sm text-gray-700" style="line-height:2">'
+  '<li><a href="/catalog/adapter-type2-gbt-premium.html">Адаптер Type 2 GB/T, 22 кВт, премиум</a></li>'
+  '<li><a href="/catalog/adapter-ccs2-gbt-dc.html">Адаптер CCS2 → GB/T DC для быстрых станций</a></li>'
+  '<li><a href="/catalog/kabel-type2-gbt-5m-22kw.html">Кабель Type 2 GB/T, 5 м, 22 кВт</a></li>'
+  '<li><a href="/catalog/portativnaya-zaryadka-gbt-7kw.html">Переносная зарядка GB/T, 7 кВт, 32 А</a></li>'
+  '<li><a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">Переносная зарядка GB/T, 3,5 кВт</a></li>'
+  '<li><a href="/catalog/udlinitel-gbt-gbt-5m.html">Удлинитель для зарядки GB/T</a></li>'
+  '</ul></div></div></section>')
+
 def catalog_build(outdir):
     os.makedirs(os.path.join(outdir,'catalog'), exist_ok=True)
     order = ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары']
@@ -171,6 +189,7 @@ def catalog_build(outdir):
         sorted_p += [p for p in PRODUCTS if p['cat'] == cat]
     cats = ''.join('<span class="chip" data-cat="' + c + '" onclick="ofFilter(this)">' + c + '</span>' for c in order)
     grid = ''.join(shop_card_html(p) for p in sorted_p)
+    
     hero = ('<section class="mt-4"><div class="container">'
       '<div class="rounded-lg break-words bg-gray-100" style="padding:44px 36px">'
       '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Каталог · 26 позиций · оплата дилеру при получении</span>'
@@ -195,7 +214,7 @@ def catalog_build(outdir):
     phev_block = ('<h2 style="margin-top:34px">Подборка для гибридов (PHEV)</h2>'
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
-    body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
+    body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + SEO_CAT + order_form_html('Каталог аксессуаров') + PRESELECT_JS
     WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог: адаптеры, кабели и зарядки для EV | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
