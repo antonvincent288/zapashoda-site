@@ -190,6 +190,38 @@ def full_meta(url):
                 print('  [meta diag]', (r.stderr or '').strip()[-250:].replace('\n', ' | '))
     return None
 
+def cobalt_download(url, dst):
+    """Открытые инстансы cobalt — прямая ссылка на mp4 без yt-dlp"""
+    bases = []
+    try:
+        data = get_json('https://instances.cobalt.best/api/instances.json', timeout=20)
+        for i in data if isinstance(data, list) else []:
+            if i.get('api') and i.get('protocol') == 'https' and (i.get('services') or {}).get('youtube') and not i.get('turnstile'):
+                bases.append('https://' + i['api'].lstrip('https://') if not i['api'].startswith('http') else i['api'])
+    except Exception as e:
+        print('  [cobalt list fail]', type(e).__name__)
+    bases += ['https://api.cobalt.tools', 'https://api.cobalt.best']
+    for base in bases[:6]:
+        try:
+            body = json.dumps({'url': url, 'videoQuality': '480', 'filenameStyle': 'basic'}).encode()
+            req = urllib.request.Request(base + '/', data=body,
+                headers={'Accept': 'application/json', 'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'})
+            r = json.load(urllib.request.urlopen(req, timeout=60))
+            status = r.get('status')
+            dl = r.get('url')
+            if status in ('redirect', 'tunnel', 'stream') and dl:
+                raw = urllib.request.urlopen(urllib.request.Request(dl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=300).read()
+                if len(raw) > 100000 and len(raw) <= MAX_BYTES:
+                    open(dst, 'wb').write(raw)
+                    print('  [cobalt] OK via', base, len(raw))
+                    return dst
+                print('  [cobalt] %s: bad size %d' % (base, len(raw)))
+            else:
+                print('  [cobalt] %s: %s %s' % (base, status, str(r.get('text'))[:80]))
+        except Exception as e:
+            print('  [cobalt fail] %s: %s %s' % (base, type(e).__name__, str(e)[:80]))
+    return None
+
 def ytdlp_download(url, dst):
     for extra in ([], EXTRACTOR_FALLBACK):
         r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
@@ -202,7 +234,7 @@ def ytdlp_download(url, dst):
             return f
         if (r.stderr or '').strip():
             print('  [dl diag]', (r.stderr or '').strip()[-250:].replace('\n', ' | '))
-    return None
+    return cobalt_download(url, dst)
 
 # ---------- источник 3: YouTube API ----------
 def api_search(topic):
