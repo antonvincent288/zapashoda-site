@@ -1750,10 +1750,10 @@ def home_page(outdir, news=None):
         "name": SITE_NAME,
         "url": SITE_DOMAIN + '/',
         "inLanguage": "ru",
-        "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 137 моделей",
+        "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 145 моделей",
         "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, проблемы и решения для 137 моделей EV в России',
+    write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, проблемы и решения для 145 моделей EV в России',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
 def pains_index(outdir):
@@ -1951,7 +1951,7 @@ def quiz_page(outdir):
       '<label class="text-sm text-gray-600">Модель <select id="q-model" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
       '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="qShow()">Показать подбор</button></div>'
       '<div id="q-out"></div></div></section>'
-      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все 137 моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
+      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все 145 моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
       + js + form)
     desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
     write_page(os.path.join(outdir, 'quiz', 'index.html'),
@@ -2405,7 +2405,7 @@ def main():
     for sl,title,_,_ in PAIN_ARTICLES:
         jobs.append(('/assets/og/p-'+sl+'.png', title))
     og_gen(outdir, jobs)
-    # OG для моделей (137) — упрощённые (заголовок покороче)
+    # OG для моделей (145) — упрощённые (заголовок покороче)
     for m in MODELS:
         jobs.append(('/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png', m['brand']+' '+m['model']+' — разъёмы зарядки'))
     og_gen(outdir, jobs)
