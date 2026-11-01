@@ -668,7 +668,7 @@ def _comments_html(path):
             '<p id="c-note">Комментарий появится после проверки модератором.</p></form>'
             + _COMMENTS_JS + '</section>')
 
-def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None):
+def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None, noindex=False):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
     crumbs_html = ''
@@ -701,7 +701,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:type" content="article"><meta property="og:image" content="' + SITE_DOMAIN + og + '">'
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
-     '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + YANDEX_META + GSC_META +
+     '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + ('<meta name="robots" content="noindex, follow">' if noindex else '') + YANDEX_META + GSC_META +
      '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">'
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
@@ -1267,7 +1267,7 @@ def model_page(m, outdir):
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Сравнить с другой моделью</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     write_page(os.path.join(outdir, sl),
-        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + ' — какой разъём зарядки, проблемы и решения | Запас хода',
+        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + ' — разъём и проблемы | Запас хода',
         'Разъёмы AC/DC ' + pname + ' (' + m["years"] + '), зарядка от розетки и на станциях, реальные проблемы владельцев и проверенные решения. ' + grp + '-стандарт, ' + m["freq"] + ' ввоз в РФ.',
         body, '/' + sl, og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
         crumbs=[('/','Модели'),('',pname)])
@@ -1347,7 +1347,7 @@ def news_index(items, outdir):
     cards = ''
     for it in items:
         cards += ('<a class="newscard" href="' + news_slug_page(it) + '">'
-          '<img src="/assets/og/n-' + it['date'] + '-' + it['slug'] + '.png" alt="" loading="lazy">'
+          '<img src="/assets/og/n-' + it['date'] + '-' + it['slug'] + '.png" alt="' + html.escape(it['title']) + '" loading="lazy">'
           '<div class="inner"><span class="newsdate">' + fmt_date(it['date']) + '</span>'
           '<b>' + html.escape(it['title']) + '</b><span>' + html.escape(it.get('teaser') or '') + '</span></div></a>')
     body = ('<div class="hero"><div class="kicker">Лента</div><h1>Новости и разборы</h1>'
@@ -1468,7 +1468,7 @@ def search_page(outdir, index_items):
      'if(!hits.length)out="<p class=note>Ничего не нашлось. Попробуйте другое слово.</p>";}'
      'document.getElementById("res").innerHTML=out;});</script>')
     write_page(os.path.join(outdir,'search.html'), 'Поиск | Запас хода',
-        'Поиск по ' + str(len(MODELS)) + ' моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html')
+        'Поиск по ' + str(len(MODELS)) + ' моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html', noindex=True)
 
 # ================= LLMS.TXT =================
 def llms_files(outdir, news):
@@ -1849,26 +1849,26 @@ def vin_hub(outdir):
 def misc_pages(outdir):
     with open(os.path.join(outdir,'robots.txt'),'w',encoding='utf-8') as f:
         ai_bots = ['GPTBot','OAI-SearchBot','ChatGPT-User','ClaudeBot','PerplexityBot','Perplexity-User','Google-Extended','Applebot','Applebot-Extended','CCBot','meta-externalagent','Bytespider','Amazonbot','YandexGPT','AliceBot']
-        lines = ['User-agent: *', 'Allow: /']
+        lines = ['User-agent: *', 'Allow: /', 'Disallow: /admin/']
         for b in ai_bots:
             lines += ['User-agent: ' + b, 'Allow: /']
-        lines += ['Sitemap: ' + SITE_DOMAIN + '/sitemap.xml', 'Host: ' + SITE_DOMAIN.replace('https://','')]
+        lines += ['Sitemap: ' + SITE_DOMAIN + '/sitemap.xml']
         f.write('\n'.join(lines) + '\n')
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
     body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
-    write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html')
+    write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html', noindex=True)
 
 def build_sitemap(slugs_model, news, vin_slugs):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/models/', SITE_DOMAIN+'/forum/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
-            SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/', SITE_DOMAIN+'/search.html']
-    urls += [SITE_DOMAIN+'/catalog/index.html'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
-    urls += [SITE_DOMAIN+'/services/index.html', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
-    urls += [SITE_DOMAIN+'/blog/index.html'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
-    urls += [SITE_DOMAIN+'/b2b/index.html']
+            SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/']
+    urls += [SITE_DOMAIN+'/catalog/'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
+    urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
+    urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
+    urls += [SITE_DOMAIN+'/b2b/']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
-    urls += [SITE_DOMAIN+'/open-data/index.html']
-    urls += [SITE_DOMAIN+'/quiz/index.html']
-    urls += [SITE_DOMAIN+'/compare/index.html']
+    urls += [SITE_DOMAIN+'/open-data/']
+    urls += [SITE_DOMAIN+'/quiz/']
+    urls += [SITE_DOMAIN+'/compare/']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
@@ -1957,8 +1957,8 @@ def quiz_page(outdir):
     desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
     write_page(os.path.join(outdir, 'quiz', 'index.html'),
                'Подбор комплекта за 30 секунд: адаптеры и зарядка под вашу модель | Запас хода', desc, body,
-               '/quiz/index.html', crumbs=[('', 'Подбор')],
-               extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/index.html') + '</script>')
+               '/quiz/', crumbs=[('', 'Подбор')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/') + '</script>')
 
 # ====== СРАВНЕНИЕ МОДЕЛЕЙ /compare/ ======
 def compare_page(outdir):
@@ -2021,8 +2021,8 @@ def compare_page(outdir):
     desc = 'Сравните две модели электромобилей: разъёмы AC/DC, бортовой зарядник, мощность быстрой зарядки, частота ввоза в РФ и что докупить. 138 моделей.'
     write_page(os.path.join(outdir, 'compare', 'index.html'),
                'Сравнение моделей EV: разъёмы, мощность зарядки, что докупить | Запас хода', desc, body,
-               '/compare/index.html', crumbs=[('', 'Сравнение')],
-               extra_ld='<script type="application/ld+json">' + services.art_ld('Сравнение моделей EV: разъёмы и зарядка', desc, '/compare/index.html') + '</script>')
+               '/compare/', crumbs=[('', 'Сравнение')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('Сравнение моделей EV: разъёмы и зарядка', desc, '/compare/') + '</script>')
 
 
 GAS_URL = 'https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec'
@@ -2490,6 +2490,12 @@ def main():
         if os.path.isdir(adst): shutil.rmtree(adst)
         shutil.copytree(adir, adst)
         with open(os.path.join(outdir,'admin','robots.txt'),'w',encoding='utf-8') as f: f.write('User-agent: *\nDisallow: /admin/\n')
+        ap = os.path.join(adst,'index.html')
+        if os.path.isfile(ap):
+            _h = open(ap,encoding='utf-8').read()
+            if '<meta name="robots"' not in _h:
+                _h = _h.replace('</head>', '<meta name="robots" content="noindex, nofollow"></head>', 1)
+                open(ap,'w',encoding='utf-8').write(_h)
     news = load_news(data_dir)
     news_map = load_news_map(data_dir)
     print('Новостей в базе:', len(news))

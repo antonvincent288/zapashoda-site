@@ -124,7 +124,7 @@ def catalog_block_for(m, pname):
     cards = bundle_card_html(bundle_for(m)) + ''.join(shop_card_html(PIDX[i['id']], i['badge']) for i in skus)
     mline = 'gbt' if ('GB/T' in str(m.get('dc', '')) or 'GB/T' in str(m.get('ac', ''))) else 'eu'
     qmodel = html.escape(pname).replace(' ', '%20').replace('&', '%26')
-    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Весь каталог: <a href="/catalog/index.html?line=' + mline + '&model=' + qmodel + '">аксессуары для ' + html.escape(pname) + '</a>.</p><div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
+    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Весь каталог: <a href="/catalog/?line=' + mline + '&model=' + qmodel + '">аксессуары для ' + html.escape(pname) + '</a>.</p><div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
 
 def faq_html(p):
     qs = FAQS.get(p['cat'], []) + [['Как оформляется заявка','Отправляете заявку с телефоном — подтверждаем наличие и доставку в ваш город через ближайший салон-дилера. Оплата — при получении, без предоплаты.']]
@@ -181,8 +181,7 @@ def catalog_build(outdir):
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/b2b/">Дилерам — прайс</a>'
       '</div></div></div></section>'
       '<div class="flex flex-wrap gap-2 my-4" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div>'
-      '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>'
-            '<div class="pc-toolbar"><span id="pc-count"></span><label class="pc-sort">Сортировка: <select id="pc-sort"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div>')
+      '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>' )
 
     phev_links = ''.join('<a class="fchip" href="/models/'+s+'.html">'+t+'</a>' for s,t in [
         ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),
@@ -197,7 +196,7 @@ def catalog_build(outdir):
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
     body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
-    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/index.html', crumbs=[('', 'Каталог')])
+    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
         tag = TAGS.get(p['id'])
@@ -224,7 +223,7 @@ def catalog_build(outdir):
           '<div class="md:w-1/2 w-full">'
           '<div class="lg:pl-10 mt-6 md:mt-0">'
           '<div class="flex flex-col gap-4">'
-          '<a href="/catalog/index.html" class="block text-green-600 text-sm">' + html.escape(p['cat']) + '</a>'
+          '<a href="/catalog/" class="block text-green-600 text-sm">' + html.escape(p['cat']) + '</a>'
           '<h1 class="text-2xl font-bold text-gray-900 leading-tight">' + html.escape(p['name']) + '</h1>'
           '<div class="text-md">'
           '<span class="text-gray-900 font-semibold text-xl">' + fmt_price(p['price']) + '</span>'
@@ -255,7 +254,7 @@ def catalog_build(outdir):
           + order_form_html(p['name'])
           + '<script type="application/ld+json">' + product_ld(p, url) + '</script>'
           + '</div></section>')
-        WRITE_PAGE(os.path.join(outdir,'catalog', p['slug'] + '.html'), p['name'] + ' — заказать | Запас хода', (p['name'] + ': ' + p['desc'] + ' Подбор под модель, оплата дилеру при получении.')[:300], body, url, crumbs=[('/catalog/index.html','Каталог'),('',p['name'])])
+        WRITE_PAGE(os.path.join(outdir,'catalog', p['slug'] + '.html'), p['name'] + ' — заказать | Запас хода', (p['name'] + ': ' + p['desc'] + ' Подбор под модель, оплата дилеру при получении.')[:300], body, url, crumbs=[('/catalog/','Каталог'),('',p['name'])])
 
 def of_filter_js():
     return '<script>function ofFilter(el){document.querySelectorAll(\'#pc-filters .chip\').forEach(function(c){c.classList.remove(\'on\')});el.classList.add(\'on\');var cat=el.getAttribute(\'data-cat\');document.querySelectorAll(\'.pc-grid .pc-card\').forEach(function(card){card.style.display=(cat===\'all\'||card.getAttribute(\'data-cat\')===cat)?\'\':\'none\'})}</script>' + '<script>function ofLineFilter(el){document.querySelectorAll("#ln-filters .chip").forEach(function(c){c.classList.remove("on")});el.classList.add("on");var ln=el.getAttribute("data-ln");document.querySelectorAll(".pc-grid .pc-card").forEach(function(card){var L=(card.getAttribute("data-ln")||"all").split(" ");card.style.display=(ln==="all"||L.indexOf(ln)>=0)?"":"none"})}</script>'
