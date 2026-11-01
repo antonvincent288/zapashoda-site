@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 User-agent: GPTBot
 Allow: /
 User-agent: OAI-SearchBot
@@ -31,4 +32,3 @@ Allow: /
 User-agent: AliceBot
 Allow: /
 Sitemap: https://zapashoda-ev.ru/sitemap.xml
-Host: zapashoda-ev.ru
