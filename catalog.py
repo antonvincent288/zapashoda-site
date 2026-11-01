@@ -196,7 +196,7 @@ def catalog_build(outdir):
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
     body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + order_form_html('Каталог аксессуаров') + PRESELECT_JS
-    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог аксессуаров для зарядки электромобилей — адаптеры, кабели, зарядки | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
+    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог: адаптеры, кабели и зарядки для EV | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
         tag = TAGS.get(p['id'])

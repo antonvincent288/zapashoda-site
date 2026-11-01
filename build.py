@@ -668,6 +668,26 @@ def _comments_html(path):
             '<p id="c-note">Комментарий появится после проверки модератором.</p></form>'
             + _COMMENTS_JS + '</section>')
 
+TITLE_SHORT = {
+ 'Не заряжается электромобиль: 10 причин и что делать': 'Не заряжается электромобиль: 10 причин',
+ 'Подогрев батареи электромобиля: зачем нужен и как включить': 'Подогрев батареи: зачем нужен и как включить',
+ 'Сколько стоит зарядить электромобиль в 2026 году: дома, на станции, на трассе': 'Сколько стоит зарядить электромобиль в 2026',
+ 'Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть': 'Запас хода зимой: почему падает на 30–45%',
+ 'Какую зарядную станцию купить для дома в 2026: мощность, разъём, цены': 'Какую зарядную станцию купить для дома в 2026',
+ 'Зарядка электромобиля от розетки 220В: время, проводка, безопасность': 'Зарядка от розетки 220В: время и проводка',
+ 'Зарядка электромобиля на трассе: М-4, М-11, М-12 и дальние маршруты': 'Зарядка на трассе: М-4, М-11, М-12',
+ 'Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T': 'Адаптеры Type2→GB/T и CCS2→GB/T: выбор',
+ '12-вольтовый аккумулятор электромобиля: главная тайная боль': '12-вольтовый аккумулятор: тайная боль EV',
+ 'Лючок зарядки не открывается на морозе и тугой механизм': 'Лючок зарядки не открывается на морозе',
+ 'Как заряжать электромобиль из США или Кореи в России': 'Как заряжать EV из США или Кореи в России',
+ 'GB/T или Type 2: чем заряжать китайский электромобиль': 'Чем заряжать китайский EV: GB/T или Type 2',
+ 'VIN, ЭПТС и СБКТС: что проверить перед покупкой параллельного импорта': 'VIN, ЭПТС и СБКТС: что проверить перед покупкой',
+ 'Заявленный запас хода и реальный: почему WLTP врёт на 20–35%': 'WLTP и реальный запас хода: разница 20–35%',
+ 'Зимой электромобиль теряет до 30–40% запаса хода. Что делать': 'Зимой EV теряет до 30–40% запаса хода: что делать',
+ 'Сколько живёт батарея электромобиля: факты вместо страшилок': 'Сколько живёт батарея электромобиля: факты',
+ 'Разъёмы GB/T: как заряжать китайский электромобиль в России': 'Разъёмы GB/T: как заряжать в России',
+}
+
 def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None, noindex=False):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
@@ -867,7 +887,7 @@ def vin_brand_page(brand, outdir):
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/">Сравнить модели</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     sl = 'vin/'+slug(brand)+'.html'
-    write_page(os.path.join(outdir, sl), 'VIN ' + brand + ': где табличка, код года, проверка истории — Запас хода',
+    write_page(os.path.join(outdir, sl), 'VIN ' + brand + ': код года и проверка истории | Запас хода',
         'Расшифровка VIN ' + brand + ' (' + country + '): код завода, модельный год на 10-й позиции, где находится табличка, бесплатная проверка ГИБДД и ЭПТС/СБКТС для параллельного импорта.',
         body, '/' + sl, og='/assets/og/vin-'+slug(brand)+'.png',
         crumbs=[('/vin/','VIN'),('',brand)])
@@ -1267,7 +1287,7 @@ def model_page(m, outdir):
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Сравнить с другой моделью</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
     write_page(os.path.join(outdir, sl),
-        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + ' — разъём и проблемы | Запас хода',
+        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + (' — разъём и проблемы' if len(pname) > 37 else ' — разъём и проблемы | Запас хода'),
         'Разъёмы AC/DC ' + pname + ' (' + m["years"] + '), зарядка от розетки и на станциях, реальные проблемы владельцев и проверенные решения. ' + grp + '-стандарт, ' + m["freq"] + ' ввоз в РФ.',
         body, '/' + sl, og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
         crumbs=[('/','Модели'),('',pname)])
@@ -1338,7 +1358,7 @@ def news_page(it, outdir, news_map):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + news_slug_page(it)
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'news',sl_file), it['title'] + ' | Запас хода',
+    write_page(os.path.join(outdir,'news',sl_file), TITLE_SHORT.get(it['title'], it['title']) + ' | Запас хода',
         it.get('teaser') or it['title'], body, news_slug_page(it),
         og='/assets/og/n-'+it['date']+'-'+it['slug']+'.png',
         crumbs=[('/news/','Новости'),('',it['title'])], extra_ld=news_ld)
@@ -1754,7 +1774,7 @@ def home_page(outdir, news=None):
         "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 145 моделей",
         "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки, проблемы и решения для 145 моделей EV в России',
+    write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки и решения для 145 моделей EV',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
 def pains_index(outdir):
@@ -1802,7 +1822,7 @@ def pain_article_page(sl, title, desc, pids, outdir):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), title+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
+    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
 
 def rel_models(rel_brands):
     out = []
@@ -1842,7 +1862,7 @@ def vin_hub(outdir):
      + VIN_STRUCT +
      '<h2>VIN по брендам</h2><div class="grid2">' + cards + '</div>'
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/news/">Новости</a></div>')
-    write_page(os.path.join(outdir,'vin','index.html'), 'VIN-справочник электромобилей: расшифровка, код года, проверка | Запас хода',
+    write_page(os.path.join(outdir,'vin','index.html'), 'VIN-справочник: расшифровка и проверка | Запас хода',
         'Как расшифровать VIN электромобиля: структура, коды модельного года, где находится табличка, бесплатная проверка ГИБДД и ЭПТС/СБКТС для параллельного импорта.',
         body, '/vin/')
 
@@ -1956,7 +1976,7 @@ def quiz_page(outdir):
       + js + form)
     desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
     write_page(os.path.join(outdir, 'quiz', 'index.html'),
-               'Подбор комплекта за 30 секунд: адаптеры и зарядка под вашу модель | Запас хода', desc, body,
+               'Подбор адаптеров и зарядки за 30 секунд | Запас хода', desc, body,
                '/quiz/', crumbs=[('', 'Подбор')],
                extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/') + '</script>')
 
@@ -2020,7 +2040,7 @@ def compare_page(outdir):
       + js + '</div></section>')
     desc = 'Сравните две модели электромобилей: разъёмы AC/DC, бортовой зарядник, мощность быстрой зарядки, частота ввоза в РФ и что докупить. 138 моделей.'
     write_page(os.path.join(outdir, 'compare', 'index.html'),
-               'Сравнение моделей EV: разъёмы, мощность зарядки, что докупить | Запас хода', desc, body,
+               'Сравнение моделей EV: разъёмы и мощность | Запас хода', desc, body,
                '/compare/', crumbs=[('', 'Сравнение')],
                extra_ld='<script type="application/ld+json">' + services.art_ld('Сравнение моделей EV: разъёмы и зарядка', desc, '/compare/') + '</script>')
 
@@ -2211,7 +2231,7 @@ def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
             + '<p class="note" style="margin-top:26px"><a href="/forum/">← Все темы форума</a></p>'
             + '<script>(function(){var G=\'' + GAS_URL + '\';var TID=\'' + html.escape(tid) + '\';' + _FORUM_JS_TEMPLATE_POSTS + '})();</script>')
     write_page(os.path.join(outdir, 'forum', sl_page),
-               title + ' — сообщество «Запас хода»',
+               TITLE_SHORT.get(title, title) + ' | Форум Запас хода',
                desc[:152].rstrip() + ('…' if len(desc) > 152 else ''),
                body, '/forum/' + sl_page, crumbs=[('/forum/', 'Сообщество')])
 
