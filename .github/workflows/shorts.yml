@@ -22,8 +22,12 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install yt-dlp
-        run: pip install -q yt-dlp
+      - name: Install yt-dlp + POT provider
+        run: |
+          pip install -q yt-dlp
+          npm install -g bgutil-ytdlp-pot-provider || true
+          (nohup bgutil-pot >/dev/null 2>&1 &) || true
+          sleep 5
       - name: Post one short
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}

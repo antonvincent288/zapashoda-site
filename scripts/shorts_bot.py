@@ -158,6 +158,8 @@ def inv_download(c, dst):
 
 # ---------- источник 2: yt-dlp ----------
 EXTRACTOR_FALLBACK = ['--extractor-args', 'youtube:player_client=ios,android_vr,tv_embedded']
+POT_ARGS = ['--extractor-args', 'youtube:player_client=web',
+            '--extractor-args', 'youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416']
 
 def ytdlp_search(topic):
     r = ytdlp(['--dump-json', '--flat-playlist', '--no-playlist', '-I', '1:20', 'ytsearch20:' + topic], timeout=180)
@@ -181,7 +183,7 @@ def ytdlp_search(topic):
     return cands
 
 def full_meta(url):
-    for extra in ([], EXTRACTOR_FALLBACK):
+    for extra in ([], EXTRACTOR_FALLBACK, POT_ARGS):
         r = ytdlp(['--dump-json', '--no-playlist', '--no-warnings'] + extra + [url], timeout=150)
         try:
             return json.loads((r.stdout or '').strip().splitlines()[-1])
@@ -223,7 +225,7 @@ def cobalt_download(url, dst):
     return None
 
 def ytdlp_download(url, dst):
-    for extra in ([], EXTRACTOR_FALLBACK):
+    for extra in ([], EXTRACTOR_FALLBACK, POT_ARGS):
         r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
                    '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
         files = glob.glob(dst + '.*')
