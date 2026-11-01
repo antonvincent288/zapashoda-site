@@ -465,6 +465,8 @@ def open_data_build(outdir, write_page):
       '<tr><td>updated</td><td>дата выгрузки (YYYY-MM-DD)</td></tr>'
       '<tr><td>stations[].lat, lon</td><td>координаты WGS-84</td></tr>'
       '<tr><td>stations[].n</td><td>название точки</td></tr>'
+      '<tr><td>stations[].op</td><td>сеть/оператор (если указан в OSM)</td></tr>'
+      '<tr><td>stations[].pw</td><td>мощность, кВт (если указана в OSM)</td></tr>'
       '<tr><td>stations[].c</td><td>число портов (если указано в OSM)</td></tr>'
       '<tr><td>stations[].a</td><td>адрес/комментарий (если есть)</td></tr>'
       '<tr><td>stations[].s</td><td>список разъёмов: type2, ccs2, chademo, gbt, yazaki, schuko и др.</td></tr></table></div>'
