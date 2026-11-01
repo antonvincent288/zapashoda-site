@@ -502,6 +502,13 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .fc-feat-ico{width:42px;height:42px;background:#0aad0a;border-radius:.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
 .fc-hits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .fc-hits .card-product{margin:0}
+/* выравнивание карточек (vol.6 fix) */
+.grid .mcard{display:flex;flex-direction:column;gap:8px}
+.mcard .mgo{margin-top:auto;color:#0aad0a;font-weight:600;font-size:13.5px;padding-top:8px}
+.card-product{display:flex;flex-direction:column}
+.card-product>.flex-auto{flex:1 1 auto;display:flex;flex-direction:column}
+.card-product>.flex-auto>.flex.flex-col{flex:1 1 auto}
+.card-product .justify-between{margin-top:auto;padding-top:10px;align-items:flex-end}
 .fc-minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
 .fc-mini{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;transition:.2s}
 .fc-mini:hover{border-color:#0aad0a;box-shadow:0 8px 24px rgba(10,173,10,.12);transform:translateY(-2px)}
@@ -1753,7 +1760,7 @@ def _tpl_blog_card(href, kind, title, teaser, img):
 
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
-    blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/default.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
     news_cards = ''
     if news:
         try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
@@ -1899,7 +1906,7 @@ def home_page(outdir, news=None):
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
 def pains_index(outdir):
-    arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
+    arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span><span class="mgo">Читать гайд →</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
     write_page(os.path.join(outdir,'pains.html'), 'Проблемы и решения электромобилей | Запас хода',
         'Не заряжается, подогрев батареи, зарядка от розетки, адаптеры GB/T и CCS2, кабель не отдаёт, 12В АКБ, CHAdeMO — решения с источниками.',
         '<h1>Типичные проблемы электромобилей и их решения</h1><p class="lede">Руководства по самым частым болям владельцев — со ссылками на первоисточники.</p><div class="grid">'+arts+'</div>', '/pains.html')
@@ -2082,7 +2089,7 @@ def pain_article_page(sl, title, desc, pids, outdir):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
+    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
 
 def rel_models(rel_brands):
     out = []
@@ -2839,6 +2846,8 @@ def main():
         jobs.append(('/assets/og/vin-'+slug(brand)+'.png', 'VIN '+brand+': расшифровка и проверка истории'))
     for sl,title,_,_ in PAIN_ARTICLES:
         jobs.append(('/assets/og/p-'+sl+'.png', title))
+    for sl3,t3,d3 in services.BLOG_ARTICLES:
+        jobs.append(('/assets/og/b-'+sl3+'.png', t3))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     catalog.catalog_build(outdir)
