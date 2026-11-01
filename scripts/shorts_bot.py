@@ -244,9 +244,9 @@ def process(c, pub, now):
         v = inv_video(c)
         if not v:
             print('no usable source for', vid); return False
-        c['license'] = v['license']; c['views'] = v['views']
-        c['title'] = v['title']; c['author'] = v['author']; c['ch'] = v['ch']
-        c['stream_url'] = v['stream_url']; c['itag'] = v['itag']
+        for k in ('license', 'views', 'title', 'author', 'ch', 'stream_url', 'itag', '_dl_base'):
+            if k in v:
+                c[k] = v[k]
     elif c['_src'] == 'yt':
         m = full_meta(c['url'])
         if not m:
