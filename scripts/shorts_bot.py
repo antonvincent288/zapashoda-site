@@ -83,22 +83,38 @@ def inv_search(topic):
     return []
 
 def inv_video(c):
-    try:
-        v = get_json(c['_base'] + '/api/v1/videos/%s?fields=license,viewCount,title,author,authorId,formatStreams' % c['videoId'], timeout=20)
-    except Exception as e:
-        print('  [inv video fail]', type(e).__name__)
-        return None
-    fs = [f for f in (v.get('formatStreams') or []) if 'mp4' in (f.get('mimeType') or '')]
-    if not fs:
-        return None
-    fs.sort(key=lambda f: int(f.get('height') or 0), reverse=True)
-    return {'license': v.get('license'), 'views': int(v.get('viewCount') or 0),
-            'title': v.get('title'), 'author': v.get('author'), 'ch': v.get('authorId'),
-            'stream_url': fs[0].get('url'), 'itag': fs[0].get('itag')}
+    for base in INV_INSTANCES:
+        try:
+            v = get_json(base + '/api/v1/videos/%s?fields=license,viewCount,title,author,authorId,formatStreams' % c['videoId'], timeout=20)
+        except Exception as e:
+            print('  [inv video fail] %s: %s %s' % (base, type(e).__name__, str(e)[:80]))
+            continue
+        if not isinstance(v, dict):
+            print('  [inv video] %s: bad response %r' % (base, str(v)[:100]))
+            continue
+        if not v.get('formatStreams'):
+            print('  [inv video] %s: no formatStreams (%r)' % (base, str(v)[:120]))
+            continue
+        fs = [f for f in v['formatStreams'] if 'mp4' in (f.get('mimeType') or '')]
+        if not fs:
+            print('  [inv video] %s: no mp4 formats' % base)
+            continue
+        fs.sort(key=lambda f: int(f.get('height') or 0), reverse=True)
+        print('  [inv video] %s: OK itag %s %s' % (base, fs[0].get('itag'), fs[0].get('qualityLabel')))
+        return {'license': v.get('license'), 'views': int(v.get('viewCount') or 0),
+                'title': v.get('title'), 'author': v.get('author'), 'ch': v.get('authorId'),
+                'stream_url': fs[0].get('url'), 'itag': fs[0].get('itag'), '_dl_base': base}
+    return None
 
 def inv_download(c, dst):
+    bases = []
+    if c.get('_dl_base'):
+        bases.append(c['_dl_base'])
+    if c.get('_base'):
+        bases.append(c['_base'])
+    bases += [b for b in INV_INSTANCES if b not in bases]
     tries = [c['stream_url']]
-    tries.append(c['_base'] + '/latest_version?id=%s&itag=18&local=true' % c['videoId'])
+    tries += [b + '/latest_version?id=%s&itag=18&local=true' % c['videoId'] for b in bases]
     for url in tries:
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -108,7 +124,7 @@ def inv_download(c, dst):
             open(dst, 'wb').write(data)
             return dst
         except Exception as e:
-            print('  [inv dl fail]', type(e).__name__, str(e)[:100])
+            print('  [inv dl fail]', str(url)[:90], type(e).__name__, str(e)[:80])
     return None
 
 # ---------- источник 2: yt-dlp ----------
