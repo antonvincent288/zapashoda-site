@@ -50,7 +50,7 @@ def ytdlp(args, timeout=240):
 
 def search_topic(topic):
     r = ytdlp(['--dump-json', '--flat-playlist', '--no-playlist', '-I', '1:%d' % SEARCH_LIMIT,
-               'ytsearchdate%d:%s' % (SEARCH_LIMIT, topic)], timeout=180)
+               'ytsearch%d:%s' % (SEARCH_LIMIT, topic)], timeout=180)
     out = []
     for line in (r.stdout or '').splitlines():
         line = line.strip()
