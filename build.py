@@ -1411,6 +1411,7 @@ var ALL=null,layer=null,mymap=null;
 var YNDX='https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=24.10.29-0&x={x}&y={y}&z={z}&scale=1&part=1&lang=ru_RU';
 function initMap(){
   mymap=L.map('map',{preferCanvas:true,zoomControl:true}).setView([55.75,37.6],10);
+  mymap.attributionControl.setPrefix('');
   L.tileLayer(YNDX,{maxZoom:19,attribution:'© Яндекс'}).addTo(mymap);
   fetch('/charging/stations.json').then(function(r){return r.json()}).then(function(d){ALL=d;showCity(0);mymap.on('moveend',function(){draw();});}).catch(function(){document.getElementById('mstat').textContent='Не удалось загрузить список станций';});
 }
@@ -1447,7 +1448,7 @@ function renderList(bb){
   ALL.stations.forEach(function(s){if(s.lat>=la1&&s.lat<=la2&&s.lon>=lo1&&s.lon<=lo2)hits.push(s);});
   var lim=hits.slice(0,50);
   var html=`<p class="note">Найдено станций: <b>`+hits.length+`</b>`+(ALL.updated?` · данные от `+ALL.updated:``)+`</p>`;
-  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:``)+(s.op?`<span class="sttag">Сеть: `+s.op+`</span>`:``)+(s.pw?`<span class="sttag">До `+s.pw+` кВт</span>`:``)+(s.c?`<span class="sttag">Портов: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Разъёмы: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">На карте ↗</a></div>`;}).join(``);
+  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:(s.a?``:`<span class="staddr">адрес не размечен в OSM</span>`))+(s.op?`<span class="sttag">Сеть: `+s.op+`</span>`:``)+(s.pw?`<span class="sttag">До `+s.pw+` кВт</span>`:``)+(s.c?`<span class="sttag">Портов: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Разъёмы: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">На карте ↗</a></div>`;}).join(``);
   if(hits.length>lim.length)html+=`<p class="note">Показаны первые 50 из `+hits.length+` — остальные на карте.</p>`;
   document.getElementById('stlist').innerHTML=html;
   document.getElementById('mstat').textContent='Станций в области: '+hits.length+(ALL.updated?(' · данные от '+ALL.updated):'');
@@ -1456,7 +1457,7 @@ initMap();
 document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click',function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});
 """ % json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False)
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где она указана в базе).</p></div>'
+     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — там, где они размечены в OpenStreetMap.</p></div>'
      '<div class="cbtns">' + city_btns + '</div>'
      '<div id="map" class="nmap"></div>'
      '<p class="note" id="mstat">Загрузка данных…</p>'
@@ -1811,7 +1812,23 @@ BUILD_DATE = None  # задаётся в main()
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
     blocks = ''.join('<div class="lcard"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
-    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a></div>'
+    city_costs = ''
+    if sl == 'stoimost-zaryadki':
+        rows = [
+            ('Дома ночью (ночной тариф)', '2,5-3,5 ₽/кВт·ч', '40-56 ₽ за 100 км'),
+            ('Дома днём (городской тариф)', '5-7 ₽/кВт·ч', '80-112 ₽ за 100 км'),
+            ('Городская станция AC (7-22 кВт)', '10-18 ₽/кВт·ч', '160-288 ₽ за 100 км'),
+            ('Быстрая станция DC в городе', '18-25 ₽/кВт·ч', '288-400 ₽ за 100 км'),
+            ('Быстрая станция DC на трассе', '25-30 ₽/кВт·ч', '400-480 ₽ за 100 км'),
+        ]
+        trs = ''.join('<tr><td>'+a+'</td><td>'+b+'</td><td>'+c+'</td></tr>' for a,b,c in rows)
+        city_costs = ('<h2>Сколько стоит 100 км в деньгах: сцены зарядки</h2>'
+            + '<p class="note">Расчёт по среднему расходу 16 кВт·ч/100 км. Тарифы — типичные диапазоны по рынку на конец 2026 года; точные цены своей сети смотрите в её приложении, тарифы электроэнергии — в квитанции энергосбыта.</p>'
+            + '<div class="tblwrap"><table><thead><tr><th>Сцена</th><th>Тариф</th><th>Стоимость 100 км</th></tr></thead><tbody>' + trs + '</tbody></table></div>'
+            + '<h2>Города: где зарядка дешевле</h2>'
+            + '<p>Меняется не столько тариф, сколько состав сетей. В Москве работает городская сеть «Энергия Москвы» — исторически для легковых электромобилей бесплатная; актуальность и условия проверяйте на сайте оператора. В Санкт-Петербурге — свои городские и сетевые станции. В остальных регионах дешевле всего дома по ночному тарифу, дороже всего — быстрые станции на трассах. Список сетей и точек по городам — на <a href="/charging/">карте зарядных станций</a>.</p>'
+            + '<p class="note">Быстрая прикидка: заряд «до полного» = ёмкость батареи × тариф. Батарея 60 кВт·ч дома ночью — 150-210 ₽, на быстрой трассовой — 1500-1800 ₽. Вот почему владельцы с домашней зарядкой платят за «топливо» в 5-10 раз меньше.</p>')
+    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+city_costs+blocks+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a></div>'
     art_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": title,
