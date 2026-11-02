@@ -788,3 +788,45 @@ html.tg-mode .zs-stbar { display:none !important; }
 
 /* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
 @media (min-width:769px) { .zs-off { display:none !important; } }
+
+.zc-wrap { padding: 10px 0 6px; }
+.zc { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+.zc-badge { display: inline-block; background: #064e3b; color: #fff; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; letter-spacing: .02em; }
+.zc-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 14px 0 8px; }
+.zc-sub { color: #475569; font-size: .95rem; max-width: 720px; margin: 0 0 18px; line-height: 1.5; }
+.zc-sub a { color: #047857; text-decoration: underline; }
+.zc-grid { display: grid; grid-template-columns: minmax(min(100%,300px),360px) minmax(0,1fr); gap: 28px; align-items: start; }
+.zc-ctrl { background: #f8fafc; border: 1px solid rgba(15,23,42,.06); border-radius: 16px; padding: 20px; }
+.zc-label { display: block; font-size: .9rem; color: #334155; margin: 0 0 10px; }
+.zc-label b { color: #0f172a; font-variant-numeric: tabular-nums; }
+.zc-ctrl input[type=range] { width: 100%; accent-color: #16a34a; margin: 4px 0 18px; }
+.zc-select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; font-size: .95rem; color: #0f172a; }
+.zc-hyb { display: none; margin-top: 12px; font-size: .8rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 8px 10px; line-height: 1.4; }
+.zc-out { min-width: 0; }
+.zc-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.zc-table th { text-align: left; color: #64748b; font-weight: 600; font-size: .8rem; padding: 6px 8px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+.zc-table td { padding: 9px 8px; border-bottom: 1px solid #eef2f7; color: #0f172a; font-variant-numeric: tabular-nums; }
+.zc-table td:first-child { color: #334155; }
+.zc-table .zc-vs td { color: #9f1239; background: #fff1f2; }
+.zc-table td:nth-child(n+2) { text-align: right; white-space: nowrap; }
+.zc-save { margin-top: 14px; font-size: 1rem; color: #334155; }
+.zc-save b { color: #047857; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.zc-cta { margin-top: 12px; font-size: .98rem; color: #0f172a; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.zc-foot { margin-top: 16px; font-size: .78rem; color: #94a3b8; line-height: 1.45; }
+@media (max-width: 900px) {
+  .zc-grid { grid-template-columns: minmax(0,1fr); }
+  .zc { padding: 22px 18px; border-radius: 16px; }
+  .zc-table { font-size: .85rem; }
+  .zc-table th { font-size: .72rem; padding: 5px 6px; }
+  .zc-table td { padding: 7px 6px; }
+}
+@media (max-width: 640px) {
+  .zc-table { display: block; overflow-x: auto; }
+  /* grid-элементы не должны держать min-content ширину и вылезать за вьюпорт */
+  .grid > * { min-width: 0; }
+}
+/* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
+@media (max-width: 768px) {
+  .zs-off { right: auto; left: -320px; transition: left .25s ease; }
+  .zs-off.open { left: 0; }
+}
