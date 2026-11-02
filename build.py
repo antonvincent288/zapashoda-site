@@ -738,8 +738,8 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'      '<meta name="twitter:card" content="summary_large_image">'      '<meta name="twitter:title" content="' + html.escape(title) + '">'      '<meta name="twitter:description" content="' + html.escape(clamp_desc(desc)) + '">'      '<meta name="twitter:image" content="' + SITE_DOMAIN + og + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + ('<meta name="robots" content="noindex, follow">' if noindex else '') + YANDEX_META + GSC_META +
-     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-     '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">'
+     '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-cyrillic-400-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin-400-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-cyrillic-700-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin-700-normal.woff2" crossorigin>'
+     '<link rel="stylesheet" href="/assets/fonts/inter.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
@@ -1745,7 +1745,7 @@ def shop_tpl_card(p):
 def _tpl_bundle_card(b):
     items_txt = ', '.join(catalog.PIDX[i]['name'].split(',')[0] for i in b['items'])
     save = b['was'] - b['price']
-    img_tag = ('<img src="/assets/sku/bundle-set.png" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center text-5xl">📦</div>')
+    img_tag = ('<img src="/assets/sku/bundle-set.webp" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center text-5xl">📦</div>')
     add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
     return ('<div class="flex-0 block w-full md:w-auto">'
       '<div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product">'
@@ -2371,7 +2371,7 @@ def _forum_seed():
     seeds = [('forum/welcome', 'Задайте первый вопрос — разберём бесплатно', 'general',
               'Сообщество владельцев электромобилей и гибридов: вопросы о зарядке, аксессуарах и эксплуатации. Отвечают редакция и владельцы.')]
     for sl, title, desc, pids in PAIN_ARTICLES:
-        seeds.append(('forum/pain-' + sl, title, 'problems', desc))
+        seeds.append(('forum/pain-' + sl, title, 'problems', desc + ' — разбор кейса, решения и FAQ от редакции «Запас хода».'))
     seeds.append(('forum/gbt-vs-type2', 'GB/T или Type 2: чем заряжать китайский электромобиль', 'charging',
                   'Чем отличаются разъёмы GB/T и Type 2, какие переходники нужны и что использовать дома и на трассе.'))
     return seeds
@@ -2602,7 +2602,7 @@ def app_page(outdir):
       "</style>")
     body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
     tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js" async></script>'
-      '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)){var d=document.documentElement;'
+      '<script>(function(){if(window.Telegram&&window.Telegram.WebApp){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
     write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
@@ -2782,6 +2782,13 @@ def main():
         dst = os.path.join(outdir,'assets','sku')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(sku_dir, dst)
+    import glob as _glob
+    from PIL import Image as _Im
+    for _p in _glob.glob(os.path.join(outdir,'assets','sku','*.png')):
+        _im = _Im.open(_p).convert('RGBA')
+        _im.save(_p[:-4] + '.webp', 'WEBP', quality=82, method=6)
+        os.remove(_p)
+
     # FreshCart theme css
     fcc = os.path.join(repo_root,'assets','fc-theme.css')
     if os.path.isfile(fcc):
