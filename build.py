@@ -516,6 +516,18 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 /* misc utilities */
 .text-decoration-none a, a.text-decoration-none{text-decoration:none}
 .small{font-size:85%}
+
+/* ===== iOS & mobile fixes (2026-11-02) ===== */
+.card-product .flex.justify-center img,
+.card-product .flex.justify-center svg{aspect-ratio:1/1;width:100%;max-width:100%;height:auto;object-fit:cover;border-radius:.5rem;background:#f6f7f9}
+.card-product h3 a{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:2.5em}
+.card-product .justify-between{flex-wrap:wrap;gap:6px 10px}
+input,select,textarea{font-size:16px !important}
+.pc-cartbar{padding-bottom:env(safe-area-inset-bottom)}
+.pc-cartbar .wrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.zs-mask,.fmodal{height:100vh;height:100dvh}
+.card-product button,.pc-cartbar .pc-go,.zs-nav a{min-height:44px}
+@media(hover:none){.card-product:hover{box-shadow:none}.card-product:hover .card-product-action{opacity:0;visibility:hidden}}
 """
 
 LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0aad0a"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
