@@ -530,6 +530,86 @@ input,select,textarea{font-size:16px !important}
 @media(hover:none){.card-product:hover{box-shadow:none}.card-product:hover .card-product-action{opacity:0;visibility:hidden}}
 """
 
+# ===== SVG-схемы зарядных портов (условные, не чертёж) =====
+def _port_svg(kind, size=44):
+    c1, c2 = '#0aad0a', '#001e2b'
+    import math as _m
+    def ring(contacts):
+        s = '<circle cx="22" cy="22" r="15" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+        for k in range(contacts):
+            a = -90 + k * (360.0/contacts)
+            x = 22 + 15*_m.cos(_m.radians(a)); y = 22 + 15*_m.sin(_m.radians(a))
+            s += '<circle cx="%s" cy="%s" r="3.2" fill="%s"/>' % (round(x,1), round(y,1), c1)
+        return s
+    if kind == 'type2':
+        inner = ring(7)
+    elif kind == 'gbt_ac':
+        inner = ('<rect x="4" y="9" width="36" height="26" rx="13" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 + ''.join('<circle cx="%.1f" cy="22" r="2.8" fill="%s"/>' % (9+k*4.6, c1) for k in range(7)))
+    elif kind == 'gbt_dc':
+        inner = ('<rect x="3" y="8" width="38" height="28" rx="8" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 + ''.join('<circle cx="%.1f" cy="16" r="2.4" fill="%s"/>' % (9+k*4.3, c1) for k in range(4))
+                 + ''.join('<circle cx="%.1f" cy="28" r="2.4" fill="%s"/>' % (9+k*4.3, c1) for k in range(4))
+                 + '<circle cx="40" cy="22" r="2.4" fill="' + c2 + '"/>')
+    elif kind == 'ccs2':
+        inner = ring(7) + '<path d="M13 34 a9 9 0 0 0 18 0" fill="none" stroke="' + c1 + '" stroke-width="2.6" stroke-linecap="round"/>'
+    elif kind == 'type1':
+        inner = ('<ellipse cx="22" cy="22" rx="16" ry="13" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 + ''.join('<circle cx="%.1f" cy="22" r="2.8" fill="%s"/>' % (11+k*5.4, c1) for k in range(5)))
+    elif kind == 'ccs1':
+        inner = ('<ellipse cx="22" cy="21" rx="16" ry="12" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 + ''.join('<circle cx="%.1f" cy="20" r="2.6" fill="%s"/>' % (11+k*5.4, c1) for k in range(5))
+                 + '<path d="M14 32 a8 8 0 0 0 16 0" fill="none" stroke="' + c1 + '" stroke-width="2.6" stroke-linecap="round"/>')
+    elif kind == 'chademo':
+        inner = ('<circle cx="22" cy="22" r="16" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 '<circle cx="22" cy="22" r="9" fill="none" stroke="#e07020" stroke-width="2.4"/>'
+                 '<circle cx="15" cy="16" r="2.6" fill="' + c1 + '"/><circle cx="29" cy="16" r="2.6" fill="' + c1 + '"/>'
+                 '<circle cx="15" cy="28" r="2.6" fill="' + c1 + '"/><circle cx="29" cy="28" r="2.6" fill="' + c1 + '"/>')
+    elif kind == 'nacs':
+        inner = ('<circle cx="22" cy="22" r="15" fill="#fff" stroke="' + c2 + '" stroke-width="2.2"/>'
+                 '<path d="M24.5 12 L17 24 h5 l-2 8 8-13 h-5 z" fill="' + c1 + '"/>')
+    else:
+        inner = ''
+    return ('<svg width="%d" height="%d" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема разъёма">%s</svg>' % (size, size, inner))
+
+PORT_NAMES = {
+ 'type2': ('Type 2', 'AC — европейские сборки'),
+ 'ccs2': ('CCS2', 'DC — быстрая (EU)'),
+ 'gbt_ac': ('GB/T AC', 'Медленная (Китай)'),
+ 'gbt_dc': ('GB/T DC', 'Быстрая (Китай)'),
+ 'type1': ('Type 1 (J1772)', 'AC — США/Корея/Япония'),
+ 'ccs1': ('CCS1', 'DC — США/Корея'),
+ 'chademo': ('CHAdeMO', 'DC — Япония (уходящий)'),
+ 'nacs': ('NACS', 'DC — Tesla US'),
+}
+def _port_kind(s):
+    s = str(s or '')
+    if 'GB/T' in s and 'DC' in s: return 'gbt_dc'
+    if 'GB/T' in s: return 'gbt_ac'
+    if 'CCS2' in s: return 'ccs2'
+    if 'CCS1' in s: return 'ccs1'
+    if 'CHAdeMO' in s: return 'chademo'
+    if 'NACS' in s: return 'nacs'
+    if 'Type 2' in s: return 'type2'
+    if 'Type 1' in s or 'J1772' in s: return 'type1'
+    return None
+def port_visual(m):
+    """Блок «Разъёмы визуально»: иконки AC/DC по данным модели."""
+    ac = _port_kind(m.get('ac')); dc = _port_kind(m.get('dc'))
+    seen = []
+    for k in (ac, dc):
+        if k and k not in seen: seen.append(k)
+    if not seen: return ''
+    cells = ''.join(
+        '<div style="flex:1 1 130px;min-width:130px;text-align:center;padding:10px;border:1px solid var(--line);border-radius:.6rem;background:#fff">'
+        + _port_svg(k) + '<div style="font-weight:700;font-size:13.5px;margin-top:6px">' + PORT_NAMES[k][0] + '</div>'
+        + '<div style="font-size:12px;color:var(--muted)">' + PORT_NAMES[k][1] + '</div></div>'
+        for k in seen)
+    return ('<h2 class="text-lg text-gray-900 mt-8">Разъёмы визуально</h2>'
+            '<p class="note">Схематичное изображение портов вашей машины — сверьте с лючком зарядки перед покупкой адаптера.</p>'
+            '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px">' + cells + '</div>')
+
+
 LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0aad0a"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
 
 NAV = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/forum/","Форум"),("/blog/","Блог"),("/news/","Новости"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/b2b/","Дилерам"),("/about.html","О проекте")]
@@ -1292,6 +1372,7 @@ def model_page(m, outdir):
     parts.append('<p class="mt-3"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold mr-2">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' ввоз</span></p>')
     parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
     parts.append('<h2 class="text-lg text-gray-900 mt-8">Разъёмы и мощность зарядки</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
+    parts.append(port_visual(m))
     if chg_table: parts.append(chg_table)
     parts.append(calc_block(m, obc_n, dcp_n, obc_s, dcp_s))
     docs_block = ''
@@ -2286,6 +2367,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/catalog/'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
+    urls += [SITE_DOMAIN+'/safety/'] + [SITE_DOMAIN+'/safety/'+s+'.html' for s,_,_ in services.SAFETY_ARTICLES]
     urls += [SITE_DOMAIN+'/b2b/']
     urls += [SITE_DOMAIN+'/calculator/']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
@@ -3013,6 +3095,7 @@ def main():
     catalog.catalog_build(outdir)
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
+    services.safety_build(outdir, write_page)
     services.b2b_build(outdir, write_page)
     services.calculator_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
