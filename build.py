@@ -2186,6 +2186,7 @@ def misc_pages(outdir):
         lines += ['Sitemap: ' + SITE_DOMAIN + '/sitemap.xml']
         f.write('\n'.join(lines) + '\n')
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
+    with open(os.path.join(outdir,'a1c7f3d9e2b5604f8d2a71c9be43f560.txt'),'w',encoding='utf-8') as f: f.write('a1c7f3d9e2b5604f8d2a71c9be43f560')
     body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html', noindex=True)
 

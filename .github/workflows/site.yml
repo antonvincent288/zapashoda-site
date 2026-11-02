@@ -46,3 +46,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           cname: zapashoda-ev.ru
+      - name: Ping IndexNow (Yandex/Bing)
+        run: python3 scripts/indexnow_ping.py
