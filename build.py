@@ -129,6 +129,8 @@ def load_site_config():
       "phone": "",                # телефон для связи (пусто = не показывать)
       "hero_title": "",           # свой заголовок главной (пусто = стандартный)
       "hero_sub": "",             # свой подзаголовок главной
+      "tg_lead_bot_token": "",    # токен Telegram-бота для заявок (публичный в HTML!)
+      "tg_lead_chat_id": "",      # chat_id канала/чата для заявок (например -100...)
     }
     try:
         p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
@@ -148,6 +150,8 @@ BANNER_LINK = str(SITE_CFG.get('banner_link') or '')
 CFG_PHONE = str(SITE_CFG.get('phone') or '')
 CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
 CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
+TG_LEAD_TOKEN = str(SITE_CFG.get('tg_lead_bot_token') or '')
+TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 
 # ================= APPLE-ДИЗАЙН =================
 CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#0aad0a;--lime-ink:#fff;--max:1240px}
@@ -938,7 +942,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script src="/assets/brand/boot.js" defer></script></body></html>')
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script>window.ZS_LEAD_CFG={token:"' + TG_LEAD_TOKEN + '",chat:"' + TG_LEAD_CHAT + '",gas:"' + GAS_URL + '"};</script>' + '<script src="/assets/brand/lead.js" defer></script>' + '<script src="/assets/brand/boot.js" defer></script></body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
