@@ -263,10 +263,37 @@ BLOG_EXTRA2 = {
 }
 
 
+BLOG_CAT = {
+ "to-elektromobilya-ceny": "Обслуживание",
+ "phev-rossiya-2026": "Гибриды",
+ "tipy-razyomov-zaryadki": "Разъёмы",
+ "li-auto-l7-zaryadka-i-obsluzhivanie": "Модели",
+ "geely-ex5-zaryadka": "Модели",
+ "zeekr-001-razyom-i-problemy": "Модели",
+ "voyah-free-osobennosti": "Модели",
+ "nissan-leaf-v-rossii": "Модели",
+ "toyota-bz3x-bz4x-razyom": "Разъёмы",
+ "evolute-0x13-ne-zaryazhaetsya": "Проблемы",
+ "stanciya-ne-rabotaet": "Проблемы",
+ "zimnyaya-zaryadka-medlennee": "Зима",
+ "handshake-oshibka-dc-zaryadki": "Проблемы",
+ "gbt-stancii-2026": "Инфраструктура",
+ "subsidii-na-elektromobil-2026": "Деньги",
+ "transportnyi-nalog-elektromobilya": "Деньги",
+ "besplatnye-trassy-parkovka-ev": "Деньги",
+ "proverka-pered-pokupkoy": "Покупка",
+ "elektromobil-dlya-taksi": "Бизнес",
+ "strakhovka-ev-phev-2026": "Деньги",
+ "rukovodstva-na-russkom": "Документы",
+ "skolko-zhivet-batareya-elektromobilya": "Батарея",
+ "zaryadka-podogrev-shtraf": "Зима"
+}
+
+
 def blog_build(outdir, write_page):
     """Раздел «Блог»: экспертные статьи-гайды (контент-SEO). Отдельно от коммерческих /services/."""
     os.makedirs(os.path.join(outdir,'blog'), exist_ok=True)
-    cards = ''.join('<a class="svc-card" href="/blog/'+sl+'.html"><div class="svc-ico">📖</div><h3>'+t+'</h3><p>'+d+'</p><div class="go">Читать →</div></a>' for sl,t,d in BLOG_ARTICLES)
+    cards = ''.join('<div><a href="/blog/'+sl+'.html" style="text-decoration:none;color:inherit"><div class="blogcard h-full">'      + '<span class="cat">'+BLOG_CAT.get(sl,'Гайд')+'</span><h3>'+t+'</h3><p>'+d[:150]+'</p>'      + '<span class="go">Читать статью →</span></div></a></div>' for sl,t,d in BLOG_ARTICLES)
     idx_body = ('<h1>Блог «Запас хода»</h1>'
       '<p class="lede">Практика владения электромобилем и гибридом в России: разъёмы и зарядка по конкретным моделям, руководства на русском, аналитика рынка и зарядной инфраструктуры. Каждая статья опирается на нашу базу болей и решений по 138 моделям — со ссылками на источники.</p>'
       '<!-- SEO-группы тем -->''<h2>Популярные темы: по формулировкам запросов</h2><div class="kv"><div><div class="k">Деньги и льготы</div><div class="v"><a href="/pain/stoimost-zaryadki.html">сколько стоит зарядить электромобиль</a> · <a href="/blog/subsidii-na-elektromobil-2026.html">субсидия на электромобиль 2026</a> · <a href="/blog/transportnyi-nalog-elektromobilya.html">транспортный налог на электромобиль</a> · <a href="/blog/besplatnye-trassy-parkovka-ev.html">бесплатный проезд по трассам</a></div></div>''<div><div class="k">Проблемы</div><div class="v"><a href="/pain/ne-zaryazhaetsya.html">электромобиль не заряжается</a> · <a href="/blog/stanciya-ne-rabotaet.html">станция не работает</a> · <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">ошибка 0x13</a> · <a href="/pain/zapas-hoda-zimoy.html">запас хода зимой</a></div></div>''<div><div class="k">Аксессуары</div><div class="v"><a href="/pain/adapter-gbt.html">адаптер type 2 gbt</a> · <a href="/pain/udlinitel.html">удлинитель для зарядки</a> · <a href="/catalog/">каталог с подбором по модели</a></div></div>''<div><div class="k">Документы и сервис</div><div class="v"><a href="/blog/rukovodstva-na-russkom.html">инструкция на русском</a> · <a href="/vin/">VIN-справочник</a> · <a href="/blog/proverka-pered-pokupkoy.html">проверка перед покупкой</a></div></div></div>''<div class="svc-grid">'+cards+'</div>'

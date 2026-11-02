@@ -178,7 +178,7 @@ nav.zs-links a:hover{background:#f0f3f2;color:#0aad0a}
 nav.zs-links a.on{color:#0aad0a;font-weight:700;background:#e8ffe6}
 .zs-more{position:relative}.zs-more>button{border:0;background:none;font:inherit;font-size:13.5px;font-weight:500;color:#21313c;padding:9px 13px;border-radius:.5rem;cursor:pointer;white-space:nowrap}
 .zs-more:hover>button,.zs-more.on>button{background:#f0f3f2;color:#0aad0a}
-.zs-drop{position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--line);border-radius:.6rem;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
+.zs-drop{position:absolute;top:100%;left:0;background:transparent;border:none;box-shadow:none;border-radius:.6rem;padding-top:8px;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
 .zs-more:hover .zs-drop,.zs-more:focus-within .zs-drop{display:flex}
 .zs-drop a{display:block;padding:9px 13px;white-space:nowrap}
 @media(max-width:1023px){.zs-more{display:none}}
@@ -534,7 +534,7 @@ input,select,textarea{font-size:16px !important}
 .zs-mask,.fmodal{height:100vh;height:100dvh}
 .card-product button,.pc-cartbar .pc-go,.zs-nav a{min-height:44px}
 @media(hover:none){.card-product:hover{box-shadow:none}.card-product:hover .card-product-action{opacity:0;visibility:hidden}}
-.infographic{margin:14px 0;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;background:#fff}.infographic img{width:100%;height:auto;display:block}
+.infographic{margin:14px 0;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;background:#fff}.infographic img{width:100%;height:auto;display:block}.zs-panel{background:#fff;border:1px solid var(--line);border-radius:.6rem;box-shadow:0 10px 24px rgba(0,0,0,.08);padding:10px}.facts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:16px 0}.facts .f{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:16px 18px}.facts .f .k{font-size:12.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#0aad0a;margin-bottom:6px}.facts .f .v{font-size:21px;font-weight:800;color:#111;line-height:1.2}.facts .f .d{font-size:13.5px;color:#5b6b6d;margin-top:6px;line-height:1.45}.mhero{display:grid;grid-template-columns:1fr;gap:20px;align-items:center}@media(min-width:900px){.mhero{grid-template-columns:1.05fr .95fr}}.mphoto{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:.75rem;border:1px solid var(--line);background:#fff;display:block}.mphoto-fb{width:100%;aspect-ratio:16/10;border-radius:.75rem;border:1px solid var(--line);background:linear-gradient(135deg,#0b3a40,#115e4b);display:flex;align-items:center;justify-content:center;color:#c8ea95;font-weight:800;font-size:30px;letter-spacing:.5px}.brand-chip{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.4px;color:#fff}.mcard-photo{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:.6rem .6rem 0 0;display:block;background:#f0f3f2}.calc-grid{display:grid;gap:14px;grid-template-columns:1fr}@media(min-width:860px){.calc-grid{grid-template-columns:.9fr 1.1fr}}.calc-grid .cin,.calc-grid .cout{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:18px 20px}.calc-grid label{display:block;font-size:13px;color:#37474a;margin:0 0 4px;font-weight:600}.calc-grid input[type=number]{width:100%;border:1.5px solid var(--line);border-radius:.5rem;padding:10px 12px;font-size:16px;background:#fff}.calc-grid input[type=number]:focus{outline:none;border-color:#0aad0a;box-shadow:0 0 0 3px rgba(10,173,10,.12)}.calc-grid .cout .big{font-size:26px;font-weight:800;color:#111}.docs-box{background:#f4f7f5;border:1px solid var(--line);border-radius:.75rem;padding:18px 20px;margin:16px 0}.docs-box h2{margin-top:0}.blogcard{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:18px;height:100%}.blogcard .cat{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;color:#0aad0a;background:#e7f6ee;width:fit-content}.blogcard h3{margin:0;font-size:17px;line-height:1.35}.blogcard p{margin:0;font-size:14px;color:#5b6b6d;line-height:1.5}.blogcard .go{margin-top:auto;font-size:14px;font-weight:700;color:#0aad0a}.prob-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));margin:14px 0}.prob-grid .pt{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px}.prob-grid .pt h3{margin:0 0 6px;font-size:15px;line-height:1.35}.prob-grid .pt .sol{font-size:13.5px;color:#37474a;line-height:1.5}.svc-card{display:block}.quiz-wrap{max-width:760px;margin:0 auto}
 """
 
 # ===== SVG-схемы зарядных портов (условные, не чертёж) =====
@@ -612,12 +612,103 @@ def port_visual(m):
         + _port_svg(k) + '<div style="font-weight:700;font-size:13.5px;margin-top:6px">' + PORT_NAMES[k][0] + '</div>'
         + '<div style="font-size:12px;color:var(--muted)">' + PORT_NAMES[k][1] + '</div></div>'
         for k in seen)
-    return ('<h2 class="text-lg text-gray-900 mt-8">Разъёмы визуально</h2>'
-            '<p class="note">Схематичное изображение портов вашей машины — сверьте с лючком зарядки перед покупкой адаптера.</p>'
-            '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px">' + cells + '</div>')
+    h2x = '<h2 class="text-lg text-gray-900 mt-8">Ваши порты зарядки: где что находится</h2>'
+    p1 = '<p class="note">У машины обычно два порта: <b>малый (AC)</b> — для медленной зарядки от розетки и городских станций, <b>большой (DC)</b> — для быстрых станций на трассе. Сверьте с фото лючка перед покупкой адаптера.</p>'
+    expl = {
+     'gbt': ('GB/T', 'Китайский стандарт: малый порт AC + большой DC. Нужно: <a href="/pain/adapter-gbt.html">адаптер Type 2 → GB/T</a> для городских станций или станция 2-в-1.'),
+     'type2': ('Type 2', 'Европейский стандарт: городские станции и домашние wallbox без переходников.'),
+     'ccs2': ('CCS2', 'Европейский DC-стандарт: быстрые станции CCS2 на трассах и в городах.'),
+     'ccs1': ('CCS1', 'Американский стандарт: нужен <a href="/pain/type1-ccs1.html">переходник Type 1 → Type 2</a> и адаптер для DC.'),
+     'chademo': ('CHAdeMO', 'Японский DC-стандарт: встречается на станциях, но портов GB/T всё больше.'),
+    }
+    cards = ''
+    for k in seen:
+        name, txt = expl.get(k, (PORT_NAMES.get(k, (k, ''))[0], ''))
+        cards += ('<div class="pt"><div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">' + _port_svg(k)
+          + '<b>' + name + '</b></div><div class="sol">' + txt + '</div></div>')
+    return h2x + p1 + '<div class="prob-grid">' + cells + cards + '</div>'
+
 
 
 LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#0aad0a" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#0aad0a"/><path d="M33 18 L23 36 h8 l-5 12 15-17 h-8 z" fill="#0aad0a"/></svg>'
+
+PHOTO_META = {
+ "zeekr-001-001-fr": {
+  "title": "File:Mobileye Zeekr 001, IAA Summit 2023, Munich (P1120233-RR).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Matti Blume"
+ },
+ "zeekr-007-007gt": {
+  "title": "File:Zeekr 007 006 (cropped).jpg",
+  "license": "CC0",
+  "author": "JustAnotherCarDesigner"
+ },
+ "zeekr-009-009-grand": {
+  "title": "File:Zeekr 009 008.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "JustAnotherCarDesigner"
+ },
+ "zeekr-7x-x-mix": {
+  "title": "File:2023 Zeekr X (front).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "User3204"
+ },
+ "li-auto-l6-l7-l8-l9-2022-2025": {
+  "title": "File:Li Auto L7 001.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "JustAnotherCarDesigner"
+ },
+ "li-auto-one": {
+  "title": "File:2020 Lixiang ONE (front).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "User3204"
+ },
+ "geely-ex5-monjaro-hi-p-phev": {
+  "title": "File:Geely Galaxy E5 001.jpg",
+  "license": "CC0",
+  "author": "JustAnotherCarDesigner"
+ },
+ "voyah-free-evr-gibrid": {
+  "title": "File:2021 Voyah FREE.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "User3204"
+ },
+ "byd-song-plus-ev": {
+  "title": "File:BYD Auto, IAA Summit 2023, Munich (P1110786).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Matti Blume"
+ },
+ "byd-yuan-plus-atto-3-yuan-up-pro": {
+  "title": "File:BYD Atto 3 1X7A6491.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Alexander Migl"
+ },
+ "avatr-11-12-ofitsialno-ru": {
+  "title": "File:2022 Avatr 11 (front).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "User3204"
+ },
+ "moskvich-3e-6": {
+  "title": "File:2026-06-27 Moscow electric vehicle parade, display 08 Moskvich 3e.jpg",
+  "license": "CC0",
+  "author": "Retired electrician"
+ },
+ "tesla-model-3-y-eu": {
+  "title": "File:Tesla Model 3, EMS 2024, Essen (P1032260).jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Matti Blume"
+ },
+ "xiaomi-su7-su7-ultra": {
+  "title": "File:(CHN-Shanghai) Private Xiaomi SU7 沪A7WE106 2024-11-24.jpg",
+  "license": "CC BY 4.0",
+  "author": "S5A-0043"
+ },
+ "aito-m5-m7": {
+  "title": "File:Aito M7 001.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Zoerides"
+ }
+}
 
 NAV_MAIN = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/blog/","Блог")]
 NAV_MORE = [("/vin/","VIN"),("/forum/","Форум"),("/safety/","Безопасность"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/b2b/","Дилерам"),("/about.html","О проекте")]
@@ -1240,14 +1331,15 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
     cap_def = 25 if str(m.get('type')) == 'PHEV' else 60
     has_min = bool(obc_n) and bool(dcp_n) and ('мин' in (dcp_s or ''))
     dc_kw = (dcp_n if (dcp_n and dcp_n >= 40 and not has_min) else 0)
-    html_out = ('<h2>Калькулятор зарядки для вашей машины</h2>'
-      '<div class="lcard" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
-      '<p class="note">Подставьте ёмкость своей батареи и тариф — расчёт обновится на ходу. Мощности — пределы именно этой модели.</p>'
-      '<div class="of-grid">'
-      '<label>Батарея, кВт·ч <input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1"></label>'
-      '<label>Тариф, ₽/кВт·ч <input id="cc-tarif" type="number" value="5.50" step="0.1" min="0.5" max="40"></label>'
-      '<label>Расход, кВт·ч/100 км <input id="cc-cons" type="number" value="18" min="5" max="50" step="1"></label>'
-      '</div><div class="tw" id="cc-out"></div></div>')
+    html_out = ('<h2 class="text-lg text-gray-900 mt-8">Калькулятор зарядки для вашей машины</h2>'
+      '<p class="note">Подставьте ёмкость батареи и тариф — расчёт обновляется на ходу. Мощности — пределы именно этой модели.</p>'
+      '<div class="calc-grid" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
+      '<div class="cin">'
+      '<label for="cc-cap">Батарея, кВт·ч</label><input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1">'
+      '<label for="cc-tarif" style="margin-top:12px">Тариф, ₽/кВт·ч</label><input id="cc-tarif" type="number" value="5.50" step="0.1" min="0.5" max="40">'
+      '<label for="cc-cons" style="margin-top:12px">Расход, кВт·ч/100 км</label><input id="cc-cons" type="number" value="18" min="5" max="50" step="1">'
+      '<p class="note" style="margin:12px 0 0">Ночной тариф дома обычно 3–4 ₽, станции в городе 15–25 ₽ — подставьте свой.</p>'
+      '</div><div class="cout" id="cc-out"></div></div>')
     js = (
       '<script>(function(){var box=document.getElementById("chg-calc");if(!box)return;'
       'var obc=parseFloat(box.getAttribute("data-obc")||"0")||0;'
@@ -1269,7 +1361,7 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
       'if(dcw>0){rows+="<tr><td>Быстрая станция (DC)</td><td>"+f1(dcw)+" кВт</td><td>0→80% ≈ "+f0(48/dcw*60)+" мин</td><td>—</td></tr>";}'
       'else if(dmin){rows+="<tr><td>Быстрая станция (DC)</td><td colspan=\\"3\\">по данным модели: "+dmin+"</td></tr>";}'
       'rows+="<tr><td>100 км поездки (дома)</td><td>"+f1(cons)+" кВт·ч</td><td>—</td><td>"+fmt(cons*tarif)+"</td></tr>";'
-      'document.getElementById("cc-out").innerHTML="<table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";}'
+      'document.getElementById("cc-out").innerHTML="<div style=\\"display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px\\">"\n       + "<div class=\\"f\\"><div class=\\"k\\">100 км дома</div><div class=\\"v\\">"+fmt(cons*tarif)+"</div></div>"\n       + (dcw>0?"<div class=\\"f\\"><div class=\\"k\\">0→80% на DC</div><div class=\\"v\\">≈"+f0(48/dcw*60)+" мин</div></div>":"")\n       + (obc>0?"<div class=\\"f\\"><div class=\\"k\\">Полная зарядка дома</div><div class=\\"v\\">"+fmt(cap*tarif)+"</div></div>":"")\n       + "</div><table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";'
       '["cc-cap","cc-tarif","cc-cons"].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener("input",recalc)});recalc();})();</script>')
     return html_out + js
 
@@ -1305,11 +1397,11 @@ def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
     sl = 'models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html'
-    pain_html = ''.join(
-        '<div class="lcard"><span class="pain-id">' + i + '</span><h3>' + html.escape(PAINS[i]["pain"]) + '</h3>'
-        '<p class="note">Кому актуально: ' + html.escape(PAINS[i]["who"]) + '</p>'
+    pain_html = '<div class="prob-grid">' + ''.join(
+        '<div class="pt"><h3><span class="pain-id">' + i + '</span> ' + html.escape(PAINS[i]["pain"]) + '</h3>'
+        '<div class="sol"><b>Кому актуально:</b> ' + html.escape(PAINS[i]["who"]) + '</div>'
         '<div class="sol"><b>Решение:</b> ' + html.escape(PAINS[i]["sol"]) + '</div>'
-        '<p class="src">' + src_html(PAINS[i]) + '</p></div>' for i in ids)
+        '<p class="src">' + src_html(PAINS[i]) + '</p></div>' for i in ids) + '</div>'
     rows = ('<tr><td>AC (медленная)</td><td>' + html.escape(str(m.get("ac") or "—")) + '</td></tr>'
      '<tr><td>DC (быстрая)</td><td>' + html.escape(str(m.get("dc") or "—")) + '</td></tr>'
      '<tr><td>Бортовое зарядное (OBC)</td><td>' + html.escape(str(m.get("obc") or "—")) + '</td></tr>'
@@ -1380,12 +1472,40 @@ def model_page(m, outdir):
         ]
     }, ensure_ascii=False) + '</script>'
     parts = []
-    parts.append('<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight my-4">' + html.escape(pname) + ': какой разъём зарядки, типичные проблемы и решения</h1>')
-    parts.append('<p class="mt-3"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold mr-2">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium mr-2">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' ввоз</span></p>')
-    parts.append('<p class="note">Важно: разъём зависит от рынка вывоза, а не от марки — проверяйте по фото лючка или VIN.</p>')
+    mkey0 = slug(m['brand']) + '-' + slug(m['model'])
+    photo0 = ''
+    if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', mkey0 + '.jpg')):
+        photo0 = '/assets/photos/' + mkey0 + '.jpg'
+    photo_html = (('<img class="mphoto" src="' + photo0 + '" alt="' + html.escape(pname) + ' — фото модели, Wikimedia Commons" loading="lazy">') if photo0 else ('<div class="mphoto-fb"><div>' + html.escape(m['brand'].upper()) + '</div></div>'))
+    parts.append('<div class="mhero"><div>'
+      + '<div class="brand-chip" style="background:#0aad0a">' + html.escape(m['brand']) + '</div>'
+      + '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight my-4">' + html.escape(pname) + ': разъёмы, зарядка и решения</h1>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' ввоз</span></div>'
+      + '<p class="note" style="margin:0 0 14px">Разъём зависит от рынка вывоза, а не от марки — сверьте по фото лючка или VIN.</p>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подобрать комплект</a>'
+      + '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/calculator/">Калькулятор зарядки</a></div>'
+      + '</div><div>' + photo_html + '</div></div>')
     parts.append('<h2 class="text-lg text-gray-900 mt-8">Разъёмы и мощность зарядки</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
     parts.append(port_visual(m))
     if chg_table: parts.append(chg_table)
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">Что понадобится для зарядки этой модели</h2>')
+    _gbt = ('gbt' in str(m.get('ac','')).lower()) or ('gb/t' in str(m.get('ac','')).lower())
+    if _gbt:
+        parts.append('<div class="prob-grid">'
+          + '<div class="pt"><div class="brand-chip" style="background:#0aad0a">Обязательно</div><h3 style="margin-top:8px">Адаптер Type 2 → GB/T</h3>'
+          + '<div class="sol">У машины китайский порт GB/T, а большинство городских станций — Type 2. Без адаптера машина «не видит» 90% станций в городе. Вариант от 4 500 ₽ в <a href="/catalog/">каталоге</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">Дом</div><h3 style="margin-top:8px">Портативная зарядка GB/T 3,5–7 кВт</h3>'
+          + '<div class="sol">Зарядка от любой розетки 220 В: дача, дом, парковка. Спасает зимой и в поездках. От 9 500 ₽ — <a href="/catalog/">портативки</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">В перспективе</div><h3 style="margin-top:8px">Настенная станция 7 кВт</h3>'
+          + '<div class="sol">Ночная зарядка по домашнему тарифу — в 3–4 раза дешевле станций. Смета — в <a href="/pain/domashnie-stancii.html">гайде</a>, монтаж — <a href="/services/ustanovka-stancii.html">услуга</a>.</div></div></div>')
+    else:
+        parts.append('<div class="prob-grid">'
+          + '<div class="pt"><div class="brand-chip" style="background:#0aad0a">Стандарт</div><h3 style="margin-top:8px">Type 2 / CCS2 — без переходников</h3>'
+          + '<div class="sol">Городские станции, домашние wallbox и быстрые CCS2 подходят напрямую — адаптеры не нужны.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">Дом</div><h3 style="margin-top:8px">Домашняя станция 7–22 кВт</h3>'
+          + '<div class="sol">Ускоряет ночную зарядку и дешевле по тарифу. Разбор — в <a href="/pain/domashnie-stancii.html">гайде</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">Дорожный запас</div><h3 style="margin-top:8px">Портативная зарядка Type 2</h3>'
+          + '<div class="sol">Резервный вариант на даче и в дороге: <a href="/catalog/">в каталоге</a> от 7 500 ₽.</div></div></div>')
     parts.append(calc_block(m, obc_n, dcp_n, obc_s, dcp_s))
     docs_block = ''
     docs_items = []
@@ -1408,13 +1528,13 @@ def model_page(m, outdir):
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<h2 class="text-lg text-gray-900 mt-8">Документы и материалы</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
+        docs_block = ('<div class="docs-box"><h2 class="text-lg text-gray-900 mt-0">Скачать руководство и материалы (PDF)</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
           '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
           + site_html + '</div>')
     else:
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт производителя: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<h2>Документы и материалы</h2><div class="lcard docs">'
+        docs_block = ('<div class="docs-box"><h2>Скачать руководство и материалы (PDF)</h2><div class="lcard docs">'
           '<p class="note">Официальное руководство по эксплуатации хранится у дилера и на сайте марки; у параллельного импорта просите сканы у продавца или в клубных чатах.</p>'
           '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div>')
 
@@ -1582,7 +1702,7 @@ def map_page(outdir):
             _stats[c] = len(hits)
     except Exception: pass
     CITY_URLS = [(c, slug(c)+'.html') for c,bb in CITIES]
-    city_links = ', '.join('<a href="/charging/'+u+'">'+c+(_stats.get(c) and ' ('+str(_stats.get(c))+')' or '')+'</a>' for c,u in CITY_URLS)
+    city_links = ', '.join('<a href="/charging/'+u+'">'+c+(_stats.get(c) and ' ('+str(_stats.get(c))+')' or '')+'</a>' for c,u in CITY_URLS if os.path.exists(os.path.join(outdir, u.lstrip('/'))))
     city_btns = ''.join('<button class="cbtn" data-ci="' + str(k) + '">' + c + '</button>' for k, (c,bb) in enumerate(CITIES))
     js = """
 var CITIES=%s;
@@ -1672,6 +1792,19 @@ def search_page(outdir, index_items):
      'document.getElementById("res").innerHTML=out;});</script>')
     write_page(os.path.join(outdir,'search.html'), 'Поиск | Запас хода',
         'Поиск по ' + str(len(MODELS)) + ' моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html', noindex=True)
+
+def credits_page(outdir, write_page):
+    """Лицензии фотографий моделей (Wikimedia Commons)."""
+    items = []
+    for mkey, m in PHOTO_META.items():
+        items.append('<tr><td>' + html.escape(mkey.replace('-', ' ')) + '</td><td><a href="https://commons.wikimedia.org/wiki/' + html.escape(m['title'].replace(' ', '_')) + '" target="_blank" rel="noopener nofollow">' + html.escape(m['title']) + '</a></td><td>' + html.escape(m.get('author','')) + '</td><td>' + html.escape(m.get('license','')) + '</td></tr>')
+    body = ('<h1>Фотографии моделей: источники и лицензии</h1>'
+      '<p class="lede">Фотографии автомобилей на страницах моделей и главной взяты из открытой медиабиблиотеки Wikimedia Commons (Wikimedia Foundation) по лицензии CC. Указываем авторов — так требует лицензия.</p>'
+      '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th>Модель</th><th>Файл на Commons</th><th>Автор</th><th>Лицензия</th></tr>' + ''.join(items) + '</table></div>')
+    write_page(os.path.join(outdir, 'credits.html'), 'Лицензии фотографий — Wikimedia Commons | Запас хода',
+        'Авторы и лицензии фотографий моделей, использованных на сайте zapashoda-ev.ru (Wikimedia Commons).',
+        art_enhance(body, SITE_DOMAIN + '/credits.html', 'Лицензии фотографий', BUILD_DATE), '/credits.html', crumbs=[('', 'Лицензии')])
+    return
 
 # ================= LLMS.TXT =================
 def llms_files(outdir, news):
@@ -1887,13 +2020,13 @@ def _tpl_bundle_card(b):
       '</div></div></div></div></div>')
 
 def _tpl_blog_card(href, kind, title, teaser, img):
-    return ('<div><a href="' + href + '"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition overflow-hidden h-full">'
-      '<img src="' + img + '" alt="' + html.escape(str(title)) + '" loading="lazy" style="width:100%;aspect-ratio:1200/630;object-fit:cover">'
-      '<div class="p-4"><small class="text-gray-500">' + html.escape(kind) + '</small>'
-      '<h3 class="text-base font-semibold text-gray-800 mt-2" style="line-height:1.4">' + html.escape(str(title)) + '</h3>'
-      '<p class="text-sm text-gray-600 mt-2" style="margin:0">' + html.escape(str(teaser)) + '</p>'
-      '<span class="text-green-600 font-semibold text-sm inline-block mt-3">Читать →</span></div></div></a></div>')
-
+    cat = kind if kind else 'Статья'
+    return ('<div><a href="' + href + '" style="text-decoration:none;color:inherit"><div class="blogcard h-full">'
+      + '<span class="cat">' + html.escape(cat) + '</span>'
+      + '<h3>' + html.escape(str(title)) + '</h3>'
+      + '<p>' + html.escape(str(teaser)[:150]) + '</p>'
+      + '<span class="go">Читать статью →</span>'
+      + '</div></a></div>')
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
     blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
@@ -1948,7 +2081,9 @@ def home_page(outdir, news=None):
         meta = html.escape(str(m.get('type') or '')) + ((', '+html.escape(str(m.get('years') or ''))) if m.get('years') else '')
         pop_cards += ('<div><div class="relative rounded-lg break-words border bg-white border-gray-300 card-product">'
           '<div class="flex-auto p-4"><div class="text-center relative flex justify-center">'
-          '<a href="/models/'+sl+'.html"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" loading="lazy" class="w-full h-auto"></a></div>'
+          '<a href="/models/'+sl+'.html" style="display:block">'+
+              (('<img class="mcard-photo" src="/assets/photos/'+sl+'.jpg" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),'assets','photos',sl+'.jpg')) else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>')) +
+              '<div class="p-3" style="padding:12px"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>'
           '<div class="flex flex-col gap-3"><a href="/models/'+sl+'.html" class="text-decoration-none text-gray-500"><small>'+meta+'</small></a>'
           '<h3 class="text-base truncate"><a href="/models/'+sl+'.html" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
           '<div class="flex justify-between items-center"><small class="text-gray-500">'+html.escape(str(m.get('ac') or ''))+'</small>'
@@ -1968,8 +2103,12 @@ def home_page(outdir, news=None):
         if not hit: continue
         m = hit[0]
         sl = slug(m['brand'])+'-'+slug(m['model'])
-        side_cards += ('<a href="/models/'+sl+'.html"><img src="/assets/og/m-'+sl+'.png" alt="'+html.escape(m['brand']+' '+m['model'])+'" class="w-full h-auto rounded-lg border border-gray-200 shadow-sm"></a>')
-    body = ('<section class="mt-4"><div class="container">'
+        _pf = '/assets/photos/'+sl+'.jpg'
+        _has_photo = os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', sl + '.jpg'))
+        side_cards += ('<a href="/models/'+sl+'.html" class="block rounded-lg break-words border bg-white border-gray-300 overflow-hidden hover:border-green-600 hover:shadow-md transition">'
+            + (('<img class="mcard-photo" src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if _has_photo else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>'))
+            + '<div class="p-3"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>')
+    body = ('<section class="mt-4">'
       '<div class="rounded-lg break-words bg-gray-100" style="padding:52px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-1/2 w-full">'
@@ -1980,7 +2119,7 @@ def home_page(outdir, news=None):
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подбор за 30 секунд</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
       '</div></div>'
-      '<div class="md:w-1/2 w-full grid gap-4 grid-cols-2">' + side_cards + '</div>'
+      '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
       '</div></div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
@@ -1988,7 +2127,7 @@ def home_page(outdir, news=None):
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3">' + tools_html + '</div></div></section>'
-      '<section class="lg:my-14 my-8"><div class="container"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
+      '<section class="lg:my-14 my-8"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-2/3 w-full">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
@@ -2101,9 +2240,9 @@ PAIN_INTRO = {
 # --- Расширенные секции болевых статей: кейсы, чек-листы, таблицы (волна рерайта №2, 01.11) ---
 # ===== Инфографики: вставка в статьи (slug → HTML) =====
 INFOGRAPHICS = {
- 'stanciya-otdaet-pol-moshchnosti': ('<div class="infographic"><img src="/assets/infographic/curve.png" alt="Кривая заряда: мощность падает с ростом SOC" loading="lazy" width="1200" height="675"></div>'),
- 'zapas-hoda-zimoy': ('<div class="infographic"><img src="/assets/infographic/zima.png" alt="Зимой доступная ёмкость и скорость зарядки ниже" loading="lazy" width="1200" height="675"></div>'),
- 'poteri-pri-zaryadke': ('<div class="infographic"><img src="/assets/infographic/poteri.png" alt="Четыре источника потерь при зарядке" loading="lazy" width="1200" height="675"></div>'),
+ 'stanciya-otdaet-pol-moshchnosti': ('<div class="facts"><div class="f"><div class="k">Реальность сети</div><div class="v">до 26%</div><div class="d">станций «мертвы» или отказывают — проверяйте статус в приложении оператора до выезда</div></div><div class="f"><div class="k">Кривая заряда</div><div class="v">50% → падает</div><div class="d">после 50–60% SOC мощность плавно снижается, на 80–90% — сильно</div></div><div class="f"><div class="k">Правило</div><div class="v">0→60% быстрее</div><div class="d">две дозарядки до 60% дают больше км за час ожидания, чем одна до 100%</div></div><div class="f"><div class="k">Совет</div><div class="v">+10 минут</div><div class="d">планируйте дозарядку по карте и оставляйте запас на неработающую станцию</div></div></div>'),
+ 'zapas-hoda-zimoy': ('<div class="facts"><div class="f"><div class="k">При −10°C</div><div class="v">−20–30%</div><div class="d">от паспортного запаса у машин с тепловым насосом (Tesla, Zeekr, Voyah)</div></div><div class="f"><div class="k">При −20°C и ниже</div><div class="v">−40–50%</div><div class="d">особенно на коротких поездках с частыми прогревами</div></div><div class="f"><div class="k">Главный «пожиратель»</div><div class="v">печка</div><div class="d">ТЭН без теплового насоса съедает до 30–40 км пробега</div></div><div class="f"><div class="k">Приём</div><div class="v">+7–15%</div><div class="d">предварительный прогрев от розетки перед выездом возвращает запас</div></div></div>'),
+ 'poteri-pri-zaryadke': ('<div class="facts"><div class="f"><div class="k">Типовые потери</div><div class="v">5–15%</div><div class="d">кВт·ч со счётчика не «приходит» в батарею — это преобразование и тепло</div></div><div class="f"><div class="k">AC-зарядка</div><div class="v">3–8%</div><div class="d">выпрямитель в машине, длинные сессии — потери в кабеле</div></div><div class="f"><div class="k">DC-зарядка</div><div class="v">4–9%</div><div class="d">преобразование на станции, охлаждение</div></div><div class="f"><div class="k">Зимой</div><div class="v">+3–6%</div><div class="d">батарея греется во время заряда — часть энергии уходит на это</div></div></div>'),
 }
 
 PAIN_EXTRA = {'poteri-pri-zaryadke': ('<h2>Куда деваются кВт·ч со счётчика</h2><p>Счётчик станции намотал 50 кВт·ч, а «пришло» в батарею 45. Эти 5 кВт·ч не пропали и не «украдены» — это физика процесса, и у неё четыре понятных источника.</p><h2>Четыре источника потерь</h2><ol><li><b>Преобразование.</b> Переменный ток в постоянный превращает выпрямитель — на AC-зарядке это бортовой зарядник машины (КПД около 92–95%), на DC — станция (91–95%). Каждый процент — это греющийся прибор.</li><li><b>Прогрев и бортовое потребление.</b> Пока машина заряжается, она тратит энергию на климат, термоконтур батареи, электронику. Зимой эта доля заметно больше — гайд <a href="/pain/zapas-hoda-zimoy.html">о зимнем запасе хода</a>.</li><li><b>Кабель и соединения.</b> Сопротивление кабеля и клемм греет их, а не батарею. На плохих контактах потери растут — и греется то, что не должно.</li><li><b>Балансировка ячеек.</b> В конце заряда BMS выравнивает ячейки — на этом этапе потери максимальны. Ещё один аргумент против «дозаряда до 100%» без нужды.</li></ol><h2>Когда потери больше всего</h2><ul><li>Медленная зарядка от бытовой розетки: длинный тонкий кабель и слабый выпрямитель — до 10–15% потерь. Быстрая DC — обычно 5–8%.</li><li>Мороз: часть энергии уходит на прогрев батареи — закладывайте 10–20% сверх плана на зимние зарядки.</li><li>Дозаряд «хвоста» с 90 до 100%: почти весь этот отрезок — балансировка.</li></ul><h2>Как считать честную стоимость километра</h2><p>Считайте по счётчику станции, а не по ёмкости батареи: реальная цена километра на 5–10% выше «табличной». Удобнее всего — в <a href="/calculator/">калькуляторе</a>: он учитывает цену сети и сценарий (дом/столб/трасса). Полный разбор цен — в гайде <a href="/pain/stoimost-zaryadki.html">сколько стоит зарядить электромобиль</a>.</p>'),
@@ -2210,7 +2349,7 @@ PAIN_EXTRA = {'poteri-pri-zaryadke': ('<h2>Куда деваются кВт·ч 
 
 # ===== PAIN_EXTRA2: экспертные секции (фев-ноя 2026, источники) =====
 PAIN_EXTRA2 = {'ne-zaryazhaetsya': ('<h2>Кейс из сервиса: 12 В — узкое место зимой</h2>' '<p>Из практики сервиса по Nissan Leaf: зимой приводят два электрокара, которые «сели совсем». Причина — машина в мороз грелась, израсходовала тяговую батарею, та подсадила 12-вольтовую, а без неё не работают ни нейтралка, ни разблокировка. Лечение — обычное 12-вольтовое зарядное устройство, после которого машина оживает (сервис Leaf, <a href="https://www.bfm.ru/news/541558" rel="noopener nofollow">BFM.ru</a>). Подробности — в <a href="/pain/12v-akb.html">гайде по 12 В</a>.</p>'),
- 'domashnie-stancii': ('<div class="infographic"><img src="/assets/infographic/smeta.png" alt="Смета установки зарядной станции под ключ, 2026" loading="lazy" width="1200" height="675"></div>' '<h2>Смета «под ключ»: реальные цифры 2026</h2>' '<table><tr><th>Статья</th><th>Стоимость</th></tr><tr><td>Станция AC 7–22 кВт</td><td>34,5–77 тыс ₽ (премиум — до 160–200 тыс)</td></tr><tr><td>Кабель ВВГнг-LS 3×6 мм²</td><td>300–600 ₽/м</td></tr><tr><td>УЗО типа B + дифавтомат</td><td>≈6,5 тыс ₽</td></tr><tr><td>Прокладка кабеля + монтаж</td><td>18–50 тыс ₽</td></tr><tr><td>Пусконаладка</td><td>≈5 тыс ₽</td></tr><tr><td><b>Итого, частный дом</b></td><td><b>80–120 тыс ₽</b></td></tr></table>' '<p>В ЖК с согласованиями (проект, АПС, кабель нг(А)-HF, разрешение УК) — от 237 тыс ₽; сложные объекты — до 400–500 тыс ₽ (кейсы монтажников: <a href="https://xn--80agenibdvfkjdv4m.xn--p1ai/zaryadnaya-stanciya-dlya-doma" rel="noopener nofollow">электропаркинг.рф</a>; разбор процедур — <a href="https://novostroyrf.ru/articles/tekhnologii/uvelichenie-moshchnosti-v-chastnom-dome-dlya-zaryadki-elektromobilya/" rel="noopener nofollow">novostroyrf</a>). Услуги — в <a href="/services/">разделе услуг</a>.</p>' '<h2>Красные флаги монтажников</h2>' '<ol><li>«Под ключ за 50 тыс» — тонкий кабель, минимум защит, монтаж не по ПУЭ: только станция уже 30–77 тыс ₽.</li><li>Отказ от УЗО типа B — повод сменить подрядчика.</li><li>В частном доме согласование не нужно; в ЖК — разрешение УК обязательно.</li></ol>'),
+ 'domashnie-stancii': ('<div class="facts"><div class="f"><div class="k">Частный дом</div><div class="v">80–120 тыс ₽</div><div class="d">под ключ со станцией 7 кВт и льготным подключением</div></div><div class="f"><div class="k">ЖК / паркинг</div><div class="v">237–500 тыс ₽</div><div class="d">согласования, проект, АПС, лицензия — 2,5+ месяца</div></div><div class="f"><div class="k">Оборудование</div><div class="v">34,5–77 тыс</div><div class="d">станция AC 7–22 кВт; премиум с балансировкой — до 160–200 тыс</div></div><div class="f"><div class="k">Сигнал тревоги</div><div class="v">«50 тыс под ключ»</div><div class="d">только качественная станция уже 30–77 тыс — экономят на кабеле и защитах</div></div></div>' '<h2>Смета «под ключ»: реальные цифры 2026</h2>' '<table><tr><th>Статья</th><th>Стоимость</th></tr><tr><td>Станция AC 7–22 кВт</td><td>34,5–77 тыс ₽ (премиум — до 160–200 тыс)</td></tr><tr><td>Кабель ВВГнг-LS 3×6 мм²</td><td>300–600 ₽/м</td></tr><tr><td>УЗО типа B + дифавтомат</td><td>≈6,5 тыс ₽</td></tr><tr><td>Прокладка кабеля + монтаж</td><td>18–50 тыс ₽</td></tr><tr><td>Пусконаладка</td><td>≈5 тыс ₽</td></tr><tr><td><b>Итого, частный дом</b></td><td><b>80–120 тыс ₽</b></td></tr></table>' '<p>В ЖК с согласованиями (проект, АПС, кабель нг(А)-HF, разрешение УК) — от 237 тыс ₽; сложные объекты — до 400–500 тыс ₽ (кейсы монтажников: <a href="https://xn--80agenibdvfkjdv4m.xn--p1ai/zaryadnaya-stanciya-dlya-doma" rel="noopener nofollow">электропаркинг.рф</a>; разбор процедур — <a href="https://novostroyrf.ru/articles/tekhnologii/uvelichenie-moshchnosti-v-chastnom-dome-dlya-zaryadki-elektromobilya/" rel="noopener nofollow">novostroyrf</a>). Услуги — в <a href="/services/">разделе услуг</a>.</p>' '<h2>Красные флаги монтажников</h2>' '<ol><li>«Под ключ за 50 тыс» — тонкий кабель, минимум защит, монтаж не по ПУЭ: только станция уже 30–77 тыс ₽.</li><li>Отказ от УЗО типа B — повод сменить подрядчика.</li><li>В частном доме согласование не нужно; в ЖК — разрешение УК обязательно.</li></ol>'),
  'stoimost-zaryadki': ('<h2>Экономика 2026: есть ли смысл на цифрах</h2>' '<p>Кроссовер с расходом 20 кВт·ч/100 км: ночная домашняя розетка (~4 ₽/кВт·ч) — около 80 ₽ за 100 км; городская медленная станция (~15 ₽/кВт·ч) — 300 ₽; быстрый хаб (~22 ₽/кВт·ч) — 440 ₽. Бензин АИ-95 (~70 ₽/л, 10 л/100 км) — около 700 ₽. С учётом нулевого транспортного налога и бесплатных парковок в Москве годовая экономия может достигать 200–300 тыс ₽ против бензинового аналога (<a href="https://trends.rbc.ru/trends/innovation/cmrm/6a3a4f7a9a79471294c087f1" rel="noopener nofollow">РБК Тренды, обновлено 29.06.2026</a>). Посчитайте под свой тариф — <a href="/calculator/">калькулятор</a>.</p>')
 }
 
@@ -2378,7 +2517,7 @@ def city_charging_pages(outdir):
             '<td>'+(str(s.get('pw'))+' кВт' if s.get('pw') else '—')+'</td>'
             '<td>'+html.escape(', '.join(s.get('s') or []))+'</td></tr>'
             for s in st_sorted)
-        city_links_all = ', '.join('<a href="/charging/'+slug(cc)+'.html">'+cc+'</a>' for cc,bb2 in CITIES if cc != c)
+        city_links_all = ', '.join('<a href="/charging/'+slug(cc)+'.html">'+cc+'</a>' for cc,bb2 in CITIES if cc != c and os.path.exists(os.path.join(outdir,'charging',slug(cc)+'.html')))
         body = (
             '<div class="hero"><div class="kicker">Карта станций</div><h1>Зарядные станции ' + prep + '</h1><p class="lede">' + str(n) + ' станций: сети, разъёмы и мощности — по данным OpenStreetMap.</p></div>'
             '<div class="article">'
@@ -2410,7 +2549,7 @@ def city_charging_pages(outdir):
         CITY_URLS.append((c, '/charging/' + sl + '.html'))
     print('город-страниц:', len(CITY_URLS))
 
-def build_sitemap(slugs_model, news, vin_slugs):
+def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/models/', SITE_DOMAIN+'/forum/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/']
     urls += [SITE_DOMAIN+'/catalog/'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
@@ -2424,7 +2563,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/open-data/']
     urls += [SITE_DOMAIN+'/quiz/']
     urls += [SITE_DOMAIN+'/app/']
-    urls += [SITE_DOMAIN+u for _,u in CITY_URLS]
+    urls += [SITE_DOMAIN+u for _,u in CITY_URLS if os.path.exists(os.path.join(outdir, u.lstrip('/')))]
     urls += [SITE_DOMAIN+'/compare/']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
@@ -2571,7 +2710,7 @@ def quiz_page(outdir):
       'document.getElementById("q-out").scrollIntoView({behavior:"smooth"});}'
       'document.addEventListener("DOMContentLoaded",function(){qFillBrand();qFillModel();});</script>')
     form = _cat.order_form_html('Квиз: подберите модель выше')
-    body = ('<section class="lg:my-10 my-6"><div class="container">'
+    body = ('<section class="lg:my-10 my-6"><div class="quiz-wrap">'
       '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
       '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Подбор за 30 секунд</span>'
       '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Подбор комплекта зарядки под вашу модель</h1>'
@@ -3129,6 +3268,11 @@ def main():
         idst = os.path.join(outdir,'assets','infographic')
         shutil.rmtree(idst, ignore_errors=True)
         shutil.copytree(inf_dir, idst)
+    ph_dir = os.path.join(repo_root,'assets','photos')
+    if os.path.isdir(ph_dir):
+        pdst = os.path.join(outdir,'assets','photos')
+        shutil.rmtree(pdst, ignore_errors=True)
+        shutil.copytree(ph_dir, pdst)
     import glob as _glob
     from PIL import Image as _Im
     for _p in _glob.glob(os.path.join(outdir,'assets','sku','*.png')):
@@ -3234,6 +3378,7 @@ def main():
     services.blog_build(outdir, write_page)
     services.safety_build(outdir, write_page)
     cost_page(outdir, write_page)
+    credits_page(outdir, write_page)
     services.b2b_build(outdir, write_page)
     services.calculator_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
@@ -3253,7 +3398,7 @@ def main():
     quiz_page(outdir)
     app_page(outdir)
     compare_page(outdir)
-    with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs))
+    with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs, outdir))
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
     print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
 
