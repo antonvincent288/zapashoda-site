@@ -785,3 +785,6 @@ html.tg-mode .zs-stbar { display:none !important; }
   }
   .mcard:hover .mcard-photo { transform:scale(1.02); }
 }
+
+/* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
+@media (min-width:769px) { .zs-off { display:none !important; } }
