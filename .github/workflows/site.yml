@@ -48,3 +48,17 @@ jobs:
           cname: zapashoda-ev.ru
       - name: Ping IndexNow (Yandex/Bing)
         run: python3 scripts/indexnow_ping.py
+
+  lighthouse:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lighthouse audit (info only)
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://zapashoda-ev.ru/
+            https://zapashoda-ev.ru/catalog/
+            https://zapashoda-ev.ru/models/zeekr-001-001-fr.html
+            https://zapashoda-ev.ru/charging/
+          uploadArtifacts: true

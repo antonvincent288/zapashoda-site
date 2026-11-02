@@ -637,8 +637,8 @@ def header_html(active):
       '<div style="display:flex;gap:16px;flex-wrap:wrap">'+top_links+'</div></div></div>'
       '<div class="zs-nav"><div class="container">'
       '<a class="zs-brand" href="/" title="Запас хода">'+LOGO_SVG+'Запас хода <span>EV</span></a>'
-      '<form class="zs-search" action="/search.html" method="get" role="search">'
-      '<input type="search" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
+      '<form class="zs-search" action="/search.html" method="get" role="search">''<datalist id="q-list">'+''.join('<option value="'+m['brand']+'">' for m in MODELS[:60])+'</datalist>'
+      '<input type="search" list="q-list" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
       '<button type="submit" aria-label="Найти"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
       '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">Подбор за 30 сек</a>'
       '<button class="zs-burger" type="button" data-open-menu aria-label="Меню"><span></span><span></span><span></span></button></div>'
@@ -837,7 +837,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<meta name="color-scheme" content="light">'
      '<title>' + html.escape(title) + '</title>'
      '<meta name="description" content="' + html.escape(clamp_desc(desc)) + '">'
-     '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">'
+     '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#0aad0a">'
      '<meta property="og:type" content="article"><meta property="og:image" content="' + SITE_DOMAIN + og + '">'      '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
      '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'      '<meta name="twitter:card" content="summary_large_image">'      '<meta name="twitter:title" content="' + html.escape(title) + '">'      '<meta name="twitter:description" content="' + html.escape(clamp_desc(desc)) + '">'      '<meta name="twitter:image" content="' + SITE_DOMAIN + og + '">'
@@ -847,7 +847,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '</body></html>')
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script src="/assets/brand/boot.js" defer></script></body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
@@ -1601,7 +1601,7 @@ function showCity(idx){
 function draw(){
   if(!ALL||!mymap)return;
   if(layer)mymap.removeLayer(layer);
-  layer=L.layerGroup().addTo(mymap);
+  layer=(typeof L.markerClusterGroup==='function')?L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:44}).addTo(mymap):L.layerGroup().addTo(mymap);
   var b=mymap.getBounds(),n=0,mk=0;
   ALL.stations.forEach(function(s){
     if(s.lat>=b.getSouth()&&s.lat<=b.getNorth()&&s.lon>=b.getWest()&&s.lon<=b.getEast()){
@@ -1646,7 +1646,10 @@ document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click
      '<p class="note">База данных © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). Картографическая основа © Яндекс. База обновляется автоматически.</p>'
      '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/pains.html">Проблемы и решения</a></div>'
      '<link rel="stylesheet" href="/assets/leaflet/leaflet.css">'
-     '<script src="/assets/leaflet/leaflet.js"></script>'
+     '<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.css">'
+      '<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css">'
+      '<script src="/assets/leaflet/leaflet.js"></script>'
+      '<script src="/assets/leaflet/leaflet.markercluster.js"></script>'
      '<script>' + js + '</script>')
     write_page(os.path.join(outdir,'charging','index.html'), 'Карта зарядных станций для электромобилей | Запас хода',
         'Карта зарядных станций на Яндекс.Картах: Москва, Санкт-Петербург, Екатеринбург, Казань и другие города. Список станций с адресами, операторами и разъёмами.',
@@ -1968,7 +1971,7 @@ def home_page(outdir, news=None):
       '<div class="rounded-lg break-words bg-gray-100" style="padding:52px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-1/2 w-full">'
-      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · ' + str(len(MODELS)) + ' моделей в России</span>'
+      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · <span data-count="' + str(len(MODELS)) + '">' + str(len(MODELS)) + '</span> моделей в России</span>'
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5">' + html.escape(CFG_HERO_TITLE or 'Как зарядить ваш электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
       '<div class="flex gap-3 flex-wrap">'
@@ -2288,6 +2291,24 @@ def misc_pages(outdir):
         f.write('\n'.join(lines) + '\n')
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
     with open(os.path.join(outdir,'a1c7f3d9e2b5604f8d2a71c9be43f560.txt'),'w',encoding='utf-8') as f: f.write('a1c7f3d9e2b5604f8d2a71c9be43f560')
+    with open(os.path.join(outdir,'sw.js'),'w',encoding='utf-8') as f:
+        f.write("const CACHE='zsh-v2';\n"
+                "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/pain/','/assets/og/default.png'])));});\n"
+                "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));});\n"
+                "self.addEventListener('fetch',e=>{\n"
+                "  const url=new URL(e.request.url);\n"
+                "  if(e.request.mode==='navigate'){\n"
+                "    e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return r;}).catch(()=>caches.match(e.request)));\n"
+                "    return;\n"
+                "  }\n"
+                "  if(url.origin===location.origin&&(url.pathname.startsWith('/assets/')||url.pathname==='/charging/stations.json')){\n"
+                "    e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return r;})));\n"
+                "    return;\n"
+                "  }\n"
+                "});\n")
+    with open(os.path.join(outdir,'manifest.json'),'w',encoding='utf-8') as f:
+        f.write('{"name":"Запас хода — гид по электромобилю","short_name":"Запас хода","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#0aad0a","icons":[{"src":"/assets/brand/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/brand/icon-512.png","sizes":"512x512","type":"image/png"}]}')
+
     body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html', noindex=True)
 
@@ -2405,9 +2426,8 @@ def build_sitemap(slugs_model, news, vin_slugs):
     return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc>'+lm+'</url>' for u in urls) + '</urlset>'
 
 def favicon_files(outdir):
-    svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1d1d1f"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
-    open(os.path.join(outdir,'favicon.svg'),'w',encoding='utf-8').write(svg)
-    manifest = json.dumps({'name':'Запас хода','short_name':'Запас хода','icons':[{'src':'/icon-192.png','sizes':'192x192','type':'image/png'}],'theme_color':'#1d1d1f','background_color':'#f5f5f7','display':'standalone'}, ensure_ascii=False)
+    svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#0aad0a" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#0aad0a"/><path d="M33 18 L23 36 h8 l-5 12 15-17 h-8 z" fill="#0aad0a"/></svg>'
+    manifest = json.dumps({'name':'Запас хода — гид по электромобилю','short_name':'Запас хода','icons':[{'src':'/icon-192.png','sizes':'192x192','type':'image/png'},{'src':'/assets/brand/icon-512.png','sizes':'512x512','type':'image/png'}],'theme_color':'#0aad0a','background_color':'#ffffff','display':'standalone'}, ensure_ascii=False)
     open(os.path.join(outdir,'site.webmanifest'),'w',encoding='utf-8').write(manifest)
     try:
         from PIL import Image, ImageDraw
@@ -2415,9 +2435,10 @@ def favicon_files(outdir):
             im = Image.new('RGBA',(sz,sz),(0,0,0,0))
             dr = ImageDraw.Draw(im)
             k = sz/64.0
-            dr.rounded_rectangle([0,0,sz-1,sz-1], radius=max(2,int(14*k)), fill=(29,29,31,255))
-            pts = [(37,8),(16,38),(30,38),(25,56),(50,22),(34,22),(42,8)]
-            dr.polygon([(x*k,y*k) for x,y in pts], fill=(255,255,255,255))
+            dr.rounded_rectangle([4*k,16*k,54*k,50*k], radius=max(2,int(9*k)), outline=(10,173,10,255), width=max(2,int(5*k)))
+            dr.rounded_rectangle([54*k,26*k,61*k,40*k], radius=max(1,int(3*k)), fill=(10,173,10,255))
+            pts = [(33,18),(23,36),(31,36),(26,48),(41,31),(33,31),(41,18)]
+            dr.polygon([(x*k,y*k) for x,y in pts], fill=(10,173,10,255))
             return im
         _icon(180).save(os.path.join(outdir,'apple-touch-icon.png'))
         _icon(192).save(os.path.join(outdir,'icon-192.png'))
@@ -3012,6 +3033,13 @@ def main():
         dst = os.path.join(outdir,'assets','sku')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(sku_dir, dst)
+    # бренд: иконки PWA + favicon
+    br_dir = os.path.join(repo_root,'assets','brand')
+    if os.path.isdir(br_dir):
+        shutil.copytree(br_dir, os.path.join(outdir,'assets','brand'), dirs_exist_ok=True)
+    fav = os.path.join(repo_root,'favicon.ico')
+    if os.path.exists(fav):
+        shutil.copy(fav, os.path.join(outdir,'favicon.ico'))
     # инфографики статей (assets/infographic)
     inf_dir = os.path.join(repo_root,'assets','infographic')
     if os.path.isdir(inf_dir):
