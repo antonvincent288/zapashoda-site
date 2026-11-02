@@ -162,10 +162,24 @@ def catalog_block_for(m, pname):
     skus = MODEL_SKU.get(m['brand'] + '|' + m['model'], [])
     if not skus:
         return ''
-    cards = bundle_card_html(bundle_for(m)) + ''.join(shop_card_html(PIDX[i['id']], i['badge']) for i in skus)
+    ac_s = str(m.get('ac') or '')
+    one_phase = (('GB/T' in ac_s) and ('Type 2' not in ac_s) and ('Type 1' not in ac_s) and ('NACS' not in ac_s)) or (str(m.get('type')) in ('PHEV', 'EREV'))
+    def _heavy(i):
+        p = PIDX.get(i['id']) or {}
+        nm = str(p.get('name') or '')
+        if p.get('cat') != 'Станции':
+            return False
+        return bool(re.search(r'(11|22)\s*кВт', nm))
+    shown = [i for i in skus if not (one_phase and _heavy(i))]
+    if not shown:
+        shown = skus
+    cards = bundle_card_html(bundle_for(m)) + ''.join(shop_card_html(PIDX[i['id']], i['badge']) for i in shown)
     mline = 'gbt' if ('GB/T' in str(m.get('dc', '')) or 'GB/T' in str(m.get('ac', ''))) else 'eu'
     qmodel = html.escape(pname).replace(' ', '%20').replace('&', '%26')
-    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Весь каталог: <a href="/catalog/?line=' + mline + '&model=' + qmodel + '">аксессуары для ' + html.escape(pname) + '</a>.</p><div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
+    filter_note = ''
+    if one_phase:
+        filter_note = '<p class="note"><b>Фильтр совместимости:</b> для этой машины станции 11–22 кВт (3 фазы) скрыты — однофазный бортовой зарядер не даст прироста скорости. Показаны только 1-фазные 7 кВт решения и адаптеры.</p>'
+    return ('<h2>Что докупить для ' + html.escape(pname) + '</h2><p class="note">Подбор — по разъёмам этой модели. Комплект дешевле позиций по отдельности. Весь каталог: <a href="/catalog/?line=' + mline + '&model=' + qmodel + '">аксессуары для ' + html.escape(pname) + '</a>.</p>' + filter_note + '<div class="pc-grid">' + cards + '</div>' + order_form_html(pname))
 
 def faq_html(p):
     qs = FAQS.get(p['cat'], []) + [['Сколько стоит доставка?','Стоимость и способ доставки согласует дилер при подтверждении заявки: обычно это встреча в вашем городе или передача через салон-партнёр.'],['Как оплатить?','Оплатите дилеру при получении: детали (наличные/перевод) согласуете при встрече.'],['Как оформляется заявка','Отправляете заявку с телефоном — подтверждаем наличие и доставку в ваш город через ближайший салон-дилера. Оплата — при получении, без предоплаты.']]
@@ -243,7 +257,7 @@ def catalog_build(outdir):
       '<div class="flex flex-wrap gap-2 my-4" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div>'
       '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>' )
 
-    phev_links = ''.join('<a class="fchip" href="/models/'+s+'.html">'+t+'</a>' for s,t in [
+    phev_links = ''.join('<a class="fchip" href="/models/'+s+'/">'+t+'</a>' for s,t in [
         ('geely-ex5-monjaro-hi-p-phev','Geely Monjaro Hi-P'),
         ('byd-song-plus-dm-i-sealion-05','BYD Song Plus DM-i'),
         ('chery-tiggo-7-8-9-c-dm-phev','Chery Tiggo C-DM'),

@@ -1450,7 +1450,8 @@ MODEL_EXTRA = {
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
-    sl = 'models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html'
+    s_m = slug(m['brand']) + '-' + slug(m['model'])
+    sl = 'models/' + s_m  # канонический URL: /models/{slug}/
     pain_html = '<div class="prob-grid">' + ''.join(
         '<div class="pt"><h3><span class="pain-id">' + i + '</span> ' + html.escape(PAINS[i]["pain"]) + '</h3>'
         '<div class="sol"><b>Кому актуально:</b> ' + html.escape(PAINS[i]["who"]) + '</div>'
@@ -1613,7 +1614,7 @@ def model_page(m, outdir):
         "dateModified": BUILD_DATE,
         "author": {"@type": "Organization", "name": SITE_NAME},
         "publisher": {"@type": "Organization", "name": SITE_NAME},
-        "mainEntityOfPage": SITE_DOMAIN + "/models/" + slug(m['brand']) + "-" + slug(m['model']) + ".html"
+        "mainEntityOfPage": SITE_DOMAIN + "/models/" + slug(m['brand']) + "-" + slug(m['model']) + "/"
     }, ensure_ascii=False) + '</script>'
     parts.append(model_ld)
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
@@ -1627,11 +1628,24 @@ def model_page(m, outdir):
     parts.append(MODEL_EXTRA.get(slug(m['brand'])+'-'+slug(m['model']),'').replace('{BD}',BUILD_DATE))
     parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Сравнить с другой моделью</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
     body = ''.join(parts)
-    write_page(os.path.join(outdir, sl),
-        (pname if len(pname) <= 55 else pname[:52].rstrip() + '…') + (' — разъём и проблемы' if len(pname) > 37 else ' — разъём и проблемы | Запас хода'),
-        'Разъёмы AC/DC ' + pname + ' (' + m["years"] + '), зарядка от розетки и на станциях, реальные проблемы владельцев и проверенные решения. ' + grp + '-стандарт, ' + m["freq"] + ' ввоз в РФ.',
-        body, '/' + sl, og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
+    ac_s = str(m.get('ac') or '')
+    is_gbt = ('GB/T' in ac_s) and ('Type 2' not in ac_s) and ('Type 1' not in ac_s) and ('NACS' not in ac_s)
+    adapter_word = 'GB/T' if is_gbt else 'совместимый адаптер'
+    ptitle = pname if len(pname) <= 45 else pname[:43].rstrip() + '…'
+    write_page(os.path.join(outdir, 'models', s_m, 'index.html'),
+        'Зарядка для ' + ptitle + ': разъёмы, кабели, переходники | Запас Хода',
+        'Решение проблем с зарядкой ' + pname + ' в России. Какая мощность нужна, сколько времени заряжается от розетки 220В и какой адаптер ' + adapter_word + ' купить.',
+        body, '/models/' + s_m + '/', og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
         crumbs=[('/','Модели'),('',pname)])
+    # старый .html -> 301-подобный редирект на новую структуру
+    os.makedirs(os.path.join(outdir, 'models'), exist_ok=True)
+    open(os.path.join(outdir, 'models', s_m + '.html'), 'w', encoding='utf-8').write(
+        '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow">'
+        '<link rel="canonical" href="' + SITE_DOMAIN + '/models/' + s_m + '/">'
+        '<meta http-equiv="refresh" content="0; url=/models/' + s_m + '/">'
+        '<script>location.replace("/models/' + s_m + '/");</script>'
+        '<title>' + html.escape(pname) + ' — страница переехала</title></head><body>'
+        '<p>Страница модели «' + html.escape(pname) + '» теперь здесь: <a href="/models/' + s_m + '/">/models/' + s_m + '/</a></p></body></html>')
     return sl
 
 # ================= НОВОСТИ =================
@@ -1880,7 +1894,7 @@ def llms_files(outdir, news):
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
         if hit and hit[0]['model'] not in seen:
             m = hit[0]; seen.add(m['model'])
-            txt += '- [' + m['brand'] + ' ' + m['model'] + '](' + SITE_DOMAIN + '/models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html): разъёмы ' + str(m.get('ac') or '?') + ' / ' + str(m.get('dc') or '?') + '\n'
+            txt += '- [' + m['brand'] + ' ' + m['model'] + '](' + SITE_DOMAIN + '/models/' + slug(m['brand']) + '-' + slug(m['model']) + '/): разъёмы ' + str(m.get('ac') or '?') + ' / ' + str(m.get('dc') or '?') + '\n'
     txt += '\n## Руководства по проблемам\n\n'
     for sl,t,d,_ in PAIN_ARTICLES: txt += '- [' + t + '](' + SITE_DOMAIN + '/pain/' + sl + '.html): ' + d + '\n'
     txt += '\n## Быстрые ответы (краткие выводы для цитирования)\n\n'
@@ -2135,13 +2149,13 @@ def home_page(outdir, news=None):
         meta = html.escape(str(m.get('type') or '')) + ((', '+html.escape(str(m.get('years') or ''))) if m.get('years') else '')
         pop_cards += ('<div><div class="relative rounded-lg break-words border bg-white border-gray-300 card-product">'
           '<div class="flex-auto p-4"><div class="text-center relative flex justify-center">'
-          '<a href="/models/'+sl+'.html" style="display:block">'+
+          '<a href="/models/'+sl+'/" style="display:block">'+
               (('<img class="mcard-photo" src="/assets/photos/'+sl+'.jpg" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),'assets','photos',sl+'.jpg')) else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>')) +
               '<div class="p-3" style="padding:12px"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>'
-          '<div class="flex flex-col gap-3"><a href="/models/'+sl+'.html" class="text-decoration-none text-gray-500"><small>'+meta+'</small></a>'
-          '<h3 class="text-base truncate"><a href="/models/'+sl+'.html" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
+          '<div class="flex flex-col gap-3"><a href="/models/'+sl+'/" class="text-decoration-none text-gray-500"><small>'+meta+'</small></a>'
+          '<h3 class="text-base truncate"><a href="/models/'+sl+'/" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
           '<div class="flex justify-between items-center"><small class="text-gray-500">'+html.escape(str(m.get('ac') or ''))+'</small>'
-          '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'.html">Разъёмы →</a></div>'
+          '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'/">Разъёмы →</a></div>'
           '</div></div></div></div>')
     bcounts = {}
     for m in MODELS:
@@ -2159,7 +2173,7 @@ def home_page(outdir, news=None):
         sl = slug(m['brand'])+'-'+slug(m['model'])
         _pf = '/assets/photos/'+sl+'.jpg'
         _has_photo = os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', sl + '.jpg'))
-        side_cards += ('<a href="/models/'+sl+'.html" class="block rounded-lg break-words border bg-white border-gray-300 overflow-hidden hover:border-green-600 hover:shadow-md transition">'
+        side_cards += ('<a href="/models/'+sl+'/" class="block rounded-lg break-words border bg-white border-gray-300 overflow-hidden hover:border-green-600 hover:shadow-md transition">'
             + (('<img class="mcard-photo" src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if _has_photo else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>'))
             + '<div class="p-3"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>')
     body = ('<section class="mt-4">'
@@ -2619,7 +2633,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/app/']
     urls += [SITE_DOMAIN+u for _,u in CITY_URLS if os.path.exists(os.path.join(outdir, u.lstrip('/')))]
     urls += [SITE_DOMAIN+'/compare/']
-    urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
+    urls += [SITE_DOMAIN+'/'+s+'/' for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
     urls += [SITE_DOMAIN+news_slug_page(it) for it in news]
     urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
@@ -2690,7 +2704,7 @@ def cost_page(outdir, write_page):
             '<li><b>Потери:</b> 5–15% кВт·ч уходит в тепло и преобразование — <a href="/pain/poteri-pri-zaryadke.html">разбор потерь</a>.</li></ol>')
         body_parts.append('<h2>Что докупить ' + name + '</h2>')
         prod = catalog.catalog_html_for(mkey) if hasattr(catalog, 'catalog_html_for') else ''
-        body_parts.append('<p>Разъёмы, мощности и совместимость — на <a href="/models/' + mkey + '.html">странице модели ' + name + '</a>. Что докупить (адаптеры, кабели, портативные зарядки) — в <a href="/catalog/">каталоге</a>; подбор за 30 секунд — <a href="/quiz/">квиз</a>.</p>')
+        body_parts.append('<p>Разъёмы, мощности и совместимость — на <a href="/models/' + mkey + '/">странице модели ' + name + '</a>. Что докупить (адаптеры, кабели, портативные зарядки) — в <a href="/catalog/">каталоге</a>; подбор за 30 секунд — <a href="/quiz/">квиз</a>.</p>')
         if prod:
             body_parts.append(prod)
         body_parts.append('<div class="cta"><a class="btn lime" href="/calculator/">Калькулятор под свой тариф</a><a class="btn ghost" href="/charging/">Карта станций рядом</a></div>')
@@ -2747,7 +2761,7 @@ def quiz_page(outdir):
       'var b=document.getElementById("q-brand").value;'
       'var i=parseInt(document.getElementById("q-model").value,10);'
       'var x=QD.brands[b][i];if(!x)return;'
-      'var slug=x.slug;var url="/models/"+slug+".html";'
+      'var slug=x.slug;var url="/models/" + slug + "/";'
       'var line=(x.type==="PHEV")?"phev":((String(x.ac||"").indexOf("GB/T")>=0)?"gbt":"eu");'
       'var bd=QBD.filter(function(y){return y.line===line})[0];'
       'var ps=window.OF_PRODUCTS||[];var hts="";'
@@ -2812,7 +2826,7 @@ def compare_page(outdir):
       'if(p)h+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});return h||\'<li>—</li>\';}'
       'function cShow(){'
       'var a=cGet("c-a"), b=cGet("c-b");if(!a||!b)return;'
-      'function link(x){return \'<a class="text-green-600 font-semibold" href="/models/\'+x.slug+\'.html">Страница модели →</a>\';}'
+      'function link(x){return \'<a class="text-green-600 font-semibold" href="/models/\'+x.slug+\'/">Страница модели →</a>\';}'
       'var rows="";'
       'rows+=cRow("Тип",a.type||"—",b.type||"—");'
       'rows+=cRow("Разъём AC",a.ac||"—",b.ac||"—");'
@@ -3075,7 +3089,7 @@ def app_page(outdir):
       " +'<div class=\"a-head\">'+esc(b)+' '+esc(x.m)+'</div>'"
       " +'<div class=\"a-cards\"><div class=\"a-card\"><b>🔌 Разъёмы</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span></div>'"
       " +'<div class=\"a-card\"><b>🧰 Что докупить</b><div id=\"a-cart\"></div></div></div>'"
-      " +'<a class=\"a-link\" href=\"https://zapashoda-ev.ru/models/'+x.slug+'.html\" target=\"_blank\" rel=\"noopener\">Полный разбор модели на сайте →</a>'"
+      " +'<a class=\"a-link\" href=\"https://zapashoda-ev.ru/models/'+x.slug+'/\" target=\"_blank\" rel=\"noopener\">Полный разбор модели на сайте →</a>'"
       " +'<button class=\"a-btn\" onclick=\"screen3()\">Оформить заявку</button>';"
       " renderCart();}"
             "function renderCart(){var e2=el('a-cart');if(!e2)return;var os='';"
@@ -3402,7 +3416,7 @@ def main():
         print('stations.json: пустой (нет static/charging/stations.json)')
     idx = []
     for m in MODELS:
-        idx.append({'t': m['brand']+' '+m['model'], 'd': 'Разъёмы: '+str(m.get('ac') or '—')+' / '+str(m.get('dc') or '—')+' · '+m['type']+' · '+m['market'], 'u': '/models/'+slug(m['brand'])+'-'+slug(m['model'])+'.html'})
+        idx.append({'t': m['brand']+' '+m['model'], 'd': 'Разъёмы: '+str(m.get('ac') or '—')+' / '+str(m.get('dc') or '—')+' · '+m['type']+' · '+m['market'], 'u': '/models/'+slug(m['brand'])+'-'+slug(m['model'])+'/'})
     for sl,title,desc,_ in PAIN_ARTICLES:
         idx.append({'t': title, 'd': desc, 'u': '/pain/'+sl+'.html'})
     for it in news:
