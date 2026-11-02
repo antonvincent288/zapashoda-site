@@ -73,7 +73,7 @@ def of_data_js(pname):
     return '<script>var OF_MODEL=' + json.dumps(pname, ensure_ascii=False) + ';var OF_PRODUCTS=' + plist + ';var OF_BUNDLES=' + json.dumps(BUNDLES, ensure_ascii=False) + ';</script>'
 
 def cart_bar_html():
-    return '<div class="pc-cartbar" id="pc-bar"><div class="wrap flex items-center gap-3 max-w-[1320px] mx-auto px-5 py-3"><span id="pc-bar-txt" class="text-sm font-semibold text-gray-900">В заявке: 0 поз.</span><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 pc-go ml-auto" href="#order-form">Оформить заявку</a></div></div>'
+    return '<div class="pc-cartbar" id="pc-bar"><div class="wrap flex items-center gap-3 max-w-[1320px] mx-auto px-5 py-3"><span id="pc-bar-txt" class="text-sm font-semibold text-gray-900">В заявке: 0 поз.</span><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 pc-go ml-auto" href="#c-form">Оформить заявку</a></div></div>'
 
 def order_form_html(pname):
     return of_data_js(pname) + cart_bar_html() + (

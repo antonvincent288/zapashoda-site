@@ -696,6 +696,14 @@ TITLE_SHORT = {
  'Разъёмы GB/T: как заряжать китайский электромобиль в России': 'Разъёмы GB/T: как заряжать в России',
 }
 
+def clamp_desc(d, limit=165):
+    d = (d or '').strip()
+    if len(d) <= limit: return d
+    cut = d[:limit]
+    sp = cut.rfind(' ')
+    if sp > limit - 40: cut = cut[:sp]
+    return cut.rstrip(' ,.;:') + chr(8230)
+
 def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None, noindex=False):
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
@@ -724,11 +732,11 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
     doc = ('<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
      '<meta name="color-scheme" content="light">'
      '<title>' + html.escape(title) + '</title>'
-     '<meta name="description" content="' + html.escape(desc) + '">'
+     '<meta name="description" content="' + html.escape(clamp_desc(desc)) + '">'
      '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">'
-     '<meta property="og:type" content="article"><meta property="og:image" content="' + SITE_DOMAIN + og + '">'
+     '<meta property="og:type" content="article"><meta property="og:image" content="' + SITE_DOMAIN + og + '">'      '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'
      '<meta property="og:title" content="' + html.escape(title) + '"><meta property="og:description" content="' + html.escape(desc[:200]) + '">'
-     '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'
+     '<meta property="og:url" content="' + SITE_DOMAIN + canonical_rel + '"><meta property="og:site_name" content="' + SITE_NAME + '">'      '<meta name="twitter:card" content="summary_large_image">'      '<meta name="twitter:title" content="' + html.escape(title) + '">'      '<meta name="twitter:description" content="' + html.escape(clamp_desc(desc)) + '">'      '<meta name="twitter:image" content="' + SITE_DOMAIN + og + '">'
      '<link rel="canonical" href="' + SITE_DOMAIN + canonical_rel + '">' + ('<meta name="robots" content="noindex, follow">' if noindex else '') + YANDEX_META + GSC_META +
      '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">'
@@ -1903,6 +1911,9 @@ def home_page(outdir, news=None):
         "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 145 моделей",
         "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
     }, ensure_ascii=False) + '</script>'
+    org_ld = '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "Organization","name": SITE_NAME, "url": SITE_DOMAIN + '/',"logo": SITE_DOMAIN + '/apple-touch-icon.png',"sameAs": ['https://t.me/zapashoda_ev']}, ensure_ascii=False) + '</script>'
+    web_ld = web_ld + org_ld
+
     write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки и решения для 145 моделей EV',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
         body, '/', extra_ld=web_ld)
@@ -2157,6 +2168,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
     urls += [SITE_DOMAIN+'/open-data/']
     urls += [SITE_DOMAIN+'/quiz/']
+    urls += [SITE_DOMAIN+'/app/']
     urls += [SITE_DOMAIN+'/compare/']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
