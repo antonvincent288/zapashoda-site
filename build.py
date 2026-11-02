@@ -2078,17 +2078,17 @@ def shop_tpl_card(p):
 def _tpl_bundle_card(b):
     items_txt = ', '.join(catalog.PIDX[i]['name'].split(',')[0] for i in b['items'])
     save = b['was'] - b['price']
-    img_tag = ('<img src="/assets/sku/bundle-set.webp" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center text-5xl">📦</div>')
+    img_tag = ('<img src="/assets/sku/bundle-set.webp" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></div>')
     add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
     return ('<div class="flex-0 block w-full md:w-auto">'
       '<div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product">'
       '<div class="flex-auto p-4">'
-      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-red-600 text-white">Выгода ' + catalog.fmt_price(save) + '</span></div>' + img_tag + '</div>'
+      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="save-badge inline-block bg-red-600 text-white">Выгода ' + catalog.fmt_price(save) + '</span></div>' + img_tag + '</div>'
       '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>Комплект</small></a>'
       '<h3 class="text-base" style="white-space:normal"><span class="text-gray-800">' + html.escape(b['name']) + '</span></h3>'
       '<small class="text-gray-500" style="display:block">В комплекте: ' + html.escape(items_txt) + '</small>'
       '<div class="flex justify-between items-center">'
-      '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(b['price']) + '</span><span class="line-through text-gray-500 ml-2">' + catalog.fmt_price(b['was']) + '</span></div>'
+      '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(b['price']) + '</span><span class="old-price">' + catalog.fmt_price(b['was']) + '</span></div>'
       + add_btn +
       '</div></div></div></div></div>')
 
@@ -2167,9 +2167,9 @@ def home_page(outdir, news=None):
         b = m['brand'].strip()
         bcounts[b] = bcounts.get(b, 0) + 1
     brand_html = ''.join('<a class="inline-flex items-center px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-800 hover:border-green-600 hover:text-green-600 text-sm font-medium" href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+'<span class="ml-2 text-green-600 font-bold">'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
-    art_cards = ''.join('<div><a href="/pain/'+sl+'.html"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition p-4 h-full">'
+    art_cards = ''.join('<div class="pain-card"><a href="/pain/'+sl+'.html"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition p-4 h-full">'
       '<small class="text-gray-500">Проблемы</small><h3 class="text-base font-semibold text-gray-800 mt-2">'+html.escape(title)+'</h3>'
-      '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
+      '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p><span class="go">Читать статью →</span></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
     side_cards = ''
     for pn in ['Zeekr 001','Li Auto L6']:
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
@@ -3418,6 +3418,40 @@ footer .fbot .fsoc a:hover { color:#FFFFFF !important; border-color:rgba(255,255
 }
 html.tg-mode .zs-stbar { display:none !important; }
 """
+EXTRA_V4_CSS = r"""
+/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ И ИНТЕРАКТИВНОСТЬ v4 (03.11) ==== */
+/* 1. Жёсткое выравнивание высоты: все карточки — flex-колонки, CTA прижаты к низу */
+.card-product { display:flex; flex-direction:column; height:100%; }
+.card-product > .flex-auto { display:flex; flex-direction:column; flex:1 1 auto; }
+.card-product .flex.flex-col { flex:1 1 auto; }
+.mcard { display:flex; flex-direction:column; height:100%; }
+.mcard > span:not(.mgo) { flex:1 1 auto; }
+.grid > div > a { display:block; height:100%; }
+.pain-card > a > div { display:flex; flex-direction:column; height:100%; }
+.pain-card .go { margin-top:auto; padding-top:12px; font-size:14px; font-weight:700; color:#2563EB; }
+/* по классике из ТЗ: старая цена и плашка «Выгода» */
+.old-price { text-decoration:line-through; color:#94A3B8; font-size:.9em; margin-left:8px; }
+.save-badge { border-radius:20px; font-size:12px; font-weight:600; padding:5px 10px; letter-spacing:.02em; }
+
+/* 2. Ограничение текста: описания сжимаются в 2 строки с троеточием */
+.blogcard p, .pain-card p, .mcard > span:not(.mgo) {
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* 3. Премиальный hover — только для устройств с настоящим курсором */
+.mcard-photo { transition:transform .25s ease; }
+@media (hover:hover) and (pointer:fine) {
+  .card-product, .mcard, .mcard2, .blogcard, .tool, .pc-card, .pain-card > a > div {
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card-product:hover, .mcard:hover, .mcard2:hover, .blogcard:hover, .tool:hover, .pc-card:hover,
+  .pain-card > a:hover > div {
+    transform:translateY(-4px);
+    box-shadow:0 12px 20px rgba(0,30,43,.08);
+  }
+  .mcard:hover .mcard-photo { transform:scale(1.02); }
+}
+"""
 
 def main():
     global CSS
@@ -3433,7 +3467,7 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
