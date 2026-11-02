@@ -1401,7 +1401,9 @@ def model_page(m, outdir):
         if vitem: docs_items = vitem + docs_items
     if mkey in DOCS_MODELS:
         docs_items = DOCS_MODELS[mkey] + docs_items
-    guides = '<a href="/pain/stoimost-zaryadki.html">Сколько стоит зарядка</a> · <a href="/pain/zaryadka-na-trasse.html">Зарядка на трассе</a> · <a href="/pain/domashnie-stancii.html">Домашние станции</a>'
+    guides = '<a href="/pain/stoimost-zaryadki.html">Сколько стоит зарядка</a> · <a href="/pain/zaryadka-na-trasse.html">Зарядка на трассе</a> ·'
+    if mkey in [c[0] for c in COST_MODELS]:
+        guides += ' · <a href="/cost/' + mkey + '.html">Сколько стоит зарядка этой модели</a>'
     if docs_items:
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
         site = BRAND_SITES.get(m['brand'])
@@ -2409,6 +2411,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
     urls += [SITE_DOMAIN+'/safety/'] + [SITE_DOMAIN+'/safety/'+s+'.html' for s,_,_ in services.SAFETY_ARTICLES]
+    urls += [SITE_DOMAIN+'/cost/'+c[0]+'.html' for c in COST_MODELS]
     urls += [SITE_DOMAIN+'/b2b/']
     urls += [SITE_DOMAIN+'/calculator/']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
@@ -2424,6 +2427,80 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/'+tid+'.html' for tid,_,_,_ in _forum_seed()]
     lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
     return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc>'+lm+'</url>' for u in urls) + '</urlset>'
+
+
+# ================= /cost/: сколько стоит зарядить конкретную модель =================
+COST_MODELS = [
+ ("zeekr-001-001-fr", "Zeekr 001", 100, 19, 31, "BEV"),
+ ("li-auto-l6-l7-l8-l9-2022-2025", "Li Auto L7", 42.8, 20.4, 26, "EREV"),
+ ("geely-ex5-monjaro-hi-p-phev", "Geely EX5", 60.2, 16, 21, "BEV"),
+ ("evolute-i-jet-i-pro-i-space-i-joy-i-joa", "Evolute i-PRO", 63, 17.5, 23, "BEV"),
+ ("voyah-free-evr-gibrid", "Voyah Free EVR", 33, 18.5, 24, "EREV"),
+ ("voyah-free-ev-rannie-ofitsialnye-ru", "Voyah Free EV", 88, 19, 25, "BEV"),
+ ("moskvich-3e-6", "Moskvich 3e", 60.9, 17.5, 23, "BEV"),
+ ("byd-song-plus-ev", "BYD Song Plus EV", 71.8, 17, 22, "BEV"),
+ ("avatr-11-12-ofitsialno-ru", "Avatr 11", 90, 19, 25, "BEV"),
+ ("zeekr-7x-x-mix", "Zeekr X", 66, 17, 22, "BEV"),
+ ("tesla-model-3-y-eu", "Tesla Model 3 (EU)", 60, 15, 20, "BEV"),
+]
+TARIFF_HOME = 5.50
+TARIFF_DC = 25.0
+LOSS = 0.10
+WINTER = 1.35
+GAS_PRICE = 62.0
+GAS_CONS = 8.0
+def cost_page(outdir, write_page):
+    """Генеративные страницы «Сколько стоит зарядить [модель]» — под дробление запроса 5091/мес."""
+    os.makedirs(os.path.join(outdir,'cost'), exist_ok=True)
+    for mkey, name, cap, cons_l, cons_w, mtype in COST_MODELS:
+        def rub(x): return f"{round(x):,}".replace(",", " ") + " ₽"
+        home100_l = cons_l*(1+LOSS)*TARIFF_HOME
+        home100_w = cons_w*(1+LOSS)*TARIFF_HOME
+        dc100_l = cons_l*(1+LOSS)*TARIFF_DC
+        dc100_w = cons_w*(1+LOSS)*TARIFF_DC
+        month_home = home100_l*15
+        month_home_w = home100_w*15
+        month_dc = dc100_l*15
+        month_dc_w = dc100_w*15
+        benz100 = GAS_CONS*GAS_PRICE
+        full_home = cap*(1+LOSS)*TARIFF_HOME
+        full_dc = cap*(1+LOSS)*TARIFF_DC
+        t = ("Сколько стоит зарядить " + name + ": расчёт на 100 км, месяц и зиму")
+        d = (f"Реальные суммы за зарядку {name} в 2026 году: дома от розетки и на станции, лето и зима, 100 км и месяц. Сравнение с бензином и калькулятор под свой тариф.")
+        body_parts = []
+        body_parts.append('<h2>Коротко: цифры для ' + name + '</h2>')
+        body_parts.append('<div class="tw">'
+            '<div class="tw-card"><b>Дома, на 100 км</b><span>' + rub(home100_l) + ' летом · ' + rub(home100_w) + ' зимой</span></div>'
+            '<div class="tw-card"><b>Станция DC, на 100 км</b><span>' + rub(dc100_l) + ' летом · ' + rub(dc100_w) + ' зимой</span></div>'
+            '<div class="tw-card"><b>Месяц: 1500 км дома</b><span>' + rub(month_home) + ' летом · ' + rub(month_home_w) + ' зимой</span></div>'
+            '<div class="tw-card"><b>Бензин для сравнения</b><span>' + rub(benz100) + ' на 100 км</span></div>'
+            '</div>')
+        body_parts.append('<p class="note">Взяв за основу тариф ' + str(TARIFF_HOME).replace(".", ",") + ' ₽/кВт·ч (усреднённый тариф по счётчику), станция DC — ' + str(round(TARIFF_DC)).replace(",", " ") + ' ₽/кВт·ч (среднее по сетям), потери при зарядке ~10%, зимний расход ×1,35. Ёмкость батареи и мощности — по спецификациям ' + name + '; реальный расход зависит от стиля, климата и шин.</p>')
+        body_parts.append('<h2>Полная зарядка ' + name + '</h2>')
+        body_parts.append('<p>Батарея ' + str(cap).replace(".", ",") + ' кВт·ч: дома — ' + rub(full_home) + ' за 100% (0 → 100%), на быстрой станции — ' + rub(full_dc) + '. На практике владельцы держат 20–80% — это ' + rub(cap*0.6*(1+LOSS)*TARIFF_HOME) + ' дома и ' + rub(cap*0.6*(1+LOSS)*TARIFF_DC) + ' на станции. Проверяйте стоимость именно по кВт·ч, а не по минуте: тарифы разных сетей различаются вдвое.</p>')
+        body_parts.append('<h2>Месяц владения: дома или станция</h2>')
+        body_parts.append('<ul>'
+            '<li><b>1500 км/мес, дома:</b> ' + rub(month_home) + ' летом, ' + rub(month_home_w) + ' зимой.</li>'
+            '<li><b>1500 км/мес, только станция DC:</b> ' + rub(month_dc) + ' летом, ' + rub(month_dc_w) + ' зимой.</li>'
+            '<li><b>Смешанный режим (70% дома / 30% станция):</b> примерно ' + rub(month_home*0.7 + month_dc*0.3) + ' летом и ' + rub(month_home_w*0.7 + month_dc_w*0.3) + ' зимой.</li>'
+            '<li><b>Год (1500 км/мес, смешанный):</b> порядка ' + rub((month_home*0.7 + month_dc*0.3)*12) + '.</li></ul>')
+        body_parts.append('<h2>Где траты растут</h2>'
+            '<ol>'
+            '<li><b>Зима:</b> расход ' + name + ' растёт до ' + str(cons_w).replace(".", ",") + ' кВт·ч/100 км (подогрев салона и батареи, сопротивление шин). Оцифровано в <a href="/pain/zapas-hoda-zimoy.html">гайде о зимнем запасе хода</a>.</li>'
+            '<li><b>Частая быстрая зарядка:</b> тарифы DC в 4–5 раз выше домашнего; экономия — ночная зарядка дома (как её поставить: <a href="/pain/domashnie-stancii.html">гайд о домашних станциях</a>).</li>'
+            '<li><b>Потери:</b> 5–15% кВт·ч уходит в тепло и преобразование — <a href="/pain/poteri-pri-zaryadke.html">разбор потерь</a>.</li></ol>')
+        body_parts.append('<h2>Что докупить ' + name + '</h2>')
+        prod = catalog.catalog_html_for(mkey) if hasattr(catalog, 'catalog_html_for') else ''
+        body_parts.append('<p>Разъёмы, мощности и совместимость — на <a href="/models/' + mkey + '.html">странице модели ' + name + '</a>. Что докупить (адаптеры, кабели, портативные зарядки) — в <a href="/catalog/">каталоге</a>; подбор за 30 секунд — <a href="/quiz/">квиз</a>.</p>')
+        if prod:
+            body_parts.append(prod)
+        body_parts.append('<div class="cta"><a class="btn lime" href="/calculator/">Калькулятор под свой тариф</a><a class="btn ghost" href="/charging/">Карта станций рядом</a></div>')
+        body = "".join(body_parts)
+        ld = '<script type="application/ld+json">' + services.art_ld(t, d, SITE_DOMAIN + '/cost/' + mkey + '.html') + '</script>'
+        write_page(os.path.join(outdir,'cost',mkey+'.html'), t + ' | Запас хода', d,
+            art_enhance(body, SITE_DOMAIN + '/cost/' + mkey + '.html', t, BUILD_DATE), '/cost/' + mkey + '.html',
+            og='/assets/og/default.png', crumbs=[('', 'Стоимость зарядки')], extra_ld=ld)
+
 
 def favicon_files(outdir):
     svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#0aad0a" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#0aad0a"/><path d="M33 18 L23 36 h8 l-5 12 15-17 h-8 z" fill="#0aad0a"/></svg>'
@@ -3150,6 +3227,7 @@ def main():
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
     services.safety_build(outdir, write_page)
+    cost_page(outdir, write_page)
     services.b2b_build(outdir, write_page)
     services.calculator_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
