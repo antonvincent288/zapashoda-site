@@ -255,7 +255,7 @@ def catalog_build(outdir):
     phev_block = ('<h2 style="margin-top:34px">Подборка для гибридов (PHEV)</h2>'
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
-    body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + grid + '</div>' + phev_block + SEO_CAT + order_form_html('Каталог аксессуаров') + PRESELECT_JS
+    body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="products-grid">' + grid + '</div>' + phev_block + SEO_CAT + order_form_html('Каталог аксессуаров') + PRESELECT_JS
     WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог: адаптеры, кабели и зарядки для EV | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
@@ -264,7 +264,7 @@ def catalog_build(outdir):
         if p.get('note'):
             spec_rows += '<tr><td>Важно знать</td><td>' + html.escape(p['note']) + '</td></tr>'
         rel = [x for x in PRODUCTS if x['cat'] == p['cat'] and x['id'] != p['id']][:4]
-        rel_html = ('<h2 class="text-lg text-gray-900 my-8">Похожие товары</h2><div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + ''.join(shop_card_html(x) for x in rel) + '</div>') if rel else ''
+        rel_html = ('<h2 class="text-lg text-gray-900 my-8">Похожие товары</h2><div class="products-grid">' + ''.join(shop_card_html(x) for x in rel) + '</div>') if rel else ''
         fh = fits_for(p)
         hit_b = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-green-600 text-white">' + tag + '</span></div>' if tag else '')
         add_btn = ('<button type="button" class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 sku-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>В заявку</button>')
