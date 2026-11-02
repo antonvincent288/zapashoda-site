@@ -752,3 +752,36 @@ footer .fbot .fsoc a:hover { color:#FFFFFF !important; border-color:rgba(255,255
   html.tg-mode body { padding-bottom:0 !important; }
 }
 html.tg-mode .zs-stbar { display:none !important; }
+
+/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ И ИНТЕРАКТИВНОСТЬ v4 (03.11) ==== */
+/* 1. Жёсткое выравнивание высоты: все карточки — flex-колонки, CTA прижаты к низу */
+.card-product { display:flex; flex-direction:column; height:100%; }
+.card-product > .flex-auto { display:flex; flex-direction:column; flex:1 1 auto; }
+.card-product .flex.flex-col { flex:1 1 auto; }
+.mcard { display:flex; flex-direction:column; height:100%; }
+.mcard > span:not(.mgo) { flex:1 1 auto; }
+.grid > div > a { display:block; height:100%; }
+.pain-card > a > div { display:flex; flex-direction:column; height:100%; }
+.pain-card .go { margin-top:auto; padding-top:12px; font-size:14px; font-weight:700; color:#2563EB; }
+/* по классике из ТЗ: старая цена и плашка «Выгода» */
+.old-price { text-decoration:line-through; color:#94A3B8; font-size:.9em; margin-left:8px; }
+.save-badge { border-radius:20px; font-size:12px; font-weight:600; padding:5px 10px; letter-spacing:.02em; }
+
+/* 2. Ограничение текста: описания сжимаются в 2 строки с троеточием */
+.blogcard p, .pain-card p, .mcard > span:not(.mgo) {
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* 3. Премиальный hover — только для устройств с настоящим курсором */
+.mcard-photo { transition:transform .25s ease; }
+@media (hover:hover) and (pointer:fine) {
+  .card-product, .mcard, .mcard2, .blogcard, .tool, .pc-card, .pain-card > a > div {
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card-product:hover, .mcard:hover, .mcard2:hover, .blogcard:hover, .tool:hover, .pc-card:hover,
+  .pain-card > a:hover > div {
+    transform:translateY(-4px);
+    box-shadow:0 12px 20px rgba(0,30,43,.08);
+  }
+  .mcard:hover .mcard-photo { transform:scale(1.02); }
+}
