@@ -995,9 +995,9 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-cyrillic-400-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin-400-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-cyrillic-700-normal.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin-700-normal.woff2" crossorigin>'
      '<link rel="stylesheet" href="/assets/fonts/inter.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
-     '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">'
+     '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">' + '\n<!-- ZS-BUILD: ' + BUILD_STAMP + ' -->'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + STICKY_BAR + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script>window.ZS_LEAD_CFG={token:"' + TG_LEAD_TOKEN + '",chat:"' + TG_LEAD_CHAT + '",gas:"' + GAS_URL + '"};</script>' + '<script src="/assets/brand/lead.js" defer></script>' + '<script src="/assets/brand/boot.js" defer></script></body></html>')
+     '</head><body data-build="' + BUILD_STAMP + '">' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + STICKY_BAR + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script>window.ZS_LEAD_CFG={token:"' + TG_LEAD_TOKEN + '",chat:"' + TG_LEAD_CHAT + '",gas:"' + GAS_URL + '"};</script>' + '<script src="/assets/brand/lead.js" defer></script>' + '<script src="/assets/brand/boot.js" defer></script></body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
