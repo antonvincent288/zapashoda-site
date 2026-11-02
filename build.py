@@ -3000,6 +3000,12 @@ def main():
         dst = os.path.join(outdir,'assets','sku')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(sku_dir, dst)
+    # инфографики статей (assets/infographic)
+    inf_dir = os.path.join(repo_root,'assets','infographic')
+    if os.path.isdir(inf_dir):
+        idst = os.path.join(outdir,'assets','infographic')
+        shutil.rmtree(idst, ignore_errors=True)
+        shutil.copytree(inf_dir, idst)
     import glob as _glob
     from PIL import Image as _Im
     for _p in _glob.glob(os.path.join(outdir,'assets','sku','*.png')):
