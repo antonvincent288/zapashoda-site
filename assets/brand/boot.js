@@ -4,7 +4,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
  document.querySelectorAll('[data-count]').forEach(anim);
  function closeLb(){var lb=document.getElementById('zsh-lb');if(lb){lb.parentNode.removeChild(lb);}}
  document.addEventListener('click',function(ev){
-   var img=ev.target.closest('img');if(!img)return;
+   var img=ev.target.closest('img[data-lb]');if(!img)return;
    if(img.closest('.zs-off')||img.closest('#zsh-lb')||img.closest('nav'))return;
    var w=img.naturalWidth||0;if(w<420)return;
    ev.preventDefault();
