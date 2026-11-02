@@ -3628,6 +3628,30 @@ def main():
         W_BODY, '/blog/winter-ev-2026.html', og='/assets/og/b-winter-ev-2026.png',
         crumbs=[('/blog/','Блог'),('','Зима близко: мороз и батарея EV')])
 
+    # SEO-заглушки новых статей (тексты добавит владелец), noindex
+    SEO_STUBS = [
+      ('/blog/li-l7-battery-heat.html',
+       'Как активировать скрытый предпрогрев батареи на Li Auto L7 перед быстрой зарядкой',
+       'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.'),
+      ('/blog/zeekr-001-gbt-diff.html',
+       'Различия портов GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026): как не сжечь инвертор',
+       'Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.'),
+      ('/blog/workersbee-vs-auxus.html',
+       'Битва брендов: Workersbee против Auxus — какой кабель переживет русскую зиму?',
+       'Сравнение кабелей Workersbee и Auxus для зарядки EV зимой: материалы, температурные тесты, надёжность замков и цена.'),
+    ]
+    for _u, _t, _d in SEO_STUBS:
+        _body = ('<div class="container"><div class="hero"><div class="kicker">Блог · готовится</div>'
+          '<h1>' + html.escape(_t) + '</h1>'
+          '<p class="lede">' + html.escape(_d) + '</p>'
+          '<div class="tldr"><b>Коротко:</b> статья готовится — добавим в неё разбор по нашей базе совместимости 145 моделей EV.</div>'
+          '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
+          '<a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
+          '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>')
+        _p = _u[1:].rsplit('/', 1)
+        write_page(os.path.join(outdir, _p[0], _p[1]),
+            _t + ' | Запас хода', _d, _body, _u, noindex=True)
+
     # OG-карточки: новости + бренды VIN + дефолт
     jobs = [('/assets/og/default.png', 'Запас хода — практика владения электромобилем в России')]
     for it in news:
