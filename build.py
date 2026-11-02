@@ -2536,7 +2536,7 @@ def app_page(outdir):
       "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
       "var cart={},curModel='',hist=[],curBrand='',curIdx=0;function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
       "function screen1(){cart={};curModel='';hist=[];updBack();renderCart();"
-      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода</div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
+      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода<span class=\"a-ver\">апп v3</span></div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
       " renderBrands('');}"
       "function renderBrands(q){var os='';"
       " D.order.forEach(function(b){if(q&&b.toLowerCase().indexOf(q.toLowerCase())<0)return;"
@@ -2580,7 +2580,7 @@ def app_page(outdir):
       " .catch(function(){btn.disabled=false;btn.textContent='Отправить заявку';alert('Сеть недоступна — попробуйте позже.');});}"
       "screen1();")
     css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
-      ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
+      ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px;position:relative}.a-ver{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:10px;color:#9fb0b8;font-weight:600}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
       ".a-search{margin:12px 16px 4px}.a-search input{width:calc(100% - 28px);padding:12px 14px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit}"
       ".a-list{margin:0 16px;display:grid;gap:8px;padding-bottom:24px}"
       ".a-row,.a-back,.a-btn{border:1px solid #d9dfe5;background:#fff;border-radius:14px;padding:13px 16px;font-size:15px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-family:inherit;cursor:pointer;box-sizing:border-box;color:#15202b}"
@@ -2602,7 +2602,7 @@ def app_page(outdir):
       "</style>")
     body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
     tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js" async></script>'
-      '<script>(function(){if(window.Telegram&&window.Telegram.WebApp){var d=document.documentElement;'
+      '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)||/tgWebAppData=/.test(location.href)){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
     write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
