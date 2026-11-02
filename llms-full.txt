@@ -19,23 +19,23 @@
 
 ## Популярные модели
 
-- [Zeekr 001 / 001 FR](https://zapashoda-ev.ru/models/zeekr-001-001-fr.html): разъёмы GB/T AC / GB/T DC
-- [Zeekr 007 / 007GT](https://zapashoda-ev.ru/models/zeekr-007-007gt.html): разъёмы GB/T AC (1 фаза) / GB/T DC 800V
-- [Zeekr 7X / X / MIX](https://zapashoda-ev.ru/models/zeekr-7x-x-mix.html): разъёмы GB/T AC / GB/T DC (7X — 800V)
-- [Li Auto L6 / L7 / L8 / L9 (2022–2025)](https://zapashoda-ev.ru/models/li-auto-l6-l7-l8-l9-2022-2025.html): разъёмы GB/T AC (1 фаза) / GB/T DC
-- [Voyah Free EVR (гибрид)](https://zapashoda-ev.ru/models/voyah-free-evr-gibrid.html): разъёмы GB/T AC / GB/T DC
-- [Avatr 11 / 12 (официально RU)](https://zapashoda-ev.ru/models/avatr-11-12-ofitsialno-ru.html): разъёмы Type 2 / CCS2
-- [Xiaomi SU7 / SU7 Ultra](https://zapashoda-ev.ru/models/xiaomi-su7-su7-ultra.html): разъёмы GB/T AC / GB/T DC (Max — 800V)
-- [BYD Song Plus EV](https://zapashoda-ev.ru/models/byd-song-plus-ev.html): разъёмы GB/T AC / GB/T DC
-- [BYD Yuan Plus / Atto 3 / Yuan Up / Pro](https://zapashoda-ev.ru/models/byd-yuan-plus-atto-3-yuan-up-pro.html): разъёмы GB/T (CN) / Type 2 (EU) / GB/T (CN) / CCS2 (EU)
-- [Geely EX5 / Monjaro Hi-P (PHEV)](https://zapashoda-ev.ru/models/geely-ex5-monjaro-hi-p-phev.html): разъёмы GB/T (уточнить RU-поставку) / GB/T
-- [Geely Galaxy E5 / E8 / TT](https://zapashoda-ev.ru/models/geely-galaxy-e5-e8-tt.html): разъёмы GB/T AC / GB/T DC
-- [Deepal S07 (RU официальная)](https://zapashoda-ev.ru/models/deepal-s07-ru-ofitsialnaya.html): разъёмы GB/T AC / GB/T DC
-- [Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA](https://zapashoda-ev.ru/models/evolute-i-jet-i-pro-i-space-i-joy-i-joa.html): разъёмы Type 2 / CCS2
-- [Moskvich 3e / 6](https://zapashoda-ev.ru/models/moskvich-3e-6.html): разъёмы Type 2 / CCS2
-- [Tesla Model 3 / Y (EU)](https://zapashoda-ev.ru/models/tesla-model-3-y-eu.html): разъёмы Type 2 / CCS2
-- [VW ID.3 / ID.4 / ID.5 / ID.Buzz](https://zapashoda-ev.ru/models/vw-id-3-id-4-id-5-id-buzz.html): разъёмы Type 2 / CCS2
-- [Nissan Leaf ZE1 (JP / EU)](https://zapashoda-ev.ru/models/nissan-leaf-ze1-jp-eu.html): разъёмы Type 1 (JP) / Type 2 (EU) / CHAdeMO
+- [Zeekr 001 / 001 FR](https://zapashoda-ev.ru/models/zeekr-001-001-fr/): разъёмы GB/T AC / GB/T DC
+- [Zeekr 007 / 007GT](https://zapashoda-ev.ru/models/zeekr-007-007gt/): разъёмы GB/T AC (1 фаза) / GB/T DC 800V
+- [Zeekr 7X / X / MIX](https://zapashoda-ev.ru/models/zeekr-7x-x-mix/): разъёмы GB/T AC / GB/T DC (7X — 800V)
+- [Li Auto L6 / L7 / L8 / L9 (2022–2025)](https://zapashoda-ev.ru/models/li-auto-l6-l7-l8-l9-2022-2025/): разъёмы GB/T AC (1 фаза) / GB/T DC
+- [Voyah Free EVR (гибрид)](https://zapashoda-ev.ru/models/voyah-free-evr-gibrid/): разъёмы GB/T AC / GB/T DC
+- [Avatr 11 / 12 (официально RU)](https://zapashoda-ev.ru/models/avatr-11-12-ofitsialno-ru/): разъёмы Type 2 / CCS2
+- [Xiaomi SU7 / SU7 Ultra](https://zapashoda-ev.ru/models/xiaomi-su7-su7-ultra/): разъёмы GB/T AC / GB/T DC (Max — 800V)
+- [BYD Song Plus EV](https://zapashoda-ev.ru/models/byd-song-plus-ev/): разъёмы GB/T AC / GB/T DC
+- [BYD Yuan Plus / Atto 3 / Yuan Up / Pro](https://zapashoda-ev.ru/models/byd-yuan-plus-atto-3-yuan-up-pro/): разъёмы GB/T (CN) / Type 2 (EU) / GB/T (CN) / CCS2 (EU)
+- [Geely EX5 / Monjaro Hi-P (PHEV)](https://zapashoda-ev.ru/models/geely-ex5-monjaro-hi-p-phev/): разъёмы GB/T (уточнить RU-поставку) / GB/T
+- [Geely Galaxy E5 / E8 / TT](https://zapashoda-ev.ru/models/geely-galaxy-e5-e8-tt/): разъёмы GB/T AC / GB/T DC
+- [Deepal S07 (RU официальная)](https://zapashoda-ev.ru/models/deepal-s07-ru-ofitsialnaya/): разъёмы GB/T AC / GB/T DC
+- [Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA](https://zapashoda-ev.ru/models/evolute-i-jet-i-pro-i-space-i-joy-i-joa/): разъёмы Type 2 / CCS2
+- [Moskvich 3e / 6](https://zapashoda-ev.ru/models/moskvich-3e-6/): разъёмы Type 2 / CCS2
+- [Tesla Model 3 / Y (EU)](https://zapashoda-ev.ru/models/tesla-model-3-y-eu/): разъёмы Type 2 / CCS2
+- [VW ID.3 / ID.4 / ID.5 / ID.Buzz](https://zapashoda-ev.ru/models/vw-id-3-id-4-id-5-id-buzz/): разъёмы Type 2 / CCS2
+- [Nissan Leaf ZE1 (JP / EU)](https://zapashoda-ev.ru/models/nissan-leaf-ze1-jp-eu/): разъёмы Type 1 (JP) / Type 2 (EU) / CHAdeMO
 
 ## Руководства по проблемам
 
