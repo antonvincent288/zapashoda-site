@@ -131,12 +131,13 @@ def load_site_config():
       "hero_sub": "",             # свой подзаголовок главной
       "tg_lead_bot_token": "",    # токен Telegram-бота для заявок (публичный в HTML!)
       "tg_lead_chat_id": "",      # chat_id канала/чата для заявок (например -100...)
+      "configurator": {},         # блок конфигуратора мини-аппа: сценарии, кэшбэк, промокоды (правится без кода)
     }
     try:
         p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
         if os.path.exists(p):
             with open(p, encoding='utf-8') as f:
-                cfg.update(json.load(f))
+                cfg.update({k: v for k, v in json.load(f).items() if k in cfg})
     except Exception:
         pass
     return cfg
@@ -150,84 +151,6 @@ BANNER_LINK = str(SITE_CFG.get('banner_link') or '')
 CFG_PHONE = str(SITE_CFG.get('phone') or '')
 CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
 CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
-
-
-# ===== КАЛЬКУЛЯТОР ЭКОНОМИИ (виджет на главной, ЭТАП 1 портала) =====
-CALC_PETROL_PRICE = float(SITE_CFG.get('calc_petrol_price') or 65)      # ₽ за литр АИ-95 (оценка)
-CALC_PETROL_L100 = float(SITE_CFG.get('calc_petrol_l100') or 10)        # л/100 км ДВС-аналога (оценка)
-CALC_T_NIGHT = float(SITE_CFG.get('calc_tariff_night') or 3.8)          # ₽/кВт·ч дом ночью (Москва, ночной тариф)
-CALC_T_DAY = float(SITE_CFG.get('calc_tariff_day') or 6.5)              # ₽/кВт·ч дом днём
-CALC_T_EZS = float(SITE_CFG.get('calc_tariff_ezs') or 22)               # ₽/кВт·ч быстрые ЭЗС (10–25, середина)
-CALC_STATION_PRICE = float(SITE_CFG.get('calc_home_station_price') or 24500)  # домашняя станция из каталога, от
-CALC_KWH_DEFAULT = float(SITE_CFG.get('calc_consumption_default') or 18)
-CALC_KWH = {k: float(v) for k, v in (SITE_CFG.get('calc_consumption') or {}).items()}
-CALC_HYBRIDS = set(SITE_CFG.get('calc_hybrid_note_models') or [])
-CALC_MODELS = list(CALC_KWH.keys())
-
-def calc_widget_html():
-    opts = ''.join('<option value="' + html.escape(m) + '" data-kwh="' + str(CALC_KWH[m]) + '"'
-                   + (' data-hyb="1"' if m in CALC_HYBRIDS else '') + '>' + html.escape(m) + '</option>'
-                   for m in CALC_MODELS)
-    tn = str(CALC_T_NIGHT).rstrip('0').rstrip('.')
-    td = str(CALC_T_DAY).rstrip('0').rstrip('.')
-    te = str(CALC_T_EZS).rstrip('0').rstrip('.')
-    pl = str(CALC_PETROL_L100).rstrip('0').rstrip('.')
-    pp = str(CALC_PETROL_PRICE).rstrip('0').rstrip('.')
-    return (
-      '<section class="zc-wrap"><div class="container"><div class="zc">'
-      '<div class="zc-head">'
-      '<span class="zc-badge">⚡️ Калькулятор экономии</span>'
-      '<h2 class="zc-title">Сколько вы экономите на электричестве вместо бензина</h2>'
-      '<p class="zc-sub">Двигайте пробег, выберите модель — расчёт по реальным тарифам: дом ночью '
-      + tn + ' ₽/кВт·ч, публичные ЭЗС около ' + te + ' ₽/кВт·ч. Расход и цены топлива — оценка, точный расчёт считает <a href="/calculator/">полный калькулятор</a>.</p>'
-      '</div>'
-      '<div class="zc-grid">'
-      '<div class="zc-ctrl">'
-      '<label class="zc-label">Годовой пробег: <b id="zc-km">15 000 км</b></label>'
-      '<input type="range" id="zc-range" min="5000" max="50000" step="1000" value="15000" aria-label="Годовой пробег">'
-      '<label class="zc-label" for="zc-model">Ваш электромобиль</label>'
-      '<select id="zc-model" class="zc-select">' + opts + '</select>'
-      '<div class="zc-hyb" id="zc-hyb">Гибрид: расчёт — для поездок на электротяге; часть пробега на бензине уменьшит фактическую экономию.</div>'
-      '</div>'
-      '<div class="zc-out">'
-      '<table class="zc-table"><thead><tr><th>Сценарий</th><th>за 1 год</th><th>за 3 года</th><th>за 5 лет</th></tr></thead><tbody>'
-      '<tr><td>Дома ночью (' + tn + ' ₽/кВт·ч)</td><td id="zc-n1">—</td><td id="zc-n3">—</td><td id="zc-n5">—</td></tr>'
-      '<tr><td>Дома днём (' + td + ' ₽/кВт·ч)</td><td id="zc-d1">—</td><td id="zc-d3">—</td><td id="zc-d5">—</td></tr>'
-      '<tr><td>Быстрые ЭЗС (' + te + ' ₽/кВт·ч)</td><td id="zc-e1">—</td><td id="zc-e3">—</td><td id="zc-e5">—</td></tr>'
-      '<tr class="zc-vs"><td>Та же машина на АИ-95 (' + pl + ' л/100 км, ' + pp + ' ₽/л)</td><td id="zc-f1">—</td><td id="zc-f3">—</td><td id="zc-f5">—</td></tr>'
-      '</tbody></table>'
-      '<div class="zc-save">Экономия за год на ночной зарядке: <b id="zc-save">—</b></div>'
-      '<div class="zc-cta" id="zc-cta"></div>'
-      '</div></div>'
-      '<div class="zc-foot">Справочные значения расхода и цен — оценка по открытым характеристикам. Экономия считается против среднего ДВС-аналога; реальный расход зависит от стиля езды и климата.</div>'
-      '</div></div></section>')
-
-CALC_JS = (
-  '(function(){var P=' + str(CALC_PETROL_PRICE) + ',L=' + str(CALC_PETROL_L100) +
-  ',TN=' + str(CALC_T_NIGHT) + ',TD=' + str(CALC_T_DAY) + ',TE=' + str(CALC_T_EZS) + ',ST=' + str(CALC_STATION_PRICE) + ';'
-  'function fmt(n){return Math.round(n).toLocaleString("ru-RU");}'
-  'function money(el,n){el.textContent="\\u2248 "+fmt(n)+" \\u20BD";}'
-  'function upd(){var r=document.getElementById("zc-range");if(!r)return;'
-  'var km=+r.value,sel=document.getElementById("zc-model"),opt=sel.options[sel.selectedIndex];'
-  'var kwh=parseFloat(opt.getAttribute("data-kwh"))||18;'
-  'var hyb=opt.getAttribute("data-hyb")==="1";'
-  'document.getElementById("zc-km").textContent=km.toLocaleString("ru-RU")+" \\u043A\\u043C";'
-  'document.getElementById("zc-hyb").style.display=hyb?"block":"none";'
-  'var b=km/100;var ev=[b*kwh*TN,b*kwh*TD,b*kwh*TE];var fu=b*L*P;'
-  'var ks=["n","d","e"];for(var ti=0;ti<3;ti++){for(var y=1;y<=5;y+=2){money(document.getElementById("zc-"+ks[ti]+y),ev[ti]*y);}}'
-  'for(var y2=1;y2<=5;y2+=2){money(document.getElementById("zc-f"+y2),fu*y2);}'
-  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");'
-  'if(save>0){sb.textContent="\\u2248 "+fmt(save)+" \\u20BD";'
-  'var months=Math.ceil(ST/(save/12));'
-  'cta.innerHTML="\\u0412\\u0430\\u0448\\u0430 \\u044D\\u043A\\u043E\\u043D\\u043E\\u043C\\u0438\\u044F \\u043E\\u043A\\u0443\\u043F\\u0430\\u0435\\u0442 \\u0434\\u043E\\u043C\\u0430\\u0448\\u043D\\u044E\\u044E \\u0437\\u0430\\u0440\\u044F\\u0434\\u043A\\u0443 \\u0437\\u0430 \\u2248"+months+" \\u043C\\u0435\\u0441. "+'
-  '"<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}'
-  'else{sb.textContent="\\u2014";'
-  'cta.innerHTML="<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}}'
-  'document.addEventListener("DOMContentLoaded",function(){'
-  'var r=document.getElementById("zc-range"),s=document.getElementById("zc-model");'
-  'if(r)r.addEventListener("input",upd);if(s)s.addEventListener("change",upd);upd();});})();')
-
-CALC_SCRIPT = '<script>' + CALC_JS + '</script>'
 TG_LEAD_TOKEN = str(SITE_CFG.get('tg_lead_bot_token') or '')
 TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 
@@ -2274,7 +2197,6 @@ def home_page(outdir, news=None):
       '</div></div>'
       '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
       '</div></div></div></section>'
-      + calc_widget_html() + CALC_SCRIPT +
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
@@ -3140,100 +3062,263 @@ def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
                body, '/forum/' + sl_page, crumbs=[('/forum/', 'Сообщество')])
 
 def app_page(outdir):
-    """Telegram Mini App: /app/ — подбор модели, разъёмы, корзина, заявка через GAS."""
+    """Telegram Mini App v6: /app/ — Конфигуратор для менеджеров ОД.
+
+    Экран 1: выбор авто (сетка брендов и моделей, быстрый поиск; пин-бренды из site_config).
+    Экран 2: сценарий зарядки (Частный дом / Квартира (паркинг) / Только путешествия).
+    Экран 3: чек-лист — готовый комплект с ценами (названия/цены из site_config + каталог).
+    Рефералка: manager_tg_id из Telegram initData или ?ref=; промокод -{DISC}%,
+    кэшбэк менеджеру {CBMIN}-{CBMAX}%; заявка улетает в GAS (t=od_order).
+    """
     import catalog as _cat
+    cfg = SITE_CFG.get('configurator') if isinstance(SITE_CFG.get('configurator'), dict) else {}
+    cfg = cfg or {}
+
+    pins = [b.strip() for b in (cfg.get('brand_pins') or ['Zeekr', 'Li Auto', 'Voyah', 'Avatr', 'Tesla']) if b.strip()]
+    refc = cfg.get('referral') or {}
+    disc = int(refc.get('discount_pct', 5) or 5)
+    cbmin = int(refc.get('cashback_min_pct', 5) or 5)
+    cbmax = int(refc.get('cashback_max_pct', 10) or 10)
+    promo_prefix = str(refc.get('promo_prefix', 'ZSH') or 'ZSH')
+
+    DEFAULT_RULES = {
+        'house': {'gb': [13, 10], 'eu': [23, 20], 'us': [19, 7], 't1': [20, 25], 'all': [12, 17], 'unc': [6, 7]},
+        'flat': {'gb': [10, 8], 'eu': [20, 21], 'us': [20, 7], 't1': [20, 25], 'all': [12, 17], 'unc': [6, 7]},
+        'road': {'gb': [6, 10], 'eu': [19, 21, 2], 'us': [7, 19], 't1': [25, 20], 'all': [12, 17],
+                 'unc': [13, 16, 23, 24]},
+    }
+    DEFAULT_NOTES = {
+        'house': 'Для дома рекомендуем настенную станцию — ночная зарядка по минимальному тарифу. Остальное — по желанию клиента.',
+        'flat': 'В паркинге главное — портативная зарядка от розетки и адаптер для станций ЖК. Станцию можно докупить позже.',
+        'road': 'Для трасс главное — адаптеры под чужие разъёмы и запасной кабель. Портативка выручает на «мёртвых» станциях.',
+    }
+    rules = {}
+    for k, v in DEFAULT_RULES.items():
+        ov = (cfg.get('scenario_check') or {}).get(k) if isinstance(cfg.get('scenario_check'), dict) else None
+        rules[k] = dict(v)
+        if isinstance(ov, dict):
+            rules[k].update(ov)
+    notes = dict(DEFAULT_NOTES)
+    if isinstance(cfg.get('scenario_note'), dict):
+        notes.update({k: str(v) for k, v in cfg['scenario_note'].items()})
+    overrides = cfg.get('price_overrides') if isinstance(cfg.get('price_overrides'), dict) else {}
+
     brands = {}
     for m in MODELS:
+        sku_list = [{'id': e['id'], 'b': e.get('badge', '')}
+                    for e in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])]
         brands.setdefault(m['brand'].strip(), []).append({
             'm': m['model'], 'slug': slug(m['brand']) + '-' + slug(m['model']),
-            'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
-            'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])][:6],
+            'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''), 'obc': m.get('obc', ''),
+            'sku': sku_list,
         })
-    prod = {p['id']: {'n': p['name'], 'pr': p['price'], 'e': p.get('emoji', '🔌'), 'b': 1 if p['price'] <= 20000 else 0} for p in _cat.PRODUCTS}
-    data = json.dumps({'brands': brands, 'order': sorted(brands, key=lambda b: -len(brands[b])), 'prod': prod}, ensure_ascii=False, separators=(',', ':'))
-    js = ("var D=" + data + ";var G='" + GAS_URL + "';"
-      "var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;"
-      "if(tg){try{tg.ready&&tg.ready();tg.expand();tg.setHeaderColor&&tg.setHeaderColor('#f5f6f8');tg.setBackgroundColor&&tg.setBackgroundColor('#f5f6f8');tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}}"
-      "function el(id){return document.getElementById(id);}"
-      "function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}"
-      "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
-      "var cart={},curModel='',hist=[],curBrand='',curIdx=0,curSkus=[];function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
-      "function screen1(){cart={};curModel='';curSkus=[];hist=[];updBack();renderCart();"
-      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода<span class=\"a-ver\">апп v5</span></div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
-      " renderBrands('');}"
-      "function renderBrands(q){var os='';"
-      " D.order.forEach(function(b){if(q&&b.toLowerCase().indexOf(q.toLowerCase())<0)return;"
-      " os+='<button class=\"a-row\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\" onkeydown=\"return aPickEnter(event,this)\" tabindex=\"0\"><span>🚗 '+esc(b)+'</span><span class=\"a-n\">'+D.brands[b].length+' мод.</span></button>';});"
-      " el('a-brands').innerHTML=os||'<p class=\"a-empty\">Ничего не нашлось — попробуйте иначе.</p>';}"
-      "function aPick(b){var os='';D.brands[b].forEach(function(x,i){"
-      " os+='<button class=\"a-row\" onclick=\"aModel(&quot;'+jq(b)+'&quot;,'+i+')\" tabindex=\"0\"><span>'+esc(x.m)+'</span><span class=\"a-n\">'+esc(x.type)+'</span></button>';});"
-      " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Все марки</button><div class=\"a-head\">'+esc(b)+'</div><div class=\"a-list\">'+os+'</div>';}"
-      "function aFilter(){renderBrands(el('a-q').value.trim());}"
-      "function aModel(b,i,np){var x=D.brands[b][i];cart={};curModel=b+' '+x.m;curBrand=b;curIdx=i;if(!np)hist.push(function(){screen1();});updBack();"
-      " curSkus=(x.skus||[]).filter(function(id){return !!D.prod[id];});curSkus.forEach(function(id){if(D.prod[id].b)cart[id]=1;});"
-      " el('app').innerHTML='<button class=\"a-back\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\">← '+esc(b)+'</button>'"
-      " +'<div class=\"a-head\">'+esc(b)+' '+esc(x.m)+'</div>'"
-      " +'<div class=\"a-cards\"><div class=\"a-card\"><b>🔌 Разъёмы</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span></div>'"
-      " +'<div class=\"a-card\"><b>🧰 Что докупить</b><div id=\"a-cart\"></div></div></div>'"
-      " +'<a class=\"a-link\" href=\"https://zapashoda-ev.ru/models/'+x.slug+'/\" target=\"_blank\" rel=\"noopener\">Полный разбор модели на сайте →</a>'"
-      " +'<button class=\"a-btn\" onclick=\"screen3()\">Оформить заявку</button>';"
-      " renderCart();}"
-            "function renderCart(){var e2=el('a-cart');if(!e2)return;var os='';"
-      " var av=(curSkus||[]).filter(function(id){return !!D.prod[id];});"
-      " if(!av.length){e2.innerHTML='<p class=\"a-empty\">Рекомендаций для этой модели пока нет — напишите нам, подберём вручную.</p>';return;}"
-      " var t=0;av.forEach(function(id){var p=D.prod[id];var on=!!cart[id];if(on)t+=p.pr;"
-      " os+='<div class=\"a-item\" onclick=\"aToggle('+id+')\"><span>'+p.e+' '+esc(p.n)+'</span><span class=\"a-p2\">'+p.pr.toLocaleString('ru-RU')+' ₽</span><span class=\"a-ck'+(on?' on':'')+'\">'+(on?'✓':'')+'</span></div>';});"
-      " if(t)os+='<div class=\"a-total\">Итого: '+t.toLocaleString('ru-RU')+' ₽</div>';"
-      " e2.innerHTML=os;}"
-      "function aToggle(id){if(cart[id])delete cart[id];else cart[id]=1;renderCart();}"
-      "function screen3(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
-      " var total=ids.reduce(function(s,id){return s+D.prod[id].pr*cart[id];},0);"
-      " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Сначала</button><div class=\"a-head\">Заявка</div>'"
-      " +'<div class=\"a-cards\" style=\"margin-top:6px\"><div class=\"a-card\"><div class=\"a-item\"><span>Позиций</span><b>'+(ids.length||0)+'</b></div><div class=\"a-item\"><span>Итого</span><b>'+(total||0).toLocaleString('ru-RU')+' ₽</b></div></div></div>'"
-      " +'<input id=\"a-name\" placeholder=\"Имя\"><input id=\"a-phone\" placeholder=\"Телефон (+7 …)\" oninput=\"aFmtP()\"><input id=\"a-city\" placeholder=\"Город\"><textarea id=\"a-note\" placeholder=\"Комментарий (необязательно)\"></textarea>'"
-      " +'<button class=\"a-btn\" id=\"a-send\" onclick=\"aSend()\">Отправить заявку</button>'"
-      " +'<p class=\"a-note\">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>';if(!ids.length){var bs=el('a-send');bs.disabled=true;bs.textContent='Сначала добавьте позиции';el('app').innerHTML+='<a class=\"a-cta\" onclick=\"tgo(\\'https://t.me/zapashoda_ev\\')\">💬 Написать нам — подберём вручную</a>';}hist.push(function(){aModel(curBrand,curIdx,1);});updBack();}"
-      "function aFmtP(){var v=el('a-phone').value.replace(/\D/g,'');if(v&&v[0]==='8')v='7'+v.slice(1);if(v.length===10)v='7'+v;if(v.length>11)v=v.slice(0,11);var s='',d=(v&&v[0]==='7')?v.slice(1):v;if(d.length){s='+7 '+d.slice(0,3);if(d.length>3)s+=' '+d.slice(3,6);if(d.length>6)s+='-'+d.slice(6,8);if(d.length>8)s+='-'+d.slice(8,10);}el('a-phone').value=s;}function tgo(u){if(tg&&tg.openTelegramLink)tg.openTelegramLink(u);else location.href=u;}function aSend(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});if(!ids.length){alert('Подбор пуст — вернитесь назад и добавьте позиции.');return;}var n=el('a-name').value.trim(),ph=el('a-phone').value.replace(/\D/g,''),c=el('a-city').value.trim();"
-      " if(ph[0]==='8')ph='7'+ph.slice(1);if(ph.length===10)ph='7'+ph;if(n.length<2||ph.length!==11){alert('Укажите имя и телефон в формате +7 XXX XXX-XX-XX — иначе не сможем связаться.');return;}"
-      " var btn=el('a-send');btn.disabled=true;btn.textContent='Отправляем…';"
-      " var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
-      " var items=ids.map(function(id){return {name:D.prod[id].n,qty:cart[id],price:D.prod[id].pr};});"
-      " fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({t:'miniapp',model:curModel,city:c,name:n,phone:ph,items:items,total:items.reduce(function(s,i){return s+i.price*i.qty;},0),comment:el('a-note').value,website:''})})"
-      " .then(function(r){return r.json();}).then(function(res){"
-      " if(res&&res.ok){el('app').innerHTML='<div class=\"a-head\">✅ Заявка принята</div><p class=\"a-sub\">Свяжемся в ближайшее время. Оплата — дилеру при получении.</p><a class=\"a-cta\" onclick=\"tgo(\\'https://t.me/zapashoda_ev\\')\">📢 Канал @zapashoda_ev — разборы и новинки</a><a class=\"a-cta\" onclick=\"tgo(\\'https://zapashoda-ev.ru/catalog/\\')\">🛒 Каталог аксессуаров</a><button class=\"a-btn\" onclick=\"screen1()\">Начать заново</button>';hist=[];updBack();}"
-      " else{btn.disabled=false;btn.textContent='Отправить заявку';alert('Не отправилось: '+((res&&res.error)||'попробуйте позже'));}})"
-      " .catch(function(){btn.disabled=false;btn.textContent='Отправить заявку';alert('Сеть недоступна — попробуйте позже.');});}"
-      "screen1();")
+    prod = {}
+    for p in _cat.PRODUCTS:
+        ov = overrides.get(str(p['id'])) or overrides.get(p['id']) or {}
+        if not isinstance(ov, dict):
+            ov = {}
+        prod[p['id']] = {'n': str(ov.get('name') or p['name']),
+                         'pr': int(ov.get('price') or p['price'] or 0),
+                         'e': p.get('emoji', '🔌')}
+    order = sorted(brands, key=lambda b: (-len(brands[b]), b))
+    order = [b for b in pins if b in brands] + [b for b in order if b not in pins]
+    scen = [{'k': s.get('key', ''), 'e': s.get('emoji', ''), 't': s.get('title', ''), 's': s.get('sub', '')}
+            for s in (cfg.get('scenarios') or [
+                {'key': 'house', 'emoji': '🏠', 'title': 'Частный дом', 'sub': 'Своя розетка или стена — ночная зарядка, дёшево'},
+                {'key': 'flat', 'emoji': '🏢', 'title': 'Квартира (паркинг)', 'sub': 'Паркинг ЖК или уличная розетка'},
+                {'key': 'road', 'emoji': '🛣', 'title': 'Только путешествия', 'sub': 'Трассы и быстрые станции'}])]
+    payload = {'brands': brands, 'order': order, 'pins': pins, 'prods': prod, 'sc': scen,
+               'rules': rules, 'notes': notes,
+               'ref': {'disc': disc, 'cbMin': cbmin, 'cbMax': cbmax, 'prefix': promo_prefix}}
+    data = json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
+    js_head = ("var D=" + data + ";var G='" + GAS_URL + "';var BASE='" + SITE_DOMAIN + "';")
+    js_body = r"""var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
+if(tg){try{tg.ready&&tg.ready();tg.expand();tg.setHeaderColor&&tg.setHeaderColor('#f5f6f8');tg.setBackgroundColor&&tg.setBackgroundColor('#f5f6f8');tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}}
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function jq(s){return esc(s).replace(/'/g,"\'");}
+function fmt(n){return n.toLocaleString('ru-RU');}
+function qA(s){return '&quot;'+jq(s)+'&quot;';}
+var MGR=(function(){var id=0,nm='';
+ try{var u=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;if(u&&u.id){id=u.id;nm=u.first_name||u.username||'';}}catch(e){}
+ if(!id){var m=location.search.match(/[?&]ref=(\d+)/);if(m)id=parseInt(m[1],10);}
+ if(!id&&tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param){var m2=(String(tg.initDataUnsafe.start_param).match(/(\d+)/)||[])[1];if(m2)id=parseInt(m2,10);}
+ return{id:id||0,name:nm};})();
+var refLink=BASE+'/app/?ref='+(MGR.id||'');
+var toastT=null;function toast(s){var t=el('a-toast');if(!t)return;t.textContent=s;t.className='show';clearTimeout(toastT);toastT=setTimeout(function(){t.className='';},2200);}
+function copyTxt(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Скопировано: '+t);},function(){prompt('Скопируйте вручную:',t);});}else{prompt('Скопируйте вручную:',t);}}
+function tgo(u){if(tg&&tg.openTelegramLink)tg.openTelegramLink(u);else location.href=u;}
+var hist=[],curBrand='',curIdx=0,curModel='',curSkus=[],cart={},scKey='',PROMO='',LAST_TOTAL=0;
+var man={};
+function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}
+if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});
+function pg(x){var a=(x.ac||'')+' '+(x.dc||'');if(a.indexOf('Type 1')>=0)return 't1';if(a.indexOf('NACS')>=0)return 'us';if(a.indexOf('GB/T')>=0)return 'gb';return 'eu';}
+function mgrChip(){if(MGR.id)return '<div class="a-mgr"><span>👤 '+esc(MGR.name)+' <i>ID '+MGR.id+'</i></span><button onclick="mLink()">🔗 Моя ссылка</button></div>';
+ return '<div class="a-mgr warn"><span>⚠️ Менеджер не определён — заявка уйдёт без атрибуции кэшбэка.</span><button onclick="mHint()">Как открыть?</button></div>';}
+function mLink(){if(!MGR.id){toast('Сначала определите менеджера — откройте по личной ссылке.');return;}copyTxt(refLink);}
+function mHint(){alert('Личная ссылка менеджера: '+BASE+'/app/?ref=ВАШ_TELEGRAM_ID\n\nОткрывайте апп по ней (или через меню бота с startapp), и все заказы будут зафиксированы на вас.');}
+function s1(){hist=[];cart={};curModel='';curBrand='';curIdx=0;curSkus=[];scKey='';PROMO='';man={};updBack();
+ el('app').innerHTML='<div class="a-head">⚡ Конфигуратор · Запас хода<span class="a-ver">od v6</span></div>'
+ +'<p class="a-sub">Подбор комплекта под модель клиента за 30 секунд — цены, промокод и ваш бонус.</p>'
+ +mgrChip()
+ +'<div class="a-search"><input id="a-q" placeholder="Бренд или модель…" oninput="aFilter()"></div><div class="a-list" id="a-brands"></div>';
+ renderBrands('');}
+function tile(b,pin){return '<button class="a-tile'+(pin?' a-p':'')+'" onclick="aPick('+qA(b)+')" tabindex="0"><span class="a-mono">'+esc(b.slice(0,2).toUpperCase())+'</span><span class="a-tb">'+esc(b)+'</span><span class="a-n">'+D.brands[b].length+' мод.</span></button>';}
+function renderBrands(q){q=(q||'').trim().toLowerCase();var box=el('a-brands');if(!box)return;var os='';
+ if(!q){D.pins.forEach(function(b){if(D.brands[b])os+=tile(b,true);});
+  D.order.forEach(function(b){if(D.pins.indexOf(b)<0)os+=tile(b,false);});}
+ else{var n=0;
+  D.order.forEach(function(b){var bm=b.toLowerCase().indexOf(q)>=0;
+   if(bm){os+=tile(b,true);n++;}
+   D.brands[b].forEach(function(x,i){if(x.m.toLowerCase().indexOf(q)>=0){os+='<button class="a-tile a-t2" onclick="aModel('+qA(b)+','+i+')" tabindex="0"><span class="a-tb">'+esc(x.m)+'</span><span class="a-n">'+esc(b)+'</span></button>';n++;}});});
+  if(!n)os='<p class="a-empty">Ничего не нашлось — попробуйте бренд или модель.</p>';}
+ box.innerHTML=os;}
+function aFilter(){renderBrands(el('a-q').value.trim());}
+function aPick(b){curBrand=b;var os='';D.brands[b].forEach(function(x,i){
+ os+='<button class="a-row" onclick="aModel('+qA(b)+','+i+')" tabindex="0"><span>'+esc(x.m)+'</span><span class="a-n">'+esc(x.type)+'</span></button>';});
+ el('app').innerHTML='<button class="a-back" onclick="s1()">← Все марки</button><div class="a-head">'+esc(b)+'</div><div class="a-list">'+os+'</div>';
+ if(!hist.length)hist.push(s1);updBack();}
+function aModel(b,i,np){var x=D.brands[b][i];curBrand=b;curIdx=i;curModel=b+' '+x.m;
+ curSkus=(x.sku||[]).filter(function(e){return !!D.prods[e.id];});
+ man={};s2(0);if(!np)hist.push(s1);updBack();}
+function s2(np){var x=D.brands[curBrand][curIdx];cart={};scKey='';man={};
+ if(!np){if(hist[hist.length-1]!==s1)hist.push(s1);}updBack();
+ el('app').innerHTML='<button class="a-back" onclick="s1()">← Сменить модель</button>'
+ +'<div class="a-head">'+esc(curModel)+'</div>'
+ +'<div class="a-cards"><div class="a-card"><b>🔌 Порты клиента</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span>'+(x.obc?'<span>OBC: '+esc(x.obc)+'</span>':'')+'</div></div>'
+ +'<div class="a-qhead">Как клиент будет заряжаться?</div>'
+ +'<div class="a-scen">'+D.sc.map(function(s){return '<button class="a-scen-b" onclick="scPick('+qA(s.k)+')"><span class="a-scen-e">'+s.e+'</span><span class="a-scen-t"><b>'+esc(s.t)+'</b><span>'+esc(s.s)+'</span></span></button>';}).join('')+'</div>';}
+function scTitle(){for(var i=0;i<D.sc.length;i++)if(D.sc[i].k===scKey)return D.sc[i].t;return '';}
+function s3(np){var x=D.brands[curBrand][curIdx];if(!x){s1();return;}
+ if(!np)hist.push(function(){s2(1);});updBack();
+ el('app').innerHTML='<button class="a-back" onclick="s2(1)">← Сценарий</button>'
+ +'<div class="a-head">🧰 Комплект</div>'
+ +'<p class="a-sub">'+esc(curModel)+' · '+esc(scTitle())+'</p>'
+ +'<div class="a-list" id="a-kit"></div>'
+ +'<p class="a-note">'+esc(D.notes[scKey]||'')+'</p>'
+ +'<button class="a-btn" onclick="s4()">Оформить заказ для клиента</button>'
+ +'<a class="a-link" href="'+BASE+'/models/'+(x.slug||'')+'/" target="_blank" rel="noopener">Полный разбор модели на сайте →</a>';
+ renderKit();}
+function kitItems(){var x=D.brands[curBrand][curIdx];var R=D.rules[scKey]||{},rec={};
+ ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(id){if(D.prods[id])rec[id]=1;});
+ var seen={},items=[];
+ (x.sku||[]).forEach(function(e){var p=D.prods[e.id];if(!p)return;seen[e.id]=1;
+  items.push({id:e.id,b:e.b,rec:!!rec[e.id]});});
+ Object.keys(rec).forEach(function(id){if(!seen[id])items.push({id:Number(id),b:'',rec:true});});
+ items.sort(function(a2,b2){var ra=(a2.b==='need')?2:(a2.rec?1:0),rb=(b2.b==='need')?2:(b2.rec?1:0);return rb-ra;});
+ return items;}
+function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand][curIdx];
+ var R=D.rules[scKey]||{},rec={};
+ ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(id){if(D.prods[id])rec[id]=1;});
+ var unc=R.unc||[];
+ var os='',t=0;cart={};
+ kitItems().forEach(function(e){var p=D.prods[e.id];if(!p)return;
+  var base=((e.b==='need')||rec[e.id])&&unc.indexOf(e.id)<0;
+  var on=(man[e.id]!==undefined)?man[e.id]:base;
+  if(on){cart[e.id]=1;t+=p.pr;}else delete cart[e.id];
+  os+='<div class="a-item" onclick="aToggle('+e.id+')"><span>'+(p.e||'🔌')+' '+esc(p.n)+(e.b==='need'?' <i class="a-bdg">обязательно</i>':(rec[e.id]?' <i class="a-bdg rec">по сценарию</i>':''))+'</span><span class="a-p2">'+fmt(p.pr)+' ₽</span><span class="a-ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span></div>';});
+ if(!t)os+='<p class="a-empty">Рекомендаций для этой модели пока нет — нажмите «Оформить заказ» и напишите комментарий, подберём вручную.</p>';
+ os+='<div class="a-total">Итого: '+fmt(t)+' ₽</div>';
+ LAST_TOTAL=t;box.innerHTML=os;}
+function aToggle(id){var x=D.brands[curBrand][curIdx];if(!x||!D.prods[id])return;
+ var R=D.rules[scKey]||{},rec={};
+ ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(i2){if(D.prods[i2])rec[i2]=1;});
+ var e2=null;(x.sku||[]).forEach(function(e){if(e.id===id)e2=e;});
+ var base=((e2&&e2.b==='need')||rec[id])&&((R.unc||[]).indexOf(id)<0);
+ var cur=(man[id]!==undefined)?man[id]:base;
+ man[id]=!cur;renderKit();}
+function scPick(k){scKey=k;man={};s3(0);}
+function s4(){var t=LAST_TOTAL||0;var n=Object.keys(cart).length;
+ el('app').innerHTML='<button class="a-back" onclick="s3(1)">← Комплект</button>'
+ +'<div class="a-head">Данные клиента</div>'
+ +'<p class="a-sub">'+esc(curModel)+' · '+esc(scTitle())+' · позиций: '+n+' · '+fmt(t)+' ₽</p>'
+ +'<input id="a-name" placeholder="Имя клиента"><input id="a-phone" placeholder="Телефон клиента (+7 …)" oninput="aFmtP()"><input id="a-city" placeholder="Город / салон">'
+ +'<textarea id="a-note" placeholder="Комментарий (необязательно)"></textarea>'
+ +'<button class="a-btn" id="a-send" onclick="aSend()">Сгенерировать промокод и отправить</button>'
+ +'<p class="a-note">Скидка клиенту — '+D.ref.disc+'% по промокоду. Ваш бонус — '+D.ref.cbMin+'–'+D.ref.cbMax+'% от чека после подтверждения продажи.</p>';
+ hist.push(function(){s3(1);});updBack();}
+function aFmtNum(d){var s='';if(d.length){s='+7 '+d.slice(0,3);if(d.length>3)s+=' '+d.slice(3,6);if(d.length>6)s+='-'+d.slice(6,8);if(d.length>8)s+='-'+d.slice(8,10);}return s;}
+function aFmtP(){var v=el('a-phone').value.replace(/\D/g,'');if(v&&v[0]==='8')v='7'+v.slice(1);if(v.length===10)v='7'+v;if(v.length>11)v=v.slice(0,11);var d=(v&&v[0]==='7')?v.slice(1):v;el('a-phone').value=aFmtNum(d);}
+function mkPromo(){var s='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<6;i++)r+=s.charAt(Math.floor(Math.random()*s.length));return (D.ref.prefix||'ZSH')+'-'+r;}
+function aSend(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prods[id];});
+ if(!ids.length){alert('Комплект пуст — вернитесь назад и отметьте позиции.');return;}
+ var n=el('a-name').value.trim(),ph=el('a-phone').value.replace(/\D/g,''),c=el('a-city').value.trim();
+ if(ph[0]==='8')ph='7'+ph.slice(1);if(ph.length===10)ph='7'+ph;
+ if(n.length<2||ph.length!==11){alert('Укажите имя и телефон клиента в формате +7 XXX XXX-XX-XX.');return;}
+ ph=aFmtNum(ph.slice(1));
+ var btn=el('a-send');btn.disabled=true;btn.textContent='Отправляем…';
+ var items=ids.map(function(id){return{id:Number(id),name:D.prods[id].n,qty:cart[id],price:D.prods[id].pr};});
+ var total=items.reduce(function(s,i){return s+i.price*i.qty;},0);
+ PROMO=mkPromo();
+ var pay={t:'od_order',promo:PROMO,manager_tg_id:String(MGR.id||''),manager_name:MGR.name||'',tg_init:(tg&&tg.initData)||'',brand:curBrand,model:curModel,scenario:scKey,items:items,total:total,client_name:n,name:n,phone:ph,city:c,comment:el('a-note').value.slice(0,300),website:'',source:'tma_od'};
+ fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pay)})
+ .then(function(){done(true);})
+ .catch(function(){done(false);});}
+function done(ok){var total=LAST_TOTAL||0;var n=Object.keys(cart).length;
+ el('app').innerHTML='<div class="a-head">✅ Промокод готов</div>'
+ +'<div class="a-promo"><span class="a-promo-l">Промокод клиента</span><span class="a-promo-c">'+esc(PROMO)+'</span><span class="a-promo-d">Скидка '+D.ref.disc+'% при заказе у дилера</span></div>'
+ +'<div class="a-cards"><div class="a-card"><b>💰 Ваш бонус</b><span>'+D.ref.cbMin+'–'+D.ref.cbMax+'% от чека '+fmt(total)+' ₽</span><span class="a-mut">≈ '+fmt(Math.round(total*D.ref.cbMin/100))+'–'+fmt(Math.round(total*D.ref.cbMax/100))+' ₽. Начисляется после подтверждения продажи дилером.</span></div>'
+ +'<div class="a-card"><b>🚗 Заказ</b><span>'+esc(curModel)+' · '+esc(scTitle())+'</span><span class="a-mut">Позиций: '+n+' · итог '+fmt(total)+' ₽'+(MGR.id?' · менеджер ID '+MGR.id:'')+'</span></div></div>'
+ +(ok?'':'<p class="a-warn">Не удалось подтвердить отправку на сервер. Продублируйте заявку в @zapashoda_ev, чтобы бонус зафиксировался.</p>')
+ +'<button class="a-btn" onclick="copyTxt('+qA(PROMO)+')">Скопировать промокод</button>'
+ +'<a class="a-cta" onclick="sharePromo()">📤 Отправить код клиенту в Telegram</a>'
+ +'<a class="a-cta" onclick="mLink()">🔗 Моя ссылка конфигуратора</a>'
+ +'<button class="a-btn a-btn2" onclick="s1()">Новый подбор</button>';
+ hist=[];updBack();}
+function sharePromo(){var txt='Ваш промокод на комплект зарядки для '+curModel+': '+PROMO+' — скидка '+D.ref.disc+'% у дилера. Подбор: '+BASE+'/app/';
+ tgo('https://t.me/share/url?url='+encodeURIComponent(BASE+'/app/')+'&text='+encodeURIComponent(txt));}
+s1();"""
+    js = js_head + js_body
     css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
       ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px}.a-ver{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:10px;color:#9fb0b8;font-weight:600}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
-      ".a-search{margin:12px 16px 4px}.a-search input{width:calc(100% - 28px);padding:12px 14px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit}"
+      ".a-search{margin:12px 16px 4px}.a-search input{width:calc(100% - 28px);padding:12px 14px;border:1px solid #d5dbe1;border-radius:12px;font-size:16px;font-family:inherit}"
       ".a-list{margin:0 16px;display:grid;gap:8px;padding-bottom:24px}"
       ".a-row,.a-back,.a-btn{border:1px solid #d9dfe5;background:#fff;border-radius:14px;padding:13px 16px;font-size:15px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-family:inherit;cursor:pointer;box-sizing:border-box;color:#15202b}"
       ".a-row{width:100%;text-align:left}"
-      ".a-back{width:auto;display:inline-flex;padding:9px 14px;border-radius:999px;font-size:13.5px;color:#0a7a2f;margin:12px 16px 0}"
+      ".a-back{width:auto;display:inline-flex;padding:9px 14px;border-radius:999px;font-size:13.5px;color:#2563EB;margin:12px 16px 0}"
       ".a-n{color:#5c6c75;font-size:12.5px;white-space:nowrap}"
       ".a-cards{margin:0 16px;display:grid;gap:10px}"
       ".a-card{background:#fff;border:1px solid #e2e7ec;border-radius:14px;padding:13px 15px;display:grid;gap:6px;font-size:14.5px}"
       ".a-card b{font-size:14px}"
-      ".a-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f3;font-size:14px}"
+      ".a-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f3;font-size:14px;cursor:pointer}"
       ".a-item:last-child{border-bottom:none}.a-pr{white-space:nowrap}"
-      ".a-qty{display:inline-flex;gap:8px;align-items:center}.a-qty button{width:26px;height:26px;border-radius:8px;border:1px solid #d5dbe1;background:#fff;font-size:15px;cursor:pointer;font-family:inherit}"
       ".a-btn{justify-content:center;background:#2563EB;border-color:#2563EB;color:#fff;font-weight:700;margin:14px 16px 0;width:calc(100% - 32px);font-size:16px;height:48px;border-radius:14px}"
-      ".a-note{margin:10px 20px;color:#7d8f95;font-size:12.5px}.a-cta{display:block;margin:10px 16px 0;padding:12px 14px;border:1px solid #d9dfe5;background:#fff;border-radius:14px;color:#0a7a2f;font-weight:600;font-size:14.5px;text-decoration:none;cursor:pointer}"
-      ".a-link{display:block;margin:14px 16px 0;color:#0a7a2f;font-weight:600;text-decoration:none;font-size:14.5px}"
-      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}.a-p2{white-space:nowrap;color:#3c5359;font-size:13.5px}.a-ck{width:30px;min-width:30px;height:30px;border:1.5px solid #d5dbe1;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:#2563EB;font-weight:800;font-size:16px}.a-ck.on{background:#2563EB;border-color:#2563EB;color:#fff}.a-card .a-item{cursor:pointer}.a-total{display:flex;justify-content:flex-end;gap:6px;padding-top:8px;margin-top:4px;border-top:1px solid #eef1f3;font-weight:800;font-size:15px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
-      "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
+      ".a-btn2{background:#fff;border-color:#d9dfe5;color:#15202b}"
+      ".a-note{margin:10px 20px;color:#7d8f95;font-size:12.5px}.a-cta{display:block;margin:10px 16px 0;padding:12px 14px;border:1px solid #d9dfe5;background:#fff;border-radius:14px;color:#2563EB;font-weight:600;font-size:14.5px;text-decoration:none;cursor:pointer}"
+      ".a-link{display:block;margin:14px 16px 0;color:#2563EB;font-weight:600;text-decoration:none;font-size:14.5px}"
+      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}.a-p2{white-space:nowrap;color:#3c5359;font-size:13.5px}.a-ck{width:30px;min-width:30px;height:30px;border:1.5px solid #d5dbe1;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:#2563EB;font-weight:800;font-size:16px;flex-shrink:0}.a-ck.on{background:#2563EB;border-color:#2563EB;color:#fff}"
+      ".a-mgr{margin:0 16px 4px;display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #e2e7ec;border-radius:12px;padding:10px 13px;font-size:13.5px}"
+      ".a-mgr i{font-style:normal;color:#5c6c75}.a-mgr button{border:1px solid #d9dfe5;background:#fff;border-radius:999px;padding:7px 12px;font-size:12.5px;font-family:inherit;cursor:pointer;color:#2563EB;font-weight:600;white-space:nowrap}"
+      ".a-mgr.warn{background:#FFF7E6;border-color:#F2D488}.a-mgr.warn button{color:#8a6d1f}"
+      ".a-tile{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;background:#fff;border:1px solid #e2e7ec;border-radius:14px;padding:12px 14px;font-family:inherit;cursor:pointer;box-sizing:border-box;text-align:left;width:100%;color:#15202b}"
+      ".a-mono{width:40px;height:40px;border-radius:12px;background:#2563EB;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}"
+      ".a-tile.a-t2{grid-template-columns:1fr auto;padding:11px 14px}.a-tb{font-size:15px;font-weight:600}"
+      ".a-qhead{margin:18px 20px 8px;font-size:16px;font-weight:800}"
+      ".a-scen{margin:0 16px;display:grid;gap:10px;padding-bottom:12px}"
+      ".a-scen-b{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;background:#fff;border:2px solid #e2e7ec;border-radius:18px;padding:16px;font-family:inherit;cursor:pointer;box-sizing:border-box;text-align:left;color:#15202b;min-height:76px}"
+      ".a-scen-b:active{border-color:#2563EB;background:#F3F7FF}"
+      ".a-scen-e{font-size:30px;text-align:center}.a-scen-t{display:grid;gap:3px}.a-scen-t b{font-size:16.5px}.a-scen-t span{font-size:13px;color:#5c6c75;line-height:1.35}"
+      ".a-bdg{font-style:normal;font-size:10.5px;font-weight:700;color:#5c6c75;background:#EEF1F4;border-radius:999px;padding:2px 7px;margin-left:6px;white-space:nowrap}.a-bdg.rec{color:#B45309;background:#FFF3D6}"
+      ".a-promo{margin:12px 16px;background:#fff;border:2px dashed #2563EB;border-radius:16px;padding:16px;display:grid;gap:4px;justify-items:center;text-align:center}"
+      ".a-promo-l{font-size:12.5px;color:#5c6c75}.a-promo-c{font-size:26px;font-weight:800;letter-spacing:2px;color:#1D4ED8}.a-promo-d{font-size:12.5px;color:#5c6c75}"
+      ".a-mut{font-size:12.5px;color:#7d8f95}"
+      ".a-warn{margin:10px 16px;background:#FFF7E6;border:1px solid #F2D488;border-radius:12px;padding:10px 12px;font-size:13px;color:#8a6d1f}"
+      "#a-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:#15202b;color:#fff;font-size:13px;padding:9px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90%;text-align:center}"
+      "#a-toast.show{opacity:.94}"
+      "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:16px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
       "textarea{min-height:64px;resize:vertical}"
+      ".a-total{display:flex;justify-content:flex-end;gap:6px;padding:10px 20px 0;margin:0;font-weight:800;font-size:15px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
       "</style>")
-    body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
+    body = ('<div id="app"></div><div id="a-toast"></div>' + css + '<script>' + js + '</script>')
     tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js" async></script>'
       '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)||/tgWebAppData=/.test(location.href)){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
-    write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
-               'Подбор комплекта зарядки под вашу модель прямо в Telegram: разъёмы, что докупить, заявка с оплатой при получении.',
+    write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — конфигуратор зарядки',
+               'Конфигуратор зарядки для менеджеров автосалонов: 145 моделей, сценарии дом/квартира/путешествия, готовые комплекты с ценами, промокод на скидку и кэшбэк менеджеру.',
                body, '/app/', extra_ld=tg_head)
-    print('mini-app: /app/ готов')
+    print('mini-app: /app/ готов (конфигуратор od v6)')
+
 
 def forum_build(outdir):
     seeds = _forum_seed()
@@ -3537,52 +3622,6 @@ EXTRA_V4_CSS = r"""
 @media (min-width:769px) { .zs-off { display:none !important; } }
 """
 
-
-# ===== CSS виджета-калькулятора (ЭТАП 1 портала) =====
-EXTRA_CALC_CSS = r"""
-.zc-wrap { padding: 10px 0 6px; }
-.zc { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
-.zc-badge { display: inline-block; background: #064e3b; color: #fff; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; letter-spacing: .02em; }
-.zc-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 14px 0 8px; }
-.zc-sub { color: #475569; font-size: .95rem; max-width: 720px; margin: 0 0 18px; line-height: 1.5; }
-.zc-sub a { color: #047857; text-decoration: underline; }
-.zc-grid { display: grid; grid-template-columns: minmax(min(100%,300px),360px) minmax(0,1fr); gap: 28px; align-items: start; }
-.zc-ctrl { background: #f8fafc; border: 1px solid rgba(15,23,42,.06); border-radius: 16px; padding: 20px; }
-.zc-label { display: block; font-size: .9rem; color: #334155; margin: 0 0 10px; }
-.zc-label b { color: #0f172a; font-variant-numeric: tabular-nums; }
-.zc-ctrl input[type=range] { width: 100%; accent-color: #16a34a; margin: 4px 0 18px; }
-.zc-select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; font-size: .95rem; color: #0f172a; }
-.zc-hyb { display: none; margin-top: 12px; font-size: .8rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 8px 10px; line-height: 1.4; }
-.zc-out { min-width: 0; }
-.zc-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
-.zc-table th { text-align: left; color: #64748b; font-weight: 600; font-size: .8rem; padding: 6px 8px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
-.zc-table td { padding: 9px 8px; border-bottom: 1px solid #eef2f7; color: #0f172a; font-variant-numeric: tabular-nums; }
-.zc-table td:first-child { color: #334155; }
-.zc-table .zc-vs td { color: #9f1239; background: #fff1f2; }
-.zc-table td:nth-child(n+2) { text-align: right; white-space: nowrap; }
-.zc-save { margin-top: 14px; font-size: 1rem; color: #334155; }
-.zc-save b { color: #047857; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
-.zc-cta { margin-top: 12px; font-size: .98rem; color: #0f172a; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.zc-foot { margin-top: 16px; font-size: .78rem; color: #94a3b8; line-height: 1.45; }
-@media (max-width: 900px) {
-  .zc-grid { grid-template-columns: minmax(0,1fr); }
-  .zc { padding: 22px 18px; border-radius: 16px; }
-  .zc-table { font-size: .85rem; }
-  .zc-table th { font-size: .72rem; padding: 5px 6px; }
-  .zc-table td { padding: 7px 6px; }
-}
-@media (max-width: 640px) {
-  .zc-table { display: block; overflow-x: auto; }
-  /* grid-элементы не должны держать min-content ширину и вылезать за вьюпорт */
-  .grid > * { min-width: 0; }
-}
-/* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
-@media (max-width: 768px) {
-  .zs-off { right: auto; left: -320px; transition: left .25s ease; }
-  .zs-off.open { left: 0; }
-}
-"""
-
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -3597,8 +3636,7 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
-
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
