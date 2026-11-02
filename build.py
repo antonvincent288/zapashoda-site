@@ -3609,6 +3609,14 @@ def main():
         jobs.append(('/assets/og/b-'+sl3+'.png', t3))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
+    # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)
+    og_src_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ogsrc')
+    if os.path.isdir(og_src_dir):
+        og_out = os.path.join(outdir, 'assets', 'og')
+        os.makedirs(og_out, exist_ok=True)
+        for _fn in os.listdir(og_src_dir):
+            if _fn.endswith('.png'):
+                shutil.copy(os.path.join(og_src_dir, _fn), os.path.join(og_out, _fn))
     catalog.catalog_build(outdir)
     services.services_build(outdir, write_page)
     services.blog_build(outdir, write_page)
