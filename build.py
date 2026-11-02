@@ -2601,7 +2601,7 @@ def app_page(outdir):
       "textarea{min-height:64px;resize:vertical}"
       "</style>")
     body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
-    tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js"></script>'
+    tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js" async></script>'
       '<script>(function(){if(window.Telegram&&window.Telegram.WebApp){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
