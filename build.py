@@ -137,7 +137,7 @@ def load_site_config():
         p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
         if os.path.exists(p):
             with open(p, encoding='utf-8') as f:
-                cfg.update({k: v for k, v in json.load(f).items() if k in cfg})
+                cfg.update(json.load(f))
     except Exception:
         pass
     return cfg
@@ -151,6 +151,84 @@ BANNER_LINK = str(SITE_CFG.get('banner_link') or '')
 CFG_PHONE = str(SITE_CFG.get('phone') or '')
 CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
 CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
+
+
+# ===== КАЛЬКУЛЯТОР ЭКОНОМИИ (виджет на главной, ЭТАП 1 портала) =====
+CALC_PETROL_PRICE = float(SITE_CFG.get('calc_petrol_price') or 65)      # ₽ за литр АИ-95 (оценка)
+CALC_PETROL_L100 = float(SITE_CFG.get('calc_petrol_l100') or 10)        # л/100 км ДВС-аналога (оценка)
+CALC_T_NIGHT = float(SITE_CFG.get('calc_tariff_night') or 3.8)          # ₽/кВт·ч дом ночью (Москва, ночной тариф)
+CALC_T_DAY = float(SITE_CFG.get('calc_tariff_day') or 6.5)              # ₽/кВт·ч дом днём
+CALC_T_EZS = float(SITE_CFG.get('calc_tariff_ezs') or 22)               # ₽/кВт·ч быстрые ЭЗС (10–25, середина)
+CALC_STATION_PRICE = float(SITE_CFG.get('calc_home_station_price') or 24500)  # домашняя станция из каталога, от
+CALC_KWH_DEFAULT = float(SITE_CFG.get('calc_consumption_default') or 18)
+CALC_KWH = {k: float(v) for k, v in (SITE_CFG.get('calc_consumption') or {}).items()}
+CALC_HYBRIDS = set(SITE_CFG.get('calc_hybrid_note_models') or [])
+CALC_MODELS = list(CALC_KWH.keys())
+
+def calc_widget_html():
+    opts = ''.join('<option value="' + html.escape(m) + '" data-kwh="' + str(CALC_KWH[m]) + '"'
+                   + (' data-hyb="1"' if m in CALC_HYBRIDS else '') + '>' + html.escape(m) + '</option>'
+                   for m in CALC_MODELS)
+    tn = str(CALC_T_NIGHT).rstrip('0').rstrip('.')
+    td = str(CALC_T_DAY).rstrip('0').rstrip('.')
+    te = str(CALC_T_EZS).rstrip('0').rstrip('.')
+    pl = str(CALC_PETROL_L100).rstrip('0').rstrip('.')
+    pp = str(CALC_PETROL_PRICE).rstrip('0').rstrip('.')
+    return (
+      '<section class="zc-wrap"><div class="container"><div class="zc">'
+      '<div class="zc-head">'
+      '<span class="zc-badge">⚡️ Калькулятор экономии</span>'
+      '<h2 class="zc-title">Сколько вы экономите на электричестве вместо бензина</h2>'
+      '<p class="zc-sub">Двигайте пробег, выберите модель — расчёт по реальным тарифам: дом ночью '
+      + tn + ' ₽/кВт·ч, публичные ЭЗС около ' + te + ' ₽/кВт·ч. Расход и цены топлива — оценка, точный расчёт считает <a href="/calculator/">полный калькулятор</a>.</p>'
+      '</div>'
+      '<div class="zc-grid">'
+      '<div class="zc-ctrl">'
+      '<label class="zc-label">Годовой пробег: <b id="zc-km">15 000 км</b></label>'
+      '<input type="range" id="zc-range" min="5000" max="50000" step="1000" value="15000" aria-label="Годовой пробег">'
+      '<label class="zc-label" for="zc-model">Ваш электромобиль</label>'
+      '<select id="zc-model" class="zc-select">' + opts + '</select>'
+      '<div class="zc-hyb" id="zc-hyb">Гибрид: расчёт — для поездок на электротяге; часть пробега на бензине уменьшит фактическую экономию.</div>'
+      '</div>'
+      '<div class="zc-out">'
+      '<table class="zc-table"><thead><tr><th>Сценарий</th><th>за 1 год</th><th>за 3 года</th><th>за 5 лет</th></tr></thead><tbody>'
+      '<tr><td>Дома ночью (' + tn + ' ₽/кВт·ч)</td><td id="zc-n1">—</td><td id="zc-n3">—</td><td id="zc-n5">—</td></tr>'
+      '<tr><td>Дома днём (' + td + ' ₽/кВт·ч)</td><td id="zc-d1">—</td><td id="zc-d3">—</td><td id="zc-d5">—</td></tr>'
+      '<tr><td>Быстрые ЭЗС (' + te + ' ₽/кВт·ч)</td><td id="zc-e1">—</td><td id="zc-e3">—</td><td id="zc-e5">—</td></tr>'
+      '<tr class="zc-vs"><td>Та же машина на АИ-95 (' + pl + ' л/100 км, ' + pp + ' ₽/л)</td><td id="zc-f1">—</td><td id="zc-f3">—</td><td id="zc-f5">—</td></tr>'
+      '</tbody></table>'
+      '<div class="zc-save">Экономия за год на ночной зарядке: <b id="zc-save">—</b></div>'
+      '<div class="zc-cta" id="zc-cta"></div>'
+      '</div></div>'
+      '<div class="zc-foot">Справочные значения расхода и цен — оценка по открытым характеристикам. Экономия считается против среднего ДВС-аналога; реальный расход зависит от стиля езды и климата.</div>'
+      '</div></div></section>')
+
+CALC_JS = (
+  '(function(){var P=' + str(CALC_PETROL_PRICE) + ',L=' + str(CALC_PETROL_L100) +
+  ',TN=' + str(CALC_T_NIGHT) + ',TD=' + str(CALC_T_DAY) + ',TE=' + str(CALC_T_EZS) + ',ST=' + str(CALC_STATION_PRICE) + ';'
+  'function fmt(n){return Math.round(n).toLocaleString("ru-RU");}'
+  'function money(el,n){el.textContent="\\u2248 "+fmt(n)+" \\u20BD";}'
+  'function upd(){var r=document.getElementById("zc-range");if(!r)return;'
+  'var km=+r.value,sel=document.getElementById("zc-model"),opt=sel.options[sel.selectedIndex];'
+  'var kwh=parseFloat(opt.getAttribute("data-kwh"))||18;'
+  'var hyb=opt.getAttribute("data-hyb")==="1";'
+  'document.getElementById("zc-km").textContent=km.toLocaleString("ru-RU")+" \\u043A\\u043C";'
+  'document.getElementById("zc-hyb").style.display=hyb?"block":"none";'
+  'var b=km/100;var ev=[b*kwh*TN,b*kwh*TD,b*kwh*TE];var fu=b*L*P;'
+  'var ks=["n","d","e"];for(var ti=0;ti<3;ti++){for(var y=1;y<=5;y+=2){money(document.getElementById("zc-"+ks[ti]+y),ev[ti]*y);}}'
+  'for(var y2=1;y2<=5;y2+=2){money(document.getElementById("zc-f"+y2),fu*y2);}'
+  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");'
+  'if(save>0){sb.textContent="\\u2248 "+fmt(save)+" \\u20BD";'
+  'var months=Math.ceil(ST/(save/12));'
+  'cta.innerHTML="\\u0412\\u0430\\u0448\\u0430 \\u044D\\u043A\\u043E\\u043D\\u043E\\u043C\\u0438\\u044F \\u043E\\u043A\\u0443\\u043F\\u0430\\u0435\\u0442 \\u0434\\u043E\\u043C\\u0430\\u0448\\u043D\\u044E\\u044E \\u0437\\u0430\\u0440\\u044F\\u0434\\u043A\\u0443 \\u0437\\u0430 \\u2248"+months+" \\u043C\\u0435\\u0441. "+'
+  '"<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}'
+  'else{sb.textContent="\\u2014";'
+  'cta.innerHTML="<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}}'
+  'document.addEventListener("DOMContentLoaded",function(){'
+  'var r=document.getElementById("zc-range"),s=document.getElementById("zc-model");'
+  'if(r)r.addEventListener("input",upd);if(s)s.addEventListener("change",upd);upd();});})();')
+
+CALC_SCRIPT = '<script>' + CALC_JS + '</script>'
 TG_LEAD_TOKEN = str(SITE_CFG.get('tg_lead_bot_token') or '')
 TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 
@@ -2197,6 +2275,7 @@ def home_page(outdir, news=None):
       '</div></div>'
       '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
       '</div></div></div></section>'
+      + calc_widget_html() + CALC_SCRIPT +
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
@@ -3622,6 +3701,52 @@ EXTRA_V4_CSS = r"""
 @media (min-width:769px) { .zs-off { display:none !important; } }
 """
 
+
+# ===== CSS виджета-калькулятора (ЭТАП 1 портала) =====
+EXTRA_CALC_CSS = r"""
+.zc-wrap { padding: 10px 0 6px; }
+.zc { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+.zc-badge { display: inline-block; background: #064e3b; color: #fff; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; letter-spacing: .02em; }
+.zc-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 14px 0 8px; }
+.zc-sub { color: #475569; font-size: .95rem; max-width: 720px; margin: 0 0 18px; line-height: 1.5; }
+.zc-sub a { color: #047857; text-decoration: underline; }
+.zc-grid { display: grid; grid-template-columns: minmax(min(100%,300px),360px) minmax(0,1fr); gap: 28px; align-items: start; }
+.zc-ctrl { background: #f8fafc; border: 1px solid rgba(15,23,42,.06); border-radius: 16px; padding: 20px; }
+.zc-label { display: block; font-size: .9rem; color: #334155; margin: 0 0 10px; }
+.zc-label b { color: #0f172a; font-variant-numeric: tabular-nums; }
+.zc-ctrl input[type=range] { width: 100%; accent-color: #16a34a; margin: 4px 0 18px; }
+.zc-select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; font-size: .95rem; color: #0f172a; }
+.zc-hyb { display: none; margin-top: 12px; font-size: .8rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 8px 10px; line-height: 1.4; }
+.zc-out { min-width: 0; }
+.zc-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.zc-table th { text-align: left; color: #64748b; font-weight: 600; font-size: .8rem; padding: 6px 8px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+.zc-table td { padding: 9px 8px; border-bottom: 1px solid #eef2f7; color: #0f172a; font-variant-numeric: tabular-nums; }
+.zc-table td:first-child { color: #334155; }
+.zc-table .zc-vs td { color: #9f1239; background: #fff1f2; }
+.zc-table td:nth-child(n+2) { text-align: right; white-space: nowrap; }
+.zc-save { margin-top: 14px; font-size: 1rem; color: #334155; }
+.zc-save b { color: #047857; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.zc-cta { margin-top: 12px; font-size: .98rem; color: #0f172a; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.zc-foot { margin-top: 16px; font-size: .78rem; color: #94a3b8; line-height: 1.45; }
+@media (max-width: 900px) {
+  .zc-grid { grid-template-columns: minmax(0,1fr); }
+  .zc { padding: 22px 18px; border-radius: 16px; }
+  .zc-table { font-size: .85rem; }
+  .zc-table th { font-size: .72rem; padding: 5px 6px; }
+  .zc-table td { padding: 7px 6px; }
+}
+@media (max-width: 640px) {
+  .zc-table { display: block; overflow-x: auto; }
+  /* grid-элементы не должны держать min-content ширину и вылезать за вьюпорт */
+  .grid > * { min-width: 0; }
+}
+/* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
+@media (max-width: 768px) {
+  .zs-off { right: auto; left: -320px; transition: left .25s ease; }
+  .zs-off.open { left: 0; }
+}
+"""
+
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -3636,7 +3761,8 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS
+
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
