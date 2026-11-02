@@ -1966,12 +1966,8 @@ PAIN_INTRO = {
   '<p>Под запросы «зарядная станция для дома купить» и «домашняя зарядка для электромобиля»: три фактора решают всё — разъём вашей машины (GB/T или Type 2), мощность бортового зарядного (OBC) и электрика парковки (автомат, кабель, заземление). Трёхфазная станция на 22 кВт бесполезна, если машина принимает только однофазные 7 кВт — платите за то, что реально использует бортовое зарядное. Стоимость установки и шорт-лист моделей — ниже и в <a href="/services/ustanovka-stancii.html">услуге установки станции</a>; экономику ночной зарядки посчитает <a href="/calculator/">калькулятор</a>. Проверено на данных базы: {BD}.</p>'),
  'zaryadka-na-trasse': ('<h2>Зарядка на трассе М-4, М-11, М-12: где станции и что учесть</h2>'
   '<p>Под запросы «зарядка на трассе М-4», «зарядные станции на М-11» и «дальняя поездка на электромобиле»: планируйте не только станции, но и запасные — до 26% точек бывают неисправны. Практика: станции на 60–100 кВт «прощают» несовместимости чаще, чем терминалы 150+ кВт. Бонус для машин российской сборки: до конца 2026 года проезд по М-1, М-3, М-4, М-11, М-12 и ЦКАД бесплатный — правила оформления в <a href="/blog/besplatnye-trassy-parkovka-ev.html">статье о бесплатных трассах</a>. Проверено на данных базы: {BD}.</p>'),
- 'zapas-hoda-zimoy': ('<p>Ищете «запас хода зимой» или «сколько едет электромобиль в мороз»? Типичная потеря — 25–40% от летних цифр: зависит от машины, скорости и работы печки. Универсального процента не существует, но паттерны повторяются — карточки ниже по моделям из нашей базы. Расход зимой растёт, а значит растут и расходы на зарядку: подставьте зимний расход в <a href="/calculator/">калькуляторе</a>. Проверено на данных базы: {BD}.</p>'),
  'kabel-ne-otdaet': ('<p>Запрос «кабель не отдаёт мощность» обычно означает одно из трёх: станция режет мощность (смотрите статус сессии в приложении), машина ограничивает приём (OBC или температура батареи), либо кабель/адаптер греется и снижает ток по защите. Разбор по шагам — в карточках ниже. Проверено на данных базы: {BD}.</p>'),
- '12v-akb': ('<p>Запросы «12 вольт аккумулятор электромобиля» и «электромобиль не заводится» чаще всего указывают на 12-вольтовую систему: она питает электронику, и её просадка сыплет ошибки вплоть до отказа зарядки. Сброс клеммы на 5–10 минут решает часть случаев (кейс Evolute 0x13 — в <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">статье</a>). Проверено на данных базы: {BD}.</p>'),
  'lyuchok': ('<p>«Заклинил лючок зарядки» — частая зимняя проблема: примерзание и износ механизма. Аварийная разблокировка описана в карточках ниже; для профилактики есть смазка лючка в <a href="/catalog/">каталоге</a>. Проверено на данных базы: {BD}.</p>'),
- 'udlinitel': ('<p>Под запрос «удлинитель для зарядки электромобиля»: обычный бытовой удлинитель не подходит — нужна линия с заземлением и подходящим сечением, лучше специально разработанный вариант с полным PE (пример — в <a href="/catalog/">каталоге</a>). Электробезопасность важнее удобства: длинные смотанные бухты греются. Проверено на данных базы: {BD}.</p>'),
- 'type1-ccs1': ('<p>Машины из США, Кореи и Японии с Type 1/CCS1 в России встречаются реже GB/T, и станций под них меньше. Переходники и варианты замены порта — в карточках ниже, адаптеры — в <a href="/catalog/">каталоге</a>. Проверено на данных базы: {BD}.</p>'),
  'tesla': ('<p>Под запросы «Tesla зарядка в России»: у большинства машин — европейский Type 2/CCS2, станции совместимы; проблема в софте и обслуживании. Разбор — в карточках ниже. Проверено на данных базы: {BD}.</p>'),
  'chademo': ('<p>CHAdeMO — стандарт старых японских EV (Nissan Leaf и др.): сетей становится меньше, но они живы. Карточки ниже — про станции, деградацию и мониторинг батареи. Проверено на данных базы: {BD}.</p>'),
  'stoimost-zaryadki': ('<p>Под запрос «сколько стоит зарядить электромобиль»: диапазоны ниже посчитаны по реальным тарифам 2026 года (ночной тариф в Москве 3,8 ₽/кВт·ч, публичные станции 10–25 ₽). Свою цифру под конкретную машину и тариф считает <a href="/calculator/">калькулятор</a>. Проверено на данных базы: {BD}.</p>'),
@@ -2540,7 +2536,7 @@ def app_page(outdir):
       "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
       "var cart={},curModel='',hist=[],curBrand='',curIdx=0;function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
       "function screen1(){cart={};curModel='';hist=[];updBack();renderCart();"
-      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода</div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
+      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода<span class=\"a-ver\">апп v3</span></div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
       " renderBrands('');}"
       "function renderBrands(q){var os='';"
       " D.order.forEach(function(b){if(q&&b.toLowerCase().indexOf(q.toLowerCase())<0)return;"
@@ -2584,7 +2580,7 @@ def app_page(outdir):
       " .catch(function(){btn.disabled=false;btn.textContent='Отправить заявку';alert('Сеть недоступна — попробуйте позже.');});}"
       "screen1();")
     css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
-      ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
+      ".a-head{font-size:22px;font-weight:800;margin:18px 20px 6px}.a-ver{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:10px;color:#9fb0b8;font-weight:600}.a-sub{margin:0 20px 10px;color:#5c6c75;font-size:14.5px}"
       ".a-search{margin:12px 16px 4px}.a-search input{width:calc(100% - 28px);padding:12px 14px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit}"
       ".a-list{margin:0 16px;display:grid;gap:8px;padding-bottom:24px}"
       ".a-row,.a-back,.a-btn{border:1px solid #d9dfe5;background:#fff;border-radius:14px;padding:13px 16px;font-size:15px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-family:inherit;cursor:pointer;box-sizing:border-box;color:#15202b}"
@@ -2606,7 +2602,7 @@ def app_page(outdir):
       "</style>")
     body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
     tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js" async></script>'
-      '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)){var d=document.documentElement;'
+      '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)||/tgWebAppData=/.test(location.href)){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
     write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
