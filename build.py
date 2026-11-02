@@ -2530,12 +2530,12 @@ def app_page(outdir):
     data = json.dumps({'brands': brands, 'order': sorted(brands, key=lambda b: -len(brands[b])), 'prod': prod}, ensure_ascii=False, separators=(',', ':'))
     js = ("var D=" + data + ";var G='" + GAS_URL + "';"
       "var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;"
-      "if(tg){try{tg.expand();tg.setHeaderColor('#f5f6f8');}catch(e){}}"
+      "if(tg){try{tg.ready&&tg.ready();tg.expand();tg.setHeaderColor&&tg.setHeaderColor('#f5f6f8');tg.setBackgroundColor&&tg.setBackgroundColor('#f5f6f8');tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}}"
       "function el(id){return document.getElementById(id);}"
       "function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}"
       "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
-      "var cart={},curModel='';"
-      "function screen1(){cart={};curModel='';renderCart();"
+      "var cart={},curModel='',hist=[],curBrand='',curIdx=0;function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
+      "function screen1(){cart={};curModel='';hist=[];updBack();renderCart();"
       " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода</div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
       " renderBrands('');}"
       "function renderBrands(q){var os='';"
@@ -2546,7 +2546,7 @@ def app_page(outdir):
       " os+='<button class=\"a-row\" onclick=\"aModel(&quot;'+jq(b)+'&quot;,'+i+')\" tabindex=\"0\"><span>'+esc(x.m)+'</span><span class=\"a-n\">'+esc(x.type)+'</span></button>';});"
       " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Все марки</button><div class=\"a-head\">'+esc(b)+'</div><div class=\"a-list\">'+os+'</div>';}"
       "function aFilter(){renderBrands(el('a-q').value.trim());}"
-      "function aModel(b,i){var x=D.brands[b][i];cart={};curModel=b+' '+x.m;"
+      "function aModel(b,i,np){var x=D.brands[b][i];cart={};curModel=b+' '+x.m;curBrand=b;curIdx=i;if(!np)hist.push(function(){screen1();});updBack();"
       " (x.skus||[]).forEach(function(id){if(D.prod[id])cart[id]=1;});"
       " el('app').innerHTML='<button class=\"a-back\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\">← '+esc(b)+'</button>'"
       " +'<div class=\"a-head\">'+esc(b)+' '+esc(x.m)+'</div>'"
@@ -2567,7 +2567,7 @@ def app_page(outdir):
       " +'<div class=\"a-cards\" style=\"margin-top:6px\"><div class=\"a-card\"><div class=\"a-item\"><span>Позиций</span><b>'+(ids.length||0)+'</b></div><div class=\"a-item\"><span>Итого</span><b>'+(total||0).toLocaleString('ru-RU')+' ₽</b></div></div></div>'"
       " +'<input id=\"a-name\" placeholder=\"Имя\"><input id=\"a-phone\" placeholder=\"Телефон\"><input id=\"a-city\" placeholder=\"Город\"><textarea id=\"a-note\" placeholder=\"Комментарий (необязательно)\"></textarea>'"
       " +'<button class=\"a-btn\" id=\"a-send\" onclick=\"aSend()\">Отправить заявку</button>'"
-      " +'<p class=\"a-note\">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>';}"
+      " +'<p class=\"a-note\">Оплата — дилеру при получении. Заявка ни к чему не обязывает.</p>';hist.push(function(){aModel(curBrand,curIdx,1);});updBack();}"
       "function aSend(){var n=el('a-name').value.trim(),ph=el('a-phone').value.trim(),c=el('a-city').value.trim();"
       " if(n.length<2||ph.length<6){alert('Укажите имя и телефон — иначе не сможем связаться.');return;}"
       " var btn=el('a-send');btn.disabled=true;btn.textContent='Отправляем…';"
@@ -2575,7 +2575,7 @@ def app_page(outdir):
       " var items=ids.map(function(id){return {name:D.prod[id].n,qty:cart[id],price:D.prod[id].pr};});"
       " fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({t:'miniapp',model:curModel,city:c,name:n,phone:ph,items:items,total:items.reduce(function(s,i){return s+i.price*i.qty;},0),comment:el('a-note').value,website:''})})"
       " .then(function(r){return r.json();}).then(function(res){"
-      " if(res&&res.ok){el('app').innerHTML='<div class=\"a-head\">✅ Заявка принята</div><p class=\"a-sub\">Свяжемся в ближайшее время. Оплата — дилеру при получении.</p><button class=\"a-btn\" onclick=\"screen1()\">Начать заново</button>';}"
+      " if(res&&res.ok){el('app').innerHTML='<div class=\"a-head\">✅ Заявка принята</div><p class=\"a-sub\">Свяжемся в ближайшее время. Оплата — дилеру при получении.</p><button class=\"a-btn\" onclick=\"screen1()\">Начать заново</button>';hist=[];updBack();}"
       " else{btn.disabled=false;btn.textContent='Отправить заявку';alert('Не отправилось: '+((res&&res.error)||'попробуйте позже'));}})"
       " .catch(function(){btn.disabled=false;btn.textContent='Отправить заявку';alert('Сеть недоступна — попробуйте позже.');});}"
       "screen1();")
@@ -2596,14 +2596,18 @@ def app_page(outdir):
       ".a-btn{justify-content:center;background:#0aad0a;border-color:#0aad0a;color:#fff;font-weight:700;margin:14px 16px 0;width:calc(100% - 32px);font-size:16px;height:48px;border-radius:14px}"
       ".a-note{margin:10px 20px;color:#7d8f95;font-size:12.5px}"
       ".a-link{display:block;margin:14px 16px 0;color:#0a7a2f;font-weight:600;text-decoration:none;font-size:14.5px}"
-      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}"
+      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
       "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
       "textarea{min-height:64px;resize:vertical}"
       "</style>")
     body = ('<div id="app"></div>' + css + '<script>' + js + '</script>')
+    tg_head = ('<script src="https://telegram.org/js/telegram-web-app.js"></script>'
+      '<script>(function(){if(window.Telegram&&window.Telegram.WebApp){var d=document.documentElement;'
+      "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
+      "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
     write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — мини-апп',
                'Подбор комплекта зарядки под вашу модель прямо в Telegram: разъёмы, что докупить, заявка с оплатой при получении.',
-               body, '/app/')
+               body, '/app/', extra_ld=tg_head)
     print('mini-app: /app/ готов')
 
 def forum_build(outdir):
