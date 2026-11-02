@@ -799,6 +799,11 @@ def _fcol(title, items):
     lis = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in items)
     return '<div><h6>'+title+'</h6><ul>'+lis+'</ul></div>'
 
+STICKY_BAR = ('<div class="zs-stbar"><div class="wrap">'
+      '<a class="zs-st-cta" href="/quiz/">⚡ Подобрать зарядку</a>'
+      '<a class="zs-st-alt" href="/catalog/">Каталог</a>'
+      '</div></div>')
+
 FOOTER = ('<footer>'
  '<div class="fcols">'
  + _fcol('Каталог', [('/catalog/','Каталог аксессуаров'),('/catalog/','Адаптеры'),('/catalog/','Кабели и удлинители'),('/catalog/','Зарядки и станции'),('/quiz/','Подбор за 30 секунд'),('/b2b/','Дилерам')])
@@ -992,7 +997,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
      '<link rel="stylesheet" href="/assets/fc-theme.css?v=' + BUILD_STAMP + '">'
      '<link rel="stylesheet" href="/style.css?v=' + BUILD_STAMP + '">'
      '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' + html.escape(title) + '","description":"' + html.escape(desc[:250]) + '","inLanguage":"ru"}</script>' + ld_crumbs + (extra_ld or "") + METRIKA_JS +
-     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script>window.ZS_LEAD_CFG={token:"' + TG_LEAD_TOKEN + '",chat:"' + TG_LEAD_CHAT + '",gas:"' + GAS_URL + '"};</script>' + '<script src="/assets/brand/lead.js" defer></script>' + '<script src="/assets/brand/boot.js" defer></script></body></html>')
+     '</head><body>' + header_html(canonical_rel) + BANNER_HTML + '<main class="container my-4">' + crumbs_html + body + _comments_html(path) + '</main>' + STICKY_BAR + FOOTER + SHARE_JS + NAV_JS + catalog.ORDER_JS + '<script>window.ZS_LEAD_CFG={token:"' + TG_LEAD_TOKEN + '",chat:"' + TG_LEAD_CHAT + '",gas:"' + GAS_URL + '"};</script>' + '<script src="/assets/brand/lead.js" defer></script>' + '<script src="/assets/brand/boot.js" defer></script></body></html>')
     with open(path,'w',encoding='utf-8') as f: f.write(_ext_fix(doc))
 
 def src_html(p):
@@ -3386,6 +3391,33 @@ img, svg { max-width:100%; }
   .zs-brand { font-size:16px; }
 }
 """
+EXTRA_STICKY_CSS = r"""
+/* ==== ЛИПКИЙ CTA-БАР + ТЁМНЫЙ ФУТЕР (02.11) ==== */
+.zs-stbar { display:none; }
+
+/* тёмный премиум-футер */
+footer { background:#0F172A !important; border-top:1px solid #1E293B; color:#94A3B8 !important; margin-top:80px !important; padding:64px 0 40px !important; }
+footer h6 { color:#E2E8F0 !important; }
+footer li a, footer .fdesc p, footer .fbot > div { color:#94A3B8 !important; }
+footer li a:hover { color:#FFFFFF !important; }
+footer .fdesc a { color:#93B7E0 !important; }
+footer .fbot { border-top:1px solid rgba(255,255,255,.08) !important; }
+footer .fbot .fsoc a { background:transparent !important; border-color:rgba(255,255,255,.14) !important; color:#CBD5E1 !important; }
+footer .fbot .fsoc a:hover { color:#FFFFFF !important; border-color:rgba(255,255,255,.32) !important; }
+
+/* липкий мобильный CTA-бар */
+@media (max-width:768px) {
+  .zs-stbar { display:block; position:fixed; left:0; right:0; bottom:0; z-index:70; background:rgba(255,255,255,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-top:1px solid #E2E8F0; padding:10px 12px calc(10px + env(safe-area-inset-bottom)); }
+  .zs-stbar .wrap { max-width:560px; margin:0 auto; display:flex; gap:10px; align-items:center; }
+  .zs-st-cta { flex:1; display:flex; align-items:center; justify-content:center; text-align:center; background:#2563EB; color:#FFFFFF; font-weight:700; font-size:15px; line-height:1.2; padding:13px 10px; border-radius:12px; text-decoration:none; box-shadow:0 6px 16px -6px rgba(37,99,235,.45); }
+  .zs-st-cta:hover { background:#1D4ED8; }
+  .zs-st-alt { flex:0 0 auto; display:flex; align-items:center; padding:13px 16px; border:1px solid #E2E8F0; border-radius:12px; color:#0F172A; font-weight:600; font-size:15px; text-decoration:none; background:#FFFFFF; }
+  body { padding-bottom:76px; }
+  footer { padding-bottom:110px !important; margin-top:48px !important; }
+  html.tg-mode body { padding-bottom:0 !important; }
+}
+html.tg-mode .zs-stbar { display:none !important; }
+"""
 
 def main():
     global CSS
@@ -3401,7 +3433,7 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
