@@ -1460,6 +1460,18 @@ CITIES = [
  ('Алматы','43.17,76.80,43.32,76.99')]
 
 def map_page(outdir):
+    from collections import Counter as _Cnt
+    _stats = {}
+    try:
+        _repo_root = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(_repo_root,'static','charging','stations.json'),encoding='utf-8') as _f: _all = json.load(_f)['stations']
+        for c,bb in CITIES:
+            la1,lo1,la2,lo2 = [float(x) for x in bb.split(',')]
+            hits = [s for s in _all if la1<=s.get('lat',0)<=la2 and lo1<=s.get('lon',0)<=lo2]
+            _stats[c] = len(hits)
+    except Exception: pass
+    CITY_URLS = [(c, slug(c)+'.html') for c,bb in CITIES]
+    city_links = ', '.join('<a href="/charging/'+u+'">'+c+(_stats.get(c) and ' ('+str(_stats.get(c))+')' or '')+'</a>' for c,u in CITY_URLS)
     city_btns = ''.join('<button class="cbtn" data-ci="' + str(k) + '">' + c + '</button>' for k, (c,bb) in enumerate(CITIES))
     js = """
 var CITIES=%s;
@@ -1514,7 +1526,7 @@ document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click
 """ % json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False)
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
      '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — из разметки OpenStreetMap и обратного геокодирования по координатам (ближайший адрес — возможна неточность номера дома). Знаете станцию, которой нет на карте? Добавьте её в OpenStreetMap (openstreetmap.org) — она попадёт в нашу базу при следующем обновлении.</p></div>'
-     '<div class="cbtns">' + city_btns + '</div>'
+     '<div class="cbtns">' + city_btns + '</div>'      '<p class="note">Подробно по городам: ' + city_links + '</p>'
      '<div id="map" class="nmap"></div>'
      '<p class="note" id="mstat">Загрузка данных…</p>'
      '<h2>Станции в выбранном городе</h2>'
@@ -2157,6 +2169,96 @@ def misc_pages(outdir):
     body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
     write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html', noindex=True)
 
+
+CITY_FORMS = {
+ 'Москва': ('в Москве', 'Москвы'),
+ 'Санкт-Петербург': ('в Санкт-Петербурге', 'Санкт-Петербурга'),
+ 'Нижний Новгород': ('в Нижнем Новгороде', 'Нижнего Новгорода'),
+ 'Екатеринбург': ('в Екатеринбурге', 'Екатеринбурга'),
+ 'Новосибирск': ('в Новосибирске', 'Новосибирска'),
+ 'Казань': ('в Казани', 'Казани'),
+ 'Краснодар': ('в Краснодаре', 'Краснодара'),
+ 'Ростов-на-Дону': ('в Ростове-на-Дону', 'Ростова-на-Дону'),
+ 'Сочи': ('в Сочи', 'Сочи'),
+ 'Владивосток': ('во Владивостоке', 'Владивостока'),
+ 'Симферополь': ('в Симферополе', 'Симферополя'),
+ 'Минск': ('в Минске', 'Минска'),
+ 'Алматы': ('в Алматы', 'Алматы'),
+}
+
+def city_charging_pages(outdir):
+    """Программатика: страница «зарядные станции в {город}» для каждого города карты."""
+    CITY_URLS.clear()
+    try:
+        _repo_root = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(_repo_root,'static','charging','stations.json'),encoding='utf-8') as f:
+            all_st = json.load(f)['stations']
+    except Exception:
+        return
+    for c,bb in CITIES:
+        la1,lo1,la2,lo2 = [float(x) for x in bb.split(',')]
+        hits = [s for s in all_st if la1<=s.get('lat',0)<=la2 and lo1<=s.get('lon',0)<=lo2]
+        if not hits:
+            hits = [s for s in all_st if (s.get('a') or '').split(',')[0].strip() == c]
+        n = len(hits)
+        if n < 8:
+            continue
+        prep, gen = CITY_FORMS.get(c, ('в ' + c, c))
+        nets = {}
+        for s in hits:
+            op = s.get('op') or 'OSM'
+            nets[op] = nets.get(op, 0) + 1
+        nets_sorted = sorted(nets.items(), key=lambda x: -x[1])
+        sock = {}
+        dc = 0
+        for s in hits:
+            for x in (s.get('s') or []):
+                sock[x] = sock.get(x, 0) + 1
+            if s.get('pw') and s.get('pw') >= 50:
+                dc += 1
+        sl = slug(c)
+        rows_nets = ''.join('<tr><td>'+html.escape(k)+'</td><td>'+str(v)+'</td></tr>' for k,v in nets_sorted[:8])
+        rows_sock = ''.join('<li>'+html.escape(k)+': '+str(v)+'</li>' for k,v in sorted(sock.items(), key=lambda x:-x[1]))
+        st_sorted = sorted(hits, key=lambda s: -(s.get('c') or 0))[:20]
+        st_rows = ''.join(
+            '<tr><td>'+html.escape(s.get('n') or 'Зарядная станция')+'</td>'
+            '<td>'+html.escape(s.get('op') or '—')+'</td>'
+            '<td>'+html.escape((s.get('a') or '').split(',',1)[-1].strip() if s.get('a') else 'адрес не размечен')+'</td>'
+            '<td>'+(str(s.get('pw'))+' кВт' if s.get('pw') else '—')+'</td>'
+            '<td>'+html.escape(', '.join(s.get('s') or []))+'</td></tr>'
+            for s in st_sorted)
+        city_links_all = ', '.join('<a href="/charging/'+slug(cc)+'.html">'+cc+'</a>' for cc,bb2 in CITIES if cc != c)
+        body = (
+            '<div class="hero"><div class="kicker">Карта станций</div><h1>Зарядные станции ' + prep + '</h1><p class="lede">' + str(n) + ' станций: сети, разъёмы и мощности — по данным OpenStreetMap.</p></div>'
+            '<div class="article">'
+            '<p class="note">По данным OpenStreetMap на ' + BUILD_DATE + ': <b>' + str(n) + '</b> зарядных станций в пределах ' + html.escape(gen) + '. '
+            + (str(dc) + ' из них — быстрые (от 50 кВт), ' if dc else '')
+            + str(sum(1 for s in hits if any('Type 2' in x for x in (s.get('s') or [])))) + ' поддерживают Type 2, ' + str(sum(1 for s in hits if any('GB/T' in x for x in (s.get('s') or [])))) + ' — GB/T.</p>'
+            '<p>Страница обновляется вместе с <a href="/charging/">общей картой зарядных станций</a> — там же фильтр по городу, мощности и разъёму. Ниже — списки станций по данным OSM: перед выездом проверяйте статус станции в приложении сети, адреса могут меняться.</p>'
+            '<h2>Сети и операторы</h2>'
+            '<div class="tblwrap"><table><thead><tr><th>Сеть</th><th>Станций</th></tr></thead><tbody>' + rows_nets + '</tbody></table></div>'
+            '<p>Списки сетей иногда неполные: часть станций в OSM не размечена оператором. Полный профиль сетей и цен — в гайде <a href="/pain/stoimost-zaryadki.html">сколько стоит зарядка</a>.</p>'
+            '<h2>Разъёмы</h2>'
+            '<ul>' + rows_sock + '</ul>'
+            '<p>Если машина с китайским разъёмом GB/T — смотрите адаптеры в <a href="/catalog/">каталоге</a>. Для европейских Type 2/CCS2 отдельный переходник обычно не нужен.</p>'
+            '<h2>Крупные станции ' + html.escape(gen) + '</h2>'
+            '<div class="tblwrap"><table><thead><tr><th>Станция</th><th>Сеть</th><th>Адрес</th><th>Мощность</th><th>Разъёмы</th></tr></thead><tbody>' + st_rows + '</tbody></table></div>'
+            '<h2>Как не встать у неработающей станции</h2>'
+            '<ol>'
+            '<li>Проверьте статус в приложении сети до выезда — «работает» не всегда значит «работает».</li>'
+            '<li>Держите вторую станцию в маршруте: до 26% станций бывают неисправны при рабочем статусе.</li>'
+            '<li>Заглядывайте в гайд <a href="/pain/ne-zaryazhaetsya.html">«Не заряжается электромобиль»</a> и статью <a href="/blog/stanciya-ne-rabotaet.html">«Станция не работает: чья вина»</a>.</li>'
+            '</ol>'
+            '<p>Считаете стоимость поездки — калькулятор <a href="/calculator/">здесь</a>. Полный список станций по городам: ' + city_links_all + '.</p>'
+            '</div>')
+        write_page(os.path.join(outdir,'charging',sl+'.html'),
+            'Зарядные станции ' + prep + ' — карта и сети | Запас хода',
+            clamp_desc(str(n) + ' зарядных станций ' + prep + ': сети и операторы, разъёмы Type 2/GB/T/CCS2, быстрые и медленные. Адреса, мощности и как не встать у неработающей станции.'),
+            body, '/charging/' + sl + '.html',
+            crumbs=[('/charging/', 'Карта станций'), ('/charging/' + sl + '.html', c)])
+        CITY_URLS.append((c, '/charging/' + sl + '.html'))
+    print('город-страниц:', len(CITY_URLS))
+
 def build_sitemap(slugs_model, news, vin_slugs):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/models/', SITE_DOMAIN+'/forum/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
             SITE_DOMAIN+'/charging/', SITE_DOMAIN+'/vin/']
@@ -2169,6 +2271,7 @@ def build_sitemap(slugs_model, news, vin_slugs):
     urls += [SITE_DOMAIN+'/open-data/']
     urls += [SITE_DOMAIN+'/quiz/']
     urls += [SITE_DOMAIN+'/app/']
+    urls += [SITE_DOMAIN+u for _,u in CITY_URLS]
     urls += [SITE_DOMAIN+'/compare/']
     urls += [SITE_DOMAIN+'/'+s for s in slugs_model]
     urls += [SITE_DOMAIN+'/pain/'+s+'.html' for s,_,_,_ in PAIN_ARTICLES]
@@ -2747,6 +2850,8 @@ EX_CSS = EX_CSS + "\n/* --- палитра GCC (marine/acid), фаза 1 --- */\
 EX_CSS = EX_CSS + "\n/* --- главная в стиле GCC: инструменты, трендовые модели, бренды --- */\n.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(246px,1fr));gap:12px;margin:14px 0 8px}\n.tool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;text-decoration:none;transition:box-shadow .15s ease}\n.tool:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.tool svg{flex:none;width:40px;height:40px;border-radius:11px;background:var(--marine);padding:9px;box-sizing:border-box}\n.tool-body{display:flex;flex-direction:column;gap:4px}\n.tool b{display:block;color:var(--marine);font-size:15.5px;letter-spacing:-.01em}\n.tool-body>span{font-size:13.5px;color:#5f5f66;line-height:1.4}\n.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;margin:14px 0 8px}\n.mcard2{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s ease}\n.mcard2:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.mcard2-media{aspect-ratio:16/9;overflow:hidden;background:#f5f5f7}\n.mcard2-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}\n.mcard2:hover .mcard2-media img{transform:scale(1.03)}\n.mcard2-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}\n.mcard2-body>b{color:var(--marine);font-size:16px;letter-spacing:-.015em}\n.mcard2-specs{display:flex;flex-wrap:wrap;gap:5px}\n.mcard2-specs span{font-size:12px;background:#f5f5f7;border-radius:6px;padding:3px 8px;color:#5f5f66}\n.mcard2-link{font-size:13.5px;color:var(--marine);font-weight:600;margin-top:auto}\n.brand-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}\n.brand-strip a{font-size:13.5px;padding:8px 13px;border:1px solid var(--line);border-radius:12px;color:var(--marine);background:#fff;text-decoration:none;font-weight:500}\n.brand-strip a:hover{background:#f4faef}\n.brand-strip a span{color:#86868b;font-size:12px;margin-left:4px}\n@media (max-width:520px){.tools-grid{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}.tool svg{width:34px;height:34px;padding:7px}}\n"
 
 
+CITY_URLS = []
+
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -2833,6 +2938,7 @@ def main():
             vin_slugs.append(vin_brand_page(brand, outdir))
     vin_hub(outdir)
     map_page(outdir)
+    city_charging_pages(outdir)
     # stations.json: готовый статический файл (обновляется отдельно из OSM)
     st_src = os.path.join(repo_root,'static','charging','stations.json')
     dst_json = os.path.join(outdir,'charging','stations.json')
