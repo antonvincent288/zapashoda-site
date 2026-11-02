@@ -2795,6 +2795,13 @@ def main():
         fdst = os.path.join(outdir,'assets','fc-theme.css')
         os.makedirs(os.path.dirname(fdst), exist_ok=True)
         shutil.copy(fcc, fdst)
+    # self-hosted шрифты Inter
+    fdir = os.path.join(repo_root,'assets','fonts')
+    if os.path.isdir(fdir):
+        fdst2 = os.path.join(outdir,'assets','fonts')
+        if os.path.isdir(fdst2): shutil.rmtree(fdst2)
+        shutil.copytree(fdir, fdst2)
+
     # админка (неиндексируемая)
     adir = os.path.join(repo_root,'admin')
     if os.path.isdir(adir):
