@@ -844,7 +844,7 @@ PHOTO_META = {
 }
 
 NAV_MAIN = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/blog/","Блог")]
-NAV_MORE = [("/vin/","VIN"),("/forum/","Форум"),("/safety/","Безопасность"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/b2b/","Дилерам"),("/about.html","О проекте")]
+NAV_MORE = [("/matrix/","Матрица"),("/vin/","VIN"),("/forum/","Форум"),("/safety/","Безопасность"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/b2b/","Дилерам"),("/about.html","О проекте")]
 NAV = NAV_MAIN + NAV_MORE
 
 def header_html(active):
@@ -2220,6 +2220,7 @@ def home_page(outdir, news=None):
       ('/forum/','Форум сообщества','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
       ('/models/','Все модели','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
       ('/b2b/','Дилерам','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
+      ('/matrix/','Матрица совместимости','<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 9v11"/><path d="M15 9v11"/>'),
       ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
       ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
       (GUIDE_PDF,'Гид PDF (бесплатно)','<path d="M12 4v10"/><path d="M7.5 9.5 12 14l4.5-4.5"/><path d="M5 20h14"/>'),
@@ -3747,6 +3748,191 @@ EXTRA_CALC_CSS = r"""
 }
 """
 
+
+
+# ===== ЭТАП 2 ПОРТАЛА: МАТРИЦА СОВМЕСТИМОСТИ /matrix/ =====
+# Колонки — топ-20 моделей по спросу (запись в базе → короткая подпись колонки)
+MATRIX_MODELS = [
+  ('Zeekr', '001 / 001 FR', 'Zeekr 001'),
+  ('Zeekr', '007 / 007GT', 'Zeekr 007'),
+  ('Zeekr', '7X / X / MIX', 'Zeekr 7X / X'),
+  ('Zeekr', '009 / 009 Grand', 'Zeekr 009'),
+  ('Li Auto', 'L6 / L7 / L8 / L9 (2022–2025)', 'Li Auto L6–L9'),
+  ('Voyah', 'Free EV (ранние официальные RU)', 'Voyah Free EV'),
+  ('Voyah', 'Dream / Dreamer (PHEV)', 'Voyah Dreamer'),
+  ('Avatr', '11 / 12 (официально RU)', 'Avatr 11 / 12'),
+  ('Xiaomi', 'SU7 / SU7 Ultra', 'Xiaomi SU7'),
+  ('BYD', 'Song Plus EV', 'BYD Song Plus EV'),
+  ('BYD', 'Seal', 'BYD Seal'),
+  ('BYD', 'Han EV / Song L', 'BYD Han EV'),
+  ('BYD', 'Yuan Plus / Atto 3 / Yuan Up / Pro', 'BYD Yuan Plus'),
+  ('Tesla', 'Model 3 / Y (EU)', 'Tesla 3/Y (EU)'),
+  ('Tesla', 'Model 3 / Y / S / X (US)', 'Tesla (US сборки)'),
+  ('Hongqi', 'E-QM5', 'Hongqi E-QM5'),
+  ('Geely', 'Geometry C / A', 'Geely Geometry C'),
+  ('Deepal', 'S07 (RU официальная)', 'Deepal S07'),
+  ('Leapmotor', 'C10 / C11 / C01 / B10 / A05', 'Leapmotor C10/C11'),
+  ('Onvo (NIO)', 'L60', 'Onvo (NIO) L60'),
+]
+
+def _sku_url(i):
+    p = catalog.PIDX.get(i) if hasattr(catalog, 'PIDX') else None
+    if p and p.get('slug'):
+        return '/catalog/' + p['slug'] + '.html'
+    return '/catalog/'
+
+def _sku_name(i):
+    p = catalog.PIDX.get(i) if hasattr(catalog, 'PIDX') else None
+    return p.get('name') if p else 'товар каталога'
+
+def _cell(status, hint, links):
+    cls = {'ok': 'm-ok', 'ad': 'm-ad', 'warn': 'm-warn', 'no': 'm-no'}[status]
+    label = {'ok': 'Прямо', 'ad': 'Через адаптер', 'warn': 'Уточнить', 'no': 'Не работает'}[status]
+    if status == 'ok':
+        return '<td class="mcell ' + cls + '" title="' + html.escape(hint) + '"><span class="mchip">' + label + '</span></td>'
+    if status == 'no':
+        return '<td class="mcell ' + cls + '" title="' + html.escape(hint) + '"><span class="mchip">' + label + '</span><span class="mnote">' + html.escape(hint) + '</span></td>'
+    lk = ''
+    if links:
+        lk = ' <a href="' + links[0][1] + '">' + html.escape(links[0][0]) + '</a>'
+        if len(links) > 1:
+            lk += ' <span class="malt">или</span> <a href="' + links[1][1] + '">' + html.escape(links[1][0]) + '</a>'
+    return ('<td class="mcell ' + cls + '" title="' + html.escape(hint) + '"><span class="mchip">' + label + '</span><span class="mnote">' + html.escape(hint) + lk + '</span></td>')
+
+def matrix_cell_for(m, row):
+    ac = str(m.get('ac') or '')
+    dc = str(m.get('dc') or '')
+    def has(t, s): return t.lower() in s.lower()
+    A = _sku_url
+    if row == 't2ac':
+        if has('type 2', ac): return _cell('ok', 'Машина с Type 2 — заряжается от Type 2-станций напрямую', [])
+        if has('gb/t', ac): return _cell('ad', 'Нужен адаптер или кабель Type 2→GB/T', [
+            ('Адаптер Type 2→GB/T (премиум)', A(1)), ('Кабель Type 2–GB/T', A(3))])
+        if has('type 1', ac): return _cell('ad', 'Нужен адаптер Type 1→Type 2', [('Адаптер Type 1→Type 2', A(25))])
+        if has('nacs', ac): return _cell('ad', 'Нужен адаптер NACS→Type 2', [('Адаптер NACS→Type 2', A(7))])
+        return _cell('no', 'Разъём AC не определён — проверьте страницу модели', [])
+    if row == 'ccs2dc':
+        if has('ccs2', dc): return _cell('ok', 'Машина с CCS2 — быстрая зарядка на CCS2-станциях напрямую', [])
+        if has('gb/t', dc): return _cell('ad', 'Нужен DC-адаптер CCS2→GB/T (250–300 А)', [('DC-адаптер CCS2→GB/T', A(6))])
+        if has('nacs', dc): return _cell('ad', 'Нужен адаптер NACS→CCS2', [('Адаптер NACS→CCS2/Type 2', A(7))])
+        if has('ccs1', dc): return _cell('no', 'CCS1-станции в РФ ограничены, типового переходника нет', [])
+        if has('chademo', dc): return _cell('no', 'Быстрая зарядка — только CHAdeMO', [])
+        return _cell('no', 'Быстрого DC-порта нет', [])
+    if row == 'gbtac':
+        if has('gb/t', ac): return _cell('ok', 'Китайский порт — GB/T-станции напрямую', [])
+        if has('type 2', ac): return _cell('ad', 'Нужен обратный адаптер GB/T→Type 2', [('Адаптер GB/T→Type 2 (обратный)', A(2))])
+        if has('type 1', ac): return _cell('warn', 'Цепочка из двух переходников ненадёжна — проще домашняя станция Type 2', [('Станция Type 2, 7 кВт', A(23))])
+        if has('nacs', ac): return _cell('warn', 'Supercharger в РФ не работает; для дома — своя станция Type 2', [('Станция Type 2, 7 кВт', A(23))])
+        return _cell('no', 'Разъём AC не определён — проверьте страницу модели', [])
+    if row == 'gbtdc':
+        if has('gb/t', dc): return _cell('ok', 'Быстрая зарядка на GB/T DC-станциях напрямую', [])
+        if has('ccs2', dc): return _cell('warn', 'Обратный DC-переходник GB/T→CCS2 — уточняйте в Telegram', [])
+        if has('nacs', dc): return _cell('no', 'Supercharger в РФ не работает', [])
+        if has('ccs1', dc): return _cell('no', 'Нет типового переходника', [])
+        return _cell('no', 'Нет быстрого DC-порта', [])
+    if row == 'chademo':
+        if has('chademo', dc): return _cell('ok', 'Быстрая зарядка на CHAdeMO-станциях напрямую', [])
+        return _cell('no', 'CHAdeMO не поддерживается', [])
+    # 220V
+    if has('gb/t', ac): return _cell('ad', 'Портативная зарядка GB/T от бытовой розетки', [
+        ('Портативка GB/T 3,5 кВт', A(10)), ('Портативка GB/T 7 кВт', A(5))])
+    if has('type 2', ac): return _cell('ad', 'Портативная зарядка Type 2 от бытовой розетки', [
+        ('Портативка Type 2 3,5 кВт', A(20)), ('Портативка Type 2 7 кВт', A(19))])
+    if has('type 1', ac): return _cell('ad', 'Портативка Type 2 + адаптер Type 1→Type 2', [
+        ('Портативка Type 2 3,5 кВт', A(20)), ('Адаптер Type 1→Type 2', A(25))])
+    if has('nacs', ac): return _cell('ad', 'Портативка Type 2 + адаптер NACS→Type 2', [
+        ('Портативка Type 2 3,5 кВт', A(20)), ('Адаптер NACS→Type 2', A(7))])
+    return _cell('no', 'Разъём не определён — проверьте страницу модели', [])
+
+MATRIX_ROWS = [
+  ('t2ac', 'Type 2 AC · 7–22 кВт', 'Медленная/городская зарядка: сеть Type 2, домашние станции и столбы у ТЦ'),
+  ('ccs2dc', 'CCS2 DC · быстрая', 'Быстрая зарядка на трассе: сети без CHAdeMO, европейский стандарт'),
+  ('gbtac', 'GB/T AC · китайский', 'Китайские станции переменного тока, GB/T-зарядки у дилеров'),
+  ('gbtdc', 'GB/T DC · быстрая CN', 'Быстрая зарядка китайских станций (не путать с AC)'),
+  ('chademo', 'CHAdeMO DC', 'Стандарт японских машин, сети с CHAdeMO-пистолетами'),
+  ('220v', 'Розетка 220 В', 'Аварийный сценарий: портативная зарядка от бытовой розетки'),
+]
+
+def matrix_build(outdir):
+    # связка колонок с записями базы
+    cols = []
+    for brand, model, label in MATRIX_MODELS:
+        entry = next((m for m in MODELS if m.get('brand') == brand and m.get('model') == model), None)
+        cols.append((entry, label))
+    thead = '<tr><th class="mrowh">Разъём станции</th>' + ''.join(
+        '<th class="mcolh"><a href="/models/' + slug(c[0]['brand']) + '-' + slug(c[0]['model']) + '/" title="Страница модели">' + html.escape(c[1]) + '</a></th>' for c in cols) + '</tr>'
+    body_rows = ''
+    for key, rname, rdesc in MATRIX_ROWS:
+        cells = ''.join(matrix_cell_for(c[0], key) for c in cols)
+        body_rows += ('<tr><th class="mrowh" title="' + html.escape(rdesc) + '">' + html.escape(rname) + '<span class="mrdesc">' + html.escape(rdesc) + '</span></th>' + cells + '</tr>')
+    table = ('<div class="mx-wrap"><table class="mx-table">' + '<thead>' + thead + '</thead><tbody>' + body_rows + '</tbody></table></div>')
+    legend = ('<div class="mx-legend">'
+      '<span><i class="lg lg-ok"></i>Прямо — разъём совпадает</span>'
+      '<span><i class="lg lg-ad"></i>Через адаптер/кабель из каталога</span>'
+      '<span><i class="lg lg-warn"></i>Особый случай — читайте подсказку</span>'
+      '<span><i class="lg lg-no"></i>Не поддерживается</span></div>')
+    faq = ('<h2>Как пользоваться матрицей</h2>'
+      '<p>Найдите свою модель в колонке, пройдитесь по строкам: где стоит «Прямо» — заряжаетесь без переходников; «Через адаптер» — переход в каталог по ссылке подсказки; «Не работает» — этот сценарий не закрывается переходником (и это честный ответ, а не маркетинг).</p>'
+      '<h2>Частые вопросы</h2>'
+      '<ul>'
+      '<li><b>Zeekr 001 — какой разъём?</b> GB/T AC + GB/T DC: от Type 2-станций — адаптер или кабель Type 2→GB/T, от CCS2-трассы — DC-адаптер CCS2→GB/T.</li>'
+      '<li><b>Li Auto — что с розеткой?</b> Li Auto заряжается от GB/T-розетки портативкой GB/T 3,5/7 кВт; аккуратно с разрядными сценариями — см. <a href="/catalog/perekhodnik-gbt-220v.html">переходник-удлинитель GB/T→220 В</a>.</li>'
+      '<li><b>Tesla (US) — можно ли от GB/T?</b> Нет: Supercharger в РФ не работает, а двойной переходник GB/T→NACS мы не рекомендуем. Домашний сценарий — своя станция Type 2.</li>'
+      '<li><b>А если модели нет в колонках?</b> Откройте её страницу в <a href="/models/">каталоге моделей</a> — на каждой странице модели свои решения по разъёмам.</li>'
+      '</ul>'
+      '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
+      '<a class="btn ghost" href="/catalog/">Каталог оборудования</a></div>')
+    body = ('<div class="container">'
+      '<div class="hero"><div class="kicker">Матрица совместимости</div>'
+      '<h1>Какой переходник нужен вашему электромобилю: разъёмы и станции в одной таблице</h1>'
+      '<p class="lede">Топ-20 моделей EV в России × типы зарядных станций: где машина заряжается напрямую, где нужен адаптер или кабель из каталога, а где переходника не существует. Клик по колонке — страница модели, наведение — подсказка.</p>'
+      '</div>'
+      + legend + table + '<div class="mx-note">Полная база — 145 моделей EV: на странице каждой модели — её разъёмы, решения и совместимое оборудование.</div>'
+      + faq + '</div>')
+    write_page(os.path.join(outdir, 'matrix', 'index.html'),
+      'Матрица совместимости EV: разъёмы и переходники для 20 популярных моделей — «Запас хода»',
+      'Таблица совместимости: Type 2, CCS2, GB/T AC/DC, CHAdeMO и розетка 220 В для Zeekr, Li Auto, Voyah, Tesla, BYD, Xiaomi, Avatr. Какой адаптер нужен вашей машине.',
+      body, '/matrix/', crumbs=[('/', 'Главная'), ('/matrix/', 'Матрица совместимости')])
+
+
+# ===== CSS матрицы совместимости (ЭТАП 2) =====
+EXTRA_MATRIX_CSS = r"""
+.mx-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; box-shadow: 0 6px 20px rgba(15,23,42,.05); background: #fff; }
+.mx-table { border-collapse: separate; border-spacing: 0; min-width: 1080px; width: 100%; font-size: .85rem; }
+.mx-table th, .mx-table td { border-bottom: 1px solid #eef2f7; border-right: 1px solid #eef2f7; padding: 10px 12px; vertical-align: top; }
+.mx-table thead th { position: sticky; top: 0; background: #0f172a; color: #fff; font-size: .78rem; font-weight: 600; z-index: 2; text-align: left; }
+.mx-table thead th a { color: #fff; text-decoration: none; }
+.mx-table thead th a:hover { text-decoration: underline; }
+.mrowh { width: 150px; min-width: 150px; background: #f8fafc; color: #0f172a; font-weight: 600; font-size: .82rem; }
+.mrowh, .mx-table thead th.mrowh { position: sticky; left: 0; z-index: 3; }
+.mx-table thead th.mrowh { z-index: 5; }
+.mrowh .mrdesc { display: block; font-weight: 400; font-size: .68rem; color: #94a3b8; margin-top: 4px; line-height: 1.3; }
+.mcolh { background: #f8fafc; }
+.mcell { background: #fff; min-width: 148px; }
+.mcell.m-ok { background: #f0fdf4; }
+.mcell.m-ad { background: #eff6ff; }
+.mcell.m-warn { background: #fffbeb; }
+.mcell.m-no { background: #fafafa; }
+.mchip { display: inline-block; font-size: .68rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; letter-spacing: .01em; margin-bottom: 6px; }
+.m-ok .mchip { background: #16a34a; color: #fff; }
+.m-ad .mchip { background: #2563eb; color: #fff; }
+.m-warn .mchip { background: #d97706; color: #fff; }
+.m-no .mchip { background: #94a3b8; color: #fff; }
+.mnote { display: block; font-size: .74rem; color: #475569; line-height: 1.35; }
+.mnote a { color: #047857; font-weight: 600; }
+.malt { color: #94a3b8; font-size: .7rem; }
+.mx-legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 0 0 14px; font-size: .82rem; color: #334155; }
+.mx-legend .lg { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.lg-ok { background: #16a34a; } .lg-ad { background: #2563eb; } .lg-warn { background: #d97706; } .lg-no { background: #94a3b8; }
+.mx-note { margin: 12px 0 0; font-size: .82rem; color: #64748b; }
+@media (max-width: 900px) {
+  .mx-table th, .mx-table td { padding: 8px 10px; }
+  .mrowh { width: 120px; min-width: 120px; font-size: .74rem; }
+  .mrowh .mrdesc { display: none; }
+  .mcell { min-width: 132px; }
+  .mnote { font-size: .68rem; }
+}
+"""
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -3762,7 +3948,7 @@ def main():
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
 
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
@@ -3883,12 +4069,13 @@ def main():
         idx.append({'t': it['title'], 'd': it.get('teaser') or '', 'u': news_slug_page(it)})
     for brand in VIN_BRANDS:
         idx.append({'t': 'VIN '+brand, 'd': 'Расшифровка VIN, код года, проверка истории ('+VIN_BRANDS[brand][0]+')', 'u': '/vin/'+slug(brand)+'.html'})
-    for t,u,d in [('/', 'Запас хода', 'Справочник по зарядке EV в России'), ('/charging/','Карта зарядных станций','ЗУ по данным OSM'), ('/pains.html','Проблемы и решения','12 руководств')]:
+    for t,u,d in [('/', 'Запас хода', 'Справочник по зарядке EV в России'), ('/matrix/','Матрица совместимости','Разъёмы и переходники для 20 моделей'), ('/charging/','Карта зарядных станций','ЗУ по данным OSM'), ('/pains.html','Проблемы и решения','12 руководств')]:
         idx.append({'t': t, 'd': d, 'u': u})
     search_page(outdir, idx)
     llms_files(outdir, news)
     about_page(outdir, news)
     misc_pages(outdir)
+    matrix_build(outdir)
     # флагманская статья блога «Зима близко» (полный текст, индексируется)
     W_BODY = ('<div class="container"><div class="hero"><div class="kicker">Блог · Флагман</div>'
       '<h1>' + html.escape('Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?') + '</h1>'
