@@ -1590,13 +1590,13 @@ def model_page(m, outdir):
         site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
         docs_block = ('<div class="docs-box"><h2 class="text-lg text-gray-900 mt-0">Скачать руководство и материалы (PDF)</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
           '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
-          + site_html + '</div>')
+          + site_html + '</div></div>')
     else:
         site = BRAND_SITES.get(m['brand'])
         site_html = ('<p class="note">Официальный сайт производителя: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
         docs_block = ('<div class="docs-box"><h2>Скачать руководство и материалы (PDF)</h2><div class="lcard docs">'
           '<p class="note">Официальное руководство по эксплуатации хранится у дилера и на сайте марки; у параллельного импорта просите сканы у продавца или в клубных чатах.</p>'
-          '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div>')
+          '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div></div>')
 
     parts.append(vin_link)
     parts.append(docs_block)
@@ -2161,7 +2161,7 @@ def home_page(outdir, news=None):
           '<h3 class="text-base truncate"><a href="/models/'+sl+'/" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
           '<div class="flex justify-between items-center"><small class="text-gray-500">'+html.escape(str(m.get('ac') or ''))+'</small>'
           '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'/">Разъёмы →</a></div>'
-          '</div></div></div></div>')
+          '</div></div></div></div></div>')
     bcounts = {}
     for m in MODELS:
         b = m['brand'].strip()
@@ -3451,6 +3451,9 @@ EXTRA_V4_CSS = r"""
   }
   .mcard:hover .mcard-photo { transform:scale(1.02); }
 }
+
+/* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
+@media (min-width:769px) { .zs-off { display:none !important; } }
 """
 
 def main():
