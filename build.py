@@ -3340,6 +3340,35 @@ body { background-color:#F8FAFC; color:#0F172A; -webkit-font-smoothing:antialias
   .card-product .justify-between { gap:12px; padding-top:10px; }
 }
 """
+EXTRA_AIR_CSS = r"""
+/* ==== ВОЗДУХ И ПРЕМИУМ-КОНТРАСТ v3 (02.11, финальный слой) ==== */
+/* 1. Дорогой воздух между секциями. Соседние вертикальные margins схлопываются —
+      зазор = max(нижний, верхний), поэтому 80px внизу дают ровно 80px просвет. */
+main section { margin-bottom:80px !important; }
+main section.my-8, main section.lg\:my-14, main section.my-10, main section.lg\:my-10,
+main section.my-6, main section.mt-4, main section.mt-6, main section.mt-10,
+main section.comments { margin-bottom:80px !important; }
+/* сетке каталога своя вертикаль больше не нужна — воздух теперь дают секции */
+.products-grid { padding:24px 0 !important; }
+
+/* 2. Главный лид-магнит: кнопка квиза на hero (пульс отключён — статичная дорогая тень) */
+.btn-quiz, .pulse-cta { background:#2563EB !important; color:#FFFFFF !important; font-size:18px !important; font-weight:700 !important; padding:16px 32px !important; border-radius:12px !important; box-shadow:0 10px 15px -3px rgba(37,99,235,.3) !important; transition:all .2s ease !important; display:inline-block; text-decoration:none; animation:none !important; }
+.btn-quiz:hover, .pulse-cta:hover { background:#1D4ED8 !important; transform:translateY(-2px); }
+
+/* 3. Мобильная шапка: убираем тёмный тайтл-бар, компактнее бренд и CTA, меню = drawer */
+@media (max-width:768px) {
+  .zs-topbar { display:none !important; }
+  .zs-nav { padding:10px 0; }
+  .zs-nav .container { gap:12px; }
+  .zs-brand { font-size:17px; }
+  .zs-act { gap:10px; }
+  .zs-act .btn.lime { padding:9px 14px !important; font-size:13px !important; white-space:nowrap; }
+  main section, main section.my-8, main section.lg\:my-14, main section.my-10,
+  main section.lg\:my-10, main section.my-6, main section.mt-4, main section.mt-6,
+  main section.mt-10, main section.comments { margin-bottom:48px !important; }
+  .products-grid { padding:16px 0 !important; }
+}
+"""
 
 def main():
     global CSS
@@ -3355,7 +3384,7 @@ def main():
     os.makedirs(os.path.join(outdir,'assets'), exist_ok=True)
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
