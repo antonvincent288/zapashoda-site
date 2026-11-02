@@ -35,14 +35,18 @@
 <input type="text" id="htitle" placeholder="">
 <label>Свой подзаголовок главной (пусто — стандартный)</label>
 <textarea id="hsub" placeholder=""></textarea>
+<label>Токен Telegram-бота для заявок (создайте ОТДЕЛЬНОГО бота в @BotFather для лидов — не используйте основного; формат 1234567890:AA...)</label>
+<input type="password" id="tgtoken" placeholder="1234567890:AA...">
+<label>ID канала/чата для заявок (например -100xxxxxxxxxx; бот должен быть админом канала). Как узнать ID: добавьте бота @getmyid_bot в чат — он покажет.</label>
+<input type="text" id="tgchat" placeholder="-100...">
 <div class="arow"><button class="abtn" id="saveBtn">Сохранить и опубликовать</button><button class="abtn gray" id="reloadBtn">Перечитать</button></div>
 <p class="hint">После сохранения сайт пересоберётся автоматически за 1–2 минуты (GitHub Actions). Обновите страницу сайта с очисткой кэша (Ctrl+F5).</p></div>
 <div class="acard"><h2>Справка</h2>
 <p class="hint">Токен создаётся на github.com → Settings → Developer settings → Fine-grained tokens: выбрать репозиторий antonvincent288/zapashoda-site, права Contents: Read and write. Токен живёт до срока, указанного при создании. Токен не отправляется никуда, кроме api.github.com, и хранится в localStorage вашего браузера.</p></div>
 </div></main></body>
 <script>
-var FIELDS=['metrika_id','banner_text','banner_link','phone','hero_title','hero_sub'];
-var MAP={metrika:'metrika_id',banner:'banner_text',blink:'banner_link',phone:'phone',htitle:'hero_title',hsub:'hero_sub'};
+var FIELDS=['metrika_id','banner_text','banner_link','phone','hero_title','hero_sub','tg_lead_bot_token','tg_lead_chat_id'];
+var MAP={metrika:'metrika_id',banner:'banner_text',blink:'banner_link',phone:'phone',htitle:'hero_title',hsub:'hero_sub',tgtoken:'tg_lead_bot_token',tgchat:'tg_lead_chat_id'};
 var PAT='',USER='';
 function msg(t){document.getElementById('amsg').textContent=t;}
 document.getElementById('loadBtn').onclick=function(){
