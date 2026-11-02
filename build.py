@@ -2711,6 +2711,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/catalog/'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie','uvelichenie-moshchnosti']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
+    urls += [SITE_DOMAIN+'/blog/zeekr-001-gbt-diff.html', SITE_DOMAIN+'/blog/li-l7-battery-heat.html']
     urls += [SITE_DOMAIN+'/safety/'] + [SITE_DOMAIN+'/safety/'+s+'.html' for s,_,_ in services.SAFETY_ARTICLES]
     urls += [SITE_DOMAIN+'/cost/'+c[0]+'.html' for c in COST_MODELS]
     urls += [SITE_DOMAIN+'/b2b/']
@@ -3933,6 +3934,10 @@ EXTRA_MATRIX_CSS = r"""
   .mnote { font-size: .68rem; }
 }
 """
+# ===== ГОТОВЫЕ СТАТЬИ БЛОГА (03.11.2026, текст владельца) =====
+ZEEKR_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · разбор</div><h1>Чем отличаются порты GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026)?</h1><p class="lede">Вы купили новый Zeekr 001, открываете зарядный лючок — и видите два внешне похожих разъёма. Разберём их один раз и навсегда.</p><div class="tldr"><b>Коротко:</b> GB/T AC — круглый порт с 7 контактами (заднее левое крыло): переменный ток, максимум 7 кВт через встроенный OBC — дом, паркинг, офис. GB/T DC — крупный порт с 5 массивными контактами (заднее правое крыло): ток идёт прямо в батарею, на публичных ЭЗС стабильно 60–120 кВт.</div><h2>Порт GB/T AC: переменный ток, медленная зарядка</h2><p>Круглый разъём с 7 контактами (пинами). На рестайлинге Zeekr 001 он расположен на заднем левом крыле. Это ваш основной порт для зарядки дома, в паркинге или у офиса. Он принимает переменный ток от настенных станций или портативных «зарядок-переносок» из розетки 220 В. Встроенное зарядное устройство (OBC) рестайлинга принимает максимум 7 кВт (1 фаза, 32 А).</p><h2>Порт GB/T DC: постоянный ток, быстрая зарядка</h2><p>Крупный разъём с 5 массивными контактами на заднем правом крыле. Нужен для ультрабыстрых городских и трассовых зарядных станций (хабы Россети, Яндекс.Заправки и т. д.). Ток идёт напрямую в батарею, минуя внутреннее зарядное устройство машины. На российских публичных ЭЗС вы будете стабильно видеть от 60 до 120 кВт в зависимости от загрузки станции.</p><h2>Что купить в багажник</h2><ul><li>Для медленных городских станций (где на выходе розетка Type 2) — <a href="/catalog/kabel-type2-gbt-5m-22kw.html">зарядный кабель Type 2 → GB/T</a> из нашего каталога.</li><li>Для быстрой зарядки на трассах (где висит кабель CCS2) — <a href="/catalog/adapter-ccs2-gbt-dc.html">адаптер CCS2 → GB/T DC</a>.</li></ul><p>Ошибка при подключении кабеля в «не тот» порт в лучшем случае прервёт сессию, а в худшем — выбьет ошибку инвертора, поэтому порт лучше сверять заранее. Какой порт у какой комплектации — есть на странице <a href="/models/zeekr-001-001-fr/">Zeekr 001 / 001 FR</a>.</p><p>Зимой обе зарядки идут медленнее и требуют прогрева — подробности в гайде <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+LI_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · лайфхак</div><h1>Как активировать скрытый предпрогрев батареи на Li Auto L7/L8/L9 перед быстрой зарядкой?</h1><p class="lede">Приезжаешь на быструю станцию зимой, вставляешь пистолет — а машина вместо 60–90 кВт берёт 15–20. Причина и два рабочих решения — в разборе.</p><div class="tldr"><b>Коротко:</b> ледяная батарея отказывается принимать большой ток: оптимальная температура для приёма быстрой зарядки — около +25 °C. Способ 1 — цель в штатной навигации (подогрев запустится за 20–30 минут до станции). Способ 2 — Battery Preheating из приложения Li Auto. Самый экономный вариант — прогрев на ночной зарядке от розетки.</div><h2>Способ № 1: активация через штатную навигацию (самый надёжный)</h2><p>В Li Auto встроен алгоритм автоматического подогрева, но он жёстко привязан к бортовой навигационной системе. В штатной навигационной карте на центральном дисплее вбейте адрес быстрой зарядной станции (ЭЗС), к которой вы едете. Бортовой компьютер поймёт цель поездки и за 20–30 минут до подъезда автоматически запустит мощный высоковольтный подогрев аккумулятора. Вы приедете с «горячей» батареей и сразу заберёте максимальный ток.</p><h2>Способ № 2: запуск через приложение Li Auto</h2><p>За 30 минут до выезда откройте официальное приложение Li Auto на смартфоне. Включите климат-контроль салона и активируйте функцию Battery Preheating (подогрев батареи). Дайте машине постоять включённой хотя бы 25–30 минут.</p><h2>Лайфхак для максимальной экономии</h2><p>Чтобы не тратить драгоценные проценты батареи на её же прогрев в пути, делайте это во время домашней ночной зарядки. Наш <a href="/catalog/">«Антикризисный набор для подключаемых гибридов (PHEV)»</a> позволяет безопасно держать машину подключённой к сети 220 В всю ночь. Вы начнёте движение с тёплой батареей, тёплым салоном и полным запасом хода.</p><p>Почему зимой зарядка вообще медленнее — с цифрами и приёмами прогрева: <a href="/blog/zimnyaya-zaryadka-medlennee.html">разбор зимней зарядки</a>. Порты и сценарии зарядки Li Auto — на странице <a href="/models/li-auto-l6-l7-l8-l9-2022-2025/">Li Auto L6/L7/L8/L9</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -4117,7 +4122,28 @@ def main():
        'Битва брендов: Workersbee против Auxus — какой кабель переживет русскую зиму?',
        'Сравнение кабелей Workersbee и Auxus для зарядки EV зимой: материалы, температурные тесты, надёжность замков и цена.'),
     ]
+    BLOG_READY = {
+      '/blog/zeekr-001-gbt-diff.html': {
+        'title': 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки',
+        'desc': 'Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.',
+        'og': '/assets/og/b-zeekr-001-gbt-diff.png',
+        'body': ZEEKR_BODY,
+      },
+      '/blog/li-l7-battery-heat.html': {
+        'title': 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой',
+        'desc': 'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.',
+        'og': '/assets/og/b-li-l7-battery-heat.png',
+        'body': LI_BODY,
+      },
+    }
     for _u, _t, _d in SEO_STUBS:
+        if _u in BLOG_READY:
+            _r = BLOG_READY[_u]
+            _p = _u[1:].rsplit('/', 1)
+            write_page(os.path.join(outdir, _p[0], _p[1]), _r['title'] + ' | Запас хода',
+                       _r['desc'], _r['body'], _u, og=_r['og'],
+                       crumbs=[('/blog/', 'Блог'), ('', _r['title'].split(':')[0])])
+            continue
         _body = ('<div class="container"><div class="hero"><div class="kicker">Блог · готовится</div>'
           '<h1>' + html.escape(_t) + '</h1>'
           '<p class="lede">' + html.escape(_d) + '</p>'
@@ -4140,6 +4166,8 @@ def main():
     for sl3,t3,d3 in services.BLOG_ARTICLES:
         jobs.append(('/assets/og/b-'+sl3+'.png', t3))
     jobs.append(('/assets/og/b-winter-ev-2026.png', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?'))
+    jobs.append(('/assets/og/b-zeekr-001-gbt-diff.png', 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки'))
+    jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой'))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)
