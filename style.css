@@ -376,6 +376,7 @@ input,select,textarea{font-size:16px !important}
 .zs-mask,.fmodal{height:100vh;height:100dvh}
 .card-product button,.pc-cartbar .pc-go,.zs-nav a{min-height:44px}
 @media(hover:none){.card-product:hover{box-shadow:none}.card-product:hover .card-product-action{opacity:0;visibility:hidden}}
+.infographic{margin:14px 0;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;background:#fff}.infographic img{width:100%;height:auto;display:block}
 
 /* --- кроссбраузерность, комменты, форум (v2) --- */
 :root{color-scheme:light}
