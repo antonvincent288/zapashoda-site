@@ -3289,52 +3289,55 @@ EX_CSS = EX_CSS + "\n/* --- главная в стиле GCC: инструмен
 CITY_URLS = []
 
 EXTRA_GRID_CSS = r"""
-/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ СЕТКИ (эталон 02.11) ==== */
-/* 1. Глобальный сброс и шрифты (поля не обнуляем глобально — иначе ломается типографика статей) */
+/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ СЕТКИ v2 (02.11: Apple/Tesla-минимализм) ==== */
+/* 1. Глобальный сброс и шрифты (поля глобально НЕ обнуляем — типографика статей не тронута) */
 * { box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
 body { background-color:#F8FAFC; color:#0F172A; -webkit-font-smoothing:antialiased; }
 
-/* 2. Идеально ровная сетка каталога */
-.products-grid, .kits-grid { display:grid !important; grid-template-columns:repeat(4,1fr) !important; gap:24px !important; padding:32px 0; }
+/* 2. Ровная сетка каталога: 4 колонки, воздух 28px, центрирование */
+.products-grid, .kits-grid { display:grid !important; grid-template-columns:repeat(4,1fr) !important; gap:28px !important; padding:48px 0 !important; max-width:1200px; margin:0 auto; }
 
-/* 3. Архитектура карточки: flex-колонка, все карточки в ряду СТРОГО одной высоты */
-.product-card, .kit-card, .card-product { background:#FFFFFF !important; border:1px solid #E2E8F0 !important; border-radius:16px !important; padding:24px !important; display:flex !important; flex-direction:column !important; height:100% !important; position:relative; transition:transform .2s ease, box-shadow .2s ease; }
-.product-card:hover, .kit-card:hover, .card-product:hover { transform:translateY(-4px); box-shadow:0 20px 25px -5px rgba(0,0,0,.05), 0 10px 10px -5px rgba(0,0,0,.04); }
+/* 3. Карточка: flex-колонка, все карточки в ряду СТРОГО одной высоты */
+.product-card, .kit-card, .card-product { background:#FFFFFF !important; border:1px solid #E2E8F0 !important; border-radius:20px !important; padding:28px !important; display:flex !important; flex-direction:column !important; height:100% !important; box-shadow:0 1px 3px rgba(0,0,0,.02) !important; position:relative; transition:transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1) !important; }
+.product-card:hover, .kit-card:hover, .card-product:hover { transform:translateY(-6px) !important; box-shadow:0 20px 25px -5px rgba(15,23,42,.08), 0 10px 10px -5px rgba(15,23,42,.04) !important; border-color:#CBD5E1 !important; }
 .card-product > .flex-auto { padding:0 !important; }
 
-/* Единая зона изображения 160px */
-.card-product .justify-center { height:160px !important; align-items:center; overflow:hidden; margin-bottom:16px !important; }
-.card-product .justify-center img, .card-product .justify-center svg { width:auto !important; height:auto !important; max-width:100% !important; max-height:160px !important; aspect-ratio:auto !important; object-fit:contain !important; border-radius:12px; background:#f6f7f9; }
+/* Зона фото: единые 150px + 24px воздуха снизу (img и svg — чтобы SVG-заглушки не ломали ритм) */
+.card-product .justify-center { height:150px !important; align-items:center; overflow:hidden; margin:0 0 24px 0 !important; }
+.card-product .justify-center img, .card-product .justify-center svg { width:100% !important; height:150px !important; max-height:150px !important; aspect-ratio:auto !important; object-fit:contain !important; margin:0 !important; border-radius:12px; background:#f6f7f9; }
 
-/* Фиксация высоты заголовка: 2 строки, хвосты букв не срезаются */
-.product-card h3, .kit-card h3, .card-product h3 { font-size:16px !important; font-weight:600 !important; line-height:1.4 !important; margin:0 0 12px 0 !important; color:#0F172A; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; height:auto !important; min-height:45px !important; }
+/* Заголовок: ровно 2 строки = 44px (16px x 1.375 — хвосты букв не срезаются) */
+.product-card h3, .kit-card h3, .card-product h3 { font-size:16px !important; font-weight:600 !important; line-height:1.375 !important; color:#0F172A !important; margin:0 0 16px 0 !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; min-height:44px !important; max-height:44px !important; }
 /* Единая высота строки со спецификацией */
 .card-product .flex.flex-col > small:nth-of-type(1) { display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; min-height:38px; line-height:1.4; }
 
-/* Блок цены */
-.product-price, .card-product .justify-between .font-semibold, .pc-price { font-size:20px !important; font-weight:700 !important; color:#0F172A; }
+/* Цена: крупнее и вниз (span inline — межстрочный зазор даёт gap нижней сетки) */
+.product-price, .card-product .justify-between .font-semibold, .pc-price { font-size:22px !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-.02em; }
 
-/* Кнопка "В заявку" — идеально ровно по нижней линии */
-.product-card .btn-submit, .kit-card .btn-submit, .product-card button, .kit-card button, .card-product .sku-add { margin-top:auto !important; width:100% !important; padding:14px !important; background:#2563EB !important; color:#FFFFFF !important; border:none !important; border-radius:10px !important; font-weight:600 !important; font-size:15px !important; cursor:pointer; transition:background .2s; }
-.product-card .btn-submit:hover, .kit-card .btn-submit:hover, .card-product .sku-add:hover { background:#1D4ED8 !important; }
+/* Кнопка "В заявку": на всю ширину, мягкая тень */
+.product-card .btn-submit, .kit-card .btn-submit, .product-card button, .kit-card button, .card-product .sku-add { margin-top:auto !important; width:100% !important; padding:14px 20px !important; background:#2563EB !important; color:#FFFFFF !important; border:none !important; border-radius:12px !important; font-weight:600 !important; font-size:15px !important; cursor:pointer !important; transition:background .2s ease !important; box-shadow:0 4px 6px -1px rgba(37,99,235,.2) !important; }
+.product-card .btn-submit:hover, .kit-card .btn-submit:hover, .card-product .sku-add:hover { background:#1D4ED8 !important; box-shadow:0 4px 12px rgba(37,99,235,.3) !important; }
 
-/* Нижний блок карточки: цена над кнопкой, обе прижаты к нижнему краю */
-.card-product .justify-between { display:grid !important; grid-template-columns:1fr !important; gap:12px; margin-top:auto !important; padding-top:12px; align-items:stretch; }
+/* Нижний блок: цена НАД кнопкой, обе прижаты к нижнему краю */
+.card-product .justify-between { display:grid !important; grid-template-columns:1fr !important; gap:20px; margin-top:auto !important; padding-top:16px; align-items:stretch; }
 .card-product .justify-between > div { display:block; }
+.card-product .justify-between .sku-add { justify-content:center; }
 
 /* Ровные карточки моделей и брендов */
 .grid .mcard { height:100%; }
 
 /* 4. Адаптивность */
 @media (max-width:1024px) {
-  .products-grid, .kits-grid { grid-template-columns:repeat(2,1fr) !important; gap:16px !important; }
+  .products-grid, .kits-grid { grid-template-columns:repeat(2,1fr) !important; gap:16px !important; padding:32px 0 !important; }
 }
-@media (max-width:640px) {
-  .products-grid, .kits-grid { grid-template-columns:repeat(2,1fr) !important; gap:12px !important; }
-  .product-card, .kit-card, .card-product { padding:16px !important; }
-  .product-card h3, .kit-card h3, .card-product h3 { font-size:14px !important; min-height:40px !important; }
-  .card-product .justify-center { height:120px !important; }
-  .card-product .justify-center img, .card-product .justify-center svg { max-height:120px !important; }
+@media (max-width:768px) {
+  .products-grid, .kits-grid { grid-template-columns:repeat(2,1fr) !important; gap:12px !important; padding:24px 12px !important; }
+  .product-card, .kit-card, .card-product { padding:16px !important; border-radius:16px !important; }
+  .card-product .justify-center { height:120px !important; margin-bottom:12px !important; }
+  .card-product .justify-center img, .card-product .justify-center svg { height:120px !important; max-height:120px !important; }
+  .card-product h3 { font-size:14px !important; line-height:1.36 !important; min-height:38px !important; max-height:38px !important; margin-bottom:8px !important; }
+  .card-product .justify-between .font-semibold { font-size:18px !important; }
+  .card-product .justify-between { gap:12px; padding-top:10px; }
 }
 """
 
