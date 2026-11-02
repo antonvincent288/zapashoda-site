@@ -2087,7 +2087,8 @@ def _tpl_bundle_card(b):
       '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>Комплект</small></a>'
       '<h3 class="text-base" style="white-space:normal"><span class="text-gray-800">' + html.escape(b['name']) + '</span></h3>'
       '<small class="text-gray-500" style="display:block">В комплекте: ' + html.escape(items_txt) + '</small>'
-      '<div class="flex justify-between items-center">'
+      + (('<small class="text-gray-500" style="display:block">' + html.escape(str(b.get('desc'))) + '</small>') if b.get('desc') else '')
+      + '<div class="flex justify-between items-center">'
       '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(b['price']) + '</span><span class="old-price">' + catalog.fmt_price(b['was']) + '</span></div>'
       + add_btn +
       '</div></div></div></div></div>')
@@ -2103,6 +2104,7 @@ def _tpl_blog_card(href, kind, title, teaser, img):
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
     blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    blog_cards += _tpl_blog_card('/blog/winter-ev-2026.html','Флагман', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?', 'Честный разбор физики мороза, деградации CLTC-запаса хода и 3 правила выживания для электромобиля в -20°C.', '/assets/og/b-winter-ev-2026.png')
     news_cards = ''
     if news:
         try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
@@ -2189,7 +2191,7 @@ def home_page(outdir, news=None):
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'Как без боли заряжать электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
       '<div class="flex gap-3 flex-wrap">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pulse-cta" href="/quiz/">⚡️ Подобрать зарядку за 30 секунд</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pulse-cta" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
       '</div></div>'
       '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
@@ -3597,6 +3599,21 @@ def main():
     llms_files(outdir, news)
     about_page(outdir, news)
     misc_pages(outdir)
+    # флагманская статья блога: заглушка (текст добавит владелец позже), noindex
+    W_BODY = ('<div class="container"><div class="hero"><div class="kicker">Блог · готовится</div>'
+      '<h1>' + html.escape('Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?') + '</h1>'
+      '<p class="lede">' + html.escape('Честный разбор физики мороза, деградации CLTC-запаса хода и 3 правила выживания для электромобиля в -20°C.') + '</p>'
+      '<div class="tldr"><b>Коротко:</b> статья выйдет до конца сезона — разложим по цифрам, что мороз делает с запасом хода CLTC и что реально работает при −20 °C.</div>'
+      '<p class="lede">Статья готовится: мы собираем данные по зимним поездкам Zeekr, Li Auto и Voyah в России. Пока — живые инструменты:</p>'
+      '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
+      '<a class="btn ghost" href="/pains.html">Гайды: проблемы и решения</a>'
+      '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>')
+    write_page(os.path.join(outdir,'blog','winter-ev-2026.html'),
+        'Зима близко: мороз и батарея Zeekr, Li Auto, Voyah — разбор | Запас хода',
+        'Честный разбор: физика мороза, деградация CLTC-запаса хода и 3 правила выживания для электромобиля при −20 °C.',
+        W_BODY, '/blog/winter-ev-2026.html', og='/assets/og/b-winter-ev-2026.png',
+        crumbs=[('/blog/','Блог'),('','Зима близко: мороз и батарея EV')], noindex=True)
+
     # OG-карточки: новости + бренды VIN + дефолт
     jobs = [('/assets/og/default.png', 'Запас хода — практика владения электромобилем в России')]
     for it in news:
@@ -3607,6 +3624,7 @@ def main():
         jobs.append(('/assets/og/p-'+sl+'.png', title))
     for sl3,t3,d3 in services.BLOG_ARTICLES:
         jobs.append(('/assets/og/b-'+sl3+'.png', t3))
+    jobs.append(('/assets/og/b-winter-ev-2026.png', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?'))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)
