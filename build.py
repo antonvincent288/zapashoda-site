@@ -2629,7 +2629,7 @@ def app_page(outdir):
             'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
             'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])][:6],
         })
-    prod = {p['id']: {'n': p['name'], 'pr': p['price'], 'e': p.get('emoji', '🔌')} for p in _cat.PRODUCTS}
+    prod = {p['id']: {'n': p['name'], 'pr': p['price'], 'e': p.get('emoji', '🔌'), 'b': 1 if p['price'] <= 20000 else 0} for p in _cat.PRODUCTS}
     data = json.dumps({'brands': brands, 'order': sorted(brands, key=lambda b: -len(brands[b])), 'prod': prod}, ensure_ascii=False, separators=(',', ':'))
     js = ("var D=" + data + ";var G='" + GAS_URL + "';"
       "var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;"
@@ -2637,9 +2637,9 @@ def app_page(outdir):
       "function el(id){return document.getElementById(id);}"
       "function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}"
       "function jq(s){return esc(s).replace(/'/g,\"\\\\'\");}"
-      "var cart={},curModel='',hist=[],curBrand='',curIdx=0;function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
-      "function screen1(){cart={};curModel='';hist=[];updBack();renderCart();"
-      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода<span class=\"a-ver\">апп v4</span></div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
+      "var cart={},curModel='',hist=[],curBrand='',curIdx=0,curSkus=[];function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});"
+      "function screen1(){cart={};curModel='';curSkus=[];hist=[];updBack();renderCart();"
+      " el('app').innerHTML='<div class=\"a-head\">🔋 Запас хода<span class=\"a-ver\">апп v5</span></div><p class=\"a-sub\">Подбор под вашу модель: разъёмы, что докупить, заявка за минуту.</p><div class=\"a-search\"><input id=\"a-q\" placeholder=\"Марка или модель…\" oninput=\"aFilter()\"></div><div class=\"a-list\" id=\"a-brands\"></div>';"
       " renderBrands('');}"
       "function renderBrands(q){var os='';"
       " D.order.forEach(function(b){if(q&&b.toLowerCase().indexOf(q.toLowerCase())<0)return;"
@@ -2650,7 +2650,7 @@ def app_page(outdir):
       " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Все марки</button><div class=\"a-head\">'+esc(b)+'</div><div class=\"a-list\">'+os+'</div>';}"
       "function aFilter(){renderBrands(el('a-q').value.trim());}"
       "function aModel(b,i,np){var x=D.brands[b][i];cart={};curModel=b+' '+x.m;curBrand=b;curIdx=i;if(!np)hist.push(function(){screen1();});updBack();"
-      " (x.skus||[]).forEach(function(id){if(D.prod[id])cart[id]=1;});"
+      " curSkus=(x.skus||[]).filter(function(id){return !!D.prod[id];});curSkus.forEach(function(id){if(D.prod[id].b)cart[id]=1;});"
       " el('app').innerHTML='<button class=\"a-back\" onclick=\"aPick(&quot;'+jq(b)+'&quot;)\">← '+esc(b)+'</button>'"
       " +'<div class=\"a-head\">'+esc(b)+' '+esc(x.m)+'</div>'"
       " +'<div class=\"a-cards\"><div class=\"a-card\"><b>🔌 Разъёмы</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span></div>'"
@@ -2658,12 +2658,14 @@ def app_page(outdir):
       " +'<a class=\"a-link\" href=\"https://zapashoda-ev.ru/models/'+x.slug+'.html\" target=\"_blank\" rel=\"noopener\">Полный разбор модели на сайте →</a>'"
       " +'<button class=\"a-btn\" onclick=\"screen3()\">Оформить заявку</button>';"
       " renderCart();}"
-      "function renderCart(){var e2=el('a-cart');if(!e2)return;var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
-      " if(!ids.length){e2.innerHTML='<p class=\"a-empty\">Подбор пуст — добавьте позиции из рекомендаций.</p>';return;}"
-      " var os='';ids.forEach(function(id){var p=D.prod[id];"
-      " os+='<div class=\"a-item\"><span>'+p.e+' '+esc(p.n)+'</span><span class=\"a-qty\"><button onclick=\"aQty('+id+',-1)\">−</button><b>'+cart[id]+'</b><button onclick=\"aQty('+id+',1)\">+</button></span><b class=\"a-pr\">'+(p.pr*cart[id]).toLocaleString('ru-RU')+' ₽</b></div>';});"
+            "function renderCart(){var e2=el('a-cart');if(!e2)return;var os='';"
+      " var av=(curSkus||[]).filter(function(id){return !!D.prod[id];});"
+      " if(!av.length){e2.innerHTML='<p class=\"a-empty\">Рекомендаций для этой модели пока нет — напишите нам, подберём вручную.</p>';return;}"
+      " var t=0;av.forEach(function(id){var p=D.prod[id];var on=!!cart[id];if(on)t+=p.pr;"
+      " os+='<div class=\"a-item\" onclick=\"aToggle('+id+')\"><span>'+p.e+' '+esc(p.n)+'</span><span class=\"a-p2\">'+p.pr.toLocaleString('ru-RU')+' ₽</span><span class=\"a-ck'+(on?' on':'')+'\">'+(on?'✓':'')+'</span></div>';});"
+      " if(t)os+='<div class=\"a-total\">Итого: '+t.toLocaleString('ru-RU')+' ₽</div>';"
       " e2.innerHTML=os;}"
-      "function aQty(id,d){cart[id]=Math.max(0,(cart[id]||0)+d);if(!cart[id])delete cart[id];renderCart();}"
+      "function aToggle(id){if(cart[id])delete cart[id];else cart[id]=1;renderCart();}"
       "function screen3(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prod[id];});"
       " var total=ids.reduce(function(s,id){return s+D.prod[id].pr*cart[id];},0);"
       " el('app').innerHTML='<button class=\"a-back\" onclick=\"screen1()\">← Сначала</button><div class=\"a-head\">Заявка</div>'"
@@ -2699,7 +2701,7 @@ def app_page(outdir):
       ".a-btn{justify-content:center;background:#0aad0a;border-color:#0aad0a;color:#fff;font-weight:700;margin:14px 16px 0;width:calc(100% - 32px);font-size:16px;height:48px;border-radius:14px}"
       ".a-note{margin:10px 20px;color:#7d8f95;font-size:12.5px}.a-cta{display:block;margin:10px 16px 0;padding:12px 14px;border:1px solid #d9dfe5;background:#fff;border-radius:14px;color:#0a7a2f;font-weight:600;font-size:14.5px;text-decoration:none;cursor:pointer}"
       ".a-link{display:block;margin:14px 16px 0;color:#0a7a2f;font-weight:600;text-decoration:none;font-size:14.5px}"
-      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
+      ".a-empty{color:#7d8f95;font-size:13.5px;padding:8px 4px}.a-p2{white-space:nowrap;color:#3c5359;font-size:13.5px}.a-ck{width:30px;min-width:30px;height:30px;border:1.5px solid #d5dbe1;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:#0aad0a;font-weight:800;font-size:16px}.a-ck.on{background:#0aad0a;border-color:#0aad0a;color:#fff}.a-card .a-item{cursor:pointer}.a-total{display:flex;justify-content:flex-end;gap:6px;padding-top:8px;margin-top:4px;border-top:1px solid #eef1f3;font-weight:800;font-size:15px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
       "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:15px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
       "textarea{min-height:64px;resize:vertical}"
       "</style>")
