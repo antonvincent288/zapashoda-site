@@ -176,6 +176,12 @@ nav.zs-links .container{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
 nav.zs-links a{color:#21313c;text-decoration:none;font-size:13.5px;font-weight:500;padding:9px 13px;border-radius:.5rem;white-space:nowrap}
 nav.zs-links a:hover{background:#f0f3f2;color:#0aad0a}
 nav.zs-links a.on{color:#0aad0a;font-weight:700;background:#e8ffe6}
+.zs-more{position:relative}.zs-more>button{border:0;background:none;font:inherit;font-size:13.5px;font-weight:500;color:#21313c;padding:9px 13px;border-radius:.5rem;cursor:pointer;white-space:nowrap}
+.zs-more:hover>button,.zs-more.on>button{background:#f0f3f2;color:#0aad0a}
+.zs-drop{position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--line);border-radius:.6rem;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
+.zs-more:hover .zs-drop,.zs-more:focus-within .zs-drop{display:flex}
+.zs-drop a{display:block;padding:9px 13px;white-space:nowrap}
+@media(max-width:1023px){.zs-more{display:none}}
 @media(max-width:1023px){
  .zs-search{display:none}
  .zs-burger{display:block}
@@ -611,15 +617,20 @@ def port_visual(m):
             '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px">' + cells + '</div>')
 
 
-LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0aad0a"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
+LOGO_SVG = '<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#0aad0a" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#0aad0a"/><path d="M33 18 L23 36 h8 l-5 12 15-17 h-8 z" fill="#0aad0a"/></svg>'
 
-NAV = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/vin/","VIN"),("/forum/","Форум"),("/blog/","Блог"),("/news/","Новости"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/b2b/","Дилерам"),("/about.html","О проекте")]
+NAV_MAIN = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/blog/","Блог")]
+NAV_MORE = [("/vin/","VIN"),("/forum/","Форум"),("/safety/","Безопасность"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/b2b/","Дилерам"),("/about.html","О проекте")]
+NAV = NAV_MAIN + NAV_MORE
 
 def header_html(active):
     top_links = ('<a href="/catalog/">Каталог аксессуаров</a>'
       '<a href="/b2b/">Оптовым дилерам</a>'
       '<a href="'+TG_CHANNEL+'">Telegram</a>')
-    nav_links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV)
+    more_open = any(u==active for u,t in NAV_MORE)
+    nav_links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV_MAIN)
+    nav_links += ('<div class="zs-more'+(' on' if more_open else '')+'"><button type="button" aria-haspopup="true" aria-expanded="false">Ещё <span aria-hidden="true">▾</span></button>'
+      '<div class="zs-drop">'+"".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV_MORE)+'</div></div>')
     off_links = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in NAV)
     return ('<header id="zs-header">'
       '<div class="zs-topbar"><div class="container"><div>Запас хода — практика владения электромобилем в России: ' + str(len(MODELS)) + ' моделей EV</div>'
@@ -1789,8 +1800,9 @@ def og_model_cards(outdir):
         img = Image.new('RGB', (1200, 630), MARINE)
         dr = ImageDraw.Draw(img)
         # логотип: зелёный скруглённый квадрат + белая молния
-        dr.rounded_rectangle([60, 54, 156, 150], radius=22, fill=GREEN)
-        dr.polygon([(109, 74), (76, 118), (98, 118), (90, 146), (124, 106), (101, 106), (113, 74)], fill=WHITE)
+        dr.rounded_rectangle([64, 62, 138, 142], radius=16, outline=WHITE, width=6)
+        dr.rounded_rectangle([140, 90, 152, 114], radius=5, fill=WHITE)
+        dr.polygon([(103, 76), (83, 106), (96, 106), (89, 128), (118, 98), (104, 98), (112, 76)], fill=ACID)
         # бейдж
         bt = 'ПРОВЕРЬ СВОЮ МАШИНУ'
         tw = dr.textlength(bt, font=f_badge)
