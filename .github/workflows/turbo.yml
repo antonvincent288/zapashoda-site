@@ -1,0 +1,46 @@
+name: Turbo guides
+on:
+  schedule:
+    - cron: '20 3,9,15,21 * * *'   # 4 прогона в день (offset от architect 30 */3 и site 13 */3)
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: turbo-writer
+  cancel-in-progress: false
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        guide: [m11-trassa, m12-trassa, parking-zhil]
+      fail-fast: false
+      max-parallel: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Write guide (${{ matrix.guide }})
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/guide_writer.py --guide ${{ matrix.guide }}
+  validate:
+    needs: write
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Sync + validate guides
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "turbo-validator"
+          git fetch origin main
+          git reset --hard origin/main
+          python scripts/validate_guides.py
