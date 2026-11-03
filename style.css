@@ -873,6 +873,16 @@ html.tg-mode .zs-stbar { display:none !important; }
 .zs-mpromo b { display: block; margin-bottom: 3px; }
 .zs-mpromo a { color: #047857; font-weight: 700; }
 .leaflet-popup-content .zs-mpromo a { white-space: normal; }
+.gbox { background: #fffdf4; border: 1px solid #D4AF37; border-left: 5px solid #D4AF37; border-radius: 14px; padding: 14px 18px; margin: 16px 0; }
+.gbox b { color: #8a6d1c; }
+.prodcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin: 24px 0; }
+.prodcard { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(15,23,42,.05); }
+.prodcard h3 { margin: 0 0 8px; font-size: 1.08rem; }
+.prodcard p { font-size: .92rem; color: #334155; }
+.prodcard .price { font-size: 1.35rem; font-weight: 700; color: #047857; margin: 10px 0; }
+.prodcard .buy-email, .prodcard .buy-phone { padding: 12px 14px; border-radius: 12px; border: 1px solid #2a3b33; background: #0d1512; color: #e8f0ec; font-size: 15px; width: 100%; box-sizing: border-box; margin: 0 0 10px; }
+.prodcard .lbl { font-size: 12px; color: #64748b; }
+.prodcard .soon-badge { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: .85rem; }
 
 .sto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 18px 0 10px; }
 .sto-card { position: relative; background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; padding: 18px; box-shadow: 0 8px 24px rgba(15,23,42,.05); min-width: 0; }
