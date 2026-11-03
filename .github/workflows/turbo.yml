@@ -1,7 +1,7 @@
 name: Turbo guides
 on:
   schedule:
-    - cron: '20 3,9,15,21 * * *'   # 4 прогона в день (offset от architect 30 */3 и site 13 */3)
+    - cron: '20 3,9,15,21 * * *'
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -44,3 +44,7 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
           python scripts/validate_guides.py
+      - name: Visual QA (Арт-Директор)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/visual_qa.py
