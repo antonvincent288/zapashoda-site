@@ -278,6 +278,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0015",
+      "ts": "2026-11-03T23:25:22+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Принято и опубликовано: zimnyaya-zaryadka-medlennee-parkovka-2-4-nedeli",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
