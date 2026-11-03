@@ -4201,17 +4201,21 @@ def main():
     _price = int(_shop.get('digital_guide_price', 490))
     _gtitle = _shop.get('guide_title', 'Гайд М-4 «Дон»')
     _gdesc = _shop.get('guide_desc', '')
+    _uses = int(_shop.get('shop_token_max_uses', 3))
+    _ttl = int(_shop.get('shop_token_ttl_hours', 24))
     _buy_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · цифровой товар</div>'
       '<h1>' + html.escape(_gtitle) + '</h1>'
       '<p class="lede">' + html.escape(_gdesc) + '</p>'
-      '<div class="tldr"><b>Как проходит покупка:</b> вводите email → платёж на защищённой странице Т-Кассы (карта или СБП) → на этой же странице появится одноразовая ссылка на скачивание PDF, дубль придёт письмом. Прямых ссылок на файл не существует: доступ выдаётся одноразовым токеном — ссылку нельзя слить в чат и переиспользовать.</div>'
+      '<div class="tldr"><b>Как проходит покупка:</b> вводите email и телефон → платёж на защищённой странице Т-Кассы (карта или СБП) → на этой же странице появится ссылка на скачивание PDF (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний), дубль придёт письмом. Прямой ссылки на файл не существует, а на страницы PDF наносится полупрозрачный водяной знак с вашими email и телефоном — это защищает гайд от слива в чаты.</div>'
       '<div class="buybox" style="margin:28px 0;display:flex;flex-direction:column;gap:12px;max-width:460px">'
       '<label for="buy-email" style="font-size:14px">Email для доставки гайда</label>'
       '<input id="buy-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" style="padding:14px 16px;border-radius:14px;border:1px solid #2a3b33;background:#0d1512;color:#e8f0ec;font-size:16px">'
+      '<label for="buy-phone" style="font-size:14px">Телефон (попадёт в водяной знак на страницах PDF)</label>'
+      '<input id="buy-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 XXX XXX-XX-XX" style="padding:14px 16px;border-radius:14px;border:1px solid #2a3b33;background:#0d1512;color:#e8f0ec;font-size:16px">'
       '<button id="buy-btn" class="btn lime" type="button" style="align-self:flex-start">Купить за ' + str(_price) + ' ₽</button>'
       '<div id="buy-msg" role="status" style="font-size:14px;min-height:20px;color:#9fb3aa"></div>'
       '</div>'
-      '<p class="fineprint" style="color:#8aa096;font-size:13px">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка на скачивание одноразовая; повторная выдача — по запросу в поддержку.</p>'
+      '<p class="fineprint" style="color:#8aa096;font-size:13px">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка действует ' + str(_ttl) + ' ч и до ' + str(_uses) + ' скачиваний; повторная выдача — по запросу в поддержку.</p>'
       '<div class="cta"><a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
       '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
       '<script>'
@@ -4219,11 +4223,14 @@ def main():
       'var gas="' + GAS_URL + '";'
       'var btn=document.getElementById("buy-btn"),em=document.getElementById("buy-email"),msg=document.getElementById("buy-msg");'
       'function say(t){msg.textContent=t;}'
+      'function norm(s){var d=(s||"").replace(/[^\\d]/g,"");if(d.length===11&&(d[0]==="7"||d[0]==="8"))return "+7"+d.slice(1);if(d.length===10)return "+7"+d;return "";}'
       'btn.addEventListener("click",function(){'
       'var v=(em.value||"").trim();'
       'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(v)){say("Введите корректный email — на него придёт дубль ссылки.");return;}'
+      'var ph=norm((document.getElementById("buy-phone")||{}).value||"");'
+      'if(!ph){say("Введите телефон в формате +7 XXX XXX-XX-XX — он нужен для водяного знака.");return;}'
       'btn.disabled=true;say("Создаём платёж…");'
-      'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:v,product:"m4don"})})'
+      'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:v,phone:ph,product:"m4don"})})'
       '.then(function(r){return r.json();})'
       '.then(function(j){'
       'if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}'
@@ -4255,8 +4262,9 @@ def main():
       'fetch(gas+"?shop_status="+encodeURIComponent(oid)).then(function(r){return r.json();}).then(function(j){'
       'if(j&&j.status==="paid"){'
       'h1("Оплата прошла — гайд ваш 🎉");'
-      'if(j.download_status==="used"){bh("<p><b>Ссылка уже использована.</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
-            'else if(j.token){bh("<p>Одноразовая ссылка на скачивание:</p><p><a class=\'btn lime\' href=\'" + gas + "?t=" + j.token + "\' style=\'display:inline-block;margin:8px 0\'>⬇️ Скачать PDF</a></p><p>Ссылка срабатывает один раз. Дубль отправлен на email, указанный при оплате.</p>");}'
+      'if(j.download_status==="limit-reached"){bh("<p><b>Лимит скачиваний исчерпан (' + str(_uses) + ').</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
+      'else if(j.download_status==="expired"){bh("<p><b>Срок действия ссылки истёк (' + str(_ttl) + ' ч).</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
+      'else if(j.token){bh("<p>Ссылка на скачивание (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний):</p><p><a class=\'btn lime\' href=\'/shop/digital/download.html?token="+j.token+"\' style=\'display:inline-block;margin:8px 0\'>⬇️ Скачать PDF</a></p><p>Дубль отправлен на email, указанный при оплате.</p>");}'
       'else{bh("<p>Токен не найден — напишите в поддержку, номер заказа: "+oid+".</p>");}}'
       'else if(j&&j.status&&j.status!=="unknown"){'
       'if(tries<12){setTimeout(poll,4000);}else{h1("Оплата в обработке");bh("<p>Уведомление от банка обычно приходит за 1–2 минуты. Обновите страницу через пару минут — или проверьте email, ссылка придёт и туда.</p><p>Номер заказа: <b>"+oid+"</b></p>");}}'
@@ -4267,6 +4275,18 @@ def main():
     write_page(os.path.join(outdir, 'shop', 'digital', 'success.html'),
         'Оплата | Запас хода', 'Статус оплаты и выдача цифрового гайда.',
         _succ_body, '/shop/digital/success.html', noindex=True)
+    _dl_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · скачивание</div>'
+      '<h1>Подготовка файла…</h1>'
+      '<p class="lede">Если вас не перенаправило автоматически — включите JavaScript или напишите в поддержку: выдача защищена токеном.</p>'
+      '<script>'
+      '(function(){'
+      'var gas="' + GAS_URL + '";'
+      'var t=new URLSearchParams(location.search).get("token")||"";'
+      'if(t){window.location.href=gas+"?t="+encodeURIComponent(t);}'
+      '})();</script>')
+    write_page(os.path.join(outdir, 'shop', 'digital', 'download.html'),
+        'Скачивание гайда | Запас хода', 'Выдача гайда по токену с ограничением времени и числа скачиваний.',
+        _dl_body, '/shop/digital/download.html', noindex=True)
 
     # OG-карточки: новости + бренды VIN + дефолт
     jobs = [('/assets/og/default.png', 'Запас хода — практика владения электромобилем в России')]

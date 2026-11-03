@@ -177,22 +177,23 @@
   "tinkoff_terminal_key": "",
   "tinkoff_is_test_mode": true,
   "digital_guide_price": 490,
-  "digital_payments_live": false,
+  "digital_payments_live": true,
   "tinkoff_receipt_object": "service",
   "tinkoff_receipt_tax": "vat0",
   "tinkoff_receipt_taxation": "usn_income",
-  "gas_pay_url": "",
+  "gas_pay_url": "https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec",
   "shop": {
-    "tinkoff_terminal_key": "",
+    "tinkoff_terminal_key": "1793665379484DEMO",
     "tinkoff_is_test_mode": true,
     "digital_guide_price": 490,
     "tinkoff_api_base": "https://securepay.tinkoff.ru",
     "shop_taxation": "usn_income",
     "shop_payment_object": "commodity",
-    "shop_token_max_uses": 1,
+    "shop_token_max_uses": 3,
     "guide_product": "m4don",
     "guide_title": "Гайд М-4 «Дон»",
     "guide_desc": "Цифровой путеводитель по зарядной инфраструктуре трассы М-4 «Дон» в формате PDF. Описание содержания обновит владелец.",
-    "guide_success_path": "/shop/digital/success.html"
+    "guide_success_path": "/shop/digital/success.html",
+    "shop_token_ttl_hours": 24
   }
 }
