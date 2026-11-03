@@ -178,6 +178,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0007",
+      "ts": "2026-11-03T20:59:04+03:00",
+      "from": "validator",
+      "topic": "Валидатор гайдов",
+      "body": "Принято в очередь согласования: m11-trassa: слишком много ₽; m12-trassa: слишком много ₽; parking-zhil: слишком много ₽",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
