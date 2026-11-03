@@ -126,11 +126,28 @@ def render(slug, guide):
 def load_prod():
     p = os.path.join(ROOT, "data", "shop_products.json")
     return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {"products": []}
+def gas_pdfs():
+    """Список продуктов, PDF которых зарегистрированы в GAS (Drive). None — GAS недоступен."""
+    import json as _json, urllib.request, urllib.error
+    cfgp = os.path.join(ROOT, "data", "site_config.json")
+    try: cfg = _json.load(open(cfgp, encoding="utf-8"))
+    except Exception: return None
+    gas = str((cfg.get("shop") or {}).get("gas_pay_url") or cfg.get("gas_pay_url") or "")
+    if not gas: return None
+    try:
+        r = urllib.request.Request(gas, data=_json.dumps({"t": "bonus_selftest"}).encode(),
+                                   headers={"Content-Type": "text/plain;charset=utf-8"})
+        resp = _json.loads(urllib.request.urlopen(r, timeout=25).read().decode("utf-8", errors="replace"))
+        return list(resp.get("pdfs") or []) if resp.get("ok") else None
+    except Exception:
+        return None
 def main():
     appr = os.path.join(ROOT, "bridge", "drafts", "guides", "approved")
     if not os.path.isdir(appr): print("approved пуст"); return
     prod = load_prod()
     built = []
+    registered = gas_pdfs()
+    print("GAS pdfs:", registered)
     for fn in sorted(os.listdir(appr)):
         if not fn.endswith(".json"): continue
         slug = fn[:-5]
@@ -140,8 +157,13 @@ def main():
         try:
             render(slug, d)
             built.append(slug)
-            for pp in prod["products"]:
-                if pp.get("slug") == slug: pp["live"] = True
+            # Live ТОЛЬКО если PDF зарегистрирован в GAS (Drive) — иначе покупка без файла невозможна
+            if registered and slug in registered:
+                for pp in prod["products"]:
+                    if pp.get("slug") == slug: pp["live"] = True
+                print(slug, ": live (PDF зарегистрирован в GAS)")
+            else:
+                print(slug, ": PDF собран, но не зарегистрирован в GAS — статус «скоро» остаётся")
         except Exception as e:
             print("PDF fail", slug, repr(e))
     if built:

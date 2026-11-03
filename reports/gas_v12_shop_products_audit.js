@@ -155,10 +155,25 @@ function _bonusSelftestEndpoint() {
     var pr = shopGetProducts();
     var keys = Object.keys(pr);
     var all990 = keys.length > 0 && keys.every(function (k) { return pr[k].amount === 99000; });
+    var pdfsRaw = PropertiesService.getScriptProperties().getProperty('shop_pdfs') || '{}';
+    var pdfs = {};
+    try { pdfs = JSON.parse(pdfsRaw); } catch (e) {}
     return { ok: true, selftest: true, products: keys.length, all990: all990,
              bonusRub: B2B_BONUS_RUB, bonusRows: Math.max(0, sh.getLastRow() - 1),
-             version: 'v12' };
+             pdfs: Object.keys(pdfs), version: 'v12' };
   } catch (e) {
     return { ok: false, selftest: true, error: String(e && e.message || e) };
   }
+}
+
+// Регистрация PDF (вызывает владелец/ассистент при наличии токена Drive):
+//   shopSetPdf2('m11-trassa', 'ID_файла_на_Диске')
+// Пишет в shop_pdfs — по этому списку конвейер автоматически включает продукт в Live.
+function shopSetPdf2(slug, fileId) {
+  var raw = PropertiesService.getScriptProperties().getProperty('shop_pdfs') || '{}';
+  var pdfs = {};
+  try { pdfs = JSON.parse(raw); } catch (e) {}
+  pdfs[slug] = fileId;
+  PropertiesService.getScriptProperties().setProperty('shop_pdfs', JSON.stringify(pdfs));
+  Logger.log('shop_pdfs: ' + Object.keys(pdfs).join(', '));
 }
