@@ -1,0 +1,25 @@
+{
+  "last_build_stamp": "2026-11-03T01:08:54Z",
+  "last_commit_sha": "local-build",
+  "active_features": [
+    "matrix",
+    "calculator",
+    "shop_v1",
+    "b2b",
+    "services_partners",
+    "stations_map",
+    "forum_v2",
+    "vin_check",
+    "quiz",
+    "digital_guide_shop"
+  ],
+  "tinkoff_status": "test",
+  "open_bugs": [
+    "b2b_page: блоки «Модель партнёрства (1. ЛИДЫ)», «Что получает партнёр» и note про 20–30 лидов/мес ещё описывают старую лидогенерацию — не согласованы с новым lede (опт + Mini App)",
+    "tinkoff: терминал на DEMO-ключе (1793665379484DEMO, test) — для боевых платежей заменить на production-ключ и переключить live",
+    "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
+    "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем",
+    "build.py: дубль блока копирования PDF для дилеров в main() (строки подряд) — безвредно, почистить при случае"
+  ],
+  "next_step_waiting": "решение владельца по чистке лид-блоков на /b2b/ + реальные данные СТО (service_partners) + production-ключ Tinkoff"
+}
