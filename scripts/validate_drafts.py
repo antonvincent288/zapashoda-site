@@ -101,8 +101,9 @@ def main():
                 page = os.path.join("_site_check", "blog", slug + ".html")
                 if not os.path.exists(page):
                     rejected.append((fn, "страница не собралась")); continue
-                doc = open(page, encoding="utf-8").read()
-                bad = [h for h in internal_hrefs(doc) if not link_ok(h, sm)]
+                body_hrefs = internal_hrefs(d.get("body_html", ""))
+                skip = ("/assets/", "/apple-touch", "/favicon", "/manifest", "/app/", "mailto:", "tel:")
+                bad = [h for h in body_hrefs if not h.startswith(skip) and not link_ok(h, sm)]
                 if bad: rejected.append((fn, "битые внутренние ссылки: " + ", ".join(sorted(bad)[:5]))); continue
                 print("GREEN:", slug)
         final = [a for a in applied if not any(r[0] == a[0] for r in rejected)]

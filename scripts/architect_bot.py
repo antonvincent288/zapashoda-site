@@ -243,12 +243,13 @@ def do_draft():
             for part in m["body"].split("Отклонено:")[-1].split(";"):
                 mm = re.match(r"\s*([a-z0-9-]+)\.json \((.{5,200})\)", part)
                 if mm: rejected[mm.group(1)] = mm.group(2)
-    target = None
+    targets = []
     for slug, why in rejected.items():
         path = BR + "/drafts/articles/" + slug + ".json"
         if get_file(path):
-            target = (path, slug, why); break
-    if target:
+            targets.append((path, slug, why))
+        if len(targets) >= 3: break
+    for target in targets:
         path, slug, why = target
         old = json.loads(get_file(path))
         prompt = base_ctx + "\n\nТвоя статья с slug=%s была отклонена валидатором по причинам: %s.\nНапиши её ЗАНОВО и ДЛИННЕЕ: интро + 4–5 разделов h2 по 140–170 слов каждый (в сумме 650–850 слов) + вывод-раздел h2 + FAQ (3 пары).\nОригинальная тема: %s\nУчти причины отклонения (длина, ссылки, заголовок ≤55 символов)." % (slug, why, old.get("title", ""))
@@ -267,7 +268,7 @@ def do_draft():
             print("rewrite: пустое тело — пропущено"); return
         push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: переписан драфт " + slug)
         print("rewrite:", slug, "| слов:", len(d["body_html"].split()))
-        return
+        time.sleep(50)
     # 2) новый драфт: два прохода
     topic = TOPICS[int(datetime.datetime.now().timestamp() // 60) % len(TOPICS)]
     prompt1 = base_ctx + "\n\nТема статьи: %s\nНапиши ПЕРВУЮ ПОЛОВИНУ статьи по формату: интро (130–180 слов) + 2–3 раздела <h2> (по 160–200 слов). Закончи на завершённом абзаце. FAQ не пиши." % topic
