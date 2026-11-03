@@ -98,19 +98,16 @@ SYSTEM = """Ты — архитектор проекта zapashoda-ev.ru (зар
 5) по-русски, по делу, до ~1200 знаков; 6) в body всегда добавляй строку «План следующего шага: ...»."""
 DRAFT_SYSTEM = """Ты — автор статей блога zapashoda-ev.ru (зарядка и аксессуары для электромобилей в России).
 Формат ответа СТРОГО такой, без markdown-обёрток:
-SLUG: <латиница-с-дефисами, уникальный>
+SLUG: <латиница-с-дефисами>
 TITLE: <30-55 символов>
 DESC: <120-240 символов>
 CATEGORY: Гайд
 BODY_HTML:
-<чистый HTML статьи: <h2> (минимум 2), <p>, <ul>/<li>, минимум 3 внутренних ссылки из списка; 450–700 слов; без <script>/<style>/<img>>
+<чистый HTML статьи: <h2> разделы, <p>, <ul>/<li>, внутренние ссылки только из списка; без <script>/<style>/<img>>
 FAQ:
 - вопрос | ответ
 - вопрос | ответ
-Правила: 1) факты — только из facts_pack (никаких чужих цифр; если фактов не хватает — общие рассуждения без чисел);
-2) цены НЕ придумывать: только диапазоны из facts_pack с пометкой «ориентир», иначе [ЦЕНА: согласовать с владельцем];
-3) внутренние ссылки — ТОЛЬКО из списка ALLOWED_LINKS; 4) живой практичный тон, обращение к читателю;
-5) финальный h2 — практический вывод; 6) секреты не упоминать."""
+Правила: 1) факты — только из facts_pack (чужих цифр не выдумывать); цены не придумывать — диапазоны из facts_pack с пометкой «ориентир» либо [ЦЕНА: согласовать с владельцем]; 2) внутренние ссылки — ТОЛЬКО из списка; 3) практичный живой тон, обращение к читателю; 4) секреты не упоминать; 5) пишешь ЧАСТЬ статьи по указанию в задании — не переписывай уже написанное."""
 ALLOWED_LINKS = ["/pain/adapter-gbt.html", "/pain/stoimost-zaryadki.html", "/pain/zaryadka-na-trasse.html", "/pain/domashnie-stancii.html", "/pain/zaryadka-ot-rozetki.html", "/pain/podogrev-batarei.html", "/pain/zapas-hoda-zimoy.html", "/pain/ne-zaryazhaetsya.html", "/pain/udlinitel.html", "/pain/12v-akb.html", "/calculator/", "/charging/", "/catalog/", "/blog/", "/vin/", "/models/zeekr-001-001-fr.html", "/models/li-auto-l6-l7-l8-l9-2022-2025.html", "/models/voyah-free-evr-gibrid.html", "/models/byd-song-plus-ev.html", "/blog/subsidii-na-elektromobil-2026.html", "/blog/transportnyi-nalog-elektromobilya.html", "/blog/zimnyaya-zaryadka-medlennee.html", "/blog/stanciya-ne-rabotae t.html".replace(" ", ""), "/blog/handshake-oshibka-dc-zaryadki.html", "/blog/skolko-zhivet-batareya-elektromobilya.html"]
 def blog_slugs():
     try:
@@ -175,25 +172,96 @@ def parse_draft(text):
                 faq.append([q.strip(), a.strip()])
     out["faq"] = faq[:4]
     return out if all(out.get(k) for k in ("slug", "title", "desc", "body_html")) else None
+def _headers_from(text):
+    def grab(tag):
+        m = re.search(tag + r":\s*(.+)", str(text))
+        return m.group(1).strip().strip("`*") if m else ""
+    return grab("SLUG"), grab("TITLE"), grab("DESC"), grab("CATEGORY")
+def _extract_body(text):
+    m = re.search(r"BODY_HTML:\s*\n(.*?)(?:\n\s*FAQ:|$)", str(text), re.S)
+    if not m: return ""
+    return m.group(1).strip()
+def _extract_faq(text):
+    faq = []
+    if "\nFAQ:" not in str(text) and not str(text).lstrip().startswith("FAQ:"):
+        part = str(text)
+    else:
+        part = str(text).split("\nFAQ:")[-1]
+    for line in part.splitlines():
+        line = line.strip().lstrip("-")
+        if "|" in line and len(line) > 15:
+            q, a = line.split("|", 1)
+            if 5 < len(q.strip()) < 200 and 10 < len(a.strip()) < 400:
+                faq.append([q.strip(), a.strip()])
+    return faq[:4]
 def do_draft():
     fp = get_file("data/facts_pack.json")
     if not fp:
         print("facts_pack отсутствует — драфт пропущен"); return
     existing = blog_slugs()
+    links = ", ".join(ALLOWED_LINKS + blog_index_links())
+    base_ctx = "facts_pack.json:\n%s\n\nУже есть статьи (слаги): %s\n\nРазрешённые внутренние ссылки:\n%s" % (fp, ", ".join(sorted(existing))[:2200], links)
+    # 1) переписать отклонённые валидатором драфты
+    a2z = json.loads(get_file(BR + "/architect_to_alisa.json") or '{"messages":[]}')
+    rejected = {}
+    for m in a2z.get("messages", []):
+        if m.get("from") == "validator" and "Отклонено" in (m.get("body") or ""):
+            for part in m["body"].split("Отклонено:")[-1].split(";"):
+                mm = re.match(r"\s*([a-z0-9-]+)\.json \((.{5,200})\)", part)
+                if mm: rejected[mm.group(1)] = mm.group(2)
+    target = None
+    for slug, why in rejected.items():
+        path = BR + "/drafts/articles/" + slug + ".json"
+        if get_file(path):
+            target = (path, slug, why); break
+    if target:
+        path, slug, why = target
+        old = json.loads(get_file(path))
+        prompt = base_ctx + "\n\nТвоя статья с slug=%s была отклонена валидатором по причинам: %s.\nНапиши её ЗАНОВО и ДЛИННЕЕ: интро + 4–5 разделов h2 по 140–170 слов каждый (в сумме 650–850 слов) + вывод-раздел h2 + FAQ (3 пары).\nОригинальная тема: %s\nУчти причины отклонения (длина, ссылки, заголовок ≤55 символов)." % (slug, why, old.get("title", ""))
+        part1 = pollinations(DRAFT_SYSTEM, prompt, max_tokens=6000, reasoning="low")
+        h_sl, h_t, h_d, h_c = _headers_from(part1)
+        body1 = _extract_body(part1)
+        prompt2 = base_ctx + "\n\nПродолжи статью «%s». Уже написано:\n%s\n\nНапиши ТОЛЬКО продолжение: 2–3 новых раздела <h2> (по 140–170 слов, практические шаги) + финальный раздел <h2> с выводом, затем строкой FAQ: и 3 пары «вопрос | ответ». Не повторяй предыдущие разделы, не пиши SLUG/TITLE." % (h_t or old.get("title", ""), body1[:2500])
+        part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=6000, reasoning="low")
+        body2 = _extract_body(part2)
+        faq = _extract_faq(part2) or _extract_faq(part1)
+        slug = re.sub(r"[^a-z0-9-]", "-", (h_sl or slug).lower())[:64]
+        d = {"slug": slug, "title": (h_t or old.get("title", ""))[:55], "desc": (h_d or old.get("desc", ""))[:300],
+             "category": h_c or old.get("category", "Гайд"),
+             "body_html": (body1 + "\n" + body2).strip(), "faq": faq}
+        if not d["body_html"]:
+            print("rewrite: пустое тело — пропущено"); return
+        if slug != old.get("slug"):
+            os.remove(path) if os.path.exists(path) else None
+            get_file(path)  # noop
+            push_files({BR + "/drafts/articles/" + slug + ".json": json.dumps(d, ensure_ascii=False, indent=1),
+                        path: None} if False else {BR + "/drafts/articles/" + slug + ".json": json.dumps(d, ensure_ascii=False, indent=1)},
+                       "architect-bot: переписан драфт " + slug)
+        else:
+            push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: переписан драфт " + slug)
+        print("rewrite:", slug, "| слов:", len(d["body_html"].split()))
+        return
+    # 2) новый драфт: два прохода
     topic = TOPICS[int(datetime.datetime.now().timestamp() // 60) % len(TOPICS)]
-    prompt = "facts_pack.json:\n%s\n\nУже есть статьи (слаги): %s\n\nРазрешённые внутренние ссылки (ALLOWED_LINKS):\n%s\n\nТема статьи: %s\nНапиши статью по формату из системной инструкции." % (
-        fp, ", ".join(sorted(existing))[:2200], ", ".join(ALLOWED_LINKS + blog_index_links()), topic)
-    content = pollinations(DRAFT_SYSTEM, prompt, max_tokens=6000, reasoning="low")
-    d = parse_draft(content)
-    if not d:
-        print("драфт: модель не вернула формат SLUG/BODY_HTML/FAQ — пропущено"); return
-    if d["slug"] in existing:
-        print("драфт: slug уже существует — пропущено"); return
-    path = BR + "/drafts/articles/" + d["slug"] + ".json"
+    prompt1 = base_ctx + "\n\nТема статьи: %s\nНапиши ПЕРВУЮ ПОЛОВИНУ статьи по формату: интро (120–160 слов) + 2 раздела <h2> (по 140–170 слов). Закончи на завершённом абзаце. FAQ не пиши." % topic
+    part1 = pollinations(DRAFT_SYSTEM, prompt1, max_tokens=6000, reasoning="low")
+    h_sl, h_t, h_d, h_c = _headers_from(part1)
+    body1 = _extract_body(part1)
+    if not body1:
+        print("драфт: первая половина пуста — пропущено"); return
+    prompt2 = base_ctx + "\n\nПродолжи статью «%s». Уже написано:\n%s\n\nНапиши ТОЛЬКО продолжение: 2–3 новых раздела <h2> (по 140–170 слов, практические шаги и кейсы) + финальный раздел <h2> с выводом (100–140 слов), затем отдельной строкой FAQ: и 3 пары «вопрос | ответ». Не повторяй предыдущие разделы и заголовки, SLUG/TITLE/DESC не пиши." % (h_t, body1[:2500])
+    part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=6000, reasoning="low")
+    body2 = _extract_body(part2)
+    faq = _extract_faq(part2) or _extract_faq(part1)
+    slug = re.sub(r"[^a-z0-9-]", "-", (h_sl or topic[:40]).lower())[:64]
+    title = (h_t or topic)[:55]
+    d = {"slug": slug, "title": title, "desc": (h_d or topic)[:300], "category": h_c or "Гайд",
+         "body_html": (body1 + "\n" + body2).strip(), "faq": faq}
+    path = BR + "/drafts/articles/" + slug + ".json"
     if get_file(path) is not None:
-        print("драфт уже есть:", d["slug"]); return
-    sha = push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: драфт статьи " + d["slug"])
-    print("draft:", d["slug"], "| title:", d["title"], "| pushed", sha[:12])
+        print("драфт уже есть:", slug); return
+    sha = push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: драфт статьи " + slug)
+    print("draft:", slug, "| title:", title, "| слов:", len(d["body_html"].split()), "| pushed", sha[:12])
 def main():
     do_advice()
     time.sleep(55)  # лимит Pollinations 1 запрос / 45 с
