@@ -29,7 +29,7 @@ nav.zs-links a.on{color:#2563EB;font-weight:700;background:#e8ffe6}
 .zs-drop{position:absolute;top:100%;left:0;background:transparent;border:none;box-shadow:none;border-radius:.6rem;padding-top:8px;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
 .zs-more:hover .zs-drop,.zs-more:focus-within .zs-drop{display:flex}
 .zs-more.is-active .zs-drop{display:flex}
-[data-open-menu],[data-close-menu],.zs-burger,.zs-more>button,.zs-off a,.off-x,.zs-drop a,.cbtn{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+[data-open-menu],[data-close-menu],.zs-burger,.zs-more>button,.zs-off a,.off-x,.zs-drop a,.cbtn{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0);touch-action:manipulation}
 .zs-drop a{display:block;padding:9px 13px;white-space:nowrap}
 @media(max-width:1023px){.zs-more{display:none}}
 @media(max-width:1023px){
