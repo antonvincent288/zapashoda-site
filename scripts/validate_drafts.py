@@ -5,7 +5,7 @@
    Зелёные переносит в data/blog_extra/ и пушит (деплой триггерится site.yml). Красные остаются.
 2) Валидирует код-драфты bridge/drafts/code/*.patch: git apply -> py_compile -> build.
    Красные не применяются. Всё докладывает в мост (bridge/architect_to_alisa.json)."""
-import json, os, re, sys, subprocess, base64, tempfile, html as _html
+import json, os, re, sys, subprocess, base64, tempfile, py_compile, html as _html
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from architect_bot import req, get_file, push_files, REPO, BR
 import datetime, urllib.request
@@ -67,7 +67,7 @@ def main():
     if drafts:
         try: pycompile_all()
         except Exception as e:
-            print("py_compile НЕ ПРОШЁЛ — применяемые драфты отменяются"); sys.exit(1)
+            print("py_compile НЕ ПРОШЁЛ:", repr(e)[:300], "— применяемые драфты отменяются"); sys.exit(1)
         existing = set()
         sp = open("services.py", encoding="utf-8").read()
         b0 = sp.find("BLOG_ARTICLES = ["); b1 = sp.find("\n]", b0)
