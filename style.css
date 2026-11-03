@@ -235,7 +235,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .of-ok{background:#f0fff0;border:1px solid #b5f0a4;border-radius:.75rem;padding:12px 14px;color:#0d7e0f;font-size:14px;margin-top:10px}
 #order-form input,#order-form textarea{width:100%;padding:11px 13px;margin:6px 0;border:1px solid var(--line);border-radius:.5rem;font-size:15px;font-family:inherit;background:#fff}
 #order-form button{width:100%;margin-top:8px}
-.of-send{padding:13px !important;font-size:15.5px !important}
+.of-send{padding:13px !important;font-size:15.5px !important;white-space:normal !important}
 @media(max-width:640px){.of-grid{grid-template-columns:1fr}}
 /* ---- product page (pz) ---- */
 .pz-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin:22px 0 8px;align-items:start}
