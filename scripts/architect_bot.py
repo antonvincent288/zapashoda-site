@@ -71,15 +71,14 @@ def pollinations(system, prompt, max_tokens=1100):
     body = {"model": POLLINATIONS_MODEL,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
             "temperature": 0.4, "max_tokens": max_tokens, "private": True}
-    waits = [20, 40, 60, 90, 120, 150]
-    for attempt, w in enumerate(waits):
+    for attempt in range(4):
         st, d = req("https://text.pollinations.ai/openai", "POST", body, headers={"Content-Type": "application/json"})
+        if st == 429: time.sleep(50); continue
         if st == 200 and isinstance(d, dict) and d.get("choices"):
             return d["choices"][0]["message"]["content"]
-        print("pollinations attempt", attempt + 1, "status", st, str(d)[:200] if not st == 429 else "rate-limited")
         if st == 200: body["model"] = FALLBACK_MODEL
-        time.sleep(w)
-    raise RuntimeError("Pollinations недоступен после %d попыток" % len(waits))
+        time.sleep(10)
+    raise RuntimeError("Pollinations недоступен")
 def parse_json(text):
     text = re.sub(r"```(?:json)?", "", str(text)).strip()
     m = re.search(r"\{.*\}", text, re.S)
@@ -94,16 +93,21 @@ SYSTEM = """Ты — архитектор проекта zapashoda-ev.ru (зар
 2) цены НЕ придумывать — писать [ЦЕНА: согласовать с владельцем]; 3) секреты не упоминать;
 4) отвечай СТРОГО одним JSON-объектом: {"topic": "...", "body": "...", "priority": "normal", "expect": "answer"};
 5) по-русски, по делу, до ~1200 знаков; 6) в body всегда добавляй строку «План следующего шага: ...»."""
-DRAFT_SYSTEM = """Ты — автор экспертных статей блога zapashoda-ev.ru (зарядка и аксессуары для электромобилей в России).
-Пиши СТРОГО один JSON-объект без markdown-обёрток:
-{"slug": "kejs-v-latine", "title": "...", "desc": "...", "category": "Гайд", "body_html": "...", "faq": [["вопрос","ответ"],["вопрос","ответ"]]}
-Правила:
-1. ФАКТЫ — только из предоставленного facts_pack. Никаких цифр, которых там нет. Где нужна цена — пиши [ЦЕНА: согласовать с владельцем] или вообще обойди без денег.
-2. Внутренние ссылки — ТОЛЬКО из списка ALLOWED_LINKS (не менее 3 на статью, разные).
-3. body_html — чистый HTML: <h2> (минимум 2), <p>, <ul>/<li>, <table> разрешены; БЕЗ <script>, <style>, <img>; 550–900 слов; живой практичный тон, обращение к читателю; финальный h2 с практическим выводом.
-4. title 30–55 символов, desc 120–240 символов, slug — латиница с дефисами, уникальный.
-5. faq — 2–4 пары по теме.
-6. Не пиши оглавление-заглушку «Оглавление», не добавляй CTA-кнопки."""
+DRAFT_SYSTEM = """Ты — автор статей блога zapashoda-ev.ru (зарядка и аксессуары для электромобилей в России).
+Формат ответа СТРОГО такой, без markdown-обёрток:
+SLUG: <латиница-с-дефисами, уникальный>
+TITLE: <30-55 символов>
+DESC: <120-240 символов>
+CATEGORY: Гайд
+BODY_HTML:
+<чистый HTML статьи: <h2> (минимум 2), <p>, <ul>/<li>, минимум 3 внутренних ссылки из списка; 450–700 слов; без <script>/<style>/<img>>
+FAQ:
+- вопрос | ответ
+- вопрос | ответ
+Правила: 1) факты — только из facts_pack (никаких чужих цифр; если фактов не хватает — общие рассуждения без чисел);
+2) цены НЕ придумывать: только диапазоны из facts_pack с пометкой «ориентир», иначе [ЦЕНА: согласовать с владельцем];
+3) внутренние ссылки — ТОЛЬКО из списка ALLOWED_LINKS; 4) живой практичный тон, обращение к читателю;
+5) финальный h2 — практический вывод; 6) секреты не упоминать."""
 ALLOWED_LINKS = ["/pain/adapter-gbt.html", "/pain/stoimost-zaryadki.html", "/pain/zaryadka-na-trasse.html", "/pain/domashnie-stancii.html", "/pain/zaryadka-ot-rozetki.html", "/pain/podogrev-batarei.html", "/pain/zapas-hoda-zimoy.html", "/pain/ne-zaryazhaetsya.html", "/pain/udlinitel.html", "/pain/12v-akb.html", "/calculator/", "/charging/", "/catalog/", "/blog/", "/vin/", "/models/zeekr-001-001-fr.html", "/models/li-auto-l6-l7-l8-l9-2022-2025.html", "/models/voyah-free-evr-gibrid.html", "/models/byd-song-plus-ev.html", "/blog/subsidii-na-elektromobil-2026.html", "/blog/transportnyi-nalog-elektromobilya.html", "/blog/zimnyaya-zaryadka-medlennee.html", "/blog/stanciya-ne-rabotae t.html".replace(" ", ""), "/blog/handshake-oshibka-dc-zaryadki.html", "/blog/skolko-zhivet-batareya-elektromobilya.html"]
 def blog_slugs():
     try:
@@ -133,7 +137,7 @@ def do_advice():
     prompt = "Состояние (roadmap):\n%s\n\nAI_BRIDGE:\n%s\n\nМои последние ответы:\n%s\n\nНовые сообщения Алисы (%d):\n%s\n\nЗадача: %s\nВерни СТРОГО JSON." % (
         roadmap[:5000], ai[:1000], ctx_mine, len(pending), ctx_pending or "(нет)",
         "ответь на последнее сообщение Алисы" if pending else "дай один полезный статус-совет по текущему этапу; без выдуманного прогресса")
-    content = pollinations(SYSTEM, prompt)
+    content = pollinations(SYSTEM, prompt, reasoning="low")
     parsed = parse_json(content) or {"topic": "Совет архитектора", "body": str(content)[:1500], "priority": "normal", "expect": "answer"}
     ts = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).isoformat(timespec="seconds")
     msg = {"id": "A-%04d" % next_num, "ts": ts, "from": "architect",
@@ -146,26 +150,47 @@ def do_advice():
                       BR + "/architect_state.json": json.dumps(state, ensure_ascii=False, indent=2)},
                      "architect-bot: %s" % msg["id"])
     print("advice:", msg["id"], "|", msg["topic"], "| pushed", sha[:12])
+def parse_draft(text):
+    out = {}
+    body_m = re.search(r"BODY_HTML:\s*\n(.*?)\n\s*FAQ:", str(text), re.S)
+    if not body_m: return None
+    body = body_m.group(1).strip()
+    def grab(tag):
+        m = re.search(tag + r":\s*(.+)", str(text))
+        return m.group(1).strip().strip("`*") if m else ""
+    out["slug"] = re.sub(r"[^a-z0-9-]", "-", grab("SLUG").lower())[:64]
+    out["title"] = grab("TITLE")
+    out["desc"] = grab("DESC")
+    out["category"] = grab("CATEGORY") or "Гайд"
+    out["body_html"] = re.sub(r"\n\s*", "\n", body)
+    faq = []
+    for line in str(text).split("\nFAQ:")[-1].splitlines():
+        line = line.strip().lstrip("-")
+        if "|" in line and len(line) > 15:
+            q, a = line.split("|", 1)
+            if 5 < len(q.strip()) < 200 and 10 < len(a.strip()) < 400:
+                faq.append([q.strip(), a.strip()])
+    out["faq"] = faq[:4]
+    return out if all(out.get(k) for k in ("slug", "title", "desc", "body_html")) else None
 def do_draft():
     fp = get_file("data/facts_pack.json")
     if not fp:
         print("facts_pack отсутствует — драфт пропущен"); return
     existing = blog_slugs()
     topic = TOPICS[int(datetime.datetime.now().timestamp() // 60) % len(TOPICS)]
-    prompt = "facts_pack.json:\n%s\n\nУже есть статьи (слаги): %s\n\nРазрешённые внутренние ссылки:\n%s\n\nТема статьи (если по ней уже есть статья — выбери сам ближайшую неосвещённую тему из своих знаний, но факты всё равно только из facts_pack): %s\n\nНапиши статью по формату из системной инструкции." % (
-        fp, ", ".join(sorted(existing))[:2500], ", ".join(ALLOWED_LINKS + blog_index_links()), topic)
-    content = pollinations(DRAFT_SYSTEM, prompt, max_tokens=2600)
-    d = parse_json(content)
-    if not d or not d.get("slug") or not d.get("body_html"):
-        print("драфт: модель не вернула валидный JSON — пропущено"); return
-    slug = str(d["slug"]).strip()
-    if slug in existing:
+    prompt = "facts_pack.json:\n%s\n\nУже есть статьи (слаги): %s\n\nРазрешённые внутренние ссылки (ALLOWED_LINKS):\n%s\n\nТема статьи: %s\nНапиши статью по формату из системной инструкции." % (
+        fp, ", ".join(sorted(existing))[:2200], ", ".join(ALLOWED_LINKS + blog_index_links()), topic)
+    content = pollinations(DRAFT_SYSTEM, prompt, max_tokens=6000, reasoning="low")
+    d = parse_draft(content)
+    if not d:
+        print("драфт: модель не вернула формат SLUG/BODY_HTML/FAQ — пропущено"); return
+    if d["slug"] in existing:
         print("драфт: slug уже существует — пропущено"); return
-    path = BR + "/drafts/articles/" + slug + ".json"
+    path = BR + "/drafts/articles/" + d["slug"] + ".json"
     if get_file(path) is not None:
-        print("драфт уже есть:", slug); return
-    sha = push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: драфт статьи " + slug)
-    print("draft:", slug, "| pushed", sha[:12])
+        print("драфт уже есть:", d["slug"]); return
+    sha = push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: драфт статьи " + d["slug"])
+    print("draft:", d["slug"], "| title:", d["title"], "| pushed", sha[:12])
 def main():
     do_advice()
     time.sleep(55)  # лимит Pollinations 1 запрос / 45 с
