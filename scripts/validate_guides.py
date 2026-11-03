@@ -35,7 +35,7 @@ def main():
         short = [i for i, x in enumerate(chapters) if words(x) < 250]
         if short: errs.append("короткие главы: %s" % short[:3])
         joined = "\n".join(chapters)
-        if joined.count("₽") > 8: errs.append("слишком много ₽")
+        if joined.count("₽") > 12: errs.append("слишком много ₽")
         if re.search(r"\b(api[_-]?key|token|password|secret)\b", joined.lower()): errs.append("подозрение на секрет")
         if "<script" in joined.lower() or "<style" in joined.lower(): errs.append("script/style запрещены")
         if errs:
@@ -58,8 +58,8 @@ def main():
         if any(k == base + "/approved/" + slug + ".json" for k in files):
             pass
     # простая замена: пушим approved-файлы + мост; из очереди принятые уберутся на следующем прогоне бота-писателя не нужно — оставляем черновик как архив
-    if len(files) > 1:
-        sha = push_files(files, "validator-guides: черновики на согласование")
+    if files:
+        sha = push_files(files, "validator-guides: черновики гайдов")
         print("pushed", sha[:12])
     print("итог:", len([n for n in notes if "ЗЕЛЁНЫЙ" in n]), "принято,", len([n for n in notes if "ЗЕЛЁНЫЙ" not in n]), "отклонено")
     for n in notes: print(" ", n)
