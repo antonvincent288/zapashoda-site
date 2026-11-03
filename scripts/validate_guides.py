@@ -5,7 +5,7 @@
 публикация платных продуктов только с решения владельца."""
 import json, os, re, sys, subprocess, base64
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from turbo_writer import get_file, push_files, REPO, BR, req
+from guide_writer import get_file, push_files, REPO, BR, req
 import urllib.request, datetime
 def strip_tags(s): return re.sub(r"<[^>]+>", " ", s)
 def words(s): return len([w for w in re.split(r"\W+", strip_tags(s)) if w])
