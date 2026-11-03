@@ -26,4 +26,9 @@ jobs:
       - name: Validate & apply drafts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python scripts/validate_drafts.py
+        run: |
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "agent-validator"
+          git fetch origin main
+          git reset --hard origin/main
+          python scripts/validate_drafts.py
