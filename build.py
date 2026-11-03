@@ -471,7 +471,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .of-ok{background:#f0fff0;border:1px solid #b5f0a4;border-radius:.75rem;padding:12px 14px;color:#0d7e0f;font-size:14px;margin-top:10px}
 #order-form input,#order-form textarea{width:100%;padding:11px 13px;margin:6px 0;border:1px solid var(--line);border-radius:.5rem;font-size:15px;font-family:inherit;background:#fff}
 #order-form button{width:100%;margin-top:8px}
-.of-send{padding:13px !important;font-size:15.5px !important}
+.of-send{padding:13px !important;font-size:15.5px !important;white-space:normal !important}
 @media(max-width:640px){.of-grid{grid-template-columns:1fr}}
 /* ---- product page (pz) ---- */
 .pz-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin:22px 0 8px;align-items:start}
@@ -1502,7 +1502,7 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
       'if(dcw>0){rows+="<tr><td>Быстрая станция (DC)</td><td>"+f1(dcw)+" кВт</td><td>0→80% ≈ "+f0(48/dcw*60)+" мин</td><td>—</td></tr>";}'
       'else if(dmin){rows+="<tr><td>Быстрая станция (DC)</td><td colspan=\\"3\\">по данным модели: "+dmin+"</td></tr>";}'
       'rows+="<tr><td>100 км поездки (дома)</td><td>"+f1(cons)+" кВт·ч</td><td>—</td><td>"+fmt(cons*tarif)+"</td></tr>";'
-      'document.getElementById("cc-out").innerHTML="<div style=\\"display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px\\">"\n       + "<div class=\\"f\\"><div class=\\"k\\">100 км дома</div><div class=\\"v\\">"+fmt(cons*tarif)+"</div></div>"\n       + (dcw>0?"<div class=\\"f\\"><div class=\\"k\\">0→80% на DC</div><div class=\\"v\\">≈"+f0(48/dcw*60)+" мин</div></div>":"")\n       + (obc>0?"<div class=\\"f\\"><div class=\\"k\\">Полная зарядка дома</div><div class=\\"v\\">"+fmt(cap*tarif)+"</div></div>":"")\n       + "</div><table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";'
+      'document.getElementById("cc-out").innerHTML="<div style=\\"display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px\\">"\n       + "<div class=\\"f\\"><div class=\\"k\\">100 км дома</div><div class=\\"v\\">"+fmt(cons*tarif)+"</div></div>"\n       + (dcw>0?"<div class=\\"f\\"><div class=\\"k\\">0→80% на DC</div><div class=\\"v\\">≈"+f0(48/dcw*60)+" мин</div></div>":"")\n       + (obc>0?"<div class=\\"f\\"><div class=\\"k\\">Полная зарядка дома</div><div class=\\"v\\">"+fmt(cap*tarif)+"</div></div>":"")\n       + "</div><table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";}'
       '["cc-cap","cc-tarif","cc-cons"].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener("input",recalc)});recalc();})();</script>')
     return html_out + js
 
@@ -2367,11 +2367,12 @@ function toggle(open){if(!off||!mask)return;off.classList.toggle('open',open);ma
 document.addEventListener('click',function(e){
  var o=e.target.closest('[data-open-menu]');if(o){toggle(true);return;}
  var c=e.target.closest('[data-close-menu]');if(c){toggle(false);return;}
- if(off&&off.classList.contains('open')&&!off.contains(e.target)){toggle(false);}
+ if(off&&off.classList.contains('open')&&!off.contains(e.target)&&Date.now()-lastTouch>700){toggle(false);}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape')toggle(false);});
 // iOS Safari: прямой бинд на кнопки меню (делегирование на document пропускает тапы) + touchend-фолбэк
 var lastTouch=0;
+document.addEventListener('touchstart',function(){lastTouch=Date.now();},{passive:true});
 function bindTap(el,open){if(!el)return;
  el.addEventListener('click',function(e){e.preventDefault();if(Date.now()-lastTouch<500)return;toggle(open);});
  el.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();toggle(open);},{passive:false});}
@@ -2383,7 +2384,7 @@ if(more){var mb=more.querySelector('button');
  function mToggle(open){more.classList.toggle('is-active',open);if(mb)mb.setAttribute('aria-expanded',open?'true':'false');}
  if(mb){mb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));});
    mb.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));},{passive:false});}
- document.addEventListener('click',function(e){if(!more.contains(e.target))mToggle(false);});
+ document.addEventListener('click',function(e){if(!more.contains(e.target)&&Date.now()-lastTouch>700)mToggle(false);});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')mToggle(false);});}
 })();</script>"""
 
@@ -2615,7 +2616,7 @@ def misc_pages(outdir):
     with open(os.path.join(outdir,'a1c7f3d9e2b5604f8d2a71c9be43f560.txt'),'w',encoding='utf-8') as f: f.write('a1c7f3d9e2b5604f8d2a71c9be43f560')
     with open(os.path.join(outdir,'sw.js'),'w',encoding='utf-8') as f:
         f.write("const CACHE='zsh-v2';\n"
-                "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/pain/','/assets/og/default.png'])));});\n"
+                "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/assets/og/default.png'])));});\n"
                 "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));});\n"
                 "self.addEventListener('fetch',e=>{\n"
                 "  const url=new URL(e.request.url);\n"
@@ -2842,6 +2843,8 @@ def favicon_files(outdir):
         _icon(180).save(os.path.join(outdir,'apple-touch-icon.png'))
         _icon(192).save(os.path.join(outdir,'icon-192.png'))
         _icon(32).save(os.path.join(outdir,'favicon.ico'), sizes=[(16,16),(32,32)])
+        with open(os.path.join(outdir,'favicon.svg'),'w',encoding='utf-8') as _f:
+            _f.write('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#0aad0a" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#0aad0a"/><polygon points="33,18 23,36 31,36 26,48 41,31 33,31 41,18" fill="#0aad0a"/></svg>')
     except Exception as e:
         print('favicon warn:', e)
 
