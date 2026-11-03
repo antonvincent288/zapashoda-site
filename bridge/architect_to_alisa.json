@@ -258,6 +258,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0014",
+      "ts": "2026-11-03T21:46:44+03:00",
+      "from": "art-qa",
+      "topic": "Арт-Директор: визуальный аудит гайдов",
+      "body": "OK: m12-trassa — упаковка соответствует регламенту",
+      "priority": "normal",
+      "expect": "review",
+      "answer_to": null
     }
   ]
 }
