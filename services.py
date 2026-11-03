@@ -467,7 +467,7 @@ def b2b_build(outdir, write_page, desc=''):
       'st.innerHTML=\'<div class="of-ok">✓ Отправлено! Прайс и условия придут в течение рабочего дня по указанным контактам.</div>\';f.reset()})'
       '.catch(function(){st.innerHTML=\'<p class="note">Не удалось отправить — напишите в Telegram: @zapashoda_ev.</p>\'})})});</script>')
     body = ('<h1>Оптовые поставки зарядного оборудования для автосалонов и готовая система мотивации отдела продаж</h1>'
-      '<p class="lede">Платформа «Запас хода» предлагает официальным дилерам и мультибрендовым автосалонам параллельного импорта готовое решение для монетизации выдачи электромобилей. Мы поставляем сертифицированные аксессуары Workersbee и Auxus оптом под ваш склад в Москве и бесплатно подключаем ваш ДЦ к закрытому Mini App конфигуратору, который автоматически мотивирует ваших менеджеров продавать оборудование из наличия за счет мгновенных бонусов от нашей платформы.</p>'
+      '<p class="lede">Оптовые поставки ЭЗС и аксессуаров зарядки для дилеров, автосалонов, ТЦ и паркингов. Мы приводим вам горячих клиентов с машинами из Китая — вы их обслуживаете и комплектуете. Оплата за квалифицированный лид (300–1 500 ₽) или 10–20% комиссии с продажи. Адаптеры, кабели и станции — дилерскими ценами. База знаний и брендированные материалы для зала — бесплатно в партнёрстве. Начинаем с пилота — без гарантий объёма и обязательств.</p>'
       '<h2>Ключевые преимущества для автосалонов</h2>'
       '<div class="kv"><div><div class="k">Максимальная маржинальность и легальность</div><div class="v">Прямые оптовые поставки от официального дистрибьютора заводов Workersbee и Auxus. Полный пакет документов, НДС/без НДС, сертификаты соответствия РФ для безопасной продажи в премиум-сегменте.</div></div>''<div><div class="k">Ликвидный склад в Москве</div><div class="v">Постоянное наличие ходовых адаптеров (NACS, CCS2, Type 2) и кабелей на нашем складе. Мгновенная отгрузка и замена брака по гарантии за 1 день. Товар не будет пылиться.</div></div>''<div><div class="k">Бесплатная автоматизация продаж (Mini App)</div><div class="v">Мы бесплатно подключаем ваш ДЦ к нашему закрытому конфигуратору. Ваши менеджеры смогут подбирать оборудование клиентам за 30 секунд, а наша платформа сама выплатит им мгновенные бонусы за каждую проданную коробку с вашего склада. Вы получаете высокие продажи допов без затрат на мотивацию персонала.</div></div></div>'
       '<h2>Модель партнёрства: что мы делаем за вас</h2>'
@@ -507,8 +507,57 @@ def b2b_build(outdir, write_page, desc=''):
     ld = '<script type="application/ld+json">' + art_ld('Прайс и условия для дилеров', desc, '/b2b/') + '</script>'
     write_page(os.path.join(outdir,'b2b','index.html'), 'Оптовые поставки зарядного оборудования для автосалонов | Запас хода', desc, body, '/b2b/', crumbs=[('', 'Дилерам')], extra_ld=ld)
 
-def services_build(outdir, write_page, desc=''):
+
+def _sto_cards(cfg):
+    """Карточки СТО-партнёров (Этап 5). Данные — только из конфига:
+    service_partners: [{name, city, address, skills:[...], verified:bool}].
+    Никаких выдуманных СТО: пустой конфиг = пустая секция."""
+    import html as _h
+    from catalog import GAS_URL as _GAS
+    parts = cfg.get('service_partners') or []
+    out = []
+    for idx, p in enumerate(parts):
+        name = _h.escape(str(p.get('name') or 'СТО #%d' % (idx+1)))
+        city = _h.escape(str(p.get('city') or ''))
+        addr = _h.escape(str(p.get('address') or ''))
+        skills = p.get('skills') or []
+        chips = ''.join('<span class="sto-chip">' + _h.escape(str(s)) + '</span>' for s in skills[:6])
+        badge = ('<div class="sto-badge">✔ Проверенный техцентр Запас Хода</div>') if p.get('verified') else ''
+        geo = (city + (' · ' + addr if addr else '')) if (city or addr) else ''
+        cid = 'sto%d' % (idx+1)
+        card = ('<div class="sto-card" data-sto="' + _h.escape(str(p.get('slug') or cid)) + '">'
+          + badge
+          + '<h3>' + name + '</h3>'
+          + (geo and ('<div class="sto-geo">📍 ' + geo + '</div>') or '')
+          + (chips and ('<div class="sto-chips">' + chips + '</div>') or '')
+          + '<div class="sto-book">'
+          + '<input type="tel" inputmode="tel" placeholder="Ваш телефон" class="sto-phone" id="' + cid + '-phone">'
+          + '<button type="button" class="btn lime sto-send" data-sto="' + _h.escape(str(p.get('slug') or cid)) + '" data-name="' + name + '">Записаться на диагностику / русификацию</button>'
+          + '<div class="sto-status" id="' + cid + '-status"></div></div>'
+          + '</div>')
+        out.append(card)
+    js = ('<script>document.addEventListener("DOMContentLoaded",function(){'
+          'document.querySelectorAll(".sto-send").forEach(function(btn){'
+          'btn.addEventListener("click",function(){'
+          'var card=btn.closest(".sto-card");var ph=card.querySelector(".sto-phone");var st=card.querySelector(".sto-status");'
+          'var v=(ph.value||"").trim();if(v.replace(/\\D/g,"").length<10){st.textContent="Введите телефон — техцентр перезвонит.";st.style.color="#b91c1c";return;}'
+          'var d={t:"lead",source:"СТО: "+btn.dataset.name,contact:v,city:card.querySelector(".sto-geo")?card.querySelector(".sto-geo").textContent.replace(/^📍 /,""):"",'
+          'product:"Диагностика / русификация",comment:"Запись через карточку СТО на /services/"};'
+          'st.textContent="Отправляем…";st.style.color="";'
+          'fetch("' + _GAS + '",{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})'
+          '.then(function(r){return r.json()}).then(function(){st.textContent="✓ Заявка ушла в техцентр — перезвонят по указанному номеру.";st.style.color="#047857";ph.value="";})'
+          '.catch(function(){st.textContent="Не удалось отправить — напишите в Telegram: @zapashoda_ev.";st.style.color="#b91c1c";});});});});</script>')
+    return ''.join(out), js
+def services_build(outdir, write_page, desc='', cfg=None):
     os.makedirs(os.path.join(outdir,'services'), exist_ok=True)
+    if cfg is None: cfg = {}
+    sto_cards, sto_js = _sto_cards(cfg)
+    sto_section = ('<h2 id="sto-partners">Автосервисы-партнёры</h2>'
+      '<p class="lede">Проверенные техцентры в вашем городе: диагностика высоковольтной системы, русификация, установка оборудования. Заявки уходят напрямую в техцентр.</p>'
+      '<div class="sto-grid">' + sto_cards + '</div>'
+      '<div class="callout ok"><b>Как это работает.</b> Партнёрский статус подтверждает, что техцентр реально работает с EV из Китая: есть опыт русификации, адаптеров и высоковольтных батарей. Плашка «Проверенный техцентр» ставится и снимается по факту — из нашего конфига, не «на вечный срок». Хотите попасть в список — напишите в Telegram @zapashoda_ev.</div>')
+    if not sto_cards:
+        sto_section = '<p class="note">Раздел наполняется партнёрами: реальные техцентры подключаются прямо сейчас — заявки на подключение принимаем в Telegram @zapashoda_ev.</p>'
     idx_body = ('<h1>Услуги: зарядная инфраструктура для электромобиля</h1>'
       '<p class="lede">Ставим стационарные зарядные станции под ключ — для дома, гаража и парковок — и обслуживаем их раз в год. Начните с бесплатной оценки: пришлите фото щитка и места установки, вернёмся с планом и расчётом.</p>'
       '<div class="kv"><div><div class="k">Срок работ</div><div class="v">обычно один рабочий день</div></div><div><div class="k">Линия</div><div class="v">выделенная, отдельный автомат</div></div><div><div class="k">Защита</div><div class="v">УЗО или дифавтомат, тип A</div></div><div><div class="k">Стоимость</div><div class="v">по расчёту после осмотра</div></div></div>'
@@ -517,7 +566,8 @@ def services_build(outdir, write_page, desc=''):
       '<a class="svc-card" href="/services/stanciya-gbt.html"><div class="svc-ico">🔌</div><h3>Станция GB/T 7 кВт</h3><p>Для китайских электромобилей: Zeekr, Li Auto, BYD, Changan, Geely, Hongqi и других.</p><div class="go">Подробнее →</div></a>'
       '<a class="svc-card" href="/services/stanciya-2v1.html"><div class="svc-ico">🔀</div><h3>Станция 2-в-1 (Type 2 + GB/T)</h3><p>Если в семье машины разных стандартов — одна станция на два разъёма.</p><div class="go">Подробнее →</div></a>'
       '<a class="svc-card" href="/services/stanciya-type2.html"><div class="svc-ico">🇪🇺</div><h3>Станция Type 2</h3><p>Для Tesla европейской сборки, VW, BMW, MG и официальных российских поставок.</p><div class="go">Подробнее →</div></a>'
-      '<a class="svc-card" <a class="svc-card" href="/services/uvelichenie-moshchnosti.html"><div class="svc-ico">📐</div><h3>Увеличение мощности</h3><p>550 ₽ до 15 кВт по льготе, свыше — индивидуальный проект. Пошагово: Госуслуги, ТУ, подрядчик.</p><div class="go">Подробнее →</div></a>href="/services/tehobsluzhivanie.html"><div class="svc-ico">🛠</div><h3>ТО зарядных станций</h3><p>Годовая проверка: клеммы, разъём, УЗО, изоляция линии, ПО и отчёт с рекомендациями.</p><div class="go">Подробнее →</div></a>'
+      '<a class="svc-card" href="/services/uvelichenie-moshchnosti.html"><div class="svc-ico">📐</div><h3>Увеличение мощности</h3><p>550 ₽ до 15 кВт по льготе, свыше — индивидуальный проект. Пошагово: Госуслуги, ТУ, подрядчик.</p><div class="go">Подробнее →</div></a>'
+      '<a class="svc-card" href="/services/tehobsluzhivanie.html"><div class="svc-ico">🛠</div><h3>ТО зарядных станций</h3><p>Годовая проверка: клеммы, разъём, УЗО, изоляция линии, ПО и отчёт с рекомендациями.</p><div class="go">Подробнее →</div></a>'
       '</div>'
       '<h2>Как мы работаем</h2><ol class="steps">'
       '<li><b>Заявка.</b><p>Пришлите фото щитка и места установки — ответим с предварительным планом и вопросами по мощности.</p></li>'
@@ -526,8 +576,9 @@ def services_build(outdir, write_page, desc=''):
       '<li><b>Пусконаладка и приёмка.</b><p>Тест УЗО кнопкой, первая зарядка под наблюдением, чек-лист приёмки, инструктаж и передача документов.</p></li>'
       '</ol>'
       '<div class="callout ok"><b>Что вы получаете.</b> Выделенную линию с автоматом и УЗО типа A, грамотно смонтированную станцию, чек-лист приёмки и инструкцию по эксплуатации. Первая зарядка — под наблюдением.</div>'
-      '<h2>Статьи и гайды</h2><p><a href="/services/ustanovka-stancii-v-garazhe.html">Как установить домашнюю зарядную станцию: от щитка до первой зарядки</a> · <a href="/services/moschnost-stancii.html">Сколько кВт нужно: выбираем мощность станции</a> · <a href="/services/tehobsluzhivanie-stanciy.html">ТО зарядной станции: что проверять раз в год</a> · <a href="/services/oshibki-ustanovki.html">5 ошибок при установке зарядной станции</a> · <a href="/blog/">Блог: гайды по владению EV и PHEV</a> · <a href="/ev-services.html">Автосервисы EV: что важно знать</a></p>'
-      + _cta('Услуга: зарядная инфраструктура'))
+      + sto_section
+      + '<h2>Статьи и гайды</h2><p><a href="/services/ustanovka-stancii-v-garazhe.html">Как установить домашнюю зарядную станцию: от щитка до первой зарядки</a> · <a href="/services/moschnost-stancii.html">Сколько кВт нужно: выбираем мощность станции</a> · <a href="/services/tehobsluzhivanie-stanciy.html">ТО зарядной станции: что проверять раз в год</a> · <a href="/services/oshibki-ustanovki.html">5 ошибок при установке зарядной станции</a> · <a href="/blog/">Блог: гайды по владению EV и PHEV</a> · <a href="/ev-services.html">Автосервисы EV: что важно знать</a></p>'
+      + sto_js + _cta('Услуга: зарядная инфраструктура'))
     write_page(os.path.join(outdir,'services','index.html'), 'Установка и обслуживание зарядных станций | Запас хода', (desc or 'Установка стационарных зарядных станций GB/T и Type 2 под ключ: осмотр щитка, выделенная линия, УЗО, монтаж, пусконаладка, инструктаж. Техобслуживание зарядных станций. Бесплатная оценка по фото щитка.'), idx_body, '/services/', crumbs=[('', 'Услуги')])
     a1 = ('<h1>Как установить домашнюю зарядную станцию: от щитка до первой зарядки</h1><p class="lede">Разбираем весь путь: какую мощность требует станция, что должно быть в щитке, куда и как её ставить — без воды и с чек-листом приёмки.</p><p class="note">Под запросы «установка зарядной станции для электромобиля», «установка wallbox» и «зарядная станция в квартиру/гараж»: ниже — полный разбор от щитка до первой зарядки, а стоимость и сроки — на <a href="/services/ustanovka-stancii.html">странице установки под ключ</a>.</p>'
       '<h2>Шаг 0. Мощность машины важнее мощности станции</h2><p>Реальную скорость зарядки определяет бортовое зарядное (OBC) вашей машины, а не станция. Если OBC 6,6 кВт — станция на 22 кВт не даст быстрее. Мощность OBC и разъёмы вашей модели — на её <a href="/">странице</a>.</p>'
