@@ -1,8 +1,9 @@
 {
  "guides": {
-  "parking-zhil": {
+  "m11-trassa": {
    "done": [
-    "c00"
+    "c00",
+    "c01"
    ]
   }
  }
