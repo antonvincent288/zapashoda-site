@@ -868,14 +868,14 @@ def header_html(active):
       '<input type="search" list="q-list" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
       '<button type="submit" aria-label="Найти"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
       '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">Подбор за 30 сек</a>'
-      '<button class="zs-burger" type="button" data-open-menu aria-label="Меню"><span></span><span></span><span></span></button></div>'
+      '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){var v=!o.classList.contains("open");o.classList.toggle("open",v);m.classList.toggle("open",v);o.setAttribute("aria-hidden",v?"false":"true");document.body.style.overflow=v?"hidden":"";}return false;" aria-label="Меню"><span></span><span></span><span></span></button></div>'
       '</div></div>'
       '<nav class="zs-links" aria-label="Основные разделы"><div class="container">'+nav_links+'</div></nav>'
       '<div class="zs-off" id="zs-off" aria-hidden="true">'
-      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu aria-label="Закрыть">✕</button></div>'
+      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){o.classList.toggle("open",false);m.classList.toggle("open",false);o.setAttribute("aria-hidden","true");document.body.style.overflow="";}return false;" aria-label="Закрыть">✕</button></div>'
       '<ul>'+off_links+'</ul>'
       '<div class="off-foot">Справочник EV · зарядка без лишних сложностей</div></div>'
-      '<div class="zs-mask" id="zs-mask" data-close-menu></div></header>')
+      '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){o.classList.toggle("open",false);m.classList.toggle("open",false);o.setAttribute("aria-hidden","true");document.body.style.overflow="";}return false;"></div></header>')
 
 def _fcol(title, items):
     lis = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in items)
@@ -2364,27 +2364,16 @@ def tl_short(pids, maxs=2):
 NAV_JS = """<script>(function(){
 var off=document.getElementById('zs-off'),mask=document.getElementById('zs-mask');
 var lastTouch=0;
-function toggle(open){if(!off||!mask)return;off.classList.toggle('open',open);mask.classList.toggle('open',open);off.setAttribute('aria-hidden',open?'false':'true');document.body.style.overflow=open?'hidden':'';}
-function bindTap(el,mode){if(!el)return;
- function act(){if(mode==='toggle'){toggle(!off.classList.contains('open'));}else{toggle(false);}}
- el.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();act();},{passive:false});
- el.addEventListener('click',function(e){e.preventDefault();if(Date.now()-lastTouch<500)return;act();});}
-bindTap(document.querySelector('[data-open-menu]'),'toggle');
-bindTap(document.querySelector('[data-close-menu]'),'close');
-bindTap(mask,'close');
 document.addEventListener('touchstart',function(){lastTouch=Date.now();},{passive:true});
 document.addEventListener('click',function(e){
- if(Date.now()-lastTouch<500)return;
- var o=e.target.closest('[data-open-menu]');if(o){toggle(!off.classList.contains('open'));return;}
- var c=e.target.closest('[data-close-menu]');if(c){toggle(false);return;}
- if(off&&off.classList.contains('open')&&!off.contains(e.target))toggle(false);
+ if(e.target.closest('[data-open-menu],[data-close-menu],.zs-mask'))return;
+ if(off&&off.classList.contains('open')&&!off.contains(e.target)&&Date.now()-lastTouch>300){off.classList.remove('open');mask.classList.remove('open');off.setAttribute('aria-hidden','true');document.body.style.overflow='';}
 });
-document.addEventListener('keydown',function(e){if(e.key==='Escape')toggle(false);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(off){off.classList.remove('open');mask.classList.remove('open');off.setAttribute('aria-hidden','true');document.body.style.overflow='';}}});
 var more=document.querySelector('.zs-more');
 if(more){var mb=more.querySelector('button');
  function mToggle(open){more.classList.toggle('is-active',open);if(mb)mb.setAttribute('aria-expanded',open?'true':'false');}
- if(mb){mb.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));},{passive:false});
-   mb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(Date.now()-lastTouch<500)return;mToggle(!more.classList.contains('is-active'));});}
+ if(mb){mb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));});}
  document.addEventListener('click',function(e){if(!more.contains(e.target)&&Date.now()-lastTouch>700)mToggle(false);});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')mToggle(false);});}
 })();</script>"""
