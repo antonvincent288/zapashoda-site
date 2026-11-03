@@ -2714,6 +2714,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie','uvelichenie-moshchnosti']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
     urls += [SITE_DOMAIN+'/blog/zeekr-001-gbt-diff.html', SITE_DOMAIN+'/blog/li-l7-battery-heat.html']
+    urls += [SITE_DOMAIN+'/shop/digital/']
     urls += [SITE_DOMAIN+'/safety/'] + [SITE_DOMAIN+'/safety/'+s+'.html' for s,_,_ in services.SAFETY_ARTICLES]
     urls += [SITE_DOMAIN+'/cost/'+c[0]+'.html' for c in COST_MODELS]
     urls += [SITE_DOMAIN+'/b2b/']
@@ -4284,6 +4285,78 @@ def main():
         write_page(os.path.join(outdir, _p[0], _p[1]),
             _t + ' | Запас хода', _d, _body, _u, noindex=True)
 
+    # ==== SHOP: цифровые гайды (Т-Касса / интернет-эквайринг Т-Банка) ====
+    _shop = load_site_config().get('shop') or {}
+    _price = int(_shop.get('digital_guide_price', 490))
+    _gtitle = _shop.get('guide_title', 'Гайд М-4 «Дон»')
+    _gdesc = _shop.get('guide_desc', '')
+    _buy_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · цифровой товар</div>'
+      '<h1>' + html.escape(_gtitle) + '</h1>'
+      '<p class="lede">' + html.escape(_gdesc) + '</p>'
+      '<div class="tldr"><b>Как проходит покупка:</b> вводите email → платёж на защищённой странице Т-Кассы (карта или СБП) → на этой же странице появится одноразовая ссылка на скачивание PDF, дубль придёт письмом. Прямых ссылок на файл не существует: доступ выдаётся одноразовым токеном — ссылку нельзя слить в чат и переиспользовать.</div>'
+      '<div class="buybox" style="margin:28px 0;display:flex;flex-direction:column;gap:12px;max-width:460px">'
+      '<label for="buy-email" style="font-size:14px">Email для доставки гайда</label>'
+      '<input id="buy-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" style="padding:14px 16px;border-radius:14px;border:1px solid #2a3b33;background:#0d1512;color:#e8f0ec;font-size:16px">'
+      '<button id="buy-btn" class="btn lime" type="button" style="align-self:flex-start">Купить за ' + str(_price) + ' ₽</button>'
+      '<div id="buy-msg" role="status" style="font-size:14px;min-height:20px;color:#9fb3aa"></div>'
+      '</div>'
+      '<p class="fineprint" style="color:#8aa096;font-size:13px">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка на скачивание одноразовая; повторная выдача — по запросу в поддержку.</p>'
+      '<div class="cta"><a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
+      '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+      '<script>'
+      '(function(){'
+      'var gas="' + GAS_URL + '";'
+      'var btn=document.getElementById("buy-btn"),em=document.getElementById("buy-email"),msg=document.getElementById("buy-msg");'
+      'function say(t){msg.textContent=t;}'
+      'btn.addEventListener("click",function(){'
+      'var v=(em.value||"").trim();'
+      'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(v)){say("Введите корректный email — на него придёт дубль ссылки.");return;}'
+      'btn.disabled=true;say("Создаём платёж…");'
+      'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:v,product:"m4don"})})'
+      '.then(function(r){return r.json();})'
+      '.then(function(j){'
+      'if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}'
+      'else{btn.disabled=false;say("Платёж не создан"+(j&&j.error?(" — "+j.error):"")+". Попробуйте позже или напишите в поддержку.");}})'
+      '.catch(function(){btn.disabled=false;say("Ошибка сети — попробуйте ещё раз.");});'
+      '});})();</script>'
+    )
+    write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
+        'Гайд М-4 «Дон» (PDF) — купить за ' + str(_price) + ' ₽ | Запас хода',
+        'Цифровой путеводитель по зарядной инфраструктуре М-4 «Дон»: оплата картой или СБП через Т-Кассу, одноразовая ссылка на скачивание PDF.',
+        _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'Магазин')])
+    _succ_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · оплата</div>'
+      '<h1 id="succ-title">Проверяем оплату…</h1>'
+      '<div id="succ-box" class="tldr"><p>Минуту…</p></div>'
+      '<div class="cta"><a class="btn ghost" href="/shop/digital/">Вернуться к гайду</a></div></div></div>'
+      '<script>'
+      '(function(){'
+      'var gas="' + GAS_URL + '";'
+      'var q=new URLSearchParams(location.search);'
+      'var oid=q.get("oid")||"";var fail=q.get("fail");'
+      'var title=document.getElementById("succ-title"),box=document.getElementById("succ-box");'
+      'function h1(t){title.textContent=t;}'
+      'function bh(h){box.innerHTML=h;}'
+      'if(fail){h1("Оплата не прошла");bh("<p>Платёж не был завершён или отменён. Можно <a href=\'/shop/digital/\'>повторить попытку</a>.</p>");return;}'
+      'if(!oid){h1("Нет данных заказа");bh("<p>Откройте эту страницу по ссылке из письма или сразу после оплаты.</p>");return;}'
+      'var tries=0;'
+      'function poll(){'
+      'tries++;'
+      'fetch(gas+"?shop_status="+encodeURIComponent(oid)).then(function(r){return r.json();}).then(function(j){'
+      'if(j&&j.status==="paid"){'
+      'h1("Оплата прошла — гайд ваш 🎉");'
+      'if(j.download_status==="used"){bh("<p><b>Ссылка уже использована.</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
+      'else if(j.token){bh("<p>Одноразовая ссылка на скачивание:</p><p><a class=\'btn lime\' href=\'' + GAS_URL + '?t=\'"+j.token+"" style=\'display:inline-block;margin:8px 0\'>⬇️ Скачать PDF</a></p><p>Ссылка срабатывает один раз. Дубль отправлен на email, указанный при оплате.</p>");}'
+      'else{bh("<p>Токен не найден — напишите в поддержку, номер заказа: "+oid+".</p>");}}'
+      'else if(j&&j.status&&j.status!=="unknown"){'
+      'if(tries<12){setTimeout(poll,4000);}else{h1("Оплата в обработке");bh("<p>Уведомление от банка обычно приходит за 1–2 минуты. Обновите страницу через пару минут — или проверьте email, ссылка придёт и туда.</p><p>Номер заказа: <b>"+oid+"</b></p>");}}'
+      'else{bh("<p>Заказ не найден. Номер: "+oid+". Напишите в поддержку.</p>");}'
+      '}).catch(function(){if(tries<12){setTimeout(poll,4000);}else{bh("<p>Ошибка сети при проверке статуса. Номер заказа: "+oid+".</p>");}});}'
+      'poll();})();</script>'
+    )
+    write_page(os.path.join(outdir, 'shop', 'digital', 'success.html'),
+        'Оплата | Запас хода', 'Статус оплаты и выдача цифрового гайда.',
+        _succ_body, '/shop/digital/success.html', noindex=True)
+
     # OG-карточки: новости + бренды VIN + дефолт
     jobs = [('/assets/og/default.png', 'Запас хода — практика владения электромобилем в России')]
     for it in news:
@@ -4296,6 +4369,7 @@ def main():
         jobs.append(('/assets/og/b-'+sl3+'.png', t3))
     jobs.append(('/assets/og/b-winter-ev-2026.png', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?'))
     jobs.append(('/assets/og/b-zeekr-001-gbt-diff.png', 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки'))
+    jobs.append(('/assets/og/shop-digital.png', 'Гайд М-4 «Дон»: цифровой путеводитель'))
     jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой'))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
