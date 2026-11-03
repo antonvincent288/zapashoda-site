@@ -866,3 +866,8 @@ html.tg-mode .zs-stbar { display:none !important; }
   .mcell { min-width: 132px; }
   .mnote { font-size: .68rem; }
 }
+
+.zs-mpromo { margin-top: 8px; padding: 8px 10px; border: 1px solid #a7f3d0; background: #ecfdf5; border-radius: 10px; font-size: .82rem; line-height: 1.4; color: #064e3b; }
+.zs-mpromo b { display: block; margin-bottom: 3px; }
+.zs-mpromo a { color: #047857; font-weight: 700; }
+.leaflet-popup-content .zs-mpromo a { white-space: normal; }
