@@ -108,6 +108,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0003",
+      "ts": "2026-11-03T19:02:33+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: kitaiskoe-vremya-raspisaniya-zaryadki-posle-rusifikatsii.json (мало слов в теле: 325 (нужно 500+); меньше 3 внутренних ссылок); kitaiskoe-vremya-v-raspisanii-zaryadki-posle-rusifikatsii.json (меньше 3 внутренних ссылок); vybor-tarifa-dlya-domashnoy-zaryadki.json (title 59 симв (нужно 10–57); мало слов в теле: 379 (нужно 500+)); zimnoe-khranenie-elektromobilya-parking-2-4-nedeli.json (мало слов в теле: 364 (нужно 500+); меньше 3 внутренних ссылок)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
