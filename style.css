@@ -789,7 +789,7 @@ html.tg-mode .zs-stbar { display:none !important; }
 }
 
 /* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
-@media (min-width:769px) { .zs-off { display:none !important; } }
+@media (min-width:1024px) { .zs-off { display:none !important; } }
 
 .zc-wrap { padding: 10px 0 6px; }
 .zc { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
@@ -828,7 +828,7 @@ html.tg-mode .zs-stbar { display:none !important; }
   .grid > * { min-width: 0; }
 }
 /* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .zs-off { right: auto; left: -320px; transition: left .25s ease; }
   .zs-off.open { left: 0; }
 }
