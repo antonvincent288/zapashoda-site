@@ -265,7 +265,7 @@ nav.zs-links a.on{color:#2563EB;font-weight:700;background:#e8ffe6}
 .zs-drop{position:absolute;top:100%;left:0;background:transparent;border:none;box-shadow:none;border-radius:.6rem;padding-top:8px;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
 .zs-more:hover .zs-drop,.zs-more:focus-within .zs-drop{display:flex}
 .zs-more.is-active .zs-drop{display:flex}
-[data-open-menu],[data-close-menu],.zs-burger,.zs-more>button,.zs-off a,.off-x,.zs-drop a,.cbtn{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+[data-open-menu],[data-close-menu],.zs-burger,.zs-more>button,.zs-off a,.off-x,.zs-drop a,.cbtn{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0);touch-action:manipulation}
 .zs-drop a{display:block;padding:9px 13px;white-space:nowrap}
 @media(max-width:1023px){.zs-more{display:none}}
 @media(max-width:1023px){
@@ -868,14 +868,14 @@ def header_html(active):
       '<input type="search" list="q-list" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
       '<button type="submit" aria-label="Найти"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
       '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">Подбор за 30 сек</a>'
-      '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){var v=!o.classList.contains("open");o.classList.toggle("open",v);m.classList.toggle("open",v);o.setAttribute("aria-hidden",v?"false":"true");document.body.style.overflow=v?"hidden":"";}return false;" aria-label="Меню"><span></span><span></span><span></span></button></div>'
+      '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){var v=!o.classList.contains(&#39;open&#39;);o.classList.toggle(&#39;open&#39;,v);m.classList.toggle(&#39;open&#39;,v);o.setAttribute(&#39;aria-hidden&#39;,v?&#39;false&#39;:&#39;true&#39;);document.body.style.overflow=v?&#39;hidden&#39;:&#39;&#39;;}return false;" aria-label="Меню"><span></span><span></span><span></span></button></div>'
       '</div></div>'
       '<nav class="zs-links" aria-label="Основные разделы"><div class="container">'+nav_links+'</div></nav>'
       '<div class="zs-off" id="zs-off" aria-hidden="true">'
-      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){o.classList.toggle("open",false);m.classList.toggle("open",false);o.setAttribute("aria-hidden","true");document.body.style.overflow="";}return false;" aria-label="Закрыть">✕</button></div>'
+      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;" aria-label="Закрыть">✕</button></div>'
       '<ul>'+off_links+'</ul>'
       '<div class="off-foot">Справочник EV · зарядка без лишних сложностей</div></div>'
-      '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById("zs-off"),m=document.getElementById("zs-mask");if(o&&m){o.classList.toggle("open",false);m.classList.toggle("open",false);o.setAttribute("aria-hidden","true");document.body.style.overflow="";}return false;"></div></header>')
+      '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;"></div></header>')
 
 def _fcol(title, items):
     lis = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in items)
