@@ -2363,27 +2363,28 @@ def tl_short(pids, maxs=2):
 
 NAV_JS = """<script>(function(){
 var off=document.getElementById('zs-off'),mask=document.getElementById('zs-mask');
+var lastTouch=0;
 function toggle(open){if(!off||!mask)return;off.classList.toggle('open',open);mask.classList.toggle('open',open);off.setAttribute('aria-hidden',open?'false':'true');document.body.style.overflow=open?'hidden':'';}
+function bindTap(el,mode){if(!el)return;
+ function act(){if(mode==='toggle'){toggle(!off.classList.contains('open'));}else{toggle(false);}}
+ el.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();act();},{passive:false});
+ el.addEventListener('click',function(e){e.preventDefault();if(Date.now()-lastTouch<500)return;act();});}
+bindTap(document.querySelector('[data-open-menu]'),'toggle');
+bindTap(document.querySelector('[data-close-menu]'),'close');
+bindTap(mask,'close');
+document.addEventListener('touchstart',function(){lastTouch=Date.now();},{passive:true});
 document.addEventListener('click',function(e){
- var o=e.target.closest('[data-open-menu]');if(o){toggle(true);return;}
+ if(Date.now()-lastTouch<500)return;
+ var o=e.target.closest('[data-open-menu]');if(o){toggle(!off.classList.contains('open'));return;}
  var c=e.target.closest('[data-close-menu]');if(c){toggle(false);return;}
- if(off&&off.classList.contains('open')&&!off.contains(e.target)&&Date.now()-lastTouch>700){toggle(false);}
+ if(off&&off.classList.contains('open')&&!off.contains(e.target))toggle(false);
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape')toggle(false);});
-// iOS Safari: прямой бинд на кнопки меню (делегирование на document пропускает тапы) + touchend-фолбэк
-var lastTouch=0;
-document.addEventListener('touchstart',function(){lastTouch=Date.now();},{passive:true});
-function bindTap(el,open){if(!el)return;
- el.addEventListener('click',function(e){e.preventDefault();if(Date.now()-lastTouch<500)return;toggle(open);});
- el.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();toggle(open);},{passive:false});}
-bindTap(document.querySelector('[data-open-menu]'),true);
-bindTap(document.querySelector('[data-close-menu]'),false);
-// Дропдаун «Ещё»: hover на десктопе, тап -> класс is-active (touch-friendly)
 var more=document.querySelector('.zs-more');
 if(more){var mb=more.querySelector('button');
  function mToggle(open){more.classList.toggle('is-active',open);if(mb)mb.setAttribute('aria-expanded',open?'true':'false');}
- if(mb){mb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));});
-   mb.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));},{passive:false});}
+ if(mb){mb.addEventListener('touchend',function(e){lastTouch=Date.now();e.preventDefault();e.stopPropagation();mToggle(!more.classList.contains('is-active'));},{passive:false});
+   mb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(Date.now()-lastTouch<500)return;mToggle(!more.classList.contains('is-active'));});}
  document.addEventListener('click',function(e){if(!more.contains(e.target)&&Date.now()-lastTouch>700)mToggle(false);});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')mToggle(false);});}
 })();</script>"""
@@ -2615,9 +2616,9 @@ def misc_pages(outdir):
     with open(os.path.join(outdir,'.nojekyll'),'w') as f: f.write('')
     with open(os.path.join(outdir,'a1c7f3d9e2b5604f8d2a71c9be43f560.txt'),'w',encoding='utf-8') as f: f.write('a1c7f3d9e2b5604f8d2a71c9be43f560')
     with open(os.path.join(outdir,'sw.js'),'w',encoding='utf-8') as f:
-        f.write("const CACHE='zsh-v2';\n"
-                "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/assets/og/default.png'])));});\n"
-                "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));});\n"
+        f.write("const CACHE='zsh-v3';\n"
+                "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/assets/og/default.png']),self.skipWaiting()));});\n"
+                "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim());});\n"
                 "self.addEventListener('fetch',e=>{\n"
                 "  const url=new URL(e.request.url);\n"
                 "  if(e.request.mode==='navigate'){\n"
@@ -3723,7 +3724,7 @@ EXTRA_V4_CSS = r"""
 }
 
 /* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
-@media (min-width:769px) { .zs-off { display:none !important; } }
+@media (min-width:1024px) { .zs-off { display:none !important; } }
 """
 
 
@@ -3766,7 +3767,7 @@ EXTRA_CALC_CSS = r"""
   .grid > * { min-width: 0; }
 }
 /* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .zs-off { right: auto; left: -320px; transition: left .25s ease; }
   .zs-off.open { left: 0; }
 }
