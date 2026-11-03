@@ -35,7 +35,8 @@ def main():
         short = [i for i, x in enumerate(chapters) if words(x) < 250]
         if short: errs.append("короткие главы: %s" % short[:3])
         joined = "\n".join(chapters)
-        if joined.count("₽") > 12: errs.append("слишком много ₽")
+        real_prices = re.findall(r"\d[\d\s.,]*\s*₽", joined)
+        if len(real_prices) > 4: errs.append("реальных цен ₽: %d (нужно 0–4 — только диапазоны из facts_pack)" % len(real_prices))
         if re.search(r"\b(api[_-]?key|token|password|secret)\b", joined.lower()): errs.append("подозрение на секрет")
         if "<script" in joined.lower() or "<style" in joined.lower(): errs.append("script/style запрещены")
         if errs:
