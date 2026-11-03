@@ -873,3 +873,16 @@ html.tg-mode .zs-stbar { display:none !important; }
 .zs-mpromo b { display: block; margin-bottom: 3px; }
 .zs-mpromo a { color: #047857; font-weight: 700; }
 .leaflet-popup-content .zs-mpromo a { white-space: normal; }
+
+.sto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 18px 0 10px; }
+.sto-card { position: relative; background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; padding: 18px; box-shadow: 0 8px 24px rgba(15,23,42,.05); min-width: 0; }
+.sto-badge { display: inline-block; background: linear-gradient(135deg, #b45309, #d97706, #f59e0b); color: #fff; font-size: .72rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 10px; letter-spacing: .01em; box-shadow: 0 2px 6px rgba(180,83,9,.3); }
+.sto-card h3 { margin: 2px 0 6px; font-size: 1.05rem; }
+.sto-geo { font-size: .85rem; color: #64748b; margin-bottom: 8px; }
+.sto-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.sto-chip { font-size: .74rem; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 3px 9px; border-radius: 999px; }
+.sto-book { display: flex; flex-direction: column; gap: 8px; }
+.sto-phone { padding: 11px 13px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 15px; width: 100%; box-sizing: border-box; }
+.sto-send { width: 100%; }
+.sto-status { font-size: .82rem; min-height: 18px; }
+@media (max-width: 640px) { .sto-grid { grid-template-columns: 1fr; } }
