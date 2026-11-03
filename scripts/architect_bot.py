@@ -55,7 +55,9 @@ def push_files(files, message):
         st, ref = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO)
         head = ref["object"]["sha"]
         st, c = req("https://api.github.com/repos/%s/git/commits/%s" % (REPO, head))
-        items = [{"path": p, "mode": "100644", "type": "blob", "sha": blob_sha(cnt)} for p, cnt in files.items()]
+        items = [{"path": p, "mode": "100644", "type": "blob", "sha": None} if cnt is None
+                  else {"path": p, "mode": "100644", "type": "blob", "sha": blob_sha(cnt)}
+                  for p, cnt in files.items()]
         st, tree = req("https://api.github.com/repos/%s/git/trees" % REPO, "POST",
             {"base_tree": c["tree"]["sha"], "tree": items})
         assert st == 201, (st, tree)

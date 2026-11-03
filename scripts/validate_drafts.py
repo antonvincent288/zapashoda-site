@@ -134,6 +134,7 @@ def main():
     for fn, slug, t in final:
         d = json.load(open(os.path.join("data/blog_extra", slug + ".json"), encoding="utf-8"))
         files["data/blog_extra/%s.json" % slug] = json.dumps(d, ensure_ascii=False, indent=1)
+        files[os.path.join(draft_dir, fn)] = None  # удалить драфт из репо после публикации
     if code_applied:
         for fn, _patch in code_applied:
             try: os.remove(os.path.join(code_dir, fn))
