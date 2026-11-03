@@ -58,6 +58,19 @@ def push_files(files, message):
         if st == 200: return newc["sha"]
         time.sleep(8)
     raise RuntimeError("не удалось запушить (гонка)")
+ALLOWED_RANGES = {"3–4","3-4","6–9","6-9","10–20","10-20","15–20","15-20","15–25","15-25","18–30","18-30"}
+PRICE_PLACEHOLDER = "[ЦЕНА: согласовать с владельцем]"
+def scrub_prices(html):
+    def rep_range(m):
+        a, b = m.group(1).replace(" ", ""), m.group(2).replace(" ", "")
+        return (a + "–" + b + " ₽") if (a + "–" + b) in ALLOWED_RANGES else (PRICE_PLACEHOLDER + " ₽")
+    html = re.sub(r"(\d[\d\s]*(?:[.,]\d+)?)\s*[–-]\s*(\d[\d\s]*(?:[.,]\d+)?)\s*₽", rep_range, html)
+    def rep_single(m):
+        n = m.group(1).replace(" ", "")
+        if n in ("925", "35"): return m.group(0)
+        return PRICE_PLACEHOLDER + " ₽"
+    html = re.sub(r"(\d[\d\s]*(?:[.,]\d+)?)\s*₽", rep_single, html)
+    return html
 def pollinations(system, prompt, max_tokens=8000):
     body = {"model": "openai-fast",
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
@@ -143,6 +156,7 @@ def main():
         prompt = "facts_pack:\n%s\n\nГайд: «%s»\nРаздел %d из %d: %s\nРазрешённые внутренние ссылки:\n%s\n\nНапиши этот раздел целиком (HTML)." % (fp, g["title"], i + 1, len(g["chapters"]), ch, LINKS)
         html = pollinations(CHAPTER_SYS, prompt)
         html = re.sub(r"^```(?:html)?\s*|\s*```$", "", html.strip())
+        html = scrub_prices(html)
         if "<h2" not in html or len(html.split()) < 300:
             print("глава %s слишком коротка (%d слов) — пропущена" % (key, len(html.split())))
             continue
