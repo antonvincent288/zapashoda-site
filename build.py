@@ -274,7 +274,7 @@ nav.zs-links a.on{color:#2563EB;font-weight:700;background:#e8ffe6}
  .zs-act{gap:8px}
  nav.zs-links{display:none}
 }
-.zs-off{position:fixed;top:0;right:-320px;width:300px;max-width:86vw;height:100%;background:#fff;z-index:120;transition:right .25s ease;overflow-y:auto;box-shadow:-8px 0 30px rgba(0,0,0,.12)}
+.zs-off{position:fixed;top:0;right:-320px;width:300px;max-width:86vw;height:100vh;height:100dvh;background:#fff;z-index:120;transition:right .25s ease;overflow-y:auto;box-shadow:-8px 0 30px rgba(0,0,0,.12)}
 .zs-off.open{right:0}
 .zs-off .off-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
 .zs-off .off-h b{font-size:16px}
@@ -871,11 +871,11 @@ def header_html(active):
       '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){var v=!o.classList.contains(&#39;open&#39;);o.classList.toggle(&#39;open&#39;,v);m.classList.toggle(&#39;open&#39;,v);o.setAttribute(&#39;aria-hidden&#39;,v?&#39;false&#39;:&#39;true&#39;);document.body.style.overflow=v?&#39;hidden&#39;:&#39;&#39;;}return false;" aria-label="Меню"><span></span><span></span><span></span></button></div>'
       '</div></div>'
       '<nav class="zs-links" aria-label="Основные разделы"><div class="container">'+nav_links+'</div></nav>'
-      '<div class="zs-off" id="zs-off" aria-hidden="true">'
+      '</header><div class="zs-off" id="zs-off" aria-hidden="true">'
       '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;" aria-label="Закрыть">✕</button></div>'
       '<ul>'+off_links+'</ul>'
       '<div class="off-foot">Справочник EV · зарядка без лишних сложностей</div></div>'
-      '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;"></div></header>')
+      '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;"></div>')
 
 def _fcol(title, items):
     lis = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in items)
