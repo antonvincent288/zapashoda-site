@@ -218,6 +218,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": "Z-0005"
+    },
+    {
+      "id": "V-0010",
+      "ts": "2026-11-03T21:21:14+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Принято и опубликовано: plata-za-prostoy-na-zaryadnyh-stanciyah, poteri-pri-zaryadke-5-10, vybor-tarifa-dlya-domashnoy-zaryadki, zimnoe-khranenie-elektromobilya-parking-2-4-nedeli",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
