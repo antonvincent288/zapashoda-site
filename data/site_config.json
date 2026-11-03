@@ -173,5 +173,13 @@
   "Li Auto L9",
   "Li Auto L6"
  ],
- "map_promo": "MAP10"
+ "map_promo": "MAP10",
+ "tinkoff_terminal_key": "",
+ "tinkoff_is_test_mode": true,
+ "digital_guide_price": 490,
+ "digital_payments_live": false,
+ "tinkoff_receipt_object": "service",
+ "tinkoff_receipt_tax": "vat0",
+ "tinkoff_receipt_taxation": "usn_income",
+ "gas_pay_url": ""
 }

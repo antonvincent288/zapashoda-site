@@ -3948,6 +3948,124 @@ EXTRA_MAP_CSS = r"""
 .zs-mpromo a { color: #047857; font-weight: 700; }
 .leaflet-popup-content .zs-mpromo a { white-space: normal; }
 """
+
+
+# ===== ЭТАП 6 ПОРТАЛА: ЦИФРОВЫЕ ТОВАРЫ /shop/digital/ (эквайринг Т-Касса) =====
+SHOP_TERMINAL_KEY = str(SITE_CFG.get('tinkoff_terminal_key') or '')
+SHOP_TEST_MODE = bool(SITE_CFG.get('tinkoff_is_test_mode'))
+SHOP_PRICE = int(SITE_CFG.get('digital_guide_price') or 490)
+SHOP_LIVE = bool(SITE_CFG.get('digital_payments_live'))
+SHOP_GAS_URL = str(SITE_CFG.get('gas_pay_url') or '')
+
+SHOP_PRODUCT = {
+  'title': 'Интерактивный авто-гид 2026/2027: Трасса М-4 Дон на электромобиле без боли',
+  'desc': ('Всё, что нужно знать перед поездкой М-4 «Дон» на электромобиле: где заряжаться, где ставить на ночёвку, '
+           'какие участки проезжать на запасе, сколько стоит время. Составлен по опыту владельцев и актуальной инфраструктуре.'),
+  'includes': [
+    'Карта маршрута с точками ЭЗС и наилучшим временем заезда',
+    'Честный расчёт времени и бюджета поездки по тарифам',
+    'Гостиницы и кемпинги с розеткой для ночного заряда',
+    'Сценарии «А разрядился посреди трассы» — что делать',
+  ],
+}
+
+def shop_digital_build(outdir):
+    price = str(SHOP_PRICE) + ' ₽'
+    inc = ''.join('<li>' + html.escape(x) + '</li>' for x in SHOP_PRODUCT['includes'])
+    body = ('<div class="container">'
+      '<div class="hero"><div class="kicker">Цифровые товары</div>'
+      '<h1>' + html.escape(SHOP_PRODUCT['title']) + '</h1>'
+      '<p class="lede">' + html.escape(SHOP_PRODUCT['desc']) + '</p></div>'
+      '<div class="sh-card">'
+      '<div class="sh-left">'
+      '<ul class="sh-list">' + inc + '</ul>'
+      '<div class="sh-note">Формат: PDF, интерактивные ссылки на карту и страницы сайта. После оплаты — мгновенная выдача файла по одноразовой ссылке (для защиты от шеринга).</div>'
+      '</div>'
+      '<div class="sh-right">'
+      '<div class="sh-price">' + html.escape(price) + '</div>'
+      '<div class="sh-paybox" id="sh-paybox">'
+      '<button class="btn lime" id="sh-buy">Купить сейчас</button>'
+      '<div class="sh-status" id="sh-status"></div>'
+      '</div>'
+      '<div class="sh-safelist">Оплата картой через эквайринг Т-Банка. Чек формируется автоматически (54-ФЗ).'
+      ' Вопросы по оплате — <a href="https://t.me/zapashoda_ev">Telegram</a>.</div>'
+      '</div></div>'
+      '<div class="sh-faq"><h2>Как проходит покупка</h2>'
+      '<ol><li>Нажимаете «Купить» — откроется защищённая форма оплаты Т-Банка.</li>'
+      '<li>После успешной оплаты попадёте на страницу выдачи — ссылка на файл появится автоматически (до 2 минут).</li>'
+      '<li>Ссылка на скачивание одноразовая — файл не гуляет по чатам.</li></ol></div>'
+      '<script>var PAYCFG={gasUrl:' + json.dumps(SHOP_GAS_URL) + ',testMode:' + ('true' if SHOP_TEST_MODE else 'false')
+      + ',price:' + str(SHOP_PRICE) + ',live:' + ('true' if SHOP_LIVE else 'false')
+      + ',successUrl:"/shop/digital/success.html",product:"' + html.escape(SHOP_PRODUCT['title'][:60]).replace('"', '&quot;') + '"};</script>'
+      '<script>'
+      "(function(){var b=document.getElementById('sh-buy'),s=document.getElementById('sh-status');if(!b)return;"
+      "function msg(t,ok){s.textContent=t;s.style.color=ok?'#047857':'#b91c1c';}"
+      "if(!PAYCFG.gasUrl||!PAYCFG.live){b.onclick=function(){msg('Платёжный модуль подключается — напишите нам в Telegram: https://t.me/zapashoda_ev',false);};return;}"
+      "b.onclick=function(){b.disabled=true;msg('Открываем оплату…',true);"
+      "fetch(PAYCFG.gasUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},"
+      "body:JSON.stringify({t:'pay_init',amount:PAYCFG.price*100,product:PAYCFG.product})})"
+      ".then(function(r){return r.json()}).then(function(j){"
+      "if(j.ok&&j.PaymentURL){location.href=j.PaymentURL;}else{msg(j.error||'Не удалось открыть оплату. Попробуйте позже или напишите в Telegram.',false);b.disabled=false;}})"
+      ".catch(function(){msg('Сеть недоступна. Напишите в Telegram: https://t.me/zapashoda_ev',false);b.disabled=false;});};})();"
+      '</script>'
+      '</div>')
+    write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
+      'Гид по трассе М-4 Дон для электромобиля 2026/2027 — купить за ' + price + ' | Запас хода',
+      'Цифровой гид по зарядке на М-4 Дон: ЭЗС, ночёвки с розеткой, расчёт бюджета поездки. Мгновенная выдача файла после оплаты.',
+      body, '/shop/digital/', og='/assets/og/default.png',
+      crumbs=[('/', 'Главная'), ('/shop/digital/', 'Цифровые товары')], noindex=(not SHOP_LIVE))
+
+    sbody = ('<div class="container">'
+      '<div class="hero"><div class="kicker">Оплата</div>'
+      '<h1>Статус платежа и выдача файла</h1>'
+      '<p class="lede">Если оплата прошла, здесь появится одноразовая ссылка на скачивание гида. Не закрывайте страницу — она проверяет статус автоматически.</p></div>'
+      '<div class="sh-card"><div class="sh-right" style="max-width:560px">'
+      '<div class="sh-status" id="sh-success" style="font-size:1rem;color:#0f172a">Проверяем платёж…</div>'
+      '<div class="sh-dl" id="sh-dl" style="display:none;margin-top:16px">'
+      '<a class="btn lime" id="sh-dl-link" href="#">Скачать файл</a>'
+      '<div class="sh-note" style="margin-top:8px">Ссылка одноразовая: файл скачается один раз. Если что-то пошло не так — напишите в Telegram.</div>'
+      '</div>'
+      '<div class="sh-note" id="sh-extra" style="margin-top:12px"></div>'
+      '</div></div>'
+      '<script>var PAYCFG={gasUrl:' + json.dumps(SHOP_GAS_URL) + ',live:' + ('true' if SHOP_LIVE else 'false') + '};</script>'
+      '<script>'
+      "(function(){var el=document.getElementById('sh-success'),dl=document.getElementById('sh-dl'),ln=document.getElementById('sh-dl-link'),ex=document.getElementById('sh-extra');"
+      "var q=new URLSearchParams(location.search);var oid=q.get('OrderId');var pid=q.get('PaymentId');"
+      "function done(u,tok){el.textContent='Оплата прошла! Файл готов.';dl.style.display='block';ln.href=u;ex.textContent='Токен выдачи: '+tok+' (одноразовый).';}"
+      "function poll(n){if(!PAYCFG.gasUrl||!PAYCFG.live){el.textContent='Платёжный модуль подключается. Если оплата прошла — напишите в Telegram: https://t.me/zapashoda_ev';return;}"
+      "if(!oid){el.textContent='Заказ не найден: открывайте страницу выдачи после оплаты.';return;}"
+      "fetch(PAYCFG.gasUrl+'?t=pay_status&OrderId='+encodeURIComponent(oid))"
+      ".then(function(r){return r.json()}).then(function(j){"
+      "if(j.status==='paid'&&j.download){done(j.download,j.token||'');return;}"
+      "if(j.status==='fail'){el.textContent='Оплата не прошла или отменена. Можно попробовать снова.';return;}"
+      "if(n>40){el.textContent='Оплата ещё не подтверждена. Если вы оплатили — проверьте через пару минут или напишите в Telegram.';return;}"
+      "el.textContent='Проверяем платёж… ('+n+')';setTimeout(function(){poll(n+1);},3000);})"
+      ".catch(function(){if(n>10){el.textContent='Сеть недоступна. Повторите позже.';return;}setTimeout(function(){poll(n+1);},4000);});}"
+      "poll(1);})();"
+      '</script></div>')
+    write_page(os.path.join(outdir, 'shop', 'digital', 'success.html'),
+      'Выдача файла — «Запас хода»',
+      'Страница выдачи цифрового товара после оплаты.',
+      sbody, '/shop/digital/success.html', noindex=True)
+
+
+# ===== CSS цифрового магазина (ЭТАП 6) =====
+EXTRA_SHOP_CSS = r"""
+.sh-card { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 28px; background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); margin-top: 8px; }
+.sh-list { margin: 0 0 16px; padding-left: 20px; color: #334155; font-size: .95rem; line-height: 1.6; }
+.sh-note { font-size: .82rem; color: #64748b; line-height: 1.45; }
+.sh-right { background: #f8fafc; border: 1px solid rgba(15,23,42,.06); border-radius: 16px; padding: 22px; height: fit-content; }
+.sh-price { font-size: 2rem; font-weight: 800; color: #047857; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
+.sh-paybox { display: flex; flex-direction: column; gap: 10px; }
+.sh-status { font-size: .9rem; color: #334155; min-height: 20px; }
+.sh-safelist { margin-top: 14px; font-size: .78rem; color: #94a3b8; line-height: 1.45; }
+.sh-safelist a, .sh-note a { color: #047857; }
+.sh-faq { margin-top: 26px; color: #334155; line-height: 1.6; }
+.sh-dl { font-size: 1rem; }
+@media (max-width: 900px) {
+  .sh-card { grid-template-columns: minmax(0,1fr); padding: 20px 16px; }
+}
+"""
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -3963,7 +4081,7 @@ def main():
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
 
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS + EXTRA_SHOP_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
@@ -4090,6 +4208,7 @@ def main():
     llms_files(outdir, news)
     about_page(outdir, news)
     misc_pages(outdir)
+    shop_digital_build(outdir)
     matrix_build(outdir)
     # флагманская статья блога «Зима близко» (полный текст, индексируется)
     W_BODY = ('<div class="container"><div class="hero"><div class="kicker">Блог · Флагман</div>'
