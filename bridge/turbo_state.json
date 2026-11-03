@@ -2,7 +2,8 @@
  "guides": {
   "parking-zhil": {
    "done": [
-    "c01"
+    "c01",
+    "c02"
    ],
    "attempts": {
     "c00": 1
