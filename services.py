@@ -1340,3 +1340,47 @@ FAQ_zaryadka_podogrev_shtraf = [
  ('Почему зимой зарядка медленнее на 30–50%?', 'Холодные литий-ионные ячейки принимают заряд с ограниченным током, а электроника машины намеренно режет мощность до прогрева. Подробно о приёмах ускорения — в гайде по зимней зарядке.'),
  ('Сколько запаса хода теряется зимой?', 'Типичная потеря — 25–40% от летних цифр: зависит от машины, скорости и работы печки. Полный разбор — в гайде по зимнему запасу хода.'),
 ]
+
+
+# ===== АВТОНОМНЫЙ КОНТЕНТ: data/blog_extra/*.json (агентский конвейер, 03.11.2026) =====
+# Файлы пишет бот-архитектор в bridge/drafts/articles/, харнесс (scripts/validate_drafts.py)
+# проверяет и переносит зелёные сюда. build.py НЕ правится ботами.
+EXTRA_BLOG_META = []  # [(slug, title)] для OG-карточек
+
+def _load_blog_extra():
+    import json as _json, glob as _glob, re as _re
+    base = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'blog_extra')
+    seen = set()
+    for p in sorted(_glob.glob(os.path.join(base, '*.json'))):
+        name = os.path.basename(p)
+        try:
+            d = _json.load(open(p, encoding='utf-8'))
+            slug = str(d['slug']).strip()
+            if not _re.match(r'^[a-z0-9-]{5,64}$', slug):
+                raise ValueError('bad slug')
+            if slug in seen:
+                raise ValueError('дубль slug')
+            seen.add(slug)
+            title = str(d['title']).strip()
+            if len(title) > 55:
+                title = title[:55].rstrip() + '…'
+            desc = str(d['desc']).strip()
+            body = str(d['body_html']).strip()
+            art_key = 'ART_' + slug.replace('-', '_')
+            globals()[art_key] = body
+            faq = d.get('faq') or []
+            if faq:
+                globals()['FAQ_' + slug.replace('-', '_')] = [(str(q), str(a)) for q, a in faq]
+            BLOG_SHORT[slug] = title if len(title) + len(' | Запас хода') <= 70 else (title[:66] + '…')
+            try:
+                BLOG_CAT[slug] = str(d.get('category') or 'Гайд')
+            except NameError:
+                pass
+            BLOG_ARTICLES.append((slug, title, desc))
+            EXTRA_BLOG_META.append((slug, title))
+        except Exception as _e:
+            print('blog_extra: пропущен', name, '—', _e)
+    if EXTRA_BLOG_META:
+        print('blog_extra: загружено статей:', len(EXTRA_BLOG_META))
+
+_load_blog_extra()

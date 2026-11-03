@@ -1,0 +1,29 @@
+name: Dev bot
+on:
+  schedule:
+    - cron: '0 2,8,14,20 * * *'   # 4 раза в день, offset от architect (30 */3)
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: dev-bot
+  cancel-in-progress: false
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install requests pillow
+      - name: Dev bot (Groq Llama-3.3-70B)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python scripts/dev_bot.py
+      - name: Validate & apply drafts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/validate_drafts.py

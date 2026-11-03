@@ -4374,6 +4374,11 @@ def main():
     jobs.append(('/assets/og/shop-digital.png', 'Гайд М-4 «Дон»: цифровой путеводитель'))
     jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой'))
     jobs.append(('/assets/og/b-workersbee-vs-auxus.png', 'Workersbee против Auxus: какой кабель выдержит русскую зиму'))
+    try:
+        import services as _svc_extra
+        jobs += [('/assets/og/b-%s.png' % sl, t) for sl, t in getattr(_svc_extra, 'EXTRA_BLOG_META', [])]
+    except Exception as _e:
+        print('blog_extra OG:', _e)
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)
