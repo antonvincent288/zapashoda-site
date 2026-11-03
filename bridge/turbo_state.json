@@ -2,6 +2,17 @@
  "guides": {
   "parking-zhil": {
    "done": [
+    "c01",
+    "c02",
+    "c03",
+    "c04"
+   ],
+   "attempts": {
+    "c00": 1
+   }
+  },
+  "m12-trassa": {
+   "done": [
     "c00",
     "c01",
     "c02",
@@ -11,17 +22,6 @@
     "c06",
     "c07"
    ]
-  },
-  "m12-trassa": {
-   "done": [
-    "c00",
-    "c01",
-    "c02",
-    "c03",
-    "c04",
-    "c05"
-   ],
-   "attempts": {}
   },
   "m11-trassa": {
    "done": [
