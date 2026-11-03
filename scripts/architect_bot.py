@@ -71,14 +71,15 @@ def pollinations(system, prompt, max_tokens=1100):
     body = {"model": POLLINATIONS_MODEL,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
             "temperature": 0.4, "max_tokens": max_tokens, "private": True}
-    for attempt in range(4):
+    waits = [20, 40, 60, 90, 120, 150]
+    for attempt, w in enumerate(waits):
         st, d = req("https://text.pollinations.ai/openai", "POST", body, headers={"Content-Type": "application/json"})
-        if st == 429: time.sleep(50); continue
         if st == 200 and isinstance(d, dict) and d.get("choices"):
             return d["choices"][0]["message"]["content"]
+        print("pollinations attempt", attempt + 1, "status", st, str(d)[:200] if not st == 429 else "rate-limited")
         if st == 200: body["model"] = FALLBACK_MODEL
-        time.sleep(10)
-    raise RuntimeError("Pollinations недоступен")
+        time.sleep(w)
+    raise RuntimeError("Pollinations недоступен после %d попыток" % len(waits))
 def parse_json(text):
     text = re.sub(r"```(?:json)?", "", str(text)).strip()
     m = re.search(r"\{.*\}", text, re.S)

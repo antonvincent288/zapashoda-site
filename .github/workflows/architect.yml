@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: architect-bot
+  group: agent-conveyor
   cancel-in-progress: false
 jobs:
   architect:
