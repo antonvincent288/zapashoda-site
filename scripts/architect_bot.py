@@ -201,6 +201,33 @@ def _extract_faq(text):
             if 5 < len(q.strip()) < 200 and 10 < len(a.strip()) < 400:
                 faq.append([q.strip(), a.strip()])
     return faq[:4]
+LINK_ANCHORS = {
+ "/pain/adapter-gbt.html": "Адаптер Type 2 → GB/T: когда нужен и как выбрать",
+ "/pain/stoimost-zaryadki.html": "Сколько стоит зарядить электромобиль: полный разбор",
+ "/pain/domashnie-stancii.html": "Домашняя зарядная станция: выбор и установка",
+ "/pain/zaryadka-ot-rozetki.html": "Зарядка от бытовой розетки: что можно и что нельзя",
+ "/pain/podogrev-batarei.html": "Предпрогрев батареи перед быстрой зарядкой",
+ "/pain/zapas-hoda-zimoy.html": "Запас хода зимой: почему падает и что делать",
+ "/pain/udlinitel.html": "Удлинитель для зарядки: как не сжечь розетку",
+ "/pain/12v-akb.html": "12-вольтовый аккумулятор: слабое место EV",
+ "/calculator/": "Калькулятор расхода и стоимости поездки",
+ "/charging/": "Карта зарядных станций по всей России",
+ "/catalog/": "Каталог аксессуаров с подбором по модели",
+ "/blog/subsidii-na-elektromobil-2026.html": "Субсидия 35% на электромобиль 2026",
+ "/blog/transportnyi-nalog-elektromobilya.html": "Транспортный налог на электромобиль",
+}
+def ensure_links(body):
+    hrefs = set(re.findall(r'href="([^"]+)"', body)) | set(re.findall(r"href='([^']+)'", body))
+    if len(hrefs) >= 3: return body
+    need = 3 - len(hrefs)
+    items = []
+    for link, anchor in LINK_ANCHORS.items():
+        if link not in hrefs:
+            items.append('<li><a href="%s">%s</a></li>' % (link, anchor))
+        if len(items) >= need: break
+    if items:
+        body += "\n<h2>См. также</h2>\n<ul>" + "".join(items) + "</ul>"
+    return body
 def do_draft():
     fp = get_file("data/facts_pack.json")
     if not fp:
@@ -235,7 +262,7 @@ def do_draft():
         slug = old.get("slug", slug)
         d = {"slug": slug, "title": (h_t or old.get("title", ""))[:55], "desc": (h_d or old.get("desc", ""))[:300],
              "category": h_c or old.get("category", "Гайд"),
-             "body_html": (body1 + "\n" + body2).strip(), "faq": faq}
+             "body_html": ensure_links((body1 + "\n" + body2).strip()), "faq": faq}
         if not d["body_html"]:
             print("rewrite: пустое тело — пропущено"); return
         push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: переписан драфт " + slug)
@@ -256,7 +283,7 @@ def do_draft():
     slug = re.sub(r"[^a-z0-9-]", "-", (h_sl or topic[:40]).lower())[:64]
     title = (h_t or topic)[:55]
     d = {"slug": slug, "title": title, "desc": (h_d or topic)[:300], "category": h_c or "Гайд",
-         "body_html": (body1 + "\n" + body2).strip(), "faq": faq}
+         "body_html": ensure_links((body1 + "\n" + body2).strip()), "faq": faq}
     path = BR + "/drafts/articles/" + slug + ".json"
     if get_file(path) is not None:
         print("драфт уже есть:", slug); return
