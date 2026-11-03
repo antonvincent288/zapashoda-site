@@ -181,6 +181,13 @@ def _extract_body(text):
     m = re.search(r"BODY_HTML:\s*\n(.*?)(?:\n\s*FAQ:|$)", str(text), re.S)
     if not m: return ""
     return m.group(1).strip()
+def _extract_continue(text):
+    t = str(text)
+    for junk in ("CONTINUE:", "BODY_HTML:"):
+        t = t.replace(junk, "")
+    t = t.strip()
+    if "FAQ:" in t: t = t.split("FAQ:")[0]
+    return t.strip() if ("<h2" in t or "<p" in t) else ""
 def _extract_faq(text):
     faq = []
     if "\nFAQ:" not in str(text) and not str(text).lstrip().startswith("FAQ:"):
@@ -222,36 +229,29 @@ def do_draft():
         h_sl, h_t, h_d, h_c = _headers_from(part1)
         body1 = _extract_body(part1)
         prompt2 = base_ctx + "\n\nПродолжи статью «%s». Уже написано:\n%s\n\nНапиши ТОЛЬКО продолжение: 2–3 новых раздела <h2> (по 140–170 слов, практические шаги) + финальный раздел <h2> с выводом, затем строкой FAQ: и 3 пары «вопрос | ответ». Не повторяй предыдущие разделы, не пиши SLUG/TITLE." % (h_t or old.get("title", ""), body1[:2500])
-        part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=6000, reasoning="low")
-        body2 = _extract_body(part2)
+        part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=8000, reasoning="low")
+        body2 = _extract_continue(part2)
         faq = _extract_faq(part2) or _extract_faq(part1)
-        slug = re.sub(r"[^a-z0-9-]", "-", (h_sl or slug).lower())[:64]
+        slug = old.get("slug", slug)
         d = {"slug": slug, "title": (h_t or old.get("title", ""))[:55], "desc": (h_d or old.get("desc", ""))[:300],
              "category": h_c or old.get("category", "Гайд"),
              "body_html": (body1 + "\n" + body2).strip(), "faq": faq}
         if not d["body_html"]:
             print("rewrite: пустое тело — пропущено"); return
-        if slug != old.get("slug"):
-            os.remove(path) if os.path.exists(path) else None
-            get_file(path)  # noop
-            push_files({BR + "/drafts/articles/" + slug + ".json": json.dumps(d, ensure_ascii=False, indent=1),
-                        path: None} if False else {BR + "/drafts/articles/" + slug + ".json": json.dumps(d, ensure_ascii=False, indent=1)},
-                       "architect-bot: переписан драфт " + slug)
-        else:
-            push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: переписан драфт " + slug)
+        push_files({path: json.dumps(d, ensure_ascii=False, indent=1)}, "architect-bot: переписан драфт " + slug)
         print("rewrite:", slug, "| слов:", len(d["body_html"].split()))
         return
     # 2) новый драфт: два прохода
     topic = TOPICS[int(datetime.datetime.now().timestamp() // 60) % len(TOPICS)]
-    prompt1 = base_ctx + "\n\nТема статьи: %s\nНапиши ПЕРВУЮ ПОЛОВИНУ статьи по формату: интро (120–160 слов) + 2 раздела <h2> (по 140–170 слов). Закончи на завершённом абзаце. FAQ не пиши." % topic
-    part1 = pollinations(DRAFT_SYSTEM, prompt1, max_tokens=6000, reasoning="low")
+    prompt1 = base_ctx + "\n\nТема статьи: %s\nНапиши ПЕРВУЮ ПОЛОВИНУ статьи по формату: интро (130–180 слов) + 2–3 раздела <h2> (по 160–200 слов). Закончи на завершённом абзаце. FAQ не пиши." % topic
+    part1 = pollinations(DRAFT_SYSTEM, prompt1, max_tokens=8000, reasoning="low")
     h_sl, h_t, h_d, h_c = _headers_from(part1)
     body1 = _extract_body(part1)
     if not body1:
         print("драфт: первая половина пуста — пропущено"); return
-    prompt2 = base_ctx + "\n\nПродолжи статью «%s». Уже написано:\n%s\n\nНапиши ТОЛЬКО продолжение: 2–3 новых раздела <h2> (по 140–170 слов, практические шаги и кейсы) + финальный раздел <h2> с выводом (100–140 слов), затем отдельной строкой FAQ: и 3 пары «вопрос | ответ». Не повторяй предыдущие разделы и заголовки, SLUG/TITLE/DESC не пиши." % (h_t, body1[:2500])
-    part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=6000, reasoning="low")
-    body2 = _extract_body(part2)
+    prompt2 = base_ctx + "\n\nПродолжи статью «%s». Уже написано:\n%s\n\nНапиши ТОЛЬКО продолжение: 2–3 новых раздела <h2> (по 160–200 слов, практические шаги и кейсы) + финальный раздел <h2> с выводом (100–140 слов), затем отдельной строкой FAQ: и 3 пары «вопрос | ответ». Не повторяй предыдущие разделы и заголовки, SLUG/TITLE/DESC не пиши." % (h_t, body1[:2500])
+    part2 = pollinations(DRAFT_SYSTEM, prompt2, max_tokens=8000, reasoning="low")
+    body2 = _extract_continue(part2)
     faq = _extract_faq(part2) or _extract_faq(part1)
     slug = re.sub(r"[^a-z0-9-]", "-", (h_sl or topic[:40]).lower())[:64]
     title = (h_t or topic)[:55]
