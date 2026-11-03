@@ -164,6 +164,7 @@ CALC_KWH_DEFAULT = float(SITE_CFG.get('calc_consumption_default') or 18)
 CALC_KWH = {k: float(v) for k, v in (SITE_CFG.get('calc_consumption') or {}).items()}
 CALC_HYBRIDS = set(SITE_CFG.get('calc_hybrid_note_models') or [])
 CALC_MODELS = list(CALC_KWH.keys())
+MAP_PROMO_CODE = str(SITE_CFG.get('map_promo') or 'MAP10')   # промокод коммерческого блока на карте (скидка у дилера)
 
 def calc_widget_html():
     opts = ''.join('<option value="' + html.escape(m) + '" data-kwh="' + str(CALC_KWH[m]) + '"'
@@ -1858,6 +1859,7 @@ def map_page(outdir):
     city_btns = ''.join('<button class="cbtn" data-ci="' + str(k) + '">' + c + '</button>' for k, (c,bb) in enumerate(CITIES))
     js = """
 var CITIES=%s;
+var PROMO=%s;
 var ALL=null,layer=null,mymap=null;
 var YNDX='https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=24.10.29-0&x={x}&y={y}&z={z}&scale=1&part=1&lang=ru_RU';
 function initMap(){
@@ -1882,9 +1884,9 @@ function draw(){
       n++;
       if(mk<2500){
         mk++;
-        var txt='<b>'+s.n+'</b>'+(s.op?'<br>Сеть: '+s.op:'')+(s.a?'<br>Адрес: '+s.a:'')+(s.pw?'<br>Мощность: до '+s.pw+' кВт':'')+(s.c?'<br>Портов: '+s.c:'')+(s.s&&s.s.length?'<br>Разъёмы: '+s.s.join(', '):'');
+        var txt='<b>'+s.n+'</b>'+(s.op?'<br>Сеть: '+s.op:'')+(s.a?'<br>Адрес: '+s.a:'')+(s.pw?'<br>Мощность: до '+s.pw+' кВт':'')+(s.c?'<br>Портов: '+s.c:'')+(s.s&&s.s.length?'<br>Разъёмы: '+s.s.join(', '):'');var promo='';if(s.s&&s.s.length){var cs2=false,t2=false;for(var qi=0;qi<s.s.length;qi++){var q=String(s.s[qi]).toLowerCase();if(q.indexOf('ccs2')>=0)cs2=true;if(q.indexOf('type 2')>=0||q.indexOf('type2')>=0)t2=true;}if(cs2)promo='<br><div class="zs-mpromo"><b>Владеете китайским EV?</b> Для этой станции нужен DC-адаптер CCS2\u2192GB/T (250\u2013300 А). <a href="/catalog/adapter-ccs2-gbt-dc.html">Купить со скидкой 10%% — промокод '+PROMO+'</a></div>';else if(t2)promo='<br><div class="zs-mpromo"><b>Владеете китайским EV?</b> Для этой станции нужен адаптер Type 2\u2192GB/T (22 кВт). <a href="/catalog/adapter-type2-gbt-premium.html">Купить со скидкой 10%% — промокод '+PROMO+'</a></div>';}
         var col=(s.pw&&s.pw>=50)?'#2563EB':'#1e98ff';var m=L.circleMarker([s.lat,s.lon],{radius:5,color:col,weight:1.5,fillColor:col,fillOpacity:0.85});
-        m.bindPopup(txt+'<br><a href="https://yandex.ru/maps/?pt='+s.lon+','+s.lat+'&z=17" target="_blank" rel="noopener">открыть в Яндекс.Картах</a>');
+        m.bindPopup(txt+promo+'<br><a href="https://yandex.ru/maps/?pt='+s.lon+','+s.lat+'&z=17" target="_blank" rel="noopener">открыть в Яндекс.Картах</a>');
         m.bindTooltip(s.n,{direction:'top',offset:[0,-4]});
         layer.addLayer(m);
       }
@@ -1906,7 +1908,7 @@ function renderList(bb){
 }
 initMap();
 document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click',function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});
-""" % json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False)
+""" % (json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False), json.dumps(MAP_PROMO_CODE))
     body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
      '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — из разметки OpenStreetMap и обратного геокодирования по координатам (ближайший адрес — возможна неточность номера дома). Знаете станцию, которой нет на карте? Добавьте её в OpenStreetMap (openstreetmap.org) — она попадёт в нашу базу при следующем обновлении.</p></div>'
      '<div class="cbtns">' + city_btns + '</div>'      '<p class="note">Подробно по городам: ' + city_links + '</p>'
@@ -3938,6 +3940,14 @@ EXTRA_MATRIX_CSS = r"""
 ZEEKR_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · разбор</div><h1>Чем отличаются порты GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026)?</h1><p class="lede">Вы купили новый Zeekr 001, открываете зарядный лючок — и видите два внешне похожих разъёма. Разберём их один раз и навсегда.</p><div class="tldr"><b>Коротко:</b> GB/T AC — круглый порт с 7 контактами (заднее левое крыло): переменный ток, максимум 7 кВт через встроенный OBC — дом, паркинг, офис. GB/T DC — крупный порт с 5 массивными контактами (заднее правое крыло): ток идёт прямо в батарею, на публичных ЭЗС стабильно 60–120 кВт.</div><h2>Порт GB/T AC: переменный ток, медленная зарядка</h2><p>Круглый разъём с 7 контактами (пинами). На рестайлинге Zeekr 001 он расположен на заднем левом крыле. Это ваш основной порт для зарядки дома, в паркинге или у офиса. Он принимает переменный ток от настенных станций или портативных «зарядок-переносок» из розетки 220 В. Встроенное зарядное устройство (OBC) рестайлинга принимает максимум 7 кВт (1 фаза, 32 А).</p><h2>Порт GB/T DC: постоянный ток, быстрая зарядка</h2><p>Крупный разъём с 5 массивными контактами на заднем правом крыле. Нужен для ультрабыстрых городских и трассовых зарядных станций (хабы Россети, Яндекс.Заправки и т. д.). Ток идёт напрямую в батарею, минуя внутреннее зарядное устройство машины. На российских публичных ЭЗС вы будете стабильно видеть от 60 до 120 кВт в зависимости от загрузки станции.</p><h2>Что купить в багажник</h2><ul><li>Для медленных городских станций (где на выходе розетка Type 2) — <a href="/catalog/kabel-type2-gbt-5m-22kw.html">зарядный кабель Type 2 → GB/T</a> из нашего каталога.</li><li>Для быстрой зарядки на трассах (где висит кабель CCS2) — <a href="/catalog/adapter-ccs2-gbt-dc.html">адаптер CCS2 → GB/T DC</a>.</li></ul><p>Ошибка при подключении кабеля в «не тот» порт в лучшем случае прервёт сессию, а в худшем — выбьет ошибку инвертора, поэтому порт лучше сверять заранее. Какой порт у какой комплектации — есть на странице <a href="/models/zeekr-001-001-fr/">Zeekr 001 / 001 FR</a>.</p><p>Зимой обе зарядки идут медленнее и требуют прогрева — подробности в гайде <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
 LI_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · лайфхак</div><h1>Как активировать скрытый предпрогрев батареи на Li Auto L7/L8/L9 перед быстрой зарядкой?</h1><p class="lede">Приезжаешь на быструю станцию зимой, вставляешь пистолет — а машина вместо 60–90 кВт берёт 15–20. Причина и два рабочих решения — в разборе.</p><div class="tldr"><b>Коротко:</b> ледяная батарея отказывается принимать большой ток: оптимальная температура для приёма быстрой зарядки — около +25 °C. Способ 1 — цель в штатной навигации (подогрев запустится за 20–30 минут до станции). Способ 2 — Battery Preheating из приложения Li Auto. Самый экономный вариант — прогрев на ночной зарядке от розетки.</div><h2>Способ № 1: активация через штатную навигацию (самый надёжный)</h2><p>В Li Auto встроен алгоритм автоматического подогрева, но он жёстко привязан к бортовой навигационной системе. В штатной навигационной карте на центральном дисплее вбейте адрес быстрой зарядной станции (ЭЗС), к которой вы едете. Бортовой компьютер поймёт цель поездки и за 20–30 минут до подъезда автоматически запустит мощный высоковольтный подогрев аккумулятора. Вы приедете с «горячей» батареей и сразу заберёте максимальный ток.</p><h2>Способ № 2: запуск через приложение Li Auto</h2><p>За 30 минут до выезда откройте официальное приложение Li Auto на смартфоне. Включите климат-контроль салона и активируйте функцию Battery Preheating (подогрев батареи). Дайте машине постоять включённой хотя бы 25–30 минут.</p><h2>Лайфхак для максимальной экономии</h2><p>Чтобы не тратить драгоценные проценты батареи на её же прогрев в пути, делайте это во время домашней ночной зарядки. Наш <a href="/catalog/">«Антикризисный набор для подключаемых гибридов (PHEV)»</a> позволяет безопасно держать машину подключённой к сети 220 В всю ночь. Вы начнёте движение с тёплой батареей, тёплым салоном и полным запасом хода.</p><p>Почему зимой зарядка вообще медленнее — с цифрами и приёмами прогрева: <a href="/blog/zimnyaya-zaryadka-medlennee.html">разбор зимней зарядки</a>. Порты и сценарии зарядки Li Auto — на странице <a href="/models/li-auto-l6-l7-l8-l9-2022-2025/">Li Auto L6/L7/L8/L9</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
 
+
+# ===== CSS коммерческого блока на карте (ЭТАП 3) =====
+EXTRA_MAP_CSS = r"""
+.zs-mpromo { margin-top: 8px; padding: 8px 10px; border: 1px solid #a7f3d0; background: #ecfdf5; border-radius: 10px; font-size: .82rem; line-height: 1.4; color: #064e3b; }
+.zs-mpromo b { display: block; margin-bottom: 3px; }
+.zs-mpromo a { color: #047857; font-weight: 700; }
+.leaflet-popup-content .zs-mpromo a { white-space: normal; }
+"""
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -3953,7 +3963,7 @@ def main():
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
 
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
