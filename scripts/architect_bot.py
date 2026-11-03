@@ -110,12 +110,24 @@ FAQ:
 Правила: 1) факты — только из facts_pack (чужих цифр не выдумывать); цены не придумывать — диапазоны из facts_pack с пометкой «ориентир» либо [ЦЕНА: согласовать с владельцем]; 2) внутренние ссылки — ТОЛЬКО из списка; 3) практичный живой тон, обращение к читателю; 4) секреты не упоминать; 5) пишешь ЧАСТЬ статьи по указанию в задании — не переписывай уже написанное."""
 ALLOWED_LINKS = ["/pain/adapter-gbt.html", "/pain/stoimost-zaryadki.html", "/pain/zaryadka-na-trasse.html", "/pain/domashnie-stancii.html", "/pain/zaryadka-ot-rozetki.html", "/pain/podogrev-batarei.html", "/pain/zapas-hoda-zimoy.html", "/pain/ne-zaryazhaetsya.html", "/pain/udlinitel.html", "/pain/12v-akb.html", "/calculator/", "/charging/", "/catalog/", "/blog/", "/vin/", "/models/zeekr-001-001-fr.html", "/models/li-auto-l6-l7-l8-l9-2022-2025.html", "/models/voyah-free-evr-gibrid.html", "/models/byd-song-plus-ev.html", "/blog/subsidii-na-elektromobil-2026.html", "/blog/transportnyi-nalog-elektromobilya.html", "/blog/zimnyaya-zaryadka-medlennee.html", "/blog/stanciya-ne-rabotae t.html".replace(" ", ""), "/blog/handshake-oshibka-dc-zaryadki.html", "/blog/skolko-zhivet-batareya-elektromobilya.html"]
 def blog_slugs():
+    s = set()
     try:
         sp = get_file("services.py") or ""
         b0 = sp.find("BLOG_ARTICLES = ["); b1 = sp.find("\n]", b0)
-        return set(re.findall(r"\('([a-z0-9-]+)',", sp[b0:b1]))
+        s |= set(re.findall(r"\('([a-z0-9-]+)',", sp[b0:b1]))
     except Exception:
-        return set()
+        pass
+    try:
+        st, ref = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO)
+        hd = ref["object"]["sha"]
+        st, c = req("https://api.github.com/repos/%s/git/commits/%s" % (REPO, hd))
+        st, tr = req("https://api.github.com/repos/%s/git/trees/%s?recursive=1" % (REPO, c["tree"]["sha"]), "GET")
+        for it in tr["tree"]:
+            m = re.match(r"data/blog_extra/([a-z0-9-]+)\.json$", it["path"])
+            if m: s.add(m.group(1))
+    except Exception:
+        pass
+    return s
 def blog_index_links():
     return ["/blog/" + s + ".html" for s in sorted(blog_slugs())]
 def do_advice():

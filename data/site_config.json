@@ -1,212 +1,213 @@
 {
-  "metrika_id": 113935123,
-  "banner_text": "",
-  "banner_link": "",
-  "phone": "",
-  "hero_title": "Правильная зарядка для любого электромобиля в России",
-  "hero_sub": "Экспертный справочник и подбор совместимого оборудования за 30 секунд для 145 моделей EV. С гарантией на коннекторы и оплатой при получении.",
-  "tg_lead_bot_token": "8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",
-  "tg_lead_chat_id": "-1002316192115",
-  "configurator": {
-    "_comment": "Конфигуратор мини-аппа (перезапуск v6). Правится без кода; применяется при следующей сборке сайта.",
-    "brand_pins": [
-      "Zeekr",
-      "Li Auto",
-      "Voyah",
-      "Avatr",
-      "Tesla"
-    ],
-    "referral": {
-      "discount_pct": 5,
-      "cashback_min_pct": 5,
-      "cashback_max_pct": 10,
-      "promo_prefix": "ZSH"
-    },
-    "scenarios": [
-      {
-        "key": "house",
-        "emoji": "🏠",
-        "title": "Частный дом",
-        "sub": "Своя розетка или стена — ночная зарядка, дёшево и без очередей"
-      },
-      {
-        "key": "flat",
-        "emoji": "🏢",
-        "title": "Квартира (паркинг)",
-        "sub": "Паркинг ЖК или уличная розетка — портативка и адаптер под посты"
-      },
-      {
-        "key": "road",
-        "emoji": "🛣",
-        "title": "Только путешествия",
-        "sub": "Трассы и быстрые станции — адаптеры и запасной кабель"
-      }
-    ],
-    "scenario_check": {
-      "house": {
-        "gb": [
-          13,
-          10
-        ],
-        "eu": [
-          23,
-          20
-        ],
-        "us": [
-          19,
-          7
-        ],
-        "t1": [
-          20,
-          25
-        ],
-        "all": [
-          12,
-          17
-        ],
-        "unc": [
-          6,
-          7
-        ]
-      },
-      "flat": {
-        "gb": [
-          10,
-          8
-        ],
-        "eu": [
-          20,
-          21
-        ],
-        "us": [
-          20,
-          7
-        ],
-        "t1": [
-          20,
-          25
-        ],
-        "all": [
-          12,
-          17
-        ],
-        "unc": [
-          6,
-          7
-        ]
-      },
-      "road": {
-        "gb": [
-          6,
-          10
-        ],
-        "eu": [
-          19,
-          21,
-          2
-        ],
-        "us": [
-          7,
-          19
-        ],
-        "t1": [
-          25,
-          20
-        ],
-        "all": [
-          12,
-          17
-        ],
-        "unc": [
-          13,
-          16,
-          23,
-          24
-        ]
-      }
-    },
-    "scenario_note": {
-      "house": "Для дома рекомендуем настенную станцию — ночная зарядка по минимальному тарифу. Остальное — по желанию клиента.",
-      "flat": "В паркинге главное — портативная зарядка от розетки и адаптер для станций ЖК. Станцию можно докупить позже.",
-      "road": "Для трасс главное — адаптеры под чужие разъёмы и запасной кабель. Портативка выручает на «мёртвых» станциях."
-    },
-    "price_overrides": {
-      "_help": "id позиции -> {\"name\":..., \"price\":...}; пусто = как в каталоге сайта",
-      "_ex": {
-        "1": {
-          "price": 7000
-        }
-      }
-    }
-  },
-  "calc_petrol_price": 65,
-  "calc_petrol_l100": 10,
-  "calc_tariff_night": 3.8,
-  "calc_tariff_day": 6.5,
-  "calc_tariff_ezs": 22,
-  "calc_home_station_price": 24500,
-  "calc_consumption_default": 18,
-  "calc_consumption": {
-    "Zeekr 001": 18.5,
-    "Zeekr 007": 17.5,
-    "Zeekr X": 15.5,
-    "Zeekr 7X": 18.0,
-    "Li Auto L7": 22.0,
-    "Li Auto L9": 23.0,
-    "Li Auto L6": 21.0,
-    "Voyah Free": 18.5,
-    "Voyah Dreamer": 22.5,
-    "Avatr 11": 18.0,
-    "Avatr 12": 17.5,
-    "BYD Song Plus EV": 15.0,
-    "BYD Seal": 14.5,
-    "Xiaomi SU7": 16.0,
-    "Tesla Model Y": 15.5,
-    "Tesla Model 3": 14.5,
-    "Hongqi E-QM5": 15.5,
-    "Geely Geometry C": 15.5,
-    "Deepal S7": 16.5,
-    "MG4": 14.5
-  },
-  "calc_hybrid_note_models": [
-    "Li Auto L7",
-    "Li Auto L9",
-    "Li Auto L6"
+ "metrika_id": 113935123,
+ "banner_text": "",
+ "banner_link": "",
+ "phone": "",
+ "hero_title": "Правильная зарядка для любого электромобиля в России",
+ "hero_sub": "Экспертный справочник и подбор совместимого оборудования за 30 секунд для 145 моделей EV. С гарантией на коннекторы и оплатой при получении.",
+ "tg_lead_bot_token": "8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",
+ "tg_lead_chat_id": "-1002316192115",
+ "configurator": {
+  "_comment": "Конфигуратор мини-аппа (перезапуск v6). Правится без кода; применяется при следующей сборке сайта.",
+  "brand_pins": [
+   "Zeekr",
+   "Li Auto",
+   "Voyah",
+   "Avatr",
+   "Tesla"
   ],
-  "map_promo": "MAP10",
-  "tinkoff_terminal_key": "",
-  "tinkoff_is_test_mode": true,
-  "digital_guide_price": 490,
-  "digital_payments_live": true,
-  "tinkoff_receipt_object": "service",
-  "tinkoff_receipt_tax": "vat0",
-  "tinkoff_receipt_taxation": "usn_income",
-  "gas_pay_url": "https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec",
-  "shop": {
-    "tinkoff_terminal_key": "1793665379484DEMO",
-    "tinkoff_is_test_mode": true,
-    "digital_guide_price": 490,
-    "tinkoff_api_base": "https://securepay.tinkoff.ru",
-    "shop_taxation": "usn_income",
-    "shop_payment_object": "commodity",
-    "shop_token_max_uses": 3,
-    "guide_product": "m4don",
-    "guide_title": "Гайд М-4 «Дон»",
-    "guide_desc": "Цифровой путеводитель по зарядной инфраструктуре трассы М-4 «Дон» в формате PDF. Описание содержания обновит владелец.",
-    "guide_success_path": "/shop/digital/success.html",
-    "shop_token_ttl_hours": 24
+  "referral": {
+   "discount_pct": 5,
+   "cashback_min_pct": 5,
+   "cashback_max_pct": 10,
+   "promo_prefix": "ZSH"
   },
-  "b2b_desc": "Зарядные станции и аксессуары EV оптом для дилеров, автосалонов, ТЦ и паркингов: дилерские цены на адаптеры Type 2→GB/T, кабели, станции 2-в-1, бесплатный закрытый Mini App конфигуратор с бонусами менеджерам и брендированные материалы для зала.",
-  "services_desc": "Установка и обслуживание зарядных станций для электромобилей: монтаж GB/T и Type 2 под ключ, выделенная линия и УЗО, сервис и диагностика ЭЗС в России.",
-  "service_partners": [],
-  "ai_bridge": {
-    "open_bugs": [
-      "b2b_pdf: static/b2b/paket-dileram.pdf описывает старую партнёрскую модель с лидами (300–1500 ₽ / 10–20% комиссии) — нужна переверстка под модель опт + Mini App",
-      "tinkoff: терминал на DEMO-ключе (1793665379484DEMO, test) — для боевых платежей заменить на production-ключ и переключить live",
-      "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
-      "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем",
-      "build.py: дубль блока копирования PDF для дилеров в main() (строки подряд) — безвредно, почистить при случае"
+  "scenarios": [
+   {
+    "key": "house",
+    "emoji": "🏠",
+    "title": "Частный дом",
+    "sub": "Своя розетка или стена — ночная зарядка, дёшево и без очередей"
+   },
+   {
+    "key": "flat",
+    "emoji": "🏢",
+    "title": "Квартира (паркинг)",
+    "sub": "Паркинг ЖК или уличная розетка — портативка и адаптер под посты"
+   },
+   {
+    "key": "road",
+    "emoji": "🛣",
+    "title": "Только путешествия",
+    "sub": "Трассы и быстрые станции — адаптеры и запасной кабель"
+   }
+  ],
+  "scenario_check": {
+   "house": {
+    "gb": [
+     13,
+     10
     ],
-    "next_step_waiting": "переверстка PDF-пакета под модель опт + Mini App + реальные данные СТО (service_partners) + production-ключ Tinkoff"
+    "eu": [
+     23,
+     20
+    ],
+    "us": [
+     19,
+     7
+    ],
+    "t1": [
+     20,
+     25
+    ],
+    "all": [
+     12,
+     17
+    ],
+    "unc": [
+     6,
+     7
+    ]
+   },
+   "flat": {
+    "gb": [
+     10,
+     8
+    ],
+    "eu": [
+     20,
+     21
+    ],
+    "us": [
+     20,
+     7
+    ],
+    "t1": [
+     20,
+     25
+    ],
+    "all": [
+     12,
+     17
+    ],
+    "unc": [
+     6,
+     7
+    ]
+   },
+   "road": {
+    "gb": [
+     6,
+     10
+    ],
+    "eu": [
+     19,
+     21,
+     2
+    ],
+    "us": [
+     7,
+     19
+    ],
+    "t1": [
+     25,
+     20
+    ],
+    "all": [
+     12,
+     17
+    ],
+    "unc": [
+     13,
+     16,
+     23,
+     24
+    ]
+   }
+  },
+  "scenario_note": {
+   "house": "Для дома рекомендуем настенную станцию — ночная зарядка по минимальному тарифу. Остальное — по желанию клиента.",
+   "flat": "В паркинге главное — портативная зарядка от розетки и адаптер для станций ЖК. Станцию можно докупить позже.",
+   "road": "Для трасс главное — адаптеры под чужие разъёмы и запасной кабель. Портативка выручает на «мёртвых» станциях."
+  },
+  "price_overrides": {
+   "_help": "id позиции -> {\"name\":..., \"price\":...}; пусто = как в каталоге сайта",
+   "_ex": {
+    "1": {
+     "price": 7000
+    }
+   }
   }
+ },
+ "calc_petrol_price": 65,
+ "calc_petrol_l100": 10,
+ "calc_tariff_night": 3.8,
+ "calc_tariff_day": 6.5,
+ "calc_tariff_ezs": 22,
+ "calc_home_station_price": 24500,
+ "calc_consumption_default": 18,
+ "calc_consumption": {
+  "Zeekr 001": 18.5,
+  "Zeekr 007": 17.5,
+  "Zeekr X": 15.5,
+  "Zeekr 7X": 18.0,
+  "Li Auto L7": 22.0,
+  "Li Auto L9": 23.0,
+  "Li Auto L6": 21.0,
+  "Voyah Free": 18.5,
+  "Voyah Dreamer": 22.5,
+  "Avatr 11": 18.0,
+  "Avatr 12": 17.5,
+  "BYD Song Plus EV": 15.0,
+  "BYD Seal": 14.5,
+  "Xiaomi SU7": 16.0,
+  "Tesla Model Y": 15.5,
+  "Tesla Model 3": 14.5,
+  "Hongqi E-QM5": 15.5,
+  "Geely Geometry C": 15.5,
+  "Deepal S7": 16.5,
+  "MG4": 14.5
+ },
+ "calc_hybrid_note_models": [
+  "Li Auto L7",
+  "Li Auto L9",
+  "Li Auto L6"
+ ],
+ "map_promo": "MAP10",
+ "tinkoff_terminal_key": "",
+ "tinkoff_is_test_mode": true,
+ "digital_guide_price": 490,
+ "digital_payments_live": true,
+ "tinkoff_receipt_object": "service",
+ "tinkoff_receipt_tax": "vat0",
+ "tinkoff_receipt_taxation": "usn_income",
+ "gas_pay_url": "https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec",
+ "shop": {
+  "tinkoff_terminal_key": "1793665379484DEMO",
+  "tinkoff_is_test_mode": true,
+  "digital_guide_price": 990,
+  "tinkoff_api_base": "https://securepay.tinkoff.ru",
+  "shop_taxation": "usn_income",
+  "shop_payment_object": "commodity",
+  "shop_token_max_uses": 3,
+  "guide_product": "m4don",
+  "guide_title": "Гайд М-4 «Дон»",
+  "guide_desc": "Цифровой путеводитель по зарядной инфраструктуре трассы М-4 «Дон» в формате PDF. Описание содержания обновит владелец.",
+  "guide_success_path": "/shop/digital/success.html",
+  "shop_token_ttl_hours": 24
+ },
+ "b2b_desc": "Зарядные станции и аксессуары EV оптом для дилеров, автосалонов, ТЦ и паркингов: дилерские цены на адаптеры Type 2→GB/T, кабели, станции 2-в-1, бесплатный закрытый Mini App конфигуратор с бонусами менеджерам и брендированные материалы для зала.",
+ "services_desc": "Установка и обслуживание зарядных станций для электромобилей: монтаж GB/T и Type 2 под ключ, выделенная линия и УЗО, сервис и диагностика ЭЗС в России.",
+ "service_partners": [],
+ "ai_bridge": {
+  "open_bugs": [
+   "b2b_pdf: static/b2b/paket-dileram.pdf описывает старую партнёрскую модель с лидами (300–1500 ₽ / 10–20% комиссии) — нужна переверстка под модель опт + Mini App",
+   "tinkoff: терминал на DEMO-ключе (1793665379484DEMO, test) — для боевых платежей заменить на production-ключ и переключить live",
+   "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
+   "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем",
+   "build.py: дубль блока копирования PDF для дилеров в main() (строки подряд) — безвредно, почистить при случае"
+  ],
+  "next_step_waiting": "переверстка PDF-пакета под модель опт + Mini App + реальные данные СТО (service_partners) + production-ключ Tinkoff"
+ },
+ "b2b_bonus_amount": 2000
 }

@@ -3961,7 +3961,25 @@ EXTRA_MAP_CSS = r"""
 .zs-mpromo b { display: block; margin-bottom: 3px; }
 .zs-mpromo a { color: #047857; font-weight: 700; }
 .leaflet-popup-content .zs-mpromo a { white-space: normal; }
+.gbox { background: #fffdf4; border: 1px solid #D4AF37; border-left: 5px solid #D4AF37; border-radius: 14px; padding: 14px 18px; margin: 16px 0; }
+.gbox b { color: #8a6d1c; }
+.prodcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin: 24px 0; }
+.prodcard { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(15,23,42,.05); }
+.prodcard h3 { margin: 0 0 8px; font-size: 1.08rem; }
+.prodcard p { font-size: .92rem; color: #334155; }
+.prodcard .price { font-size: 1.35rem; font-weight: 700; color: #047857; margin: 10px 0; }
+.prodcard .buy-email, .prodcard .buy-phone { padding: 12px 14px; border-radius: 12px; border: 1px solid #2a3b33; background: #0d1512; color: #e8f0ec; font-size: 15px; width: 100%; box-sizing: border-box; margin: 0 0 10px; }
+.prodcard .lbl { font-size: 12px; color: #64748b; }
+.prodcard .soon-badge { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: .85rem; }
 """
+
+
+def load_products():
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'shop_products.json')
+    try:
+        with open(p, encoding='utf-8') as f: return json.load(f)
+    except Exception:
+        return {}
 
 
 # ===== ЭТАП 6 ПОРТАЛА: ЦИФРОВЫЕ ТОВАРЫ /shop/digital/ (эквайринг Т-Касса) =====
@@ -4274,44 +4292,59 @@ def main():
     _gdesc = _shop.get('guide_desc', '')
     _uses = int(_shop.get('shop_token_max_uses', 3))
     _ttl = int(_shop.get('shop_token_ttl_hours', 24))
-    _buy_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · цифровой товар</div>'
-      '<h1>' + html.escape(_gtitle) + '</h1>'
-      '<p class="lede">' + html.escape(_gdesc) + '</p>'
-      '<div class="tldr"><b>Как проходит покупка:</b> вводите email и телефон → платёж на защищённой странице Т-Кассы (карта или СБП) → на этой же странице появится ссылка на скачивание PDF (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний), дубль придёт письмом. Прямой ссылки на файл не существует, а на страницы PDF наносится полупрозрачный водяной знак с вашими email и телефоном — это защищает гайд от слива в чаты.</div>'
-      '<div class="buybox" style="margin:28px 0;display:flex;flex-direction:column;gap:12px;max-width:460px">'
-      '<label for="buy-email" style="font-size:14px">Email для доставки гайда</label>'
-      '<input id="buy-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" style="padding:14px 16px;border-radius:14px;border:1px solid #2a3b33;background:#0d1512;color:#e8f0ec;font-size:16px">'
-      '<label for="buy-phone" style="font-size:14px">Телефон (попадёт в водяной знак на страницах PDF)</label>'
-      '<input id="buy-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 XXX XXX-XX-XX" style="padding:14px 16px;border-radius:14px;border:1px solid #2a3b33;background:#0d1512;color:#e8f0ec;font-size:16px">'
-      '<button id="buy-btn" class="btn lime" type="button" style="align-self:flex-start">Купить за ' + str(_price) + ' ₽</button>'
+    _products_cfg = load_products()
+    _plist = _products_cfg.get('products') or [{'slug': 'm4don', 'title': SHOP_PRODUCT['title'], 'desc': SHOP_PRODUCT['desc'], 'price': _price, 'live': True}]
+    _prodcards = []
+    for _p in _plist:
+        _psl = html.escape(str(_p.get('slug', '')), quote=True)
+        _pt = html.escape(str(_p.get('title', '')))
+        _pd = html.escape(str(_p.get('desc', '')))
+        _pp = int(_p.get('price', _price) or _price)
+        _plive = bool(_p.get('live'))
+        _inputs = ''
+        _btn = ''
+        if _plive:
+            _inputs = ('<label class="lbl" for="em-' + _psl + '">Email для доставки</label>'
+              '<input id="em-' + _psl + '" class="buy-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">'
+              '<label class="lbl" for="ph-' + _psl + '">Телефон (попадёт в водяной знак PDF)</label>'
+              '<input id="ph-' + _psl + '" class="buy-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 XXX XXX-XX-XX">')
+            _btn = '<button class="btn lime buy-btn" type="button" data-product="' + _psl + '">Купить за ' + str(_pp) + ' ₽</button>'
+        else:
+            _btn = '<span class="soon-badge">Скоро в продаже — ' + str(_pp) + ' ₽</span>'
+        _prodcards.append('<div class="prodcard"><h3>' + _pt + '</h3><p>' + _pd + '</p><div class="price">' + str(_pp) + ' ₽</div>' + _inputs + _btn + '</div>')
+    _minprice = min([int(p.get('price', _price) or _price) for p in _plist])
+    _buy_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · цифровые товары</div>'
+      '<h1>Цифровые гайды «Запас хода»</h1>'
+      '<p class="lede">Практические PDF-гайды по зарядной инфраструктуре: трасса М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядка на парковке ЖК. Пишем по проверенным фактам — без фейковых обещаний.</p>'
+      '<div class="tldr"><b>Как проходит покупка:</b> вводите email и телефон → платёж на защищённой странице Т-Кассы (карта или СБП) → ссылка на скачивание PDF (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний) появится здесь же и придёт письмом. Прямой ссылки на файл не существует, а на страницы PDF наносится персональный водяной знак с вашими email и телефоном — защита от слива в чаты.</div>'
+      '<div class="prodcards">' + ''.join(_prodcards) + '</div>'
       '<div id="buy-msg" role="status" style="font-size:14px;min-height:20px;color:#9fb3aa"></div>'
-      '</div>'
       '<p class="fineprint" style="color:#8aa096;font-size:13px">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка действует ' + str(_ttl) + ' ч и до ' + str(_uses) + ' скачиваний; повторная выдача — по запросу в поддержку.</p>'
       '<div class="cta"><a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
       '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
       '<script>'
       '(function(){'
-      'var gas="' + GAS_URL + '";'
-      'var btn=document.getElementById("buy-btn"),em=document.getElementById("buy-email"),msg=document.getElementById("buy-msg");'
+      'var gas="' + GAS_URL + '",msg=document.getElementById("buy-msg");'
       'function say(t){msg.textContent=t;}'
       'function norm(s){var d=(s||"").replace(/[^\\d]/g,"");if(d.length===11&&(d[0]==="7"||d[0]==="8"))return "+7"+d.slice(1);if(d.length===10)return "+7"+d;return "";}'
+      'Array.prototype.forEach.call(document.querySelectorAll(".buy-btn[data-product]"),function(btn){'
       'btn.addEventListener("click",function(){'
-      'var v=(em.value||"").trim();'
-      'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(v)){say("Введите корректный email — на него придёт дубль ссылки.");return;}'
-      'var ph=norm((document.getElementById("buy-phone")||{}).value||"");'
+      'var card=btn.closest(".prodcard");'
+      'var emEl=card.querySelector(".buy-email");var em=((emEl||{}).value||"").trim();'
+      'var phn=card.querySelector(".buy-phone");var ph=norm((phn||{}).value||"");'
+      'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(em)){say("Введите корректный email — на него придёт дубль ссылки.");return;}'
       'if(!ph){say("Введите телефон в формате +7 XXX XXX-XX-XX — он нужен для водяного знака.");return;}'
       'btn.disabled=true;say("Создаём платёж…");'
-      'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:v,phone:ph,product:"m4don"})})'
+      'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:em,phone:ph,product:btn.getAttribute("data-product")})})'
       '.then(function(r){return r.json();})'
-      '.then(function(j){'
-      'if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}'
-      'else{btn.disabled=false;say("Платёж не создан"+(j&&j.error?(" — "+j.error):"")+". Попробуйте позже или напишите в поддержку.");}})'
+      '.then(function(j){if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}else{btn.disabled=false;say("Платёж не создан"+(j&&j.error?(" — "+j.error):"")+". Попробуйте позже или напишите в поддержку.");}})'
       '.catch(function(){btn.disabled=false;say("Ошибка сети — попробуйте ещё раз.");});'
-      '});})();</script>'
+      '});});'
+      '})();</script>'
     )
     write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
-        'Гайд М-4 «Дон» (PDF) — купить за ' + str(_price) + ' ₽ | Запас хода',
-        'Цифровой путеводитель по зарядной инфраструктуре М-4 «Дон»: оплата картой или СБП через Т-Кассу, одноразовая ссылка на скачивание PDF.',
+        'Цифровые гайды «Запас хода» (PDF) — купить за ' + str(_minprice) + ' ₽ | Запас хода',
+        'Практические PDF-гайды: трассы М-4 «Дон», М-11, М-12, зарядка в ЖК. Оплата картой или СБП через Т-Кассу, персональная одноразовая ссылка на скачивание.',
         _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'Магазин')], noindex=(not SHOP_LIVE))
     _succ_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · оплата</div>'
       '<h1 id="succ-title">Проверяем оплату…</h1>'
@@ -4402,6 +4435,8 @@ def main():
     if os.path.isfile(bpdf):
         os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
         shutil.copy(bpdf, os.path.join(outdir,'b2b','paket-dileram.pdf'))
+    if os.path.isdir(os.path.join(repo_root,'static','products')):
+        shutil.copytree(os.path.join(repo_root,'static','products'), os.path.join(outdir,'products'), dirs_exist_ok=True)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
