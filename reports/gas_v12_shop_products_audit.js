@@ -144,3 +144,21 @@ function bonusReport() {
   _tg('📊 Бонусы: paid=' + out.paid + ' (' + out.sum_rub + ' ₽), hold=' + out.hold + ', pending=' + out.pending + ', rejected=' + out.rejected);
   return out;
 }
+
+// ===== HTTP-ЭНДПОИНТ ДЛЯ CRON-МОНИТОРА (GitHub Actions → GAS) =====
+// В _odDoPost ДОБАВИТЬ ОДНУ ВЕТКУ (рядом с другими):
+//   if (p.t === 'bonus_selftest') return _bonusSelftestEndpoint();
+// Эндпоинт только читает состояние (листы/конфиги) — безопасен, изменений не вносит.
+function _bonusSelftestEndpoint() {
+  try {
+    var sh = _bonusSheet();
+    var pr = shopGetProducts();
+    var keys = Object.keys(pr);
+    var all990 = keys.length > 0 && keys.every(function (k) { return pr[k].amount === 99000; });
+    return { ok: true, selftest: true, products: keys.length, all990: all990,
+             bonusRub: B2B_BONUS_RUB, bonusRows: Math.max(0, sh.getLastRow() - 1),
+             version: 'v12' };
+  } catch (e) {
+    return { ok: false, selftest: true, error: String(e && e.message || e) };
+  }
+}
