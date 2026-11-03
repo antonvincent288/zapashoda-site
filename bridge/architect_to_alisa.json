@@ -308,6 +308,16 @@
       "priority": "normal",
       "expect": "none",
       "answer_to": null
+    },
+    {
+      "id": "V-0017",
+      "ts": "2026-11-03T23:55:54+03:00",
+      "from": "validator",
+      "topic": "Валидатор гайдов",
+      "body": "Принято в очередь согласования: m11-trassa: ЗЕЛЁНЫЙ (8 глав, 4184 слов) — ждёт владельца; m12-trassa: короткие главы: [6]; parking-zhil: слов: 2968 (нужно 3000+); короткие главы: [0, 5]",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
