@@ -2713,8 +2713,8 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/catalog/'] + [SITE_DOMAIN+'/catalog/'+p['slug']+'.html' for p in catalog.PRODUCTS]
     urls += [SITE_DOMAIN+'/services/', SITE_DOMAIN+'/services/ustanovka-stancii-v-garazhe.html', SITE_DOMAIN+'/services/moschnost-stancii.html', SITE_DOMAIN+'/services/tehobsluzhivanie-stanciy.html', SITE_DOMAIN+'/services/oshibki-ustanovki.html', SITE_DOMAIN+'/ev-services.html'] + [SITE_DOMAIN+'/services/'+s+'.html' for s in ['ustanovka-stancii','stanciya-gbt','stanciya-2v1','stanciya-type2','tehobsluzhivanie','uvelichenie-moshchnosti']]
     urls += [SITE_DOMAIN+'/blog/'] + [SITE_DOMAIN+'/blog/'+s+'.html' for s,_,_ in services.BLOG_ARTICLES]
-    urls += [SITE_DOMAIN+'/blog/zeekr-001-gbt-diff.html', SITE_DOMAIN+'/blog/li-l7-battery-heat.html']
-    urls += [SITE_DOMAIN+'/shop/digital/']
+    urls += [SITE_DOMAIN+'/blog/zeekr-001-gbt-diff.html', SITE_DOMAIN+'/blog/li-l7-battery-heat.html', SITE_DOMAIN+'/blog/workersbee-vs-auxus.html']
+    if SHOP_LIVE: urls += [SITE_DOMAIN+'/shop/digital/']
     urls += [SITE_DOMAIN+'/safety/'] + [SITE_DOMAIN+'/safety/'+s+'.html' for s,_,_ in services.SAFETY_ARTICLES]
     urls += [SITE_DOMAIN+'/cost/'+c[0]+'.html' for c in COST_MODELS]
     urls += [SITE_DOMAIN+'/b2b/']
@@ -3937,6 +3937,9 @@ EXTRA_MATRIX_CSS = r"""
   .mnote { font-size: .68rem; }
 }
 """
+# ===== СТАТЬЯ 3: Workersbee vs Auxus (03.11.2026) =====
+WORKERSBEE_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · сравнение</div><h1>Битва брендов: Workersbee против Auxus — какой зарядный кабель выдержит русскую зиму?</h1><p class="lede">При выборе зарядного кабеля Type 2 → GB/T или портативной «переноски» покупатель неизбежно сталкивается с двумя гигантами рынка: Workersbee и Auxus. Когда температура падает до −25 °C, разница в материалах изоляции может превратить один кабель в послушный гибкий провод, а второй — в дубовый кусок пластика. Сравниваем без цензуры.</p><div class="tldr"><b>Коротко:</b> Workersbee — «боевой» кабель: TPU-изоляция держит гибкость при −30 °C, посеребрённые контакты и влагозащита IP67 — для частых поездок по трассам и уличных ЭЗС. Auxus — «умный» домашний: TPE-эластомер, эргономичные корпуса пистолетов и встроенные датчики температуры в вилке, отключающие зарядку при перегреве — идеален для гаража и дачи по сбалансированной цене.</div><h2>1. Изоляция кабеля: ТПУ (TPU) против ТЭП (TPE)</h2><p>Главный враг кабеля в РФ — это мороз.</p><ul><li><b>Workersbee:</b> использует высококачественный термопластичный полиуретан (TPU). Этот материал дороже, но обладает феноменальной износостойкостью: при −30 °C кабель Workersbee сохраняет до 80% своей гибкости. Он не дубеет и легко сматывается в кольцо.</li><li><b>Auxus:</b> в ряде линеек применяет термопластичный эластомер (TPE). Он чуть мягче при комнатной температуре, но при сильных заморозках твердеет быстрее полиуретана.</li></ul><h2>2. Контакты и пистолеты: посеребрение против никелирования</h2><p>Качество коннектора определяет, не сгорит ли порт вашей машины от перегрева при длительной сессии в 32 ампера.</p><ul><li><b>Workersbee:</b> компоненты покрыты плотным слоем серебра. Это минимизирует сопротивление и исключает перегрев. Их пистолеты имеют класс влагозащиты IP67 даже в момент зарядки.</li><li><b>Auxus:</b> делает отличные, крепкие корпуса пистолетов с эргономичным хватом. Кабели Auxus снабжены встроенными датчиками температуры в вилке — если розетка у вас на даче начнёт плавиться, зарядка моментально отключится.</li></ul><h2>Вердикт «Запас хода»</h2><ul><li>Выбирайте Workersbee, если вам нужен неубиваемый «боевой» кабель для частых поездок по трассам, публичных ЭЗС и жёсткой зимней эксплуатации на улице.</li><li>Выбирайте Auxus, если ищете умное домашнее устройство с отличными защитными датчиками для гаража или дачи по сбалансированной цене.</li></ul><p>Оба варианта у нас в каталоге: кабель <a href="/catalog/kabel-type2-gbt-5m-22kw.html">Type 2 → GB/T, 5 м, 22 кВт</a> и <a href="/catalog/kabel-type2-gbt-7m-22kw.html">7 м</a>, для дачи — портативки <a href="/catalog/portativnaya-zaryadka-gbt-7kw.html">7 кВт</a> и <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">3,5 кВт</a>. Зимой любой кабель дубеет меньше, если его прогрели — см. гайд <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+
 # ===== ГОТОВЫЕ СТАТЬИ БЛОГА (03.11.2026, текст владельца) =====
 ZEEKR_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · разбор</div><h1>Чем отличаются порты GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026)?</h1><p class="lede">Вы купили новый Zeekr 001, открываете зарядный лючок — и видите два внешне похожих разъёма. Разберём их один раз и навсегда.</p><div class="tldr"><b>Коротко:</b> GB/T AC — круглый порт с 7 контактами (заднее левое крыло): переменный ток, максимум 7 кВт через встроенный OBC — дом, паркинг, офис. GB/T DC — крупный порт с 5 массивными контактами (заднее правое крыло): ток идёт прямо в батарею, на публичных ЭЗС стабильно 60–120 кВт.</div><h2>Порт GB/T AC: переменный ток, медленная зарядка</h2><p>Круглый разъём с 7 контактами (пинами). На рестайлинге Zeekr 001 он расположен на заднем левом крыле. Это ваш основной порт для зарядки дома, в паркинге или у офиса. Он принимает переменный ток от настенных станций или портативных «зарядок-переносок» из розетки 220 В. Встроенное зарядное устройство (OBC) рестайлинга принимает максимум 7 кВт (1 фаза, 32 А).</p><h2>Порт GB/T DC: постоянный ток, быстрая зарядка</h2><p>Крупный разъём с 5 массивными контактами на заднем правом крыле. Нужен для ультрабыстрых городских и трассовых зарядных станций (хабы Россети, Яндекс.Заправки и т. д.). Ток идёт напрямую в батарею, минуя внутреннее зарядное устройство машины. На российских публичных ЭЗС вы будете стабильно видеть от 60 до 120 кВт в зависимости от загрузки станции.</p><h2>Что купить в багажник</h2><ul><li>Для медленных городских станций (где на выходе розетка Type 2) — <a href="/catalog/kabel-type2-gbt-5m-22kw.html">зарядный кабель Type 2 → GB/T</a> из нашего каталога.</li><li>Для быстрой зарядки на трассах (где висит кабель CCS2) — <a href="/catalog/adapter-ccs2-gbt-dc.html">адаптер CCS2 → GB/T DC</a>.</li></ul><p>Ошибка при подключении кабеля в «не тот» порт в лучшем случае прервёт сессию, а в худшем — выбьет ошибку инвертора, поэтому порт лучше сверять заранее. Какой порт у какой комплектации — есть на странице <a href="/models/zeekr-001-001-fr/">Zeekr 001 / 001 FR</a>.</p><p>Зимой обе зарядки идут медленнее и требуют прогрева — подробности в гайде <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
 LI_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · лайфхак</div><h1>Как активировать скрытый предпрогрев батареи на Li Auto L7/L8/L9 перед быстрой зарядкой?</h1><p class="lede">Приезжаешь на быструю станцию зимой, вставляешь пистолет — а машина вместо 60–90 кВт берёт 15–20. Причина и два рабочих решения — в разборе.</p><div class="tldr"><b>Коротко:</b> ледяная батарея отказывается принимать большой ток: оптимальная температура для приёма быстрой зарядки — около +25 °C. Способ 1 — цель в штатной навигации (подогрев запустится за 20–30 минут до станции). Способ 2 — Battery Preheating из приложения Li Auto. Самый экономный вариант — прогрев на ночной зарядке от розетки.</div><h2>Способ № 1: активация через штатную навигацию (самый надёжный)</h2><p>В Li Auto встроен алгоритм автоматического подогрева, но он жёстко привязан к бортовой навигационной системе. В штатной навигационной карте на центральном дисплее вбейте адрес быстрой зарядной станции (ЭЗС), к которой вы едете. Бортовой компьютер поймёт цель поездки и за 20–30 минут до подъезда автоматически запустит мощный высоковольтный подогрев аккумулятора. Вы приедете с «горячей» батареей и сразу заберёте максимальный ток.</p><h2>Способ № 2: запуск через приложение Li Auto</h2><p>За 30 минут до выезда откройте официальное приложение Li Auto на смартфоне. Включите климат-контроль салона и активируйте функцию Battery Preheating (подогрев батареи). Дайте машине постоять включённой хотя бы 25–30 минут.</p><h2>Лайфхак для максимальной экономии</h2><p>Чтобы не тратить драгоценные проценты батареи на её же прогрев в пути, делайте это во время домашней ночной зарядки. Наш <a href="/catalog/">«Антикризисный набор для подключаемых гибридов (PHEV)»</a> позволяет безопасно держать машину подключённой к сети 220 В всю ночь. Вы начнёте движение с тёплой батареей, тёплым салоном и полным запасом хода.</p><p>Почему зимой зарядка вообще медленнее — с цифрами и приёмами прогрева: <a href="/blog/zimnyaya-zaryadka-medlennee.html">разбор зимней зарядки</a>. Порты и сценарии зарядки Li Auto — на странице <a href="/models/li-auto-l6-l7-l8-l9-2022-2025/">Li Auto L6/L7/L8/L9</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
@@ -3970,103 +3973,6 @@ SHOP_PRODUCT = {
   ],
 }
 
-def shop_digital_build(outdir):
-    price = str(SHOP_PRICE) + ' ₽'
-    inc = ''.join('<li>' + html.escape(x) + '</li>' for x in SHOP_PRODUCT['includes'])
-    body = ('<div class="container">'
-      '<div class="hero"><div class="kicker">Цифровые товары</div>'
-      '<h1>' + html.escape(SHOP_PRODUCT['title']) + '</h1>'
-      '<p class="lede">' + html.escape(SHOP_PRODUCT['desc']) + '</p></div>'
-      '<div class="sh-card">'
-      '<div class="sh-left">'
-      '<ul class="sh-list">' + inc + '</ul>'
-      '<div class="sh-note">Формат: PDF, интерактивные ссылки на карту и страницы сайта. После оплаты — мгновенная выдача файла по одноразовой ссылке (для защиты от шеринга).</div>'
-      '</div>'
-      '<div class="sh-right">'
-      '<div class="sh-price">' + html.escape(price) + '</div>'
-      '<div class="sh-paybox" id="sh-paybox">'
-      '<button class="btn lime" id="sh-buy">Купить сейчас</button>'
-      '<div class="sh-status" id="sh-status"></div>'
-      '</div>'
-      '<div class="sh-safelist">Оплата картой через эквайринг Т-Банка. Чек формируется автоматически (54-ФЗ).'
-      ' Вопросы по оплате — <a href="https://t.me/zapashoda_ev">Telegram</a>.</div>'
-      '</div></div>'
-      '<div class="sh-faq"><h2>Как проходит покупка</h2>'
-      '<ol><li>Нажимаете «Купить» — откроется защищённая форма оплаты Т-Банка.</li>'
-      '<li>После успешной оплаты попадёте на страницу выдачи — ссылка на файл появится автоматически (до 2 минут).</li>'
-      '<li>Ссылка на скачивание одноразовая — файл не гуляет по чатам.</li></ol></div>'
-      '<script>var PAYCFG={gasUrl:' + json.dumps(SHOP_GAS_URL) + ',testMode:' + ('true' if SHOP_TEST_MODE else 'false')
-      + ',price:' + str(SHOP_PRICE) + ',live:' + ('true' if SHOP_LIVE else 'false')
-      + ',successUrl:"/shop/digital/success.html",product:"' + html.escape(SHOP_PRODUCT['title'][:60]).replace('"', '&quot;') + '"};</script>'
-      '<script>'
-      "(function(){var b=document.getElementById('sh-buy'),s=document.getElementById('sh-status');if(!b)return;"
-      "function msg(t,ok){s.textContent=t;s.style.color=ok?'#047857':'#b91c1c';}"
-      "if(!PAYCFG.gasUrl||!PAYCFG.live){b.onclick=function(){msg('Платёжный модуль подключается — напишите нам в Telegram: https://t.me/zapashoda_ev',false);};return;}"
-      "b.onclick=function(){b.disabled=true;msg('Открываем оплату…',true);"
-      "fetch(PAYCFG.gasUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},"
-      "body:JSON.stringify({t:'pay_init',amount:PAYCFG.price*100,product:PAYCFG.product})})"
-      ".then(function(r){return r.json()}).then(function(j){"
-      "if(j.ok&&j.PaymentURL){location.href=j.PaymentURL;}else{msg(j.error||'Не удалось открыть оплату. Попробуйте позже или напишите в Telegram.',false);b.disabled=false;}})"
-      ".catch(function(){msg('Сеть недоступна. Напишите в Telegram: https://t.me/zapashoda_ev',false);b.disabled=false;});};})();"
-      '</script>'
-      '</div>')
-    write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
-      'Гид по трассе М-4 Дон для электромобиля 2026/2027 — купить за ' + price + ' | Запас хода',
-      'Цифровой гид по зарядке на М-4 Дон: ЭЗС, ночёвки с розеткой, расчёт бюджета поездки. Мгновенная выдача файла после оплаты.',
-      body, '/shop/digital/', og='/assets/og/default.png',
-      crumbs=[('/', 'Главная'), ('/shop/digital/', 'Цифровые товары')], noindex=(not SHOP_LIVE))
-
-    sbody = ('<div class="container">'
-      '<div class="hero"><div class="kicker">Оплата</div>'
-      '<h1>Статус платежа и выдача файла</h1>'
-      '<p class="lede">Если оплата прошла, здесь появится одноразовая ссылка на скачивание гида. Не закрывайте страницу — она проверяет статус автоматически.</p></div>'
-      '<div class="sh-card"><div class="sh-right" style="max-width:560px">'
-      '<div class="sh-status" id="sh-success" style="font-size:1rem;color:#0f172a">Проверяем платёж…</div>'
-      '<div class="sh-dl" id="sh-dl" style="display:none;margin-top:16px">'
-      '<a class="btn lime" id="sh-dl-link" href="#">Скачать файл</a>'
-      '<div class="sh-note" style="margin-top:8px">Ссылка одноразовая: файл скачается один раз. Если что-то пошло не так — напишите в Telegram.</div>'
-      '</div>'
-      '<div class="sh-note" id="sh-extra" style="margin-top:12px"></div>'
-      '</div></div>'
-      '<script>var PAYCFG={gasUrl:' + json.dumps(SHOP_GAS_URL) + ',live:' + ('true' if SHOP_LIVE else 'false') + '};</script>'
-      '<script>'
-      "(function(){var el=document.getElementById('sh-success'),dl=document.getElementById('sh-dl'),ln=document.getElementById('sh-dl-link'),ex=document.getElementById('sh-extra');"
-      "var q=new URLSearchParams(location.search);var oid=q.get('OrderId');var pid=q.get('PaymentId');"
-      "function done(u,tok){el.textContent='Оплата прошла! Файл готов.';dl.style.display='block';ln.href=u;ex.textContent='Токен выдачи: '+tok+' (одноразовый).';}"
-      "function poll(n){if(!PAYCFG.gasUrl||!PAYCFG.live){el.textContent='Платёжный модуль подключается. Если оплата прошла — напишите в Telegram: https://t.me/zapashoda_ev';return;}"
-      "if(!oid){el.textContent='Заказ не найден: открывайте страницу выдачи после оплаты.';return;}"
-      "fetch(PAYCFG.gasUrl+'?t=pay_status&OrderId='+encodeURIComponent(oid))"
-      ".then(function(r){return r.json()}).then(function(j){"
-      "if(j.status==='paid'&&j.download){done(j.download,j.token||'');return;}"
-      "if(j.status==='fail'){el.textContent='Оплата не прошла или отменена. Можно попробовать снова.';return;}"
-      "if(n>40){el.textContent='Оплата ещё не подтверждена. Если вы оплатили — проверьте через пару минут или напишите в Telegram.';return;}"
-      "el.textContent='Проверяем платёж… ('+n+')';setTimeout(function(){poll(n+1);},3000);})"
-      ".catch(function(){if(n>10){el.textContent='Сеть недоступна. Повторите позже.';return;}setTimeout(function(){poll(n+1);},4000);});}"
-      "poll(1);})();"
-      '</script></div>')
-    write_page(os.path.join(outdir, 'shop', 'digital', 'success.html'),
-      'Выдача файла — «Запас хода»',
-      'Страница выдачи цифрового товара после оплаты.',
-      sbody, '/shop/digital/success.html', noindex=True)
-
-
-# ===== CSS цифрового магазина (ЭТАП 6) =====
-EXTRA_SHOP_CSS = r"""
-.sh-card { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 28px; background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); margin-top: 8px; }
-.sh-list { margin: 0 0 16px; padding-left: 20px; color: #334155; font-size: .95rem; line-height: 1.6; }
-.sh-note { font-size: .82rem; color: #64748b; line-height: 1.45; }
-.sh-right { background: #f8fafc; border: 1px solid rgba(15,23,42,.06); border-radius: 16px; padding: 22px; height: fit-content; }
-.sh-price { font-size: 2rem; font-weight: 800; color: #047857; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
-.sh-paybox { display: flex; flex-direction: column; gap: 10px; }
-.sh-status { font-size: .9rem; color: #334155; min-height: 20px; }
-.sh-safelist { margin-top: 14px; font-size: .78rem; color: #94a3b8; line-height: 1.45; }
-.sh-safelist a, .sh-note a { color: #047857; }
-.sh-faq { margin-top: 26px; color: #334155; line-height: 1.6; }
-.sh-dl { font-size: 1rem; }
-@media (max-width: 900px) {
-  .sh-card { grid-template-columns: minmax(0,1fr); padding: 20px 16px; }
-}
-"""
 def main():
     global CSS
     outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
@@ -4082,7 +3988,7 @@ def main():
     LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#003a40"/><path d="M37 8 L16 38 h14 l-5 18 25-34 H34 l8-14 z" fill="#ffffff"/></svg>'
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
 
-    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS + EXTRA_SHOP_CSS
+    CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS
     with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
@@ -4209,7 +4115,6 @@ def main():
     llms_files(outdir, news)
     about_page(outdir, news)
     misc_pages(outdir)
-    shop_digital_build(outdir)
     matrix_build(outdir)
     # флагманская статья блога «Зима близко» (полный текст, индексируется)
     W_BODY = ('<div class="container"><div class="hero"><div class="kicker">Блог · Флагман</div>'
@@ -4264,6 +4169,12 @@ def main():
         'desc': 'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.',
         'og': '/assets/og/b-li-l7-battery-heat.png',
         'body': LI_BODY,
+      },
+      '/blog/workersbee-vs-auxus.html': {
+        'title': 'Workersbee против Auxus: какой кабель выдержит русскую зиму',
+        'desc': 'Честное сравнение зарядных кабелей Workersbee и Auxus: TPU против TPE на морозе, посеребрённые контакты против датчиков температуры, вердикт для трассы и для дачи.',
+        'og': '/assets/og/b-workersbee-vs-auxus.png',
+        'body': WORKERSBEE_BODY,
       },
     }
     for _u, _t, _d in SEO_STUBS:
@@ -4323,7 +4234,7 @@ def main():
     write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
         'Гайд М-4 «Дон» (PDF) — купить за ' + str(_price) + ' ₽ | Запас хода',
         'Цифровой путеводитель по зарядной инфраструктуре М-4 «Дон»: оплата картой или СБП через Т-Кассу, одноразовая ссылка на скачивание PDF.',
-        _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'Магазин')])
+        _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'Магазин')], noindex=(not SHOP_LIVE))
     _succ_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · оплата</div>'
       '<h1 id="succ-title">Проверяем оплату…</h1>'
       '<div id="succ-box" class="tldr"><p>Минуту…</p></div>'
@@ -4371,6 +4282,7 @@ def main():
     jobs.append(('/assets/og/b-zeekr-001-gbt-diff.png', 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки'))
     jobs.append(('/assets/og/shop-digital.png', 'Гайд М-4 «Дон»: цифровой путеводитель'))
     jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой'))
+    jobs.append(('/assets/og/b-workersbee-vs-auxus.png', 'Workersbee против Auxus: какой кабель выдержит русскую зиму'))
     og_gen(outdir, jobs)
     og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
     # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)

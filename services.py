@@ -407,8 +407,39 @@ def safety_build(outdir, write_page):
 def b2b_build(outdir, write_page):
     """Страница для дилеров и автосалонов: прайс и условия. Форма шлёт тот же канал GAS (t=site_order), поле model маркирует B2B."""
     from catalog import GAS_URL as _GAS
+
+    proj_html = (
+      '<form id="b2b-form2" class="lcard" style="margin-top:18px"><h3>Запросить расчёт проекта</h3>'
+      '<p class="note">Для ТЦ, паркингов, отелей и ресторанов: пришлём расчёт под ваш объект — количество станций, мощности, сценарий и вилку бюджета. Расчёт бесплатный.</p>'
+      '<div class="of-grid"><input required name="company" autocomplete="organization" placeholder="Компания / объект"></div>'
+      '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя и должность"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram"></div>'
+      '<div class="of-grid"><input name="city" placeholder="Город"><select name="object">'
+      '<option value="Объект: ТЦ / БЦ">ТЦ / бизнес-центр</option>'
+      '<option value="Объект: подземный паркинг">Подземный паркинг</option>'
+      '<option value="Объект: отель / ресторан">Отель / ресторан (HoReCa)</option>'
+      '<option value="Объект: флот / служебный транспорт">Флот / служебный транспорт</option>'
+      '<option value="Объект: другое">Другое</option></select>'
+      '<select name="spots"><option value="Мест: до 5">до 5 машино-мест</option>'
+      '<option value="Мест: 5–20">5–20 машино-мест</option>'
+      '<option value="Мест: 20+">20+ машино-мест</option></select></div>'
+      '<div class="of-grid"><select name="power"><option value="Питание: есть силовая розетка">Силовая розетка 16–32 А есть</option>'
+      '<option value="Питание: нужно согласование">Питание нужно согласовывать</option>'
+      '<option value="Питание: не знаю">Не знаю — подскажите</option></select></div>'
+      '<textarea name="comment" rows="2" placeholder="Пожелания: сроки, бюджет, особенности объекта"></textarea>'
+      '<button class="btn lime of-send" type="submit">Запросить расчёт</button>'
+      '<div id="b2b2-status"></div></form>'
+      '<script>document.addEventListener("DOMContentLoaded",function(){var f=document.getElementById("b2b-form2");if(!f)return;'
+      'f.addEventListener("submit",function(e){e.preventDefault();'
+      'var d={t:"b2b_project",model:"B2B — расчёт проекта (ТЦ/паркинг/HoReCa/флот)",items:[],total:0,'
+      'name:f.company.value+" / "+f.name.value,phone:f.phone.value,city:f.city.value,'
+      'comment:f.object.value+"; "+f.spots.value+"; "+f.power.value+". "+(f.comment.value||"")};'
+      'var st=document.getElementById("b2b2-status");st.innerHTML=\'<p class="note">Отправляем…</p>\';'
+      'fetch("' + _GAS + '", {method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})'
+      '.then(function(r){return r.json()}).then(function(){'
+      'st.innerHTML=\'<div class="of-ok">✓ Отправлено! Расчёт придёт в течение рабочего дня по указанным контактам.</div>\';f.reset()})'
+      '.catch(function(){st.innerHTML=\'<p class="note">Не удалось отправить — напишите в Telegram: @zapashoda_ev.</p>\'})})});</script>')
     form_html = (
-      '<form id="b2b-form" class="lcard"><h3>Стать партнёром — заявка</h3>'
+      '<form id="b2b-form" class="lcard"><h3>Получить оптовый прайс</h3>'
       '<p class="note">Пришлём прайс, условия по лидам и пример брендированных материалов в течение рабочего дня. Заявка ни к чему не обязывает — начнём с бесплатного пилота.</p>'
       '<div class="of-grid"><input required name="company" autocomplete="organization" placeholder="Компания"></div>'
       '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя и должность"><input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram"></div>'
@@ -426,7 +457,7 @@ def b2b_build(outdir, write_page):
       '<div id="b2b-status"></div></form>'
       '<script>document.addEventListener("DOMContentLoaded",function(){var f=document.getElementById("b2b-form");if(!f)return;'
       'f.addEventListener("submit",function(e){e.preventDefault();'
-      'var d={t:"site_order",model:"B2B — партнёрство (лиды + опт)",items:[],total:0,'
+      'var d={t:"b2b_price",model:"B2B — оптовый прайс (дилеры/салоны)",items:[],total:0,'
       'name:f.company.value+" / "+f.name.value,phone:f.phone.value,city:f.city.value,'
       'comment:"Профиль: "+f.profile.value+"; "+f.volume.value+". "+(f.comment.value||"")};'
       'var st=document.getElementById("b2b-status");st.innerHTML=\'<p class="note">Отправляем…</p>\';'
@@ -456,7 +487,20 @@ def b2b_build(outdir, write_page):
       '<div class="faq-q"><b>Какие документы?</b><p>Работаем стандартно: счёт, договор — по запросу. НДС-детали уточняются при оформлении.</p></div>'
       '<div class="faq-q"><b>Какой минимальный объём?</b><p>Зависит от позиций. Для пилота по адаптерам и расходным позициям он небольшой — пришлём расчёт вместе с прайсом.</p></div>'
       '<div class="faq-q"><b>Мы продаём только гибриды (PHEV), им это нужно?</b><p>Нужно, но по-другому: гибриду хватает портативки или станции 3,5–7,4 кВт и кабеля, DC-адаптер не обязателен. Разбор сегмента — в нашем <a href="/blog/phev-rossiya-2026.html">гиде по PHEV</a>.</p></div>'
-      + form_html)
+      '<h2>Оптовый каталог: бренды на полку</h2>'
+      '<p class="lede">Поставляем проверенные бренды, которые мы же продаём в розницу на сайте — вы получаете тот же ассортимент, что и наш каталог, дилерскими ценами.</p>'
+      '<div class="kv"><div><div class="k">WORKERSBEE</div><div class="v">«боевые» кабели: TPU-изоляция сохраняет гибкость при −30 °C, посеребрённые контакты, IP67. Для трассы и уличных ЭЗС. Подробности — в <a href="/blog/workersbee-vs-auxus.html">сравнении Workersbee vs Auxus</a>.</div></div>'
+      '<div><div class="k">AUXUS</div><div class="v">«умные» зарядные устройства: эргономичные корпуса, встроенные датчики температуры в вилке отключают зарядку при перегреве розетки. Для гаража и дачи.</div></div></div>'
+      '<p>Позиции под дилерскую полку: <a href="/catalog/kabel-type2-gbt-5m-22kw.html">кабель Type 2–GB/T 5 м (22 кВт)</a>, <a href="/catalog/kabel-type2-gbt-7m-22kw.html">7 м</a>, <a href="/catalog/kabel-type2-gbt-10m-32a.html">10 м, 32 А (3 фазы)</a>, портативки <a href="/catalog/portativnaya-zaryadka-gbt-7kw.html">GB/T 7 кВт</a> и <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">3,5 кВт</a>, адаптеры <a href="/catalog/adapter-type2-gbt-premium.html">Type 2→GB/T</a> и <a href="/catalog/adapter-ccs2-gbt-dc.html">CCS2→GB/T DC</a>. Дилерская цена зависит от объёма — посчитаем в прайсе.</p>'
+      '<h2>Зарядная инфраструктура для бизнеса: ТЦ, паркинги, HoReCa</h2>'
+      '<p class="lede">Китайские EV — уже не редкость в мегаполисах. Клиент с GB/T-разъёмом не поставит машину на вашу парковку, если не может зарядиться. Мы комплектуем объекты «под ключ».</p>'
+      '<ul><li><b>ТЦ и бизнес-центры:</b> станции 2-в-1 (Type 2 + GB/T, 22 кВт) покрывают оба потока: и «китайцев», и европейские машины — <a href="/catalog/stanciya-2v1-type2-gbt.html">44 000 ₽/шт</a>.</li>'
+      '<li><b>Подземные и наземные паркинги:</b> настенные Type 2 — <a href="/catalog/nastennaya-stanciya-type2-7kw.html">7 кВт (24 500 ₽)</a> или <a href="/catalog/nastennaya-stanciya-type2-22kw.html">22 кВт (34 500 ₽)</a>; для китайского парка — <a href="/catalog/nastennaya-stanciya-gbt-7kw.html">GB/T 7 кВт (39 000 ₽)</a>.</li>'
+      '<li><b>HoReCa (гостиницы, рестораны):</b> гостевая зарядка GB/T 3,5–7 кВт или портативные комплекты — клиент заряжается за ужином, вы держите его на площадке дольше.</li></ul>'
+      '<p class="note">Сценарные расчёты окупаемости (полное возвращение стоимости станции за счёт притока клиентов) — <b>оценочные</b>: финальные цифры считаем под ваш объект после заявки. Ставки аренды, поток и тарифы различаются — обещать «окупаемость за 6 месяцев» без расчёта мы не будем.</p>'
+      '<h2>Запросить расчёт проекта</h2>'
+      + form_html
+      + proj_html)
     desc = 'Прайс и условия для дилеров и автосалонов: адаптеры Type 2 → GB/T, DC-адаптеры, кабели, зарядки и станции для EV и PHEV. Комплектация машин, дилерские цены, пилотная партия.'
     ld = '<script type="application/ld+json">' + art_ld('Прайс и условия для дилеров', desc, '/b2b/') + '</script>'
     write_page(os.path.join(outdir,'b2b','index.html'), 'Прайс и условия для дилеров: аксессуары зарядки EV и PHEV | Запас хода', desc, body, '/b2b/', crumbs=[('', 'Дилерам')], extra_ld=ld)
