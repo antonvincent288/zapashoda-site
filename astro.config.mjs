@@ -27,7 +27,6 @@ export default defineConfig({
 			},
 			drafts: true
 		}),
-		sitemap(),
 		tailwind()
 	]
 })
