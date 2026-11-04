@@ -96,7 +96,7 @@ def render(spec, out_dir):
         # 1) арт: мягкий Ken Burns 1.00 -> 1.06 (только картинка)
         art_m4 = os.path.join(tmp, f"a{i}.mp4")
         subprocess.run([os.environ.get("FFMPEG_BIN", "ffmpeg"), "-y", "-loop", "1", "-i", art_png, "-t", str(dur),
-            "-vf", "zoompan=z='min(zoom+0.0005,1.06)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1080:fps=30" % frames,
+            "-vf", "zoompan=z='min(zoom+0.000333,1.04)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=2160x2160:fps=30,scale=1080:1080:flags=lanczos" % frames,
             "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", art_m4],
             check=True, capture_output=True)
         # 2) панель: статичный поток без фильтров
