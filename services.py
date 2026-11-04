@@ -1534,7 +1534,8 @@ def routes_build(outdir, write_page):
 
 def telemetry_build(outdir, write_page):
     os.makedirs(os.path.join(outdir, 'telemetry'), exist_ok=True)
-    payload = {'updated': BUILD_DATE, 'schema': 'v1', 'regions': [], 'note': 'Агрегация анонимной телеметрии B2B-партнёров: деградация SOH по регионам и моделям. Стартовая полка: подключение партнёров открыто.'}
+    from datetime import date as _date
+    payload = {'updated': _date.today().isoformat(), 'schema': 'v1', 'regions': [], 'note': 'Агрегация анонимной телеметрии B2B-партнёров: деградация SOH по регионам и моделям. Стартовая полка: подключение партнёров открыто.'}
     with open(os.path.join(outdir, 'telemetry', 'data.json'), 'w', encoding='utf-8') as f:
         json.dump(payload, f, ensure_ascii=False)
     body = ('<h1>Стресс-тест батарей РФ</h1>'
