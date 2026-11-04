@@ -6,7 +6,7 @@ header{position:sticky;top:0;z-index:1000;background:#1d1d1f;border-bottom:1px s
 .zs-topbar .container{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;padding-bottom:6px}
 .zs-topbar a{color:#c1c7c6;text-decoration:none}
 .zs-topbar a:hover{color:#fff}
-.zs-nav{padding:14px 0 10px}
+.zs-nav{padding:10px 0}
 .zs-nav .container{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .zs-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#f5f5f7}
 .zs-brand span{background:#2563EB;color:#fff;border-radius:8px;font-size:11px;font-weight:700;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase}
@@ -87,6 +87,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .zhero-gold{background:#fff;color:var(--accent);border:2px solid var(--accent);animation:pulse 2.4s ease-in-out infinite}
 .btn-primary{animation:pulse 2.4s ease-in-out infinite}
 .zhero-gold:hover{background:#EFF6FF;color:var(--accent);opacity:1}
+.zhero{background:#fff;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.05)}
+.zhero-photo{position:relative;display:block;border-radius:16px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.14)}
+.zhero-photo img{width:100%;height:400px;object-fit:cover;display:block}
+.zhero-photo .zcap{position:absolute;left:14px;bottom:14px;background:rgba(23,26,28,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#f5f5f7;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;display:block}
+.zhero-photo .zcap span{display:block;font-size:12px;font-weight:500;color:#c1c7c6;margin-top:2px}
+@media(max-width:767px){.zhero-photo img{height:240px}}
 .ugc-grid{columns:3 300px;column-gap:14px}
 .ugc-card{break-inside:avoid;margin:0 0 14px;background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;box-shadow:0 1px 2px rgba(0,30,43,.04)}
 .ugc-card img{width:100%;display:block}
@@ -413,7 +419,7 @@ input,select,textarea{font-size:16px !important}
 body{background:var(--bg-main)}
 header#zs-header{background:rgba(23,26,28,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:1000!important;border-bottom:1px solid #33373a;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 header .zs-topbar{background:var(--text-main)}
-header .zs-nav{background:transparent;border-bottom:1px solid var(--line)}
+header .zs-nav{background:transparent}
 /* перекраска Tailwind/FreshCart-акцентов в Electric Blue */
 .bg-green-600{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
 .hover\:bg-green-700:hover{background:var(--accent-hover)!important;border-color:var(--accent-hover)!important}
