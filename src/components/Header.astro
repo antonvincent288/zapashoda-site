@@ -1,4 +1,3 @@
----
 import HeaderLink from '@/components/HeaderLink'
 import MenuIcon from './icons/MenuIcon.astro'
 import Search from '@/components/Search'
@@ -8,7 +7,7 @@ import { SOCIALNETWORKS } from '@/data/links'
 ---
 
 <header class='relative flex items-center h-12 font-semibold'>
-	<a class='text-lg mr-auto font-bold' href='/'>Запас хода</a>
+	<a class='text-lg mr-auto' href='/'>Главная</a>
 
 	<div
 		id='astro-header-drawer'
@@ -20,10 +19,9 @@ import { SOCIALNETWORKS } from '@/data/links'
 			<div
 				class='flex flex-col gap-4 md:flex-row md:border-r-2 border-black pr-4 dark:border-white'
 			>
-				<HeaderLink href='/models/' class='flex items-center gap-1 text-2xl md:text-base'>Модели</HeaderLink>
-				<HeaderLink href='/blog/' class='flex items-center gap-1 text-2xl md:text-base'>Блог</HeaderLink>
-				<HeaderLink href='/pain/' class='flex items-center gap-1 text-2xl md:text-base'>Проблемы</HeaderLink>
-				<HeaderLink href='/safety/' class='flex items-center gap-1 text-2xl md:text-base'>Безопасность</HeaderLink>
+				<HeaderLink href='/tags' class='flex items-center gap-1 text-2xl md:text-base'>
+					<TagIcon /> Метки
+				</HeaderLink>
 			</div>
 
 			<div class='flex justify-center items-center md:justify-end gap-3 md:p-0'>
@@ -45,7 +43,7 @@ import { SOCIALNETWORKS } from '@/data/links'
 		<ToggleTheme />
 		<button id='astro-header-drawer-button' type='button' class='md:ml-6 md:hidden'>
 			<MenuIcon />
-			<span class='sr-only'>Show Menu</span>
+			<span class='sr-only'>Показать меню</span>
 		</button>
 	</div>
 </header>

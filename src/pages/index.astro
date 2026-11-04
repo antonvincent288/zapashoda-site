@@ -1,88 +1,22 @@
 ---
+import ListCategories from '@/components/ListCategories'
+import ListPosts from '@/components/ListPosts'
+import TitlePage from '@/components/TitlePage'
 import BaseLayout from '@/layouts/BaseLayout'
-import ArticleCard from '@/components/ArticleCard'
-import { ARTICLES, bySection } from '../utils/articles'
-import { MODELS } from '../utils/models'
-
-const blog = bySection('blog').slice(0, 6)
-const pain = bySection('pain').slice(0, 3)
-const featured = ['zeekr-001-razyom-i-problemy', 'tipy-razyomov-zaryadki', 'phev-rossiya-2026']
-  .map((s) => ARTICLES.find((a) => a.slug === s))
-  .filter((a) => a)
-const pop_models = ['zeekr-001-001-fr', 'li-xiang-l7-l8-l9', 'byd-song-plus', 'voyah-free', 'zeekr-7x-x-mix', 'byd-han', 'li-xiang-l6', 'geely-ex5-zaryadka']
-  .map((s) => MODELS.find((m) => m.slug === s))
-  .filter((m) => m)
-const fallback_models = MODELS.slice(0, 8)
-const modelsToShow = pop_models.length >= 6 ? pop_models : fallback_models
 ---
-<BaseLayout title='Запас хода — зарядка электромобилей в России' description='Справочник по зарядке электромобилей в России: разъёмы GB/T, Type 2, CCS2, 145 моделей, карта 2073 зарядных станций, реальные проблемы и решения, каталог адаптеров с оплатой при получении'>
-  <section class='bg-gradient-to-b from-slate-50 to-white dark:from-[#0a0910] dark:to-[#0a0910] py-16 md:py-24'>
-    <div class='mx-auto max-w-6xl px-4'>
-      <div class='max-w-3xl'>
-        <p class='mb-4 inline-block rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-white dark:bg-white dark:text-black'>Справочник владельца EV</p>
-        <h1 class='mb-5 text-4xl font-bold leading-tight md:text-6xl'>Зарядка электромобиля в России — без сюрпризов</h1>
-        <p class='mb-8 text-lg text-slate-600 dark:text-slate-300'>Разъёмы GB/T, Type 2 и CCS2, 145 моделей с их типичными проблемами, карта 2073 зарядных станций и каталог адаптеров — всё проверено на практике, а не переписано с маркетплейсов.</p>
-        <div class='flex flex-wrap gap-3'>
-          <a href='/catalog/' class='rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700'>Подобрать комплект</a>
-          <a href='/models/' class='rounded-xl border border-slate-300 px-6 py-3 font-semibold transition hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800'>Справочник моделей</a>
-        </div>
-      </div>
-      <div class='mt-12 grid grid-cols-2 gap-4 md:grid-cols-4'>
-        {[['145', 'моделей в базе'], ['2073', 'станций на карте'], ['59', 'практических статей'], ['51', 'VIN-инструкций']].map(([n, t]) => (
-          <div class='rounded-2xl border border-slate-200 bg-white p-4 text-center dark:border-slate-800 dark:bg-[#0f172a]'>
-            <div class='text-2xl font-bold md:text-3xl'>{n}</div>
-            <div class='text-xs text-slate-500 dark:text-slate-400'>{t}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-  <section class='mx-auto max-w-6xl px-4 py-12'>
-    <h2 class='mb-6 text-2xl font-bold'>Читают чаще всего</h2>
-    <div class='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {featured.map((a) => <ArticleCard article={a} />)}
-    </div>
-  </section>
-  <section class='mx-auto max-w-6xl px-4 py-12'>
-    <div class='mb-6 flex items-center justify-between'>
-      <h2 class='text-2xl font-bold'>Популярные модели</h2>
-      <a href='/models/' class='text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400'>Все 145 →</a>
-    </div>
-    <div class='grid grid-cols-2 gap-4 md:grid-cols-4'>
-      {modelsToShow.map((m) => (
-        <a class='group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-[#0a0910]' href={`/models/${m.slug}/`}>
-          {m.og && <img src={m.og} alt={m.title} loading='lazy' class='h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105' />}
-          <div class='p-4'>
-            <div class='font-semibold leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400'>{m.name}</div>
-            <div class='mt-1 text-xs text-slate-500 dark:text-slate-400'>{m.years} · {m.port}</div>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-  <section class='mx-auto max-w-6xl px-4 py-12'>
-    <div class='mb-6 flex items-center justify-between'>
-      <h2 class='text-2xl font-bold'>Свежее из блога</h2>
-      <a href='/blog/' class='text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400'>Весь блог →</a>
-    </div>
-    <div class='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {blog.map((a) => <ArticleCard article={a} />)}
-    </div>
-  </section>
-  <section class='mx-auto max-w-6xl px-4 py-12'>
-    <div class='grid grid-cols-1 gap-4 md:grid-cols-4'>
-      {[['Карта зарядок', '/charging/', '2073 станции по России'], ['Калькулятор зарядки', '/calculator/', 'время, деньги, потери'], ['Проблемы и решения', '/pain/', '19 разборов'], ['VIN по брендам', '/vin/', 'как расшифровать и проверить']].map(([t, u, d]) => (
-        <a class='rounded-2xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-[#0a0910]' href={u}>
-          <div class='font-semibold'>{t}</div>
-          <div class='mt-1 text-sm text-slate-500 dark:text-slate-400'>{d}</div>
-        </a>
-      ))}
-    </div>
-  </section>
-  <section class='mx-auto max-w-6xl px-4 pb-16'>
-    <h2 class='mb-6 text-2xl font-bold'>Реальные проблемы</h2>
-    <div class='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {pain.map((a) => <ArticleCard article={a} />)}
-    </div>
-  </section>
+
+<BaseLayout title='Запас хода — зарядка электромобилей в России'>
+	<TitlePage title='Запас хода' />
+	<ListCategories />
+
+	<div>
+		<h2 class='text-lg font-medium tracking-wide text-end'>Свежие статьи</h2>
+		<ListPosts FirstBig={true} max={6} />
+	</div>
+
+	<div class='mt-10 text-center'>
+		<a href='/blog/' class='font-semibold text-indigo-600 dark:text-indigo-400 hover:underline'
+			>Все 59 статей →</a
+		>
+	</div>
 </BaseLayout>
