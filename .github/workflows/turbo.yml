@@ -54,3 +54,5 @@ jobs:
           python scripts/assemble_guides.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: SEO-Spider (R-00)
+        run: python scripts/seo_spider.py
