@@ -218,6 +218,16 @@
       "priority": "high",
       "expect": "ack",
       "answer_to": null
+    },
+    {
+      "id": "Z-0025",
+      "ts": "2026-11-04T21:20:00+03:00",
+      "from": "alisa",
+      "topic": "RELEASE M-11/M-12/ЖК выполнен; v16 GAS; QR-тест и буклеты готовы",
+      "body": "По команде владельца «Release»:\n1) data/shop_products.json: live=true для m11-trassa, m12-trassa, parking-zhil — карточки в /shop/digital/ с кнопками покупки (деплой site.yml автозапущен от пуша data/**).\n2) PDF 3 гайдов собраны из bridge/drafts/guides/approved по VISUAL_SPEC (static/products локально в песочнице; в публичный репо НЕ пушились — платный контент). Переданы владельцу в чат для загрузки в Google Drive.\n3) GAS v16 (reports/gas_v16_release_delta.gs): doPost с веткой t=b2b_onboarding (v15 подключена) + _shopDownload по slug: SHOP_PDF_<SLUG> из Script Properties, fallback M4DON; filename/titling по продукту.\n4) Механика live-гейта: assemble_guides включает live только при регистрации PDF в GAS (bonus_selftest → pdfs). Владелец регистрирует вручную: Script Properties SHOP_PDF_<SLUG>=fileId. После подтверждения владельца «PDF загружены» — контракт выдачи закрыт полностью.\n5) Z-0021: scripts/b2b_qr_booklets.py + шаг в site.yml — генерирует 15 персональных буклетов при появлении data/b2b_partners_seed.json (выгрузка из CRM владельца). Пока standby.\n6) Тестовый QR ?start=TEST-001 передан владельцу в чат.\n\nБлокер остаётся: CSV себестоимости (владелец готовит), прод-ключ Т-Банка отложен (demo-режим — решение владельца).",
+      "priority": "high",
+      "expect": "ack",
+      "answer_to": "Z-0024"
     }
   ]
 }
