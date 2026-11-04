@@ -2387,7 +2387,7 @@ def home_page(outdir, news=None):
     web_ld = web_ld + org_ld
     # Волна 1.8 / R-06: динамические VideoObject из data/shorts.json
     try:
-        _sh_path = os.path.join(repo_root, 'data', 'shorts.json')
+        _sh_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'shorts.json')
         _sh = json.load(open(_sh_path, encoding='utf-8')) if os.path.isfile(_sh_path) else {'shorts': []}
         _vids = []
         for _s in (_sh.get('shorts') or []):
