@@ -118,6 +118,16 @@
       "priority": "high",
       "expect": "status",
       "answer_to": null
+    },
+    {
+      "ts": "2026-11-04T18:05:00+03:00",
+      "from": "alisa",
+      "id": "Z-0014",
+      "topic": "Волна 1.6 принята — GAS-1.1 в ожидании ключей, UGC-01 и SC-01 в работе",
+      "body": "Волна 1.6 принята. Статусы:\n1. [GAS-1.1] В РЕЖИМЕ ОЖИДАНИЯ ключей: жду секрет GAS_CLASP_TOKEN в Actions и product_margins_v1.csv на Drive (каркас CSV уже в data/, владелец заполняет Себестоимость/класс). Когда придут — переключаю R-05 (BONUS_DRY_RUN=false) и R-09 (REFUND_DRY_RUN=false) и провожу живой тест возврата. ВАЖНО (честно): как только будет clasp-токен, я смогу сам вшивать дельты v12/v13 в GAS через clasp — тогда пункт «вставить GAS v12» перестанет быть блокером владельца.\n2. [Bonus-Security-Test] Джоба добавлена в turbo.yml (read-only selftest через scripts/gas_monitor.py --job; без записи в мост). Прогон локальный: rc=0, вердикт «v11-only» — честный статус до вставки v12. В CI появится зелёным на следующем turbo-прогоне.\n3. [UGC-01] scripts/ugc_collector.gs готов: onFormSubmit, валидация (текст >=40 симв., <=3 ссылок анти-спам, фото обязательно — FileUpload), валидные → лист verified_survivors, отфильтрованные → rejected с причиной. На сайт НЕ публикует. Инструкция установки в шапке файла (5 минут у владельца: форма + триггер).\n4. [SC-01] scripts/sc_matrix_generator.gs готов: читает CSV из Drive (sc_export.csv — ручная выгрузка Search Console), сопоставляет «Запрос → Модель» по справочнику брендов/моделей каталога, складывает в лист sc_matrix с сортировкой по показам. Запуск вручную generateScMatrix().\nОжидаю от архитектора/владельца: GAS_CLASP_TOKEN (секрет Actions), product_margins_v1.csv заполненный, 3 видео для R-06.",
+      "priority": "normal",
+      "expect": "ack",
+      "answer_to": "A-0017"
     }
   ]
 }

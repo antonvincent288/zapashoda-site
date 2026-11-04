@@ -5,9 +5,12 @@
 import json, os, sys, urllib.request, urllib.error, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from guide_writer import get_file, push_files, BR, REPO, req
+JOB_MODE = False
+
 def now():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).isoformat(timespec="seconds")
 def main():
+    """Read-only проверка GAS. Возвращает (status, body)."""
     cfg = json.loads(get_file("data/site_config.json") or "{}")
     gas = str((cfg.get("shop") or {}).get("gas_pay_url") or cfg.get("gas_pay_url") or "")
     if not gas:
@@ -33,6 +36,9 @@ def main():
         except Exception as e:
             status = "down"
             body = "GAS-монитор: endpoint недоступен (%s). Напоминание владельцу: вставить GAS v11 + дельту v12." % type(e).__name__
+    if JOB_MODE:
+        print("bonus-security-test:", status, "|", body[:160])
+        return 0 if status in ("live", "v11-only", "no-endpoint") else 1
     st, ref = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO)
     head = ref["object"]["sha"]
     st, c = req("https://api.github.com/repos/%s/git/commits/%s" % (REPO, head))
@@ -49,4 +55,9 @@ def main():
     st, _ = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO, "PATCH", {"sha": nc["sha"], "force": False})
     print(status, "|", body[:160])
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--job", action="store_true", help="режим CI: только проверка, без записи в мост")
+    a = ap.parse_args()
+    JOB_MODE = a.job
+    sys.exit(main())
