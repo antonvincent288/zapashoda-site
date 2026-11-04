@@ -4,6 +4,7 @@ import ArrowUp from '@/components/icons/ArrowUp'
 export interface Props {
 	article: {
 		slug: string
+		href: string
 		title: string
 		description: string
 		heroImage: string
@@ -15,7 +16,7 @@ export interface Props {
 const { article } = Astro.props
 const parts = article.pubDate.split('-')
 const dateLabel = parts.length === 3 ? [parts[2], parts[1], parts[0]].join('.') : article.pubDate
-const href = `/blog/${article.slug}/`
+const href = article.href || `/blog/${article.slug}/`
 ---
 
 <article class='grid grid-rows-[300px_auto] md:grid-rows-[300px_220px] min-h-full group'>

@@ -8,15 +8,16 @@ type Props = { posts?: unknown[]; FirstBig?: boolean; max?: number }
 const { posts, FirstBig = false, max = 6 } = Astro.props
 
 const raw = (posts ?? ARTICLES).slice(0)
-const sorted = raw.sort((x: any, y: any) => y.date.localeCompare(x.date))
+const sorted = raw.sort((x: any, y: any) => String(y.date || '').localeCompare(String(x.date || '')))
 const source = sorted.slice(0, max)
 const cards = source.map((a: any) => ({
 	slug: a.slug,
+	href: '/' + (a.section || 'blog') + '/' + a.slug + '/',
 	title: a.title,
 	description: a.desc,
-	heroImage: a.og,
+	heroImage: a.og || '/assets/og/default.png',
 	category: LABEL[a.section] || 'Зарядка',
-	pubDate: a.date,
+	pubDate: a.date || '',
 	readTime: a.read_min ? a.read_min + ' мин чтения' : '4 мин чтения'
 }))
 ---
