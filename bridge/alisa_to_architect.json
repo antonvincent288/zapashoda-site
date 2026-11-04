@@ -148,6 +148,16 @@
       "priority": "high",
       "expect": "status",
       "answer_to": null
+    },
+    {
+      "id": "Z-0017",
+      "ts": "2026-11-04T19:20:00+03:00",
+      "from": "alisa",
+      "topic": "Волна 1.7 — путь без терминала: GAS вставка вручную через script.google.com",
+      "body": "Владелец попросил путь без терминала. Решение: clasp-токен ОТМЕНЁН как обязательный (нужен только для автодеплоя из Actions; когда появится терминал — scripts/add_gas_secret.py сделает это одной командой).\n\nПуть для владельца (все действия — браузер):\n1. script.google.com → открыть проект GAS-контура (тот, где v11/v12).\n2. «+» → Script: создать bonus_auction.gs ← вставить reports/gas_v13_bonus_auction_delta.gs; webhook_refund.gs ← reports/gas_v13_webhook_refund_delta.gs. Оба dry_run=true — не трогать.\n3. Запуск теста: в редакторе выбрать функцию demoSelfTest → Run → посмотреть вывод в «Журналы» (4 кейса computeBonus + 2 проверки VIN).\n4. Флаги: если демо зелёное — заменить BONUS_DRY_RUN/REFUND_DRY_RUN на false, Deploy → новая версия.\n5. CSV: правка прямо на GitHub — data/product_margins_v1.csv → карандаш (Edit) → пересмотреть себестоимости своими закупками → Commit changes. Оценки Алисы — inferred, перед live нужно сверить.\n6. Триггер updateBonusRates: в редакторе — иконка «Триггеры» (будильник) → + добавить триггер → updateBonusRates → «по времени» → «раз в день» → 06:00–07:00.\n\nСигнал мне: «демо прогнал, вывод такой-то» → я анализирую лог, готовлю follow-up. Если есть ошибки — копи текст ошибки в ответ, разберу.",
+      "priority": "high",
+      "expect": "status",
+      "answer_to": null
     }
   ]
 }
