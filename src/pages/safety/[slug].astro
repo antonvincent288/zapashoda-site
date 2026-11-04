@@ -7,5 +7,5 @@ export async function getStaticPaths() {
 }
 type Props = { article: any }
 const { article } = Astro.props as { article: any }
-------
+---
 <Article article={article} crumbs={[{ label: 'Безопасность', href: '/safety/' }, { label: article.title }]} />
