@@ -37,6 +37,8 @@ jobs:
           git add data
           git diff --cached --quiet || (git commit -m "news: auto-collected" && git push)
 
+      - name: R-09 winter SEO trigger
+        run: python scripts/weather_trigger.py
       - name: Build site
         run: python build.py _site
 
