@@ -45,7 +45,7 @@ def wrap(draw, text, fnt, maxw):
 def make_slide(art_path, title, sub, footer):
     img = Image.new("RGB", (W, H), ANTHRACITE)
     ART_H = 1080
-    if art_path and os.path.exists(art_path):
+    if art_path and not os.path.isdir(art_path) and os.path.exists(art_path):
         art = Image.open(art_path).convert("RGB")
         art = cover(art, W, ART_H)
         art = ImageEnhance.Brightness(art).enhance(0.92)
@@ -79,14 +79,14 @@ def render(spec, out_dir):
     parts = []
     for i, s in enumerate(spec["slides"]):
         png = os.path.join(tmp, f"s{i}.png")
-        make_slide(os.path.join(ROOT, s.get("art") or ""), s["title"], s["sub"], spec["footer"]).save(png)
+        make_slide(os.path.join(ROOT, s["art"]) if s.get("art") else "", s["title"], s["sub"], spec["footer"]).save(png)
         m4 = os.path.join(tmp, f"s{i}.mp4")
         dur = s.get("dur", 4.0)
         cmd = ["ffmpeg", "-y", "-loop", "1", "-i", png,
                "-t", str(dur), "-vf",
                "zoompan=z='min(zoom+0.0015,1.18)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30" % int(dur * 30),
                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", m4]
-        subprocess.run(cmd, check=True, capture_output=True)
+        subprocess.run(["ffmpeg" if shutil.which("ffmpeg") else os.environ.get("FFMPEG_BIN", "ffmpeg")] + cmd[1:], check=True, capture_output=True)
         parts.append(m4)
     # склейка с кроссфейдами
     n = len(parts)
@@ -111,7 +111,7 @@ def render(spec, out_dir):
     else:
         cmd = ["ffmpeg", "-y"] + inputs + ["-filter_complex", fc, "-map", "[v%d]" % (n - 2),
                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", out]
-        subprocess.run(cmd, check=True, capture_output=True)
+        subprocess.run(["ffmpeg" if shutil.which("ffmpeg") else os.environ.get("FFMPEG_BIN", "ffmpeg")] + cmd[1:], check=True, capture_output=True)
     shutil.rmtree(tmp, ignore_errors=True)
     print("rendered:", out, os.path.getsize(out), "bytes")
 
