@@ -237,32 +237,32 @@ TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#2563EB;--lime-ink:#fff;--max:1240px}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
 /* ==== header (FreshCart) ==== */
-header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.04)}
+header{position:sticky;top:0;z-index:50;background:#1d1d1f;border-bottom:1px solid #33373a;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .zs-topbar{background:#21313c;color:#c1c7c6;font-size:13px}
 .zs-topbar .container{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;padding-bottom:6px}
 .zs-topbar a{color:#c1c7c6;text-decoration:none}
 .zs-topbar a:hover{color:#fff}
 .zs-nav{padding:14px 0 10px}
 .zs-nav .container{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-.zs-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#001e2b}
+.zs-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#f5f5f7}
 .zs-brand span{background:#2563EB;color:#fff;border-radius:8px;font-size:11px;font-weight:700;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase}
 .zs-search{flex:1 1 320px;max-width:560px;position:relative}
 .zs-search input{width:100%;border:1px solid var(--line);border-radius:.5rem;padding:11px 44px 11px 14px;font-size:15px;background:#fff}
 .zs-search input:focus{outline:none;border-color:#2563EB;box-shadow:0 0 0 .25rem rgba(10,173,10,.25)}
 .zs-search button{position:absolute;right:0;top:0;padding:12px;border:0;background:none;cursor:pointer;color:#5c6c75}
 .zs-act{display:flex;align-items:center;gap:14px;margin-left:auto}
-.zs-act a{color:#21313c;text-decoration:none;font-size:14px;font-weight:600}
-.zs-act a:hover{color:#2563EB}
-.zs-burger{display:none;border:1px solid var(--line);background:#fff;border-radius:.5rem;padding:9px 11px;cursor:pointer}
-.zs-burger span{display:block;width:20px;height:2px;background:#21313c;margin:4px 0;border-radius:2px}
-nav.zs-links{border-top:1px solid var(--line);background:#fff}
+.zs-act a{color:#f5f5f7;text-decoration:none;font-size:14px;font-weight:600}
+.zs-act a:hover{color:#D4AF37}
+.zs-burger{display:none;border:1px solid #33373a;background:transparent;border-radius:.5rem;padding:9px 11px;cursor:pointer}
+.zs-burger span{display:block;width:20px;height:2px;background:#f5f5f7;margin:4px 0;border-radius:2px}
+nav.zs-links{border-top:1px solid #33373a;background:#1d1d1f}
 nav.zs-links .container{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
-nav.zs-links a{color:#21313c;text-decoration:none;font-size:13.5px;font-weight:500;padding:9px 13px;border-radius:.5rem;white-space:nowrap}
-nav.zs-links a:hover{background:#f0f3f2;color:#2563EB}
-nav.zs-links a.on{color:#2563EB;font-weight:700;background:#e8ffe6}
-.zs-more{position:relative}.zs-more>button{border:0;background:none;font:inherit;font-size:13.5px;font-weight:500;color:#21313c;padding:9px 13px;border-radius:.5rem;cursor:pointer;white-space:nowrap}
-.zs-more:hover>button,.zs-more.on>button{background:#f0f3f2;color:#2563EB}
-.zs-drop{position:absolute;top:100%;left:0;background:transparent;border:none;box-shadow:none;border-radius:.6rem;padding-top:8px;box-shadow:0 10px 30px rgba(0,30,43,.12);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
+nav.zs-links a{color:#d0d4d6;text-decoration:none;font-size:13.5px;font-weight:500;padding:9px 13px;border-radius:.5rem;white-space:nowrap}
+nav.zs-links a:hover{background:rgba(255,255,255,.07);color:#D4AF37}
+nav.zs-links a.on{color:#D4AF37;font-weight:700;background:rgba(212,175,55,.15)}
+.zs-more{position:relative}.zs-more>button{border:0;background:none;font:inherit;font-size:13.5px;font-weight:500;color:#d0d4d6;padding:9px 13px;border-radius:.5rem;cursor:pointer;white-space:nowrap}
+.zs-more:hover>button,.zs-more.on>button{background:rgba(255,255,255,.07);color:#D4AF37}
+.zs-drop{position:absolute;top:100%;left:0;background:#1d1d1f;border:1px solid #33373a;box-shadow:none;border-radius:.6rem;padding-top:8px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:6px;display:none;flex-direction:column;min-width:190px;z-index:80}
 .zs-more:hover .zs-drop,.zs-more:focus-within .zs-drop{display:flex}
 .zs-more.is-active .zs-drop{display:flex}
 [data-open-menu],[data-close-menu],.zs-burger,.zs-more>button,.zs-off a,.off-x,.zs-drop a,.cbtn{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0);touch-action:manipulation}
@@ -299,9 +299,9 @@ h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.018em;font-weight:700;margin:
 h3{font-size:17.5px;font-weight:600;margin:34px 0 10px;letter-spacing:-.01em}
 h4{font-size:16px;font-weight:600;margin:16px 0 8px}
 p{margin:10px 0;max-width:740px;line-height:1.75}
-.art-body p{max-width:none}
+.art-body p{max-width:740px}
 /* ==== D-01 Air & Hierarchy (v4.0): списки в лонгридах ==== */
-.art-body ul,.art-body ol{padding-left:1.4em;margin:16px 0}
+.art-body ul,.art-body ol{padding-left:22px;margin:16px 0}
 .art-body li{margin:.55em 0;line-height:1.72}
 .art-body li::marker{color:var(--muted)}
 .lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:780px}
@@ -320,9 +320,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:.5rem;font-weight:600;font-size:15px;text-decoration:none;transition:.2s;cursor:pointer;border:1px solid transparent}
 .btn:hover{opacity:.9}
 .btn.lime{background:var(--lime);color:#fff;box-shadow:0 8px 20px rgba(10,173,10,.22)}
-.zhero-gold{background:#fff;color:#8a6d1c;border:2px solid #D4AF37;animation:goldpulse 2.4s ease-in-out infinite}
+.zhero-gold{background:#fff;color:#8a6d1c;border:2px solid #D4AF37;animation:pulse 2.4s ease-in-out infinite}
+.btn-primary{border:2px solid #D4AF37;animation:pulse 2.4s ease-in-out infinite}
 .zhero-gold:hover{background:#fffdf4;color:#8a6d1c;opacity:1}
-@keyframes goldpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.45)}50%{box-shadow:0 0 0 9px rgba(212,175,55,0)}}
+.ugc-grid{columns:3 300px;column-gap:14px}
+.ugc-card{break-inside:avoid;margin:0 0 14px;background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;box-shadow:0 1px 2px rgba(0,30,43,.04)}
+.ugc-card img{width:100%;display:block}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.5)}70%{box-shadow:0 0 0 10px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 .btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
 .btn.ghost:hover{border-color:#2563EB;color:#2563EB;opacity:1}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0}
@@ -2191,6 +2195,40 @@ def _tpl_blog_card(href, kind, title, teaser, img):
       + '<p>' + html.escape(str(teaser)[:150]) + '</p>'
       + '<span class="go">Читать статью →</span>'
       + '</div></a></div>')
+
+def survivor_hall_html():
+    """UGC «Зал славы выживших»: только РЕАЛЬНЫЕ верифицированные истории.
+    Источник: data/survivors.json (пополняется вручную из листа verified_survivors
+    после проверки владельцем). Пусто — честная заглушка, без выдуманных отзывов."""
+    import json as _json
+    data = []
+    try:
+        sp = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'survivors.json')
+        if os.path.exists(sp):
+            data = _json.load(open(sp, encoding='utf-8'))
+    except Exception:
+        data = []
+    if not data:
+        return ('<section class="lg:my-14 my-8"><div class="container">'
+          '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
+          '<div class="rounded-lg break-words border border-dashed" style="border-color:#D4AF37;background:#fffdf4;padding:26px 24px;margin-top:10px">'
+          '<p style="margin:0 0 8px;font-weight:700;color:#8a6d1c">Раздел открыт — и он честный.</p>'
+          '<p style="margin:0 0 14px;color:var(--muted);font-size:14.5px;max-width:740px">Мы не публикуем выдуманные отзывы. Здесь появятся верифицированные истории с фото: где встали, что спасло, сколько стоило. Хотите быть первым — расскажите свою на форуме.</p>'
+          '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700" href="/forum/">Рассказать историю →</a>'
+          '</div></div></section>')
+    cards = ''
+    for it in data[:24]:
+        img = ('<img src="' + html.escape(str(it.get('photo', ''))) + '" alt="' + html.escape(str(it.get('title', 'История'))) + '" loading="lazy" style="width:100%;display:block">') if it.get('photo') else ''
+        tag = ('<span class="tag">' + html.escape(str(it.get('model', ''))) + '</span>') if it.get('model') else ''
+        place = ('<span class="tag">' + html.escape(str(it.get('place', ''))) + '</span>') if it.get('place') else ''
+        cards += ('<div class="ugc-card">' + img +
+          '<div class="p" style="padding:14px 16px"><b style="font-size:15px">' + html.escape(str(it.get('title', ''))) + '</b>'
+          '<p style="margin:8px 0 10px;font-size:14px;line-height:1.7;color:var(--muted)">' + html.escape(str(it.get('text', ''))) + '</p>'
+          '<div style="font-size:12px;color:var(--muted)">' + tag + place + '</div></div></div>')
+    return ('<section class="lg:my-14 my-8"><div class="container">'
+      '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
+      '<div class="ugc-grid">' + cards + '</div></div></section>')
+
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
     blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
@@ -2282,13 +2320,13 @@ def home_page(outdir, news=None):
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'Как без боли заряжать электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
       '<div class="flex gap-3 flex-wrap">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pulse-cta" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 btn-primary" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
       '<a class="btn zhero-gold" href="/calculator/">💰 Сколько сэкономлю на зарядке?</a>'
       '</div></div>'
       '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
       '</div></div></div></section>'
-      + calc_widget_html() + CALC_SCRIPT +
+      + calc_widget_html() + CALC_SCRIPT + survivor_hall_html() +
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
