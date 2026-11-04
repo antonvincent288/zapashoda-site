@@ -1,10 +1,14 @@
 ---
 import { siteConfig } from '@/site-config'
-
 const today = new Date()
 ---
-
-<footer class='flex justify-center items-center w-full px-16 h-28 border-t-2'>
-	&copy; {today.getFullYear()}
-	{siteConfig.author}. All rights reserved.
+<footer class='border-t-2 px-6 py-8 md:px-16'>
+  <div class='mx-auto flex max-w-6xl flex-col items-center gap-3 text-center text-sm'>
+    <div class='flex items-center gap-4'>
+      <a href='https://t.me/zapashoda_ev' class='font-semibold hover:text-blue-600 dark:hover:text-blue-400'>Telegram-канал</a>
+      <a href='/blog/' class='hover:text-blue-600 dark:hover:text-blue-400'>Блог</a>
+      <a href='/pain/' class='hover:text-blue-600 dark:hover:text-blue-400'>Проблемы</a>
+    </div>
+    <div class='opacity-70'>© {today.getFullYear()} {siteConfig.author}. Неофициальный проект, не связан с автопроизводителями.</div>
+  </div>
 </footer>

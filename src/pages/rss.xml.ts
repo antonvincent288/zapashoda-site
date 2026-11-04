@@ -1,16 +1,16 @@
 import rss from '@astrojs/rss'
-import { getCollection } from 'astro:content'
+import { ARTICLES } from '@/utils/articles'
 import { siteConfig } from '@/site-config'
 
-export async function GET(context: any) {
-	const posts = await getCollection('blog')
-	return rss({
-		title: siteConfig.title,
-		description: siteConfig.description,
-		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `post/${post.slug}/`
-		}))
-	})
-}
+export const GET = async () =>
+  rss({
+    title: siteConfig.title,
+    description: siteConfig.description,
+    site: siteConfig.site,
+    items: ARTICLES.slice(0, 50).map((a) => ({
+      title: a.title,
+      description: a.desc,
+      pubDate: a.date ? new Date(a.date) : new Date(),
+      link: `/${a.section}/${a.slug}/`
+    }))
+  })

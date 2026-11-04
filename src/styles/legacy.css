@@ -1,0 +1,82 @@
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+.table {
+  display: table;
+}
+.tooltip .tooltip-arrow {
+	display: block;
+	width: 0.8rem;
+	height: 0.4rem;
+}
+.tooltip .tooltip-arrow::before {
+	position: absolute;
+	content: '';
+	border-color: transparent;
+	border-style: solid;
+}
+.bs-tooltip-top .tooltip-arrow,
+.bs-tooltip-auto[data-popper-placement^='top'] .tooltip-arrow {
+	bottom: calc(-1 * 0.48rem);
+}
+.bs-tooltip-top .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^='top'] .tooltip-arrow::before {
+	top: -1px;
+	border-width: 0.4rem;
+	border-top-color: rgb(0, 19, 28);
+	left: 0;
+}
+.bs-tooltip-end .tooltip-arrow,
+.bs-tooltip-auto[data-popper-placement^='right'] .tooltip-arrow {
+	left: calc(-1 * 0.4rem);
+	width: 0.4rem;
+	height: 0.8rem;
+}
+.bs-tooltip-end .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^='right'] .tooltip-arrow::before {
+	right: -1px;
+	border-width: 0.4rem;
+	border-right-color: rgb(0, 19, 28);
+}
+.bs-tooltip-start .tooltip-arrow,
+.bs-tooltip-auto[data-popper-placement^='left'] .tooltip-arrow {
+	right: calc(-1 * 0.4rem);
+	width: 0.4rem;
+	height: 0.8rem;
+}
+.bs-tooltip-start .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^='left'] .tooltip-arrow::before {
+	left: -1px;
+	border-width: 0.4rem;
+	border-left-color: rgb(0, 19, 28);
+}
+.bs-tooltip-bottom .tooltip-arrow,
+.bs-tooltip-auto[data-popper-placement^='bottom'] .tooltip-arrow {
+	top: calc(-1 * 0.4rem);
+}
+.bs-tooltip-bottom .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^='bottom'] .tooltip-arrow::before {
+	bottom: -1px;
+	border-width: 0 calc(0.8rem * 0.5) 0.4rem;
+	border-bottom-color: rgb(0, 19, 28);
+	right: 0;
+	left: 0;
+}
+/* art без TOC — на всю ширину (fix 02.11) */
+.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
+.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
+/* статьи: широкая центрированная колонка вместо «прижато влево» (fix 02.11) */
+.art-body{max-width:980px;margin:0 auto;padding:0 8px}
+.art-body p{max-width:none}
+.art-body .lcard{margin-left:0;margin-right:0}
+.art-body h1,.art-body h2{max-width:none}
+.art-nogrid .art-body{max-width:1040px;margin:0 auto;padding:0 8px}
+.art-body{max-width:1010px}

@@ -1,0 +1,12 @@
+---
+import ArticleCard from '@/components/ArticleCard'
+import TitlePage from '@/components/TitlePage'
+import { bySection } from '@/utils/articles'
+const posts = bySection('safety')
+---
+<TitlePage title='Безопасность электромобиля' description='Нормы, зарядка и парковка, возгорание — без паники и с фактами' />
+<main class='mx-auto max-w-6xl px-4 py-8'>
+  <div class='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+    {posts.map((a) => <ArticleCard article={a} />)}
+  </div>
+</main>
