@@ -1,11 +1,11 @@
 ---
-import Article from '@/layouts/Article'
-import { bySection, getArticle } from '../../utils/articles'
-const all = bySection('safety')
-export function getStaticPaths() {
+import Article from '../layouts/Article'
+export async function getStaticPaths() {
+  const { bySection } = await import('../../utils/articles')
+  const all = bySection('safety')
   return all.map((a) => ({ params: { slug: a.slug }, props: { article: a } }))
 }
-type Props = { article: ReturnType<typeof getArticle> }
+type Props = { article: any }
 const { article } = Astro.props as { article: any }
----
+------
 <Article article={article} crumbs={[{ label: 'Безопасность', href: '/safety/' }, { label: article.title }]} />
