@@ -958,6 +958,10 @@ def calculator_build(outdir, write_page):
         document.getElementById("c-share").onclick=function(){window.open("https://t.me/share/url?url="+encodeURIComponent("https://zapashoda-ev.ru/calculator/")+"&text="+encodeURIComponent(sh));};
       }
       document.addEventListener("DOMContentLoaded",function(){
+        var q=new URLSearchParams(location.search),qm=parseFloat(q.get("km")),qk=parseFloat(q.get("kwh")),qn=q.get("m");
+        if(qm){document.getElementById("c-km").value=Math.max(100,Math.round(qm/12));}
+        if(qk){var ce=document.getElementById("c-cons");ce.value=Math.min(25,Math.max(10,qk));document.getElementById("c-cons-v").textContent=ce.value;}
+        if(qn){var ms=document.getElementById("c-model"),ml=qn.toLowerCase();for(var pi=0;pi<ms.options.length;pi++){if(ms.options[pi].text.toLowerCase().indexOf(ml)!==-1){ms.selectedIndex=pi;document.getElementById("c-cap").value=ms.value;break;}}}
         ["c-cons","c-km","c-cap","c-scene","c-custom","c-fuel","c-fuelp"].forEach(function(id){
           document.getElementById(id).addEventListener("input",calcR);
           document.getElementById(id).addEventListener("change",calcR);

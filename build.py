@@ -192,6 +192,7 @@ def calc_widget_html():
       '<div class="zc-hyb" id="zc-hyb">Гибрид: расчёт — для поездок на электротяге; часть пробега на бензине уменьшит фактическую экономию.</div>'
       '</div>'
       '<div class="zc-out">'
+      '<div class="zc-counter"><div class="loss-counter" id="loss-counter">0 ₽</div><div class="zc-counter-cap">Экономия за год при ночной зарядке — цифра живая, двигайте пробег</div></div>'
       '<table class="zc-table"><thead><tr><th>Сценарий</th><th>за 1 год</th><th>за 3 года</th><th>за 5 лет</th></tr></thead><tbody>'
       '<tr><td>Дома ночью (' + tn + ' ₽/кВт·ч)</td><td id="zc-n1">—</td><td id="zc-n3">—</td><td id="zc-n5">—</td></tr>'
       '<tr><td>Дома днём (' + td + ' ₽/кВт·ч)</td><td id="zc-d1">—</td><td id="zc-d3">—</td><td id="zc-d5">—</td></tr>'
@@ -209,6 +210,7 @@ CALC_JS = (
   ',TN=' + str(CALC_T_NIGHT) + ',TD=' + str(CALC_T_DAY) + ',TE=' + str(CALC_T_EZS) + ',ST=' + str(CALC_STATION_PRICE) + ';'
   'function fmt(n){return Math.round(n).toLocaleString("ru-RU");}'
   'function money(el,n){el.textContent="\\u2248 "+fmt(n)+" \\u20BD";}'
+  'function tween(el,to){var from=parseFloat(el.getAttribute("data-v")||"0")||0;var t0=null;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/450);var v=from+(to-from)*(1-Math.pow(1-p,3));el.textContent=to>0?("≈ "+Math.round(v).toLocaleString("ru-RU")+" ₽"):"—";if(p<1)requestAnimationFrame(step);else el.setAttribute("data-v",String(Math.round(to)));}requestAnimationFrame(step);}'
   'function upd(){var r=document.getElementById("zc-range");if(!r)return;'
   'var km=+r.value,sel=document.getElementById("zc-model"),opt=sel.options[sel.selectedIndex];'
   'var kwh=parseFloat(opt.getAttribute("data-kwh"))||18;'
@@ -218,13 +220,7 @@ CALC_JS = (
   'var b=km/100;var ev=[b*kwh*TN,b*kwh*TD,b*kwh*TE];var fu=b*L*P;'
   'var ks=["n","d","e"];for(var ti=0;ti<3;ti++){for(var y=1;y<=5;y+=2){money(document.getElementById("zc-"+ks[ti]+y),ev[ti]*y);}}'
   'for(var y2=1;y2<=5;y2+=2){money(document.getElementById("zc-f"+y2),fu*y2);}'
-  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");'
-  'if(save>0){sb.textContent="\\u2248 "+fmt(save)+" \\u20BD";'
-  'var months=Math.ceil(ST/(save/12));'
-  'cta.innerHTML="\\u0412\\u0430\\u0448\\u0430 \\u044D\\u043A\\u043E\\u043D\\u043E\\u043C\\u0438\\u044F \\u043E\\u043A\\u0443\\u043F\\u0430\\u0435\\u0442 \\u0434\\u043E\\u043C\\u0430\\u0448\\u043D\\u044E\\u044E \\u0437\\u0430\\u0440\\u044F\\u0434\\u043A\\u0443 \\u0437\\u0430 \\u2248"+months+" \\u043C\\u0435\\u0441. "+'
-  '"<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}'
-  'else{sb.textContent="\\u2014";'
-  'cta.innerHTML="<a class=\\"btn lime\\" href=\\"/quiz/\\">\u26A1 \u041F\\u043E\\u0434\\u043E\\u0431\\u0440\\u0430\\u0442\\u044C \\u0441\\u0442\\u0430\\u043D\\u0446\\u0438\\u044E</a>";}}'
+  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");var lc=document.getElementById("loss-counter");if(lc){if(save>0){tween(lc,save);}else{tween(lc,0);}}if(save>0){sb.textContent="≈ "+fmt(save)+" ₽";var months=Math.ceil(ST/(save/12));var p="/calculator/?km="+km+"&kwh="+kwh+(opt.text?"&m="+encodeURIComponent(opt.text):"");cta.innerHTML="Экономия окупает домашнюю зарядку за ≈"+months+" мес. <a class=\'btn zgold-cta\' href=\'"+p+"\'>СПАСТИ "+fmt(save)+" ₽</a>";}else{sb.textContent="—";if(lc){lc.textContent="—";}cta.innerHTML="<a class=\'btn lime\' href=\'/quiz/\'>⚡ Подобрать станцию</a>";}}'
   'document.addEventListener("DOMContentLoaded",function(){'
   'var r=document.getElementById("zc-range"),s=document.getElementById("zc-model");'
   'if(r)r.addEventListener("input",upd);if(s)s.addEventListener("change",upd);upd();});})();')
@@ -237,7 +233,7 @@ TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#2563EB;--lime-ink:#fff;--max:1240px}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
 /* ==== header (FreshCart) ==== */
-header{position:sticky;top:0;z-index:50;background:#1d1d1f;border-bottom:1px solid #33373a;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+header{position:sticky;top:0;z-index:1000;background:#1d1d1f;border-bottom:1px solid #33373a;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 .zs-topbar{background:#21313c;color:#c1c7c6;font-size:13px}
 .zs-topbar .container{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;padding-bottom:6px}
 .zs-topbar a{color:#c1c7c6;text-decoration:none}
@@ -326,6 +322,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .ugc-grid{columns:3 300px;column-gap:14px}
 .ugc-card{break-inside:avoid;margin:0 0 14px;background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;box-shadow:0 1px 2px rgba(0,30,43,.04)}
 .ugc-card img{width:100%;display:block}
+.zc-counter{margin:0 0 16px}
+.loss-counter{font-size:clamp(24px,5vw,48px);font-weight:900;color:#D4AF37;line-height:1.15;font-variant-numeric:tabular-nums}
+.zc-counter-cap{font-size:13px;color:var(--muted);margin-top:2px;max-width:740px}
+.btn.zgold-cta{background:#D4AF37;color:#1d1d1f;border-color:#D4AF37;animation:pulse 2.4s ease-in-out infinite;font-weight:800}
+.btn.zgold-cta:hover{background:#e6c969;color:#1d1d1f;opacity:1}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.5)}70%{box-shadow:0 0 0 10px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 .btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
 .btn.ghost:hover{border-color:#2563EB;color:#2563EB;opacity:1}
