@@ -131,7 +131,7 @@ def load_site_config():
       "hero_sub": "",             # свой подзаголовок главной
       "tg_lead_bot_token": "",    # токен Telegram-бота для заявок (публичный в HTML!)
       "tg_lead_chat_id": "",      # chat_id канала/чата для заявок (например -100...)
-      "configurator": {},         # блок конфигуратора мини-аппа: сценарии, кэшбэк, промокоды (правится без кода)
+      "configurator": {},         # блок конфигуратора мини-аппа: сценарии, промокоды, рефералка (правится без кода)
     }
     try:
         p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
@@ -3316,8 +3316,9 @@ def app_page(outdir):
     Экран 1: выбор авто (сетка брендов и моделей, быстрый поиск; пин-бренды из site_config).
     Экран 2: сценарий зарядки (Частный дом / Квартира (паркинг) / Только путешествия).
     Экран 3: чек-лист — готовый комплект с ценами (названия/цены из site_config + каталог).
-    Рефералка: manager_tg_id из Telegram initData или ?ref=; промокод -{DISC}%,
-    кэшбэк менеджеру {CBMIN}-{CBMAX}%; заявка улетает в GAS (t=od_order).
+    Атрибуция: manager_tg_id из Telegram initData или ?ref=; промокод -{DISC}%
+    на РРЦ клиента; заявка улетает в GAS (t=od_order). Условия отгрузки салону
+    — отдельная заявка t=b2b_price (запрос поставки). Оптовых цен в интерфейсе нет.
     """
     import catalog as _cat
     cfg = SITE_CFG.get('configurator') if isinstance(SITE_CFG.get('configurator'), dict) else {}
@@ -3403,14 +3404,15 @@ function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.s
 if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});
 function pg(x){var a=(x.ac||'')+' '+(x.dc||'');if(a.indexOf('Type 1')>=0)return 't1';if(a.indexOf('NACS')>=0)return 'us';if(a.indexOf('GB/T')>=0)return 'gb';return 'eu';}
 function mgrChip(){if(MGR.id)return '<div class="a-mgr"><span>👤 '+esc(MGR.name)+' <i>ID '+MGR.id+'</i></span><button onclick="mLink()">🔗 Моя ссылка</button></div>';
- return '<div class="a-mgr warn"><span>⚠️ Менеджер не определён — заявка уйдёт без атрибуции кэшбэка.</span><button onclick="mHint()">Как открыть?</button></div>';}
+ return '<div class="a-mgr warn"><span>⚠️ Менеджер не определён — заявка уйдёт без привязки к салону-партнёру.</span><button onclick="mHint()">Как открыть?</button></div>';}
 function mLink(){if(!MGR.id){toast('Сначала определите менеджера — откройте по личной ссылке.');return;}copyTxt(refLink);}
 function mHint(){alert('Личная ссылка менеджера: '+BASE+'/app/?ref=ВАШ_TELEGRAM_ID\n\nОткрывайте апп по ней (или через меню бота с startapp), и все заказы будут зафиксированы на вас.');}
 function s1(){hist=[];cart={};curModel='';curBrand='';curIdx=0;curSkus=[];scKey='';PROMO='';man={};updBack();
  el('app').innerHTML='<div class="a-head">⚡ Конфигуратор · Запас хода<span class="a-ver">od v6</span></div>'
- +'<p class="a-sub">Подбор комплекта под модель клиента за 30 секунд — цены, промокод и ваш бонус.</p>'
+ +'<p class="a-sub">Подбор комплекта зарядки под модель за 30 секунд — сценарии, цены РРЦ, готовый список. Работает и для клиента в салоне, и для себя.</p>'
  +mgrChip()
- +'<div class="a-search"><input id="a-q" placeholder="Бренд или модель…" oninput="aFilter()"></div><div class="a-list" id="a-brands"></div>';
+ +'<div class="a-search"><input id="a-q" placeholder="Бренд или модель…" oninput="aFilter()"></div><div class="a-list" id="a-brands"></div>'
+      +'<button class="a-btn a-btn2" onclick="s5()">🏢 Я работаю в автосалоне — условия отгрузки</button>';
  renderBrands('');}
 function tile(b,pin){return '<button class="a-tile'+(pin?' a-p':'')+'" onclick="aPick('+qA(b)+')" tabindex="0"><span class="a-mono">'+esc(b.slice(0,2).toUpperCase())+'</span><span class="a-tb">'+esc(b)+'</span><span class="a-n">'+D.brands[b].length+' мод.</span></button>';}
 function renderBrands(q){q=(q||'').trim().toLowerCase();var box=el('a-brands');if(!box)return;var os='';
@@ -3484,7 +3486,7 @@ function s4(){var t=LAST_TOTAL||0;var n=Object.keys(cart).length;
  +'<input id="a-name" placeholder="Имя клиента"><input id="a-phone" placeholder="Телефон клиента (+7 …)" oninput="aFmtP()"><input id="a-city" placeholder="Город / салон">'
  +'<textarea id="a-note" placeholder="Комментарий (необязательно)"></textarea>'
  +'<button class="a-btn" id="a-send" onclick="aSend()">Сгенерировать промокод и отправить</button>'
- +'<p class="a-note">Скидка клиенту — '+D.ref.disc+'% по промокоду. Ваш бонус — '+D.ref.cbMin+'–'+D.ref.cbMax+'% от чека после подтверждения продажи.</p>';
+ +'<p class="a-note">Скидка клиенту — '+D.ref.disc+'% по промокоду при заказе у дилера. Условия отгрузки для вашего салона — по заявке.</p>';
  hist.push(function(){s3(1);});updBack();}
 function aFmtNum(d){var s='';if(d.length){s='+7 '+d.slice(0,3);if(d.length>3)s+=' '+d.slice(3,6);if(d.length>6)s+='-'+d.slice(6,8);if(d.length>8)s+='-'+d.slice(8,10);}return s;}
 function aFmtP(){var v=el('a-phone').value.replace(/\D/g,'');if(v&&v[0]==='8')v='7'+v.slice(1);if(v.length===10)v='7'+v;if(v.length>11)v=v.slice(0,11);var d=(v&&v[0]==='7')?v.slice(1):v;el('a-phone').value=aFmtNum(d);}
@@ -3506,16 +3508,36 @@ function aSend(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0
 function done(ok){var total=LAST_TOTAL||0;var n=Object.keys(cart).length;
  el('app').innerHTML='<div class="a-head">✅ Промокод готов</div>'
  +'<div class="a-promo"><span class="a-promo-l">Промокод клиента</span><span class="a-promo-c">'+esc(PROMO)+'</span><span class="a-promo-d">Скидка '+D.ref.disc+'% при заказе у дилера</span></div>'
- +'<div class="a-cards"><div class="a-card"><b>💰 Ваш бонус</b><span>'+D.ref.cbMin+'–'+D.ref.cbMax+'% от чека '+fmt(total)+' ₽</span><span class="a-mut">≈ '+fmt(Math.round(total*D.ref.cbMin/100))+'–'+fmt(Math.round(total*D.ref.cbMax/100))+' ₽. Начисляется после подтверждения продажи дилером.</span></div>'
+ +'<div class="a-cards"><div class="a-card"><b>💡 Что дальше</b><span>Покажите промокод клиенту — скидка '+D.ref.disc+'% при заказе у дилера.</span><span class="a-mut">Нужны условия отгрузки для салона? Запросите их отдельной кнопкой — обсудим лично.</span></div>'
  +'<div class="a-card"><b>🚗 Заказ</b><span>'+esc(curModel)+' · '+esc(scTitle())+'</span><span class="a-mut">Позиций: '+n+' · итог '+fmt(total)+' ₽'+(MGR.id?' · менеджер ID '+MGR.id:'')+'</span></div></div>'
  +(ok?'':'<p class="a-warn">Не удалось подтвердить отправку на сервер. Продублируйте заявку в @zapashoda_ev, чтобы бонус зафиксировался.</p>')
  +'<button class="a-btn" onclick="copyTxt('+qA(PROMO)+')">Скопировать промокод</button>'
  +'<a class="a-cta" onclick="sharePromo()">📤 Отправить код клиенту в Telegram</a>'
  +'<a class="a-cta" onclick="mLink()">🔗 Моя ссылка конфигуратора</a>'
+      +'<a class="a-cta" onclick="s5()">🏢 Запросить условия отгрузки для салона</a>'
  +'<button class="a-btn a-btn2" onclick="s1()">Новый подбор</button>';
  hist=[];updBack();}
 function sharePromo(){var txt='Ваш промокод на комплект зарядки для '+curModel+': '+PROMO+' — скидка '+D.ref.disc+'% у дилера. Подбор: '+BASE+'/app/';
  tgo('https://t.me/share/url?url='+encodeURIComponent(BASE+'/app/')+'&text='+encodeURIComponent(txt));}
+function s5(){hist.push(function(){s1();});updBack();
+ el('app').innerHTML='<button class="a-back" onclick="s1()">← Назад</button>'
+ +'<div class="a-head">🏢 Работа в автосалоне</div>'
+ +'<p class="a-sub">Подключим ваш салон: условия отгрузки, инструменты продажи для менеджеров, квартальный бонус салону за объём. Оптовых цен на сайте нет — обсудим лично.</p>'
+ +'<input id="a-b2-name" placeholder="Имя">'
+ +'<input id="a-b2-comp" placeholder="Автосалон / компания">'
+ +'<input id="a-b2-city" placeholder="Город">'
+ +'<input id="a-b2-phone" placeholder="Телефон или Telegram (@ник или +7 …)" oninput="aFmtP2()">'
+ +'<textarea id="a-b2-note" placeholder="Что интересно: адаптеры, портативные, станции…"></textarea>'
+ +'<button class="a-btn" id="a-b2-send" onclick="s5Send()">Запросить условия отгрузки</button>'
+ +'<p class="a-note">Отвечаем в течение рабочего дня. Заявка фиксируется в CRM с привязкой к салону.</p>';
+ hist.push(function(){s1();});updBack();}
+function aFmtP2(){var e2=el('a-b2-phone');var v=e2.value;if(v.indexOf('@')===0)return;var d=v.replace(/\\D/g,'');if(d&&d[0]==='8')d='7'+d.slice(1);if(d.length===10)d='7'+d;e2.value=(d.length===11)?aFmtNum(d.slice(1)):v;}
+function s5Send(){var n=el('a-b2-name').value.trim(),co=el('a-b2-comp').value.trim(),c=el('a-b2-city').value.trim(),ph=el('a-b2-phone').value.trim(),cm=el('a-b2-note').value.slice(0,400);
+ if(n.length<2||co.length<2||ph.length<5){alert('Укажите имя, салон и контакт.');return;}
+ var btn=el('a-b2-send');btn.disabled=true;btn.textContent='Отправляем…';
+ var pay={t:'b2b_price',model:'B2B — запрос отгрузки из Mini App',items:[],total:0,name:co+' / '+n,phone:ph,city:c,comment:'Интерес: '+(cm||'—')+'. Источник: Mini App, менеджер ID '+(MGR.id||'—')+'.'};
+ fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pay)}).then(function(){s5Done(true);}).catch(function(){s5Done(false);});}
+function s5Done(ok){el('app').innerHTML='<div class="a-head">✅ Заявка отправлена</div><p class="a-sub">Запрос условий отгрузки принят. Свяжемся в ближайшее рабочее время — обычно в тот же день.</p><button class="a-btn" onclick="s1()">К подбору зарядки</button>'+(ok?'':'<p class="a-warn">Не удалось подтвердить отправку — продублируйте в @zapashoda_ev.</p>');hist=[];updBack();}
 s1();"""
     js = js_head + js_body
     css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
@@ -3564,7 +3586,7 @@ s1();"""
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
     write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — конфигуратор зарядки',
-               'Конфигуратор зарядки для менеджеров автосалонов: 145 моделей, сценарии дом/квартира/путешествия, готовые комплекты с ценами, промокод на скидку и кэшбэк менеджеру.',
+               'Конфигуратор зарядки «Запас хода»: 145 моделей, сценарии дом/квартира/путешествия, готовые комплекты с ценами РРЦ. Автосалонам — подбор для клиента и заявка на поставку.',
                body, '/app/', extra_ld=tg_head)
     print('mini-app: /app/ готов (конфигуратор od v6)')
 
