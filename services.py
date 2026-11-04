@@ -1553,6 +1553,9 @@ def seo_spider_build(outdir, write_page):
 
 # ===== R-06: Shorts-хаб — VideoObject JSON-LD + video-sitemap.xml =====
 def shorts_build(outdir, write_page):
+    import html as _html
+    from datetime import date as _date
+    _stamp = _date.today().isoformat()
     src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'shorts.json')
     items = []
     if os.path.isfile(src):
@@ -1565,10 +1568,10 @@ def shorts_build(outdir, write_page):
     ld_items = []
     for it in items:
         url = 'https://zapashoda-ev.ru' + it.get('url', '')
-        cards += ('<div class="lcard" style="margin:12px 0"><h3 style="margin:0 0 4px">' + html.escape(str(it.get('title') or '')) + '</h3>'
+        cards += ('<div class="lcard" style="margin:12px 0"><h3 style="margin:0 0 4px">' + _html.escape(str(it.get('title') or '')) + '</h3>'
                   + '<video controls preload="none" poster="/assets/og/default.png" style="width:100%;max-width:420px;border-radius:12px;background:#1d1d1f">'
                   + '<source src="' + it.get('url', '') + '" type="video/mp4"></video>'
-                  + '<p class="note">' + html.escape(str(it.get('desc') or '')) + '</p></div>')
+                  + '<p class="note">' + _html.escape(str(it.get('desc') or '')) + '</p></div>')
         ld_items.append({
             "@context": "https://schema.org", "@type": "VideoObject",
             "name": it.get('title') or 'Шорт «Запас хода»',
@@ -1593,7 +1596,7 @@ def shorts_build(outdir, write_page):
     vs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">']
     for it in items:
         page = 'https://zapashoda-ev.ru/shorts/'
-        t = html.escape(str(it.get('title') or 'Шорт «Запас хода»'))
+        t = _html.escape(str(it.get('title') or 'Шорт «Запас хода»'))
         u = 'https://zapashoda-ev.ru' + it.get('url', '')
         vs.append('<url><loc>' + page + '</loc><video:video><video:title>' + t + '</video:title><video:thumbnail_loc>https://zapashoda-ev.ru/assets/og/default.png</video:thumbnail_loc><video:content_loc>' + u + '</video:content_loc><video:publication_date>' + (it.get('added') or '') + '</video:publication_date><video:family_friendly>yes</video:family_friendly><video:live>no</video:live></video:video></url>')
     vs.append('</urlset>')
