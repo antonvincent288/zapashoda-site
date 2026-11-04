@@ -51,3 +51,30 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   sessionStorage.setItem('zsvl','1');
  }catch(e){}
 })();
+
+/* ---- R-08: Нейро-ассистент «Бортовой ИИ» (проактивный совет, MVP) ---- */
+(function(){
+ try{
+  if(sessionStorage.getItem('zsai'))return;
+  var h=new Date().getHours();
+  var winter=(new Date().getMonth()>=9||new Date().getMonth()<=2);
+  var path=location.pathname;
+  var tips=[];
+  if(winter){tips.push(['При минусах полная сессия быстрой зарядки идёт в 1,5–2 раза дольше — планируйте запасные станции.','/blog/zimnyaya-zaryadka-medlennee.html']);}
+  if(path.indexOf('/calculator')!==-1){tips.push(['Считаете бюджет? Проверьте ещё «цену простоя» — сколько стоит застрять без заряда.','#dt-calc']);}
+  if(path.indexOf('/pain')!==-1||path.indexOf('/blog')!==-1){tips.push(['Хотите разбор под вашу модель? Карточки моделей: разъёмы, адаптеры, совместимость.','/catalog/']);}
+  if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
+  var t=tips[0];
+  var toast=document.createElement('div');toast.id='zs-ai-toast';
+  toast.style.cssText='position:fixed;left:14px;bottom:14px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
+  toast.innerHTML='<div style="font-size:11px;letter-spacing:.08em;color:#8e8e93">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
+   +'<div style="margin:6px 0">'+t[0]+'</div>'
+   +'<a href="'+t[1]+'" style="display:inline-block;background:#D4AF37;color:#1d1d1f;font-weight:700;padding:6px 12px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a> '
+   +'<button id="zs-ai-x" style="margin-left:8px;background:none;border:none;color:#8e8e93;cursor:pointer">Скрыть</button>';
+  document.body.appendChild(toast);
+  if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
+  document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
+  document.getElementById('zs-ai-x').addEventListener('click',function(){toast.remove();sessionStorage.setItem('zsai','1');});
+  setTimeout(function(){var el=document.getElementById('zs-ai-toast');if(el&&!el.dataset.closed)el.style.opacity='.0',el.style.transition='opacity .6s';},14000);
+ }catch(e){}
+})();
