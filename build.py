@@ -4445,12 +4445,16 @@ def main():
     services.b2b_build(outdir, write_page, desc=(SITE_CFG.get('b2b_desc') or ''))
     services.calculator_build(outdir, write_page)
     services.routes_build(outdir, write_page)
+    services.shorts_build(outdir, write_page)
     services.telemetry_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
         os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
         shutil.copy(bpdf, os.path.join(outdir,'b2b','paket-dileram.pdf'))
+    shorts_src = os.path.join(repo_root,'assets','shorts')
+    if os.path.isdir(shorts_src):
+        shutil.copytree(shorts_src, os.path.join(outdir,'assets','shorts'), dirs_exist_ok=True)
     if os.path.isdir(os.path.join(repo_root,'static','products')):
         shutil.copytree(os.path.join(repo_root,'static','products'), os.path.join(outdir,'products'), dirs_exist_ok=True)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
