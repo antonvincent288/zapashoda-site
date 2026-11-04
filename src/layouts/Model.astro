@@ -1,0 +1,68 @@
+---
+import BaseLayout from '@/layouts/BaseLayout'
+import Breadcrumb from '@/components/Breadcrumb'
+import TableOfContents from '@/components/TableOfContents'
+import '@/styles/legacy.css'
+import type { Model } from '@/utils/models'
+
+type Props = { model: Model }
+const { model } = Astro.props
+const tocHeadings = model.headings.map((h) => ({ depth: 2, slug: h.id, text: h.text }))
+---
+<BaseLayout title={model.title} description={model.desc} image={model.og || undefined}>
+  <main class='mx-auto max-w-6xl px-4 py-6'>
+    <Breadcrumb items={[{ label: 'Модели', href: '/models/' }, { label: model.title }]} />
+    <article class='min-w-full'>
+      <header class='mb-4 flex flex-col items-center gap-3 text-center'>
+        <div class='flex flex-wrap items-center justify-center gap-2 text-sm opacity-70'>
+          {model.brand && <span class='rounded-full bg-slate-200 px-3 py-0.5 font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200'>{model.brand}</span>}
+          {model.type && <span>· {model.type}</span>}
+          {model.port && <span>· разъём {model.port}</span>}
+          {model.years && <span>· {model.years}</span>}
+        </div>
+        <h1 class='max-w-4xl text-center text-3xl font-semibold md:text-5xl'>{model.title}</h1>
+        {model.desc && <p class='max-w-3xl text-center text-base opacity-80'>{model.desc}</p>}
+      </header>
+      <hr class='my-4' />
+      {tocHeadings.length > 0 && (
+        <div class='grid grid-cols-1 gap-8 md:grid-cols-[18%_auto]'>
+          <aside class='hidden md:flex md:flex-col'>
+            <div class='sticky top-24 self-start'>
+              <TableOfContents headings={tocHeadings} />
+            </div>
+          </aside>
+          <div class='article-body prose prose-lg dark:prose-invert max-w-full w-full min-w-0'>
+            <Fragment set:html={model.body_html} />
+          </div>
+        </div>
+      )}
+      {tocHeadings.length === 0 && (
+        <div class='article-body prose prose-lg dark:prose-invert max-w-full'>
+          <Fragment set:html={model.body_html} />
+        </div>
+      )}
+    </article>
+  </main>
+</BaseLayout>
+
+<script>
+  const fnObserver = () => {
+    function handleIntersection(entries: IntersectionObserverEntry[]) {
+      entries.forEach((entry) => {
+        const index = document.querySelector(`aside a[href="#${entry.target.id}"]`)
+        if (entry.isIntersecting) {
+          index?.classList.remove('bg-slate-200', 'dark:bg-slate-800')
+          index?.classList.add('bg-indigo-600', 'dark:bg-indigo-700', 'text-white', 'font-bold', 'transition-colors', 'duration-200')
+        } else {
+          index?.classList.add('bg-slate-200', 'dark:bg-slate-800')
+          index?.classList.remove('bg-indigo-600', 'dark:bg-indigo-700', 'text-white', 'font-bold', 'transition-colors', 'duration-200')
+        }
+      })
+    }
+    const headings = document.querySelectorAll('.article-body h2, .article-body h3')
+    const observer = new IntersectionObserver(handleIntersection, { rootMargin: '15% 0px 0% 0px', threshold: 1 })
+    headings.forEach((heading) => observer.observe(heading))
+  }
+  fnObserver()
+  document.addEventListener('astro:after-swap', fnObserver)
+</script>

@@ -1,0 +1,10 @@
+---
+import Model from '@/layouts/Model'
+export async function getStaticPaths() {
+  const { MODELS } = await import('../utils/models')
+  return MODELS.map((m) => ({ params: { slug: m.slug }, props: { model: m } }))
+}
+type Props = { model: any }
+const { model } = Astro.props as { model: any }
+---
+<Model model={model} />
