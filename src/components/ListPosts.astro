@@ -1,32 +1,28 @@
+---
 import PostCard from '@/components/PostCard'
-import { cn } from '@/utils'
 import { ARTICLES } from '@/utils/articles'
 
-const SECTION_LABEL = { blog: 'Зарядка', pain: 'Проблемы', safety: 'Безопасность' }
-export function toCard(a) {
-	return {
-		slug: a.slug,
-		title: a.title,
-		description: a.desc,
-		heroImage: a.og,
-		category: SECTION_LABEL[a.section] || a.category,
-		pubDate: a.date,
-		readTime: a.read_min ? `${a.read_min} мин чтения` : '4 мин чтения'
-	}
-}
+const LABEL: Record<string, string> = { blog: 'Зарядка', pain: 'Проблемы', safety: 'Безопасность' }
 
-type Props = { posts?: unknown[]; FirstBig?: boolean; max?: number; exclude?: string[] }
-const { FirstBig = false, max = 6, exclude = [] } = Astro.props
-const source = (posts ?? ARTICLES.filter((a) => !exclude.includes(a.slug)))
-	.sort((x, y) => (x.date < y.date ? 1 : -1))
-	.slice(0, max)
+type Props = { posts?: unknown[]; FirstBig?: boolean; max?: number }
+const { FirstBig = false, max = 6 } = Astro.props
+
+const raw = (posts ?? ARTICLES).slice(0)
+const sorted = raw.sort((x: any, y: any) => y.date.localeCompare(x.date))
+const source = sorted.slice(0, max)
+const cards = source.map((a: any) => ({
+	slug: a.slug,
+	title: a.title,
+	description: a.desc,
+	heroImage: a.og,
+	category: LABEL[a.section] || 'Зарядка',
+	pubDate: a.date,
+	readTime: a.read_min ? a.read_min + ' мин чтения' : '4 мин чтения'
+}))
 ---
 
 <section
-	class={cn(
-		`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-3`,
-		FirstBig && `md:[&>*:first-child]:col-span-2`
-	)}
+	class:list={['grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-3', FirstBig && 'md:[&>*:first-child]:col-span-2']}
 >
-	{source.map((a) => <PostCard article={toCard(a)} />)}
+	{cards.map((c: any) => <PostCard article={c} />)}
 </section>

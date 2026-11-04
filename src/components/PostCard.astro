@@ -13,17 +13,13 @@ export interface Props {
 	}
 }
 const { article } = Astro.props
-const isRuDate = /^\d{4}-\d{2}-\d{2}$/.test(article.pubDate)
-const dateLabel = isRuDate
-	? article.pubDate.split('-').reverse().join('.')
-	: article.pubDate
-const href = ['/blog', 'pain', 'safety'].includes(article.category) || true
-	? `/blog/${article.slug}/`
-	: `/blog/${article.slug}/`
+const parts = article.pubDate.split('-')
+const dateLabel = parts.length === 3 ? [parts[2], parts[1], parts[0]].join('.') : article.pubDate
+const href = `/blog/${article.slug}/`
 ---
 
 <article class='grid grid-rows-[300px_auto] md:grid-rows-[300px_220px] min-h-full group'>
-	<a class='relative overflow-hidden' href={`/blog/${article.slug}/`}>
+	<a class='relative overflow-hidden' href={href}>
 		<img
 			src={article.heroImage}
 			width={600}
@@ -49,7 +45,7 @@ const href = ['/blog', 'pain', 'safety'].includes(article.category) || true
 	<div class='flex justify-between flex-col gap-4 md:gap-0 py-6 pl-1'>
 		<div class='flex flex-col gap-3'>
 			<div class='flex flex-col gap-2'>
-				<a class='text-2xl font-semibold -tracking-wider' href={`/blog/${article.slug}/`}>
+				<a class='text-2xl font-semibold -tracking-wider' href={href}>
 					{article.title}
 				</a>
 			</div>
@@ -63,7 +59,7 @@ const href = ['/blog', 'pain', 'safety'].includes(article.category) || true
 
 		<footer class='flex justify-between items-center'>
 			<a
-				href={`/blog/${article.slug}/`}
+				href={href}
 				class='flex justify-center items-center dark:text-white rounded-full hover:translate-x-1 transition-transform duration-150 ease-in-out font-semibold gap-1 group'
 				aria-label={`go to ${article.title}`}
 			>
