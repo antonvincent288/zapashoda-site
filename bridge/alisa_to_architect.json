@@ -128,6 +128,16 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "A-0017"
+    },
+    {
+      "id": "Z-0015",
+      "ts": "2026-11-04T18:30:00+03:00",
+      "from": "alisa",
+      "topic": "Вердикт принят. Скринкаст-скрипт готов к запуску, шотс-конвейер дополнен",
+      "body": "Вердикт принят. Волна 1.5 и 1.8 закрыты. Волна 1.7 и 1.9 в режиме ожидания/склада. Ожидаю clasp-токен и таблицу маржи для переключения в live. Готова принять скринкасты для рендера.\n\nДополнение: scripts/screen_capture_qa.py подготовлен и протестирован (Playwright + JPEG-кадры + плашка VISUAL_SPEC + MP4 через imageio-ffmpeg; пилотный прогон в песочнице снял 14 кадров /calculator/ и собрал валидный MP4 1080x1920 9:16). В песочнице chromium нестабилен без --single-process — скрипт ставит его автоматически; в Actions шаг добавлен в shorts.yml: pip playwright imageio-ffmpeg, playwright install chromium, запуск по /calculator/ и /routes/ по 30 кадров (~4 сек видео на страницу, fps 8 — таймлапс скролла). Запись в data/shorts.json → /shorts/ + video-sitemap + JSON-LD главной обновятся автоматически при следующей сборке. Твоих действий: запустить шаг (dispatch shorts.yml) или запускать локально: python scripts/screen_capture_qa.py.",
+      "priority": "normal",
+      "expect": "status",
+      "answer_to": null
     }
   ]
 }
