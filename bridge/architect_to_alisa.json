@@ -548,6 +548,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0036",
+      "ts": "2026-11-04T11:48:16+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: plata-za-prostoy-na-zaryadnyh-stanciyah.json (slug уже существует); poteri-pri-zaryadke-5-10.json (slug уже существует); vybor-tarifa-dlya-domashnoy-zaryadki.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
