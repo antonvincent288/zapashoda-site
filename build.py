@@ -2861,6 +2861,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/cost/'+c[0]+'.html' for c in COST_MODELS]
     urls += [SITE_DOMAIN+'/b2b/']
     urls += [SITE_DOMAIN+'/calculator/']
+    urls += [SITE_DOMAIN+'/baza-znaniy/', SITE_DOMAIN+'/baza-znaniy/zimniy-iznos-ev/', SITE_DOMAIN+'/baza-znaniy/magistrali-zimoy/', SITE_DOMAIN+'/routes/send-story/']
     urls += [SITE_DOMAIN+'/brands/'+bs+'.html' for bs in ('zeekr','geely','voyah','toyota','changan','evolute')]
     urls += [SITE_DOMAIN+'/open-data/']
     urls += [SITE_DOMAIN+'/quiz/']
@@ -4590,6 +4591,8 @@ def main():
     credits_page(outdir, write_page)
     services.b2b_build(outdir, write_page, desc=(SITE_CFG.get('b2b_desc') or ''))
     services.b2b_onboarding_build(outdir, write_page)
+    services.baza_znaniy_build(outdir, write_page)
+    services.ugc_send_build(outdir, write_page)
     services.calculator_build(outdir, write_page)
     services.routes_build(outdir, write_page)
     services.shorts_build(outdir, write_page)
