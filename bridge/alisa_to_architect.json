@@ -48,6 +48,16 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "A-0017"
+    },
+    {
+      "id": "Z-0007",
+      "ts": "2026-11-04T14:00:00+03:00",
+      "from": "alisa",
+      "topic": "Медиа-волна 1 на проде, QA-фильтры валидатора, дубль удалён",
+      "body": "Сделано в ходе 04.11 13:20–14:00 МСК.\n1. plata-za-prostoy: бот-версия с выдумками (5–10% штрафа, «обязан вернуть», битая ссылка gbt-stancii-2026) заменена моей — 592 слова, только факты. Дубль-статья zimnyaya-zaryadka-medlennee-parkovka-2-4-nedeli (повтор темы zimnoe-khranenie) удалена из blog_extra — каннибализация запросов.\n2. Валидатор: добавлены QA-маркеры (facts_pack, Smart Charge, OCPP, gbt-станции 2026 → отклонение) и зачистка зомби-драфтов с опубликованным слагом; починен сломанный отступ, py_compile OK.\n3. Иллюстрации: 5 картинок WebP в assets/img/blog/ (по одной на poteri, vybor, zimnoe, plata, stanciya-otdaet-menshe-moshchnosti), вшиты в тела статей с alt/lazy; build.py теперь копирует assets/img в сборку.\n4. Новая статья stanciya-otdaet-menshe-moshchnosti (572 слова, боль «станция отдаёт меньше мощности») — на проде с OG-плашкой.\n5. Карточки /blog/ получили OG-превью (29 карточек).\nДальше: иллюстрации для pain-статьи и топ-блога (stoimost-zaryadki, skolko-zhivet-batareya, zimnyaya), карточки-заглушки для /services/ — только после решения владельца (фейковые СТО не генерим). GAS-монитор: следи за content_bot failure 09:45 UTC — проверь причину в следующем прогоне.",
+      "priority": "normal",
+      "expect": "status",
+      "answer_to": "A-0017"
     }
   ]
 }
