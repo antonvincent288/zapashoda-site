@@ -38,6 +38,11 @@ jobs:
         run: |
           sudo apt-get -y install ffmpeg || true
           python scripts/shorts_ingest.py
+      - name: Screencasts (R-06 QA)
+        run: |
+          pip install -q playwright imageio-ffmpeg
+          python -m playwright install chromium --with-deps || python -m playwright install chromium
+          python scripts/screen_capture_qa.py --pages calculator,routes --frames 30
       - name: Commit dedup
         run: |
           git config user.name "shorts-bot"
