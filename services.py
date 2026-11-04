@@ -404,6 +404,40 @@ def safety_build(outdir, write_page):
             _enh(SAFETY_BODY[sl], '/safety/' + sl + '.html', t2), '/safety/' + sl + '.html',
             og='/assets/og/default.png', crumbs=[('/safety/','Безопасность'),('', t2)], extra_ld=ld, toc=True)
 
+def b2b_onboarding_build(outdir, write_page):
+    """R-07: QR-Onboarding — лендинг сбора контактов менеджеров салонов (?start=ID)."""
+    from catalog import GAS_URL as _GAS
+    form_html = (
+      '<form id="b2b-onboard" class="lcard"><h3>Подключение менеджера салона</h3>'
+      '<p class="note">Заполни анкету — получишь доступ к закрытому B2B-кабинету: оптовый прайс, бонусная программа, статус выплат.</p>'
+      '<div class="of-grid"><input required name="name" autocomplete="name" placeholder="Имя и должность"></div>'
+      '<div class="of-grid"><input required name="salon" autocomplete="organization" placeholder="Автосалон / компания"></div>'
+      '<div class="of-grid"><input name="city" placeholder="Город"><input required name="tg" placeholder="Telegram @ник"></div>'
+      '<label style="display:block;margin:10px 0"><input required type="checkbox" name="consent"> Даю согласие на обработку персональных данных (152-ФЗ)</label>'
+      '<button class="btn lime of-send" type="submit">Отправить заявку</button>'
+      '<div id="b2b-ob-status"></div></form>'
+      '<script>document.addEventListener("DOMContentLoaded",function(){'
+      'var f=document.getElementById("b2b-onboard");if(!f)return;'
+      'var sid=new URLSearchParams(location.search).get("start")||"";'
+      'f.addEventListener("submit",function(e){e.preventDefault();'
+      'var d={t:"b2b_onboarding",name:f.name.value,salon:f.salon.value,city:f.city.value,'
+      'tg:f.tg.value.replace(/^@/,""),consent:true,start_id:sid};'
+      'var st=document.getElementById("b2b-ob-status");st.innerHTML=\'<p class="note">Отправляем…</p>\';'
+      'fetch("' + _GAS + '", {method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})'
+      '.then(function(r){return r.json()}).then(function(j){'
+      'if(j&&j.status==="already"){st.innerHTML=\'<div class="of-ok">✓ Ты уже в базе — доступ придёт в Telegram.</div>\';}'
+      'else{st.innerHTML=\'<div class="of-ok">✓ Заявка принята! Подключение к B2B-кабинету придёт в Telegram в течение рабочего дня.</div>\';f.reset();}})'
+      '.catch(function(){st.innerHTML=\'<p class="note">Не удалось отправить — напишите в Telegram: @zapashoda_ev.</p>\'})})});</s'
+      'cript>'
+    )
+    body = ('<h1>Подключение партнёра «Запас хода»</h1>'
+      '<p class="lede">Страница регистрации менеджеров автосалонов: доступ к оптовому прайсу, бонусной программе и личному кабинету партнёра.</p>'
+      + form_html
+      + '<div class="cta"><a class="btn ghost" href="/b2b/">О партнёрской программе</a><a class="btn ghost" href="/calculator/">Калькулятор простоя</a></div>')
+    ld = '<script type="application/ld+json">' + art_ld('Подключение партнёра «Запас хода»', 'Регистрация менеджеров автосалонов: оптовый прайс, бонусы, кабинет партнёра', '/b2b/onboarding/') + '</script>'
+    write_page(os.path.join(outdir,'b2b','onboarding','index.html'), 'Подключение партнёра «Запас хода»', 'Регистрация менеджеров автосалонов: оптовый прайс, бонусная программа, кабинет партнёра',
+        _enh(body, '/b2b/onboarding/', 'Подключение партнёра'), '/b2b/onboarding/', crumbs=[('/b2b/','B2B'),('', 'Подключение')], extra_ld=ld)
+
 def b2b_build(outdir, write_page, desc=''):
     if not desc: desc = 'Прайс и условия для дилеров и автосалонов: адаптеры Type 2 → GB/T, DC-адаптеры, кабели, зарядки и станции для EV и PHEV. Комплектация машин, дилерские цены, пилотная партия.'
     """Страница для дилеров и автосалонов: прайс и условия. Форма шлёт тот же канал GAS (t=site_order), поле model маркирует B2B."""
