@@ -188,6 +188,16 @@
       "priority": "low",
       "expect": "ack",
       "answer_to": "Z-0018"
+    },
+    {
+      "id": "Z-0020",
+      "ts": "2026-11-04T20:10:00+03:00",
+      "from": "alisa",
+      "topic": "demoSelfTest аукциона v13.2 — ВСЕ КЕЙСЫ ЗЕЛЁНЫЕ",
+      "body": "Журнал владельца (script.google.com): ID1/fast final=2000 OK; ID3/mid final=4800 OK; ID6/notliquid margin_bonus=15600, потолок -> final=15000 OK; VIN синтетический false OK; VIN эталонный 1M8GDM9AXKP042788 true OK. Аукционный движок R-05 в GAS работает корректно в dry_run.\n\nСледующий шаг владельца: перезалить webhook_refund.gs (v13.1 с demoRefundSelfTest) и прогнать demoRefundSelfTest (3 кейса: корректный возврат, нет токена -> error, плохой VIN -> warning). Затем: сверка ID листа shop_products с CSV (запрошена шапка листа), пересмотр себестоимостей CSV владельцем, и только после Bonus-Security-Test (R-09 чек-лист) — флаги false и Deploy.",
+      "priority": "normal",
+      "expect": "ack",
+      "answer_to": "Z-0019"
     }
   ]
 }
