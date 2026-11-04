@@ -31,13 +31,13 @@ const tocHeadings = model.headings.map((h) => ({ depth: 2, slug: h.id, text: h.t
               <TableOfContents headings={tocHeadings} />
             </div>
           </aside>
-          <div class='article-body prose prose-lg dark:prose-invert max-w-full w-full min-w-0'>
+          <div class='article-body max-w-full w-full min-w-0'>
             <Fragment set:html={model.body_html} />
           </div>
         </div>
       )}
       {tocHeadings.length === 0 && (
-        <div class='article-body prose prose-lg dark:prose-invert max-w-full'>
+        <div class='article-body max-w-full'>
           <Fragment set:html={model.body_html} />
         </div>
       )}

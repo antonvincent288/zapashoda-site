@@ -33,7 +33,7 @@ const tocHeadings = article.headings.map((h) => ({ depth: 2, slug: h.id, text: h
             {tocHeadings.length > 0 && <TableOfContents headings={tocHeadings} />}
           </div>
         </aside>
-        <div class='article-body prose prose-lg dark:prose-invert max-w-full w-full min-w-0'>
+        <div class='article-body max-w-full w-full min-w-0'>
           <Fragment set:html={article.body_html} />
         </div>
       </div>
