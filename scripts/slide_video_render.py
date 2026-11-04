@@ -95,18 +95,18 @@ def render(spec, out_dir):
         frames = int(dur * 30)
         # 1) арт: мягкий Ken Burns 1.00 -> 1.06 (только картинка)
         art_m4 = os.path.join(tmp, f"a{i}.mp4")
-        subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", art_png, "-t", str(dur),
+        subprocess.run([os.environ.get("FFMPEG_BIN", "ffmpeg"), "-y", "-loop", "1", "-i", art_png, "-t", str(dur),
             "-vf", "zoompan=z='min(zoom+0.0005,1.06)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1080:fps=30" % frames,
             "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", art_m4],
             check=True, capture_output=True)
         # 2) панель: статичный поток без фильтров
         pan_m4 = os.path.join(tmp, f"p{i}.mp4")
-        subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", pan_png, "-t", str(dur),
+        subprocess.run([os.environ.get("FFMPEG_BIN", "ffmpeg"), "-y", "-loop", "1", "-i", pan_png, "-t", str(dur),
             "-vf", "fps=30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", pan_m4],
             check=True, capture_output=True)
         # 3) vstack
         sl_m4 = os.path.join(tmp, f"s{i}.mp4")
-        subprocess.run(["ffmpeg", "-y", "-i", art_m4, "-i", pan_m4,
+        subprocess.run([os.environ.get("FFMPEG_BIN", "ffmpeg"), "-y", "-i", art_m4, "-i", pan_m4,
             "-filter_complex", "[0:v][1:v]vstack=inputs=2[v]",
             "-map", "[v]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", sl_m4],
             check=True, capture_output=True)
