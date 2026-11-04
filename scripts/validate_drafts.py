@@ -88,7 +88,10 @@ def main():
             links = [h for h in internal_hrefs(body)]
             if len(links) < 3: errs.append("меньше 3 внутренних ссылок")
             if "<script" in body.lower(): errs.append("script запрещён")
-            if body.count("₽") > 6: errs.append("больше 6 вхождений ₽ — возможна выдуманная цена")
+                        if body.count("₽") > 6: errs.append("больше 6 вхождений ₽ — возможна выдуманная цена")
+            low = body.lower()
+            for bad_mark in ("facts_pack", "smart charge", "ocpp", "gbt-станции 2026"):
+                if bad_mark in low: errs.append("QA-маркер вне факт-базы: %r" % bad_mark)
             if re.search(r"\b(api[_-]?key|token|password|secret)\b", body.lower()): errs.append("подозрение на секрет в тексте")
             if errs: rejected.append((fn, "; ".join(errs))); continue
             os.makedirs("data/blog_extra", exist_ok=True)
@@ -145,6 +148,16 @@ def main():
         print("код-драфт применён и запушен git-ом:", fn)
         fn = None
     if files or rejected or code_applied:
+        # зачистка зомби-драфтов: отклонённые с уже существующим слагом удаляются из очереди навсегда
+        for fn, why in rejected:
+            if "slug уже существует" in why:
+                try:
+                    st, cur = req("https://api.github.com/repos/%s/contents/%s?ref=main" % (REPO, os.path.join(draft_dir, fn)))
+                    if st == 200:
+                        req("https://api.github.com/repos/%s/contents/%s" % (REPO, os.path.join(draft_dir, fn)), "DELETE",
+                            {"message": "validator: зомби-драфт %s удалён (slug опубликован)" % fn, "sha": cur["sha"], "branch": "main"})
+                except Exception as e:
+                    print("cleanup failed:", repr(e)[:120])
         if final: notes.append("Принято и опубликовано: " + ", ".join(sl for _, sl, _ in final))
         if rejected: notes.append("Отклонено: " + "; ".join("%s (%s)" % (f, r[:160]) for f, r in rejected))
         a2z = validator_msg("Валидатор драфтов", "\n".join(notes) if notes else "без изменений")
