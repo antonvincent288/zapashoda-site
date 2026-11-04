@@ -2862,7 +2862,30 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
     urls += [SITE_DOMAIN+'/'+tid+'.html' for tid,_,_,_ in _forum_seed()]
     lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
-    return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>'+u+'</loc>'+lm+'</url>' for u in urls) + '</urlset>'
+    # R-09: зимний приоритет — bridge/winter_seo.json (triggered=true, свежее 48 ч) поднимает зимние URL.
+    winter_boost = False
+    try:
+        if os.path.exists('bridge/winter_seo.json'):
+            if time.time() - os.path.getmtime('bridge/winter_seo.json') < 48*3600:
+                winter_boost = '"triggered": true' in open('bridge/winter_seo.json', encoding='utf-8').read()
+    except Exception:
+        pass
+    WINTER_URLS = ['/blog/winter-ev-2026.html', '/blog/kvt-i-kvt-ch-raznica.html', '/blog/rasxod-zimoy-bortovoy-kompyuter.html', '/routes/', '/calculator/']
+    if winter_boost:
+        def _wp(u):
+            return u.rstrip('/') == SITE_DOMAIN.rstrip('/') + w for w in [] # placeholder
+    prio = {}
+    if winter_boost:
+        for u in urls:
+            path = u[len(SITE_DOMAIN):] if u.startswith(SITE_DOMAIN) else u
+            prio[u] = 0.9 if path in WINTER_URLS else 0.5
+        urls = [u for u in urls if prio.get(u) == 0.9] + [u for u in urls if prio.get(u) != 0.9]
+    lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
+    def _url(u):
+        pr = prio.get(u)
+        p_tag = '<priority>' + str(pr) + '</priority>' if pr else ''
+        return '<url><loc>' + u + '</loc>' + lm + p_tag + '</url>'
+    return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(_url(u) for u in urls) + '</urlset>'
 
 
 # ================= /cost/: сколько стоит зарядить конкретную модель =================
@@ -4558,6 +4581,7 @@ def main():
     cost_page(outdir, write_page)
     credits_page(outdir, write_page)
     services.b2b_build(outdir, write_page, desc=(SITE_CFG.get('b2b_desc') or ''))
+    services.b2b_onboarding_build(outdir, write_page)
     services.calculator_build(outdir, write_page)
     services.routes_build(outdir, write_page)
     services.shorts_build(outdir, write_page)
