@@ -238,7 +238,7 @@ header{position:sticky;top:0;z-index:1000;background:#1d1d1f;border-bottom:1px s
 .zs-topbar .container{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;padding-bottom:6px}
 .zs-topbar a{color:#c1c7c6;text-decoration:none}
 .zs-topbar a:hover{color:#fff}
-.zs-nav{padding:14px 0 10px}
+.zs-nav{padding:10px 0}
 .zs-nav .container{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .zs-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#f5f5f7}
 .zs-brand span{background:#2563EB;color:#fff;border-radius:8px;font-size:11px;font-weight:700;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase}
@@ -319,6 +319,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .zhero-gold{background:#fff;color:var(--accent);border:2px solid var(--accent);animation:pulse 2.4s ease-in-out infinite}
 .btn-primary{animation:pulse 2.4s ease-in-out infinite}
 .zhero-gold:hover{background:#EFF6FF;color:var(--accent);opacity:1}
+.zhero{background:#fff;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.05)}
+.zhero-photo{position:relative;display:block;border-radius:16px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.14)}
+.zhero-photo img{width:100%;height:400px;object-fit:cover;display:block}
+.zhero-photo .zcap{position:absolute;left:14px;bottom:14px;background:rgba(23,26,28,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#f5f5f7;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;display:block}
+.zhero-photo .zcap span{display:block;font-size:12px;font-weight:500;color:#c1c7c6;margin-top:2px}
+@media(max-width:767px){.zhero-photo img{height:240px}}
 .ugc-grid{columns:3 300px;column-gap:14px}
 .ugc-card{break-inside:avoid;margin:0 0 14px;background:#fff;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;box-shadow:0 1px 2px rgba(0,30,43,.04)}
 .ugc-card img{width:100%;display:block}
@@ -645,7 +651,7 @@ input,select,textarea{font-size:16px !important}
 body{background:var(--bg-main)}
 header#zs-header{background:rgba(23,26,28,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:1000!important;border-bottom:1px solid #33373a;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 header .zs-topbar{background:var(--text-main)}
-header .zs-nav{background:transparent;border-bottom:1px solid var(--line)}
+header .zs-nav{background:transparent}
 /* перекраска Tailwind/FreshCart-акцентов в Electric Blue */
 .bg-green-600{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
 .hover\:bg-green-700:hover{background:var(--accent-hover)!important;border-color:var(--accent-hover)!important}
@@ -872,8 +878,6 @@ def header_html(active):
       '<div class="zs-drop">'+"".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV_MORE)+'</div></div>')
     off_links = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in NAV)
     return ('<header id="zs-header">'
-      '<div class="zs-topbar"><div class="container"><div>Запас хода — практика владения электромобилем в России: ' + str(len(MODELS)) + ' моделей EV</div>'
-      '<div style="display:flex;gap:16px;flex-wrap:wrap">'+top_links+'</div></div></div>'
       '<div class="zs-nav"><div class="container">'
       '<a class="zs-brand" href="/" title="Запас хода">'+LOGO_SVG+'Запас хода <span>EV</span></a>'
       '<form class="zs-search" action="/search.html" method="get" role="search">''<datalist id="q-list">'+''.join('<option value="'+m['brand']+'">' for m in MODELS[:60])+'</datalist>'
@@ -2302,30 +2306,32 @@ def home_page(outdir, news=None):
     art_cards = ''.join('<div class="pain-card"><a href="/pain/'+sl+'.html"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition p-4 h-full">'
       '<small class="text-gray-500">Проблемы</small><h3 class="text-base font-semibold text-gray-800 mt-2">'+html.escape(title)+'</h3>'
       '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p><span class="go">Читать статью →</span></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
-    side_cards = ''
+    hero_photo = ''
     for pn in ['Zeekr 001','Li Auto L6']:
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
         if not hit: continue
         m = hit[0]
         sl = slug(m['brand'])+'-'+slug(m['model'])
         _pf = '/assets/photos/'+sl+'.jpg'
-        _has_photo = os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', sl + '.jpg'))
-        side_cards += ('<a href="/models/'+sl+'/" class="block rounded-lg break-words border bg-white border-gray-300 overflow-hidden hover:border-green-600 hover:shadow-md transition">'
-            + (('<img class="mcard-photo" src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if _has_photo else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>'))
-            + '<div class="p-3"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>')
+        if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', sl + '.jpg')):
+            hero_photo = ('<a href="/models/'+sl+'/" class="zhero-photo" aria-label="'+html.escape(m['brand']+' '+m['model'])+' — разъёмы и решения">'
+              + '<img src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' — зарядка, Wikimedia Commons" loading="eager" fetchpriority="high">'
+              + '<span class="zcap">'+html.escape(m['brand']+' '+m['model'])+'<span>Разъёмы и решения →</span></span></a>')
+            break
+    if not hero_photo:
+        hero_photo = '<div class="mphoto-fb"><div style="font-size:24px">EV</div></div>'
     body = ('<section class="mt-4">'
-      '<div class="rounded-lg break-words bg-gray-100 zhero" style="padding:52px 40px">'
+      '<div class="rounded-lg break-words zhero" style="padding:56px 44px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-1/2 w-full">'
       '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold hero-badge">Справочник EV · <span data-count="' + str(len(MODELS)) + '">' + str(len(MODELS)) + '</span> моделей в России</span>'
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'Как без боли заряжать электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
-      '<div class="flex gap-3 flex-wrap">'
+      '<div class="flex gap-3 flex-wrap items-center">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 btn-primary" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
-      '<a class="btn zhero-gold" href="/calculator/">💰 Сколько сэкономлю на зарядке?</a>'
       '</div></div>'
-      '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
+      '<div class="md:w-1/2 w-full">' + hero_photo + '</div>'
       '</div></div></div></section>'
       + calc_widget_html() + CALC_SCRIPT + survivor_hall_html() +
       '<section class="lg:my-14 my-8"><div class="container">'
