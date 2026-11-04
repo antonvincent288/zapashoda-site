@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout'
 import Breadcrumb from '@/components/Breadcrumb'
 import TableOfContents from '@/components/TableOfContents'
-import type { Article } from '@/utils/articles'
+import type { Article } from '../../utils/articles'
 
 type Props = { article: Article; crumbs: { label: string; href?: string }[] }
 const { article, crumbs } = Astro.props

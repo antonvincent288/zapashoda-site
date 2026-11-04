@@ -1,5 +1,5 @@
 import rss from '@astrojs/rss'
-import { ARTICLES } from '@/utils/articles'
+import { ARTICLES } from '../../utils/articles'
 import { siteConfig } from '@/site-config'
 
 export const GET = async () =>
