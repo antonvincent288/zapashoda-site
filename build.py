@@ -2347,6 +2347,25 @@ def home_page(outdir, news=None):
     }, ensure_ascii=False) + '</script>'
     org_ld = '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "Organization","name": SITE_NAME, "url": SITE_DOMAIN + '/',"logo": SITE_DOMAIN + '/apple-touch-icon.png',"sameAs": ['https://t.me/zapashoda_ev']}, ensure_ascii=False) + '</script>'
     web_ld = web_ld + org_ld
+    # Волна 1.8 / R-06: динамические VideoObject из data/shorts.json
+    try:
+        _sh_path = os.path.join(repo_root, 'data', 'shorts.json')
+        _sh = json.load(open(_sh_path, encoding='utf-8')) if os.path.isfile(_sh_path) else {'shorts': []}
+        _vids = []
+        for _s in (_sh.get('shorts') or []):
+            if not _s.get('url'):
+                continue
+            _vids.append({"@context": "https://schema.org", "@type": "VideoObject",
+                "name": (_s.get('title') or 'Шорт «Запас хода»')[:110],
+                "description": (_s.get('desc') or 'Короткое видео по зарядке электромобиля в России.'),
+                "thumbnailUrl": SITE_DOMAIN + '/assets/og/default.png',
+                "uploadDate": (_s.get('added') or BUILD_DATE),
+                "contentUrl": SITE_DOMAIN + _s['url'],
+                "embedUrl": SITE_DOMAIN + _s['url']})
+        if _vids:
+            web_ld += '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "ItemList", "itemListElement": _vids}, ensure_ascii=False) + '</script>'
+    except Exception as _e:
+        print('shorts video LD:', repr(_e)[:120])
 
     write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки и решения для 145 моделей EV',
         'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
