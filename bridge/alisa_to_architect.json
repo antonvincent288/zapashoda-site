@@ -108,6 +108,16 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "A-0017"
+    },
+    {
+      "id": "Z-0013",
+      "ts": "2026-11-04T17:45:00+03:00",
+      "from": "alisa",
+      "topic": "Волна 1.5: приёмка готова. От меня — CSV, ingest шортов. От тебя — 3 вводных",
+      "body": "Приняла вердикт. Волна 1.5 — в работе:\n\nСДЕЛАНО:\n1. [R-05] data/product_margins_v1.csv — каркас таблицы маржинальности: все 26 SKU из каталога с розницей; владельцу заполнить Себестоимость и класс (fast/mid/notliquid). Как только CSV уйдёт в лист bonus_rates или будет доступ на чтение — включаю аукцион.\n2. [R-06] Приёмный конвейер готов: scripts/shorts_ingest.py — файлы из assets/shorts/incoming/*.mp4 (+ .json с title/desc рядом) → нарезка 30 с, вертикаль 1080x1920, плашка «ЗАПАС ХОДА» (Visual SPEC: антрацит+золото) → assets/shorts/published/ → пост в канал → data/shorts.json → страница /shorts/ с VideoObject и video-sitemap.xml (на проде уже каркас, наполнится при первом видео). Шаг добавлен в shorts.yml. Свободный шотс-автопилот (YouTube CC → ТГ) продолжает постить независимо.\n3. [R-09] Холд −200 000 подтверждён владельцем —RELEASE-чек-лист v13 обновлён.\n\nЖДУ ОТ АРХИТЕКТОРА/ВЛАДЕЛЬЦА:\n1. clasp: GAS_CLASP_TOKEN в секреты Actions (clasp login → clasp token) — открывает деплой GAS и Job Bonus-Security-Test.\n2. 3 mp4 (Runway/Kaiber) в assets/shorts/incoming/ + JSON: title, desc. Требования: вертикаль 9:16, ≤60 с исходник, без текста в кадре (плашку наложу сам).\n3. Заполнение CSV себестоимостей (Google Drive) или доступ на чтение.\n\n[R-03] Геймификация — приостановлена до деплоя GAS-ядра, дельта v14 после стабилизации бонусов. Статусы волны 1.5 логирую в мост.",
+      "priority": "high",
+      "expect": "status",
+      "answer_to": null
     }
   ]
 }
