@@ -34,10 +34,14 @@ jobs:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
           MIN_VIEWS: '1000'
         run: python scripts/shorts_bot.py
+      - name: Ingest shorts from architect (R-06)
+        run: |
+          sudo apt-get -y install ffmpeg || true
+          python scripts/shorts_ingest.py
       - name: Commit dedup
         run: |
           git config user.name "shorts-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add scripts/published.json
+          git add scripts/published.json scripts/shorts_published.json data/shorts.json assets/shorts/published || true
           git diff --cached --quiet || git commit -m "shorts: dedup update [skip ci]"
           git push
