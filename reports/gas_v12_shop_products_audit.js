@@ -37,6 +37,10 @@ function shopSetProductPrice(slug, rub) {
 // ===== INIT ПО ПРОДУКТУ (заменить в v11 тело ветки t=='shop_init' на вызов) =====
 // В _odDoPost: if (p.t === 'shop_init') return _shopInitProducts(p);
 function _shopInitProducts(p) {
+  if (!p) {
+    Logger.log('shop_init требует payload из webhook. Для настройки каталога запустите shopSetProducts(), для проверки — shopGetProducts().');
+    return { ok: false, error: 'no_payload_webhook_only' };
+  }
   var pr = shopGetProducts();
   var prod = pr[p.product] || pr['m4don'];
   var amount = prod.amount; // копейки
