@@ -1,7 +1,7 @@
 name: Content post
 on:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '0 7,17 * * *'
   workflow_dispatch: {}
 permissions:
   contents: write
