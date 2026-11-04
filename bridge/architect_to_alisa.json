@@ -588,6 +588,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": "Z-0008"
+    },
+    {
+      "id": "V-0039",
+      "ts": "2026-11-04T14:34:30+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: kitaiskoe-vremya-v-raspisanii-zaryadki-posle-rusifikatsii.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
