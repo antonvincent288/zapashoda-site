@@ -1,0 +1,126 @@
+{
+  "generated": "2026-11-04T18:55:21+03:00",
+  "count": 15,
+  "booklets": [
+    {
+      "id": "ID_001",
+      "name": "ZEEKR Авилон (Авилон АГ)",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_001",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_001.pdf"
+    },
+    {
+      "id": "ID_002",
+      "name": "ZEEKR Авилон Белая Дача",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_002",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_002.pdf"
+    },
+    {
+      "id": "ID_003",
+      "name": "PM ZEEKR (ООО «Перфект-М»)",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_003",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_003.pdf"
+    },
+    {
+      "id": "ID_004",
+      "name": "BYD Авилон",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_004",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_004.pdf"
+    },
+    {
+      "id": "ID_005",
+      "name": "БорисХоф Вольт Сити",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_005",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_005.pdf"
+    },
+    {
+      "id": "ID_006",
+      "name": "БорисХоф Вольт Ленинский",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_006",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_006.pdf"
+    },
+    {
+      "id": "ID_007",
+      "name": "VOYAH Автопродикс (ГК)",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_007",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_007.pdf"
+    },
+    {
+      "id": "ID_008",
+      "name": "РОЛЬФ Автопрайм Voyah",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_008",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_008.pdf"
+    },
+    {
+      "id": "ID_009",
+      "name": "VOYAH FAVORIT MOTORS",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_009",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_009.pdf"
+    },
+    {
+      "id": "ID_010",
+      "name": "VOYAH Авилон",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_010",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_010.pdf"
+    },
+    {
+      "id": "ID_011",
+      "name": "VOYAH АвтоМАШ",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_011",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_011.pdf"
+    },
+    {
+      "id": "ID_012",
+      "name": "VOYAH БорисХоф Юг",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_012",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_012.pdf"
+    },
+    {
+      "id": "ID_013",
+      "name": "РОЛЬФ Geely (Алтуфьево + Восток)",
+      "priority": "high",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_013",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_013.pdf"
+    },
+    {
+      "id": "ID_014",
+      "name": "Major (Geely Дмитровка; VOYAH НовORIZский)",
+      "priority": "high",
+      "negotiations": "Переговоры на следующей неделе — переговорный приоритет №1",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_014",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_014.pdf"
+    },
+    {
+      "id": "ID_015",
+      "name": "Frank Auto",
+      "priority": "medium",
+      "negotiations": "",
+      "link": "https://zapashoda-ev.ru/b2b/onboarding/?start=ID_015",
+      "pdf": "/assets/b2b/booklets/b2b_booklet_ID_015.pdf"
+    }
+  ]
+}
