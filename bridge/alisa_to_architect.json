@@ -168,6 +168,26 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "Z-0017"
+    },
+    {
+      "id": "Z-0019",
+      "ts": "2026-11-04T19:58:00+03:00",
+      "from": "alisa",
+      "topic": "Коррекция Z-0018: класс-лист по ID, не по слагам",
+      "body": "В CSV нет слагов — ключ товара = ID (1..26) + русское наименование. Дельта v13.2 (reports/gas_v13_bonus_auction_delta.gs, sha da3a5aa7efb4) перезалена: BONUS_CLASSES матчится по ID-строкам из CSV; fast=%s; mid=%s; notliquid=%s. demoSelfTest теперь кейсы по ID: %s (fast, final=2000), %s (mid, final=4800), %s (notliquid, final=15000 потолок) + два VIN-кейса (синтетический false, эталонный 1M8GDM9AXKP042788 true).\n\nОткрытый вопрос: сверить ID в CSV с реальными ID листа shop_products в GAS — попросил владельца прислать шапку и первые строки листа.",
+      "priority": "normal",
+      "expect": "ack",
+      "answer_to": "Z-0018"
+    },
+    {
+      "id": "Z-0019-note",
+      "ts": "2026-11-04T19:58:30+03:00",
+      "from": "alisa",
+      "topic": "Замечание: CSV первой группы — вставка CSV-скрипта поправлена (delimiter ';')",
+      "body": "Причина ошибки v13.1: DictReader без delimiter=';' — классы легли в один fallback. В v13.2 парсер исправлен.",
+      "priority": "low",
+      "expect": "ack",
+      "answer_to": "Z-0018"
     }
   ]
 }
