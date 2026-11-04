@@ -4093,6 +4093,12 @@ def main():
         gdst = os.path.join(outdir,'assets','guide')
         if os.path.isdir(gdst): shutil.rmtree(gdst)
         shutil.copytree(gdir, gdst)
+    # иллюстрации статей (assets/img/blog)
+    idir = os.path.join(repo_root,'assets','img')
+    if os.path.isdir(idir):
+        idst = os.path.join(outdir,'assets','img')
+        if os.path.isdir(idst): shutil.rmtree(idst)
+        shutil.copytree(idir, idst)
     sku_dir = os.path.join(repo_root,'assets','sku')
     if os.path.isdir(sku_dir):
         dst = os.path.join(outdir,'assets','sku')
