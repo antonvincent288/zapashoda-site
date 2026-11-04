@@ -1,6 +1,6 @@
 ---
 import Article from '@/layouts/Article'
-import { bySection, getArticle } from '../../../utils/articles'
+import { bySection, getArticle } from '../../../../utils/articles'
 const all = bySection('pain')
 export function getStaticPaths() {
   return all.map((a) => ({ params: { slug: a.slug }, props: { article: a } }))
