@@ -15,6 +15,9 @@ var BONUS_BASE = 2000; // базовый бонус, ₽ (константа Т�
 // margin_share — доля маржи, которую отдаём как бонус (10–15% для неликвида).
 // Классы ликвидности — синхронизированы с data/product_margins_v1.csv (26 SKU).
 // Классы ликвидности — синхронизированы с data/product_margins_v1.csv (26 SKU, ключ = ID из shop_products).
+// ГАЙДЫ (Цифровые Штурманы) — не участвуют в бонусном аукционе: бонус = 0.
+var NO_BONUS_SLUGS = ['m4don','m11-trassa','m12-trassa','parking-zhil'];
+
 var BONUS_CLASSES = [
   { cls: 'fast', match: ['1', '2', '7', '8', '11', '12', '17', '18', '19', '20', '25'], share: 0.05 },
   { cls: 'mid', match: ['3', '4', '5', '9', '10', '14', '15', '21', '22', '26'], share: 0.08 },
@@ -28,6 +31,9 @@ var BONUS_CLASSES = [
 function computeBonus(itemId, marginRub) {
   try {
     if (!itemId) return { status: 'error', details: { reason: 'no_item_id' } };
+    if (NO_BONUS_SLUGS.indexOf(String(itemId).trim()) !== -1) {
+      return { status: 'no_bonus', details: { item: itemId, reason: 'digital_guide_not_in_auction' } };
+    }
     var cls = 'mid', share = 0.08;
     for (var i = 0; i < BONUS_CLASSES.length; i++) {
       if (BONUS_CLASSES[i].match.indexOf(String(itemId).trim()) !== -1) {
