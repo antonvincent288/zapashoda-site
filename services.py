@@ -1523,6 +1523,7 @@ def _ugc_cta():
       '<a href="/routes/send-story/">заполните форму «Я выжил»</a> — и вернитесь за идеями в '
       '<a href="/routes/rating/">рейтинг маршрутов</a>. Первые 50 отчётов получают звание «Император трассы».</div>')
 
+
 def _ugc_send_build(outdir, write_page):
     """R-UGC-SURVIVAL: форма «Я выжил» на /routes/send-story/ (трасса, оценка 1-10, фото, гео)."""
     from catalog import GAS_URL as _GAS
@@ -1530,11 +1531,11 @@ def _ugc_send_build(outdir, write_page):
       '<form id="ugc-form" class="lcard"><h3>Форма «Я выжил»</h3>'
       '<p class="note">Честная история о поездке: что планировали, где «зона смерти» удивила, что бы сделали иначе. История проходит модерацию и попадает в <a href="/routes/rating/">Зал славы</a>.</p>'
       '<div class="of-grid"><label>Трасса: <select required name="track">'
-      '<option value="М-4">М-4 «Дон»</option><option value="М-11">М-11 «Нева»</option><option value="М-12">М-12 «Восток»</option></select></label>'
+      '<option value="М-4">М-4 «Дон»</option><option value="М-11">М-11 «Нева»</option><option value="М-12">М-12 «Восток»</option></select></label> '
       '<label>Оценка участка: <input required type="range" min="1" max="10" value="6" id="ugc-rate"> <b id="ugc-rate-v">6</b>/10</label></div>'
       '<textarea required name="text" rows="5" minlength="30" maxlength="2000" placeholder="История: маршрут, модель, месяц, где не хватало станций, чем выручили…"></textarea>'
       '<div class="of-grid"><input required name="name" placeholder="Как назвать вас (имя/ник)"><input name="contact" placeholder="Telegram или телефон (не публикуется)"></div>'
-      '<div class="of-grid"><label>Фото (опционально): <input type="file" accept="image/*" id="ugc-photo"></label>'
+      '<div class="of-grid"><label>Фото (опционально): <input type="file" accept="image/*" id="ugc-photo"></label> '
       '<label style="margin-left:10px"><input type="checkbox" id="ugc-geo"> Добавить гео-метку</label></div>'
       '<label style="display:block;margin:10px 0"><input required type="checkbox" id="ugc-consent"> Даю согласие на публикацию истории (без контактов) и фото на zapashoda-ev.ru</label>'
       '<button class="btn lime of-send" type="submit">Отправить историю</button>'
@@ -1566,63 +1567,75 @@ def _ugc_send_build(outdir, write_page):
       '<p class="lede">Зал славы владельцев электромобилей: реальные поездки по М-4, М-11 и М-12 — что сработало, где «зона смерти», на что смотреть при планировании.</p>'
       + form_html +
       '<div class="cta"><a class="btn ghost" href="/routes/rating/">Зал славы (рейтинг маршрутов)</a><a class="btn ghost" href="/routes/">Имперский маршрут: калькулятор «зон смерти»</a></div>')
-    ld = '<script type="application/ld+json">' + art_ld('Форма «Я выжил» — истории владельцев электромобилей', 'Расскажите свою историю поездки по М-4, М-11 или М-12 и попадите в Зал славы «Запас хода»', '/routes/send-story/') + '</script>'
+    ld = '<script type="application/ld+json">' + art_ld('Форма «Я выжил» — истории владельцев электромобилей',
+        'Расскажите свою историю поездки по М-4, М-11 или М-12 и попадите в Зал славы «Запас хода»', '/routes/send-story/') + '</script>'
     write_page(os.path.join(outdir, 'routes', 'send-story', 'index.html'),
         '«Я выжил на трассе» — рассказать свою историю | Запас хода',
         'Форма историй владельцев электромобилей: трасса, оценка участка, фото и гео-метка. Публикация после модерации в Зале славы.',
         _enh(body, '/routes/send-story/', '«Я выжил» — история владельца'), '/routes/send-story/',
-        crumbs=[('/routes/', 'Имперский маршрут'), ('', 'Я выжил')], extra_ld=ld)
+        crumbs=[('/routes/', 'Маршруты'), ('', 'Я выжил')], extra_ld=ld)
+
+
+def _ugc_card(it):
+    import html as _h
+    ph = ''
+    if it.get('photo_url'):
+        ph = '<img src="' + _h.escape(str(it['photo_url']), quote=True) + '" alt="Отчёт владельца" loading="lazy" style="width:100%;border-radius:10px 10px 0 0;display:block">'
+    return ('<div class="ugc-card">' + ph +
+      '<div style="padding:12px 14px"><div style="font-size:12px;color:#8e8e93;margin-bottom:6px">' +
+      _h.escape(str(it.get('route', ''))) + ' · ' + _h.escape(str(it.get('name', ''))) + '</div>'
+      '<p style="margin:0;font-size:14px;line-height:1.45">' + _h.escape(str(it.get('text', ''))[:280]) + '</p>'
+      '<div style="margin-top:8px;color:#D4AF37;font-weight:700;font-size:14px">Оценка: ' + _h.escape(str(it.get('rating', ''))) + '/10</div></div></div>')
+
 
 def _ugc_rating_build(outdir, write_page, items=None):
     """R-UGC-SURVIVAL: Зал славы /routes/rating/ — Masonry-лента + ItemList."""
     from catalog import GAS_URL as _GAS
-    cards = ''
-    if items:
-        for it in items:
-            ph = ('<img src="' + str(it.get('photo_url', '')) + '" alt="Отчёт владельца" style="width:100%;border-radius:10px 10px 0 0;display:block">'
-                  ) if it.get('photo_url') else ''
-            cards += ('<div class="ugc-card"><a href="/routes/send-story/">' + ph + '</a>'
-              '<div style="padding:12px 14px"><div style="font-size:12px;color:#8e8e93;margin-bottom:6px">' +
-              str(it.get('route', '')) + ' · ' + str(it.get('name', '')) + '</div>'
-              '<p style="margin:0;font-size:14px;line-height:1.45">' + str(it.get('text', ''))[:280] + '</p>'
-              '<div style="margin-top:8px;color:#D4AF37;font-weight:700;font-size:14px">Оценка: ' + str(it.get('rating', '')) + '/10</div></div></div>')
+    cards = ''.join(_ugc_card(it) for it in items) if items else ''
     empty_block = ('<div class="gbox" style="background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:14px;padding:18px">'
       '<div style="color:#8e8e93;font-size:13px">РЕЙТИНГ ФОРМИРУЕТСЯ</div>'
       '<p>Первые 50 отчётов получают звание «Император трассы» и открывают Зал славы. '
       '<a href="/routes/send-story/" style="color:#D4AF37;font-weight:700">Расскажите свою историю →</a></p></div>')
+    js = (
+      'fetch("' + _GAS + '?action=ugc_list").then(function(r){return r.json()}).then(function(j){'
+      'if(!j||!j.items||!j.items.length)return;'
+      'var box=document.getElementById("ugc-feed");'
+      'box.innerHTML=j.items.map(function(it){'
+      'var esc=function(s){return String(s||"").replace(/[&<>\\"]+/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":c===">"?"&gt;":"&quot;";});};'
+      'return \'<div class="ugc-card">\'+(it.photo_url?\'<img src="\'+esc(it.photo_url)+\'" alt="Отчёт владельца" style="width:100%;border-radius:10px 10px 0 0;display:block">\':\'\')'
+      '+\'<div style="padding:12px 14px"><div style="font-size:12px;color:#8e8e93;margin-bottom:6px">\'+esc(it.route)+\' · \'+esc(it.name)+\'</div>\''
+      '+\'<p style="margin:0;font-size:14px;line-height:1.45">\'+esc(it.text).slice(0,300)+\'</p>\''
+      '+\'<div style="margin-top:8px;color:#D4AF37;font-weight:700;font-size:14px">Оценка: \'+esc(it.rating)+\'/10</div></div></div>\';'
+      '}).join("");}).catch(function(){});')
     body = ('<h1>Зал славы выживших: рейтинг маршрутов «Я выжил»</h1>'
-      '<p class="lede">Честные истории владельцев: трасса, оценка участка, фото и гео-метка. Модерация — модераторы «Запас хода»; контакты не публикуются.</p>'
+      '<p class="lede">Честные истории владельцев: трасса, оценка участка, фото и гео-метка. Модерация — редакция «Запас хода»; контакты не публикуются.</p>'
       + (('<div class="ugc-masonry">' + cards + '</div>') if cards else empty_block)
       + '<div id="ugc-feed" class="ugc-masonry" style="margin-top:18px"></div>'
-      + '<script>fetch("' + _GAS + '?action=ugc_list").then(function(r){return r.json()}).then(function(j){'
-      'if(!j||!j.items||!j.items.length)return;'
-      'var box=document.getElementById("ugc-feed");var seen={};Array.prototype.forEach.call(document.querySelectorAll(".ugc-card"),function(c){});'
-      'box.innerHTML=j.items.map(function(it){return \'<div class="ugc-card">\''
-      '+ (it.photo_url?\'<img src="\'+it.photo_url+\'" alt="Отчёт владельца" style="width:100%;border-radius:10px 10px 0 0;display:block">\':\'\')'
-      + \'<div style="padding:12px 14px"><div style="font-size:12px;color:#8e8e93;margin-bottom:6px">\'+it.route+\' · \'+(it.name||"")+\'</div>\'
-      + \'<p style="margin:0;font-size:14px;line-height:1.45">\'+String(it.text||"").slice(0,280)+\'</p>\'
-      + \'<div style="margin-top:8px;color:#D4AF37;font-weight:700;font-size:14px">Оценка: \'+it.rating+\'/10</div></div></div>\';}).join("");'
-      '}).catch(function(){});</script>'
-      '<div class="cta"><a class="btn lime" href="/routes/send-story/">Рассказать свою историю</a><a class="btn ghost" href="/routes/">Калькулятор «зон смерти»</a><a class="btn ghost" href="/baza-znaniy/">База знаний</a></div>')
+      + '<script>' + js + '</script>'
+      + '<style>.ugc-masonry{column-count:3;column-gap:14px}@media(max-width:900px){.ugc-masonry{column-count:2}}@media(max-width:560px){.ugc-masonry{column-count:1}}.ugc-card{break-inside:avoid;margin-bottom:14px;border:1px solid #2a2a2c;border-radius:12px;overflow:hidden;background:#fff}</style>'
+      + '<div class="cta"><a class="btn lime" href="/routes/send-story/">Рассказать свою историю</a><a class="btn ghost" href="/routes/">Калькулятор «зон смерти»</a><a class="btn ghost" href="/baza-znaniy/">База знаний</a></div>')
     ld = '<script type="application/ld+json">'
     if items:
         ld += json.dumps({"@context": "https://schema.org", "@type": "ItemList",
             "name": "Зал славы выживших: рейтинги маршрутов владельцев EV",
             "itemListElement": [{"@type": "ListItem", "position": i + 1,
-                "item": {"@type": "CreativeWork", "name": (it.get('route', '') + ' — история владельца'),
-                         "author": {"@type": "Person", "name": it.get('name', 'владелец EV')},
-                         "description": str(it.get('text', ''))[:200], "url": SITE_DOMAIN + '/routes/rating/'}}
+                "item": {"@type": "CreativeWork",
+                         "name": (str(it.get('route', '')) + ' — история владельца'),
+                         "author": {"@type": "Person", "name": str(it.get('name', 'владелец EV'))[:60]},
+                         "description": str(it.get('text', ''))[:200],
+                         "url": "https://zapashoda-ev.ru/routes/rating/"}}
                 for i, it in enumerate(items[:25])]}, ensure_ascii=False)
     else:
         ld += json.dumps({"@context": "https://schema.org", "@type": "CollectionPage",
             "name": "Зал славы выживших — рейтинг маршрутов «Я выжил»",
-            "url": SITE_DOMAIN + '/routes/rating/'}, ensure_ascii=False)
+            "url": "https://zapashoda-ev.ru/routes/rating/"}, ensure_ascii=False)
     ld += '</script>'
     write_page(os.path.join(outdir, 'routes', 'rating', 'index.html'),
         'Зал славы выживших: рейтинг маршрутов «Я выжил» | Запас хода',
         'Masonry-лента честных историй владельцев электромобилей: М-4, М-11, М-12, оценка участков, фото и гео-метки. Публикация после модерации.',
         _enh(body, '/routes/rating/', 'Зал славы выживших'), '/routes/rating/',
-        crumbs=[('/routes/', 'Имперский маршрут'), ('', 'Зал славы')], extra_ld=ld)
+        crumbs=[('/routes/', 'Маршруты'), ('', 'Зал славы')], extra_ld=ld)
+
 
 def _baza_znaniy_build(outdir, write_page):
     """R-CLUSTER-WINTER: зимний кластер «Базы знаний» — 2 лонгрида по структуре ТЗ."""
@@ -1633,7 +1646,7 @@ def _baza_znaniy_build(outdir, write_page):
       '<div class="svc-card"><a href="/baza-znaniy/zimniy-iznos-ev/"><h3>Почему ваш Zeekr теряет 30% запаса на морозе (и как это починить)</h3>'
       '<p>Физика потерь, математика простоя в пробке, ТОП-3 ошибки владельца на холоде.</p><div class="go">Читать →</div></a></div>'
       '<div class="svc-card"><a href="/baza-znaniy/magistrali-zimoy/"><h3>М-11 и М-12 зимой: карта «зон смерти» и белых пятен</h3>'
-      '<p>Где кончаются станции, как объезжать платные участки и сколько стоит 1500 км.</p><div class="go">Читать →</div></a></div>'
+      '<p>Где кончаются станции, как планировать платные участки и сколько стоит 1500 км.</p><div class="go">Читать →</div></a></div>'
       '<div class="cta"><a class="btn lime" href="/routes/">Калькулятор «зон смерти»</a><a class="btn ghost" href="/routes/rating/">Зал славы</a></div>')
     write_page(os.path.join(outdir, 'baza-znaniy', 'index.html'),
         'База знаний об электромобилях: зимний износ, трассы, планирование | Запас хода',
@@ -1643,36 +1656,37 @@ def _baza_znaniy_build(outdir, write_page):
     a1 = ('<h1>Почему ваш Zeekr теряет 30% запаса на морозе (и как это починить)</h1>'
       '<p class="lede">Утром −18 °C, бортовой показал −34% к «летнему» пробегу — и это не поломка, а физика. Разбираем, куда уходит заряд, сколько стоит час зимней пробки и какие три ошибки убивают батарею быстрее всего.</p>'
       '<h2>Физика: куда уходит заряд в −20 °C?</h2>'
-      '<p>Литиевая батарея зимой теряет часть ёмкости не «насовсем», а во временную блокировку: электролит густеет, и химия отдаёт ток медленнее. По нашей базе расчётов реальные потери хода зимой — от 25 до 40% в городском цикле, и это до того, как вы тронулись.</p>'
+      '<p>Литиевая батарея зимой теряет часть хода не «насовсем», а во временную блокировку: электролит густеет, и химия отдаёт ток медленнее. По нашей базе расчётов реальные потери хода зимой — от 25 до 40% в городском цикле, и это до того, как вы тронулись.</p>'
       '<div class="gbox"><b>Куда уходит заряд в −20 °C (ориентиры):</b><ul>'
-      '<li>Обогрев салона и стекла: 2–4 кВт·ч в час работы — это как «постоянно ехать» на 12–25 км/ч только ради тепла.</li>'
-      '<li>Холодная батарея до прогрева: отдает заметно меньше мощности — разгон и рекуперация реже работают на полную.</li>'
+      '<li>Обогрев салона и стёкол: 2–4 кВт·ч в час работы — эквивалент «постоянно ехать» на 12–25 км/ч только ради тепла.</li>'
+      '<li>Холодная батарея до прогрева: отдаёт меньше мощности — разгон и рекуперация реже работают на полную.</li>'
       '<li>Зимние шины и снежное покрытие: расход растёт ещё на 5–10%.</li>'
-      '<li>Встречный ветер и снежная каша: аэродинамические потери, особенно на трассе.</li>'
+      '<li>Встречный ветер и снежная каша: аэродинамические потери, особенно заметны на трассе.</li>'
       '</ul></div>'
       '<h2>Математика простоя: сколько стоит час в пробке зимой</h2>'
-      '<p>Простои зимой дороже, чем летом: печка работает постоянно. Для владельца это не «неприятно», а конкретные рубли.</p>'
-      '<div class="gbox"><b>Час простоя в зимней пробке (2–4 кВт·ч):</b><ul>'
-      '<li>Дома (ночью, тариф 3–9 ₽/кВт·ч): 6–36 ₽ — незаметно.</li>'
+      '<p>Простой зимой дороже, чем летом: печка работает постоянно. Для владельца это не «неприятно», а конкретные рубли.</p>'
+      '<div class="gbox"><b>Час простоя в зимней пробке (2–4 кВт·ч на печку):</b><ul>'
+      '<li>Дома, ночная зарядка (тариф 3–9 ₽/кВт·ч): 6–36 ₽ — незаметно.</li>'
       '<li>Городская DC-зарядка (15–25 ₽/кВт·ч): 30–100 ₽ за час — уже чувствительно.</li>'
-      '<li>Трасса, DC 18–30 ₽/кВт·ч: 36–120 ₽ в час простоя.</li>'
+      '<li>Трасса, DC (18–30 ₽/кВт·ч): 36–120 ₽ в час простоя.</li>'
       '</ul><p>Эквивалент пробега: за час печки вы «сжигаете» 12–25 км хода — на М-11 в объезде Москвы это реальный резерв до ближайшей станции.</p></div>'
       '<h2>ТОП-3 ошибки, убивающих батарею на холоде</h2>'
-      '<div class="gbox"><b>Ошибка 1 — приехать на быструю зарядку с ледяной батареей.</b> Станция отдаст мощность по «потолку» холодного пакета: вдвое-втрое медленнее. Правило: перед DC-зарядкой дайте батарее прогреться — 15–20 минут активной езды или штатный подогрев батареи перед станцией.</div>'
-      '<div class="gbox"><b>Ошибка 2 — парковка «в ноль» на морозе.</b> Глубокий разряд на холоде — самый быстрый путь к ускоренной деградации и, в пиковые морозы, к отказу трогаться. Правило: на зимней стоянке держите минимум 20% — не «чуть-чуть на потом».</div>'
-      '<div class="gbox"><b>Ошибка 3 — привычка «заряжаться до 100% и стоять».</b> Постоянные 100% на морозе не полезны химии. Для зимнего города комфортный коридор — 60–80% с регулярной подзарядкой, а 100% — только перед дальним рейсом.</div>'
+      '<div class="gbox"><b>Ошибка 1 — приехать на быструю зарядку с ледяной батареей.</b> Станция отдаст мощность по «потолку» холодного пакета: вдвое-втрое медленнее обычного. Правило: перед DC дайте батарее прогреться — 15–20 минут активной езды или штатный подогрев батареи перед станцией.</div>'
+      '<div class="gbox"><b>Ошибка 2 — парковка «в ноль» на морозе.</b> Глубокий разряд на холоде — самый быстрый путь к ускоренной деградации и, в пиковые морозы, к отказу трогаться. Правило: на зимней стоянке держите минимум 20%.</div>'
+      '<div class="gbox"><b>Ошибка 3 — привычка «заряжаться до 100% и стоять».</b> Постоянные 100% на морозе не полезны химии пакета. Для зимнего города комфортный коридор — 60–80% с регулярной подзарядкой; 100% — только перед дальним рейсом.</div>'
       '<div class="gbox"><b>Зимний чек-лист:</b><ul>'
       '<li>Планируйте на 25–40% больше энергии, чем летом.</li>'
       '<li>Перед DC — подогрев батареи (штатный или 15–20 минут езды).</li>'
-      '<li>Стоянка — не ниже 20%, поездка на 100% — только перед рейсом.</li>'
-      '<li>Дома — зарядка на медленной станции дешевле и бережнее к батарее.</li>'
+      '<li>Стоянка — не ниже 20%; полный заряд — только перед рейсом.</li>'
+      '<li>Дома на медленной станции — дешевле и бережнее к батарее.</li>'
       '</ul></div>'
       + cta
-      + '<div class="cta"><a class="btn lime" href="/routes/">Калькулятор «зон смерти» на трассах</a><a class="btn ghost" href="/baza-znaniy/magistrali-zimoy/">М-11 и М-12 зимой: карта «зон смерти»</a><a class="btn ghost" href="/blog/winter-ev-2026.html/">Зимние гайды блога</a></div>')
-    faq1 = [('Насколько реально падает запас зимой?', 'По нашей базе расчётов — от 25 до 40% в городском цикле; на трассе с постоянной скоростью потери меньше.'),
+      + '<div class="cta"><a class="btn lime" href="/routes/">Калькулятор «зон смерти» на трассах</a><a class="btn ghost" href="/baza-znaniy/magistrali-zimoy/">М-11 и М-12 зимой: карта «зон смерти»</a><a class="btn ghost" href="/blog/">Зимние гайды блога</a></div>')
+    faq1 = [('Насколько реально падает запас зимой?', 'По нашей базе расчётов — от 25 до 40% в городском цикле; на трассе с ровной скоростью потери меньше.'),
             ('Нужно ли греть батарею перед быстрой зарядкой?', 'Да: 15–20 минут активной езды или штатный подогрев — иначе станция отдаёт мощность по потолку холодного пакета.'),
             ('Сколько держать заряда на зимней парковке?', 'Не ниже 20%: глубокий разряд на морозе ускоряет деградацию и может оставить автомобиль без хода.')]
-    ld1 = '<script type="application/ld+json">' + art_ld('Почему Zeekr теряет 30% запаса на морозе', 'Физика зимних потерь хода, математика простоя и ТОП-3 ошибки владельца электромобиля на холоде', '/baza-znaniy/zimniy-iznos-ev/') + faq_ld(faq1) + '</script>'
+    ld1 = '<script type="application/ld+json">' + art_ld('Почему Zeekr теряет 30% запаса на морозе',
+        'Физика зимних потерь хода, математика простоя и ТОП-3 ошибки владельца электромобиля на холоде', '/baza-znaniy/zimniy-iznos-ev/') + faq_ld(faq1) + '</script>'
     write_page(os.path.join(outdir, 'baza-znaniy', 'zimniy-iznos-ev', 'index.html'),
         'Почему Zeekr теряет 30% запаса на морозе (и как это починить) | Запас хода',
         'Физика зимних потерь: обогрев, холодная батарея, шины. Математика простоя в пробке в рублях и ТОП-3 ошибки на холоде.',
@@ -1683,30 +1697,31 @@ def _baza_znaniy_build(outdir, write_page):
       '<p class="lede">Зимой магистраль прощает меньше ошибок: разрыв между станциями, который летом вы не заметили, при потерях 25–40% превращается в «зону смерти». Здесь — карта рисков по нашей базе 2073 ЭЗС и правила прохождения платных участков.</p>'
       '<h2>Карта белых пятен: где вы встанете в очередь на 2 часа</h2>'
       '<p>По нашей базе станций в коридорах М-4, М-11 и М-12 построен <a href="/routes/">калькулятор «зон смерти»</a>: он показывает отрезки, где между подходящими разъёмами больше километров, чем ваш зимний запас. Белые пятна имеют типичную природу:</p>'
-      '<div class="gbox"><b>Типы белых пятен (проверяйте свой коридор на калькуляторе):</b><ul>'
-      '<li>Разрывы между кластерами: участки, где до ближайшей пары станций больше 60 км при зимнем запасе 250–300 км и потерях 30%.</li>'
-      '<li>Объезды крупных городов: продолжительные «серые» отрезки, где станции есть, но стоят все в один выезд.</li>'
-      '<li>Монобрендовые участки: разъёмов хватает, но все — одного стандарта; у вас другой порт, и считаться они будут «белыми».</li>'
-      '</ul><p>Очереди на 2 часа — типичная зимняя картина тёплых выходных и праздников: все едут в один момент, а мощности станций не растут. Планируйте альтернативную станцию на каждом стыке.</p></div>'
-      '<h2>Скрытые платные участки и как их объезжать</h2>'
-      '<p>М-11 и М-12 — платные магистрали с безбарьерной оплатой (T-pass и аналоги): суммарная стоимость проезда складывается из нескольких участков. Электромобилю это выгоднее, чем выглядит: платные магистрали дают ровную скорость без светофоров, то есть предсказуемый расход.</p>'
+      '<div class="gbox"><b>Типы белых пятен (свой коридор проверяйте на калькуляторе):</b><ul>'
+      '<li>Разрывы между кластерами: участки, где до ближайшей пары станций больше 60 км при зимнем запасе 250–300 км и потерях около 30%.</li>'
+      '<li>Объезды крупных городов: длинные «серые» отрезки, где станции есть, но все — в одном выезде, и очередь выстраивается в один час.</li>'
+      '<li>Монобрендовые участки: разъёмов хватает, но все одного стандарта; с другим портом ваш коридор считается «белым».</li>'
+      '</ul><p>Очередь на 2 часа — типичная картина тёплых зимних выходных и праздников: все едут в один момент, а мощность станций не растёт. Планируйте альтернативную станцию на каждом стыке маршрута.</p></div>'
+      '<h2>Скрытые платные участки и как их планировать</h2>'
+      '<p>М-11 и М-12 — платные магистрали с безбарьерной оплатой (T-pass и аналоги): суммарный счёт складывается из нескольких участков. Для электромобиля это скорее плюс, чем минус: платные магистрали дают ровную скорость без светофоров, а значит предсказуемый расход.</p>'
       '<div class="gbox"><b>Правила кошелька и хода на платных магистралях:</b><ul>'
-      '<li>Проверяйте тарифы участков на официальных сайтах оператора перед рейсом — цены меняются.</li>'
+      '<li>Проверяйте тарифы участков на официальных сайтах оператора перед рейсом — цены обновляются.</li>'
       '<li>Станции «прилипают» к въездам и сервисным зонам: закладывайте подзарядку на них, а не «после следующего поста».</li>'
-      '<li>Не выключайте трассовый режим ради бесплатного объезда: б increments в городе и перекрёстках съедают экономию и время.</li>'
+      '<li>Не уходите с трассы ради бесплатного объезда без необходимости: городские перекрёстки и замедление съедают и время, и экономию.</li>'
       '</ul></div>'
       '<h2>Расчёт времени: 1500 км на одном баке vs розетке</h2>'
       '<div class="gbox"><b>1500 км: бензин против электромобиля (ориентиры зимы 2026):</b><ul>'
-      '<li>Бензин: ~90–120 л (6–8 л/100 км) — по текущим ценам это тысячи рублей и одна-две заправки без планирования.</li>'
+      '<li>Бензин: ~90–120 л (6–8 л/100 км) — тысячи рублей за рейс, но заправка без планирования.</li>'
       '<li>EV: 1500 км × 18–22 кВт·ч/100 км ≈ 270–330 кВт·ч. Дома по 3–9 ₽ — порядка 1–3 тыс. ₽; на трассе по 18–30 ₽ — порядка 5–10 тыс. ₽.</li>'
-      '<li>Время: 4–6 заправок по 25–40 минут + замедление зимой до 30–50% на DC — итого EV теряет к ДВС 3–5 часов на 1500 км.</li>'
-      '</ul><p>Вывод: не «быстрее», но в разы дешевле и с лучшим отдыхом по расписанию — если коридор проверен заранее.</p></div>'
+      '<li>Время: 4–6 зарядок по 25–40 минут + зимнее замедление DC до 30–50% — итого EV теряет к ДВС 3–5 часов на 1500 км.</li>'
+      '</ul><p>Вывод: не «быстрее», но заметно дешевле и с лучшим отдыхом по расписанию — если коридор проверен заранее.</p></div>'
       + cta
       + '<div class="cta"><a class="btn lime" href="/routes/">Проверить свой коридор: калькулятор «зон смерти»</a><a class="btn ghost" href="/baza-znaniy/zimniy-iznos-ev/">Zeekr на морозе: −30% запаса</a><a class="btn ghost" href="/routes/rating/">Зал славы</a></div>')
-    faq2 = [('Где на М-11 и М-12 «зоны смерти»?', 'Считайте свой коридор на калькуляторе /routes/ — он строит разрывы по нашей базе 2073 ЭЗС с учётом зимнего запаса и разъёма.'),
+    faq2 = [('Где на М-11 и М-12 «зоны смерти»?', 'Считайте свой коридор на калькуляторе /routes/ — он строит разрывы по нашей базе 2073 ЭЗС с учётом зимнего запаса и типа разъёма.'),
             ('Сколько стоит проезд по платным магистралям?', 'Зависит от участков и класса автомобиля; проверяйте актуальные тарифы на официальных сайтах оператора перед рейсом.'),
-            ('Сколько времени занимает 1500 км на EV зимой?', 'К ДВС добавляется 3–5 часов на заправки с учётом зимнего замедления быстрых зарядок на 30–50%.')]
-    ld2 = '<script type="application/ld+json">' + art_ld('М-11 и М-12 зимой: зоны смерти и белые пятна', 'Карта разрывов между ЭЗС, правила платных участков и расчёт 1500 км: бензин vs электромобиль', '/baza-znaniy/magistrali-zimoy/') + faq_ld(faq2) + '</script>'
+            ('Сколько времени занимает 1500 км на EV зимой?', 'К поездке на ДВС добавляется 3–5 часов на зарядки с учётом зимнего замедления быстрых станций на 30–50%.')]
+    ld2 = '<script type="application/ld+json">' + art_ld('М-11 и М-12 зимой: зоны смерти и белые пятна',
+        'Карта разрывов между ЭЗС, правила платных участков и расчёт 1500 км: бензин против электромобиля', '/baza-znaniy/magistrali-zimoy/') + faq_ld(faq2) + '</script>'
     write_page(os.path.join(outdir, 'baza-znaniy', 'magistrali-zimoy', 'index.html'),
         'М-11 и М-12 зимой: карта «зон смерти» и белых пятен | Запас хода',
         'Белые пятна зимних магистралей, платные участки без сюрпризов и расчёт 1500 км: бензин против розетки.',
@@ -1714,64 +1729,6 @@ def _baza_znaniy_build(outdir, write_page):
         crumbs=[('/baza-znaniy/', 'База знаний'), ('', 'Магистрали зимой')], extra_ld=ld2, toc=True)
 
 def routes_build(outdir, write_page):
-    data = _build_trass_stations()
-    os.makedirs(os.path.join(outdir, 'assets', 'data'), exist_ok=True)
-    data_rel = '/assets/data/trass_stations.json'
-    if data:
-        with open(os.path.join(outdir, 'assets', 'data', 'trass_stations.json'), 'w', encoding='utf-8') as f:
-            json.dump({'updated': 'auto', 'lines': data}, f, ensure_ascii=False)
-        n_all = sum(len(v['stations']) for v in data.values())
-        counts = ', '.join(v['name'] + ': ' + str(len(v['stations'])) for v in data.values())
-    else:
-        n_all = 0
-        counts = 'данные не найдены'
-    body = ('<h1>Имперский маршрут: зоны смерти на федеральных трассах</h1>'
-      '<p class="lede">Выберите трассу и задайте зимний запас хода — расчёт покажет отрезки трассы, где между зарядными станциями больше, чем вы проедете без розетки.</p>'
-      '<div class="gbox" id="rm-box" style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:20px;margin:18px 0">'
-      '<label>Трасса: <select id="rm-trass" style="background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px">'
-      '<option value="m4">М-4 «Дон»</option><option value="m11">М-11 «Нева»</option><option value="m12">М-12 «Восток»</option></select></label> '
-      '<label style="margin-left:10px">Зимний запас хода, км: <input id="rm-range" type="number" min="100" max="900" step="10" value="300" style="back'
-      '<label style="margin-left:10px">Тип разъёма: <select id="rm-type" style="background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8'
-      '<option value="all">любой</option><option value="GB/T DC">GB/T DC</option><option value="CCS2">CCS2</option><option value="Type 2">Type 2</opti'
-      '<div id="rm-result" style="margin-top:14px"></div></div>'
-      '<p class="note">Найдено станций в коридорах: ' + counts + '. «Зона смерти» — отрезок, где между подходящими станциями больше км, чем ваш зимний '
-      + '<script>var ZSTRASS=' + (json.dumps({'lines': data}, ensure_ascii=False) if data else 'null') + ';'
-      '(function(){function dist(a,b){var R=6371,rad=Math.PI/180,dl=(b[0]-a[0])*rad,dn=(b[1]-a[1])*rad;'
-      'a2=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.min(1,Math.sqrt('
-      'function show(){var res=document.getElementById("rm-result");'
-      'if(!ZSTRASS||!ZSTRASS.lines){res.innerHTML="<p>Данные станций не найдены.</p>";return;}'
-      'var key=document.getElementById("rm-trass").value, rng=parseFloat(document.getElementById("rm-range").value)||300,'
-      'typ=document.getElementById("rm-type").value, L=ZSTRASS.lines[key];'
-      'var sts=L.stations.filter(function(s){return typ==="all"||(s[1]||[]).some(function(t){return (t||"").indexOf(typ.split(" ")[0])!==-1;});});'
-      'var zones=[],prev=0,first=sts.length?sts[0][0]:null;'
-      'for(var i=0;i<sts.length;i++){if(sts[i][0]-prev>rng&&sts[i][0]>0){zones.push([prev,sts[i][0],Math.round(sts[i][0]-prev)]);}'
-      'prev=sts[i][0];}'
-      'var tail=L.len_km-prev;if(tail>rng){zones.push([prev,L.len_km,Math.round(tail)]);}'
-      'var html2="<p><b>"+L.name+"</b> · длина ≈ "+L.len_km+" км · подходящих станций в коридоре: "+sts.length+"</p>";'
-      'if(!zones.length){html2+="<div class=\'gbox\' style=\'border-color:#30d158;padding:12px\'>✔ «Зон смерти» при этом запасе не найдено. Проверьте '
-      'else{html2+="<div class=\'gbox\' style=\'border-color:#D4AF37;padding:12px;margin:8px 0;animation:zspulse 2.4s infinite\'><b style=\'color:#D4A'
-      'zones.forEach(function(z){html2+="<li>от ~"+Math.round(z[0])+" км до ~"+Math.round(z[1])+" км — <b>"+z[2]+" км</b> без подходящих станций</li>"'
-      'html2+="</ul><div style=\'margin-top:8px\'>Закладывайте запасную станцию и не разряжайтесь в ноль: <a href=\'/blog/planirovanie-dalnej-poezdki-'
-      'res.innerHTML=html2;}'
-      'document.addEventListener("DOMContentLoaded",function(){'
-      '["rm-trass","rm-range","rm-type"].forEach(function(id){var el=document.getElementById(id);el.addEventListener("change",show);el.addEventListene'
-      '</script>'
-      '<style>@keyframes zspulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.25)}50%{box-shadow:0 0 0 6px rgba(212,175,55,.12)}}</style>')
-    ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"WebApplication","name":"Имперский маршрут — зоны
-    write_page(os.path.join(outdir, 'routes', 'index.html'), 'Имперский маршрут: зоны смерти на М-4, М-11, М-12 | Запас хода', 'Расчёт «зон смерти» на
-    # рейтинг — Masonry-лента (волна 2.0 R-UGC-SURVIVAL)
-    _items = None
-    try:
-        from catalog import GAS_URL as _gurl
-        import urllib.request as _ur
-        _req = _ur.Request(_gurl + '?action=ugc_list', headers={'User-Agent': 'zapashoda-builder'})
-        _j = json.loads(_ur.urlopen(_req, timeout=12).read().decode('utf-8', 'replace'))
-        if _j and _j.get('items'):
-            _items = _j['items'][:25]
-    except Exception:
-        _items = None
-    _ugc_rating_build(outdir, write_page, items=_items)
-
     data = _build_trass_stations()
     os.makedirs(os.path.join(outdir, 'assets', 'data'), exist_ok=True)
     data_rel = '/assets/data/trass_stations.json'
@@ -1817,13 +1774,18 @@ def routes_build(outdir, write_page):
       '<style>@keyframes zspulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.25)}50%{box-shadow:0 0 0 6px rgba(212,175,55,.12)}}</style>')
     ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"WebApplication","name":"Имперский маршрут — зоны смерти","applicationCategory":"TravelApplication","operatingSystem":"Web","url":"https://zapashoda-ev.ru/routes/"}, ensure_ascii=False) + '</script>'
     write_page(os.path.join(outdir, 'routes', 'index.html'), 'Имперский маршрут: зоны смерти на М-4, М-11, М-12 | Запас хода', 'Расчёт «зон смерти» на федеральных трассах: отрезки, где между зарядными станциями больше, чем ваш зимний запас хода. По публичной базе 2073 станций.', body, '/routes/', crumbs=[('', 'Маршруты')], extra_ld=ld)
-    # рейтинг (каркас UGC)
-    rbody = ('<h1>Рейтинг маршрутов владельцев</h1>'
-      '<p class="lede">Публичный рейтинг «Я выжил»: маршруты, которые владельцы прошли зимой и летом. Стартовая полка — первые отзывы ждут вас: пройдите маршрут на <a href="/routes/">Имперском маршруте</a> и пришлите отчёт в наш Telegram-канал.</p>'
-      '<div class="gbox" style="background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:14px;padding:18px">'
-      '<div style="color:#8e8e93;font-size:13px">ПОКА ПУСТО — РЕЙТИНГ ФОРМИРУЕТСЯ</div>'
-      '<p>Первые 50 отчётов получат звание «Император трассы» и попадут в этот рейтинг. Формат отчёта: трасса, модель, месяц, минимальный остаток заряда, работавшие станции.</p></div>')
-    write_page(os.path.join(outdir, 'routes', 'rating', 'index.html'), 'Рейтинг маршрутов «Я выжил» | Запас хода', 'Публичный UGC-рейтинг зимних маршрутов владельцев электромобилей: трассы, модели, отчёты «я выжил».', rbody, '/routes/rating/', crumbs=[('/routes/', 'Маршруты'), ('', 'Рейтинг')], noindex=False)
+    # Зал славы: Masonry-лента из GAS (approved) + JS-подгрузка (волна 2.0 R-UGC-SURVIVAL)
+    _items = None
+    try:
+        from catalog import GAS_URL as _gurl
+        import urllib.request as _ur
+        _req = _ur.Request(_gurl + '?action=ugc_list', headers={'User-Agent': 'zapashoda-builder'})
+        _j = json.loads(_ur.urlopen(_req, timeout=12).read().decode('utf-8', 'replace'))
+        if _j and _j.get('items'):
+            _items = _j['items'][:25]
+    except Exception:
+        _items = None
+    _ugc_rating_build(outdir, write_page, items=_items)
 
 def telemetry_build(outdir, write_page):
     os.makedirs(os.path.join(outdir, 'telemetry'), exist_ok=True)
