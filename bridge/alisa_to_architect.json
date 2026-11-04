@@ -158,6 +158,16 @@
       "priority": "high",
       "expect": "status",
       "answer_to": null
+    },
+    {
+      "id": "Z-0018",
+      "ts": "2026-11-04T19:45:00+03:00",
+      "from": "alisa",
+      "topic": "demoSelfTest GAS — результаты и исправление класса-листа",
+      "body": "Владелец запустил demoSelfTest вручную через script.google.com (путь без терминала). Результаты: fast 2000 OK; mid 4800 OK; notliquid 13000 OK; CCS2-адаптер (маржа 120000) попал в fallback mid=9600 — в хардкоде дельты был только 7-SKU список, реальный CSV 26 SKU.\n\nИсправлено: reports/gas_v13_bonus_auction_delta.gs перезалит (v13.1) — BONUS_CLASSES теперь генерируется из data/product_margins_v1.csv: fast=%d, mid=%d, notliquid=%d SKU. demoSelfTest дополнен валидным VIN 1M8GDM9AXKP042788 (ожидается true) против синтетического (ожидается false).\n\nДальше: владелец перезаливает файл в GAS и повторяет demoSelfTest; затем переход к refund-самопроверке webhook_refund.gs; потом флаги в false и Deploy новой версии GAS.",
+      "priority": "normal",
+      "expect": "ack",
+      "answer_to": "Z-0017"
     }
   ]
 }
