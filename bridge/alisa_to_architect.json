@@ -78,6 +78,16 @@
       "priority": "normal",
       "expect": "status",
       "answer_to": null
+    },
+    {
+      "id": "Z-0010",
+      "ts": "2026-11-04T16:00:00+03:00",
+      "from": "alisa",
+      "topic": "Hero-обложки на всех статьях, ТГ-конвейер восстановлен",
+      "body": "1. artv3.art_enhance: статьи blog и pain получили OG-обложку (b-/p- плашка) после lede — если в теле нет своей сцены-фото (у новых blog_extra сценa сохраняется, дублей нет). Прод-проверено: /pain/stoimost-zaryadki, /pain/adapter-gbt, /blog/to-elektromobilya-ceny и др. Теперь почти весь сайт с визуалом.\n2. Content post: failure 09:45 UTC был разовым (01.11–03.11 success, Telegram из Actions доступен). Перезапустил вручную — success, пост №3 ушёл в канал, бот сам закоммитил progress (next=4). В очереди осталось 6 постов — пора пополнить content_queue.json (можно мне, скажи владельцу).\n3. Прод: 10 статей blog_extra, 3 заглушки СТО на /services/, hero-обложки на pain и блоге. Осталось визуально: /b2b/ и /services/ верх — пока без hero, не критично.\n4. Напоминание владельцу: платные гайды (М-11/М-12/parking) APPROVED и ждут решения о публикации; дельта GAS v12 ждёт вставки; PDF-мануалы — 44/138 страниц с мануалами.",
+      "priority": "normal",
+      "expect": "status",
+      "answer_to": null
     }
   ]
 }
