@@ -42,78 +42,93 @@ def wrap(draw, text, fnt, maxw):
     if cur: lines.append(cur)
     return lines
 
-def make_slide(art_path, title, sub, footer):
-    img = Image.new("RGB", (W, H), ANTHRACITE)
-    ART_H = 1080
+def make_art_layer(art_path):
+    """Арт-слой 1080x1080: cover-кроп, лёгкое затемнение по краям для перехода к панели."""
     if art_path and not os.path.isdir(art_path) and os.path.exists(art_path):
         art = Image.open(art_path).convert("RGB")
-        art = cover(art, W, ART_H)
+        art = cover(art, W, W)
         art = ImageEnhance.Brightness(art).enhance(0.92)
-        img.paste(art, (0, 0))
-        # градиент-стык: верх панели -> арт
+        # нижний градиент-стык к антрациту
         band = Image.new("RGBA", (W, 120), (29, 29, 31, 255))
         grad = Image.new("L", (W, 120))
         gd = ImageDraw.Draw(grad)
         for yy in range(120):
             gd.line([(0, yy), (W, yy)], fill=int(255 * (yy / 119)))
-        img.paste(band, (0, ART_H - 120), grad)
+        art.paste(band, (0, W - 120), grad)
+        return art
+    # без арта — фирменный антрацит с золотой линией
+    img = Image.new("RGB", (W, W), ANTHRACITE)
     d = ImageDraw.Draw(img)
-    # золотая линия-шапка
-    d.rectangle([70, ART_H + 48, 190, ART_H + 54], fill=GOLD)
+    d.rectangle([70, W // 2 - 6, 190, W // 2], fill=GOLD)
+    return img
+
+
+def make_panel(title, sub, footer):
+    """Панель 1080x840 (низ кадра): СТАТИЧНАЯ, текст не двигается никогда."""
+    H_PANEL = 840
+    img = Image.new("RGB", (W, H_PANEL), ANTHRACITE)
+    d = ImageDraw.Draw(img)
+    d.rectangle([70, 48, 190, 54], fill=GOLD)
     title_f = font("DejaVuSans-Bold.ttf", 64)
     sub_f = font("DejaVuSans.ttf", 42)
-    y = ART_H + 96
+    y = 96
     for ln in wrap(d, title, title_f, W - 140):
         d.text((70, y), ln, font=title_f, fill=WHITE); y += 80
     y += 18
     for ln in wrap(d, sub, sub_f, W - 140):
         d.text((70, y), ln, font=sub_f, fill=MUT); y += 56
-    # нижняя плашка
     f_f = font("DejaVuSans-Bold.ttf", 30)
-    d.text((70, H - 120), footer, font=f_f, fill=GOLD)
+    d.text((70, H_PANEL - 100), footer, font=f_f, fill=GOLD)
     return img
+
 
 def render(spec, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     tmp = tempfile.mkdtemp()
     parts = []
-    for i, s in enumerate(spec["slides"]):
-        png = os.path.join(tmp, f"s{i}.png")
-        make_slide(os.path.join(ROOT, s["art"]) if s.get("art") else "", s["title"], s["sub"], spec["footer"]).save(png)
-        m4 = os.path.join(tmp, f"s{i}.mp4")
-        dur = s.get("dur", 4.0)
-        cmd = ["ffmpeg", "-y", "-loop", "1", "-i", png,
-               "-t", str(dur), "-vf",
-               "zoompan=z='min(zoom+0.0015,1.18)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30" % int(dur * 30),
-               "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", m4]
-        subprocess.run(["ffmpeg" if shutil.which("ffmpeg") else os.environ.get("FFMPEG_BIN", "ffmpeg")] + cmd[1:], check=True, capture_output=True)
-        parts.append(m4)
-    # склейка с кроссфейдами
+    for i, sld in enumerate(spec["slides"]):
+        art_png = os.path.join(tmp, f"a{i}.png")
+        pan_png = os.path.join(tmp, f"p{i}.png")
+        make_art_layer(os.path.join(ROOT, sld["art"]) if sld.get("art") else "").save(art_png)
+        make_panel(sld["title"], sld["sub"], spec["footer"]).save(pan_png)
+        dur = sld.get("dur", 4.0)
+        frames = int(dur * 30)
+        # 1) арт: мягкий Ken Burns 1.00 -> 1.06 (только картинка)
+        art_m4 = os.path.join(tmp, f"a{i}.mp4")
+        subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", art_png, "-t", str(dur),
+            "-vf", "zoompan=z='min(zoom+0.0005,1.06)':d=%d:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1080:fps=30" % frames,
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", art_m4],
+            check=True, capture_output=True)
+        # 2) панель: статичный поток без фильтров
+        pan_m4 = os.path.join(tmp, f"p{i}.mp4")
+        subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", pan_png, "-t", str(dur),
+            "-vf", "fps=30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", pan_m4],
+            check=True, capture_output=True)
+        # 3) vstack
+        sl_m4 = os.path.join(tmp, f"s{i}.mp4")
+        subprocess.run(["ffmpeg", "-y", "-i", art_m4, "-i", pan_m4,
+            "-filter_complex", "[0:v][1:v]vstack=inputs=2[v]",
+            "-map", "[v]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", sl_m4],
+            check=True, capture_output=True)
+        parts.append(sl_m4)
     n = len(parts)
-    inputs = []
-    for p in parts: inputs += ["-i", p]
-    fl = ""
-    prev = 0
-    for i in range(n):
-        fl += "[%d:v]" % i
-        if i == n - 1: break
-        off = 3.6
-        fl += ("[%d:v]" % (i + 1)) if False else ""
-    # простой вариант: filter_complex цепочкой
-    fc = ""
-    for i in range(n - 1):
-        a = ("[%d:v]" % i) if i == 0 else ("[v%d]" % (i - 1))
-        fc += "%s[%d:v]xfade=transition=fade:duration=0.5:offset=%.2f[v%d];" % (a, i + 1, (i * 3.5) + 3.5, i)
-    fc = fc.rstrip(";")
     out = os.path.join(out_dir, spec.get("slug", "slide") + ".mp4")
     if n == 1:
         shutil.copy(parts[0], out)
     else:
+        inputs = []
+        for pth in parts: inputs += ["-i", pth]
+        fc = ""
+        for i in range(n - 1):
+            a = ("[%d:v]" % i) if i == 0 else ("[v%d]" % (i - 1))
+            fc += "%s[%d:v]xfade=transition=fade:duration=0.5:offset=%.2f[v%d];" % (a, i + 1, (i * 3.5) + 3.5, i)
+        fc = fc.rstrip(";")
         cmd = ["ffmpeg", "-y"] + inputs + ["-filter_complex", fc, "-map", "[v%d]" % (n - 2),
                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", out]
-        subprocess.run(["ffmpeg" if shutil.which("ffmpeg") else os.environ.get("FFMPEG_BIN", "ffmpeg")] + cmd[1:], check=True, capture_output=True)
+        subprocess.run(cmd, check=True, capture_output=True)
     shutil.rmtree(tmp, ignore_errors=True)
     print("rendered:", out, os.path.getsize(out), "bytes")
+
 
 SPEC = {
   "slug": "slide-01",
