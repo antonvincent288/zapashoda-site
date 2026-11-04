@@ -55,7 +55,13 @@ def art_enhance(body, url, title, date='', kind='Руководство'):
     meta = ('<div class="art-meta"><span class="kind">' + html.escape(kind) + '</span><span class="dot">·</span>'
             '<span>' + str(minutes) + ' мин чтения</span><span class="dot">·</span>'
             '<span>Обновлено: ' + html.escape(date) + '</span></div>')
+    mrel = re.search(r'/(blog|pain)/([a-z0-9-]+)\.html', url or '')
+    hero = ''
+    if mrel and '<img src="/assets/img/blog/' not in body:
+        hero = ('<img src="/assets/og/' + ('b-' if mrel.group(1) == 'blog' else 'p-') + mrel.group(2) + '.png"'
+                ' alt="' + html.escape(t, quote=True) + '" loading="lazy" decoding="async"'
+                ' style="width:100%;border-radius:12px;margin:14px 0">')
     grid_cls = 'art-grid' if toc_desk else 'art-grid art-nogrid'
     return ('<div class="art"><div class="art-progress" aria-hidden="true"><i></i></div>'
-            + head + meta + toc_mob
+            + head + hero + meta + toc_mob
             + '<div class="' + grid_cls + '">' + toc_desk + '<div class="art-body">' + rest + share + '</div></div></div>')
