@@ -56,6 +56,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: SEO-Spider (R-00)
         run: python scripts/seo_spider.py
+      - name: GAS/MARGIN Watch (волна 1.7)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/gas_watch.py
 
   bonus-security-test:
     runs-on: ubuntu-latest
