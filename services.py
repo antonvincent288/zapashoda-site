@@ -526,8 +526,10 @@ def _sto_cards(cfg):
         badge = ('<div class="sto-badge">✔ Проверенный техцентр Запас Хода</div>') if p.get('verified') else ''
         geo = (city + (' · ' + addr if addr else '')) if (city or addr) else ''
         cid = 'sto%d' % (idx+1)
+        photo = str(p.get('photo') or '')
         card = ('<div class="sto-card" data-sto="' + _h.escape(str(p.get('slug') or cid)) + '">'
           + badge
+          + (('<img src="' + _h.escape(photo) + '" alt="' + name + '" loading="lazy" decoding="async" style="width:100%;border-radius:10px;margin-bottom:10px">') if photo else '')
           + '<h3>' + name + '</h3>'
           + (geo and ('<div class="sto-geo">📍 ' + geo + '</div>') or '')
           + (chips and ('<div class="sto-chips">' + chips + '</div>') or '')
