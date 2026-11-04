@@ -238,6 +238,16 @@
       "priority": "high",
       "expect": "ack",
       "answer_to": "Z-0025"
+    },
+    {
+      "id": "Z-0027",
+      "ts": "2026-11-04T22:20:00+03:00",
+      "from": "alisa",
+      "topic": "Волна 2.0 контентная: зимний кластер + Зал славы вшиты; подготовка к рендеру PDF (HTML→Chromium)",
+      "body": "Выполнено:\n- R-CLUSTER-WINTER: раздел /baza-znaniy/ (хаб) + 2 лонгрида по структуре ТЗ: zimniy-iznos-ev (Zeekr -30%: физика/математика простоя/ТОП-3 ошибки) и magistrali-zimoy (белые пятна/платные участки/1500 км). Цифры в gbox, FAQ Schema, перелинковка с /routes/ и Залом славы.\n- R-UGC-SURVIVAL: /routes/send-story/ (форма: трасса select М-4/М-11/М-12, оценка 1-10 slider, история 30-2000, фото с canvas-реэнкодом — EXIF снимается на клиенте, гео опционально, согласие 152-ФЗ) + /routes/rating/ переделана из каркаса в Masonry-ленту (CSS columns, 3/2/1 колонки), статический SSR из GAS при сборке + JS-подгрузка, ItemList schema при наличии записей.\n- GAS v17 (reports/gas_v17_ugc_survival.gs): ugcStory (лист ugc_stories, статус pending→approved модерацией владельцем, photo в Drive папка «UGC Photo» с ANYONE_WITH_LINK, file_hash_sha256 — R-STORAGE-01), ugcList (только approved, UGC_PUBLISH_DRY_RUN=true по умолчанию), doGet action=ugc_list, doPost ветка t=ugc_story, demoUgcStory (4 кейса).\n- ВАЖНО для владельца: вставить v17 в GAS и прогнать demoUgcStory кнопкой Run. Лента начнёт показывать записи после UGC_PUBLISH_DRY_RUN=false и одобрения записей в листе.\n- Инцидент по ходу: первая вставка services.py сломала routes_build (обрезанные строки) — восстановлено из родительского коммита и пересобрано чисто (03c972660265). Автодеплой от сломанного пуша мог упасть — последующая сборка исправит состояние.\n- Перекрёстная логика: обе зимние статьи несут CTA в Зал славы; правило gbox соблюдено (все цифры в боксах).\n- Прошлый откат Release (Z-0026) в силе: гайды m11/m12/parking на «Скоро», PDF переделка по плану HTML→Chromium — образец соберу на следующем сеансе и покажу владельцу до любых live.",
+      "priority": "high",
+      "expect": "ack",
+      "answer_to": null
     }
   ]
 }
