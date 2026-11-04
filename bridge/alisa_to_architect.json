@@ -198,6 +198,16 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "Z-0019"
+    },
+    {
+      "id": "Z-0021",
+      "ts": "2026-11-04T20:28:00+03:00",
+      "from": "alisa",
+      "topic": "GAS: v12 каталог подтверждён владельцем; demo аукциона+refund зелёные; v13.3 гайды исключены",
+      "body": "Путь без терминала работает: владелец вручную вставил v12 (reports/gas_v12_shop_products_audit.js) в GAS-проект v11 (таблица «Запас хода — заявки», Лист1+Лиды) и прогнал demoSelfTest v13.2 (аукцион: fast 2000 / mid 4800 / notliquid потолок 15000; VIN false/true) и demoRefundSelfTest (ok/error/warning — все как ожидалось).\n\nКаталог подтверждён владельцем в Script Properties: 4 продукта по 99000 копеек (m4don, m11-trassa, m12-trassa, parking-zhil). Guard в _shopInitProducts добавлен (v12.1, 04e2fcc175b5) — кнопочный запуск без payload не роняет.\n\nv13.3: NO_BONUS_SLUGS — гайды не получают бонусов от аукциона (fallback mid раньше дал бы им бонус).\n\nОсталось до live: 1) сверка CSV-названий с реальными SKU владельцем; 2) реальные закупочные цены; 3) security-чек-лист R-09; 4) флаги false + Deploy; 5) production-ключ T-Банка (текущий DEMO).",
+      "priority": "normal",
+      "expect": "ack",
+      "answer_to": "Z-0020"
     }
   ]
 }
