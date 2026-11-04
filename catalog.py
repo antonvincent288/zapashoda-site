@@ -237,6 +237,17 @@ SEO_CAT = ('<section class="mt-6"><div class="container"><div class="rounded-lg 
   '<li><a href="/catalog/udlinitel-gbt-gbt-5m.html">Удлинитель для зарядки GB/T</a></li>'
   '</ul></div></div></section>')
 
+SAFETY_MARKER = {
+  'Адаптеры': ('<div class="gbox" style="margin:16px 0"><b>Важно про безопасность.</b> '
+    'Адаптер — самое нагруженное звено цепи зарядки. Пассивный переходник не управляет сессией: '
+    'handshake, лимиты и тариф всегда согласуют станция и машина. На новых платформах с высоким '
+    'напряжением (Zeekr 007, Zeekr 001 FR, Xiaomi SU7 в версиях 800 В, Avatr 11/12) рабочий ток '
+    'сессии выше — берите адаптер с запасом по току и следите за нагревом коннектора во время '
+    'зарядки. Для оптовых партий действует входной контроль перед отгрузкой. Подробный разбор — '
+    'в <a href="/pain/adapter-gbt.html">гайде об адаптерах GB/T</a>. Цены оптовых партий — '
+    '<a href="/b2b/">по запросу для дилеров</a>.</div>'),
+}
+
 def catalog_build(outdir):
     os.makedirs(os.path.join(outdir,'catalog'), exist_ok=True)
     order = ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары']
@@ -255,6 +266,7 @@ def catalog_build(outdir):
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подбор за 30 секунд</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/b2b/">Дилерам — прайс</a>'
       '</div></div></div></section>'
+            '<div class="gbox" style="margin:14px 0"><b>Оптом для салонов и дилеров.</b> Поставляем адаптеры GB/T (в том числе <a href="/catalog/adapter-ccs2-gbt-dc.html">DC-адаптеры CCS2 → GB/T</a>), кабели, переноски и станции: <a href="/b2b/">оптовые поставки ЭЗС и переходников GB/T для автосалонов</a> — комплектация машин при выдаче, дилерские цены, условия под ваш объём.</div>'
       '<div class="flex flex-wrap gap-2 my-4" id="pc-filters"><span class="chip on" data-cat="all" onclick="ofFilter(this)">Все</span>' + cats + '</div>'
       '<div class="flex flex-wrap gap-2 my-2" id="ln-filters"><span class="chip on" data-ln="all" onclick="ofLineFilter(this)">Все машины</span><span class="chip" data-ln="gbt" onclick="ofLineFilter(this)">GB/T (Китай)</span><span class="chip" data-ln="eu" onclick="ofLineFilter(this)">Type 2 / CCS2 (Европа)</span><span class="chip" data-ln="phev" onclick="ofLineFilter(this)">Для гибридов (PHEV)</span></div>' )
 
@@ -271,7 +283,7 @@ def catalog_build(outdir):
       '<p class="note">Для гибрида хватает домашней зарядки 3,5–7,4 кВт, адаптер нужен только если у вашей версии разъём GB/T. <a href="/blog/phev-rossiya-2026.html">Гид по PHEV 2026 →</a></p>'
       '<div class="fsec">' + phev_links + '</div>')
     body = hero + '<div class="flex flex-wrap gap-2 my-3"><span id="pc-count" class="text-sm text-gray-500"></span><label class="text-sm text-gray-500 ml-auto">Сортировка: <select id="pc-sort" class="ml-2 border border-gray-300 rounded-lg px-3 py-2"><option value="default">По подбору</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option></select></label></div><div class="products-grid">' + grid + '</div>' + phev_block + SEO_CAT + order_form_html('Каталог аксессуаров') + PRESELECT_JS
-    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог: адаптеры, кабели и зарядки для EV | Запас хода', 'Каталог аксессуаров для зарядки электромобилей в России: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
+    WRITE_PAGE(os.path.join(outdir,'catalog','index.html'), 'Каталог: адаптеры, кабели и зарядки для EV | Запас хода', 'Каталог аксессуаров для зарядки электромобилей и оптовые поставки ЭЗС для дилеров и автосалонов: адаптеры Type 2 → GB/T, DC-адаптеры CCS2 → GB/T, кабели, портативные зарядки, станции. Подбор под модель, оплата дилеру при получении.', body, '/catalog/', crumbs=[('', 'Каталог')])
     for p in PRODUCTS:
         url = '/catalog/' + p['slug'] + '.html'
         tag = TAGS.get(p['id'])
@@ -323,6 +335,7 @@ def catalog_build(outdir):
           '<h2 class="text-lg text-gray-900 mt-8 mb-4">О товаре</h2>'
           '<p class="text-base text-gray-700 leading-relaxed" style="max-width:760px">' + html.escape(p['descLong']) + '</p>'
           '<p class="text-sm text-gray-500" style="max-width:760px">' + cat_intro(p) + '</p>'
+          + SAFETY_MARKER.get(p['cat'], '')
           + (('<h2 class="text-lg text-gray-900 mt-8 mb-4">Подходит для</h2><p class="text-sm text-gray-500">Разъёмы и подбор — на страницах моделей:</p><div class="pz-fits flex flex-wrap gap-2">' + fh + '</div>') if fh else '')
           + faq_html(p)
           + rel_html

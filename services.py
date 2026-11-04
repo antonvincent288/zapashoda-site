@@ -263,6 +263,18 @@ BLOG_EXTRA2 = {
 }
 
 
+
+# Статьи с телами в build.py (SEO_STUBS/BLOG_READY): показываем в индексе блога карточками
+BLOG_EXTRA_CARDS = [
+    ('b2b-reglament-vydachi-ev', 'Регламент выдачи китайских EV в автосалоне: чек-лист для РОПа', 'Готовый стандарт предпродажной подготовки и выдачи BEV/EREV: проверка разъёмов, SOC, комплект зарядки, инструктаж и скрипт передачи машины клиенту.'),
+    ('800v-zaryadka-ev-rossiya', 'Зарядка EV 800 В в России: Zeekr 007, SU7 и станции 400 В', 'Что происходит с 800-вольтовыми машинами (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) на станциях 400 В: мощность, ток адаптера и handshake-сессия.'),
+    ('erekv-domashnyaya-zaryadka', 'Li Auto L6–L9: почему гибриду нужна домашняя зарядка', 'Сценарий владения EREV: ночная домашняя зарядка вместо городской быстрой, математика батареи 40–52 кВтч и правильный набор для дилера.'),
+    ('sertifikaciya-ezs-rf-2026', 'Сертификация зарядных станций в РФ 2026: ЕАЭС и ГОСТ', 'Какие документы обязательны у поставщика ЭЗС (ТР ТС 004/020, ЕАЭС 037), знак ЕАС, требования к монтажу и распределение ответственности.'),
+    ('zeekr-001-gbt-diff', 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки', 'Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.'),
+    ('li-l7-battery-heat', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой', 'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.'),
+    ('workersbee-vs-auxus', 'Workersbee против Auxus: какой кабель выдержит русскую зиму', 'Честное сравнение зарядных кабелей Workersbee и Auxus: TPU против TPE на морозе, посеребрённые контакты против датчиков температуры, вердикт для трассы и для дачи.'),
+]
+
 BLOG_CAT = {
  "to-elektromobilya-ceny": "Обслуживание",
  "phev-rossiya-2026": "Гибриды",
@@ -293,7 +305,7 @@ BLOG_CAT = {
 def blog_build(outdir, write_page):
     """Раздел «Блог»: экспертные статьи-гайды (контент-SEO). Отдельно от коммерческих /services/."""
     os.makedirs(os.path.join(outdir,'blog'), exist_ok=True)
-    cards = ''.join('<div><a href="/blog/'+sl+'.html" style="text-decoration:none;color:inherit"><div class="blogcard h-full">'      + '<img src="/assets/og/b-'+sl+'.png" alt="'+t.replace('"','')+'" loading="lazy" decoding="async" style="width:100%;border-radius:10px;margin-bottom:10px" auto=1>'      + '<span class="cat">'+BLOG_CAT.get(sl,'Гайд')+'</span><h3>'+t+'</h3><p>'+d[:150]+'</p>'      + '<span class="go">Читать статью →</span></div></a></div>' for sl,t,d in BLOG_ARTICLES)
+    cards = ''.join('<div><a href="/blog/'+sl+'.html" style="text-decoration:none;color:inherit"><div class="blogcard h-full">'      + '<img src="/assets/og/b-'+sl+'.png" alt="'+t.replace('"','')+'" loading="lazy" decoding="async" style="width:100%;border-radius:10px;margin-bottom:10px" auto=1>'      + '<span class="cat">'+BLOG_CAT.get(sl,'Гайд')+'</span><h3>'+t+'</h3><p>'+d[:150]+'</p>'      + '<span class="go">Читать статью →</span></div></a></div>' for sl,t,d in BLOG_ARTICLES + BLOG_EXTRA_CARDS)
     idx_body = ('<h1>Блог «Запас хода»</h1>'
       '<p class="lede">Практика владения электромобилем и гибридом в России: разъёмы и зарядка по конкретным моделям, руководства на русском, аналитика рынка и зарядной инфраструктуры. Каждая статья опирается на нашу базу болей и решений по 138 моделям — со ссылками на источники.</p>'
       '<!-- SEO-группы тем -->''<h2>Популярные темы: по формулировкам запросов</h2><div class="kv"><div><div class="k">Деньги и льготы</div><div class="v"><a href="/pain/stoimost-zaryadki.html">сколько стоит зарядить электромобиль</a> · <a href="/blog/subsidii-na-elektromobil-2026.html">субсидия на электромобиль 2026</a> · <a href="/blog/transportnyi-nalog-elektromobilya.html">транспортный налог на электромобиль</a> · <a href="/blog/besplatnye-trassy-parkovka-ev.html">бесплатный проезд по трассам</a></div></div>''<div><div class="k">Проблемы</div><div class="v"><a href="/pain/ne-zaryazhaetsya.html">электромобиль не заряжается</a> · <a href="/blog/stanciya-ne-rabotaet.html">станция не работает</a> · <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">ошибка 0x13</a> · <a href="/pain/zapas-hoda-zimoy.html">запас хода зимой</a></div></div>''<div><div class="k">Аксессуары</div><div class="v"><a href="/pain/adapter-gbt.html">адаптер type 2 gbt</a> · <a href="/pain/udlinitel.html">удлинитель для зарядки</a> · <a href="/catalog/">каталог с подбором по модели</a></div></div>''<div><div class="k">Документы и сервис</div><div class="v"><a href="/blog/rukovodstva-na-russkom.html">инструкция на русском</a> · <a href="/vin/">VIN-справочник</a> · <a href="/blog/proverka-pered-pokupkoy.html">проверка перед покупкой</a></div></div></div>''<div class="svc-grid">'+cards+'</div>'
@@ -975,6 +987,7 @@ def calculator_build(outdir, write_page):
       '<div class="kv" id="c-out"></div>'
       '<p><button class="btn lime" id="c-share" type="button">Отправить результат в Telegram</button></p>'
       '<p class="note">Тарифы — по данным отраслевых операторов на конец 2026 года: дом ночью 3–4, днём 6–9, городская AC 10–20, DC в городе 15–25, DC на трассе 18–30 ₽/кВт·ч (АПОЭ, тарифы регулятора января 2026). Точный тариф вашей сети смотрите в приложении оператора. Ёмкости моделей — ориентир по типовым комплектациям, сверьте со своей.</p>'
+      '<p class="note"><b>Расчёт — базовый.</b> Фактическая стоимость сессии на публичных быстрых ЭЗС может включать поминутные тарифы операторов за удержание коннектора (плата за простой) — особенно на трассах и у гибридов, которые стоят дольше. Полный разбор — в гайде <a href="/pain/plata-za-prostoy.html">«Плата за простой»</a>.</p>'
       '</div>'
       '<h2>Как считается</h2>'
       '<p>Стоимость 100 км = расход (кВт·ч/100 км) × тариф (₽/кВт·ч). Стоимость месяца = цена 100 км × (пробег ÷ 100). Полная зарядка = ёмкость батареи × тариф — столько вы потратите за одну сессию от нуля до 100%. Сравнение с бензином считается по вашему расходу топлива и цене литра.</p>'

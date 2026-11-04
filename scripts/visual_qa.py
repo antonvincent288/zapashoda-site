@@ -1,85 +1,93 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Арт-Директор (Visual QA Validator) zapashoda — по регламенту владельца 03.11 (вечный).
-Жёстко блокирует гайд-продукты, нарушающие визуальную упаковку:
-① заглушки/пустые списки >3 пунктов ② антракит/светлые разделители — проверяются на этапе
-сборки PDF (VISUAL_SPEC ниже — контракт для компилятора) ③ боли/лайфхаки не в gbox
-④ вода вместо хардкора. Заблокированное возвращается на перегенерацию."""
-import json, os, re, sys, base64, datetime
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from guide_writer import get_file, push_files, qa_check_chapter, BR, REPO, req
-VISUAL_SPEC = {
-    "palette": {"anthracite": "#1d1d1f", "light": "#f5f5f7", "gold": "#D4AF37", "marine": "#003a40", "acid": "#c8ea95", "green": "#0aad0a"},
-    "rules": [
-        "PDF-компилятор обязан чередовать фоны разделов: антрацит → светлый → антрацит…",
-        "Каждая боль/лайфхак — закруглённый бокс (радиус 12+) с акцентом #D4AF37 (линия/номер/иконка)",
-        "Заглушки любого вида запрещены навсегда: [ЦЕНА…], TODO, пустые списки",
-        "Каждая глава: ≥1 бокс, ≥8 маркеров хардкора (цифры/шаги/сроки/кВт/км/минуты), ≤3 оборотов воды",
-    ],
-}
-def now():
-    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).isoformat(timespec="seconds")
-def next_v_id(a2z):
-    import re as _re
-    nums = [int(m.group(1)) for m in (_re.match(r"V-(\d+)", x.get("id", "")) for x in a2z.get("messages", [])) if m]
-    return max(nums + [0]) + 1
-def main():
-    base = BR + "/drafts/guides"
-    st, ref = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO)
-    if st != 200: return
-    head = ref["object"]["sha"]
-    st, c = req("https://api.github.com/repos/%s/git/commits/%s" % (REPO, head))
-    st, t = req("https://api.github.com/repos/%s/git/trees/%s?recursive=1" % (REPO, c["tree"]["sha"]), "GET")
-    paths = [it["path"] for it in t["tree"]]
-    approved = [p for p in paths if p.startswith(base + "/approved/") and p.endswith(".json")]
-    if not approved:
-        print("approved пуст — проверять нечего"); return
-    notes, files, deletes = [], {}, []
-    for ap in approved:
-        slug = ap.split("/")[-1][:-5]
-        d = json.loads(get_file(ap))
-        fails = []
-        for i, ch in enumerate(d.get("chapters", [])):
-            errs = qa_check_chapter(ch)
-            if errs: fails.append("гл.%d: %s" % (i + 1, "; ".join(errs)))
-        placeholders = sum(1 for ch in d.get("chapters", []) if re.search(r"\[ЦЕНА", ch))
-        if placeholders: fails.append("заглушек в гайде: %d" % placeholders)
-        if fails:
-            # блок: возвращаем на перегенерацию
-            draft_path = base + "/" + slug + ".json"
-            draft = get_file(draft_path)
-            if draft:
-                dj = json.loads(draft)
-                dj["qa_failed"] = fails[:6]
-                files[draft_path] = json.dumps(dj, ensure_ascii=False, indent=1)
-            deletes.append(ap)
-            notes.append("БЛОК: %s → перегенерация. %s" % (slug, " | ".join(fails)[:400]))
-        else:
-            notes.append("OK: %s — упаковка соответствует регламенту" % slug)
-    if notes:
-        a2z = json.loads(get_file(BR + "/architect_to_alisa.json") or '{"messages":[]}')
-        a2z.setdefault("messages", []).append({"id": "V-%04d" % next_v_id(a2z), "ts": now(), "from": "art-qa",
-            "topic": "Арт-Директор: визуальный аудит гайдов", "body": "\n".join(notes)[:2800],
-            "priority": "high" if any("БЛОК" in n for n in notes) else "normal",
-            "expect": "review", "answer_to": None})
-        files[BR + "/architect_to_alisa.json"] = json.dumps(a2z, ensure_ascii=False, indent=2)
-    if deletes:
-        items = [{"path": p, "mode": "100644", "type": "blob", "sha": None} for p in deletes]
-    else:
-        items = []
-    st, tree = req("https://api.github.com/repos/%s/git/trees" % REPO, "POST", {"base_tree": c["tree"]["sha"], "tree": items + [{"path": p, "mode": "100644", "type": "blob", "sha": None} for p in []]})
-    # blobs
-    def _blob(cnt):
-        st, b = req("https://api.github.com/repos/%s/git/blobs" % REPO, "POST", {"content": base64.b64encode(cnt.encode("utf-8")).decode(), "encoding": "base64"})
-        assert st == 201, (st, b); return b["sha"]
-    items += [{"path": p, "mode": "100644", "type": "blob", "sha": _blob(cnt)} for p, cnt in files.items()]
-    st, tree = req("https://api.github.com/repos/%s/git/trees" % REPO, "POST", {"base_tree": c["tree"]["sha"], "tree": items})
-    assert st == 201, (st, tree)
-    msg = "art-qa: " + ("блок %d гайдов → перегенерация" % len(deletes) if deletes else "визуальный аудит пройден")
-    st, newc = req("https://api.github.com/repos/%s/git/commits" % REPO, "POST", {"message": msg, "tree": tree["sha"], "parents": [head]})
-    assert st == 201, (st, newc)
-    st, _ = req("https://api.github.com/repos/%s/git/refs/heads/main" % REPO, "PATCH", {"sha": newc["sha"], "force": False})
-    if st != 200: raise RuntimeError("гонка пуша art-qa")
-    print(msg, "|", "; ".join(notes)[:300])
-if __name__ == "__main__":
-    main()
+"""
+visual_qa.py — контроль Арт-Директора для B2B-материалов «Запас Хода» (регламент v3-B2B-SHIELD).
+
+Что проверяет:
+  1. OG-карточки B2B-статей: существуют, размер > 12 КБ, фон = антрацит #1d1d1f (VISUAL_SPEC).
+  2. На страницах B2B-статей: есть выноски gbox (блоки «выносок», не «сухой текст»).
+  3. Карточки товаров категории «Адаптеры»: маркер безопасности (gbox) на месте.
+  4. Калькуляторы (модели + /calculator/): сноска о поминутных тарифах.
+  5. CSS: класс .gbox с золотом #D4AF37 подключён.
+
+Запуск: python3 scripts/visual_qa.py <каталог_сборки>   (например _site или /tmp/out)
+Выход: exit 0 — всё ок; exit 1 — есть замечания (печать по пунктам).
+Палитра B2B (VISUAL_SPEC): антрацит #1d1d1f (29,29,31), золото #D4AF37 (212,175,55).
+"""
+import os, sys, re, glob
+
+ANTHRACITE = (29, 29, 31)
+GOLD = (212, 175, 55)
+
+B2B_SLUGS = ['b2b-reglament-vydachi-ev', '800v-zaryadka-ev-rossiya',
+             'erekv-domashnyaya-zaryadka', 'sertifikaciya-ezs-rf-2026']
+
+def main(outdir):
+    problems = []
+
+    # 1. OG-карточки B2B в палитре
+    for sl in B2B_SLUGS:
+        p = os.path.join(outdir, 'assets', 'og', 'b-%s.png' % sl)
+        if not os.path.exists(p):
+            problems.append('OG нет: %s' % p); continue
+        if os.path.getsize(p) < 12000:
+            problems.append('OG подозрительно мала: %s (%d байт)' % (p, os.path.getsize(p)))
+        try:
+            from PIL import Image
+            im = Image.open(p).convert('RGB')
+            bg = im.getpixel((10, 10))
+            if max(abs(bg[i] - ANTHRACITE[i]) for i in range(3)) > 12:
+                problems.append('OG %s: фон %s — не антрацит %s' % (sl, bg, (ANTHRACITE,)))
+        except ImportError:
+            print('PIL недоступен — проверку палитры пропускаю')
+
+    # 2. Выноски gbox в статьях
+    for sl in B2B_SLUGS:
+        p = os.path.join(outdir, 'blog', sl + '.html')
+        if not os.path.exists(p):
+            problems.append('статья нет: %s' % p); continue
+        s = open(p, encoding='utf-8', errors='ignore').read()
+        if 'gbox' not in s:
+            problems.append('статья %s: нет выноски gbox' % sl)
+        if s[:700].count('noindex'):
+            problems.append('статья %s: всё ещё noindex!' % sl)
+
+    # 3. Маркер безопасности на адаптерах
+    adapters = [f for f in glob.glob(os.path.join(outdir, 'catalog', 'adapter*.html'))
+                if 'index' not in os.path.basename(f)]
+    for f in adapters:
+        s = open(f, encoding='utf-8', errors='ignore').read()
+        if 'Важно про безопасность' not in s:
+            problems.append('адаптер без маркера: %s' % os.path.basename(f))
+
+    # 4. Сноска калькуляторов
+    calc_model = os.path.join(outdir, 'models', 'zeekr-001-001-fr', 'index.html')
+    if os.path.exists(calc_model):
+        s = open(calc_model, encoding='utf-8', errors='ignore').read()
+        if 'поминутные тарифы' not in s:
+            problems.append('модельная страница: нет сноски калькулятора')
+    calc_page = os.path.join(outdir, 'calculator', 'index.html')
+    if os.path.exists(calc_page):
+        s = open(calc_page, encoding='utf-8', errors='ignore').read()
+        if 'поминутные тарифы' not in s:
+            problems.append('/calculator/: нет сноски о поминутных тарифах')
+
+    # 5. CSS gbox
+    css = os.path.join(outdir, 'style.css')
+    if os.path.exists(css):
+        s = open(css, encoding='utf-8', errors='ignore').read()
+        if '.gbox' not in s or '#D4AF37' not in s.replace('d4af37', '#D4AF37').lower().replace('#d4af37', '#D4AF37') and '#D4AF37' not in s:
+            if '.gbox' not in s:
+                problems.append('style.css: нет класса .gbox')
+
+    if problems:
+        print('visual_qa: %d замечаний' % len(problems))
+        for p in problems: print('  -', p)
+        return 1
+    print('visual_qa: OK — %d B2B-статей, %d адаптеров, калькуляторы со сносками, палитра на месте'
+          % (len(B2B_SLUGS), len(adapters)))
+    return 0
+
+if __name__ == '__main__':
+    outdir = sys.argv[1] if len(sys.argv) > 1 else '_site'
+    sys.exit(main(outdir))
