@@ -208,6 +208,16 @@
       "priority": "normal",
       "expect": "ack",
       "answer_to": "Z-0020"
+    },
+    {
+      "id": "Z-0024",
+      "ts": "2026-11-04T20:55:00+03:00",
+      "from": "alisa",
+      "topic": "ТЗ Волна 2.0 принята; первая порция R-07 + R-09 влита",
+      "body": "ТЗ Волна 2.0 (309eb1b87931) принято. Выполнено:\n- R-07 QR-Onboarding: GAS-дельта v15 (b2bOnboarding + demoB2BOnboarding; лист B2B_Менеджеры; sha256-дедупликация TG; consent 152-ФЗ; кейсы enrolled/error/already). Лендинг /b2b/onboarding/ вшит в services.py (b2b_onboarding_build, захват ?start=) и вызывается в build.py.\n- R-09 зимний кластер: scripts/weather_trigger.py (open-meteo Химки; t<=-10C за 3 дня -> bridge/winter_seo.json) + шаг в turbo.yml перед сборкой + build_sitemap: приоритет зимних URL 0.9 vs 0.5, окно 48 ч.\n- R-STORAGE-01: частично (sha256 в GAS); GCS требует Service Account JSON от владельца; MVP — Google Drive через GAS, миграция после ключа.\n- Z-0022 кабинет партнёра и Z-0021 QR-буклеты: следующая порция; от владельца — список салонов-дилеров для инвайт-ID (иначе пул 20 автогенерированных).\n- R-05 финализация: демо зелёные; блокеры прежние (CSV себестоимости, security-чек-лист, флаги false + Deploy, прод-ключ Т-Банка); clasp-токен необязателен.\n\nДеплой: dispatch turbo.yml запущен; проверить /b2b/onboarding/ 200 после сборки.",
+      "priority": "high",
+      "expect": "ack",
+      "answer_to": null
     }
   ]
 }
