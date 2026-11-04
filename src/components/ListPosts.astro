@@ -5,7 +5,7 @@ import { ARTICLES } from '../utils/articles'
 const LABEL: Record<string, string> = { blog: 'Зарядка', pain: 'Проблемы', safety: 'Безопасность' }
 
 type Props = { posts?: unknown[]; FirstBig?: boolean; max?: number }
-const { FirstBig = false, max = 6 } = Astro.props
+const { posts, FirstBig = false, max = 6 } = Astro.props
 
 const raw = (posts ?? ARTICLES).slice(0)
 const sorted = raw.sort((x: any, y: any) => y.date.localeCompare(x.date))
