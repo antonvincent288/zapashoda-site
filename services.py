@@ -1550,3 +1550,54 @@ def telemetry_build(outdir, write_page):
 def seo_spider_build(outdir, write_page):
     pass
 
+
+# ===== R-06: Shorts-хаб — VideoObject JSON-LD + video-sitemap.xml =====
+def shorts_build(outdir, write_page):
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'shorts.json')
+    items = []
+    if os.path.isfile(src):
+        try:
+            d = json.load(open(src, encoding='utf-8'))
+            items = d.get('shorts') or []
+        except Exception:
+            items = []
+    cards = ''
+    ld_items = []
+    for it in items:
+        url = 'https://zapashoda-ev.ru' + it.get('url', '')
+        cards += ('<div class="lcard" style="margin:12px 0"><h3 style="margin:0 0 4px">' + html.escape(str(it.get('title') or '')) + '</h3>'
+                  + '<video controls preload="none" poster="/assets/og/default.png" style="width:100%;max-width:420px;border-radius:12px;background:#1d1d1f">'
+                  + '<source src="' + it.get('url', '') + '" type="video/mp4"></video>'
+                  + '<p class="note">' + html.escape(str(it.get('desc') or '')) + '</p></div>')
+        ld_items.append({
+            "@context": "https://schema.org", "@type": "VideoObject",
+            "name": it.get('title') or 'Шорт «Запас хода»',
+            "description": it.get('desc') or 'Короткое видео по зарядке электромобиля в России.',
+            "thumbnailUrl": "https://zapashoda-ev.ru/assets/og/default.png",
+            "uploadDate": it.get('added') or BUILD_STAMP,
+            "contentUrl": url, "embedUrl": url
+        })
+    if not items:
+        cards = ('<div class="gbox" style="background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:14px;padding:18px">'
+                 '<div style="color:#8e8e93;font-size:13px">КОНВЕЙЕР ВКЛЮЧЁН — ПЕРВЫЕ ШОРТЫ СКОРО</div>'
+                 '<p>Вертикальные видео с хардкорными цифрами по зарядке EV в России: канал <a href="https://t.me/zapashoda_ev" style="color:#D4AF37">@zapashoda_ev</a>. Сюда вылетят и видео лонгридов из серии «Имперский маршрут».</p></div>')
+    extra_ld = ''
+    if ld_items:
+        extra_ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"ItemList","itemListElement":ld_items}, ensure_ascii=False) + '</script>'
+    body = ('<h1>Шортсы «Запас хода»: зарядка EV за 30 секунд</h1>'
+            '<p class="lede">Вертикальные видео: цены простоя, зимние сюрпризы зарядки, адаптеры и «зоны смерти» трасс. Полные гайды — <a href="/shop/digital/">Цифровые штурманы</a>.</p>'
+            + cards
+            + '<p><a class="btn lime" href="https://t.me/zapashoda_ev">Смотреть в Telegram-канале</a></p>')
+    write_page(os.path.join(outdir, 'shorts', 'index.html'), 'Шортсы о зарядке электромобилей | Запас хода', 'Вертикальные видео по зарядке EV в России: 30 секунд — хардкорные цифры, гайды и адаптеры.', body, '/shorts/', crumbs=[('', 'Шортсы')], extra_ld=extra_ld)
+    # video-sitemap.xml
+    vs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">']
+    for it in items:
+        page = 'https://zapashoda-ev.ru/shorts/'
+        t = html.escape(str(it.get('title') or 'Шорт «Запас хода»'))
+        u = 'https://zapashoda-ev.ru' + it.get('url', '')
+        vs.append('<url><loc>' + page + '</loc><video:video><video:title>' + t + '</video:title><video:thumbnail_loc>https://zapashoda-ev.ru/assets/og/default.png</video:thumbnail_loc><video:content_loc>' + u + '</video:content_loc><video:publication_date>' + (it.get('added') or '') + '</video:publication_date><video:family_friendly>yes</video:family_friendly><video:live>no</video:live></video:video></url>')
+    vs.append('</urlset>')
+    with open(os.path.join(outdir, 'video-sitemap.xml'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(vs))
+    print('shorts_build:', len(items), 'видео')
+
