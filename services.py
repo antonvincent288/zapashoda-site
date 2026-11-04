@@ -969,6 +969,31 @@ def calculator_build(outdir, write_page):
         calcR();
       });
       </script>''')
+    DOWNTIME_HTML = ('<div class="gbox" id="dt-calc" style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:22px;margin:26px 0">'
+      + '<h2 style="color:#D4AF37;margin-top:0">Цена простоя: сколько стоит застрять без заряда</h2>'
+      + '<p style="color:#c9c9cf">Установите свои вводные — счётчик посчитает, сколько денег сгорает, пока машина стоит. Оценка на ваших цифрах, не обещание услуг.</p>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0">'
+      + '<label style="display:block">Час вашей работы, ₽<input id="dt-hour" type="number" min="0" step="50" value="900" style="width:100%;background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px"></label>'
+      + '<label style="display:block">Простой за сессию, мин<input id="dt-min" type="number" min="0" step="10" value="120" style="width:100%;background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px"></label>'
+      + '<label style="display:block"><input id="dt-tow" type="checkbox" style="margin-right:6px">Не доехал — нужен эвакуатор<input id="dt-tow-cost" type="number" min="0" step="500" value="8000" style="width:100%;background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px;margin-top:4px"></label>'
+      + '</div>'
+      + '<div style="border:1px solid #D4AF37;border-radius:10px;padding:14px;text-align:center">'
+      + '<div style="font-size:13px;color:#8e8e93">УБЫТОК ЗА ЭТОТ ПРОСТОЙ</div>'
+      + '<div id="dt-loss" style="font-size:34px;font-weight:800;color:#ff453a">0 ₽</div>'
+      + '<div id="dt-note" style="font-size:13px;color:#c9c9cf"></div></div>'
+      + '<p style="text-align:center;margin:14px 0"><a class="btn lime" href="/catalog/" onclick="if(window.ym){ym(\'113935123\',\'reachGoal\',\'downtime_calc_click\');}" style="background:#D4AF37;color:#1d1d1f;font-weight:700">Собрать комплект автономности</a></p>'
+      + '<p class="note">Что делает комплект: запасной кабель и переходник снимают риск «станция не принимает», а расчёты маршрута — риск застрять в «зоне смерти». См. <a href="/routes/" style="color:#D4AF37">Имперский маршрут</a>.</p>'
+      + '<script>(function(){function dtR(){var h=parseFloat(document.getElementById("dt-hour").value)||0;'
+      + 'var m=parseFloat(document.getElementById("dt-min").value)||0;'
+      + 'var tow=document.getElementById("dt-tow").checked?(parseFloat(document.getElementById("dt-tow-cost").value)||0):0;'
+      + 'var loss=Math.round(h*(m/60))+tow;'
+      + 'document.getElementById("dt-loss").textContent=loss.toLocaleString("ru-RU")+" ₽";'
+      + 'document.getElementById("dt-note").textContent=(m>=90?"Полтора часа простоя — уже рабочий день за чужой счёт.":"Каждая минута простоя на станции — это ваши деньги.");}'
+      + 'document.addEventListener("DOMContentLoaded",function(){'
+      + '["dt-hour","dt-min","dt-tow","dt-tow-cost"].forEach(function(id){'
+      + 'var el=document.getElementById(id);el.addEventListener("input",dtR);el.addEventListener("change",dtR);});dtR();});})();</script>'
+      + '</div>')
+    body = body + DOWNTIME_HTML
     write_page(os.path.join(outdir, 'calculator', 'index.html'), title, desc, body, '/calculator/', crumbs=[('', 'Калькулятор зарядки')], extra_ld=ld)
 
 
