@@ -4436,6 +4436,8 @@ def main():
     credits_page(outdir, write_page)
     services.b2b_build(outdir, write_page, desc=(SITE_CFG.get('b2b_desc') or ''))
     services.calculator_build(outdir, write_page)
+    services.routes_build(outdir, write_page)
+    services.telemetry_build(outdir, write_page)
     # PDF-пакет для дилеров (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
