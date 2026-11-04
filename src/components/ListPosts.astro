@@ -13,7 +13,7 @@ const source = sorted.slice(0, max)
 const cards = source.map((a: any) => ({
 	slug: a.slug,
 	href: '/' + (a.section || 'blog') + '/' + a.slug + '/',
-	title: a.title,
+	title: (a.title || '').replace(/ \| Запас Хода$/, ''),
 	description: a.desc,
 	heroImage: a.og || '/assets/og/default.png',
 	category: LABEL[a.section] || 'Зарядка',
