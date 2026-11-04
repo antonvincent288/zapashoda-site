@@ -235,7 +235,7 @@ TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 
 # ================= APPLE-ДИЗАЙН =================
 CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#2563EB;--lime-ink:#fff;--max:1240px}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
 /* ==== header (FreshCart) ==== */
 header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.04)}
 .zs-topbar{background:#21313c;color:#c1c7c6;font-size:13px}
@@ -295,11 +295,15 @@ nav.crumbs{margin:18px 0 0;justify-content:flex-start}
 /* ==== legacy content bridge ==== */
 main{max-width:var(--max);margin:0 auto;padding:6px 22px 20px}
 h1{font-size:clamp(30px,4.5vw,42px);line-height:1.12;letter-spacing:-.03em;font-weight:800;margin:44px 0 14px;color:#001e2b}
-h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.018em;font-weight:700;margin:48px 0 14px;scroll-margin-top:80px;color:#001e2b}
-h3{font-size:17.5px;font-weight:600;margin:20px 0 8px;letter-spacing:-.01em}
+h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.018em;font-weight:700;margin:76px 0 18px;scroll-margin-top:80px;color:#001e2b}
+h3{font-size:17.5px;font-weight:600;margin:34px 0 10px;letter-spacing:-.01em}
 h4{font-size:16px;font-weight:600;margin:16px 0 8px}
 p{margin:10px 0;max-width:740px;line-height:1.75}
 .art-body p{max-width:none}
+/* ==== D-01 Air & Hierarchy (v4.0): списки в лонгридах ==== */
+.art-body ul,.art-body ol{padding-left:1.4em;margin:16px 0}
+.art-body li{margin:.55em 0;line-height:1.72}
+.art-body li::marker{color:var(--muted)}
 .lede{font-size:clamp(17px,2.3vw,21px);color:var(--muted);line-height:1.45;max-width:780px}
 .note{color:var(--muted);font-size:14px;max-width:760px}
 a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:8px}
@@ -316,6 +320,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:.5rem;font-weight:600;font-size:15px;text-decoration:none;transition:.2s;cursor:pointer;border:1px solid transparent}
 .btn:hover{opacity:.9}
 .btn.lime{background:var(--lime);color:#fff;box-shadow:0 8px 20px rgba(10,173,10,.22)}
+.zhero-gold{background:#fff;color:#8a6d1c;border:2px solid #D4AF37;animation:goldpulse 2.4s ease-in-out infinite}
+.zhero-gold:hover{background:#fffdf4;color:#8a6d1c;opacity:1}
+@keyframes goldpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.45)}50%{box-shadow:0 0 0 9px rgba(212,175,55,0)}}
 .btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
 .btn.ghost:hover{border-color:#2563EB;color:#2563EB;opacity:1}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0}
@@ -2277,6 +2284,7 @@ def home_page(outdir, news=None):
       '<div class="flex gap-3 flex-wrap">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pulse-cta" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
       '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
+      '<a class="btn zhero-gold" href="/calculator/">💰 Сколько сэкономлю на зарядке?</a>'
       '</div></div>'
       '<div class="md:w-1/2 w-full grid gap-4 grid-cols-1 sm:grid-cols-2">' + side_cards + '</div>'
       '</div></div></div></section>'
