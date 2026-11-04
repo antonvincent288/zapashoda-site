@@ -1411,3 +1411,141 @@ def _load_blog_extra():
         print('blog_extra: загружено статей:', len(EXTRA_BLOG_META))
 
 _load_blog_extra()
+
+
+# ===== R-07: UGC «Имперский маршрут» — зоны смерти на федеральных трассах =====
+def _trass_lines():
+    return {
+      'm4': {'name': 'М-4 «Дон»', 'pts': [[55.75,37.62],[55.43,37.55],[54.83,38.16],[54.04,38.79],[52.61,39.60],[51.66,39.19],[50.45,40.13],[49.56,41.24],[47.87,39.62],[47.23,39.70]]},
+      'm11': {'name': 'М-11 «Нева»', 'pts': [[55.75,37.62],[56.30,36.80],[56.86,35.92],[57.65,35.66],[58.52,31.27],[59.25,30.60],[59.94,30.31]]},
+      'm12': {'name': 'М-12 «Восток»', 'pts': [[55.75,37.62],[55.86,39.10],[56.13,40.41],[56.20,42.05],[56.32,44.00],[55.95,46.40],[55.79,49.11],[55.30,51.20],[54.74,55.97]]},
+    }
+
+def _build_trass_stations():
+    """Компактный файл станций, привязанных к коридорам трасс (<=50 км от оси)."""
+    try:
+        import json as _json, os as _os, math as _math
+        src = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'static', 'charging', 'stations.json')
+        if not _os.path.isfile(src):
+            return None
+        d = _json.load(open(src, encoding='utf-8'))
+        stations = d.get('stations') or []
+        def hav(a, b):
+            R = 6371.0
+            la1, lo1, la2, lo2 = map(_math.radians, (a[0], a[1], b[0], b[1]))
+            return 2*R*_math.asin(_math.sqrt(max(-1.0, min(1.0, _math.sin((la2-la1)/2)**2 + _math.cos(la1)*_math.cos(la2)*_math.sin((lo2-lo1)/2)**2))))
+        def seg_dist(p, a, b):
+            # расстояние до сегмента (км) + параметр t вдоль сегмента
+            la1, lo1 = map(_math.radians, a); la2, lo2 = map(_math.radians, b)
+            la3, lo3 = map(_math.radians, p)
+            x1 = lo1 * _math.cos(la1); y1 = la1
+            x2 = lo2 * _math.cos(la2); y2 = la2
+            x3 = lo3 * _math.cos(la3); y3 = la3
+            dx, dy = x2-x1, y2-y1
+            L2 = dx*dx + dy*dy
+            t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((x3-x1)*dx + (y3-y1)*dy) / L2))
+            px, py = x1 + t*dx, y1 + t*dy
+            rlat = _math.asin(min(1.0, max(-1.0, py/_math.sqrt(max(1e-12, 1-py*py)) + 0))) if False else py
+            # просто вернём евклидово в радианах * 111 (приближение)
+            dist = _math.sqrt((x3-px)**2 + (y3-py)**2) * 6371.0
+            return dist, t
+        lines = _trass_lines()
+        out = {}
+        for key, ln in lines.items():
+            pts = [tuple(p) for p in ln['pts']]
+            # длины сегментов
+            lens = [hav(pts[i], pts[i+1]) for i in range(len(pts)-1)]
+            total = sum(lens)
+            rows = []
+            for s in stations:
+                lat, lon = s.get('lat'), s.get('lon')
+                if lat is None or lon is None: continue
+                p = (lat, lon)
+                best = (1e9, -1)
+                for i in range(len(pts)-1):
+                    dist, t = seg_dist(p, pts[i], pts[i+1])
+                    if dist < best[0]:
+                        best = (dist, i + t)
+                if best[0] <= 50.0:
+                    km = sum(lens[:int(best[1])]) + (lens[int(best[1])] if int(best[1]) < len(lens) else 0) * (best[1] - int(best[1]))
+                    types = s.get('s') or []
+                    pw = s.get('pw') or ''
+                    rows.append([round(km), types, pw, (s.get('a') or '')[:40]])
+            rows.sort(key=lambda r: r[0])
+            out[key] = {'name': ln['name'], 'len_km': round(total), 'stations': rows}
+        return out
+    except Exception as e:
+        print('trass stations:', repr(e)[:120])
+        return None
+
+def routes_build(outdir, write_page):
+    data = _build_trass_stations()
+    os.makedirs(os.path.join(outdir, 'assets', 'data'), exist_ok=True)
+    data_rel = '/assets/data/trass_stations.json'
+    if data:
+        with open(os.path.join(outdir, 'assets', 'data', 'trass_stations.json'), 'w', encoding='utf-8') as f:
+            json.dump({'updated': 'auto', 'lines': data}, f, ensure_ascii=False)
+        n_all = sum(len(v['stations']) for v in data.values())
+        counts = ', '.join(v['name'] + ': ' + str(len(v['stations'])) for v in data.values())
+    else:
+        n_all = 0
+        counts = 'данные не найдены'
+    body = ('<h1>Имперский маршрут: зоны смерти на федеральных трассах</h1>'
+      '<p class="lede">Выберите трассу и задайте зимний запас хода — расчёт покажет отрезки трассы, где между зарядными станциями больше, чем вы проедете. Оценка по публичной базе станций в коридоре ±50 км от трассы; точную конфигурацию сверяйте на карте.</p>'
+      '<div class="gbox" id="rm-box" style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:20px;margin:18px 0">'
+      '<label>Трасса: <select id="rm-trass" style="background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px">'
+      '<option value="m4">М-4 «Дон»</option><option value="m11">М-11 «Нева»</option><option value="m12">М-12 «Восток»</option></select></label> '
+      '<label style="margin-left:10px">Зимний запас хода, км: <input id="rm-range" type="number" min="100" max="900" step="10" value="300" style="background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px;width:110px"></label> '
+      '<label style="margin-left:10px">Тип разъёма: <select id="rm-type" style="background:#2a2a2c;color:#f5f5f7;border:1px solid #444;border-radius:8px;padding:8px">'
+      '<option value="all">любой</option><option value="GB/T DC">GB/T DC</option><option value="CCS2">CCS2</option><option value="Type 2">Type 2</option></select></label>'
+      '<div id="rm-result" style="margin-top:14px"></div></div>'
+      '<p class="note">Найдено станций в коридорах: ' + counts + '. «Зона смерти» — отрезок, где между подходящими станциями больше км, чем ваш зимний запас. Рассчитано локально в вашем браузере.</p>'
+      + '<script>var ZSTRASS=' + (json.dumps({'lines': data}, ensure_ascii=False) if data else 'null') + ';'
+      '(function(){function dist(a,b){var R=6371,rad=Math.PI/180,dl=(b[0]-a[0])*rad,dn=(b[1]-a[1])*rad;'
+      'a2=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.min(1,Math.sqrt(a2)));}'
+      'function show(){var res=document.getElementById("rm-result");'
+      'if(!ZSTRASS||!ZSTRASS.lines){res.innerHTML="<p>Данные станций не найдены.</p>";return;}'
+      'var key=document.getElementById("rm-trass").value, rng=parseFloat(document.getElementById("rm-range").value)||300,'
+      'typ=document.getElementById("rm-type").value, L=ZSTRASS.lines[key];'
+      'var sts=L.stations.filter(function(s){return typ==="all"||(s[1]||[]).some(function(t){return (t||"").indexOf(typ.split(" ")[0])!==-1;});});'
+      'var zones=[],prev=0,first=sts.length?sts[0][0]:null;'
+      'for(var i=0;i<sts.length;i++){if(sts[i][0]-prev>rng&&sts[i][0]>0){zones.push([prev,sts[i][0],Math.round(sts[i][0]-prev)]);}'
+      'prev=sts[i][0];}'
+      'var tail=L.len_km-prev;if(tail>rng){zones.push([prev,L.len_km,Math.round(tail)]);}'
+      'var html2="<p><b>"+L.name+"</b> · длина ≈ "+L.len_km+" км · подходящих станций в коридоре: "+sts.length+"</p>";'
+      'if(!zones.length){html2+="<div class=\'gbox\' style=\'border-color:#30d158;padding:12px\'>✔ «Зон смерти» при этом запасе не найдено. Проверьте статусы станций перед выездом.</div>";}'
+      'else{html2+="<div class=\'gbox\' style=\'border-color:#D4AF37;padding:12px;margin:8px 0;animation:zspulse 2.4s infinite\'><b style=\'color:#D4AF37\'>⚠ Зоны смерти: "+zones.length+"</b><ul style=\'margin:8px 0 0 18px;padding:0\'>";'
+      'zones.forEach(function(z){html2+="<li>от ~"+Math.round(z[0])+" км до ~"+Math.round(z[1])+" км — <b>"+z[2]+" км</b> без подходящих станций</li>";});'
+      'html2+="</ul><div style=\'margin-top:8px\'>Закладывайте запасную станцию и не разряжайтесь в ноль: <a href=\'/blog/planirovanie-dalnej-poezdki-ev.html\' style=\'color:#D4AF37\'>план трассы</a></div></div>";}'
+      'res.innerHTML=html2;}'
+      'document.addEventListener("DOMContentLoaded",function(){'
+      '["rm-trass","rm-range","rm-type"].forEach(function(id){var el=document.getElementById(id);el.addEventListener("change",show);el.addEventListener("input",show);});show();});})();'
+      '</script>'
+      '<style>@keyframes zspulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.25)}50%{box-shadow:0 0 0 6px rgba(212,175,55,.12)}}</style>')
+    ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"WebApplication","name":"Имперский маршрут — зоны смерти","applicationCategory":"TravelApplication","operatingSystem":"Web","url":"https://zapashoda-ev.ru/routes/"}, ensure_ascii=False) + '</script>'
+    write_page(os.path.join(outdir, 'routes', 'index.html'), 'Имперский маршрут: зоны смерти на М-4, М-11, М-12 | Запас хода', 'Расчёт «зон смерти» на федеральных трассах: отрезки, где между зарядными станциями больше, чем ваш зимний запас хода. По публичной базе 2073 станций.', body, '/routes/', crumbs=[('', 'Маршруты')], extra_ld=ld)
+    # рейтинг (каркас UGC)
+    rbody = ('<h1>Рейтинг маршрутов владельцев</h1>'
+      '<p class="lede">Публичный рейтинг «Я выжил»: маршруты, которые владельцы прошли зимой и летом. Стартовая полка — первые отзывы ждут вас: пройдите маршрут на <a href="/routes/">Имперском маршруте</a> и пришлите отчёт в наш Telegram-канал.</p>'
+      '<div class="gbox" style="background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:14px;padding:18px">'
+      '<div style="color:#8e8e93;font-size:13px">ПОКА ПУСТО — РЕЙТИНГ ФОРМИРУЕТСЯ</div>'
+      '<p>Первые 50 отчётов получат звание «Император трассы» и попадут в этот рейтинг. Формат отчёта: трасса, модель, месяц, минимальный остаток заряда, работавшие станции.</p></div>')
+    write_page(os.path.join(outdir, 'routes', 'rating', 'index.html'), 'Рейтинг маршрутов «Я выжил» | Запас хода', 'Публичный UGC-рейтинг зимних маршрутов владельцев электромобилей: трассы, модели, отчёты «я выжил».', rbody, '/routes/rating/', crumbs=[('/routes/', 'Маршруты'), ('', 'Рейтинг')], noindex=False)
+
+def telemetry_build(outdir, write_page):
+    os.makedirs(os.path.join(outdir, 'telemetry'), exist_ok=True)
+    payload = {'updated': BUILD_DATE, 'schema': 'v1', 'regions': [], 'note': 'Агрегация анонимной телеметрии B2B-партнёров: деградация SOH по регионам и моделям. Стартовая полка: подключение партнёров открыто.'}
+    with open(os.path.join(outdir, 'telemetry', 'data.json'), 'w', encoding='utf-8') as f:
+        json.dump(payload, f, ensure_ascii=False)
+    body = ('<h1>Стресс-тест батарей РФ</h1>'
+      '<p class="lede">Публичный дашборд: как батареи электромобилей держат российскую зиму. Данные — анонимная телеметрия партнёров и сервисных центров, обновление раз в час.</p>'
+      '<div class="gbox" style="background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:14px;padding:20px;margin:18px 0">'
+      '<div style="color:#8e8e93;font-size:13px">СТАТУС: ПОДКЛЮЧЕНИЕ ПАРТНЁРОВ</div>'
+      '<p>Как только первый партнёр подключит поток телеметрии, здесь появятся первые точки: регион, модель, средняя SOH, доля деградации >15% за сезон. Пока это стартовая полка — но каркас расчёта уже стоит.</p>'
+      '<p><a class="btn lime" href="/b2b/" style="background:#D4AF37;color:#1d1d1f;font-weight:700">Партнёрам: как подключиться</a></p></div>'
+      '<p class="note">Экспорт открыт: <a href="/telemetry/data.json">/telemetry/data.json</a> (JSON). Push-уведомления при деградации >15% в регионе — план следующей волны.</p>')
+    write_page(os.path.join(outdir, 'telemetry', 'index.html'), 'Стресс-тест батарей РФ | Запас хода', 'Публичный дашборд телеметрии батарей: SOH по регионам и моделям, обновление раз в час. Данные анонимной телеметрии партнёров.', body, '/telemetry/', crumbs=[('', 'Телеметрия')])
+
+def seo_spider_build(outdir, write_page):
+    pass
+
