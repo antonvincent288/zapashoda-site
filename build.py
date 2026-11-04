@@ -2871,9 +2871,6 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     except Exception:
         pass
     WINTER_URLS = ['/blog/winter-ev-2026.html', '/blog/kvt-i-kvt-ch-raznica.html', '/blog/rasxod-zimoy-bortovoy-kompyuter.html', '/routes/', '/calculator/']
-    if winter_boost:
-        def _wp(u):
-            return u.rstrip('/') == SITE_DOMAIN.rstrip('/') + w for w in [] # placeholder
     prio = {}
     if winter_boost:
         for u in urls:
