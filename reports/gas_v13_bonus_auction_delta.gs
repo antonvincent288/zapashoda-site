@@ -79,3 +79,19 @@ function topMarginalJson() {
     return JSON.stringify({ error: String(e) });
   }
 }
+
+/** DEMO для запуска кнопкой Run в редакторе (без терминала). */
+function demoSelfTest() {
+  var cases = [
+    ['adapter-premium', 40000],   // fast: ожидается final=2000
+    ['station-t2-7kw', 60000],    // mid: ожидается final=2300
+    ['bundle-set', 100000],       // notliquid: ожидается final=13000
+    ['adapter-ccs2-gbt-dc', 120000] // notliquid по марже: ожидается final=15000 (потолок)
+  ];
+  cases.forEach(function(c) {
+    var res = computeBonus(c[0], c[1]);
+    Logger.log(c[0] + ' (маржа ' + c[1] + '): ' + JSON.stringify(res));
+  });
+  Logger.log('VIN: WAUZZZ8V9KA123456 -> ' + validateVIN('WAUZZZ8V9KA123456'));
+  Logger.log('Все кейсы — dry_run=true, деньги не списываются.');
+}
