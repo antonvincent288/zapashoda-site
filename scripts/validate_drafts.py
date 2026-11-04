@@ -88,7 +88,7 @@ def main():
             links = [h for h in internal_hrefs(body)]
             if len(links) < 3: errs.append("меньше 3 внутренних ссылок")
             if "<script" in body.lower(): errs.append("script запрещён")
-                        if body.count("₽") > 6: errs.append("больше 6 вхождений ₽ — возможна выдуманная цена")
+            if body.count("₽") > 6: errs.append("больше 6 вхождений ₽ — возможна выдуманная цена")
             low = body.lower()
             for bad_mark in ("facts_pack", "smart charge", "ocpp", "gbt-станции 2026"):
                 if bad_mark in low: errs.append("QA-маркер вне факт-базы: %r" % bad_mark)
