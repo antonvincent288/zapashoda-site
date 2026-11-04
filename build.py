@@ -3458,6 +3458,13 @@ function kitItems(){var x=D.brands[curBrand][curIdx];var R=D.rules[scKey]||{},re
  Object.keys(rec).forEach(function(id){if(!seen[id])items.push({id:Number(id),b:'',rec:true});});
  items.sort(function(a2,b2){var ra=(a2.b==='need')?2:(a2.rec?1:0),rb=(b2.b==='need')?2:(b2.rec?1:0);return rb-ra;});
  return items;}
+function phrHtml(x,cnt){if(!cnt)return '';
+ var fr=[
+  'Под вашу '+curModel+' всё совместимо: порт AC — '+(x.ac||'—')+', DC — '+(x.dc||'—')+'. Ничего докупать не придётся.',
+  'Это полный набор под сценарий «'+scTitle()+'»: '+cnt+' поз. — закроет зарядку за один визит в салон.',
+  'Цена '+fmt(LAST_TOTAL||0)+' ₽ — РРЦ: она же на официальном сайте, где бы вы ни сравнили — не переплатите.'];
+ return '<div class="a-phr-h">💬 Как сказать клиенту</div>'
+  +fr.map(function(p){return '<div class="a-card a-phr"><span>'+esc(p)+'</span><button onclick="copyTxt('+qA(p)+')">📋</button></div>';}).join('');}
 function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand][curIdx];
  var R=D.rules[scKey]||{},rec={};
  ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(id){if(D.prods[id])rec[id]=1;});
@@ -3469,7 +3476,7 @@ function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand]
   if(on){cart[e.id]=1;t+=p.pr;}else delete cart[e.id];
   os+='<div class="a-item" onclick="aToggle('+e.id+')"><span>'+(p.e||'🔌')+' '+esc(p.n)+(e.b==='need'?' <i class="a-bdg">обязательно</i>':(rec[e.id]?' <i class="a-bdg rec">по сценарию</i>':''))+'</span><span class="a-p2">'+fmt(p.pr)+' ₽</span><span class="a-ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span></div>';});
  if(!t)os+='<p class="a-empty">Рекомендаций для этой модели пока нет — нажмите «Оформить заказ» и напишите комментарий, подберём вручную.</p>';
- os+='<div class="a-total">Итого: '+fmt(t)+' ₽</div>';
+ var cnt=Object.keys(cart).length;os+=phrHtml(x,cnt);os+='<div class="a-total">Итого: '+fmt(t)+' ₽</div>';
  LAST_TOTAL=t;box.innerHTML=os;}
 function aToggle(id){var x=D.brands[curBrand][curIdx];if(!x||!D.prods[id])return;
  var R=D.rules[scKey]||{},rec={};
@@ -3575,7 +3582,7 @@ s1();"""
       ".a-mut{font-size:12.5px;color:#7d8f95}"
       ".a-warn{margin:10px 16px;background:#FFF7E6;border:1px solid #F2D488;border-radius:12px;padding:10px 12px;font-size:13px;color:#8a6d1f}"
       "#a-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:#15202b;color:#fff;font-size:13px;padding:9px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90%;text-align:center}"
-      "#a-toast.show{opacity:.94}"
+      "#a-toast.show{opacity:.94}"".a-phr-h{margin:18px 20px 8px;font-size:16px;font-weight:800}"".a-phr{grid-template-columns:1fr auto;align-items:start}.a-phr button{justify-self:end;border:1px solid #d9dfe5;background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit;color:#2563EB;font-weight:600}"
       "input,textarea{margin:8px 16px;padding:11px 13px;border:1px solid #d5dbe1;border-radius:12px;font-size:16px;font-family:inherit;width:calc(100% - 32px);box-sizing:border-box;display:block}"
       "textarea{min-height:64px;resize:vertical}"
       ".a-total{display:flex;justify-content:flex-end;gap:6px;padding:10px 20px 0;margin:0;font-weight:800;font-size:15px}body{padding-bottom:env(safe-area-inset-bottom)}html.tg-mode #zs-header,html.tg-mode footer,html.tg-mode .banner,html.tg-mode .zs-off,html.tg-mode .zs-mask{display:none!important}html.tg-mode main.container{max-width:none!important;margin:0!important;padding:0!important;width:100%}html.tg-mode main.container>:not(#app){display:none!important}html.tg-mode body{height:100%}html.tg-mode body{font-family:Inter,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}"
