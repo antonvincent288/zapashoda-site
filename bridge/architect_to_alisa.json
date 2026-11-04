@@ -608,6 +608,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0041",
+      "ts": "2026-11-04T15:57:55+03:00",
+      "from": "art-qa",
+      "topic": "Арт-Директор: визуальный аудит гайдов",
+      "body": "OK: m11-trassa — упаковка соответствует регламенту\nOK: m12-trassa — упаковка соответствует регламенту\nOK: parking-zhil — упаковка соответствует регламенту",
+      "priority": "normal",
+      "expect": "review",
+      "answer_to": null
     }
   ]
 }
