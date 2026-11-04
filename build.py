@@ -319,6 +319,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offse
 .zhero-gold{background:#fff;color:var(--accent);border:2px solid var(--accent);animation:pulse 2.4s ease-in-out infinite}
 .btn-primary{animation:pulse 2.4s ease-in-out infinite}
 .zhero-gold:hover{background:#EFF6FF;color:var(--accent);opacity:1}
+html{scroll-behavior:smooth}
+.toc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:22px 0;box-shadow:0 1px 2px rgba(0,30,43,.04)}
+.toc .toc-t{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.toc ol{margin:0;padding-left:18px;columns:2;column-gap:28px}
+.toc li{break-inside:avoid;margin:6px 0}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+@media(max-width:640px){.toc ol{columns:1}}
+.band{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:44px 0}
 .zhero{background:#fff;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.05)}
 .zhero-photo{position:relative;display:block;border-radius:16px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.14)}
 .zhero-photo img{width:100%;height:400px;object-fit:cover;display:block}
@@ -524,7 +533,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .art-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 @media(min-width:1020px){.art-grid{grid-template-columns:216px minmax(0,1fr);gap:34px}}
 .art-toc{display:none}
-@media(min-width:1020px){.art-toc{display:block;position:sticky;top:96px;align-self:start;font-size:13.5px;max-height:calc(100vh - 120px);overflow:auto}}
+@media(min-width:1020px){.art-toc{display:block;position:sticky;top:72px;align-self:start;font-size:13.5px;max-height:calc(100vh - 100px);overflow:auto}}
 .art-toc .t{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 8px;font-weight:600}
 .art-toc ol{list-style:none;margin:0;padding:0}
 .art-toc a{display:block;padding:6px 10px;border-radius:.5rem;color:var(--muted);text-decoration:none;line-height:1.4}
@@ -1056,7 +1065,49 @@ def clamp_desc(d, limit=165):
     if sp > limit - 40: cut = cut[:sp]
     return cut.rstrip(' ,.;:') + chr(8230)
 
-def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None, noindex=False):
+
+def _inject_toc(body):
+    """Оглавление лонгрида: id на H2 + компактный TOC-бокс после лида.
+    Инъекция только если в теле >=3 разных H2."""
+    try:
+        if 'class="art-toc"' in body or 'art-tocmob' in body:
+            return body
+        h2_pat = re.compile(r'<h2((?:\s[^>]*)?)>(.*?)</h2>', re.S)
+        found = h2_pat.findall(body)
+        if len(found) < 3:
+            return body
+        items, seen = [], {}
+        def _repl(m):
+            attrs, inner = m.group(1), m.group(2)
+            idm = re.search(r'id="([^"]+)"', attrs)
+            if idm:
+                sid = idm.group(1)
+            else:
+                text0 = re.sub(r'<[^>]+>', '', inner).strip()
+                sid = 'anch-' + (slug(text0) or 'h2')[:48]
+                if sid in seen:
+                    seen[sid] += 1
+                    sid = sid + '-' + str(seen[sid])
+                else:
+                    seen[sid] = 0
+            text = re.sub(r'<[^>]+>', '', inner).strip()
+            items.append((sid, text))
+            if 'id=' in attrs:
+                return m.group(0)
+            return '<h2' + attrs + ' id="' + html.escape(sid) + '">' + inner + '</h2>'
+        new_body = h2_pat.sub(_repl, body)
+        toc = ('<div class="toc"><div class="toc-t">Содержание</div><ol>'
+               + ''.join('<li><a href="#' + html.escape(sid) + '">' + html.escape(text) + '</a></li>' for sid, text in items)
+               + '</ol></div>')
+        m = re.search(r'</p>', new_body)
+        if m:
+            return new_body[:m.end()] + toc + new_body[m.end():]
+        return new_body + toc
+    except Exception:
+        return body
+
+def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.png", crumbs=None, extra_ld=None, noindex=False, toc=False):
+    if toc: body = _inject_toc(body)
     d = os.path.dirname(path)
     if d: os.makedirs(d, exist_ok=True)
     crumbs_html = ''
@@ -2214,7 +2265,7 @@ def survivor_hall_html():
     except Exception:
         data = []
     if not data:
-        return ('<section class="lg:my-14 my-8"><div class="container">'
+        return ('<section class="lg:my-14 my-8 band"><div class="container">'
           '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
           '<div class="rounded-lg break-words border border-dashed" style="border-color:var(--line);background:#fff;padding:26px 24px;margin-top:10px">'
           '<p style="margin:0 0 8px;font-weight:700;color:var(--accent)">Раздел открыт — и он честный.</p>'
@@ -2230,7 +2281,7 @@ def survivor_hall_html():
           '<div class="p" style="padding:14px 16px"><b style="font-size:15px">' + html.escape(str(it.get('title', ''))) + '</b>'
           '<p style="margin:8px 0 10px;font-size:14px;line-height:1.7;color:var(--muted)">' + html.escape(str(it.get('text', ''))) + '</p>'
           '<div style="font-size:12px;color:var(--muted)">' + tag + place + '</div></div></div>')
-    return ('<section class="lg:my-14 my-8"><div class="container">'
+    return ('<section class="lg:my-14 my-8 band"><div class="container">'
       '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
       '<div class="ugc-grid">' + cards + '</div></div></section>')
 
@@ -2337,7 +2388,7 @@ def home_page(outdir, news=None):
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
-      '<section class="lg:my-14 my-8"><div class="container">'
+      '<section class="lg:my-14 my-8 band"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3">' + tools_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
@@ -2362,7 +2413,7 @@ def home_page(outdir, news=None):
       '<a href="/catalog/" class="btn bg-white text-gray-800 border-white">Смотреть комплекты</a></div></div>'
       + ''.join(_tpl_bundle_card(b) for b in catalog.BUNDLES) +
       '</div></div></section>'
-      '<section class="lg:my-14 my-8"><div class="container">'
+      '<section class="lg:my-14 my-8 band"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Трендовые модели <a class="see-all" href="/models/">все ' + str(len(MODELS)) + ' →</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + pop_cards + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
@@ -2622,7 +2673,7 @@ def pain_article_page(sl, title, desc, pids, outdir):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld)
+    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld, toc=True)
 
 def rel_models(rel_brands):
     out = []

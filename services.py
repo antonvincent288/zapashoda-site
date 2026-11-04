@@ -306,7 +306,7 @@ def blog_build(outdir, write_page):
         faq = globals().get('FAQ_' + sl.replace('-','_'))
         ld = '<script type="application/ld+json">' + art_ld(t, d, '/blog/' + sl + '.html') + '</script>'
         if faq: ld += faq_ld(faq)
-        write_page(os.path.join(outdir,'blog',sl+'.html'), BLOG_SHORT.get(sl, t) + ' | Запас хода', d, _enh(f, '/blog/' + sl + '.html', t) + BLOG_EXTRA.get(sl, '') + BLOG_EXTRA2.get(sl, ''), '/blog/' + sl + '.html', og='/assets/og/b-'+sl+'.png', crumbs=[('/blog/','Блог'),('', t)], extra_ld=ld)
+        write_page(os.path.join(outdir,'blog',sl+'.html'), BLOG_SHORT.get(sl, t) + ' | Запас хода', d, _enh(f, '/blog/' + sl + '.html', t) + BLOG_EXTRA.get(sl, '') + BLOG_EXTRA2.get(sl, ''), '/blog/' + sl + '.html', og='/assets/og/b-'+sl+'.png', crumbs=[('/blog/','Блог'),('', t)], extra_ld=ld, toc=True)
 
 
 # ===== SAFETY: пожарная безопасность EV (хаб + 3 статьи) =====
@@ -402,7 +402,7 @@ def safety_build(outdir, write_page):
         if faq: ld += faq_ld(faq)
         write_page(os.path.join(outdir,'safety',sl+'.html'), t2 + ' | Запас хода', d,
             _enh(SAFETY_BODY[sl], '/safety/' + sl + '.html', t2), '/safety/' + sl + '.html',
-            og='/assets/og/default.png', crumbs=[('/safety/','Безопасность'),('', t2)], extra_ld=ld)
+            og='/assets/og/default.png', crumbs=[('/safety/','Безопасность'),('', t2)], extra_ld=ld, toc=True)
 
 def b2b_build(outdir, write_page, desc=''):
     if not desc: desc = 'Прайс и условия для дилеров и автосалонов: адаптеры Type 2 → GB/T, DC-адаптеры, кабели, зарядки и станции для EV и PHEV. Комплектация машин, дилерские цены, пилотная партия.'
