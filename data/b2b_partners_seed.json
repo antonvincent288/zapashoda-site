@@ -1,0 +1,176 @@
+{
+ "version": 1,
+ "generated": "2026-11-05",
+ "generated_by": "alisa (веб-сборка по открытым источникам)",
+ "status_note": "Контакты из открытых источников, статус unverified. Перед печатью QR-буклетов подтвердить актуальность телефонов у владельца.",
+ "partners": [
+  {
+   "id": "ID_001",
+   "name": "ZEEKR Авилон (Авилон АГ)",
+   "brand": "Zeekr",
+   "city": "Москва",
+   "address": "Волгоградский пр-т, 41, к.1; Автозаводская ул., 23, к.5",
+   "phone": "+7 (495) 730-05-04",
+   "site": "sales.avilon-zeekr.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_002",
+   "name": "ZEEKR Авилон Белая Дача",
+   "brand": "Zeekr",
+   "city": "Котельники",
+   "address": "Коммерческий проезд, 10",
+   "phone": "+7 (495) 127-84-68",
+   "site": "avilon.ru/contacts/zeekr-bd/",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_003",
+   "name": "PM ZEEKR (ООО «Перфект-М»)",
+   "brand": "Zeekr",
+   "city": "Москва (Раздоры, Одинцовский р-н)",
+   "address": "Рублёво-Успенское ш., 1-й км, вл2с9",
+   "phone": "+7 (999) 888-00-70",
+   "site": "zeekr.com.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_004",
+   "name": "BYD Авилон",
+   "brand": "BYD",
+   "city": "Москва",
+   "address": "Волгоградский пр-т, 41, к.1",
+   "phone": "+7 (495) 730-44-08",
+   "site": "avilon.ru/contacts/byd/",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_005",
+   "name": "БорисХоф Вольт Сити",
+   "brand": "Zeekr, Lynk&Co, Li Auto, Avatr, Lotus",
+   "city": "Москва",
+   "address": "2-я Магистральная ул., 18, стр.22",
+   "phone": "+7 (495) 011-11-55",
+   "site": "borishof-volt.ru",
+   "priority": "high",
+   "status": "unverified",
+   "note": "Есть отдельный раздел «Зарядные станции» — уже продают ЗУ"
+  },
+  {
+   "id": "ID_006",
+   "name": "БорисХоф Вольт Ленинский",
+   "brand": "Zeekr, Lynk&Co, Li Auto, Avatr, Lotus",
+   "city": "Санкт-Петербург",
+   "address": "Ленинский пр-т, 146",
+   "phone": "+7 (812) 470-70-10",
+   "site": "borishof-volt.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_007",
+   "name": "VOYAH Автопродикс (ГК)",
+   "brand": "Voyah",
+   "city": "Санкт-Петербург",
+   "address": "пр. Дунайский, 15/2; ул. Школьная, 71/1",
+   "phone": "+7 (812) 313-70-70",
+   "site": "voyah-autoprodix.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_008",
+   "name": "РОЛЬФ Автопрайм Voyah",
+   "brand": "Voyah",
+   "city": "Санкт-Петербург",
+   "address": "Полюстровский пр-т, 79",
+   "phone": "+7 (812) 332-02-12",
+   "site": "rolf.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_009",
+   "name": "VOYAH FAVORIT MOTORS",
+   "brand": "Voyah",
+   "city": "Москва",
+   "address": "МКАД, 3-й километр, 7",
+   "phone": "+7 (495) 165-56-07",
+   "site": "voyah.favorit-motors.ru",
+   "priority": "high",
+   "status": "unverified",
+   "note": "Дают «зарядную станцию в подарок» — уже работают с ЗУ"
+  },
+  {
+   "id": "ID_010",
+   "name": "VOYAH Авилон",
+   "brand": "Voyah",
+   "city": "Москва",
+   "address": "Волгоградский пр-т, 41, стр.2",
+   "phone": "+7 (495) 730-33-37",
+   "site": "voyah.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_011",
+   "name": "VOYAH АвтоМАШ",
+   "brand": "Voyah",
+   "city": "Люберцы",
+   "address": "Новорязанское шоссе, 11/1",
+   "phone": "+7 (495) 641-33-11",
+   "site": "voyah-automash.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_012",
+   "name": "VOYAH БорисХоф Юг",
+   "brand": "Voyah",
+   "city": "Москва",
+   "address": "МКАД, 29-й километр, вл1Б",
+   "phone": "+7 (495) 033-15-33",
+   "site": "borishof.ru",
+   "priority": "high",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_013",
+   "name": "РОЛЬФ Geely (Алтуфьево + Восток)",
+   "brand": "Geely (EX5 EV)",
+   "city": "Москва",
+   "address": "Алтуфьевское ш., 31, к.1; Рязанский пр-т, 24, к.3",
+   "phone": "+7 (495) 967-96-75",
+   "site": "rolf-geely.ru",
+   "priority": "high",
+   "status": "unverified",
+   "note": "В меню дилера есть раздел «Зарядные устройства»"
+  },
+  {
+   "id": "ID_014",
+   "name": "Major Geely Дмитровка (+ Voyah Мэйджор Новorizский)",
+   "brand": "Geely, Voyah",
+   "city": "Москва",
+   "address": "Псковская ул., 13; Новорижское шоссе, 9 км от МКАД",
+   "phone": "",
+   "site": "majorauto.ru",
+   "priority": "medium",
+   "status": "unverified"
+  },
+  {
+   "id": "ID_015",
+   "name": "Frank Auto",
+   "brand": "Zeekr, BYD, Voyah, LiXiang (сервис+продажа)",
+   "city": "Москва",
+   "address": "МКАД, 85-й километр, с3А; Новорижское ш., 17-й км, 1",
+   "phone": "+7 (495) 909-11-80",
+   "site": "frankauto.ru",
+   "priority": "medium",
+   "status": "unverified"
+  }
+ ]
+}
