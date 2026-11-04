@@ -1,5 +1,5 @@
 ---
-import Article from '../layouts/Article'
+import Article from '../../layouts/Article'
 export async function getStaticPaths() {
   const { bySection } = await import('../../utils/articles')
   const all = bySection('pain')
