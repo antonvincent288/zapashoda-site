@@ -14,10 +14,11 @@ var BONUS_BASE = 2000; // базовый бонус, ₽ (константа Т�
 // Классы ликвидности: чем ниже ликвидность — тем выше ставка.
 // margin_share — доля маржи, которую отдаём как бонус (10–15% для неликвида).
 // Классы ликвидности — синхронизированы с data/product_margins_v1.csv (26 SKU).
+// Классы ликвидности — синхронизированы с data/product_margins_v1.csv (26 SKU, ключ = ID из shop_products).
 var BONUS_CLASSES = [
-  { cls: 'fast', match: ['__none__'], share: 0.05 },
-  { cls: 'mid', match: ['1;Адаптер Type 2 → GB/T', '2;Адаптер GB/T → Type 2 (обратный)', '4;Кабель Type 2–GB/T', '5;Портативная зарядка GB/T', '6;Адаптер CCS2 → GB/T DC', '7;Адаптер Tesla NACS → CCS2 / Type 2;15000;7000;8000;53;fast', '8;Адаптер Type 2 → GB/T', '12;Держатель / органайзер кабеля GB/T;1500;450;1050;70;fast', '13;Настенная станция GB/T', '14;Удлинитель GB/T → GB/T', '16;Станция 2-в-1: Type 2 + GB/T', '17;Смазка силиконовая (зимний kit);690;200;490;71;fast', '18;Переходник-удлинитель GB/T → 220 В;6500;2800;3700;57;fast', '19;Портативная зарядка Type 2', '21;Кабель Type 2 — Type 2', '22;Кабель Type 2 — Type 2', '23;Настенная станция Type 2', '24;Настенная станция Type 2', '25;Адаптер Type 1 → Type 2;8500;4200;4300;51;fast', '26;Удлинитель Type 2 — Type 2'], share: 0.08 },
-  { cls: 'notliquid', match: ['__none__'], share: 0.13 },
+  { cls: 'fast', match: ['1', '2', '7', '8', '11', '12', '17', '18', '19', '20', '25'], share: 0.05 },
+  { cls: 'mid', match: ['3', '4', '5', '9', '10', '14', '15', '21', '22', '26'], share: 0.08 },
+  { cls: 'notliquid', match: ['6', '13', '16', '23', '24'], share: 0.13 },
 ];
 
 /**
@@ -84,10 +85,9 @@ function topMarginalJson() {
 /** DEMO для запуска кнопкой Run в редакторе (без терминала). */
 function demoSelfTest() {
   var cases = [
-    ['adapter-premium', 40000],   // fast: ожидается final=2000
-    ['station-t2-7kw', 60000],    // mid: ожидается final=4800
-    ['bundle-set', 100000],       // notliquid: ожидается final=13000
-    ['adapter-ccs2-gbt-dc', 120000] // notliquid: ожидается final=15000 (потолок)
+    ['1', 40000],   // fast (Адаптер Type 2 → GB/T, 22 кВт, премиум): ожидается final=2000
+    ['3', 60000],   // mid (Кабель Type 2–GB/T, 5 м, 22 кВт, TPU): ожидается final=4800
+    ['6', 120000]   // notliquid (Адаптер CCS2 → GB/T DC, 250–300 А): ожидается final=15000 (потолок)
   ];
   cases.forEach(function(c) {
     var res = computeBonus(c[0], c[1]);
