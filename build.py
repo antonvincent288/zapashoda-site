@@ -328,7 +328,18 @@ html{scroll-behavior:smooth}
 .toc a:hover{text-decoration:underline}
 @media(max-width:640px){.toc ol{columns:1}}
 .band{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:44px 0}
-.zhero{background:#fff;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,30,43,.05)}
+.zhero-dark{background:radial-gradient(1100px 460px at 82% -12%, rgba(37,99,235,.20), transparent 62%), linear-gradient(180deg,#14181c 0%,#1d1d1f 100%);padding:60px 0 70px;margin:0}
+.zhero-grid{display:grid;grid-template-columns:1fr;gap:26px}
+@media(min-width:900px){.zhero-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:44px;align-items:center}}
+.zhero-copy .hero-badge{background:rgba(37,99,235,.30);color:#dbeafe}
+.zhero-copy .zhero-h1{color:#fff;font-size:clamp(30px,3.3vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.12}
+.zhero-copy .zhero-sub{color:#c7ced6;font-size:16.5px;max-width:540px;margin:0 0 26px;line-height:1.62}
+.zhero-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.38)}
+.zhero-ghost:hover{background:rgba(255,255,255,.10);color:#fff;border-color:rgba(255,255,255,.6)}
+.zhero-media{min-width:0}
+.zhero-photo img{width:100%;height:380px;object-fit:cover;object-position:center;display:block;filter:saturate(.92) contrast(1.04)}
+.zhero-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(205deg,rgba(20,24,28,0) 52%,rgba(20,24,28,.58) 100%);pointer-events:none;border-radius:inherit}
+@media(max-width:767px){.zhero-photo img{height:250px}}
 .zhero-photo{position:relative;display:block;border-radius:16px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.14)}
 .zhero-photo img{width:100%;height:400px;object-fit:cover;display:block}
 .zhero-photo .zcap{position:absolute;left:14px;bottom:14px;background:rgba(23,26,28,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#f5f5f7;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;display:block}
@@ -2371,19 +2382,19 @@ def home_page(outdir, news=None):
             break
     if not hero_photo:
         hero_photo = '<div class="mphoto-fb"><div style="font-size:24px">EV</div></div>'
-    body = ('<section class="mt-4">'
-      '<div class="rounded-lg break-words zhero" style="padding:56px 44px">'
-      '<div class="flex flex-wrap items-center gap-8">'
-      '<div class="md:w-1/2 w-full">'
+    body = ('<section class="zhero-dark">'
+      '<div class="container">'
+      '<div class="zhero-grid">'
+      '<div class="zhero-copy">'
       '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold hero-badge">Справочник EV · <span data-count="' + str(len(MODELS)) + '">' + str(len(MODELS)) + '</span> моделей в России</span>'
       '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'Как без боли заряжать электромобиль в России') + '</h1>'
       '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
       '<div class="flex gap-3 flex-wrap items-center">'
       '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 btn-primary" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
-      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/catalog/">Каталог аксессуаров</a>'
+      '<a class="btn zhero-ghost" href="/catalog/">Каталог аксессуаров</a>'
       '</div></div>'
-      '<div class="md:w-1/2 w-full">' + hero_photo + '</div>'
-      '</div></div></div></section>'
+      '<div class="zhero-media">' + hero_photo + '</div>'
+      '</div></div></section>'
       + calc_widget_html() + CALC_SCRIPT + survivor_hall_html() +
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
@@ -2402,7 +2413,7 @@ def home_page(outdir, news=None):
       '<p class="text-xs text-gray-500 mt-2">PDF · 0,1 МБ · можно переслать другу</p>'
       '</div></div></div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Popular Products</h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Популярные товары</h2></div></div>'
       '<div class="products-grid">' + hits + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
       '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Комплекты — выгоднее по отдельности</h2></div></div>'
