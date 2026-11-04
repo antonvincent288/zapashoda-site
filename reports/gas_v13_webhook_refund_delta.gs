@@ -39,3 +39,14 @@ function handleRefund(payload) {
     return { status: 'error', details: [{ step: 'fatal', msg: String(e) }] };
   }
 }
+
+/** DEMO для запуска кнопкой Run в редакторе (без терминала). */
+function demoRefundSelfTest() {
+  var r1 = handleRefund({ token: 'DEMO1234567890', vin: '1M8GDM9AXKP042788', reason: 'changed_mind' });
+  Logger.log('кейс 1, корректный возврат: ' + JSON.stringify(r1));
+  var r2 = handleRefund({ vin: '1M8GDM9AXKP042788' });
+  Logger.log('кейс 2, нет токена (ожидается error): ' + JSON.stringify(r2));
+  var r3 = handleRefund({ token: 'DEMO9876543210', vin: 'WAUZZZ8V9KA123456', reason: 'other' });
+  Logger.log('кейс 3, плохой VIN (ожидается warning в details): ' + JSON.stringify(r3));
+  Logger.log('REFUND_DRY_RUN=true: ссылку не отозвали, холд 0 — деньги не трогаем.');
+}
