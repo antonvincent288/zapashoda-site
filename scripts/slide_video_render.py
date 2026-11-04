@@ -123,7 +123,7 @@ def render(spec, out_dir):
             a = ("[%d:v]" % i) if i == 0 else ("[v%d]" % (i - 1))
             fc += "%s[%d:v]xfade=transition=fade:duration=0.5:offset=%.2f[v%d];" % (a, i + 1, (i * 3.5) + 3.5, i)
         fc = fc.rstrip(";")
-        cmd = ["ffmpeg", "-y"] + inputs + ["-filter_complex", fc, "-map", "[v%d]" % (n - 2),
+        cmd = [os.environ.get("FFMPEG_BIN", "ffmpeg"), "-y"] + inputs + ["-filter_complex", fc, "-map", "[v%d]" % (n - 2),
                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", out]
         subprocess.run(cmd, check=True, capture_output=True)
     shutil.rmtree(tmp, ignore_errors=True)
