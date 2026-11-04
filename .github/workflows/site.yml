@@ -41,6 +41,8 @@ jobs:
         run: python scripts/weather_trigger.py
       - name: Build site
         run: python build.py _site
+      - name: B2B QR booklets (если seed есть)
+        run: pip install -q qrcode reportlab && python scripts/b2b_qr_booklets.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
