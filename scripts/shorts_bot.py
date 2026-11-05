@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.2 (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.3 (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -230,7 +230,7 @@ def cobalt_download(url, dst):
                     print('  [cobalt] OK via', base, len(raw))
                     return dst
             else:
-                print('  [cobalt] %s: %s' % (base, status))
+                print('  [cobalt] %s: %s %s' % (base, status, str(r.get('text'))[:100]))
         except Exception as e:
             print('  [cobalt fail] %s: %s %s' % (base, type(e).__name__, str(e)[:60]))
     return None
@@ -245,6 +245,10 @@ def ytdlp_download(url, dst):
             if os.path.getsize(f) > MAX_BYTES:
                 os.remove(f); return None
             return f
+        if (r.stderr or '').strip():
+            lines = [x for x in (r.stderr or '').strip().splitlines() if 'WARNING' not in x]
+            print('  [dl] rc=%d %s' % (r.returncode, ' | '.join(lines[:6])[:500]))
+            print('  [dl tail]', (r.stderr or '').strip()[-300:].replace('\n', ' | '))
     return cobalt_download(url, dst)
 
 # ---------- источник 3: YouTube API ----------
@@ -350,9 +354,12 @@ def process(c, pub, now):
         return False, 'author cooldown'
     if pub.get('last_topic') == c['topic']:
         return False, 'same topic as last'
-    if c['_src'] == 'inv' and c.get('stream_url'):
+    clip = None
+    if c.get('stream_url'):
         clip = inv_download(c, '/tmp/clip.mp4')
-    else:
+    if not clip:
+        clip = inv_download(c, '/tmp/clip.mp4') if c['_src'] != 'inv' else None
+    if not clip:
         clip = ytdlp_download(c['url'], '/tmp/clip')
     if not clip:
         return False, 'download failed'
