@@ -82,7 +82,7 @@ def rewrite(html):
                 alt = url[:-5] + "/"
                 if alt in path_to_id:
                     return f'href="#{path_to_id[alt]}"'
-            return 'href="data:,DEAD"'
+            return 'href="#'
         if attr == "src":
             du = data_uri(url)
             if du:
@@ -141,8 +141,8 @@ out = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name=
 <button class="pv-toggle" onclick="document.documentElement.classList.toggle('dark')">🌙 Тема</button>
 <nav class="pv-nav" id="pv-nav"></nav>
 {''.join(body_html)}
+<script>{'<\/script><script>'.join(page_scripts)}</script>
 <script>
-try {{ {' '.join(page_scripts)} }} catch (e) {{ console.warn('preview scripts:', e); }}
 (function(){{
   var nav = document.getElementById('pv-nav');
   var pages = document.querySelectorAll('.pv-page');
