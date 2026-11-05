@@ -33,12 +33,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         </aside>
         <article class="article">
           <h1 style="font-size:clamp(28px,3.4vw,40px)">{a.title}</h1>
-          {a.desc && <p class="lead">{a.desc}</p>}
+          {a.desc && <p class="lede">{a.desc}</p>}
           <div class="meta">
-            <span>Блог</span>
+            {a.read_min && <span>{a.read_min} мин чтения</span>}
             {a.category && <span>{a.category}</span>}
-            {a.date && <span>{a.date}</span>}
-            {a.read_min && <span>{a.read_min} мин</span>}
+            {a.date && <span>Обновлено: {a.date}</span>}
           </div>
           <div set:html={a.body_html} />
           {extra && <div set:html={extra} />}
@@ -51,7 +50,15 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             </div>
           )}
           {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) })} />}
-<div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
+<div class="share"><a href={`https://t.me/share/url?url=https://zapashoda-ev.ru/blog/${a.slug}/`} target="_blank" rel="nofollow">Telegram</a><a href={`https://wa.me/?text=${encodeURIComponent('https://zapashoda-ev.ru/blog/' + a.slug + '/')}`} target="_blank" rel="nofollow">WhatsApp</a><a href="#" data-copy={`https://zapashoda-ev.ru/blog/${a.slug}/`} id="copylink">Скопировать ссылку</a></div>
+<script>
+  var cl = document.getElementById('copylink');
+  if (cl) cl.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (navigator.clipboard) navigator.clipboard.writeText(cl.getAttribute('data-copy'));
+    cl.textContent = 'Скопировано ✓';
+  });
+</script>
         </article>
       </div>
     </div>
