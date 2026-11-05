@@ -1,8 +1,6 @@
 name: Scaffold AstroWind (astrowind-migration)
 on:
   workflow_dispatch: {}
-  push:
-    branches: [astrowind-migration]
 permissions:
   contents: write
 jobs:
@@ -12,21 +10,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: astrowind-migration
-      - name: Skip if already scaffolded
+      - id: chk
         run: |
-          if [ -f site/package.json ]; then echo "Scaffold already present - skipping"; exit 0; fi
+          if [ -f site/package.json ]; then echo "done=yes" >> "$GITHUB_OUTPUT"; else echo "done=no" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/setup-node@v4
+        if: steps.chk.outputs.done == 'no'
         with:
           node-version: 22
       - name: Create Astro project (AstroWind template) into site/
+        if: steps.chk.outputs.done == 'no'
         run: |
           npm create astro@latest -- site --template arthelokyo/astrowind --yes --no-git --install
       - name: Prepare data dirs and samples
+        if: steps.chk.outputs.done == 'no'
         run: |
           mkdir -p site/data/models site/data/skus site/data/faq
           printf '%s\n' '{\"slug\":\"zeekr-001-001-fr\",\"brand\":\"Zeekr\",\"model\":\"001 / 001 FR\",\"years\":\"2022-2026\",\"type\":\"BEV\",\"ac\":\"GB/T AC\",\"dc\":\"GB/T DC\",\"obc\":\"7 кВт (однофазный)\",\"dcp\":\"~100 кВт\",\"solution\":\"Type 2-станции: адаптер Type 2 -> GB/T (SKU 1 premium / SKU 8 базовый) или кабель\",\"frequency\":\"Средняя\"}' > site/data/models/zeekr-001.json
           printf '%s\n' '{\"slug\":\"byd-seal\",\"brand\":\"BYD\",\"model\":\"Seal\",\"years\":\"2023-\",\"type\":\"BEV\",\"ac\":\"Type 2\",\"dc\":\"CCS2\",\"obc\":\"11 кВт (3-фазный)\",\"dcp\":\"~150 кВт\",\"solution\":\"Штатная инфраструктура РФ: Type 2 / CCS2 без адаптера\",\"frequency\":\"Высокая\"}' > site/data/models/byd-seal.json
       - name: Commit and push
+        if: steps.chk.outputs.done == 'no'
         run: |
           git config user.name "alisa-robot"
           git config user.email "bot@zapashoda-ev.ru"
