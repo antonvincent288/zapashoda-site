@@ -1,66 +1,119 @@
 {
- "sitemap_count": 375,
- "sitemap_ok": 375,
+ "sitemap_count": 221,
+ "sitemap_ok": 221,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
   "/models/": 200,
   "/catalog/": 200,
-  "/app/": 200,
+  "/app/": 404,
   "/blog/": 200,
   "/safety/": 200,
   "/b2b/": 200,
   "/shop/digital/": 200,
-  "/calculator/": 200,
+  "/calculator/": 404,
   "/quiz/": 200,
-  "/vin/": 200,
-  "/compare/": 200,
-  "/matrix/": 200,
+  "/vin/": 404,
+  "/compare/": 404,
+  "/matrix/": 404,
   "/news/": 200,
-  "/forum/": 200,
+  "/forum/": 404,
   "/charging/": 200,
-  "/routes/": 200,
-  "/search.html": 200,
-  "/pains.html": 200,
+  "/routes/": 404,
+  "/search.html": 404,
+  "/pains.html": 404,
   "/about.html": 200,
   "/ev-services.html": 200,
   "/services/": 200,
-  "/shorts/": 200,
-  "/telemetry/": 200
+  "/shorts/": 404,
+  "/telemetry/": 404
  },
  "models_cards": 145,
- "app_scripts": 9,
- "app_brands": 78,
- "app_models": 145,
- "app_prods": 26,
- "app_zeekr_models": 5,
- "app_sku_missing": 0,
- "catalog_products": 26,
- "link_targets": 232,
- "links_ok": 232,
+ "catalog_products": 0,
+ "link_targets": 185,
+ "links_ok": 185,
  "links_bad": [],
- "assets_count": 47,
- "assets_ok": 47,
+ "assets_count": 24,
+ "assets_ok": 24,
  "assets_bad": [],
- "gas_alive": true,
- "checked_at_msk": "05.11 23:34",
+ "checked_at_msk": "06.11 00:13",
  "failures": [
   {
-   "where": "/",
-   "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
+   "where": "page /app/",
+   "what": "HTTP 404",
    "crit": true
   },
   {
-   "where": "/search.html",
-   "what": "страница поиска игнорирует ?q= (известный баг)",
+   "where": "page /calculator/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /vin/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /compare/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /matrix/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /forum/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /routes/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /search.html",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /pains.html",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /shorts/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "page /telemetry/",
+   "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "/models/",
+   "what": "нет фильтра брендов",
    "crit": false
   },
   {
-   "where": "/pain/",
-   "what": "лента проблем: HTTP 404",
+   "where": "/models/",
+   "what": "фильтр не читает ?brand=",
    "crit": false
+  },
+  {
+   "where": "/catalog/",
+   "what": "товаров в OF_PRODUCTS: 0",
+   "crit": true
+  },
+  {
+   "where": "GAS",
+   "what": "не найден в разметке",
+   "crit": true
   }
  ],
- "failures_count": 3,
- "crit_count": 1
+ "failures_count": 15,
+ "crit_count": 13
 }
