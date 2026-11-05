@@ -120,13 +120,15 @@ for name, path, label in PAGES:
         if not part.startswith(("<script", "<style")):
             parts[i] = rewrite(part)
     b = "".join(parts)
+    b = b.replace("</body>", "").replace("</html>", "")
+    b = re.sub(r'<script[^>]*>[\s\S]{0,400}?pv-nav[\s\S]*?</script>', '', b)
     if name == "charging":
         st = read_local("/charging/stations.json")
         stub = "<script>window.__STATIONS_JSON = " + st.decode("utf-8", "replace") + ";</script>" if st else ""
         own = re.findall(r'(<script[^>]*>[\s\S]*?</script>)', b)
         b_clean = re.sub(r'<script[^>]*>[\s\S]*?</script>', '', b)
         leaf = [s for s in own if "Leaflet 1.9.4" in s]
-        clus = [s for s in own if "MarkerCluster" in s or "markerClusterGroup" in s]
+        clus = [s for s in own if "L.MarkerCluster" in s and "__STATIONS_JSON" not in s]
         rest = [s for s in own if s not in leaf and s not in clus]
         b = b_clean + "".join(leaf) + "".join(clus) + stub + "".join(rest)
     body_html.append(f'<section class="pv-page" id="pv_{name}" data-label="{label}" style="display:none">{b}</section>')
@@ -157,7 +159,7 @@ html.dark .pv-toggle{background:#1d1d1f;color:#f5f5f7;border-color:#333}
 merged_css = "\n".join(css_all) + font_face + pv_ui
 out = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Превью миграции v2.1 — Запас хода (не прод)</title><style>{merged_css}</style></head><body class="pv">
-<div class="pv-bar">ПРЕВЬЮ МИГРАЦИИ · НЕ ПРОД · 14 страниц</div>
+<div class="pv-bar">ПРЕВЬЮ МИГРАЦИИ · НЕ ПРОД · 18 страниц</div>
 <button class="pv-toggle" onclick="document.documentElement.classList.toggle('dark')">🌙 Тема</button>
 <nav class="pv-nav" id="pv-nav"></nav>
 {''.join(body_html)}
