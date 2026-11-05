@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.6 (пулы 15 inv + 8 piped, кэш рабочих инстансов) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.7 (поиск по 5 инстансам, скачивание по всему пулу) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -109,7 +109,7 @@ def ytdlp(args, timeout=240):
 # ---------- источник 1: Invidious (деградировавший, оставлен как best-effort) ----------
 def inv_search(topic):
     q = urllib.parse.quote(topic)
-    for base in INV_INSTANCES:
+    for base in INV_INSTANCES[:5]:
         try:
             data = get_json(base + '/api/v1/search?q=%s&type=video&sort_by=view_count&fields=videoId,title,author,authorId,lengthSeconds,viewCount,license' % q, timeout=15)
             out = []
@@ -130,7 +130,7 @@ def inv_search(topic):
     return []
 
 def inv_video(c):
-    for base in INV_INSTANCES:
+    for base in INV_INSTANCES[:6]:
         try:
             v = get_json(base + '/api/v1/videos/%s?fields=license,viewCount,title,author,authorId,formatStreams' % c['videoId'], timeout=15)
         except Exception as e:
