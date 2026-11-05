@@ -41,8 +41,11 @@ jobs:
         run: python scripts/weather_trigger.py
       - name: Build site
         run: python build.py _site
-      - name: QA suite (fail gate)
+      - name: QA suite (regress gate — fail)
+        run: python scripts/qa_suite.py _site
+      - name: Fact-check factory drafts (report — не блокирует деплой)
         run: python scripts/qa_suite.py _site --drafts bridge/drafts/guides
+        continue-on-error: true
       - name: Visual QA
         run: python scripts/visual_qa.py _site
       - name: B2B QR booklets (если seed есть)

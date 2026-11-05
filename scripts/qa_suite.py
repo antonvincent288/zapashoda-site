@@ -79,15 +79,6 @@ def resolve(url):
 def is_js_concat(url):
     return ('+' in url) or (url.startswith("/models/')") or url.startswith("/catalog/')"))
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ASSET_OUTSIDE = ('assets/', 'static/')
-
-def repo_has(rel):
-    rel = rel.lstrip('/')
-    return (os.path.exists(os.path.join(REPO_ROOT, rel))
-            or os.path.exists(os.path.join(REPO_ROOT, 'static', rel))
-            or os.path.exists(os.path.join(REPO_ROOT, 'assets', rel)))
-
 def check_links(outdir, all_files):
     fset = set(all_files)
     for f in all_files:
@@ -97,12 +88,8 @@ def check_links(outdir, all_files):
             if is_js_concat(u): continue
             r = resolve(u)
             if r in (None, 'EXTERNAL'): continue
-            rel = r.lstrip('/')
-            if rel not in fset:
-                if rel.startswith(ASSET_OUTSIDE) or repo_has(rel):
-                    WARN.append('ссылка вне сборки (ассеты деплоя): %s ← %s' % (r, f))
-                else:
-                    FAIL.append('битая ссылка %s ← %s' % (r, f))
+            if r.lstrip('/') not in fset:
+                FAIL.append('битая ссылка %s ← %s' % (r, f))
 
 def check_sitemap(outdir, all_files):
     fset = set(all_files)
@@ -228,13 +215,13 @@ def fact_check_drafts(drafts_dir):
         for pat, why in HALLUCINATION_PATTERNS:
             for mo in re.finditer(pat, body, re.I):
                 frag = body[max(0, mo.start()-40):mo.end()+40].replace('\n', ' ')
-                WARN.append('DRAFT %s: %s | …%s…' % (slug, why, frag.strip()[:120]))
+                FAIL.append('DRAFT %s: %s | …%s…' % (slug, why, frag.strip()[:120]))
         nums = len(re.findall(r'\d[\d\s]{1,5}\s?(?:₽|руб|кВт|А\b|В\b|мин|км)', body))
         srcs = len(re.findall(r'(?:источник|по данным|со ссылкой|см\.|reddit|4pda|drive2|автостат|россети|автодор|автоваз|overpass)', body, re.I))
         if nums >= 8 and srcs == 0:
-            WARN.append('DRAFT %s: %d числовых фактов и 0 упоминаний источников' % (slug, nums))
+            FAIL.append('DRAFT %s: %d числовых фактов и 0 упоминаний источников' % (slug, nums))
         elif nums >= 15 and srcs < 2:
-            WARN.append('DRAFT %s: мало источников: %d при %d цифрах' % (slug, srcs, nums))
+            FAIL.append('DRAFT %s: мало источников: %d при %d цифрах' % (slug, srcs, nums))
 
 def main():
     args = sys.argv[1:]
