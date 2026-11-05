@@ -92,7 +92,7 @@ def rewrite(html):
                 alt = url[:-5] + "/"
                 if alt in path_to_id:
                     return f'href="#{path_to_id[alt]}"'
-            return 'href="#'
+            return 'href="#"'
         if attr == "src":
             du = data_uri(url)
             if du:
