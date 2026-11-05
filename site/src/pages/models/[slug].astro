@@ -42,6 +42,34 @@ while ((rm = rowRe.exec(body))) {
   else if (/Мощность DC/i.test(k)) spec.dcpow = v;
   else if (/Рынок/i.test(k)) spec.market = v;
 }
+const cutBalanced = (html, startTag) => {
+  const i = html.indexOf(startTag);
+  if (i < 0) return html;
+  const rx = new RegExp('<' + startTag.slice(1, 6) + '|' + '</' + startTag.slice(1, 6) + '>', 'g');
+  rx.lastIndex = i;
+  let d = 0, mm;
+  while ((mm = rx.exec(html))) {
+    if (mm[0][1] === '/') d--; else d++;
+    if (d === 0) return html.slice(0, i) + html.slice(rx.lastIndex);
+  }
+  return html;
+};
+const bodyClean = (() => {
+  let h = String(m.body_html || '');
+  h = h.replace(/^<main[^>]*>/, '').replace(/<\/main>\s*$/, '');
+  h = cutBalanced(h, '<nav ');
+  h = cutBalanced(h, '<div class="mhero">');
+  h = cutBalanced(h, '<div class="pc-cartbar');
+  h = cutBalanced(h, '<div class="cta">');
+  // первая таблица прода дублирует spec-таблицу выше — снять
+  const tIdx = h.indexOf('<table');
+  if (tIdx >= 0) {
+    const rx2 = /<table[\s\S]*?<\/table>/;
+    h = h.replace(rx2, '');
+  }
+  return h.trim();
+})();
+
 const yearsShort = String(m.years || '').split(' · ')[0];
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: m.title, description: m.desc };
 ---
@@ -74,5 +102,6 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
       </div>
     </div>
-  </section>
+        {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
+      </section>
 </ZhLayout>
