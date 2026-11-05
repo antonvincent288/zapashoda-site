@@ -1,8 +1,8 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import src from '../../data/pagesservices.json';
+import src from '../../data/pages_services.json';
 const d = src.items.find((i) => i.path === '/services/tehobsluzhivanie.html');
 ---
-<ZhLayout title={d.title + ' — Запас хода'} description={d.desc}>
-  <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / <a href="/services/">Услуги</a> / {d.title}</div><div class="article" set:html={d.body} /></div></section>
+<ZhLayout title={{d.title + ' — Запас хода'}} description={{d.desc}}>
+  <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / <a href="/services/">Услуги</a> / {{d.title}}</div><div class="article" set:html={{d.body}} /></div></section>
 </ZhLayout>

@@ -1,8 +1,8 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import src from '../../data/pagescost.json';
+import src from '../../data/pages_cost.json';
 const d = src.items.find((i) => i.path === '/cost/geely-ex5-monjaro-hi-p-phev.html');
 ---
-<ZhLayout title={d.title + ' — Запас хода'} description={d.desc}>
-  <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / <a href="/cost/">Стоимость зарядки</a> / {d.title}</div><div class="article" set:html={d.body} /></div></section>
+<ZhLayout title={{d.title + ' — Запас хода'}} description={{d.desc}}>
+  <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / <a href="/cost/">Стоимость зарядки</a> / {{d.title}}</div><div class="article" set:html={{d.body}} /></div></section>
 </ZhLayout>
