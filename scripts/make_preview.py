@@ -112,19 +112,23 @@ for name, path, label in PAGES:
     html = strip_external_js(html)
     html = inline_leaflet(html)
     if name == "charging":
-        st = read_local("/charging/stations.json")
-        stub = "<script>window.__STATIONS_JSON = " + st.decode("utf-8", "replace") + ";</script>" if st else ""
         html = re.sub(r'fetch\((["\'])/charging/stations\.json\1\)',
                       'Promise.resolve(new Response(JSON.stringify(window.__STATIONS_JSON)))', html)
-        idx = html.find("<script")
-        if stub and idx != -1:
-            html = html[:idx] + stub + html[idx:]
     b = html.split("<body", 1)[1].split(">", 1)[1].rsplit("</body>", 1)[0]
     parts = re.split(r'(<script[\s\S]*?</script>|<style[\s\S]*?</style>)', b)
     for i, part in enumerate(parts):
         if not part.startswith(("<script", "<style")):
             parts[i] = rewrite(part)
     b = "".join(parts)
+    if name == "charging":
+        st = read_local("/charging/stations.json")
+        stub = "<script>window.__STATIONS_JSON = " + st.decode("utf-8", "replace") + ";</script>" if st else ""
+        own = re.findall(r'(<script[^>]*>[\s\S]*?</script>)', b)
+        b_clean = re.sub(r'<script[^>]*>[\s\S]*?</script>', '', b)
+        leaf = [s for s in own if "Leaflet 1.9.4" in s]
+        clus = [s for s in own if "MarkerCluster" in s or "markerClusterGroup" in s]
+        rest = [s for s in own if s not in leaf and s not in clus]
+        b = b_clean + "".join(leaf) + "".join(clus) + stub + "".join(rest)
     body_html.append(f'<section class="pv-page" id="pv_{name}" data-label="{label}" style="display:none">{b}</section>')
 
 font_face = ""
