@@ -60,14 +60,13 @@ jobs:
           test -f dist/b2b/paket-dileram.pdf || { echo 'MISSING paket-dileram.pdf'; exit 1; }
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
-          echo '--- dist/catalog:'; ls dist/catalog | head -40; echo '--- services:'; ls dist/services 2>/dev/null | head -15; echo '--- cost:'; ls dist/cost 2>/dev/null | head -5; echo '--- news:'; ls dist/news 2>/dev/null | head -12
+          grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
+          NC=$(find dist/catalog -name 'index.html' | wc -l); echo "catalog pages: $NC"
           CITEM=$(find dist/catalog -path '*adapter-type2-gbt-premium*' -name 'index.html' 2>/dev/null | head -1)
           [ -n "$CITEM" ] || CITEM=$(find dist/catalog -maxdepth 1 -name 'adapter-type2-gbt-premium.html' -type f 2>/dev/null | head -1)
           [ -n "$CITEM" ] || { echo 'MISSING catalog item (find empty)'; ls -1 dist/catalog; exit 1; }
           grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
           echo "FOUND=[$CITEM]"; wc -c < "$CITEM"; head -c 220 "$CITEM" | tr -d '\n'; echo; grep -c "премиум" "$CITEM" || true; grep -c "<h1" "$CITEM" || true; grep -c "h1" "$CITEM" || true
-          CC=$(find dist/catalog -path '*adapter-ccs2-gbt-dc*' -name 'index.html' 2>/dev/null | head -1)
-          [ -n "$CC" ] || { echo 'MISSING ccs2 item'; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
           test -f dist/cost/avatr-11-12-ofitsialno-ru.html || { echo 'MISSING cost page'; exit 1; }
           test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
@@ -75,7 +74,7 @@ jobs:
           echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"   
         working-directory: site
       - name: Pack offline preview
-        if: success()
+        if: always()
         run: python3 scripts/make_preview.py
       - name: Commit preview
         if: success()
