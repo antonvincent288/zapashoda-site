@@ -1,40 +1,68 @@
-# Pages CMS - конфигурация коллекций «Запас хода»
-# Владелец: pagescms.org -> войти через GitHub -> подключить репозиторий antonvincent288/zapashoda-site
-# Пока прод на main: в интерфейсе выбрать ветку astrowind-migration, чтобы правки шли туда.
+# Pages CMS — конфигурация коллекций «Запас хода»
+# Правки владельца: pagescms.org -> подключить репозиторий -> ветка astrowind-migration (прод на main защищён).
 media: site/public/images/uploads
 content:
   - name: blog
     label: Статьи блога
-    path: site/src/content/blog
+    path: site/src/data/articles/blog
     type: collection
     view:
-      fields: [title, publishDate, draft]
+      fields: [title, date, category]
       primary: title
-      sort: { key: publishDate, order: desc }
+      sort: { key: date, order: desc }
     fields:
+      - { name: slug, label: Slug, type: string, required: true }
       - { name: title, label: Заголовок, type: string, required: true }
-      - { name: excerpt, label: Краткое описание (lede), type: text }
-      - { name: publishDate, label: Дата, type: date, default: today }
+      - { name: desc, label: Краткое описание (lede), type: text }
       - { name: category, label: Категория, type: string }
-      - { name: draft, label: Черновик, type: boolean, default: false }
-      - { name: body, label: Текст статьи, type: rich-text, required: true }
+      - { name: read_min, label: Время чтения (мин), type: number }
+      - { name: date, label: Дата, type: date }
+      - { name: og, label: OG-картинка (путь), type: string }
+      - { name: body_html, label: Текст статьи (HTML), type: text }
+      - { name: extra_html, label: Доп. блоки (HTML), type: text }
+      - { name: headings, label: Оглавление (TOC), type: text }
+  - name: pain
+    label: Проблемы (разборы)
+    path: site/src/data/articles/pain
+    type: collection
+    view: { fields: [title, date], primary: title, sort: { key: date, order: desc } }
+    fields:
+      - { name: slug, label: Slug, type: string, required: true }
+      - { name: title, label: Заголовок, type: string, required: true }
+      - { name: desc, label: Краткое описание, type: text }
+      - { name: date, label: Дата, type: date }
+      - { name: og, label: OG-картинка (путь), type: string }
+      - { name: body_html, label: Текст (HTML), type: text }
+      - { name: headings, label: Оглавление (TOC), type: text }
+  - name: safety
+    label: Безопасность
+    path: site/src/data/articles/safety
+    type: collection
+    view: { fields: [title, date], primary: title, sort: { key: date, order: desc } }
+    fields:
+      - { name: slug, label: Slug, type: string, required: true }
+      - { name: title, label: Заголовок, type: string, required: true }
+      - { name: desc, label: Краткое описание, type: text }
+      - { name: date, label: Дата, type: date }
+      - { name: og, label: OG-картинка (путь), type: string }
+      - { name: body_html, label: Текст (HTML), type: text }
+      - { name: headings, label: Оглавление (TOC), type: text }
   - name: models
     label: Каталог моделей
-    path: site/data/models
+    path: site/src/data/models
     type: collection
     view:
-      fields: [brand, model, years]
-      primary: model
+      fields: [brand, name, years]
+      primary: name
       sort: { key: brand, order: asc }
     fields:
       - { name: slug, label: Slug (URL), type: string, required: true }
       - { name: brand, label: Марка, type: string, required: true }
-      - { name: model, label: Модель, type: string, required: true }
-      - { name: years, label: Годы, type: string }
+      - { name: name, label: Модель, type: string }
+      - { name: title, label: SEO-заголовок, type: string }
+      - { name: desc, label: SEO-описание, type: text }
       - { name: type, label: Тип (BEV/REEV), type: string }
-      - { name: ac, label: AC-разъём, type: string }
-      - { name: dc, label: DC-разъём, type: string }
-      - { name: obc, label: Бортовой заряд, type: string }
-      - { name: dcp, label: Пиковый DC, type: string }
-      - { name: solution, label: Решение для РФ, type: text }
-      - { name: frequency, label: Частота запроса, type: string }
+      - { name: port, label: Разъёмы, type: text }
+      - { name: years, label: Годы, type: string }
+      - { name: og, label: OG-картинка (путь), type: string }
+      - { name: body_html, label: Текст карточки (HTML), type: text }
