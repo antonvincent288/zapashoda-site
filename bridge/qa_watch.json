@@ -1,12 +1,7 @@
 {
  "sitemap_count": 375,
- "sitemap_ok": 374,
- "sitemap_bad": [
-  [
-   "https://zapashoda-ev.ru/pain/lyuchok.html",
-   503
-  ]
- ],
+ "sitemap_ok": 375,
+ "sitemap_bad": [],
  "key_pages": {
   "/": 200,
   "/models/": 200,
@@ -42,23 +37,13 @@
  "app_sku_missing": 0,
  "catalog_products": 26,
  "link_targets": 232,
- "links_ok": 231,
- "links_bad": [
-  [
-   "https://zapashoda-ev.ru/models/honda-m-nv-ens1-enp1.html",
-   503
-  ]
- ],
+ "links_ok": 232,
+ "links_bad": [],
  "assets_count": 47,
  "assets_ok": 47,
  "assets_bad": [],
  "checked_at_msk": "05.11 23:21",
  "failures": [
-  {
-   "where": "sitemap: /pain/lyuchok.html",
-   "what": "HTTP 503",
-   "crit": true
-  },
   {
    "where": "/",
    "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
@@ -75,16 +60,11 @@
    "crit": false
   },
   {
-   "where": "link /models/honda-m-nv-ens1-enp1.html",
-   "what": "HTTP 503",
-   "crit": false
-  },
-  {
    "where": "GAS",
    "what": "не найден в разметке",
    "crit": true
   }
  ],
- "failures_count": 6,
- "crit_count": 3
+ "failures_count": 4,
+ "crit_count": 2
 }
