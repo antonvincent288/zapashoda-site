@@ -66,3 +66,14 @@ jobs:
           test -f dist/about/index.html || { echo 'MISSING dist/about/index.html'; exit 1; }
           echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"   
         working-directory: site
+      - name: Pack offline preview
+        if: success()
+        run: python3 scripts/make_preview.py
+      - name: Commit preview
+        if: success()
+        run: |
+          git config user.name "alisa-bot"
+          git config user.email "alisa@bot.local"
+          git add previews/ || true
+          git commit -m "preview: офлайн-превью v2 (автосборка)" || echo "no changes"
+          git push || echo "push skipped"
