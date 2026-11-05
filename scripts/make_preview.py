@@ -21,6 +21,10 @@ PAGES = [
     ("safety",       "/safety/",                                "Безопасность"),
     ("b2b",          "/b2b/",                                   "B2B"),
     ("about",        "/about/",                                 "О проекте"),
+    ("services",     "/services/",                              "Услуги"),
+    ("service",      "/services/ustanovka-stancii.html",        "Услуга: установка"),
+    ("cost_item",    "/cost/avatr-11-12-ofitsialno-ru.html",    "Расчёт владения"),
+    ("news",         "/news/",                                  "Новости"),
     ("charging",     "/charging/",                              "Карта ЗУ"),
 ]
 path_to_id = {p: f"pv_{n}" for n, p, _ in PAGES}
