@@ -1616,6 +1616,20 @@ MODEL_EXTRA = {
   '<p>Ð ÐµÐ´ÐºÐ¸Ð¹ ÑÐ»ÑÑÐ°Ð¹ Â«ÐºÐ¸ÑÐ°Ð¹ÑÐ°Â» Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¼Ð¸ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼Ð¸: Type 2/CCS2, OBC 11 ÐºÐÑ (3 ÑÐ°Ð·Ñ), Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð¾ 240 ÐºÐÑ. Ð Ð¾ÑÑÐ¸Ð¹ÑÐºÐ°Ñ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ° Type 2/CCS2 ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ â Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð½Ðµ Ð½ÑÐ¶Ð½Ñ, Ð° ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ°ÑÐºÑÑÐ²Ð°ÐµÑ OBC Ð¿Ð¾Ð»Ð½Ð¾ÑÑÑÑ. Ð­ÑÐ¾ Ð´ÐµÐ»Ð°ÐµÑ Avatr Ð¾Ð´Ð½Ð¸Ð¼ Ð¸Ð· ÑÐ°Ð¼ÑÑ Â«Ð±ÐµÑÑÐ¾Ð²Ð½ÑÑÂ» ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð´Ð»Ñ Ð Ð¾ÑÑÐ¸Ð¸. ÐÐ¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ â <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´</a>, Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â <a href="/pain/zaryadka-na-trasse.html">ÐºÐ°ÑÑÐ° Ð¸ Ð¿Ð»Ð°Ð½Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
 }
 
+
+def AEO_DIRECT(m, pname):
+    """Детерминированный «Прямой ответ» для ИИ-поисковиков: только факты из базы модели."""
+    def e(v): return html.escape(str(v)) if v else '—'
+    parts = ['<div class="tldr" style="margin:12px 0 0"><b>Прямой ответ:</b> ' + html.escape(pname)
+             + ' (годы: ' + e(m.get('years')) + ', рынок вывоза: ' + e(m.get('market')) + ') — разъёмы: AC '
+             + e(m.get('ac')) + ', DC ' + e(m.get('dc')) + '.']
+    if m.get('obc'): parts.append(' Бортовое зарядное: ' + e(m['obc']) + '.')
+    if m.get('dcp'): parts.append(' Быстрая зарядка: ' + e(m['dcp']) + '.')
+    if m.get('sol'): parts.append(' Что докупить: ' + e(m['sol']))
+    parts.append('</div>')
+    return ''.join(parts)
+
+
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
@@ -1709,6 +1723,7 @@ def model_page(m, outdir):
       + '<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</a>'
       + '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/calculator/">ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</a></div>'
       + '</div><div>' + photo_html + '</div></div>')
+    parts.append(AEO_DIRECT(m, pname))
     parts.append('<h2 class="text-lg text-gray-900 mt-8">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
     parts.append(port_visual(m))
     if chg_table: parts.append(chg_table)
@@ -2073,6 +2088,10 @@ def llms_files(outdir, news):
     if news:
         txt += '\n## Ð¡Ð²ÐµÐ¶Ð¸Ðµ Ð½Ð¾Ð²Ð¾ÑÑÐ¸\n\n'
         for it in news[:20]: txt += '- [' + it['title'] + '](' + SITE_DOMAIN + news_slug_page(it) + '): ' + (it.get('teaser') or '') + '\n'
+    txt += '\n## Экспертные статьи блога\n\n'
+    _blog_slugs = [s for s, _, _ in services.BLOG_ARTICLES] + ['zeekr-001-gbt-diff', 'li-l7-battery-heat', 'workersbee-vs-auxus', 'b2b-reglament-vydachi-ev', '800v-zaryadka-ev-rossiya', 'erekv-domashnyaya-zaryadka', 'sertifikaciya-ezs-rf-2026']
+    for _bs in _blog_slugs:
+        txt += '- [' + _bs.replace('-', ' ') + '](' + SITE_DOMAIN + '/blog/' + _bs + '.html)\n'
     with open(os.path.join(outdir,'llms.txt'),'w',encoding='utf-8') as f: f.write(txt)
 
     full = txt + '\n\n# ÐÐÐÐÐ«Ð Ð¢ÐÐÐ¡Ð¢ Ð Ð£ÐÐÐÐÐÐ¡Ð¢Ð\n\n'
@@ -4492,6 +4511,30 @@ def main():
         'og': '/assets/og/b-workersbee-vs-auxus.png',
         'body': WORKERSBEE_BODY,
       },
+      '/blog/b2b-reglament-vydachi-ev.html': {
+        'title': 'Регламент выдачи китайских EV в автосалоне: чек-лист для РОПа',
+        'desc': 'Готовый стандарт предпродажной подготовки и выдачи BEV/EREV: проверка разъёмов, SOC, комплект зарядки, инструктаж и скрипт передачи машины клиенту.',
+        'og': '/assets/og/b-b2b-reglament-vydachi-ev.png',
+        'body': B2B_ART1_BODY,
+      },
+      '/blog/800v-zaryadka-ev-rossiya.html': {
+        'title': 'Зарядка EV 800 В в России: Zeekr 007, SU7 и станции 400 В',
+        'desc': 'Что происходит с 800-вольтовыми машинами (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) на станциях 400 В: мощность, ток адаптера и handshake-сессия.',
+        'og': '/assets/og/b-800v-zaryadka-ev-rossiya.png',
+        'body': B2B_ART2_BODY,
+      },
+      '/blog/erekv-domashnyaya-zaryadka.html': {
+        'title': 'Li Auto L6–L9: почему гибриду нужна домашняя зарядка',
+        'desc': 'Сценарий владения EREV: ночная домашняя зарядка вместо городской быстрой, математика батареи 40–52 кВтч и правильный набор для дилера.',
+        'og': '/assets/og/b-erekv-domashnyaya-zaryadka.png',
+        'body': B2B_ART3_BODY,
+      },
+      '/blog/sertifikaciya-ezs-rf-2026.html': {
+        'title': 'Сертификация зарядных станций в РФ 2026: ЕАЭС и ГОСТ',
+        'desc': 'Какие документы обязательны у поставщика ЭЗС (ТР ТС 004/020, ЕАЭС 037), знак ЕАС, требования к монтажу и распределение ответственности.',
+        'og': '/assets/og/b-sertifikaciya-ezs-rf-2026.png',
+        'body': B2B_ART4_BODY,
+      },
     }
     for _u, _t, _d in SEO_STUBS:
         if _u in BLOG_READY:
@@ -4614,7 +4657,8 @@ def main():
       'var gas="' + GAS_URL + '";'
       'var t=new URLSearchParams(location.search).get("token")||"";'
       'if(t){window.location.href=gas+"?t="+encodeURIComponent(t);}'
-      '})();</script>')
+      '})();</script>'
+      '</div></div>')
     write_page(os.path.join(outdir, 'shop', 'digital', 'download.html'),
         'Ð¡ÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ Ð³Ð°Ð¹Ð´Ð° | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'ÐÑÐ´Ð°ÑÐ° Ð³Ð°Ð¹Ð´Ð° Ð¿Ð¾ ÑÐ¾ÐºÐµÐ½Ñ Ñ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸ÐµÐ¼ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð¸ ÑÐ¸ÑÐ»Ð° ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹.',
         _dl_body, '/shop/digital/download.html', noindex=True)
