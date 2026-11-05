@@ -1,24 +1,33 @@
 ---
 import ZhLayout from '../layouts/ZhLayout.astro';
+const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
+all.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+const latest = all.slice(0, 3);
 const stats = [
   { n: '145', t: 'моделей с разъёмами и решениями' },
   { n: '59', t: 'разборов о зарядке' },
   { n: '2073', t: 'станций на карте РФ' },
   { n: '30 сек', t: 'на подбор комплекта' },
 ];
-const cards = [
-  { ico: '🔌', h: 'Не заряжается: первые действия', p: 'Алгоритм из 7 шагов: кабель, фильтр, BMS, станция. Что делать до звонка в сервис.' },
-  { ico: '❄️', h: 'Зимняя зарядка медленнее в 1,5-2 раза', p: 'Почему при минусах сессия растягивается и как планировать маршрут.' },
-  { ico: 'GB/T', h: 'Разъёмы и адаптеры', p: 'Кто конвертируется, кто нет. Проверьте свою модель в каталоге перед покупкой.' },
+const pains = [
+  { ico: '⚡', h: 'Не заряжается: первые действия', p: 'Алгоритм из 7 шагов: кабель, фильтр, BMS, станция. Что делать до звонка в сервис.', href: '/pain/adapter-gbt/', label: 'Разбор' },
+  { ico: '❄️', h: 'Зимняя зарядка медленнее в 1,5-2 раза', p: 'Почему при минусах сессия растягивается и как планировать маршрут.', href: '/blog/gbt-stancii-2026/', label: 'Цифры' },
+  { ico: 'GB/T', h: 'Разъёмы и адаптеры', p: 'Кто конвертируется, кто нет. Проверьте свою модель в каталоге.', href: '/models/', label: 'Каталог' },
 ];
-const jsonld = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' };
+const faq = [
+  { q: 'У моей модели разъём GB/T - зарядиться на станции Type 2 реально?', a: 'Да, через адаптер Type 2 к GB/T. Каталог покажет вашу модель и нужный сценарий.' },
+  { q: 'Сколько реально идёт быстрая зарядка зимой?', a: 'При минусах полная сессия быстрой зарядки идёт в 1,5-2 раза дольше - планируйте запасные станции.' },
+  { q: 'Вы продаёте адаптеры или только консультируете?', a: 'Подбираем и поставляем: адаптеры, кабели, держатели. Для дилеров - партнёрский пакет на странице B2B.' },
+];
+const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' };
 ---
-<ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели за 30 секунд. 145 моделей, 59 разборов, карта 2073 станций." jsonld={jsonld}>
+<ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели за 30 секунд. 145 моделей, 59 разборов, карта 2073 станций." jsonld={orgLd}>
   <div class="hero">
     <div class="wrap">
       <div class="badge" style="color:#D4AF37">N1 по зарядке EV в России</div>
       <h1>Подберите зарядку и адаптеры <span>для вашей модели</span> за 30 секунд</h1>
-      <p>Разъёмы, мощность борта, зимний сценарий и цена простоя - по вашей марке и году.</p>
+      <p>Разъёмы, мощность борта, зимний сценарий и цена простоя — по вашей марке и году.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a class="btn btn-gold" href="/models/">Подобрать для моей машины</a>
         <a class="btn btn-ghost" style="background:transparent;color:#f5f5f7;border-color:rgba(229,236,246,.3)" href="/blog/">Читать разборы</a>
@@ -38,10 +47,24 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Organization', name
   <section class="sec sec-alt">
     <div class="wrap">
       <h2>Что чаще всего ломается на практике</h2>
-      <p class="lead" style="margin-bottom:36px">Каждый блок - не маркетинг, а разбор реального кейса из "Проблем".</p>
+      <p class="lead" style="margin-bottom:36px">Каждый блок — не маркетинг, а разбор реального кейса из «Проблем».</p>
       <div class="cards">
-        {cards.map((c) => (
-          <div class="card"><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></div>
+        {pains.map((c) => (
+          <a class="card" href={c.href}><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p><span style="color:#D4AF37;font-size:14px;font-weight:700">{c.label} →</span></a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <h2>Свежие разборы</h2>
+      <div class="bgrid" style="margin-top:28px">
+        {latest.map((a) => (
+          <a class="bcard" href={`/blog/${a.slug}/`}>
+            {a.category && <span class="tag">{a.category}</span>}
+            <h3>{a.title}</h3>
+            {a.desc && <p>{String(a.desc).slice(0, 120)}…</p>}
+          </a>
         ))}
       </div>
     </div>
@@ -49,13 +72,14 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Organization', name
   <section class="sec sec-alt">
     <div class="wrap">
       <h2>Частые вопросы</h2>
-      <div class="faqbox">
-        <details open><summary>У моей модели разъём GB/T - зарядиться на станции Type 2 реально?</summary><p>Да, через адаптер Type 2 к GB/T. Каталог покажет вашу модель и нужный сценарий.</p></details>
-        <details><summary>Сколько реально идёт быстрая зарядка зимой?</summary><p>При минусах полная сессия быстрой зарядки идёт в 1,5-2 раза дольше - планируйте запасные станции.</p></details>
-        <details><summary>Вы продаёте адаптеры или только консультируете?</summary><p>Подбираем и поставляем: адаптеры, кабели, держатели. Для дилеров - партнёрский пакет на странице B2B.</p></details>
+      <div class="faqbox" jsonld={faqLd}>
+        {faq.map((f) => (
+          <details open={f.q.startsWith('У моей модели')}><summary>{f.q}</summary><p>{f.a}</p></details>
+        ))}
       </div>
     </div>
   </section>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
 </ZhLayout>
 <style is:global>
 .hero{background:var(--ink);color:#f5f5f7;padding:104px 0 88px}
@@ -69,12 +93,13 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Organization', name
 .stats b{display:block;font-size:40px;letter-spacing:-.02em;color:var(--head)}
 .stats span{font-size:14px;color:var(--txt-muted)}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;transition:.18s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;transition:.18s;text-decoration:none;display:block}
 .card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .card .ico{font-size:26px;margin-bottom:12px;display:block;font-weight:700}
+.card h3{color:var(--head);font-size:18px}
 .card p{font-size:14.5px;color:var(--txt-muted)}
 .faqbox details{border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:12px}
-.faqbox summary{cursor:pointer;font-weight:700;padding:16px 20px;font-size:15.5px}
+.faqbox summary{cursor:pointer;font-weight:700;padding:16px 20px;font-size:15.5px;color:var(--head)}
 .faqbox details[open] summary{border-bottom:1px solid var(--line)}
 .faqbox details p{padding:14px 20px;font-size:14.5px;color:var(--txt-muted)}
 @media(max-width:900px){.cards{grid-template-columns:1fr 1fr}}
