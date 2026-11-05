@@ -4,7 +4,7 @@ on:
     branches: [astrowind-migration]
   workflow_dispatch: {}
 permissions:
-  contents: read
+  contents: write
 jobs:
   qa:
     runs-on: ubuntu-latest
@@ -74,5 +74,10 @@ jobs:
           git config user.name "alisa-bot"
           git config user.email "alisa@bot.local"
           git add site/previews/ || true
-          git commit -m "preview: офлайн-превью v2 (автосборка)" || echo "no changes"
-          git push || echo "push skipped"
+          if git status --porcelain | grep -q .; then
+            git commit -m "preview: офлайн-превью v2 (автосборка)"
+            git pull --rebase origin astrowind-migration || true
+            git push origin HEAD:astrowind-migration               || { git pull --rebase origin astrowind-migration && git push origin HEAD:astrowind-migration; }
+          else
+            echo "no changes"
+          fi
