@@ -13,6 +13,11 @@ export async function getStaticPaths() {
   });
 }
 const { a } = Astro.props;
+const extra = String(a.extra_html || '')
+  .replace(/<section[^>]*class=["'][^"']*comments[^"']*\/[\s\S]*?<\/section>/gi, '')
+  .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
+  .replace(/<form[\s\S]*?<\/form>/gi, '')
+  .replace(/<script[\s\S]*?<\/script>/gi, '');
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.desc, datePublished: a.date, articleSection: 'Проблемы' };
 ---
 <ZhLayout title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}>
@@ -36,8 +41,17 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             {a.read_min && <span>{a.read_min} мин</span>}
           </div>
           <div set:html={a.body_html} />
-          {a.extra_html && <div set:html={a.extra_html} />}
-          <div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
+          {extra && <div set:html={extra} />}
+                    {a.faq && (
+            <div class="faqbox">
+              <h2>Частые вопросы</h2>
+              {a.faq.map((f) => (
+                <details><summary>{f.q}</summary><p>{f.a}</p></details>
+              ))}
+            </div>
+          )}
+          {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) })} />}
+<div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
         </article>
       </div>
     </div>
