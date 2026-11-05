@@ -1,9 +1,8 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import catalog from '../../data/catalog.json';
-const all = (catalog.products || []).filter((p) => p.slug !== 'catalog');
 export function getStaticPaths() {
-  return all.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+  return catalog.products.filter((p) => p.slug !== 'catalog').map((p) => ({ params: { slug: p.slug }, props: { p } }));
 }
 const { p } = Astro.props;
 const related = all.filter((x) => x.slug !== p.slug && x.cat && x.cat === p.cat).slice(0, 3);
