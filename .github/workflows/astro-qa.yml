@@ -55,5 +55,9 @@ jobs:
           test -f dist/charging/stations.json || { echo 'MISSING stations.json'; exit 1; }
           test -f dist/assets/leaflet/leaflet.js || { echo 'MISSING leaflet.js'; exit 1; }
           grep -q "Зарядные станции рядом" dist/charging/index.html || { echo 'MISSING charging H1'; exit 1; }
-          echo "SMOKE OK (catalog + articles + FAQPage + shop + map)" 
+          test -f dist/quiz/index.html || { echo 'MISSING dist/quiz/index.html'; exit 1; }
+          test -f dist/b2b/index.html || { echo 'MISSING dist/b2b/index.html'; exit 1; }
+          test -f dist/b2b/paket-dileram.pdf || { echo 'MISSING paket-dileram.pdf'; exit 1; }
+          test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
+          echo "SMOKE OK (catalog + articles + FAQPage + shop + map + quiz + b2b + rss)"  
         working-directory: site
