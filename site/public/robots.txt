@@ -1,2 +1,5 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://zapashoda-ev.ru/sitemap.xml
+Host: https://zapashoda-ev.ru
