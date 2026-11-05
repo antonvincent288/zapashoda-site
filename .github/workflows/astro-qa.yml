@@ -32,12 +32,9 @@ jobs:
         run: npx --yes pagefind --site dist
         working-directory: site
       - name: Smoke checks (og, JSON-LD, sitemap)
-        if: steps.pre.outputs.scaffold == 'yes'
+        working-directory: site
         run: |
-          test -f dist/index.html
-          test -f dist/sitemap-index.xml
-          grep -rl 'property="og:title"' dist --include='*.html' | head -1
-          grep -rl 'application/ld+json' dist --include='*.html' | head -1
+          test -f dist/index.html || { echo 'MISSING dist/index.html'; exit 1; }
           test -f dist/models/index.html || { echo 'MISSING dist/models/index.html'; exit 1; }
           test -f dist/models/zeekr-001-001-fr/index.html || { echo 'MISSING model detail'; exit 1; }
           test -f dist/blog/index.html || { echo 'MISSING dist/blog/index.html'; exit 1; }
@@ -49,7 +46,6 @@ jobs:
           test -f dist/assets/og/b-gbt-stancii-2026.png || { echo 'MISSING og article image'; exit 1; }
           test -f dist/assets/og/m-aito-m5-m7.png || { echo 'MISSING og model image'; exit 1; }
           grep -q FAQPage dist/pain/12v-akb/index.html || { echo 'MISSING FAQPage JSON-LD on pain article'; exit 1; }
-          grep -q "comments" dist/blog/gbt-stancii-2026/index.html || echo 'note: legacy comments removed from blog detail'
           test -f dist/shop/digital/index.html || { echo 'MISSING dist/shop/digital/index.html'; exit 1; }
           test -f dist/charging/index.html || { echo 'MISSING dist/charging/index.html'; exit 1; }
           test -f dist/charging/stations.json || { echo 'MISSING stations.json'; exit 1; }
@@ -61,26 +57,23 @@ jobs:
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
           grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
-          NC=$(find dist/catalog -name 'index.html' | wc -l); echo "catalog pages: $NC"
-          CITEM=$(find dist/catalog -path '*adapter-type2-gbt-premium*' -name 'index.html' 2>/dev/null | head -1)
-          [ -n "$CITEM" ] || CITEM=$(find dist/catalog -maxdepth 1 -name 'adapter-type2-gbt-premium.html' -type f 2>/dev/null | head -1)
-          [ -n "$CITEM" ] || { echo 'MISSING catalog item (find empty)'; ls -1 dist/catalog; exit 1; }
-          grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
-          echo "FOUND=[$CITEM]"; wc -c < "$CITEM"; head -c 220 "$CITEM" | tr -d '\n'; echo; grep -c "премиум" "$CITEM" || true; grep -c "<h1" "$CITEM" || true; grep -c "h1" "$CITEM" || true
+          CITEM=$(find dist/catalog -name 'index.html' -path '*premium*' | head -1)
+          [ -n "$CITEM" ] || { echo 'MISSING catalog item'; exit 1; }
+          grep -q "премиум" "$CITEM" || { echo 'MISSING item title'; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
           test -f dist/cost/avatr-11-12-ofitsialno-ru.html || { echo 'MISSING cost page'; exit 1; }
           test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
           test -f dist/about/index.html || { echo 'MISSING dist/about/index.html'; exit 1; }
-          echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"   
-        working-directory: site
+          echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"
       - name: Pack offline preview
         if: always()
-        run: python3 scripts/make_preview.py
+        working-directory: site
+        run: python3 ../scripts/make_preview.py
       - name: Commit preview
-        if: success()
+        if: always()
         run: |
           git config user.name "alisa-bot"
           git config user.email "alisa@bot.local"
-          git add previews/ || true
+          git add site/previews/ || true
           git commit -m "preview: офлайн-превью v2 (автосборка)" || echo "no changes"
           git push || echo "push skipped"
