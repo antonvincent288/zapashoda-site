@@ -848,6 +848,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": "Z-0047"
+    },
+    {
+      "id": "V-0055",
+      "ts": "2026-11-05T17:33:12+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: poteri-pri-zaryadke-5-10.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
