@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Запас хода — генератор SEO-сайта v5 (Apple-дизайн).
-Разделы: 137 моделей, 12 руководств, каталог новостей (RSS + своя страница у каждой),
-VIN-справочник (хаб + бренды), карта зарядных станций (OSM/Overpass), llms.txt,
-OG-карточки (PIL), поиск, sitemap, robots, 404.
-Самодостаточен: данные моделей зашиты в DATA_B64. Запуск: python3 build.py [папка] (по умолчанию _site).
-Домен: переменная окружения SITE_DOMAIN (по умолчанию https://zapashoda-ev.ru).
+ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾Ñ SEO-ÑÐ°Ð¹ÑÐ° v5 (Apple-Ð´Ð¸Ð·Ð°Ð¹Ð½).
+Ð Ð°Ð·Ð´ÐµÐ»Ñ: 137 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, 12 ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ², ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ð½Ð¾Ð²Ð¾ÑÑÐµÐ¹ (RSS + ÑÐ²Ð¾Ñ ÑÑÑÐ°Ð½Ð¸ÑÐ° Ñ ÐºÐ°Ð¶Ð´Ð¾Ð¹),
+VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº (ÑÐ°Ð± + Ð±ÑÐµÐ½Ð´Ñ), ÐºÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ (OSM/Overpass), llms.txt,
+OG-ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ (PIL), Ð¿Ð¾Ð¸ÑÐº, sitemap, robots, 404.
+Ð¡Ð°Ð¼Ð¾Ð´Ð¾ÑÑÐ°ÑÐ¾ÑÐµÐ½: Ð´Ð°Ð½Ð½ÑÐµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð·Ð°ÑÐ¸ÑÑ Ð² DATA_B64. ÐÐ°Ð¿ÑÑÐº: python3 build.py [Ð¿Ð°Ð¿ÐºÐ°] (Ð¿Ð¾ ÑÐ¼Ð¾Ð»ÑÐ°Ð½Ð¸Ñ _site).
+ÐÐ¾Ð¼ÐµÐ½: Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½Ð°Ñ Ð¾ÐºÑÑÐ¶ÐµÐ½Ð¸Ñ SITE_DOMAIN (Ð¿Ð¾ ÑÐ¼Ð¾Ð»ÑÐ°Ð½Ð¸Ñ https://zapashoda-ev.ru).
 """
 import gzip, base64, json, os, re, sys, html, shutil
 import catalog
@@ -18,54 +18,54 @@ DATA_B64 = "H4sIACMo5GoC/+y9C3Mb15Uu+lf65JRSZAVNvAESqtQURdGSbVGWRUlWfOuUq0m2yA5B
 DATA = json.loads(gzip.decompress(base64.b64decode(DATA_B64.encode("ascii"))).decode("utf-8"))
 PAINS = DATA["pains"]
 MODELS = DATA["models"]
-# Toyota bZ3X — добавлена отдельной моделью (Wordstat-спрос «bZ3X разъём» — лидер среди новинок)
-MODELS.append({"n": 138, "brand": "Toyota", "model": "bZ3X", "years": "2025–2026", "type": "BEV",
- "market": "Китай (CN)", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 кВт (однофазный)", "dcp": "~100 кВт",
- "sol": "Type 2-станции: адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт, силовая). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).",
- "freq": "Средний",
- "note": "Самый частый разъёмный запрос по всем новинкам (Wordstat ~370 показов/мес по разъёмным фразам). Платформа GAC-Toyota: подробный разбор — статья «Toyota bZ3X и bZ4X: какой разъём зарядки».",
+# Toyota bZ3X â Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð° Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»ÑÑ (Wordstat-ÑÐ¿ÑÐ¾Ñ Â«bZ3X ÑÐ°Ð·ÑÑÐ¼Â» â Ð»Ð¸Ð´ÐµÑ ÑÑÐµÐ´Ð¸ Ð½Ð¾Ð²Ð¸Ð½Ð¾Ðº)
+MODELS.append({"n": 138, "brand": "Toyota", "model": "bZ3X", "years": "2025â2026", "type": "BEV",
+ "market": "ÐÐ¸ÑÐ°Ð¹ (CN)", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 ÐºÐÑ (Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐ¹)", "dcp": "~100 ÐºÐÑ",
+ "sol": "Type 2-ÑÑÐ°Ð½ÑÐ¸Ð¸: Ð°Ð´Ð°Ð¿ÑÐµÑ Type2âGB/T (SKU 1 premium / SKU 8 Ð±Ð°Ð·Ð¾Ð²ÑÐ¹) Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Type2âGB/T (SKU 3 / 9 / 15). CCS2-ÑÑÐ°ÑÑÐ°: DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2âGB/T (SKU 6). ÐÑ ÑÐ¾Ð·ÐµÑÐºÐ¸: Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° SKU 10 (3,5 ÐºÐÑ) / SKU 5 (7 ÐºÐÑ, ÑÐ¸Ð»Ð¾Ð²Ð°Ñ). Ð£Ð´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ GB/T (SKU 14), ÑÐ¼Ð°Ð·ÐºÐ° Ð»ÑÑÐºÐ° (SKU 17).",
+ "freq": "Ð¡ÑÐµÐ´Ð½Ð¸Ð¹",
+ "note": "Ð¡Ð°Ð¼ÑÐ¹ ÑÐ°ÑÑÑÐ¹ ÑÐ°Ð·ÑÑÐ¼Ð½ÑÐ¹ Ð·Ð°Ð¿ÑÐ¾Ñ Ð¿Ð¾ Ð²ÑÐµÐ¼ Ð½Ð¾Ð²Ð¸Ð½ÐºÐ°Ð¼ (Wordstat ~370 Ð¿Ð¾ÐºÐ°Ð·Ð¾Ð²/Ð¼ÐµÑ Ð¿Ð¾ ÑÐ°Ð·ÑÑÐ¼Ð½ÑÐ¼ ÑÑÐ°Ð·Ð°Ð¼). ÐÐ»Ð°ÑÑÐ¾ÑÐ¼Ð° GAC-Toyota: Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ â ÑÑÐ°ÑÑÑ Â«Toyota bZ3X Ð¸ bZ4X: ÐºÐ°ÐºÐ¾Ð¹ ÑÐ°Ð·ÑÑÐ¼ Ð·Ð°ÑÑÐ´ÐºÐ¸Â».",
  "src": "/blog/toyota-bz3x-bz4x-razyom.html"})
-MODELS.append({"n": 139, "brand": "Kia", "model": "EV2", "years": "2026–", "type": "BEV",
- "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить (EU)", "dcp": "уточнить",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
- "freq": "Редкий",
- "note": "Компактный городской BEV (EU, 2026). Спецификации зарядки сверяйте по руководству; RU-мануал 26MY доступен.",
+MODELS.append({"n": 139, "brand": "Kia", "model": "EV2", "years": "2026â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ (EU)", "dcp": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð±ÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð². ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 Ð¸ Ð´ÐµÑÐ¶Ð°ÑÐµÐ»Ñ Type 2 â Ð²Ð½Ðµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° (Ð¿Ð¾ÑÐµÐ½ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ Ð½Ð¾Ð²ÑÐµ SKU).",
+ "freq": "Ð ÐµÐ´ÐºÐ¸Ð¹",
+ "note": "ÐÐ¾Ð¼Ð¿Ð°ÐºÑÐ½ÑÐ¹ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ BEV (EU, 2026). Ð¡Ð¿ÐµÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÑÐ²ÐµÑÑÐ¹ÑÐµ Ð¿Ð¾ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ñ; RU-Ð¼Ð°Ð½ÑÐ°Ð» 26MY Ð´Ð¾ÑÑÑÐ¿ÐµÐ½.",
  "src": "kia.ee (Kia Baltic, RU)"})
-MODELS.append({"n": 140, "brand": "Kia", "model": "EV3", "years": "2025–", "type": "BEV",
- "market": "Европа (EU) / RU-комплектации", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт (3 фазы, до 10,5)", "dcp": "~101 кВт (58,3 кВт·ч) / ~128 кВт (81,4 кВт·ч)",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
- "freq": "Средний",
- "note": "Оба порта: AC Type 2 и DC CCS2 (порт спереди справа). Батареи: 58,3 / 81,4 кВт·ч (NMC). V2L 3,6 кВт.",
+MODELS.append({"n": 140, "brand": "Kia", "model": "EV3", "years": "2025â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU) / RU-ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸", "ac": "Type 2", "dc": "CCS2", "obc": "11 ÐºÐÑ (3 ÑÐ°Ð·Ñ, Ð´Ð¾ 10,5)", "dcp": "~101 ÐºÐÑ (58,3 ÐºÐÑÂ·Ñ) / ~128 ÐºÐÑ (81,4 ÐºÐÑÂ·Ñ)",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð±ÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð². ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 Ð¸ Ð´ÐµÑÐ¶Ð°ÑÐµÐ»Ñ Type 2 â Ð²Ð½Ðµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° (Ð¿Ð¾ÑÐµÐ½ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ Ð½Ð¾Ð²ÑÐµ SKU).",
+ "freq": "Ð¡ÑÐµÐ´Ð½Ð¸Ð¹",
+ "note": "ÐÐ±Ð° Ð¿Ð¾ÑÑÐ°: AC Type 2 Ð¸ DC CCS2 (Ð¿Ð¾ÑÑ ÑÐ¿ÐµÑÐµÐ´Ð¸ ÑÐ¿ÑÐ°Ð²Ð°). ÐÐ°ÑÐ°ÑÐµÐ¸: 58,3 / 81,4 ÐºÐÑÂ·Ñ (NMC). V2L 3,6 ÐºÐÑ.",
  "src": "evspecs.org; kia.co.nz"})
-MODELS.append({"n": 141, "brand": "Kia", "model": "EV4", "years": "2026–", "type": "BEV",
- "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт", "dcp": "~100 кВт (Standard Range; Long Range уточнить)",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). V2L до 3,6 кВт — отдельный V2L-адаптер Type 2.",
- "freq": "Редкий",
- "note": "Седан (58,3 кВт·ч NMC Standard Range; Long Range — уточнить). V2L 3,6 кВт.",
+MODELS.append({"n": 141, "brand": "Kia", "model": "EV4", "years": "2026â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 ÐºÐÑ", "dcp": "~100 ÐºÐÑ (Standard Range; Long Range ÑÑÐ¾ÑÐ½Ð¸ÑÑ)",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ. ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). V2L Ð´Ð¾ 3,6 ÐºÐÑ â Ð¾ÑÐ´ÐµÐ»ÑÐ½ÑÐ¹ V2L-Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2.",
+ "freq": "Ð ÐµÐ´ÐºÐ¸Ð¹",
+ "note": "Ð¡ÐµÐ´Ð°Ð½ (58,3 ÐºÐÑÂ·Ñ NMC Standard Range; Long Range â ÑÑÐ¾ÑÐ½Ð¸ÑÑ). V2L 3,6 ÐºÐÑ.",
  "src": "zecar.com"})
-MODELS.append({"n": 142, "brand": "Kia", "model": "EV4 Fastback", "years": "2026–", "type": "BEV",
- "market": "Европа (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 кВт", "dcp": "уточнить",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). V2L до 3,6 кВт — отдельный V2L-адаптер Type 2.",
- "freq": "Редкий",
- "note": "Fastback-версия EV4. Спецификации сверяйте по руководству.",
+MODELS.append({"n": 142, "brand": "Kia", "model": "EV4 Fastback", "years": "2026â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU)", "ac": "Type 2", "dc": "CCS2", "obc": "11 ÐºÐÑ", "dcp": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ. ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). V2L Ð´Ð¾ 3,6 ÐºÐÑ â Ð¾ÑÐ´ÐµÐ»ÑÐ½ÑÐ¹ V2L-Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2.",
+ "freq": "Ð ÐµÐ´ÐºÐ¸Ð¹",
+ "note": "Fastback-Ð²ÐµÑÑÐ¸Ñ EV4. Ð¡Ð¿ÐµÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸ ÑÐ²ÐµÑÑÐ¹ÑÐµ Ð¿Ð¾ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ñ.",
  "src": "kia.ee (Kia Baltic, RU)"})
-MODELS.append({"n": 143, "brand": "Kia", "model": "EV5", "years": "2024–", "type": "BEV",
- "market": "Китай (CN) — RU параллельный импорт", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 кВт (однофазный)", "dcp": "~120–141 кВт (64,2 кВт·ч) / до ~160 кВт (81,4 кВт·ч LFP)",
- "sol": "GB/T (китайская сборка для ввоза в РФ): Type 2-станции — адаптер Type2→GB/T (SKU 1 premium / SKU 8 базовый) или кабель Type2–GB/T (SKU 3 / 9 / 15). От розетки: портативка SKU 10 (3,5 кВт) / SKU 5 (7 кВт). CCS2-трасса: DC-адаптер CCS2→GB/T (SKU 6). V2L до 3,6 кВт — адаптер в порт GB/T (аналог SKU 11 — вне каталога). Удлинитель GB/T (SKU 14), смазка лючка (SKU 17).",
- "freq": "Средний",
- "note": "AC-порт однофазный до 7 кВт — трёхфазные станции прибавки не дают. V2L до 3,6 кВт через адаптер в порт GB/T. Батареи: 64,2 LFP (530 км CLTC) / 81,4 LFP (555 км CLTC).",
+MODELS.append({"n": 143, "brand": "Kia", "model": "EV5", "years": "2024â", "type": "BEV",
+ "market": "ÐÐ¸ÑÐ°Ð¹ (CN) â RU Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½ÑÐ¹ Ð¸Ð¼Ð¿Ð¾ÑÑ", "ac": "GB/T AC", "dc": "GB/T DC", "obc": "7 ÐºÐÑ (Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐ¹)", "dcp": "~120â141 ÐºÐÑ (64,2 ÐºÐÑÂ·Ñ) / Ð´Ð¾ ~160 ÐºÐÑ (81,4 ÐºÐÑÂ·Ñ LFP)",
+ "sol": "GB/T (ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ°Ñ ÑÐ±Ð¾ÑÐºÐ° Ð´Ð»Ñ Ð²Ð²Ð¾Ð·Ð° Ð² Ð Ð¤): Type 2-ÑÑÐ°Ð½ÑÐ¸Ð¸ â Ð°Ð´Ð°Ð¿ÑÐµÑ Type2âGB/T (SKU 1 premium / SKU 8 Ð±Ð°Ð·Ð¾Ð²ÑÐ¹) Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Type2âGB/T (SKU 3 / 9 / 15). ÐÑ ÑÐ¾Ð·ÐµÑÐºÐ¸: Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° SKU 10 (3,5 ÐºÐÑ) / SKU 5 (7 ÐºÐÑ). CCS2-ÑÑÐ°ÑÑÐ°: DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2âGB/T (SKU 6). V2L Ð´Ð¾ 3,6 ÐºÐÑ â Ð°Ð´Ð°Ð¿ÑÐµÑ Ð² Ð¿Ð¾ÑÑ GB/T (Ð°Ð½Ð°Ð»Ð¾Ð³ SKU 11 â Ð²Ð½Ðµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°). Ð£Ð´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ GB/T (SKU 14), ÑÐ¼Ð°Ð·ÐºÐ° Ð»ÑÑÐºÐ° (SKU 17).",
+ "freq": "Ð¡ÑÐµÐ´Ð½Ð¸Ð¹",
+ "note": "AC-Ð¿Ð¾ÑÑ Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐ¹ Ð´Ð¾ 7 ÐºÐÑ â ÑÑÑÑÑÐ°Ð·Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¿ÑÐ¸Ð±Ð°Ð²ÐºÐ¸ Ð½Ðµ Ð´Ð°ÑÑ. V2L Ð´Ð¾ 3,6 ÐºÐÑ ÑÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ Ð² Ð¿Ð¾ÑÑ GB/T. ÐÐ°ÑÐ°ÑÐµÐ¸: 64,2 LFP (530 ÐºÐ¼ CLTC) / 81,4 LFP (555 ÐºÐ¼ CLTC).",
  "src": "greenlight.by; auto.ru; Wikipedia"})
-MODELS.append({"n": 144, "brand": "Kia", "model": "PV5", "years": "2025–", "type": "BEV",
- "market": "Европа (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить", "dcp": "уточнить",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
- "freq": "Средний",
- "note": "PBV-фургон/пассажир (Kia PV5). RU-мануал 26MY доступен.",
+MODELS.append({"n": 144, "brand": "Kia", "model": "PV5", "years": "2025â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ", "dcp": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð±ÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð². ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 Ð¸ Ð´ÐµÑÐ¶Ð°ÑÐµÐ»Ñ Type 2 â Ð²Ð½Ðµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° (Ð¿Ð¾ÑÐµÐ½ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ Ð½Ð¾Ð²ÑÐµ SKU).",
+ "freq": "Ð¡ÑÐµÐ´Ð½Ð¸Ð¹",
+ "note": "PBV-ÑÑÑÐ³Ð¾Ð½/Ð¿Ð°ÑÑÐ°Ð¶Ð¸Ñ (Kia PV5). RU-Ð¼Ð°Ð½ÑÐ°Ð» 26MY Ð´Ð¾ÑÑÑÐ¿ÐµÐ½.",
  "src": "kia.ee (Kia Baltic, RU)"})
-MODELS.append({"n": 145, "brand": "Kia", "model": "PV5 Cargo", "years": "2025–", "type": "BEV",
- "market": "Европа (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "уточнить", "dcp": "уточнить",
- "sol": "Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).",
- "freq": "Средний",
- "note": "Cargo-версия Kia PV5. RU-мануал 26MY общий с пассажирской.",
+MODELS.append({"n": 145, "brand": "Kia", "model": "PV5 Cargo", "years": "2025â", "type": "BEV",
+ "market": "ÐÐ²ÑÐ¾Ð¿Ð° (EU) / RU", "ac": "Type 2", "dc": "CCS2", "obc": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ", "dcp": "ÑÑÐ¾ÑÐ½Ð¸ÑÑ",
+ "sol": "Type 2/CCS2 â ÑÑÐ°ÑÐ½ÑÐµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð Ð¤-Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð±ÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð². ÐÐ° GB/T-ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2 (SKU 2). ÐÐµÑÐ¶Ð°ÑÐµÐ»Ñ (SKU 12), ÑÐ¼Ð°Ð·ÐºÐ° (SKU 17). ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 Ð¸ Ð´ÐµÑÐ¶Ð°ÑÐµÐ»Ñ Type 2 â Ð²Ð½Ðµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° (Ð¿Ð¾ÑÐµÐ½ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ Ð½Ð¾Ð²ÑÐµ SKU).",
+ "freq": "Ð¡ÑÐµÐ´Ð½Ð¸Ð¹",
+ "note": "Cargo-Ð²ÐµÑÑÐ¸Ñ Kia PV5. RU-Ð¼Ð°Ð½ÑÐ°Ð» 26MY Ð¾Ð±ÑÐ¸Ð¹ Ñ Ð¿Ð°ÑÑÐ°Ð¶Ð¸ÑÑÐºÐ¾Ð¹.",
  "src": "kia.ee (Kia Baltic, RU)"})
 
 BRAND_PAINS = {
@@ -109,29 +109,29 @@ def pains_for(m):
     if 'Leaf' not in m['model']: ids = [i for i in ids if i not in ('LEAF-01','LEAF-02')]
     seen = set(); return [i for i in ids if not (i in seen or seen.add(i))]
 
-_TR = str.maketrans({'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',' ':'-','/':'-','.':'-','(':'',')':'',',':'','+':'','–':'-','—':'-'})
+_TR = str.maketrans({'Ð°':'a','Ð±':'b','Ð²':'v','Ð³':'g','Ð´':'d','Ðµ':'e','Ñ':'e','Ð¶':'zh','Ð·':'z','Ð¸':'i','Ð¹':'y','Ðº':'k','Ð»':'l','Ð¼':'m','Ð½':'n','Ð¾':'o','Ð¿':'p','Ñ':'r','Ñ':'s','Ñ':'t','Ñ':'u','Ñ':'f','Ñ':'h','Ñ':'ts','Ñ':'ch','Ñ':'sh','Ñ':'sch','Ñ':'','Ñ':'y','Ñ':'','Ñ':'e','Ñ':'yu','Ñ':'ya',' ':'-','/':'-','.':'-','(':'',')':'',',':'','+':'','â':'-','â':'-'})
 def slug(s):
     return re.sub(r'-+','-', re.sub(r'[^a-z0-9\-]','', s.lower().translate(_TR))).strip('-')
 
-# ================= КОНФИГ =================
+# ================= ÐÐÐÐ¤ÐÐ =================
 SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "https://zapashoda-ev.ru")
-SITE_NAME = "Запас хода"
+SITE_NAME = "ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°"
 TG_CHANNEL = "https://t.me/zapashoda_ev"
 TG_BOT_APP = "https://t.me/zapashoda_ev_bot/app"
 GUIDE_PDF = "/assets/guide/zapashoda-guide-2026.pdf"
 
-# ===== КОНФИГУРАЦИЯ (правится через админку /admin/ или вручную в data/site_config.json) =====
+# ===== ÐÐÐÐ¤ÐÐÐ£Ð ÐÐ¦ÐÐ¯ (Ð¿ÑÐ°Ð²Ð¸ÑÑÑ ÑÐµÑÐµÐ· Ð°Ð´Ð¼Ð¸Ð½ÐºÑ /admin/ Ð¸Ð»Ð¸ Ð²ÑÑÑÐ½ÑÑ Ð² data/site_config.json) =====
 def load_site_config():
     cfg = {
-      "metrika_id": 0,            # номер счётчика Яндекс.Метрики; 0 = не подключена
-      "banner_text": "",          # текст объявления сверху (пусто = баннера нет)
-      "banner_link": "",          # ссылка баннера (пусто = просто текст)
-      "phone": "",                # телефон для связи (пусто = не показывать)
-      "hero_title": "",           # свой заголовок главной (пусто = стандартный)
-      "hero_sub": "",             # свой подзаголовок главной
-      "tg_lead_bot_token": "",    # токен Telegram-бота для заявок (публичный в HTML!)
-      "tg_lead_chat_id": "",      # chat_id канала/чата для заявок (например -100...)
-      "configurator": {},         # блок конфигуратора мини-аппа: сценарии, промокоды, рефералка (правится без кода)
+      "metrika_id": 0,            # Ð½Ð¾Ð¼ÐµÑ ÑÑÑÑÑÐ¸ÐºÐ° Ð¯Ð½Ð´ÐµÐºÑ.ÐÐµÑÑÐ¸ÐºÐ¸; 0 = Ð½Ðµ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð°
+      "banner_text": "",          # ÑÐµÐºÑÑ Ð¾Ð±ÑÑÐ²Ð»ÐµÐ½Ð¸Ñ ÑÐ²ÐµÑÑÑ (Ð¿ÑÑÑÐ¾ = Ð±Ð°Ð½Ð½ÐµÑÐ° Ð½ÐµÑ)
+      "banner_link": "",          # ÑÑÑÐ»ÐºÐ° Ð±Ð°Ð½Ð½ÐµÑÐ° (Ð¿ÑÑÑÐ¾ = Ð¿ÑÐ¾ÑÑÐ¾ ÑÐµÐºÑÑ)
+      "phone": "",                # ÑÐµÐ»ÐµÑÐ¾Ð½ Ð´Ð»Ñ ÑÐ²ÑÐ·Ð¸ (Ð¿ÑÑÑÐ¾ = Ð½Ðµ Ð¿Ð¾ÐºÐ°Ð·ÑÐ²Ð°ÑÑ)
+      "hero_title": "",           # ÑÐ²Ð¾Ð¹ Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº Ð³Ð»Ð°Ð²Ð½Ð¾Ð¹ (Ð¿ÑÑÑÐ¾ = ÑÑÐ°Ð½Ð´Ð°ÑÑÐ½ÑÐ¹)
+      "hero_sub": "",             # ÑÐ²Ð¾Ð¹ Ð¿Ð¾Ð´Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº Ð³Ð»Ð°Ð²Ð½Ð¾Ð¹
+      "tg_lead_bot_token": "",    # ÑÐ¾ÐºÐµÐ½ Telegram-Ð±Ð¾ÑÐ° Ð´Ð»Ñ Ð·Ð°ÑÐ²Ð¾Ðº (Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÐ¹ Ð² HTML!)
+      "tg_lead_chat_id": "",      # chat_id ÐºÐ°Ð½Ð°Ð»Ð°/ÑÐ°ÑÐ° Ð´Ð»Ñ Ð·Ð°ÑÐ²Ð¾Ðº (Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ -100...)
+      "configurator": {},         # Ð±Ð»Ð¾Ðº ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾ÑÐ° Ð¼Ð¸Ð½Ð¸-Ð°Ð¿Ð¿Ð°: ÑÑÐµÐ½Ð°ÑÐ¸Ð¸, Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´Ñ, ÑÐµÑÐµÑÐ°Ð»ÐºÐ° (Ð¿ÑÐ°Ð²Ð¸ÑÑÑ Ð±ÐµÐ· ÐºÐ¾Ð´Ð°)
     }
     try:
         p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'site_config.json')
@@ -153,18 +153,18 @@ CFG_HERO_TITLE = str(SITE_CFG.get('hero_title') or '')
 CFG_HERO_SUB = str(SITE_CFG.get('hero_sub') or '')
 
 
-# ===== КАЛЬКУЛЯТОР ЭКОНОМИИ (виджет на главной, ЭТАП 1 портала) =====
-CALC_PETROL_PRICE = float(SITE_CFG.get('calc_petrol_price') or 65)      # ₽ за литр АИ-95 (оценка)
-CALC_PETROL_L100 = float(SITE_CFG.get('calc_petrol_l100') or 10)        # л/100 км ДВС-аналога (оценка)
-CALC_T_NIGHT = float(SITE_CFG.get('calc_tariff_night') or 3.8)          # ₽/кВт·ч дом ночью (Москва, ночной тариф)
-CALC_T_DAY = float(SITE_CFG.get('calc_tariff_day') or 6.5)              # ₽/кВт·ч дом днём
-CALC_T_EZS = float(SITE_CFG.get('calc_tariff_ezs') or 22)               # ₽/кВт·ч быстрые ЭЗС (10–25, середина)
-CALC_STATION_PRICE = float(SITE_CFG.get('calc_home_station_price') or 24500)  # домашняя станция из каталога, от
+# ===== ÐÐÐÐ¬ÐÐ£ÐÐ¯Ð¢ÐÐ  Ð­ÐÐÐÐÐÐÐ (Ð²Ð¸Ð´Ð¶ÐµÑ Ð½Ð° Ð³Ð»Ð°Ð²Ð½Ð¾Ð¹, Ð­Ð¢ÐÐ 1 Ð¿Ð¾ÑÑÐ°Ð»Ð°) =====
+CALC_PETROL_PRICE = float(SITE_CFG.get('calc_petrol_price') or 65)      # â½ Ð·Ð° Ð»Ð¸ÑÑ ÐÐ-95 (Ð¾ÑÐµÐ½ÐºÐ°)
+CALC_PETROL_L100 = float(SITE_CFG.get('calc_petrol_l100') or 10)        # Ð»/100 ÐºÐ¼ ÐÐÐ¡-Ð°Ð½Ð°Ð»Ð¾Ð³Ð° (Ð¾ÑÐµÐ½ÐºÐ°)
+CALC_T_NIGHT = float(SITE_CFG.get('calc_tariff_night') or 3.8)          # â½/ÐºÐÑÂ·Ñ Ð´Ð¾Ð¼ Ð½Ð¾ÑÑÑ (ÐÐ¾ÑÐºÐ²Ð°, Ð½Ð¾ÑÐ½Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ)
+CALC_T_DAY = float(SITE_CFG.get('calc_tariff_day') or 6.5)              # â½/ÐºÐÑÂ·Ñ Ð´Ð¾Ð¼ Ð´Ð½ÑÐ¼
+CALC_T_EZS = float(SITE_CFG.get('calc_tariff_ezs') or 22)               # â½/ÐºÐÑÂ·Ñ Ð±ÑÑÑÑÑÐµ Ð­ÐÐ¡ (10â25, ÑÐµÑÐµÐ´Ð¸Ð½Ð°)
+CALC_STATION_PRICE = float(SITE_CFG.get('calc_home_station_price') or 24500)  # Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¸Ð· ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°, Ð¾Ñ
 CALC_KWH_DEFAULT = float(SITE_CFG.get('calc_consumption_default') or 18)
 CALC_KWH = {k: float(v) for k, v in (SITE_CFG.get('calc_consumption') or {}).items()}
 CALC_HYBRIDS = set(SITE_CFG.get('calc_hybrid_note_models') or [])
 CALC_MODELS = list(CALC_KWH.keys())
-MAP_PROMO_CODE = str(SITE_CFG.get('map_promo') or 'MAP10')   # промокод коммерческого блока на карте (скидка у дилера)
+MAP_PROMO_CODE = str(SITE_CFG.get('map_promo') or 'MAP10')   # Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ ÐºÐ¾Ð¼Ð¼ÐµÑÑÐµÑÐºÐ¾Ð³Ð¾ Ð±Ð»Ð¾ÐºÐ° Ð½Ð° ÐºÐ°ÑÑÐµ (ÑÐºÐ¸Ð´ÐºÐ° Ñ Ð´Ð¸Ð»ÐµÑÐ°)
 
 def calc_widget_html():
     opts = ''.join('<option value="' + html.escape(m) + '" data-kwh="' + str(CALC_KWH[m]) + '"'
@@ -178,31 +178,31 @@ def calc_widget_html():
     return (
       '<section class="zc-wrap"><div class="container"><div class="zc">'
       '<div class="zc-head">'
-      '<span class="zc-badge">⚡️ Калькулятор экономии</span>'
-      '<h2 class="zc-title">Сколько вы экономите на электричестве вместо бензина</h2>'
-      '<p class="zc-sub">Двигайте пробег, выберите модель — расчёт по реальным тарифам: дом ночью '
-      + tn + ' ₽/кВт·ч, публичные ЭЗС около ' + te + ' ₽/кВт·ч. Расход и цены топлива — оценка, точный расчёт считает <a href="/calculator/">полный калькулятор</a>.</p>'
+      '<span class="zc-badge">â¡ï¸ ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ð¸</span>'
+      '<h2 class="zc-title">Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð²Ñ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸ÑÐµ Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ðµ Ð²Ð¼ÐµÑÑÐ¾ Ð±ÐµÐ½Ð·Ð¸Ð½Ð°</h2>'
+      '<p class="zc-sub">ÐÐ²Ð¸Ð³Ð°Ð¹ÑÐµ Ð¿ÑÐ¾Ð±ÐµÐ³, Ð²ÑÐ±ÐµÑÐ¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ñ â ÑÐ°ÑÑÑÑ Ð¿Ð¾ ÑÐµÐ°Ð»ÑÐ½ÑÐ¼ ÑÐ°ÑÐ¸ÑÐ°Ð¼: Ð´Ð¾Ð¼ Ð½Ð¾ÑÑÑ '
+      + tn + ' â½/ÐºÐÑÂ·Ñ, Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÐµ Ð­ÐÐ¡ Ð¾ÐºÐ¾Ð»Ð¾ ' + te + ' â½/ÐºÐÑÂ·Ñ. Ð Ð°ÑÑÐ¾Ð´ Ð¸ ÑÐµÐ½Ñ ÑÐ¾Ð¿Ð»Ð¸Ð²Ð° â Ð¾ÑÐµÐ½ÐºÐ°, ÑÐ¾ÑÐ½ÑÐ¹ ÑÐ°ÑÑÑÑ ÑÑÐ¸ÑÐ°ÐµÑ <a href="/calculator/">Ð¿Ð¾Ð»Ð½ÑÐ¹ ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ</a>.</p>'
       '</div>'
       '<div class="zc-grid">'
       '<div class="zc-ctrl">'
-      '<label class="zc-label">Годовой пробег: <b id="zc-km">15 000 км</b></label>'
-      '<input type="range" id="zc-range" min="5000" max="50000" step="1000" value="15000" aria-label="Годовой пробег">'
-      '<label class="zc-label" for="zc-model">Ваш электромобиль</label>'
+      '<label class="zc-label">ÐÐ¾Ð´Ð¾Ð²Ð¾Ð¹ Ð¿ÑÐ¾Ð±ÐµÐ³: <b id="zc-km">15 000 ÐºÐ¼</b></label>'
+      '<input type="range" id="zc-range" min="5000" max="50000" step="1000" value="15000" aria-label="ÐÐ¾Ð´Ð¾Ð²Ð¾Ð¹ Ð¿ÑÐ¾Ð±ÐµÐ³">'
+      '<label class="zc-label" for="zc-model">ÐÐ°Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ</label>'
       '<select id="zc-model" class="zc-select">' + opts + '</select>'
-      '<div class="zc-hyb" id="zc-hyb">Гибрид: расчёт — для поездок на электротяге; часть пробега на бензине уменьшит фактическую экономию.</div>'
+      '<div class="zc-hyb" id="zc-hyb">ÐÐ¸Ð±ÑÐ¸Ð´: ÑÐ°ÑÑÑÑ â Ð´Ð»Ñ Ð¿Ð¾ÐµÐ·Ð´Ð¾Ðº Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¾ÑÑÐ³Ðµ; ÑÐ°ÑÑÑ Ð¿ÑÐ¾Ð±ÐµÐ³Ð° Ð½Ð° Ð±ÐµÐ½Ð·Ð¸Ð½Ðµ ÑÐ¼ÐµÐ½ÑÑÐ¸Ñ ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÑÑ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ.</div>'
       '</div>'
       '<div class="zc-out">'
-      '<div class="zc-counter"><div class="loss-counter" id="loss-counter">0 ₽</div><div class="zc-counter-cap">Экономия за год при ночной зарядке — цифра живая, двигайте пробег</div></div>'
-      '<table class="zc-table"><thead><tr><th>Сценарий</th><th>за 1 год</th><th>за 3 года</th><th>за 5 лет</th></tr></thead><tbody>'
-      '<tr><td>Дома ночью (' + tn + ' ₽/кВт·ч)</td><td id="zc-n1">—</td><td id="zc-n3">—</td><td id="zc-n5">—</td></tr>'
-      '<tr><td>Дома днём (' + td + ' ₽/кВт·ч)</td><td id="zc-d1">—</td><td id="zc-d3">—</td><td id="zc-d5">—</td></tr>'
-      '<tr><td>Быстрые ЭЗС (' + te + ' ₽/кВт·ч)</td><td id="zc-e1">—</td><td id="zc-e3">—</td><td id="zc-e5">—</td></tr>'
-      '<tr class="zc-vs"><td>Та же машина на АИ-95 (' + pl + ' л/100 км, ' + pp + ' ₽/л)</td><td id="zc-f1">—</td><td id="zc-f3">—</td><td id="zc-f5">—</td></tr>'
+      '<div class="zc-counter"><div class="loss-counter" id="loss-counter">0 â½</div><div class="zc-counter-cap">Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð·Ð° Ð³Ð¾Ð´ Ð¿ÑÐ¸ Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐµ â ÑÐ¸ÑÑÐ° Ð¶Ð¸Ð²Ð°Ñ, Ð´Ð²Ð¸Ð³Ð°Ð¹ÑÐµ Ð¿ÑÐ¾Ð±ÐµÐ³</div></div>'
+      '<table class="zc-table"><thead><tr><th>Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¹</th><th>Ð·Ð° 1 Ð³Ð¾Ð´</th><th>Ð·Ð° 3 Ð³Ð¾Ð´Ð°</th><th>Ð·Ð° 5 Ð»ÐµÑ</th></tr></thead><tbody>'
+      '<tr><td>ÐÐ¾Ð¼Ð° Ð½Ð¾ÑÑÑ (' + tn + ' â½/ÐºÐÑÂ·Ñ)</td><td id="zc-n1">â</td><td id="zc-n3">â</td><td id="zc-n5">â</td></tr>'
+      '<tr><td>ÐÐ¾Ð¼Ð° Ð´Ð½ÑÐ¼ (' + td + ' â½/ÐºÐÑÂ·Ñ)</td><td id="zc-d1">â</td><td id="zc-d3">â</td><td id="zc-d5">â</td></tr>'
+      '<tr><td>ÐÑÑÑÑÑÐµ Ð­ÐÐ¡ (' + te + ' â½/ÐºÐÑÂ·Ñ)</td><td id="zc-e1">â</td><td id="zc-e3">â</td><td id="zc-e5">â</td></tr>'
+      '<tr class="zc-vs"><td>Ð¢Ð° Ð¶Ðµ Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ð° ÐÐ-95 (' + pl + ' Ð»/100 ÐºÐ¼, ' + pp + ' â½/Ð»)</td><td id="zc-f1">â</td><td id="zc-f3">â</td><td id="zc-f5">â</td></tr>'
       '</tbody></table>'
-      '<div class="zc-save">Экономия за год на ночной зарядке: <b id="zc-save">—</b></div>'
+      '<div class="zc-save">Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð·Ð° Ð³Ð¾Ð´ Ð½Ð° Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐµ: <b id="zc-save">â</b></div>'
       '<div class="zc-cta" id="zc-cta"></div>'
       '</div></div>'
-      '<div class="zc-foot">Справочные значения расхода и цен — оценка по открытым характеристикам. Экономия считается против среднего ДВС-аналога; реальный расход зависит от стиля езды и климата.</div>'
+      '<div class="zc-foot">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐµ Ð·Ð½Ð°ÑÐµÐ½Ð¸Ñ ÑÐ°ÑÑÐ¾Ð´Ð° Ð¸ ÑÐµÐ½ â Ð¾ÑÐµÐ½ÐºÐ° Ð¿Ð¾ Ð¾ÑÐºÑÑÑÑÐ¼ ÑÐ°ÑÐ°ÐºÑÐµÑÐ¸ÑÑÐ¸ÐºÐ°Ð¼. Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ ÑÑÐ¸ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¾ÑÐ¸Ð² ÑÑÐµÐ´Ð½ÐµÐ³Ð¾ ÐÐÐ¡-Ð°Ð½Ð°Ð»Ð¾Ð³Ð°; ÑÐµÐ°Ð»ÑÐ½ÑÐ¹ ÑÐ°ÑÑÐ¾Ð´ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ¸Ð»Ñ ÐµÐ·Ð´Ñ Ð¸ ÐºÐ»Ð¸Ð¼Ð°ÑÐ°.</div>'
       '</div></div></section>')
 
 CALC_JS = (
@@ -210,7 +210,7 @@ CALC_JS = (
   ',TN=' + str(CALC_T_NIGHT) + ',TD=' + str(CALC_T_DAY) + ',TE=' + str(CALC_T_EZS) + ',ST=' + str(CALC_STATION_PRICE) + ';'
   'function fmt(n){return Math.round(n).toLocaleString("ru-RU");}'
   'function money(el,n){el.textContent="\\u2248 "+fmt(n)+" \\u20BD";}'
-  'function tween(el,to){var from=parseFloat(el.getAttribute("data-v")||"0")||0;var t0=null;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/450);var v=from+(to-from)*(1-Math.pow(1-p,3));el.textContent=to>0?("≈ "+Math.round(v).toLocaleString("ru-RU")+" ₽"):"—";if(p<1)requestAnimationFrame(step);else el.setAttribute("data-v",String(Math.round(to)));}requestAnimationFrame(step);}'
+  'function tween(el,to){var from=parseFloat(el.getAttribute("data-v")||"0")||0;var t0=null;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/450);var v=from+(to-from)*(1-Math.pow(1-p,3));el.textContent=to>0?("â "+Math.round(v).toLocaleString("ru-RU")+" â½"):"â";if(p<1)requestAnimationFrame(step);else el.setAttribute("data-v",String(Math.round(to)));}requestAnimationFrame(step);}'
   'function upd(){var r=document.getElementById("zc-range");if(!r)return;'
   'var km=+r.value,sel=document.getElementById("zc-model"),opt=sel.options[sel.selectedIndex];'
   'var kwh=parseFloat(opt.getAttribute("data-kwh"))||18;'
@@ -220,7 +220,7 @@ CALC_JS = (
   'var b=km/100;var ev=[b*kwh*TN,b*kwh*TD,b*kwh*TE];var fu=b*L*P;'
   'var ks=["n","d","e"];for(var ti=0;ti<3;ti++){for(var y=1;y<=5;y+=2){money(document.getElementById("zc-"+ks[ti]+y),ev[ti]*y);}}'
   'for(var y2=1;y2<=5;y2+=2){money(document.getElementById("zc-f"+y2),fu*y2);}'
-  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");var lc=document.getElementById("loss-counter");if(lc){if(save>0){tween(lc,save);}else{tween(lc,0);}}if(save>0){sb.textContent="≈ "+fmt(save)+" ₽";var months=Math.ceil(ST/(save/12));var p="/calculator/?km="+km+"&kwh="+kwh+(opt.text?"&m="+encodeURIComponent(opt.text):"");cta.innerHTML="Экономия окупает домашнюю зарядку за ≈"+months+" мес. <a class=\'btn zgold-cta\' href=\'"+p+"\'>СПАСТИ "+fmt(save)+" ₽</a>";}else{sb.textContent="—";if(lc){lc.textContent="—";}cta.innerHTML="<a class=\'btn lime\' href=\'/quiz/\'>⚡ Подобрать станцию</a>";}}'
+  'var save=fu-ev[0];var sb=document.getElementById("zc-save");var cta=document.getElementById("zc-cta");var lc=document.getElementById("loss-counter");if(lc){if(save>0){tween(lc,save);}else{tween(lc,0);}}if(save>0){sb.textContent="â "+fmt(save)+" â½";var months=Math.ceil(ST/(save/12));var p="/calculator/?km="+km+"&kwh="+kwh+(opt.text?"&m="+encodeURIComponent(opt.text):"");cta.innerHTML="Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð¾ÐºÑÐ¿Ð°ÐµÑ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ Ð·Ð° â"+months+" Ð¼ÐµÑ. <a class=\'btn zgold-cta\' href=\'"+p+"\'>Ð¡ÐÐÐ¡Ð¢Ð "+fmt(save)+" â½</a>";}else{sb.textContent="â";if(lc){lc.textContent="â";}cta.innerHTML="<a class=\'btn lime\' href=\'/quiz/\'>â¡ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ</a>";}}'
   'document.addEventListener("DOMContentLoaded",function(){'
   'var r=document.getElementById("zc-range"),s=document.getElementById("zc-model");'
   'if(r)r.addEventListener("input",upd);if(s)s.addEventListener("change",upd);upd();});})();')
@@ -229,7 +229,7 @@ CALC_SCRIPT = '<script>' + CALC_JS + '</script>'
 TG_LEAD_TOKEN = str(SITE_CFG.get('tg_lead_bot_token') or '')
 TG_LEAD_CHAT = str(SITE_CFG.get('tg_lead_chat_id') or '')
 
-# ================= APPLE-ДИЗАЙН =================
+# ================= APPLE-ÐÐÐÐÐÐ =================
 CSS = r""":root{--bg:#f9f9f9;--card:#fff;--ink:#21313c;--muted:#5c6c75;--line:#dfe2e1;--lime:#2563EB;--lime-ink:#fff;--max:1240px}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
 /* ==== header (FreshCart) ==== */
@@ -297,7 +297,7 @@ h3{font-size:17.5px;font-weight:600;margin:34px 0 10px;letter-spacing:-.01em}
 h4{font-size:16px;font-weight:600;margin:16px 0 8px}
 p{margin:10px 0;max-width:740px;line-height:1.75}
 .art-body p{max-width:740px}
-/* ==== D-01 Air & Hierarchy (v4.0): списки в лонгридах ==== */
+/* ==== D-01 Air & Hierarchy (v4.0): ÑÐ¿Ð¸ÑÐºÐ¸ Ð² Ð»Ð¾Ð½Ð³ÑÐ¸Ð´Ð°Ñ ==== */
 .art-body ul,.art-body ol{padding-left:22px;margin:16px 0}
 .art-body li{margin:.55em 0;line-height:1.72}
 .art-body li::marker{color:var(--muted)}
@@ -476,7 +476,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .pc-name{font-weight:700;font-size:14.5px;line-height:1.35;text-decoration:none;color:#001e2b;display:block}
 .pc-specs{list-style:none;margin:6px 0 0;padding:0}
 .pc-specs li{font-size:12.5px;color:var(--muted);line-height:1.55;display:flex;gap:6px}
-.pc-specs li::before{content:"•";color:#2563EB}
+.pc-specs li::before{content:"â¢";color:#2563EB}
 .pc-spec-line{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:4px}
 .pc-spec-line span{display:block}
 .pc-bottom{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
@@ -527,7 +527,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .pz-delivery{font-size:13.5px;color:var(--muted);line-height:1.5}
 .pz-perks{display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px;background:#fff}
 .pz-perks span{font-size:13.5px;color:var(--ink)}
-.pz-perks span::before{content:"✓";color:#2563EB;font-weight:700;margin-right:8px}
+.pz-perks span::before{content:"â";color:#2563EB;font-weight:700;margin-right:8px}
 .pz-ask{font-size:13.5px;color:#2563EB;text-decoration:none;font-weight:600}
 .pz-sec{margin:26px 0}
 .spec-table td:first-child{color:#5c6c75;width:38%;font-size:13.5px}
@@ -544,6 +544,8 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .art-meta .dot{opacity:.5}
 .art-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 @media(min-width:1020px){.art-grid{grid-template-columns:216px minmax(0,1fr);gap:34px}}
+.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
+@media(min-width:1020px){.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}}
 .art-toc{display:none}
 @media(min-width:1020px){.art-toc{display:block;position:sticky;top:72px;align-self:start;font-size:13.5px;max-height:calc(100vh - 100px);overflow:auto}}
 .art-toc .t{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 8px;font-weight:600}
@@ -556,11 +558,11 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 @media(min-width:1020px){.art-tocmob{display:none}}
 .art-tocmob summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;justify-content:space-between}
 .art-tocmob summary::-webkit-details-marker{display:none}
-.art-tocmob summary::after{content:'▾';color:var(--muted)}
-.art-tocmob[open] summary::after{content:'▴'}
+.art-tocmob summary::after{content:'â¾';color:var(--muted)}
+.art-tocmob[open] summary::after{content:'â´'}
 .art-tocmob ol{margin:10px 0 2px;padding-left:20px;line-height:1.6}
 .art-tocmob a{color:var(--muted);text-decoration:none}
-.art-body{max-width:980px;margin:0 auto}
+.art-body{max-width:780px}
 .art-body p{margin:0 0 14px;line-height:1.66;font-size:16.5px}
 .art-body h2{font-size:clamp(21px,2.8vw,26px);margin:38px 0 12px;letter-spacing:-.015em;scroll-margin-top:90px}
 .art-body h3{font-size:17.5px;margin:26px 0 8px}
@@ -634,7 +636,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .fc-feat-ico{width:42px;height:42px;background:#2563EB;border-radius:.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
 .fc-hits{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:16px}
 .fc-hits .card-product{margin:0}
-/* выравнивание карточек (vol.6 fix) */
+/* Ð²ÑÑÐ°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ ÐºÐ°ÑÑÐ¾ÑÐµÐº (vol.6 fix) */
 .grid .mcard{display:flex;flex-direction:column;gap:8px}
 .mcard .mgo{margin-top:auto;color:#2563EB;font-weight:600;font-size:13.5px;padding-top:8px}
 .card-product{display:flex;flex-direction:column}
@@ -661,7 +663,7 @@ input,select,textarea{font-size:16px !important}
 @media(hover:none){.card-product:hover{box-shadow:none}.card-product:hover .card-product-action{opacity:0;visibility:hidden}}
 .infographic{margin:14px 0;border:1px solid var(--line);border-radius:.75rem;overflow:hidden;background:#fff}.infographic img{width:100%;height:auto;display:block}.zs-panel{background:#fff;border:1px solid var(--line);border-radius:.6rem;box-shadow:0 10px 24px rgba(0,0,0,.08);padding:10px}.facts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));margin:16px 0}.facts .f{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:16px 18px}.facts .f .k{font-size:12.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#2563EB;margin-bottom:6px}.facts .f .v{font-size:21px;font-weight:800;color:#111;line-height:1.2}.facts .f .d{font-size:13.5px;color:#5b6b6d;margin-top:6px;line-height:1.45}.mhero{display:grid;grid-template-columns:1fr;gap:20px;align-items:center}@media(min-width:900px){.mhero{grid-template-columns:1.05fr .95fr}}.mphoto{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:.75rem;border:1px solid var(--line);background:#fff;display:block}.mphoto-fb{width:100%;aspect-ratio:16/10;border-radius:.75rem;border:1px solid var(--line);background:linear-gradient(135deg,#0b3a40,#115e4b);display:flex;align-items:center;justify-content:center;color:#c8ea95;font-weight:800;font-size:30px;letter-spacing:.5px}.brand-chip{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.4px;color:#fff}.mcard-photo{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:.6rem .6rem 0 0;display:block;background:#f0f3f2}.calc-grid{display:grid;gap:14px;grid-template-columns:1fr}@media(min-width:860px){.calc-grid{grid-template-columns:.9fr 1.1fr}}.calc-grid .cin,.calc-grid .cout{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:18px 20px}.calc-grid label{display:block;font-size:13px;color:#37474a;margin:0 0 4px;font-weight:600}.calc-grid input[type=number]{width:100%;border:1.5px solid var(--line);border-radius:.5rem;padding:10px 12px;font-size:16px;background:#fff}.calc-grid input[type=number]:focus{outline:none;border-color:#2563EB;box-shadow:0 0 0 3px rgba(10,173,10,.12)}.calc-grid .cout .big{font-size:26px;font-weight:800;color:#111}.docs-box{background:#f4f7f5;border:1px solid var(--line);border-radius:.75rem;padding:18px 20px;margin:16px 0}.docs-box h2{margin-top:0}.blogcard{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:18px;height:100%}.blogcard .cat{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;color:#2563EB;background:#e7f6ee;width:fit-content}.blogcard h3{margin:0;font-size:17px;line-height:1.35}.blogcard p{margin:0;font-size:14px;color:#5b6b6d;line-height:1.5}.blogcard .go{margin-top:auto;font-size:14px;font-weight:700;color:#2563EB}.prob-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));margin:14px 0}.prob-grid .pt{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:14px 16px}.prob-grid .pt h3{margin:0 0 6px;font-size:15px;line-height:1.35}.prob-grid .pt .sol{font-size:13.5px;color:#37474a;line-height:1.5}.svc-card{display:block}.quiz-wrap{max-width:760px;margin:0 auto}
 
-/* ==== ZAPASHODA №1: DESIGN SYSTEM (Apple/Tesla) ==== */
+/* ==== ZAPASHODA â1: DESIGN SYSTEM (Apple/Tesla) ==== */
 :root{
   --bg-main:#F8FAFC; --bg-card:#FFFFFF; --text-main:#0F172A; --text-muted:#64748B;
   --accent:#2563EB; --accent-hover:#1D4ED8; --success:#10B981;
@@ -673,7 +675,7 @@ body{background:var(--bg-main)}
 header#zs-header{background:rgba(23,26,28,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:1000!important;border-bottom:1px solid #33373a;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 header .zs-topbar{background:var(--text-main)}
 header .zs-nav{background:transparent}
-/* перекраска Tailwind/FreshCart-акцентов в Electric Blue */
+/* Ð¿ÐµÑÐµÐºÑÐ°ÑÐºÐ° Tailwind/FreshCart-Ð°ÐºÑÐµÐ½ÑÐ¾Ð² Ð² Electric Blue */
 .bg-green-600{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
 .hover\:bg-green-700:hover{background:var(--accent-hover)!important;border-color:var(--accent-hover)!important}
 .focus\:ring-green-300:focus{box-shadow:0 0 0 4px rgba(37,99,235,.28)!important}
@@ -689,7 +691,7 @@ header .zs-nav{background:transparent}
 .facts .f .k{color:var(--accent)!important}
 .pain-id{background:var(--accent)!important;color:#fff!important}
 a{transition:var(--transition)}
-/* breathing room: секции */
+/* breathing room: ÑÐµÐºÑÐ¸Ð¸ */
 .my-8{margin-top:3rem!important;margin-bottom:3rem!important}
 @media(min-width:1024px){.lg\:my-14{margin-top:5rem!important;margin-bottom:5rem!important}}
 /* hero */
@@ -698,7 +700,7 @@ a{transition:var(--transition)}
 .hero-badge{background:var(--accent)!important}
 .pulse-cta{animation:zspulse 2.2s cubic-bezier(.4,0,.6,1) infinite}
 @keyframes zspulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.38)}50%{box-shadow:0 0 0 14px rgba(37,99,235,0)}}
-/* продуктовая сетка и карточки */
+/* Ð¿ÑÐ¾Ð´ÑÐºÑÐ¾Ð²Ð°Ñ ÑÐµÑÐºÐ° Ð¸ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ */
 .products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 @media(max-width:767px){.products-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
 .card-product{height:100%;display:flex;flex-direction:column;background:var(--bg-card);padding:24px;border:1px solid #E2E8F0;border-radius:var(--radius);transition:var(--transition)}
@@ -712,7 +714,7 @@ a{transition:var(--transition)}
 @media(max-width:767px){.card-product{padding:14px}}
 """
 
-# ===== SVG-схемы зарядных портов (условные, не чертёж) =====
+# ===== SVG-ÑÑÐµÐ¼Ñ Ð·Ð°ÑÑÐ´Ð½ÑÑ Ð¿Ð¾ÑÑÐ¾Ð² (ÑÑÐ»Ð¾Ð²Ð½ÑÐµ, Ð½Ðµ ÑÐµÑÑÑÐ¶) =====
 def _port_svg(kind, size=44):
     c1, c2 = '#2563EB', '#001e2b'
     import math as _m
@@ -752,17 +754,17 @@ def _port_svg(kind, size=44):
                  '<path d="M24.5 12 L17 24 h5 l-2 8 8-13 h-5 z" fill="' + c1 + '"/>')
     else:
         inner = ''
-    return ('<svg width="%d" height="%d" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема разъёма">%s</svg>' % (size, size, inner))
+    return ('<svg width="%d" height="%d" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ð¡ÑÐµÐ¼Ð° ÑÐ°Ð·ÑÑÐ¼Ð°">%s</svg>' % (size, size, inner))
 
 PORT_NAMES = {
- 'type2': ('Type 2', 'AC — европейские сборки'),
- 'ccs2': ('CCS2', 'DC — быстрая (EU)'),
- 'gbt_ac': ('GB/T AC', 'Медленная (Китай)'),
- 'gbt_dc': ('GB/T DC', 'Быстрая (Китай)'),
- 'type1': ('Type 1 (J1772)', 'AC — США/Корея/Япония'),
- 'ccs1': ('CCS1', 'DC — США/Корея'),
- 'chademo': ('CHAdeMO', 'DC — Япония (уходящий)'),
- 'nacs': ('NACS', 'DC — Tesla US'),
+ 'type2': ('Type 2', 'AC â ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ðµ ÑÐ±Ð¾ÑÐºÐ¸'),
+ 'ccs2': ('CCS2', 'DC â Ð±ÑÑÑÑÐ°Ñ (EU)'),
+ 'gbt_ac': ('GB/T AC', 'ÐÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ (ÐÐ¸ÑÐ°Ð¹)'),
+ 'gbt_dc': ('GB/T DC', 'ÐÑÑÑÑÐ°Ñ (ÐÐ¸ÑÐ°Ð¹)'),
+ 'type1': ('Type 1 (J1772)', 'AC â Ð¡Ð¨Ð/ÐÐ¾ÑÐµÑ/Ð¯Ð¿Ð¾Ð½Ð¸Ñ'),
+ 'ccs1': ('CCS1', 'DC â Ð¡Ð¨Ð/ÐÐ¾ÑÐµÑ'),
+ 'chademo': ('CHAdeMO', 'DC â Ð¯Ð¿Ð¾Ð½Ð¸Ñ (ÑÑÐ¾Ð´ÑÑÐ¸Ð¹)'),
+ 'nacs': ('NACS', 'DC â Tesla US'),
 }
 def _port_kind(s):
     s = str(s or '')
@@ -776,7 +778,7 @@ def _port_kind(s):
     if 'Type 1' in s or 'J1772' in s: return 'type1'
     return None
 def port_visual(m):
-    """Блок «Разъёмы визуально»: иконки AC/DC по данным модели."""
+    """ÐÐ»Ð¾Ðº Â«Ð Ð°Ð·ÑÑÐ¼Ñ Ð²Ð¸Ð·ÑÐ°Ð»ÑÐ½Ð¾Â»: Ð¸ÐºÐ¾Ð½ÐºÐ¸ AC/DC Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¼Ð¾Ð´ÐµÐ»Ð¸."""
     ac = _port_kind(m.get('ac')); dc = _port_kind(m.get('dc'))
     seen = []
     for k in (ac, dc):
@@ -787,14 +789,14 @@ def port_visual(m):
         + _port_svg(k) + '<div style="font-weight:700;font-size:13.5px;margin-top:6px">' + PORT_NAMES[k][0] + '</div>'
         + '<div style="font-size:12px;color:var(--muted)">' + PORT_NAMES[k][1] + '</div></div>'
         for k in seen)
-    h2x = '<h2 class="text-lg text-gray-900 mt-8">Ваши порты зарядки: где что находится</h2>'
-    p1 = '<p class="note">У машины обычно два порта: <b>малый (AC)</b> — для медленной зарядки от розетки и городских станций, <b>большой (DC)</b> — для быстрых станций на трассе. Сверьте с фото лючка перед покупкой адаптера.</p>'
+    h2x = '<h2 class="text-lg text-gray-900 mt-8">ÐÐ°ÑÐ¸ Ð¿Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸: Ð³Ð´Ðµ ÑÑÐ¾ Ð½Ð°ÑÐ¾Ð´Ð¸ÑÑÑ</h2>'
+    p1 = '<p class="note">Ð£ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¾Ð±ÑÑÐ½Ð¾ Ð´Ð²Ð° Ð¿Ð¾ÑÑÐ°: <b>Ð¼Ð°Ð»ÑÐ¹ (AC)</b> â Ð´Ð»Ñ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¸ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹, <b>Ð±Ð¾Ð»ÑÑÐ¾Ð¹ (DC)</b> â Ð´Ð»Ñ Ð±ÑÑÑÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½Ð° ÑÑÐ°ÑÑÐµ. Ð¡Ð²ÐµÑÑÑÐµ Ñ ÑÐ¾ÑÐ¾ Ð»ÑÑÐºÐ° Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°.</p>'
     expl = {
-     'gbt': ('GB/T', 'Китайский стандарт: малый порт AC + большой DC. Нужно: <a href="/pain/adapter-gbt.html">адаптер Type 2 → GB/T</a> для городских станций или станция 2-в-1.'),
-     'type2': ('Type 2', 'Европейский стандарт: городские станции и домашние wallbox без переходников.'),
-     'ccs2': ('CCS2', 'Европейский DC-стандарт: быстрые станции CCS2 на трассах и в городах.'),
-     'ccs1': ('CCS1', 'Американский стандарт: нужен <a href="/pain/type1-ccs1.html">переходник Type 1 → Type 2</a> и адаптер для DC.'),
-     'chademo': ('CHAdeMO', 'Японский DC-стандарт: встречается на станциях, но портов GB/T всё больше.'),
+     'gbt': ('GB/T', 'ÐÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ð´Ð°ÑÑ: Ð¼Ð°Ð»ÑÐ¹ Ð¿Ð¾ÑÑ AC + Ð±Ð¾Ð»ÑÑÐ¾Ð¹ DC. ÐÑÐ¶Ð½Ð¾: <a href="/pain/adapter-gbt.html">Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 â GB/T</a> Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸Ð»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ñ 2-Ð²-1.'),
+     'type2': ('Type 2', 'ÐÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ð´Ð°ÑÑ: Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ðµ wallbox Ð±ÐµÐ· Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð².'),
+     'ccs2': ('CCS2', 'ÐÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¹ DC-ÑÑÐ°Ð½Ð´Ð°ÑÑ: Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ CCS2 Ð½Ð° ÑÑÐ°ÑÑÐ°Ñ Ð¸ Ð² Ð³Ð¾ÑÐ¾Ð´Ð°Ñ.'),
+     'ccs1': ('CCS1', 'ÐÐ¼ÐµÑÐ¸ÐºÐ°Ð½ÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ð´Ð°ÑÑ: Ð½ÑÐ¶ÐµÐ½ <a href="/pain/type1-ccs1.html">Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Type 1 â Type 2</a> Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð´Ð»Ñ DC.'),
+     'chademo': ('CHAdeMO', 'Ð¯Ð¿Ð¾Ð½ÑÐºÐ¸Ð¹ DC-ÑÑÐ°Ð½Ð´Ð°ÑÑ: Ð²ÑÑÑÐµÑÐ°ÐµÑÑÑ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸ÑÑ, Ð½Ð¾ Ð¿Ð¾ÑÑÐ¾Ð² GB/T Ð²ÑÑ Ð±Ð¾Ð»ÑÑÐµ.'),
     }
     cards = ''
     for k in seen:
@@ -874,7 +876,7 @@ PHOTO_META = {
   "author": "Matti Blume"
  },
  "xiaomi-su7-su7-ultra": {
-  "title": "File:(CHN-Shanghai) Private Xiaomi SU7 沪A7WE106 2024-11-24.jpg",
+  "title": "File:(CHN-Shanghai) Private Xiaomi SU7 æ²ªA7WE106 2024-11-24.jpg",
   "license": "CC BY 4.0",
   "author": "S5A-0043"
  },
@@ -885,33 +887,33 @@ PHOTO_META = {
  }
 }
 
-NAV_MAIN = [("/catalog/","Каталог"),("/quiz/","Подбор"),("/models/","Модели"),("/charging/","Карта ЗУ"),("/blog/","Блог")]
-NAV_MORE = [("/matrix/","Матрица"),("/vin/","VIN"),("/forum/","Форум"),("/safety/","Безопасность"),("/pains.html","Проблемы"),("/services/","Услуги"),("/ev-services.html","Автосервисы"),("/news/","Новости"),("/b2b/","Дилерам"),("/about.html","О проекте")]
+NAV_MAIN = [("/catalog/","ÐÐ°ÑÐ°Ð»Ð¾Ð³"),("/quiz/","ÐÐ¾Ð´Ð±Ð¾Ñ"),("/models/","ÐÐ¾Ð´ÐµÐ»Ð¸"),("/charging/","ÐÐ°ÑÑÐ° ÐÐ£"),("/blog/","ÐÐ»Ð¾Ð³")]
+NAV_MORE = [("/matrix/","ÐÐ°ÑÑÐ¸ÑÐ°"),("/vin/","VIN"),("/forum/","Ð¤Ð¾ÑÑÐ¼"),("/safety/","ÐÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÑ"),("/pains.html","ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ"),("/services/","Ð£ÑÐ»ÑÐ³Ð¸"),("/ev-services.html","ÐÐ²ÑÐ¾ÑÐµÑÐ²Ð¸ÑÑ"),("/news/","ÐÐ¾Ð²Ð¾ÑÑÐ¸"),("/b2b/","ÐÐ¸Ð»ÐµÑÐ°Ð¼"),("/about.html","Ð Ð¿ÑÐ¾ÐµÐºÑÐµ")]
 NAV = NAV_MAIN + NAV_MORE
 
 def header_html(active):
-    top_links = ('<a href="/catalog/">Каталог аксессуаров</a>'
-      '<a href="/b2b/">Оптовым дилерам</a>'
+    top_links = ('<a href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð²</a>'
+      '<a href="/b2b/">ÐÐ¿ÑÐ¾Ð²ÑÐ¼ Ð´Ð¸Ð»ÐµÑÐ°Ð¼</a>'
       '<a href="'+TG_CHANNEL+'">Telegram</a>')
     more_open = any(u==active for u,t in NAV_MORE)
     nav_links = "".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV_MAIN)
-    nav_links += ('<div class="zs-more'+(' on' if more_open else '')+'"><button type="button" aria-haspopup="true" aria-expanded="false">Ещё <span aria-hidden="true">▾</span></button>'
+    nav_links += ('<div class="zs-more'+(' on' if more_open else '')+'"><button type="button" aria-haspopup="true" aria-expanded="false">ÐÑÑ <span aria-hidden="true">â¾</span></button>'
       '<div class="zs-drop">'+"".join('<a href="'+u+'"'+(' class="on"' if u==active else '')+'>'+t+'</a>' for u,t in NAV_MORE)+'</div></div>')
     off_links = "".join('<li><a href="'+u+'">'+t+'</a></li>' for u,t in NAV)
     return ('<header id="zs-header">'
       '<div class="zs-nav"><div class="container">'
-      '<a class="zs-brand" href="/" title="Запас хода">'+LOGO_SVG+'Запас хода <span>EV</span></a>'
+      '<a class="zs-brand" href="/" title="ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°">'+LOGO_SVG+'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° <span>EV</span></a>'
       '<form class="zs-search" action="/search.html" method="get" role="search">''<datalist id="q-list">'+''.join('<option value="'+m['brand']+'">' for m in MODELS[:60])+'</datalist>'
-      '<input type="search" list="q-list" name="q" placeholder="Поиск: Zeekr, адаптер GB/T, зарядка…" aria-label="Поиск по сайту">'
-      '<button type="submit" aria-label="Найти"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
-      '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">Подбор за 30 сек</a>'
-      '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){var v=!o.classList.contains(&#39;open&#39;);o.classList.toggle(&#39;open&#39;,v);m.classList.toggle(&#39;open&#39;,v);o.setAttribute(&#39;aria-hidden&#39;,v?&#39;false&#39;:&#39;true&#39;);document.body.style.overflow=v?&#39;hidden&#39;:&#39;&#39;;}return false;" aria-label="Меню"><span></span><span></span><span></span></button></div>'
+      '<input type="search" list="q-list" name="q" placeholder="ÐÐ¾Ð¸ÑÐº: Zeekr, Ð°Ð´Ð°Ð¿ÑÐµÑ GB/T, Ð·Ð°ÑÑÐ´ÐºÐ°â¦" aria-label="ÐÐ¾Ð¸ÑÐº Ð¿Ð¾ ÑÐ°Ð¹ÑÑ">'
+      '<button type="submit" aria-label="ÐÐ°Ð¹ÑÐ¸"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5.3-5.3"/></svg></button></form>'
+      '<div class="zs-act"><a class="btn lime" style="padding:10px 18px;font-size:14px" href="/quiz/">ÐÐ¾Ð´Ð±Ð¾Ñ Ð·Ð° 30 ÑÐµÐº</a>'
+      '<button class="zs-burger" type="button" data-open-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){var v=!o.classList.contains(&#39;open&#39;);o.classList.toggle(&#39;open&#39;,v);m.classList.toggle(&#39;open&#39;,v);o.setAttribute(&#39;aria-hidden&#39;,v?&#39;false&#39;:&#39;true&#39;);document.body.style.overflow=v?&#39;hidden&#39;:&#39;&#39;;}return false;" aria-label="ÐÐµÐ½Ñ"><span></span><span></span><span></span></button></div>'
       '</div></div>'
-      '<nav class="zs-links" aria-label="Основные разделы"><div class="container">'+nav_links+'</div></nav>'
+      '<nav class="zs-links" aria-label="ÐÑÐ½Ð¾Ð²Ð½ÑÐµ ÑÐ°Ð·Ð´ÐµÐ»Ñ"><div class="container">'+nav_links+'</div></nav>'
       '</header><div class="zs-off" id="zs-off" aria-hidden="true">'
-      '<div class="off-h"><b>Запас хода</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;" aria-label="Закрыть">✕</button></div>'
+      '<div class="off-h"><b>ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°</b><button class="off-x" type="button" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;" aria-label="ÐÐ°ÐºÑÑÑÑ">â</button></div>'
       '<ul>'+off_links+'</ul>'
-      '<div class="off-foot">Справочник EV · зарядка без лишних сложностей</div></div>'
+      '<div class="off-foot">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº EV Â· Ð·Ð°ÑÑÐ´ÐºÐ° Ð±ÐµÐ· Ð»Ð¸ÑÐ½Ð¸Ñ ÑÐ»Ð¾Ð¶Ð½Ð¾ÑÑÐµÐ¹</div></div>'
       '<div class="zs-mask" id="zs-mask" data-close-menu onclick="var o=document.getElementById(&#39;zs-off&#39;),m=document.getElementById(&#39;zs-mask&#39;);if(o&amp;&amp;m){o.classList.toggle(&#39;open&#39;,false);m.classList.toggle(&#39;open&#39;,false);o.setAttribute(&#39;aria-hidden&#39;,&#39;true&#39;);document.body.style.overflow=&#39;&#39;;}return false;"></div>')
 
 def _fcol(title, items):
@@ -919,20 +921,20 @@ def _fcol(title, items):
     return '<div><h6>'+title+'</h6><ul>'+lis+'</ul></div>'
 
 STICKY_BAR = ('<div class="zs-stbar"><div class="wrap">'
-      '<a class="zs-st-cta" href="/quiz/">⚡ Подобрать зарядку</a>'
-      '<a class="zs-st-alt" href="/catalog/">Каталог</a>'
+      '<a class="zs-st-cta" href="/quiz/">â¡ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ</a>'
+      '<a class="zs-st-alt" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³</a>'
       '</div></div>')
 
 FOOTER = ('<footer>'
  '<div class="fcols">'
- + _fcol('Каталог', [('/catalog/','Каталог аксессуаров'),('/catalog/','Адаптеры'),('/catalog/','Кабели и удлинители'),('/catalog/','Зарядки и станции'),('/quiz/','Подбор за 30 секунд'),('/b2b/','Дилерам')])
- + _fcol('Справочник', [('/models/', str(len(MODELS)) + ' моделей EV'),('/vin/','VIN-проверка'),('/charging/','Карта зарядных станций'),('/pains.html','Проблемы и решения'),('/forum/','Форум сообщества')])
- + _fcol('Материалы', [('/blog/','Блог и гайды'),('/news/','Новости EV'),('/services/','Услуги'),('/ev-services.html','Автосервисы'),('/about.html','О проекте')])
- + _fcol('Контакты', [('https://t.me/zapashoda_ev','Telegram-канал'),('https://t.me/zapashoda_ev_bot/app','Мини-приложение'),('/feed.xml','RSS-лента'),('/llms.txt','llms.txt')])
+ + _fcol('ÐÐ°ÑÐ°Ð»Ð¾Ð³', [('/catalog/','ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð²'),('/catalog/','ÐÐ´Ð°Ð¿ÑÐµÑÑ'),('/catalog/','ÐÐ°Ð±ÐµÐ»Ð¸ Ð¸ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ð¸'),('/catalog/','ÐÐ°ÑÑÐ´ÐºÐ¸ Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸'),('/quiz/','ÐÐ¾Ð´Ð±Ð¾Ñ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´'),('/b2b/','ÐÐ¸Ð»ÐµÑÐ°Ð¼')])
+ + _fcol('Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº', [('/models/', str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV'),('/vin/','VIN-Ð¿ÑÐ¾Ð²ÐµÑÐºÐ°'),('/charging/','ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹'),('/pains.html','ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ'),('/forum/','Ð¤Ð¾ÑÑÐ¼ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°')])
+ + _fcol('ÐÐ°ÑÐµÑÐ¸Ð°Ð»Ñ', [('/blog/','ÐÐ»Ð¾Ð³ Ð¸ Ð³Ð°Ð¹Ð´Ñ'),('/news/','ÐÐ¾Ð²Ð¾ÑÑÐ¸ EV'),('/services/','Ð£ÑÐ»ÑÐ³Ð¸'),('/ev-services.html','ÐÐ²ÑÐ¾ÑÐµÑÐ²Ð¸ÑÑ'),('/about.html','Ð Ð¿ÑÐ¾ÐµÐºÑÐµ')])
+ + _fcol('ÐÐ¾Ð½ÑÐ°ÐºÑÑ', [('https://t.me/zapashoda_ev','Telegram-ÐºÐ°Ð½Ð°Ð»'),('https://t.me/zapashoda_ev_bot/app','ÐÐ¸Ð½Ð¸-Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ'),('/feed.xml','RSS-Ð»ÐµÐ½ÑÐ°'),('/llms.txt','llms.txt')])
  + '</div>'
- '<div class="fdesc"><p>Запас хода — практика владения электромобилем в России: разъёмы, зима, зарядка, расходы. ' + str(len(MODELS)) + ' моделей, ввезённых в РФ в 2019–2026. Информация из открытых источников; решения носят рекомендательный характер. При поломке высоковольтной системы обращайтесь в специализированный сервис.</p>'
- '<p>Карта зарядных станций: данные © участники <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> (ODbL), запросы через Overpass API.</p></div>'
- '<div class="fbot"><div>© Запас хода, 2026. Справочник по зарядке электромобилей в России.</div>'
+ '<div class="fdesc"><p>ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â Ð¿ÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼ Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð·Ð¸Ð¼Ð°, Ð·Ð°ÑÑÐ´ÐºÐ°, ÑÐ°ÑÑÐ¾Ð´Ñ. ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, Ð²Ð²ÐµÐ·ÑÐ½Ð½ÑÑ Ð² Ð Ð¤ Ð² 2019â2026. ÐÐ½ÑÐ¾ÑÐ¼Ð°ÑÐ¸Ñ Ð¸Ð· Ð¾ÑÐºÑÑÑÑÑ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¾Ð²; ÑÐµÑÐµÐ½Ð¸Ñ Ð½Ð¾ÑÑÑ ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°ÑÐµÐ»ÑÐ½ÑÐ¹ ÑÐ°ÑÐ°ÐºÑÐµÑ. ÐÑÐ¸ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐµ Ð²ÑÑÐ¾ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½Ð¾Ð¹ ÑÐ¸ÑÑÐµÐ¼Ñ Ð¾Ð±ÑÐ°ÑÐ°Ð¹ÑÐµÑÑ Ð² ÑÐ¿ÐµÑÐ¸Ð°Ð»Ð¸Ð·Ð¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐ¹ ÑÐµÑÐ²Ð¸Ñ.</p>'
+ '<p>ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹: Ð´Ð°Ð½Ð½ÑÐµ Â© ÑÑÐ°ÑÑÐ½Ð¸ÐºÐ¸ <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> (ODbL), Ð·Ð°Ð¿ÑÐ¾ÑÑ ÑÐµÑÐµÐ· Overpass API.</p></div>'
+ '<div class="fbot"><div>Â© ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°, 2026. Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð² Ð Ð¾ÑÑÐ¸Ð¸.</div>'
  '<div class="fsoc"><a href="https://t.me/zapashoda_ev" rel="noopener" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 15.9 8.9 20a.6.6 0 0 0 .96.51l2.3-1.98 3.94 2.9c.52.29 1.12-.02 1.23-.62l2.66-13.4c.14-.72-.5-1.3-1.17-1.03L3.4 10.2c-.68.26-.67 1.2.01 1.45l4.13 1.38.05.02 9.83-5.62c.28-.16.55.2.3.41z"/></svg></a></div></div>'
  '</footer>')
 
@@ -940,12 +942,12 @@ SHARE_JS = '''<script>
 try{var p=location.pathname;if(p.endsWith("/index.html")){var q=location.search+location.hash;history.replaceState(null,"",p.slice(0,-10)+q);}}catch(e){}
 function sharePg(){var t=document.title,u=location.href;
  if(navigator.share){navigator.share({title:t,url:u}).catch(function(){});}
- else if(navigator.clipboard){navigator.clipboard.writeText(t+' — '+u).then(function(){alert('Ссылка скопирована');});}
- else{prompt('Скопируйте ссылку:',u);}
+ else if(navigator.clipboard){navigator.clipboard.writeText(t+' â '+u).then(function(){alert('Ð¡ÑÑÐ»ÐºÐ° ÑÐºÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°Ð½Ð°');});}
+ else{prompt('Ð¡ÐºÐ¾Ð¿Ð¸ÑÑÐ¹ÑÐµ ÑÑÑÐ»ÐºÑ:',u);}
 }
 document.addEventListener('click',function(e){var a=e.target.closest('a.btn.share');if(a){e.preventDefault();sharePg();}});
-function shOpen(net){var t=document.title.replace(/ \| Запас хода$/,''),u=location.href.split('#')[0];
-if(net==='copy'){if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){var b=document.querySelector('.shbtn.copy');if(b){b.classList.add('ok');setTimeout(function(){b.classList.remove('ok');},1800);}});}else{prompt('Скопируйте ссылку:',u);}return;}
+function shOpen(net){var t=document.title.replace(/ \| ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°$/,''),u=location.href.split('#')[0];
+if(net==='copy'){if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){var b=document.querySelector('.shbtn.copy');if(b){b.classList.add('ok');setTimeout(function(){b.classList.remove('ok');},1800);}});}else{prompt('Ð¡ÐºÐ¾Ð¿Ð¸ÑÑÐ¹ÑÐµ ÑÑÑÐ»ÐºÑ:',u);}return;}
 var m={vk:'https://vk.com/share.php?url='+encodeURIComponent(u)+'&title='+encodeURIComponent(t),tg:'https://t.me/share/url?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(t),wa:'https://wa.me/?text='+encodeURIComponent(t+' '+u)};
 if(m[net]){window.open(m[net],'shwin','noopener,width=640,height=460');}}
 (function(){var pb=document.querySelector('.art-progress i');if(pb){var u=function(){var h=document.documentElement;var s=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?Math.min(100,s/mx*100):0)+'%';};window.addEventListener('scroll',u,{passive:true});u();}
@@ -976,7 +978,7 @@ if BANNER_TEXT:
 YANDEX_META = '<meta name="yandex-verification" content="' + YANDEX_VER + '">' if YANDEX_VER else ''
 GSC_META = '<meta name="google-site-verification" content="' + GSC_VER + '">' if GSC_VER else ''
 
-# ====== ВНЕШНИЕ ССЫЛКИ: target=_blank (не уводим с сайта) ======
+# ====== ÐÐÐÐ¨ÐÐÐ Ð¡Ð¡Ð«ÐÐÐ: target=_blank (Ð½Ðµ ÑÐ²Ð¾Ð´Ð¸Ð¼ Ñ ÑÐ°Ð¹ÑÐ°) ======
 def _ext_fix(doc):
     try:
         parts = re.split(r'(<script[^>]*>.*?</script>)', doc, flags=re.S)
@@ -999,7 +1001,7 @@ def _ext_fix(doc):
             out.append(re.sub(r'<a\s([^>]*?)href="(https?://[^"]+)"([^>]*)>', _fix, part))
     return "".join(out)
 
-# ====== КОММЕНТАРИИ (GAS Forum backend, премодерация в Sheets) ======
+# ====== ÐÐÐÐÐÐÐ¢ÐÐ ÐÐ (GAS Forum backend, Ð¿ÑÐµÐ¼Ð¾Ð´ÐµÑÐ°ÑÐ¸Ñ Ð² Sheets) ======
 _COMMENTS_JS = """<script>(function(){
 var G='https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec';
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -1007,20 +1009,20 @@ var box=document.getElementById('comments');if(!box)return;var tid=box.getAttrib
 var list=document.getElementById('c-list');
 try{fetch(G+'?action=posts&thread='+encodeURIComponent(tid)).then(function(r){return r.json();}).then(function(d){
  if(!d||!d.ok){list.innerHTML='';return;}
- if(!d.posts||!d.posts.length){list.innerHTML='<p class="c-empty">Пока никто не написал — задайте вопрос первым.</p>';return;}
+ if(!d.posts||!d.posts.length){list.innerHTML='<p class="c-empty">ÐÐ¾ÐºÐ° Ð½Ð¸ÐºÑÐ¾ Ð½Ðµ Ð½Ð°Ð¿Ð¸ÑÐ°Ð» â Ð·Ð°Ð´Ð°Ð¹ÑÐµ Ð²Ð¾Ð¿ÑÐ¾Ñ Ð¿ÐµÑÐ²ÑÐ¼.</p>';return;}
  list.innerHTML=d.posts.map(function(p){var t=new Date(p.ts).toLocaleDateString('ru-RU');
   return '<div class="c-item"><b>'+esc(p.name)+'</b><span class="c-date">'+t+'</span><p>'+esc(p.text)+'</p></div>';}).join('');
 }).catch(function(){list.innerHTML='';});}catch(e){}
 var fm=document.getElementById('c-form');if(!fm)return;
 fm.addEventListener('submit',function(ev){ev.preventDefault();
  var fd=new FormData(fm),btn=fm.querySelector('button'),note=document.getElementById('c-note');
- btn.disabled=true;btn.textContent='Отправляем…';
+ btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
  fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:tid,name:fd.get('name'),tg:fd.get('tg'),text:fd.get('text')})})
  .then(function(r){return r.json();}).then(function(d){
-  btn.disabled=false;btn.textContent='Отправить';
-  if(d&&d.ok){fm.reset();note.textContent='Спасибо! Комментарий появится после проверки модератором.';}
-  else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}
- }).catch(function(){btn.disabled=false;btn.textContent='Отправить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});
+  btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';
+  if(d&&d.ok){fm.reset();note.textContent='Ð¡Ð¿Ð°ÑÐ¸Ð±Ð¾! ÐÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.';}
+  else{note.textContent='ÐÑÐ¸Ð±ÐºÐ°: '+((d&&d.error)||'Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ');}
+ }).catch(function(){btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';note.textContent='ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ, Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÐµÑÑ ÑÐ°Ð·.';});
 });
 })();</script>"""
 
@@ -1041,32 +1043,32 @@ def _comments_html(path):
     rel = '/'.join(p.split('/')[-2:])
     tid = rel[:-5] if rel.endswith('.html') else rel
     return ('<section class="comments" id="comments" data-thread="' + tid + '">'
-            '<h2>Обсуждение</h2><div id="c-list"></div>'
-            '<form id="c-form"><input name="name" maxlength="40" placeholder="Ваше имя" required>'
-            '<input name="tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
-            '<textarea name="text" maxlength="2000" placeholder="Вопрос, опыт, уточнение — напишите…" required></textarea>'
-            '<button class="btn lime" type="submit">Отправить</button>'
-            '<p id="c-note">Комментарий появится после проверки модератором.</p></form>'
+            '<h2>ÐÐ±ÑÑÐ¶Ð´ÐµÐ½Ð¸Ðµ</h2><div id="c-list"></div>'
+            '<form id="c-form"><input name="name" maxlength="40" placeholder="ÐÐ°ÑÐµ Ð¸Ð¼Ñ" required>'
+            '<input name="tg" maxlength="32" placeholder="Telegram @ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)">'
+            '<textarea name="text" maxlength="2000" placeholder="ÐÐ¾Ð¿ÑÐ¾Ñ, Ð¾Ð¿ÑÑ, ÑÑÐ¾ÑÐ½ÐµÐ½Ð¸Ðµ â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµâ¦" required></textarea>'
+            '<button class="btn lime" type="submit">ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ</button>'
+            '<p id="c-note">ÐÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.</p></form>'
             + _COMMENTS_JS + '</section>')
 
 TITLE_SHORT = {
- 'Не заряжается электромобиль: 10 причин и что делать': 'Не заряжается электромобиль: 10 причин',
- 'Подогрев батареи электромобиля: зачем нужен и как включить': 'Подогрев батареи: зачем нужен и как включить',
- 'Сколько стоит зарядить электромобиль в 2026 году: дома, на станции, на трассе': 'Сколько стоит зарядить электромобиль в 2026',
- 'Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть': 'Запас хода зимой: почему падает на 30–45%',
- 'Какую зарядную станцию купить для дома в 2026: мощность, разъём, цены': 'Какую зарядную станцию купить для дома в 2026',
- 'Зарядка электромобиля от розетки 220В: время, проводка, безопасность': 'Зарядка от розетки 220В: время и проводка',
- 'Зарядка электромобиля на трассе: М-4, М-11, М-12 и дальние маршруты': 'Зарядка на трассе: М-4, М-11, М-12',
- 'Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T': 'Адаптеры Type2→GB/T и CCS2→GB/T: выбор',
- '12-вольтовый аккумулятор электромобиля: главная тайная боль': '12-вольтовый аккумулятор: тайная боль EV',
- 'Лючок зарядки не открывается на морозе и тугой механизм': 'Лючок зарядки не открывается на морозе',
- 'Как заряжать электромобиль из США или Кореи в России': 'Как заряжать EV из США или Кореи в России',
- 'GB/T или Type 2: чем заряжать китайский электромобиль': 'Чем заряжать китайский EV: GB/T или Type 2',
- 'VIN, ЭПТС и СБКТС: что проверить перед покупкой параллельного импорта': 'VIN, ЭПТС и СБКТС: что проверить перед покупкой',
- 'Заявленный запас хода и реальный: почему WLTP врёт на 20–35%': 'WLTP и реальный запас хода: разница 20–35%',
- 'Зимой электромобиль теряет до 30–40% запаса хода. Что делать': 'Зимой EV теряет до 30–40% запаса хода: что делать',
- 'Сколько живёт батарея электромобиля: факты вместо страшилок': 'Сколько живёт батарея электромобиля: факты',
- 'Разъёмы GB/T: как заряжать китайский электромобиль в России': 'Разъёмы GB/T: как заряжать в России',
+ 'ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: 10 Ð¿ÑÐ¸ÑÐ¸Ð½ Ð¸ ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ': 'ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: 10 Ð¿ÑÐ¸ÑÐ¸Ð½',
+ 'ÐÐ¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: Ð·Ð°ÑÐµÐ¼ Ð½ÑÐ¶ÐµÐ½ Ð¸ ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ': 'ÐÐ¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸: Ð·Ð°ÑÐµÐ¼ Ð½ÑÐ¶ÐµÐ½ Ð¸ ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ',
+ 'Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² 2026 Ð³Ð¾Ð´Ñ: Ð´Ð¾Ð¼Ð°, Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð½Ð° ÑÑÐ°ÑÑÐµ': 'Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² 2026',
+ 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð·Ð¸Ð¼Ð¾Ð¹: Ð¿Ð¾ÑÐµÐ¼Ñ Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð° 30â45% Ð¸ ÐºÐ°Ðº Ð²ÐµÑÐ½ÑÑÑ': 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° Ð·Ð¸Ð¼Ð¾Ð¹: Ð¿Ð¾ÑÐµÐ¼Ñ Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð° 30â45%',
+ 'ÐÐ°ÐºÑÑ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÐºÑÐ¿Ð¸ÑÑ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð° Ð² 2026: Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ, ÑÐ°Ð·ÑÑÐ¼, ÑÐµÐ½Ñ': 'ÐÐ°ÐºÑÑ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÐºÑÐ¿Ð¸ÑÑ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð° Ð² 2026',
+ 'ÐÐ°ÑÑÐ´ÐºÐ° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð: Ð²ÑÐµÐ¼Ñ, Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÐ°, Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÑ': 'ÐÐ°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð: Ð²ÑÐµÐ¼Ñ Ð¸ Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÐ°',
+ 'ÐÐ°ÑÑÐ´ÐºÐ° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð½Ð° ÑÑÐ°ÑÑÐµ: Ð-4, Ð-11, Ð-12 Ð¸ Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¼Ð°ÑÑÑÑÑÑ': 'ÐÐ°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÑÐ°ÑÑÐµ: Ð-4, Ð-11, Ð-12',
+ 'ÐÐ´Ð°Ð¿ÑÐµÑÑ Ð´Ð»Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹: Type2âGB/T, CCS2âGB/T': 'ÐÐ´Ð°Ð¿ÑÐµÑÑ Type2âGB/T Ð¸ CCS2âGB/T: Ð²ÑÐ±Ð¾Ñ',
+ '12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: Ð³Ð»Ð°Ð²Ð½Ð°Ñ ÑÐ°Ð¹Ð½Ð°Ñ Ð±Ð¾Ð»Ñ': '12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾Ñ: ÑÐ°Ð¹Ð½Ð°Ñ Ð±Ð¾Ð»Ñ EV',
+ 'ÐÑÑÐ¾Ðº Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð¸ ÑÑÐ³Ð¾Ð¹ Ð¼ÐµÑÐ°Ð½Ð¸Ð·Ð¼': 'ÐÑÑÐ¾Ðº Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ',
+ 'ÐÐ°Ðº Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¸Ð· Ð¡Ð¨Ð Ð¸Ð»Ð¸ ÐÐ¾ÑÐµÐ¸ Ð² Ð Ð¾ÑÑÐ¸Ð¸': 'ÐÐ°Ðº Ð·Ð°ÑÑÐ¶Ð°ÑÑ EV Ð¸Ð· Ð¡Ð¨Ð Ð¸Ð»Ð¸ ÐÐ¾ÑÐµÐ¸ Ð² Ð Ð¾ÑÑÐ¸Ð¸',
+ 'GB/T Ð¸Ð»Ð¸ Type 2: ÑÐµÐ¼ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ': 'Ð§ÐµÐ¼ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ EV: GB/T Ð¸Ð»Ð¸ Type 2',
+ 'VIN, Ð­ÐÐ¢Ð¡ Ð¸ Ð¡ÐÐÐ¢Ð¡: ÑÑÐ¾ Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ°': 'VIN, Ð­ÐÐ¢Ð¡ Ð¸ Ð¡ÐÐÐ¢Ð¡: ÑÑÐ¾ Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹',
+ 'ÐÐ°ÑÐ²Ð»ÐµÐ½Ð½ÑÐ¹ Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° Ð¸ ÑÐµÐ°Ð»ÑÐ½ÑÐ¹: Ð¿Ð¾ÑÐµÐ¼Ñ WLTP Ð²ÑÑÑ Ð½Ð° 20â35%': 'WLTP Ð¸ ÑÐµÐ°Ð»ÑÐ½ÑÐ¹ Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°: ÑÐ°Ð·Ð½Ð¸ÑÐ° 20â35%',
+ 'ÐÐ¸Ð¼Ð¾Ð¹ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ ÑÐµÑÑÐµÑ Ð´Ð¾ 30â40% Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¾Ð´Ð°. Ð§ÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ': 'ÐÐ¸Ð¼Ð¾Ð¹ EV ÑÐµÑÑÐµÑ Ð´Ð¾ 30â40% Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¾Ð´Ð°: ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ',
+ 'Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð¶Ð¸Ð²ÑÑ Ð±Ð°ÑÐ°ÑÐµÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: ÑÐ°ÐºÑÑ Ð²Ð¼ÐµÑÑÐ¾ ÑÑÑÐ°ÑÐ¸Ð»Ð¾Ðº': 'Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð¶Ð¸Ð²ÑÑ Ð±Ð°ÑÐ°ÑÐµÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: ÑÐ°ÐºÑÑ',
+ 'Ð Ð°Ð·ÑÑÐ¼Ñ GB/T: ÐºÐ°Ðº Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² Ð Ð¾ÑÑÐ¸Ð¸': 'Ð Ð°Ð·ÑÑÐ¼Ñ GB/T: ÐºÐ°Ðº Ð·Ð°ÑÑÐ¶Ð°ÑÑ Ð² Ð Ð¾ÑÑÐ¸Ð¸',
 }
 
 def clamp_desc(d, limit=165):
@@ -1079,8 +1081,8 @@ def clamp_desc(d, limit=165):
 
 
 def _inject_toc(body):
-    """Оглавление лонгрида: id на H2 + компактный TOC-бокс после лида.
-    Инъекция только если в теле >=3 разных H2."""
+    """ÐÐ³Ð»Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð»Ð¾Ð½Ð³ÑÐ¸Ð´Ð°: id Ð½Ð° H2 + ÐºÐ¾Ð¼Ð¿Ð°ÐºÑÐ½ÑÐ¹ TOC-Ð±Ð¾ÐºÑ Ð¿Ð¾ÑÐ»Ðµ Ð»Ð¸Ð´Ð°.
+    ÐÐ½ÑÐµÐºÑÐ¸Ñ ÑÐ¾Ð»ÑÐºÐ¾ ÐµÑÐ»Ð¸ Ð² ÑÐµÐ»Ðµ >=3 ÑÐ°Ð·Ð½ÑÑ H2."""
     try:
         if 'class="art-toc"' in body or 'art-tocmob' in body:
             return body
@@ -1108,7 +1110,7 @@ def _inject_toc(body):
                 return m.group(0)
             return '<h2' + attrs + ' id="' + html.escape(sid) + '">' + inner + '</h2>'
         new_body = h2_pat.sub(_repl, body)
-        toc = ('<div class="toc"><div class="toc-t">Содержание</div><ol>'
+        toc = ('<div class="toc"><div class="toc-t">Ð¡Ð¾Ð´ÐµÑÐ¶Ð°Ð½Ð¸Ðµ</div><ol>'
                + ''.join('<li><a href="#' + html.escape(sid) + '">' + html.escape(text) + '</a></li>' for sid, text in items)
                + '</ol></div>')
         m = re.search(r'</p>', new_body)
@@ -1125,7 +1127,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
     crumbs_html = ''
     ld_crumbs = ''
     if crumbs:
-        items = [("/", "Главная")] + list(crumbs)
+        items = [("/", "ÐÐ»Ð°Ð²Ð½Ð°Ñ")] + list(crumbs)
         parts = []
         for idx2, (href, label) in enumerate(items):
             last = (idx2 == len(items) - 1)
@@ -1135,7 +1137,7 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
             else:
                 parts.append('<li class="inline-flex items-center"><a class="text-gray-500 hover:text-green-600" href="' + href + '">' + lab + '</a>'
                     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-2 text-gray-400"><path d="M9 6l6 6-6 6"/></svg></li>')
-        crumbs_html = '<nav aria-label="Хлебные крошки"><ul class="flex flex-wrap items-center text-sm py-4">' + ''.join(parts) + '</ul></nav>'
+        crumbs_html = '<nav aria-label="Ð¥Ð»ÐµÐ±Ð½ÑÐµ ÐºÑÐ¾ÑÐºÐ¸"><ul class="flex flex-wrap items-center text-sm py-4">' + ''.join(parts) + '</ul></nav>'
         ld_list = []
         for idx2, (href, label) in enumerate(items):
             item = '{"@type":"ListItem","position":' + str(idx2 + 1) + ',"name":"' + html.escape(str(label)).replace('"','') + '"'
@@ -1164,30 +1166,30 @@ def write_page(path, title, desc, body, canonical_rel, og="/assets/og/default.pn
 def src_html(p):
     links = [s for s in p['src'] if s.startswith('http')]
     if links:
-        return 'Источники: ' + ' '.join('<a href="'+s+'">'+html.escape(re.sub(r"^https?://(www\\.)?","",s)[:70])+'</a>' for s in links)
-    return 'Решение собрано по отзывам владельцев на профильных форумах и сервисах'
+        return 'ÐÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸: ' + ' '.join('<a href="'+s+'">'+html.escape(re.sub(r"^https?://(www\\.)?","",s)[:70])+'</a>' for s in links)
+    return 'Ð ÐµÑÐµÐ½Ð¸Ðµ ÑÐ¾Ð±ÑÐ°Ð½Ð¾ Ð¿Ð¾ Ð¾ÑÐ·ÑÐ²Ð°Ð¼ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð½Ð° Ð¿ÑÐ¾ÑÐ¸Ð»ÑÐ½ÑÑ ÑÐ¾ÑÑÐ¼Ð°Ñ Ð¸ ÑÐµÑÐ²Ð¸ÑÐ°Ñ'
 
 PAIN_ARTICLES = [
- ('ne-zaryazhaetsya','Не заряжается электромобиль: 10 причин и что делать','От кабеля и порта до OBC, заземления и прошивки станции. Пошаговая диагностика.',['UN-03','UN-04','BAT-04']),
- ('podogrev-batarei','Подогрев батареи электромобиля: зачем нужен и как включить','Как холодная батарея режет скорость зарядки и запас хода; предпрогрев от сети и в пути.',['UN-01','ZM-01']),
- ('zaryadka-ot-rozetki','Зарядка электромобиля от розетки 220В: время, проводка, безопасность','Сколько реально даёт розетка, какая проводка нужна, почему вышибает автоматы.',['GB-07','GB-08']),
- ('adapter-gbt','Адаптеры для китайских электромобилей: Type2→GB/T, CCS2→GB/T','Какие переходники нужны, как не купить несовместимый, что с батареей питания адаптера.',['GB-01','GB-02','GB-04','GB-05','GB-06']),
- ('zapas-hoda-zimoy','Запас хода электромобиля зимой: почему падает на 30–45% и как вернуть','Физика мороза, отопители, предпрогрев, шины и стиль вождения.',['ZM-01','ZM-02','BAT-03']),
- ('kabel-ne-otdaet','Кабель зарядки не отдаёт из порта: что делать','Почему замок не разблокирует коннектор и где аварийный тросик.',['UN-04']),
- ('12v-akb','12-вольтовый аккумулятор электромобиля: главная тайная боль','Почему садится, какие машины чаще страдают (BYD, Voyah, MG, Kia EV6, Hongqi) и что делать.',['BAT-04']),
- ('lyuchok','Лючок зарядки не открывается на морозе и тугой механизм','Аварийные тросики, прогрев, смазка механизма.',['UN-05','ZV-01']),
- ('udlinitel','Удлинитель и кабель для зарядки электромобиля','Сечение, автоматы, почему дешёвый удлинитель опасен.',['GB-08','UN-06']),
- ('type1-ccs1','Как заряжать электромобиль из США или Кореи в России','Type 1/CCS1: переходники, замена порта, радикальный кейс с перекодировкой.',['T1-01','T1-02','T1-03']),
- ('tesla','Tesla в России: зарядка, адаптеры, Supercharger','EU vs US версии, адаптеры, прогрев батареи на морозе.',['TS-01','TS-02']),
- ('chademo','CHAdeMO: Leaf и другие японские EV','Сети CHAdeMO, деградация от быстрых зарядок, мониторинг батареи.',['LEAF-01','LEAF-02','BAT-01']),
- ('stoimost-zaryadki','Сколько стоит зарядить электромобиль в 2026 году: дома, на станции, на трассе','Цены за кВт·ч в Москве и регионах, реальные суммы за полную зарядку, сравнение с бензином и способы платить меньше.',['EC-01','EC-02','EC-03','EC-04']),
- ('zaryadka-na-trasse','Зарядка электромобиля на трассе: М-4, М-11, М-12 и дальние маршруты','Где станции на магистралях, тарифы Green Drive и Автодора, как планировать маршрут и что делать на редких направлениях.',['HW-01','HW-02','HW-03','HW-04']),
- ('domashnie-stancii','Какую зарядную станцию купить для дома в 2026: мощность, разъём, цены','Разъём под машину, сеть объекта, реальный предел OBC, шорт-лист моделей, стоимость установки и когда нужна DC.',['HM-01','HM-02','HM-03','HM-04']),
+ ('ne-zaryazhaetsya','ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: 10 Ð¿ÑÐ¸ÑÐ¸Ð½ Ð¸ ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ','ÐÑ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸ Ð¿Ð¾ÑÑÐ° Ð´Ð¾ OBC, Ð·Ð°Ð·ÐµÐ¼Ð»ÐµÐ½Ð¸Ñ Ð¸ Ð¿ÑÐ¾ÑÐ¸Ð²ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸. ÐÐ¾ÑÐ°Ð³Ð¾Ð²Ð°Ñ Ð´Ð¸Ð°Ð³Ð½Ð¾ÑÑÐ¸ÐºÐ°.',['UN-03','UN-04','BAT-04']),
+ ('podogrev-batarei','ÐÐ¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: Ð·Ð°ÑÐµÐ¼ Ð½ÑÐ¶ÐµÐ½ Ð¸ ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ','ÐÐ°Ðº ÑÐ¾Ð»Ð¾Ð´Ð½Ð°Ñ Ð±Ð°ÑÐ°ÑÐµÑ ÑÐµÐ¶ÐµÑ ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°; Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð¾Ñ ÑÐµÑÐ¸ Ð¸ Ð² Ð¿ÑÑÐ¸.',['UN-01','ZM-01']),
+ ('zaryadka-ot-rozetki','ÐÐ°ÑÑÐ´ÐºÐ° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð: Ð²ÑÐµÐ¼Ñ, Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÐ°, Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÑ','Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÐµÐ°Ð»ÑÐ½Ð¾ Ð´Ð°ÑÑ ÑÐ¾Ð·ÐµÑÐºÐ°, ÐºÐ°ÐºÐ°Ñ Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÐ° Ð½ÑÐ¶Ð½Ð°, Ð¿Ð¾ÑÐµÐ¼Ñ Ð²ÑÑÐ¸Ð±Ð°ÐµÑ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÑ.',['GB-07','GB-08']),
+ ('adapter-gbt','ÐÐ´Ð°Ð¿ÑÐµÑÑ Ð´Ð»Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹: Type2âGB/T, CCS2âGB/T','ÐÐ°ÐºÐ¸Ðµ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸ Ð½ÑÐ¶Ð½Ñ, ÐºÐ°Ðº Ð½Ðµ ÐºÑÐ¿Ð¸ÑÑ Ð½ÐµÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼ÑÐ¹, ÑÑÐ¾ Ñ Ð±Ð°ÑÐ°ÑÐµÐµÐ¹ Ð¿Ð¸ÑÐ°Ð½Ð¸Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°.',['GB-01','GB-02','GB-04','GB-05','GB-06']),
+ ('zapas-hoda-zimoy','ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð·Ð¸Ð¼Ð¾Ð¹: Ð¿Ð¾ÑÐµÐ¼Ñ Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð° 30â45% Ð¸ ÐºÐ°Ðº Ð²ÐµÑÐ½ÑÑÑ','Ð¤Ð¸Ð·Ð¸ÐºÐ° Ð¼Ð¾ÑÐ¾Ð·Ð°, Ð¾ÑÐ¾Ð¿Ð¸ÑÐµÐ»Ð¸, Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ², ÑÐ¸Ð½Ñ Ð¸ ÑÑÐ¸Ð»Ñ Ð²Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ.',['ZM-01','ZM-02','BAT-03']),
+ ('kabel-ne-otdaet','ÐÐ°Ð±ÐµÐ»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑ Ð¸Ð· Ð¿Ð¾ÑÑÐ°: ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ','ÐÐ¾ÑÐµÐ¼Ñ Ð·Ð°Ð¼Ð¾Ðº Ð½Ðµ ÑÐ°Ð·Ð±Ð»Ð¾ÐºÐ¸ÑÑÐµÑ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ Ð¸ Ð³Ð´Ðµ Ð°Ð²Ð°ÑÐ¸Ð¹Ð½ÑÐ¹ ÑÑÐ¾ÑÐ¸Ðº.',['UN-04']),
+ ('12v-akb','12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: Ð³Ð»Ð°Ð²Ð½Ð°Ñ ÑÐ°Ð¹Ð½Ð°Ñ Ð±Ð¾Ð»Ñ','ÐÐ¾ÑÐµÐ¼Ñ ÑÐ°Ð´Ð¸ÑÑÑ, ÐºÐ°ÐºÐ¸Ðµ Ð¼Ð°ÑÐ¸Ð½Ñ ÑÐ°ÑÐµ ÑÑÑÐ°Ð´Ð°ÑÑ (BYD, Voyah, MG, Kia EV6, Hongqi) Ð¸ ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ.',['BAT-04']),
+ ('lyuchok','ÐÑÑÐ¾Ðº Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð¸ ÑÑÐ³Ð¾Ð¹ Ð¼ÐµÑÐ°Ð½Ð¸Ð·Ð¼','ÐÐ²Ð°ÑÐ¸Ð¹Ð½ÑÐµ ÑÑÐ¾ÑÐ¸ÐºÐ¸, Ð¿ÑÐ¾Ð³ÑÐµÐ², ÑÐ¼Ð°Ð·ÐºÐ° Ð¼ÐµÑÐ°Ð½Ð¸Ð·Ð¼Ð°.',['UN-05','ZV-01']),
+ ('udlinitel','Ð£Ð´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ','Ð¡ÐµÑÐµÐ½Ð¸Ðµ, Ð°Ð²ÑÐ¾Ð¼Ð°ÑÑ, Ð¿Ð¾ÑÐµÐ¼Ñ Ð´ÐµÑÑÐ²ÑÐ¹ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Ð¾Ð¿Ð°ÑÐµÐ½.',['GB-08','UN-06']),
+ ('type1-ccs1','ÐÐ°Ðº Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¸Ð· Ð¡Ð¨Ð Ð¸Ð»Ð¸ ÐÐ¾ÑÐµÐ¸ Ð² Ð Ð¾ÑÑÐ¸Ð¸','Type 1/CCS1: Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸, Ð·Ð°Ð¼ÐµÐ½Ð° Ð¿Ð¾ÑÑÐ°, ÑÐ°Ð´Ð¸ÐºÐ°Ð»ÑÐ½ÑÐ¹ ÐºÐµÐ¹Ñ Ñ Ð¿ÐµÑÐµÐºÐ¾Ð´Ð¸ÑÐ¾Ð²ÐºÐ¾Ð¹.',['T1-01','T1-02','T1-03']),
+ ('tesla','Tesla Ð² Ð Ð¾ÑÑÐ¸Ð¸: Ð·Ð°ÑÑÐ´ÐºÐ°, Ð°Ð´Ð°Ð¿ÑÐµÑÑ, Supercharger','EU vs US Ð²ÐµÑÑÐ¸Ð¸, Ð°Ð´Ð°Ð¿ÑÐµÑÑ, Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ.',['TS-01','TS-02']),
+ ('chademo','CHAdeMO: Leaf Ð¸ Ð´ÑÑÐ³Ð¸Ðµ ÑÐ¿Ð¾Ð½ÑÐºÐ¸Ðµ EV','Ð¡ÐµÑÐ¸ CHAdeMO, Ð´ÐµÐ³ÑÐ°Ð´Ð°ÑÐ¸Ñ Ð¾Ñ Ð±ÑÑÑÑÑÑ Ð·Ð°ÑÑÐ´Ð¾Ðº, Ð¼Ð¾Ð½Ð¸ÑÐ¾ÑÐ¸Ð½Ð³ Ð±Ð°ÑÐ°ÑÐµÐ¸.',['LEAF-01','LEAF-02','BAT-01']),
+ ('stoimost-zaryadki','Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² 2026 Ð³Ð¾Ð´Ñ: Ð´Ð¾Ð¼Ð°, Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð½Ð° ÑÑÐ°ÑÑÐµ','Ð¦ÐµÐ½Ñ Ð·Ð° ÐºÐÑÂ·Ñ Ð² ÐÐ¾ÑÐºÐ²Ðµ Ð¸ ÑÐµÐ³Ð¸Ð¾Ð½Ð°Ñ, ÑÐµÐ°Ð»ÑÐ½ÑÐµ ÑÑÐ¼Ð¼Ñ Ð·Ð° Ð¿Ð¾Ð»Ð½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ, ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ñ Ð±ÐµÐ½Ð·Ð¸Ð½Ð¾Ð¼ Ð¸ ÑÐ¿Ð¾ÑÐ¾Ð±Ñ Ð¿Ð»Ð°ÑÐ¸ÑÑ Ð¼ÐµÐ½ÑÑÐµ.',['EC-01','EC-02','EC-03','EC-04']),
+ ('zaryadka-na-trasse','ÐÐ°ÑÑÐ´ÐºÐ° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð½Ð° ÑÑÐ°ÑÑÐµ: Ð-4, Ð-11, Ð-12 Ð¸ Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¼Ð°ÑÑÑÑÑÑ','ÐÐ´Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð° Ð¼Ð°Ð³Ð¸ÑÑÑÐ°Ð»ÑÑ, ÑÐ°ÑÐ¸ÑÑ Green Drive Ð¸ ÐÐ²ÑÐ¾Ð´Ð¾ÑÐ°, ÐºÐ°Ðº Ð¿Ð»Ð°Ð½Ð¸ÑÐ¾Ð²Ð°ÑÑ Ð¼Ð°ÑÑÑÑÑ Ð¸ ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ Ð½Ð° ÑÐµÐ´ÐºÐ¸Ñ Ð½Ð°Ð¿ÑÐ°Ð²Ð»ÐµÐ½Ð¸ÑÑ.',['HW-01','HW-02','HW-03','HW-04']),
+ ('domashnie-stancii','ÐÐ°ÐºÑÑ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÐºÑÐ¿Ð¸ÑÑ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð° Ð² 2026: Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ, ÑÐ°Ð·ÑÑÐ¼, ÑÐµÐ½Ñ','Ð Ð°Ð·ÑÑÐ¼ Ð¿Ð¾Ð´ Ð¼Ð°ÑÐ¸Ð½Ñ, ÑÐµÑÑ Ð¾Ð±ÑÐµÐºÑÐ°, ÑÐµÐ°Ð»ÑÐ½ÑÐ¹ Ð¿ÑÐµÐ´ÐµÐ» OBC, ÑÐ¾ÑÑ-Ð»Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ ÑÑÑÐ°Ð½Ð¾Ð²ÐºÐ¸ Ð¸ ÐºÐ¾Ð³Ð´Ð° Ð½ÑÐ¶Ð½Ð° DC.',['HM-01','HM-02','HM-03','HM-04']),
 
- ('stanciya-otdaet-pol-moshchnosti','Станция отдаёт половину мощности: почему и что делать','Быстрая станция заявляет 150 кВт, а машина принимает 60. Разбор пяти ограничений: кривая заряда, температура, протокол, станция, кабель — с чек-листом проверки.',[]),
- ('plata-za-prostoy','Плата за простой на зарядной станции: почему капает счётчик','Стоите после 80% или заснули на станции — и тариф продолжает тикать. Как считается простой, когда он включается и как не платить за простаивание.',[]),
- ('poteri-pri-zaryadke','Потери при зарядке: куда деваются 5–10% кВт·ч','Счётчик станции намотал 50 кВт·ч, а в батарею «пришло» 45. Откуда берутся потери при зарядке, когда они больше и как считать реальную стоимость километра.',[]),
- ('zaryadka-pod-dozhdyom','Можно ли заряжать электромобиль под дождём','Дождь, лужа под машиной и коннектор, на котором брызги. Почему зарядка под дождём безопасна по конструкции и какие три ситуации всё-таки стоит избегать.',[]),]
+ ('stanciya-otdaet-pol-moshchnosti','Ð¡ÑÐ°Ð½ÑÐ¸Ñ Ð¾ÑÐ´Ð°ÑÑ Ð¿Ð¾Ð»Ð¾Ð²Ð¸Ð½Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸: Ð¿Ð¾ÑÐµÐ¼Ñ Ð¸ ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ','ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð·Ð°ÑÐ²Ð»ÑÐµÑ 150 ÐºÐÑ, Ð° Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ 60. Ð Ð°Ð·Ð±Ð¾Ñ Ð¿ÑÑÐ¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ð¹: ÐºÑÐ¸Ð²Ð°Ñ Ð·Ð°ÑÑÐ´Ð°, ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ°, Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð», ÑÑÐ°Ð½ÑÐ¸Ñ, ÐºÐ°Ð±ÐµÐ»Ñ â Ñ ÑÐµÐº-Ð»Ð¸ÑÑÐ¾Ð¼ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸.',[]),
+ ('plata-za-prostoy','ÐÐ»Ð°ÑÐ° Ð·Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹ Ð½Ð° Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸: Ð¿Ð¾ÑÐµÐ¼Ñ ÐºÐ°Ð¿Ð°ÐµÑ ÑÑÑÑÑÐ¸Ðº','Ð¡ÑÐ¾Ð¸ÑÐµ Ð¿Ð¾ÑÐ»Ðµ 80% Ð¸Ð»Ð¸ Ð·Ð°ÑÐ½ÑÐ»Ð¸ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸ â Ð¸ ÑÐ°ÑÐ¸Ñ Ð¿ÑÐ¾Ð´Ð¾Ð»Ð¶Ð°ÐµÑ ÑÐ¸ÐºÐ°ÑÑ. ÐÐ°Ðº ÑÑÐ¸ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¾ÑÑÐ¾Ð¹, ÐºÐ¾Ð³Ð´Ð° Ð¾Ð½ Ð²ÐºÐ»ÑÑÐ°ÐµÑÑÑ Ð¸ ÐºÐ°Ðº Ð½Ðµ Ð¿Ð»Ð°ÑÐ¸ÑÑ Ð·Ð° Ð¿ÑÐ¾ÑÑÐ°Ð¸Ð²Ð°Ð½Ð¸Ðµ.',[]),
+ ('poteri-pri-zaryadke','ÐÐ¾ÑÐµÑÐ¸ Ð¿ÑÐ¸ Ð·Ð°ÑÑÐ´ÐºÐµ: ÐºÑÐ´Ð° Ð´ÐµÐ²Ð°ÑÑÑÑ 5â10% ÐºÐÑÂ·Ñ','Ð¡ÑÑÑÑÐ¸Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð°Ð¼Ð¾ÑÐ°Ð» 50 ÐºÐÑÂ·Ñ, Ð° Ð² Ð±Ð°ÑÐ°ÑÐµÑ Â«Ð¿ÑÐ¸ÑÐ»Ð¾Â» 45. ÐÑÐºÑÐ´Ð° Ð±ÐµÑÑÑÑÑ Ð¿Ð¾ÑÐµÑÐ¸ Ð¿ÑÐ¸ Ð·Ð°ÑÑÐ´ÐºÐµ, ÐºÐ¾Ð³Ð´Ð° Ð¾Ð½Ð¸ Ð±Ð¾Ð»ÑÑÐµ Ð¸ ÐºÐ°Ðº ÑÑÐ¸ÑÐ°ÑÑ ÑÐµÐ°Ð»ÑÐ½ÑÑ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ°.',[]),
+ ('zaryadka-pod-dozhdyom','ÐÐ¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¿Ð¾Ð´ Ð´Ð¾Ð¶Ð´ÑÐ¼','ÐÐ¾Ð¶Ð´Ñ, Ð»ÑÐ¶Ð° Ð¿Ð¾Ð´ Ð¼Ð°ÑÐ¸Ð½Ð¾Ð¹ Ð¸ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ, Ð½Ð° ÐºÐ¾ÑÐ¾ÑÐ¾Ð¼ Ð±ÑÑÐ·Ð³Ð¸. ÐÐ¾ÑÐµÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾Ð´ Ð´Ð¾Ð¶Ð´ÑÐ¼ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð° Ð¿Ð¾ ÐºÐ¾Ð½ÑÑÑÑÐºÑÐ¸Ð¸ Ð¸ ÐºÐ°ÐºÐ¸Ðµ ÑÑÐ¸ ÑÐ¸ÑÑÐ°ÑÐ¸Ð¸ Ð²ÑÑ-ÑÐ°ÐºÐ¸ ÑÑÐ¾Ð¸Ñ Ð¸Ð·Ð±ÐµÐ³Ð°ÑÑ.',[]),]
 
 RELATED = {
   'ne-zaryazhaetsya': ['Zeekr','BYD','Geely','Voyah','Evolute','Changan'],
@@ -1204,322 +1206,322 @@ RELATED = {
   'chademo': ['Nissan'],
 }
 
-# ================= VIN-СПРАВОЧНИК =================
+# ================= VIN-Ð¡ÐÐ ÐÐÐÐ§ÐÐÐ =================
 VIN_BRANDS = {
- 'Zeekr': ('Китай','Группа Geely; заводы в Нинбо и Циндао. Код производителя начинается на L (Китай).'),
- 'Li Auto': ('Китай','Заводы в Чанчжоу; код производителя начинается на L.'),
- 'BYD': ('Китай','Заводы в Шэньчжэне, Сиане, Чанша и др.; код начинается на L.'),
- 'Denza (BYD)': ('Китай','Совместное предприятие BYD и Mercedes-Benz; код начинается на L.'),
- 'Voyah': ('Китай','Группа Dongfeng, завод в Ухане; код начинается на L.'),
- 'Avatr': ('Китай','Changan + CATL + Huawei; код начинается на L.'),
- 'Hongqi': ('Китай','FAW, заводы в Чанчуне; код начинается на L.'),
- 'Geely': ('Китай','Заводы в Нинбо и др.; код начинается на L.'),
- 'Deepal': ('Китай','Changan; код начинается на L.'),
- 'Exeed': ('Китай','Chery; код начинается на L.'),
- 'Changan': ('Китай','Заводы в Чунцине; код начинается на L.'),
- 'AITO': ('Китай','Seres + Huawei; код начинается на L.'),
- 'M-Hero': ('Китай','Dongfeng (Mengshi); код начинается на L.'),
- 'Ora': ('Китай','Great Wall Motor; код начинается на L.'),
- 'Xiaomi': ('Китай','Завод в Пекине; код начинается на L.'),
- 'XPeng': ('Китай','Заводы в Чжаоцине и Ухане; код начинается на L.'),
- 'Leapmotor': ('Китай','Код начинается на L.'),
- 'Lynk & Co': ('Китай','Geely-Volvo; код начинается на L.'),
- 'JAC': ('Китай','Код начинается на L.'),
- 'Neta': ('Китай','Код начинается на L.'),
- 'Livan': ('Китай','Geely-Renault JV; код начинается на L.'),
- 'Skywell': ('Китай','Код начинается на L.'),
- 'SWM': ('Китай','Код начинается на L.'),
- 'Kaiyi': ('Китай','Код начинается на L.'),
- 'Wuling / Hongguang': ('Китай','SAIC-GM-Wuling; код начинается на L.'),
- 'Dongfeng': ('Китай','Код начинается на L.'),
- 'GAC': ('Китай','Код начинается на L.'),
- 'Seres': ('Китай','Код начинается на L.'),
- 'IM Motors': ('Китай','SAIC; код начинается на L.'),
- 'iCAR': ('Китай','Chery; код начинается на L.'),
- 'Luxeed (Chery/Huawei)': ('Китай','Chery + Huawei; код начинается на L.'),
- 'Stelato (BAIC/Huawei)': ('Китай','BAIC + Huawei; код начинается на L.'),
- 'Onvo (NIO)': ('Китай','NIO; код начинается на L.'),
- 'HiPhi': ('Китай','Код начинается на L.'),
- 'Roewe': ('Китай','SAIC; код начинается на L.'),
- 'FAW': ('Китай','Код начинается на L.'),
- 'MG': ('Китай','Современные MG производит SAIC в Китае; исторические — Великобритания.'),
- 'Tesla': ('США / Китай','Версии для Европы и РФ — с завода во Фремонте (США, VIN с 1 или 5) или из Шанхая (Китай, LRW). US-версии — порт NACS, EU/CN — CCS2/GB/T.'),
- 'Nissan': ('Япония','Leaf собирается в Японии; часть машин для РФ — сборка в Санкт-Петербурге до 2022 года.'),
- 'Mitsubishi': ('Япония','Код начинается на J (Япония).'),
- 'Kia': ('Корея / Россия','Заводы Кореи (код K) и калининградский «Автотор» (X). Рынок поставки уточняйте по 11-й позиции VIN.'),
- 'Hyundai': ('Корея / Россия','Заводы Кореи (код K), Таганрог и Екатеринбург (X).'),
- 'Genesis': ('Корея','Завод в Ульсане; код K.'),
- 'VW': ('Германия / Россия','Заводы в Вольфсбурге и др. (код W); для РФ — Калуга (X) до 2022 года.'),
- 'Skoda': ('Чехия / Россия','Заводы в Млада-Болеславе (код T); для РФ — Калуга и Нижний Новгород (X) до 2022 года.'),
- 'Audi': ('Германия','Заводы в Ингольштадте и Неккарзульме; код W.'),
- 'Mercedes': ('Германия','Заводы в Зиндельфингене и др.; код W.'),
- 'BMW': ('Германия','Заводы в Мюнхене и Лейпциге (код W); для РФ — «Автотор», Калининград (X).'),
- 'Evolute': ('Россия','Собран в Липецке на заводе «Моторинвест»; код X.'),
- 'Moskvich': ('Россия','Собран в Москве (бывший завод Renault); код X.'),
- 'Lotus': ('Англия / Китай','Классика — Хетел (Англия, S); электрические Eletre/Emeya — Ухань (Китай, L).'),
+ 'Zeekr': ('ÐÐ¸ÑÐ°Ð¹','ÐÑÑÐ¿Ð¿Ð° Geely; Ð·Ð°Ð²Ð¾Ð´Ñ Ð² ÐÐ¸Ð½Ð±Ð¾ Ð¸ Ð¦Ð¸Ð½Ð´Ð°Ð¾. ÐÐ¾Ð´ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L (ÐÐ¸ÑÐ°Ð¹).'),
+ 'Li Auto': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´Ñ Ð² Ð§Ð°Ð½ÑÐ¶Ð¾Ñ; ÐºÐ¾Ð´ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'BYD': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´Ñ Ð² Ð¨ÑÐ½ÑÑÐ¶ÑÐ½Ðµ, Ð¡Ð¸Ð°Ð½Ðµ, Ð§Ð°Ð½ÑÐ° Ð¸ Ð´Ñ.; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Denza (BYD)': ('ÐÐ¸ÑÐ°Ð¹','Ð¡Ð¾Ð²Ð¼ÐµÑÑÐ½Ð¾Ðµ Ð¿ÑÐµÐ´Ð¿ÑÐ¸ÑÑÐ¸Ðµ BYD Ð¸ Mercedes-Benz; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Voyah': ('ÐÐ¸ÑÐ°Ð¹','ÐÑÑÐ¿Ð¿Ð° Dongfeng, Ð·Ð°Ð²Ð¾Ð´ Ð² Ð£ÑÐ°Ð½Ðµ; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Avatr': ('ÐÐ¸ÑÐ°Ð¹','Changan + CATL + Huawei; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Hongqi': ('ÐÐ¸ÑÐ°Ð¹','FAW, Ð·Ð°Ð²Ð¾Ð´Ñ Ð² Ð§Ð°Ð½ÑÑÐ½Ðµ; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Geely': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÐ¸Ð½Ð±Ð¾ Ð¸ Ð´Ñ.; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Deepal': ('ÐÐ¸ÑÐ°Ð¹','Changan; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Exeed': ('ÐÐ¸ÑÐ°Ð¹','Chery; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Changan': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´Ñ Ð² Ð§ÑÐ½ÑÐ¸Ð½Ðµ; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'AITO': ('ÐÐ¸ÑÐ°Ð¹','Seres + Huawei; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'M-Hero': ('ÐÐ¸ÑÐ°Ð¹','Dongfeng (Mengshi); ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Ora': ('ÐÐ¸ÑÐ°Ð¹','Great Wall Motor; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Xiaomi': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´ Ð² ÐÐµÐºÐ¸Ð½Ðµ; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'XPeng': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ°Ð²Ð¾Ð´Ñ Ð² Ð§Ð¶Ð°Ð¾ÑÐ¸Ð½Ðµ Ð¸ Ð£ÑÐ°Ð½Ðµ; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Leapmotor': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Lynk & Co': ('ÐÐ¸ÑÐ°Ð¹','Geely-Volvo; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'JAC': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Neta': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Livan': ('ÐÐ¸ÑÐ°Ð¹','Geely-Renault JV; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Skywell': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'SWM': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Kaiyi': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Wuling / Hongguang': ('ÐÐ¸ÑÐ°Ð¹','SAIC-GM-Wuling; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Dongfeng': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'GAC': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Seres': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'IM Motors': ('ÐÐ¸ÑÐ°Ð¹','SAIC; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'iCAR': ('ÐÐ¸ÑÐ°Ð¹','Chery; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Luxeed (Chery/Huawei)': ('ÐÐ¸ÑÐ°Ð¹','Chery + Huawei; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Stelato (BAIC/Huawei)': ('ÐÐ¸ÑÐ°Ð¹','BAIC + Huawei; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Onvo (NIO)': ('ÐÐ¸ÑÐ°Ð¹','NIO; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'HiPhi': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'Roewe': ('ÐÐ¸ÑÐ°Ð¹','SAIC; ÐºÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'FAW': ('ÐÐ¸ÑÐ°Ð¹','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° L.'),
+ 'MG': ('ÐÐ¸ÑÐ°Ð¹','Ð¡Ð¾Ð²ÑÐµÐ¼ÐµÐ½Ð½ÑÐµ MG Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸Ñ SAIC Ð² ÐÐ¸ÑÐ°Ðµ; Ð¸ÑÑÐ¾ÑÐ¸ÑÐµÑÐºÐ¸Ðµ â ÐÐµÐ»Ð¸ÐºÐ¾Ð±ÑÐ¸ÑÐ°Ð½Ð¸Ñ.'),
+ 'Tesla': ('Ð¡Ð¨Ð / ÐÐ¸ÑÐ°Ð¹','ÐÐµÑÑÐ¸Ð¸ Ð´Ð»Ñ ÐÐ²ÑÐ¾Ð¿Ñ Ð¸ Ð Ð¤ â Ñ Ð·Ð°Ð²Ð¾Ð´Ð° Ð²Ð¾ Ð¤ÑÐµÐ¼Ð¾Ð½ÑÐµ (Ð¡Ð¨Ð, VIN Ñ 1 Ð¸Ð»Ð¸ 5) Ð¸Ð»Ð¸ Ð¸Ð· Ð¨Ð°Ð½ÑÐ°Ñ (ÐÐ¸ÑÐ°Ð¹, LRW). US-Ð²ÐµÑÑÐ¸Ð¸ â Ð¿Ð¾ÑÑ NACS, EU/CN â CCS2/GB/T.'),
+ 'Nissan': ('Ð¯Ð¿Ð¾Ð½Ð¸Ñ','Leaf ÑÐ¾Ð±Ð¸ÑÐ°ÐµÑÑÑ Ð² Ð¯Ð¿Ð¾Ð½Ð¸Ð¸; ÑÐ°ÑÑÑ Ð¼Ð°ÑÐ¸Ð½ Ð´Ð»Ñ Ð Ð¤ â ÑÐ±Ð¾ÑÐºÐ° Ð² Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³Ðµ Ð´Ð¾ 2022 Ð³Ð¾Ð´Ð°.'),
+ 'Mitsubishi': ('Ð¯Ð¿Ð¾Ð½Ð¸Ñ','ÐÐ¾Ð´ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð½Ð° J (Ð¯Ð¿Ð¾Ð½Ð¸Ñ).'),
+ 'Kia': ('ÐÐ¾ÑÐµÑ / Ð Ð¾ÑÑÐ¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ ÐÐ¾ÑÐµÐ¸ (ÐºÐ¾Ð´ K) Ð¸ ÐºÐ°Ð»Ð¸Ð½Ð¸Ð½Ð³ÑÐ°Ð´ÑÐºÐ¸Ð¹ Â«ÐÐ²ÑÐ¾ÑÐ¾ÑÂ» (X). Ð ÑÐ½Ð¾Ðº Ð¿Ð¾ÑÑÐ°Ð²ÐºÐ¸ ÑÑÐ¾ÑÐ½ÑÐ¹ÑÐµ Ð¿Ð¾ 11-Ð¹ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸ VIN.'),
+ 'Hyundai': ('ÐÐ¾ÑÐµÑ / Ð Ð¾ÑÑÐ¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ ÐÐ¾ÑÐµÐ¸ (ÐºÐ¾Ð´ K), Ð¢Ð°Ð³Ð°Ð½ÑÐ¾Ð³ Ð¸ ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³ (X).'),
+ 'Genesis': ('ÐÐ¾ÑÐµÑ','ÐÐ°Ð²Ð¾Ð´ Ð² Ð£Ð»ÑÑÐ°Ð½Ðµ; ÐºÐ¾Ð´ K.'),
+ 'VW': ('ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ / Ð Ð¾ÑÑÐ¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÐ¾Ð»ÑÑÑÐ±ÑÑÐ³Ðµ Ð¸ Ð´Ñ. (ÐºÐ¾Ð´ W); Ð´Ð»Ñ Ð Ð¤ â ÐÐ°Ð»ÑÐ³Ð° (X) Ð´Ð¾ 2022 Ð³Ð¾Ð´Ð°.'),
+ 'Skoda': ('Ð§ÐµÑÐ¸Ñ / Ð Ð¾ÑÑÐ¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÐ»Ð°Ð´Ð°-ÐÐ¾Ð»ÐµÑÐ»Ð°Ð²Ðµ (ÐºÐ¾Ð´ T); Ð´Ð»Ñ Ð Ð¤ â ÐÐ°Ð»ÑÐ³Ð° Ð¸ ÐÐ¸Ð¶Ð½Ð¸Ð¹ ÐÐ¾Ð²Ð³Ð¾ÑÐ¾Ð´ (X) Ð´Ð¾ 2022 Ð³Ð¾Ð´Ð°.'),
+ 'Audi': ('ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÐ½Ð³Ð¾Ð»ÑÑÑÐ°Ð´ÑÐµ Ð¸ ÐÐµÐºÐºÐ°ÑÐ·ÑÐ»ÑÐ¼Ðµ; ÐºÐ¾Ð´ W.'),
+ 'Mercedes': ('ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÐ¸Ð½Ð´ÐµÐ»ÑÑÐ¸Ð½Ð³ÐµÐ½Ðµ Ð¸ Ð´Ñ.; ÐºÐ¾Ð´ W.'),
+ 'BMW': ('ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ','ÐÐ°Ð²Ð¾Ð´Ñ Ð² ÐÑÐ½ÑÐµÐ½Ðµ Ð¸ ÐÐµÐ¹Ð¿ÑÐ¸Ð³Ðµ (ÐºÐ¾Ð´ W); Ð´Ð»Ñ Ð Ð¤ â Â«ÐÐ²ÑÐ¾ÑÐ¾ÑÂ», ÐÐ°Ð»Ð¸Ð½Ð¸Ð½Ð³ÑÐ°Ð´ (X).'),
+ 'Evolute': ('Ð Ð¾ÑÑÐ¸Ñ','Ð¡Ð¾Ð±ÑÐ°Ð½ Ð² ÐÐ¸Ð¿ÐµÑÐºÐµ Ð½Ð° Ð·Ð°Ð²Ð¾Ð´Ðµ Â«ÐÐ¾ÑÐ¾ÑÐ¸Ð½Ð²ÐµÑÑÂ»; ÐºÐ¾Ð´ X.'),
+ 'Moskvich': ('Ð Ð¾ÑÑÐ¸Ñ','Ð¡Ð¾Ð±ÑÐ°Ð½ Ð² ÐÐ¾ÑÐºÐ²Ðµ (Ð±ÑÐ²ÑÐ¸Ð¹ Ð·Ð°Ð²Ð¾Ð´ Renault); ÐºÐ¾Ð´ X.'),
+ 'Lotus': ('ÐÐ½Ð³Ð»Ð¸Ñ / ÐÐ¸ÑÐ°Ð¹','ÐÐ»Ð°ÑÑÐ¸ÐºÐ° â Ð¥ÐµÑÐµÐ» (ÐÐ½Ð³Ð»Ð¸Ñ, S); ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÐºÐ¸Ðµ Eletre/Emeya â Ð£ÑÐ°Ð½Ñ (ÐÐ¸ÑÐ°Ð¹, L).'),
 }
 
 VIN_YEAR = [('A',2010),('B',2011),('C',2012),('D',2013),('E',2014),('F',2015),('G',2016),('H',2017),
             ('J',2018),('K',2019),('L',2020),('M',2021),('N',2022),('P',2023),('R',2024),('S',2025),('T',2026)]
 
-VIN_STRUCT = '<h2>Как устроен VIN: 17 символов</h2><div class="tw"><table><tr><th>Позиции</th><th>Название</th><th>Что кодирует</th></tr>'
-VIN_STRUCT += '<tr><td>1–3 (WMI)</td><td>Код завода-изготовителя</td><td>1-й символ — регион: <b>L</b> — Китай, <b>J</b> — Япония, <b>K</b> — Корея, <b>W</b> — Германия, <b>1/4/5</b> — США, <b>X</b> — Россия/СНГ, <b>S</b> — Великобритания, <b>T</b> — Чехия/Швейцария, <b>V</b> — Франция/Испания, <b>Z</b> — Италия, <b>Y</b> — Швеция/Финляндия.</td></tr>'
-VIN_STRUCT += '<tr><td>4–9 (VDS)</td><td>Описание модели</td><td>Модель, двигатель, кузов. 9-я позиция — контрольная цифра (обязательна для машин американского рынка).</td></tr>'
-VIN_STRUCT += '<tr><td>10</td><td>Модельный год</td><td>Код года — таблица ниже. Цикл повторяется каждые 30 лет.</td></tr>'
-VIN_STRUCT += '<tr><td>11</td><td>Завод сборки</td><td>Буква/цифра конкретного завода.</td></tr>'
-VIN_STRUCT += '<tr><td>12–17 (VIS)</td><td>Серийный номер</td><td>Порядковый номер машины.</td></tr></table></div>'
-VIN_STRUCT += '<h2>Код модельного года (10-я позиция)</h2><div class="tw"><table><tr><th>Код</th><th>Год</th><th>Код</th><th>Год</th><th>Код</th><th>Год</th></tr>'
+VIN_STRUCT = '<h2>ÐÐ°Ðº ÑÑÑÑÐ¾ÐµÐ½ VIN: 17 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð²</h2><div class="tw"><table><tr><th>ÐÐ¾Ð·Ð¸ÑÐ¸Ð¸</th><th>ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ</th><th>Ð§ÑÐ¾ ÐºÐ¾Ð´Ð¸ÑÑÐµÑ</th></tr>'
+VIN_STRUCT += '<tr><td>1â3 (WMI)</td><td>ÐÐ¾Ð´ Ð·Ð°Ð²Ð¾Ð´Ð°-Ð¸Ð·Ð³Ð¾ÑÐ¾Ð²Ð¸ÑÐµÐ»Ñ</td><td>1-Ð¹ ÑÐ¸Ð¼Ð²Ð¾Ð» â ÑÐµÐ³Ð¸Ð¾Ð½: <b>L</b> â ÐÐ¸ÑÐ°Ð¹, <b>J</b> â Ð¯Ð¿Ð¾Ð½Ð¸Ñ, <b>K</b> â ÐÐ¾ÑÐµÑ, <b>W</b> â ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ, <b>1/4/5</b> â Ð¡Ð¨Ð, <b>X</b> â Ð Ð¾ÑÑÐ¸Ñ/Ð¡ÐÐ, <b>S</b> â ÐÐµÐ»Ð¸ÐºÐ¾Ð±ÑÐ¸ÑÐ°Ð½Ð¸Ñ, <b>T</b> â Ð§ÐµÑÐ¸Ñ/Ð¨Ð²ÐµÐ¹ÑÐ°ÑÐ¸Ñ, <b>V</b> â Ð¤ÑÐ°Ð½ÑÐ¸Ñ/ÐÑÐ¿Ð°Ð½Ð¸Ñ, <b>Z</b> â ÐÑÐ°Ð»Ð¸Ñ, <b>Y</b> â Ð¨Ð²ÐµÑÐ¸Ñ/Ð¤Ð¸Ð½Ð»ÑÐ½Ð´Ð¸Ñ.</td></tr>'
+VIN_STRUCT += '<tr><td>4â9 (VDS)</td><td>ÐÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»Ð¸</td><td>ÐÐ¾Ð´ÐµÐ»Ñ, Ð´Ð²Ð¸Ð³Ð°ÑÐµÐ»Ñ, ÐºÑÐ·Ð¾Ð². 9-Ñ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ñ â ÐºÐ¾Ð½ÑÑÐ¾Ð»ÑÐ½Ð°Ñ ÑÐ¸ÑÑÐ° (Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð° Ð´Ð»Ñ Ð¼Ð°ÑÐ¸Ð½ Ð°Ð¼ÐµÑÐ¸ÐºÐ°Ð½ÑÐºÐ¾Ð³Ð¾ ÑÑÐ½ÐºÐ°).</td></tr>'
+VIN_STRUCT += '<tr><td>10</td><td>ÐÐ¾Ð´ÐµÐ»ÑÐ½ÑÐ¹ Ð³Ð¾Ð´</td><td>ÐÐ¾Ð´ Ð³Ð¾Ð´Ð° â ÑÐ°Ð±Ð»Ð¸ÑÐ° Ð½Ð¸Ð¶Ðµ. Ð¦Ð¸ÐºÐ» Ð¿Ð¾Ð²ÑÐ¾ÑÑÐµÑÑÑ ÐºÐ°Ð¶Ð´ÑÐµ 30 Ð»ÐµÑ.</td></tr>'
+VIN_STRUCT += '<tr><td>11</td><td>ÐÐ°Ð²Ð¾Ð´ ÑÐ±Ð¾ÑÐºÐ¸</td><td>ÐÑÐºÐ²Ð°/ÑÐ¸ÑÑÐ° ÐºÐ¾Ð½ÐºÑÐµÑÐ½Ð¾Ð³Ð¾ Ð·Ð°Ð²Ð¾Ð´Ð°.</td></tr>'
+VIN_STRUCT += '<tr><td>12â17 (VIS)</td><td>Ð¡ÐµÑÐ¸Ð¹Ð½ÑÐ¹ Ð½Ð¾Ð¼ÐµÑ</td><td>ÐÐ¾ÑÑÐ´ÐºÐ¾Ð²ÑÐ¹ Ð½Ð¾Ð¼ÐµÑ Ð¼Ð°ÑÐ¸Ð½Ñ.</td></tr></table></div>'
+VIN_STRUCT += '<h2>ÐÐ¾Ð´ Ð¼Ð¾Ð´ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¾Ð´Ð° (10-Ñ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ñ)</h2><div class="tw"><table><tr><th>ÐÐ¾Ð´</th><th>ÐÐ¾Ð´</th><th>ÐÐ¾Ð´</th><th>ÐÐ¾Ð´</th><th>ÐÐ¾Ð´</th><th>ÐÐ¾Ð´</th></tr>'
 _vin_rows = ''
 for _i in range(0, len(VIN_YEAR), 3):
     _trio = VIN_YEAR[_i:_i+3]
     _cells = ''.join('<td>'+c+'</td><td>'+str(y)+'</td>' for c,y in _trio)
-    if len(_trio) < 3: _cells += '<td>—</td><td>—</td>'*(3-len(_trio))
+    if len(_trio) < 3: _cells += '<td>â</td><td>â</td>'*(3-len(_trio))
     _vin_rows += '<tr>'+_cells+'</tr>'
 VIN_STRUCT += _vin_rows + '</table></div>'
-VIN_STRUCT += '<p class="note">Буквы I, O, Q, U, Z и цифра 0 в коде года не используются — чтобы не путать с 0, 1, 2 и V.</p>'
-VIN_STRUCT += '<h2>Где искать VIN на электромобиле</h2><div class="lcard">'
-VIN_STRUCT += '<p>У EV табличка с VIN обычно в тех же местах, что и у обычных машин:</p>'
-VIN_STRUCT += '<p>• в нижнем углу <b>лобового стекла</b> со стороны водителя (виден снаружи);</p>'
-VIN_STRUCT += '<p>• на <b>шильдике в проёме водительской двери</b> (B-стойка);</p>'
-VIN_STRUCT += '<p>• в <b>документах</b>: ПТС, СТС, ЭПТС, договор купли-продажи, СБКТС.</p>'
-VIN_STRUCT += '<p>У части китайских EV продублирован на наклейке в проёме лючка зарядки — удобно сверять при подключении адаптера.</p></div>'
-VIN_STRUCT += '<h2>Проверка VIN перед покупкой (особенно параллельный импорт)</h2><div class="lcard">'
-VIN_STRUCT += '<p><b>1. Сверьте VIN во всех местах.</b> VIN на кузове, на табличке и в документах должен совпадать посимвольно. Перебитый VIN — главная красная флаговая история.</p>'
-VIN_STRUCT += '<p><b>2. Проверка истории по VIN.</b> Основной бесплатный сервис — <a href="https://гибдд.рф/check/auto">сайт ГИБДД</a> (история регистраций, ДТП, розыск, ограничения). Сервис ГИБДД периодически бывает недоступен — тогда используйте альтернативы:</p>'
-VIN_STRUCT += '<p>— <a href="https://reestr-zalogov.ru/search">Реестр залогов ФНП</a> — бесплатно: машина в залоге или нет;</p>'
-VIN_STRUCT += '<p>— <a href="https://autoteka.ru/">Автотека</a> или <a href="https://avtocod.ru/">Автокод</a> — платно, но подробный отчёт (ДТП, пробег, объявления) и работает всегда;</p>'
-VIN_STRUCT += '<p>— <a href="https://vinformer.su/">Vinformer</a> — бесплатная расшифровка комплектации по VIN.</p>'
-VIN_STRUCT += '<p><b>3. ЭПТС и СБКТС.</b> У машин параллельного импорта (Zeekr, Li Auto, Avatr и др.) должен быть электронный ПТС и свидетельство о безопасности конструкции (СБКТС), оформленные на импортёра. Без СБКТС машину не поставят на учёт. Проверьте, что ЭПТС выпущен легально и на этот VIN.</p>'
-VIN_STRUCT += '<p><b>4. Код года по 10-й позиции.</b> Сверьте с годом в ЭПТС: расхождение — повод задуматься о легальности ввоза или «омоложении» машины.</p>'
-VIN_STRUCT += '<p><b>5. Расшифровка комплектации.</b> Точную расшифровку опций по VIN даёт дилер марки или официальный сервис по запросу — в интернет-справочниках встречаются ошибки.</p></div>'
-VIN_STRUCT += '<p class="note">Справочник информационный: не юридическая консультация и не заменяет проверку по официальным базам.</p>'
+VIN_STRUCT += '<p class="note">ÐÑÐºÐ²Ñ I, O, Q, U, Z Ð¸ ÑÐ¸ÑÑÐ° 0 Ð² ÐºÐ¾Ð´Ðµ Ð³Ð¾Ð´Ð° Ð½Ðµ Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÑÑÑÑ â ÑÑÐ¾Ð±Ñ Ð½Ðµ Ð¿ÑÑÐ°ÑÑ Ñ 0, 1, 2 Ð¸ V.</p>'
+VIN_STRUCT += '<h2>ÐÐ´Ðµ Ð¸ÑÐºÐ°ÑÑ VIN Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ðµ</h2><div class="lcard">'
+VIN_STRUCT += '<p>Ð£ EV ÑÐ°Ð±Ð»Ð¸ÑÐºÐ° Ñ VIN Ð¾Ð±ÑÑÐ½Ð¾ Ð² ÑÐµÑ Ð¶Ðµ Ð¼ÐµÑÑÐ°Ñ, ÑÑÐ¾ Ð¸ Ñ Ð¾Ð±ÑÑÐ½ÑÑ Ð¼Ð°ÑÐ¸Ð½:</p>'
+VIN_STRUCT += '<p>â¢ Ð² Ð½Ð¸Ð¶Ð½ÐµÐ¼ ÑÐ³Ð»Ñ <b>Ð»Ð¾Ð±Ð¾Ð²Ð¾Ð³Ð¾ ÑÑÐµÐºÐ»Ð°</b> ÑÐ¾ ÑÑÐ¾ÑÐ¾Ð½Ñ Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ (Ð²Ð¸Ð´ÐµÐ½ ÑÐ½Ð°ÑÑÐ¶Ð¸);</p>'
+VIN_STRUCT += '<p>â¢ Ð½Ð° <b>ÑÐ¸Ð»ÑÐ´Ð¸ÐºÐµ Ð² Ð¿ÑÐ¾ÑÐ¼Ðµ Ð²Ð¾Ð´Ð¸ÑÐµÐ»ÑÑÐºÐ¾Ð¹ Ð´Ð²ÐµÑÐ¸</b> (B-ÑÑÐ¾Ð¹ÐºÐ°);</p>'
+VIN_STRUCT += '<p>â¢ Ð² <b>Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ñ</b>: ÐÐ¢Ð¡, Ð¡Ð¢Ð¡, Ð­ÐÐ¢Ð¡, Ð´Ð¾Ð³Ð¾Ð²Ð¾Ñ ÐºÑÐ¿Ð»Ð¸-Ð¿ÑÐ¾Ð´Ð°Ð¶Ð¸, Ð¡ÐÐÐ¢Ð¡.</p>'
+VIN_STRUCT += '<p>Ð£ ÑÐ°ÑÑÐ¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð¿ÑÐ¾Ð´ÑÐ±Ð»Ð¸ÑÐ¾Ð²Ð°Ð½ Ð½Ð° Ð½Ð°ÐºÐ»ÐµÐ¹ÐºÐµ Ð² Ð¿ÑÐ¾ÑÐ¼Ðµ Ð»ÑÑÐºÐ° Ð·Ð°ÑÑÐ´ÐºÐ¸ â ÑÐ´Ð¾Ð±Ð½Ð¾ ÑÐ²ÐµÑÑÑÑ Ð¿ÑÐ¸ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°.</p></div>'
+VIN_STRUCT += '<h2>ÐÑÐ¾Ð²ÐµÑÐºÐ° VIN Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ (Ð¾ÑÐ¾Ð±ÐµÐ½Ð½Ð¾ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½ÑÐ¹ Ð¸Ð¼Ð¿Ð¾ÑÑ)</h2><div class="lcard">'
+VIN_STRUCT += '<p><b>1. Ð¡Ð²ÐµÑÑÑÐµ VIN Ð²Ð¾ Ð²ÑÐµÑ Ð¼ÐµÑÑÐ°Ñ.</b> VIN Ð½Ð° ÐºÑÐ·Ð¾Ð²Ðµ, Ð½Ð° ÑÐ°Ð±Ð»Ð¸ÑÐºÐµ Ð¸ Ð² Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ñ Ð´Ð¾Ð»Ð¶ÐµÐ½ ÑÐ¾Ð²Ð¿Ð°Ð´Ð°ÑÑ Ð¿Ð¾ÑÐ¸Ð¼Ð²Ð¾Ð»ÑÐ½Ð¾. ÐÐµÑÐµÐ±Ð¸ÑÑÐ¹ VIN â Ð³Ð»Ð°Ð²Ð½Ð°Ñ ÐºÑÐ°ÑÐ½Ð°Ñ ÑÐ»Ð°Ð³Ð¾Ð²Ð°Ñ Ð¸ÑÑÐ¾ÑÐ¸Ñ.</p>'
+VIN_STRUCT += '<p><b>2. ÐÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸ Ð¿Ð¾ VIN.</b> ÐÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½ÑÐ¹ ÑÐµÑÐ²Ð¸Ñ â <a href="https://Ð³Ð¸Ð±Ð´Ð´.ÑÑ/check/auto">ÑÐ°Ð¹Ñ ÐÐÐÐÐ</a> (Ð¸ÑÑÐ¾ÑÐ¸Ñ ÑÐµÐ³Ð¸ÑÑÑÐ°ÑÐ¸Ð¹, ÐÐ¢Ð, ÑÐ¾Ð·ÑÑÐº, Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ñ). Ð¡ÐµÑÐ²Ð¸Ñ ÐÐÐÐÐ Ð¿ÐµÑÐ¸Ð¾Ð´Ð¸ÑÐµÑÐºÐ¸ Ð±ÑÐ²Ð°ÐµÑ Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½ â ÑÐ¾Ð³Ð´Ð° Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐ¹ÑÐµ Ð°Ð»ÑÑÐµÑÐ½Ð°ÑÐ¸Ð²Ñ:</p>'
+VIN_STRUCT += '<p>â <a href="https://reestr-zalogov.ru/search">Ð ÐµÐµÑÑÑ Ð·Ð°Ð»Ð¾Ð³Ð¾Ð² Ð¤ÐÐ</a> â Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾: Ð¼Ð°ÑÐ¸Ð½Ð° Ð² Ð·Ð°Ð»Ð¾Ð³Ðµ Ð¸Ð»Ð¸ Ð½ÐµÑ;</p>'
+VIN_STRUCT += '<p>â <a href="https://autoteka.ru/">ÐÐ²ÑÐ¾ÑÐµÐºÐ°</a> Ð¸Ð»Ð¸ <a href="https://avtocod.ru/">ÐÐ²ÑÐ¾ÐºÐ¾Ð´</a> â Ð¿Ð»Ð°ÑÐ½Ð¾, Ð½Ð¾ Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÑÐ¹ Ð¾ÑÑÑÑ (ÐÐ¢Ð, Ð¿ÑÐ¾Ð±ÐµÐ³, Ð¾Ð±ÑÑÐ²Ð»ÐµÐ½Ð¸Ñ) Ð¸ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð²ÑÐµÐ³Ð´Ð°;</p>'
+VIN_STRUCT += '<p>â <a href="https://vinformer.su/">Vinformer</a> â Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð°Ñ ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸ Ð¿Ð¾ VIN.</p>'
+VIN_STRUCT += '<p><b>3. Ð­ÐÐ¢Ð¡ Ð¸ Ð¡ÐÐÐ¢Ð¡.</b> Ð£ Ð¼Ð°ÑÐ¸Ð½ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ° (Zeekr, Li Auto, Avatr Ð¸ Ð´Ñ.) Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±ÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð½ÑÐ¹ ÐÐ¢Ð¡ Ð¸ ÑÐ²Ð¸Ð´ÐµÑÐµÐ»ÑÑÑÐ²Ð¾ Ð¾ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÐ¸ ÐºÐ¾Ð½ÑÑÑÑÐºÑÐ¸Ð¸ (Ð¡ÐÐÐ¢Ð¡), Ð¾ÑÐ¾ÑÐ¼Ð»ÐµÐ½Ð½ÑÐµ Ð½Ð° Ð¸Ð¼Ð¿Ð¾ÑÑÑÑÐ°. ÐÐµÐ· Ð¡ÐÐÐ¢Ð¡ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ðµ Ð¿Ð¾ÑÑÐ°Ð²ÑÑ Ð½Ð° ÑÑÑÑ. ÐÑÐ¾Ð²ÐµÑÑÑÐµ, ÑÑÐ¾ Ð­ÐÐ¢Ð¡ Ð²ÑÐ¿ÑÑÐµÐ½ Ð»ÐµÐ³Ð°Ð»ÑÐ½Ð¾ Ð¸ Ð½Ð° ÑÑÐ¾Ñ VIN.</p>'
+VIN_STRUCT += '<p><b>4. ÐÐ¾Ð´ Ð³Ð¾Ð´Ð° Ð¿Ð¾ 10-Ð¹ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸.</b> Ð¡Ð²ÐµÑÑÑÐµ Ñ Ð³Ð¾Ð´Ð¾Ð¼ Ð² Ð­ÐÐ¢Ð¡: ÑÐ°ÑÑÐ¾Ð¶Ð´ÐµÐ½Ð¸Ðµ â Ð¿Ð¾Ð²Ð¾Ð´ Ð·Ð°Ð´ÑÐ¼Ð°ÑÑÑÑ Ð¾ Ð»ÐµÐ³Ð°Ð»ÑÐ½Ð¾ÑÑÐ¸ Ð²Ð²Ð¾Ð·Ð° Ð¸Ð»Ð¸ Â«Ð¾Ð¼Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸Â» Ð¼Ð°ÑÐ¸Ð½Ñ.</p>'
+VIN_STRUCT += '<p><b>5. Ð Ð°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸.</b> Ð¢Ð¾ÑÐ½ÑÑ ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÑ Ð¾Ð¿ÑÐ¸Ð¹ Ð¿Ð¾ VIN Ð´Ð°ÑÑ Ð´Ð¸Ð»ÐµÑ Ð¼Ð°ÑÐºÐ¸ Ð¸Ð»Ð¸ Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹ ÑÐµÑÐ²Ð¸Ñ Ð¿Ð¾ Ð·Ð°Ð¿ÑÐ¾ÑÑ â Ð² Ð¸Ð½ÑÐµÑÐ½ÐµÑ-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°Ñ Ð²ÑÑÑÐµÑÐ°ÑÑÑÑ Ð¾ÑÐ¸Ð±ÐºÐ¸.</p></div>'
+VIN_STRUCT += '<p class="note">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð¸Ð½ÑÐ¾ÑÐ¼Ð°ÑÐ¸Ð¾Ð½Ð½ÑÐ¹: Ð½Ðµ ÑÑÐ¸Ð´Ð¸ÑÐµÑÐºÐ°Ñ ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ñ Ð¸ Ð½Ðµ Ð·Ð°Ð¼ÐµÐ½ÑÐµÑ Ð¿ÑÐ¾Ð²ÐµÑÐºÑ Ð¿Ð¾ Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¼ Ð±Ð°Ð·Ð°Ð¼.</p>'
 
 def vin_brand_page(brand, outdir):
     country, note = VIN_BRANDS[brand]
     models_b = [m for m in MODELS if m['brand'].strip()==brand]
-    top = sorted(models_b, key=lambda x: x['freq']!='Массовый')[:6]
-    cards = ''.join('<a class="mcard" href="/models/'+slug(m['brand'])+'-'+slug(m['model'])+'.html"><b>'+html.escape(m['brand']+' '+m['model'])+'</b><span>'+html.escape(m['years']+' · '+m['type']+' · '+m['freq']+' ввоз')+'</span></a>' for m in top)
+    top = sorted(models_b, key=lambda x: x['freq']!='ÐÐ°ÑÑÐ¾Ð²ÑÐ¹')[:6]
+    cards = ''.join('<a class="mcard" href="/models/'+slug(m['brand'])+'-'+slug(m['model'])+'.html"><b>'+html.escape(m['brand']+' '+m['model'])+'</b><span>'+html.escape(m['years']+' Â· '+m['type']+' Â· '+m['freq']+' Ð²Ð²Ð¾Ð·')+'</span></a>' for m in top)
     parts = []
-    parts.append('<a class="back" href="/vin/">← Все бренды VIN-справочника</a>')
-    parts.append('<h1>VIN ' + html.escape(brand) + ': где табличка, код года и проверка истории</h1>')
-    parts.append('<p class="lede">Код производителя, позиция модельного года и места расположения таблички у ' + html.escape(brand) + ', ввезённых в Россию.</p>')
-    parts.append('<div class="lcard"><h3>Страна сборки и код завода</h3><p><span class="tag lime">' + html.escape(country) + '</span></p><p>' + html.escape(note) + '</p>')
-    parts.append('<p class="note">Первый символ VIN соответствует региону производства: L — Китай, J — Япония, K — Корея, W — Германия, X — Россия/СНГ.</p></div>')
+    parts.append('<a class="back" href="/vin/">â ÐÑÐµ Ð±ÑÐµÐ½Ð´Ñ VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°</a>')
+    parts.append('<h1>VIN ' + html.escape(brand) + ': Ð³Ð´Ðµ ÑÐ°Ð±Ð»Ð¸ÑÐºÐ°, ÐºÐ¾Ð´ Ð³Ð¾Ð´Ð° Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸</h1>')
+    parts.append('<p class="lede">ÐÐ¾Ð´ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ, Ð¿Ð¾Ð·Ð¸ÑÐ¸Ñ Ð¼Ð¾Ð´ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¾Ð´Ð° Ð¸ Ð¼ÐµÑÑÐ° ÑÐ°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ ÑÐ°Ð±Ð»Ð¸ÑÐºÐ¸ Ñ ' + html.escape(brand) + ', Ð²Ð²ÐµÐ·ÑÐ½Ð½ÑÑ Ð² Ð Ð¾ÑÑÐ¸Ñ.</p>')
+    parts.append('<div class="lcard"><h3>Ð¡ÑÑÐ°Ð½Ð° ÑÐ±Ð¾ÑÐºÐ¸ Ð¸ ÐºÐ¾Ð´ Ð·Ð°Ð²Ð¾Ð´Ð°</h3><p><span class="tag lime">' + html.escape(country) + '</span></p><p>' + html.escape(note) + '</p>')
+    parts.append('<p class="note">ÐÐµÑÐ²ÑÐ¹ ÑÐ¸Ð¼Ð²Ð¾Ð» VIN ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²ÑÐµÑ ÑÐµÐ³Ð¸Ð¾Ð½Ñ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´ÑÑÐ²Ð°: L â ÐÐ¸ÑÐ°Ð¹, J â Ð¯Ð¿Ð¾Ð½Ð¸Ñ, K â ÐÐ¾ÑÐµÑ, W â ÐÐµÑÐ¼Ð°Ð½Ð¸Ñ, X â Ð Ð¾ÑÑÐ¸Ñ/Ð¡ÐÐ.</p></div>')
     parts.append(VIN_STRUCT)
     if cards:
-        parts.append('<h2>Модели ' + html.escape(brand) + ' в нашей базе</h2><div class="grid2">' + cards + '</div>')
-    parts.append('<h2>Что проверить по VIN ' + html.escape(brand) + ' перед покупкой</h2><div class="lcard">')
-    parts.append('<p>Машины ' + html.escape(brand) + ' в РФ чаще всего ввезены по параллельному импорту или из Кореи — значит, ключевые проверки: совпадение VIN на кузове и в ЭПТС, наличие СБКТС, история ДТП по базе ГИБДД, код модельного года на 10-й позиции.</p>')
-    parts.append('<p>Проверить историю: <a href="https://гибдд.рф/check/auto">сервис ГИБДД по VIN</a> (бесплатно, иногда недоступен) или <a href="https://reestr-zalogov.ru/search">реестр залогов ФНП</a>, <a href="https://autoteka.ru/">Автотека</a>. Расшифровку комплектации — у дилера марки.</p></div>')
+        parts.append('<h2>ÐÐ¾Ð´ÐµÐ»Ð¸ ' + html.escape(brand) + ' Ð² Ð½Ð°ÑÐµÐ¹ Ð±Ð°Ð·Ðµ</h2><div class="grid2">' + cards + '</div>')
+    parts.append('<h2>Ð§ÑÐ¾ Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð¿Ð¾ VIN ' + html.escape(brand) + ' Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹</h2><div class="lcard">')
+    parts.append('<p>ÐÐ°ÑÐ¸Ð½Ñ ' + html.escape(brand) + ' Ð² Ð Ð¤ ÑÐ°ÑÐµ Ð²ÑÐµÐ³Ð¾ Ð²Ð²ÐµÐ·ÐµÐ½Ñ Ð¿Ð¾ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð¼Ñ Ð¸Ð¼Ð¿Ð¾ÑÑÑ Ð¸Ð»Ð¸ Ð¸Ð· ÐÐ¾ÑÐµÐ¸ â Ð·Ð½Ð°ÑÐ¸Ñ, ÐºÐ»ÑÑÐµÐ²ÑÐµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸: ÑÐ¾Ð²Ð¿Ð°Ð´ÐµÐ½Ð¸Ðµ VIN Ð½Ð° ÐºÑÐ·Ð¾Ð²Ðµ Ð¸ Ð² Ð­ÐÐ¢Ð¡, Ð½Ð°Ð»Ð¸ÑÐ¸Ðµ Ð¡ÐÐÐ¢Ð¡, Ð¸ÑÑÐ¾ÑÐ¸Ñ ÐÐ¢Ð Ð¿Ð¾ Ð±Ð°Ð·Ðµ ÐÐÐÐÐ, ÐºÐ¾Ð´ Ð¼Ð¾Ð´ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¾Ð´Ð° Ð½Ð° 10-Ð¹ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸.</p>')
+    parts.append('<p>ÐÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð¸ÑÑÐ¾ÑÐ¸Ñ: <a href="https://Ð³Ð¸Ð±Ð´Ð´.ÑÑ/check/auto">ÑÐµÑÐ²Ð¸Ñ ÐÐÐÐÐ Ð¿Ð¾ VIN</a> (Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾, Ð¸Ð½Ð¾Ð³Ð´Ð° Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½) Ð¸Ð»Ð¸ <a href="https://reestr-zalogov.ru/search">ÑÐµÐµÑÑÑ Ð·Ð°Ð»Ð¾Ð³Ð¾Ð² Ð¤ÐÐ</a>, <a href="https://autoteka.ru/">ÐÐ²ÑÐ¾ÑÐµÐºÐ°</a>. Ð Ð°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸ â Ñ Ð´Ð¸Ð»ÐµÑÐ° Ð¼Ð°ÑÐºÐ¸.</p></div>')
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
       '<div class="md:w-2/3 w-full">'
-      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все ' + str(len(MODELS)) + ' моделей + чек-лист покупки</h3>'
-      '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">ÐÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ Â· PDF</span>'
+      '<h3 class="font-semibold text-gray-900 my-2">ÐÐ¸Ð´ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ: Ð²ÑÐµ ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ + ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸</h3>'
+      '<p class="text-sm text-gray-600">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸, 12 ÑÐ°ÑÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸, ÑÑÐ¸ Ð³Ð¾ÑÐ¾Ð²ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð¸ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¸Ð· 20 Ð¿ÑÐ½ÐºÑÐ¾Ð².</p>'
       '</div><div class="md:w-auto w-full">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>â¬ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF</a>'
       '</div></div></div>')
-    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/">Сравнить модели</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</a><a class="btn ghost" href="/compare/">Ð¡ÑÐ°Ð²Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸</a><a class="btn ghost" href="' + TG_CHANNEL + '">ÐÐ°Ð½Ð°Ð» Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">ÐÐ¾Ð´ÐµÐ»Ð¸ÑÑÑÑ</a></div>')
     body = ''.join(parts)
     sl = 'vin/'+slug(brand)+'.html'
-    write_page(os.path.join(outdir, sl), 'VIN ' + brand + ': код года и проверка истории | Запас хода',
-        'Расшифровка VIN ' + brand + ' (' + country + '): код завода, модельный год на 10-й позиции, где находится табличка, бесплатная проверка ГИБДД и ЭПТС/СБКТС для параллельного импорта.',
+    write_page(os.path.join(outdir, sl), 'VIN ' + brand + ': ÐºÐ¾Ð´ Ð³Ð¾Ð´Ð° Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'Ð Ð°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° VIN ' + brand + ' (' + country + '): ÐºÐ¾Ð´ Ð·Ð°Ð²Ð¾Ð´Ð°, Ð¼Ð¾Ð´ÐµÐ»ÑÐ½ÑÐ¹ Ð³Ð¾Ð´ Ð½Ð° 10-Ð¹ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸, Ð³Ð´Ðµ Ð½Ð°ÑÐ¾Ð´Ð¸ÑÑÑ ÑÐ°Ð±Ð»Ð¸ÑÐºÐ°, Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð°Ñ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° ÐÐÐÐÐ Ð¸ Ð­ÐÐ¢Ð¡/Ð¡ÐÐÐ¢Ð¡ Ð´Ð»Ñ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ°.',
         body, '/' + sl, og='/assets/og/vin-'+slug(brand)+'.png',
         crumbs=[('/vin/','VIN'),('',brand)])
     return sl
 
 DOCS_ZEEKR = {
   'zeekr-001-001-fr': [
-    ('Руководство по эксплуатации Zeekr 001 (RU, 2024)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/RU-Zeekr-001-All-New-2024-Manual.pdf', '46 МБ'),
-    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Zeekr 001 (RU, 2024)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/RU-Zeekr-001-All-New-2024-Manual.pdf', '46 ÐÐ'),
+    ('ÐÐ°Ð¹Ð´ Â«ÐÐ°ÑÑÐ´ÐºÐ° ZeekrÂ» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 ÐÐ'),
   ],
   'zeekr-7x-x-mix': [
-    ('Руководство по эксплуатации Zeekr X (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20X%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B5%20.pdf', 'большой скан'),
-    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Zeekr X (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20X%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B5%20.pdf', 'Ð±Ð¾Ð»ÑÑÐ¾Ð¹ ÑÐºÐ°Ð½'),
+    ('ÐÐ°Ð¹Ð´ Â«ÐÐ°ÑÑÐ´ÐºÐ° ZeekrÂ» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 ÐÐ'),
   ],
   'zeekr-009-009-grand': [
-    ('Zeekr 009 user manual (EN)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20009%20user%20manual%20(ENG).pdf', '2,2 МБ'),
-    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+    ('Zeekr 009 user manual (EN)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/Zeekr%20009%20user%20manual%20(ENG).pdf', '2,2 ÐÐ'),
+    ('ÐÐ°Ð¹Ð´ Â«ÐÐ°ÑÑÐ´ÐºÐ° ZeekrÂ» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 ÐÐ'),
   ],
   'default': [
-    ('Гайд «Зарядка Zeekr» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 МБ'),
+    ('ÐÐ°Ð¹Ð´ Â«ÐÐ°ÑÑÐ´ÐºÐ° ZeekrÂ» (RU)', 'https://chats.chinamobil.ru/files/zeekr-club/applicationpdf/%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BA%D0%B0%20Zeekr.pdf', '0,5 ÐÐ'),
   ],
 }
 DOCS_VOYAH = {
   'voyah-free-evr-gibrid': [
-    ('Руководство по эксплуатации VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 МБ'),
-    ('Руководство по эксплуатации Voyah Free Sport Edition (RU)', 'https://pnevma.ru/bardachok/wp-content/uploads/2025/02/voyah-manual-free-.pdf', '6,5 МБ'),
-    ('Руководство пользователя VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Voyah Free Sport Edition (RU)', 'https://pnevma.ru/bardachok/wp-content/uploads/2025/02/voyah-manual-free-.pdf', '6,5 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
   ],
   'voyah-free-ev-rannie-ofitsialnye-ru': [
-    ('Руководство по эксплуатации VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 МБ'),
-    ('Руководство пользователя VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ VOYAH FREE (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_VOYAH_FREE.pdf', '8 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ VOYAH FREE APOLLO RUS (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_VOYAH_FREE_APOLLO_RUS.pdf', ''),
   ],
   'voyah-dream-dreamer-phev': [
-    ('Руководство по эксплуатации Voyah Dream / Dreamer (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B4%D0%BB%D1%8F%20voyah-dream.pdf', '3,3 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Voyah Dream / Dreamer (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B4%D0%BB%D1%8F%20voyah-dream.pdf', '3,3 ÐÐ'),
   ],
   'voyah-passion-passion-s': [
-    ('Руководство по эксплуатации Voyah Passion (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/Voyah%20Passion%20%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F.pdf', '6 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Voyah Passion (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/Voyah%20Passion%20%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F.pdf', '6 ÐÐ'),
   ],
 }
 DOCS_VOYAH_UNI = [
-  ('Руководство пользователя адаптера ELECTWAY CCS2→GB/T (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B5%D1%80%D0%B0_ELECTWAY_CCS2_GB_T.pdf', ''),
-  ('Руководство пользователя портативного ЗУ Enjoe (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%BF%D0%BE%D1%80%D1%82%D0%B0%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_Enjoe.pdf', ''),
+  ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ° ELECTWAY CCS2âGB/T (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B5%D1%80%D0%B0_ELECTWAY_CCS2_GB_T.pdf', ''),
+  ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ ÐÐ£ Enjoe (RU)', 'https://chats.chinamobil.ru/files/voyah-chat/applicationpdf/%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_%D0%BF%D0%BE%D1%80%D1%82%D0%B0%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_Enjoe.pdf', ''),
 ]
 DOCS_MODELS = {
 'kia-ev2': [
-    ('Kia EV2 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV2_QVe_2026_RU.pdf', '13,3 МБ'),
+    ('Kia EV2 â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV2_QVe_2026_RU.pdf', '13,3 ÐÐ'),
   ],
 'kia-ev3': [
-    ('Kia EV3 — Руководство пользователя (RU, 25MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV3_25MY_RUS.pdf', '12,0 МБ'),
+    ('Kia EV3 â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 25MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV3_25MY_RUS.pdf', '12,0 ÐÐ'),
   ],
 'kia-ev4': [
-    ('Kia EV4 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_SZe_26MY_RUS.pdf', '7,8 МБ'),
+    ('Kia EV4 â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_SZe_26MY_RUS.pdf', '7,8 ÐÐ'),
   ],
 'kia-ev4-fastback': [
-    ('Kia EV4 Fastback — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_CT_26MY_RUS.pdf', '11,7 МБ'),
+    ('Kia EV4 Fastback â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV4_CT_26MY_RUS.pdf', '11,7 ÐÐ'),
   ],
 'kia-ev5': [
-    ('Kia EV5 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV5_26MY_RUS.pdf', '12,8 МБ'),
+    ('Kia EV5 â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_EV5_26MY_RUS.pdf', '12,8 ÐÐ'),
   ],
 'kia-pv5': [
-    ('Kia PV5 — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 МБ'),
+    ('Kia PV5 â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 ÐÐ'),
   ],
 'kia-pv5-cargo': [
-    ('Kia PV5 / PV5 Cargo — Руководство пользователя (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 МБ'),
+    ('Kia PV5 / PV5 Cargo â Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RU, 26MY)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/Kia_PV5_26MY_RUS.pdf', '11,7 ÐÐ'),
   ],
   'avatr-11-12-ofitsialno-ru': [
-    ('Руководство пользователя Avatr 11 (RU)', 'https://avatr.by/img/tech/AVATR11-manual.pdf', '3,1 МБ'),
-    ('Руководство пользователя Avatr 12 (RU)', 'https://avatr.by/img/tech/AVATR12-manual.pdf', '6,2 МБ'),
-    ('Avatr 11 — Manual (RU, перевод 2022)', 'https://chats.chinamobil.ru/files/avatr-club-chat/applicationpdf/Avatr%2011%20%E2%80%94%20Manual%20(RU,%202022).pdf', '8 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Avatr 11 (RU)', 'https://avatr.by/img/tech/AVATR11-manual.pdf', '3,1 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Avatr 12 (RU)', 'https://avatr.by/img/tech/AVATR12-manual.pdf', '6,2 ÐÐ'),
+    ('Avatr 11 â Manual (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´ 2022)', 'https://chats.chinamobil.ru/files/avatr-club-chat/applicationpdf/Avatr%2011%20%E2%80%94%20Manual%20(RU,%202022).pdf', '8 ÐÐ'),
   ],
   'avatr-07-parallelnyy': [
-    ('Руководство пользователя Avatr 07 (RU)', 'https://avatr.by/img/tech/AVATR07-manual.pdf', '6,2 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Avatr 07 (RU)', 'https://avatr.by/img/tech/AVATR07-manual.pdf', '6,2 ÐÐ'),
   ],
   'aito-m5-m7': [
-    ('AITO M5 — Manual (RU, дистрибьютор МБ РУС)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M5%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8 МБ'),
-    ('AITO M7 — Manual (RU, дистрибьютор МБ РУС)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M7%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8,8 МБ'),
+    ('AITO M5 â Manual (RU, Ð´Ð¸ÑÑÑÐ¸Ð±ÑÑÑÐ¾Ñ ÐÐ Ð Ð£Ð¡)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M5%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8 ÐÐ'),
+    ('AITO M7 â Manual (RU, Ð´Ð¸ÑÑÑÐ¸Ð±ÑÑÑÐ¾Ñ ÐÐ Ð Ð£Ð¡)', 'https://chats.chinamobil.ru/files/aito-m5-m7-m9-club-chat/applicationpdf/AITO%20M7%20%E2%80%94%20Manual%20(MB%20RUS).pdf', '8,8 ÐÐ'),
   ],
 
   'li-auto-l6-l7-l8-l9-2022-2025': [
-    ('Руководство Li L9 (RU, перевод)', 'https://chats.chinamobil.ru/files/lixiang-li-l7-l8-l9/applicationpdf/L9%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20(RU).pdf', '52 МБ'),
-    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Li L9 (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://chats.chinamobil.ru/files/lixiang-li-l7-l8-l9/applicationpdf/L9%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20(RU).pdf', '52 ÐÐ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 ÐÐ'),
   ],
   'li-auto-one': [
-    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 ÐÐ'),
   ],
   'li-auto-mega': [
-    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 ÐÐ'),
   ],
   'li-auto-i6-i8': [
-    ('Инструкция приложения Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 МБ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Li Auto (RU)', 'https://faq.liautorussia.ru/liauto_mobileapp.pdf', '3 ÐÐ'),
   ],
   'xiaomi-yu7': [
-    ('Руководство пользователя Xiaomi YU7 (RU)', 'https://yu7.site/assets/yu7-user-manual-ru.pdf', '96 МБ'),
-    ('Руководство пользователя Xiaomi YU7 (EN)', 'https://yu7.site/assets/yu7-user-manual-en.pdf', '96 МБ'),
-    ('Руководство пользователя Xiaomi YU7 (CN, оригинал)', 'https://yu7.site/assets/yu7-user-manual-cn.pdf', '52 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Xiaomi YU7 (RU)', 'https://yu7.site/assets/yu7-user-manual-ru.pdf', '96 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Xiaomi YU7 (EN)', 'https://yu7.site/assets/yu7-user-manual-en.pdf', '96 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Xiaomi YU7 (CN, Ð¾ÑÐ¸Ð³Ð¸Ð½Ð°Ð»)', 'https://yu7.site/assets/yu7-user-manual-cn.pdf', '52 ÐÐ'),
   ],
   'xiaomi-su7-su7-ultra': [
-    ('Xiaomi SU7 — руководство по ремонту (RU, сервисный, машинный перевод)', 'https://yu7.site/assets/SU7_Repair_Manual_RU_clean.pdf', '85 МБ'),
-    ('Инструкция к зарядному устройству Xiaomi (RU)', 'https://yu7.site/assets/charging/xiaomi-charger-manual-ru.pdf', '0,6 МБ'),
+    ('Xiaomi SU7 â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐµÐ¼Ð¾Ð½ÑÑ (RU, ÑÐµÑÐ²Ð¸ÑÐ½ÑÐ¹, Ð¼Ð°ÑÐ¸Ð½Ð½ÑÐ¹ Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://yu7.site/assets/SU7_Repair_Manual_RU_clean.pdf', '85 ÐÐ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ Ðº Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¼Ñ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ñ Xiaomi (RU)', 'https://yu7.site/assets/charging/xiaomi-charger-manual-ru.pdf', '0,6 ÐÐ'),
   ],
   'byd-han-ev-song-l': [
-    ('Руководство по эксплуатации BYD Han EV (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/HAN%20EV%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D1%8D%D0%BA%D1%81%D0%BF%D0%BB.pdf', '51 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ BYD Han EV (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/HAN%20EV%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D0%B2%D0%BE%20%D0%BF%D0%BE%20%D1%8D%D0%BA%D1%81%D0%BF%D0%BB.pdf', '51 ÐÐ'),
   ],
   'byd-song-plus-ev': [
-    ('BYD Song Plus EV 2023 Champion Edition — руководство (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20Song%20Plus%20EV2023%20Champion%20Edition%20user%20manual%20(RU).pdf', '8,6 МБ'),
-    ('Инструкция: зарядная станция BYD 7 кВт (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%98%D0%BD%D1%81%D1%82%D1%80.%20%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%B0%D1%8F%20%D1%81%D1%82%D0%B0%D0%BD%D1%86%D0%B8%D1%8F%20BYD%207%D0%BA%D0%92%D1%82.pdf', ''),
+    ('BYD Song Plus EV 2023 Champion Edition â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20Song%20Plus%20EV2023%20Champion%20Edition%20user%20manual%20(RU).pdf', '8,6 ÐÐ'),
+    ('ÐÐ½ÑÑÑÑÐºÑÐ¸Ñ: Ð·Ð°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ BYD 7 ÐºÐÑ (RU)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%98%D0%BD%D1%81%D1%82%D1%80.%20%D0%97%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D0%B0%D1%8F%20%D1%81%D1%82%D0%B0%D0%BD%D1%86%D0%B8%D1%8F%20BYD%207%D0%BA%D0%92%D1%82.pdf', ''),
   ],
   'byd-song-plus-dm-i-sealion-05': [
-    ('Руководство пользователя BYD Song Plus DM-i (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_BYD_SONG_PLUS.pdf', '59 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ BYD Song Plus DM-i (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F_BYD_SONG_PLUS.pdf', '59 ÐÐ'),
   ],
   'byd-yuan-plus-atto-3-yuan-up-pro': [
-    ('Руководство по эксплуатации BYD Atto 3 / Yuan Plus (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%202022.pdf', '7,9 МБ'),
-    ('Руководство пользователя BYD Yuan Pro / S1 (RU, перевод)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/Byd%20S1%20(yuan%20pro)%20User%20Manual.pdf', '11 МБ'),
-    ('BYD Atto 3 / Yuan Plus (EN, 2022)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%20(EN,%202022).pdf', '3,4 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ BYD Atto 3 / Yuan Plus (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%202022.pdf', '7,9 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ BYD Yuan Pro / S1 (RU, Ð¿ÐµÑÐµÐ²Ð¾Ð´)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/Byd%20S1%20(yuan%20pro)%20User%20Manual.pdf', '11 ÐÐ'),
+    ('BYD Atto 3 / Yuan Plus (EN, 2022)', 'https://chats.chinamobil.ru/files/byd-yuan-song-ev/applicationpdf/BYD%20ATTO%203%20%3D%20Yuan%20Plus%20(EN,%202022).pdf', '3,4 ÐÐ'),
   ],
   'byd-seal': [
-    ("BYD Seal Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/584dac99-9035-4e65-9354-42c1b8162793/BYD-SEAL-OWNER%E2%80%98s-MANUAL-NZ_11_2023_web.pdf', '2,1 МБ'),
+    ("BYD Seal Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/584dac99-9035-4e65-9354-42c1b8162793/BYD-SEAL-OWNER%E2%80%98s-MANUAL-NZ_11_2023_web.pdf', '2,1 ÐÐ'),
   ],
   'byd-dolphin': [
-    ("BYD Dolphin Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/81ddab61-b06e-4761-bb8d-9f897c9a7901/BYD-DOLPHIN-Owner%27s-Manual_NZ_09_2023_website.pdf', '2,7 МБ'),
+    ("BYD Dolphin Owner's Manual (EN, LHD)", 'https://www.bydauto.co.nz/storage/uploads/81ddab61-b06e-4761-bb8d-9f897c9a7901/BYD-DOLPHIN-Owner%27s-Manual_NZ_09_2023_website.pdf', '2,7 ÐÐ'),
   ],
   'deepal-s07-ru-ofitsialnaya': [
-    ('Руководство по эксплуатации Deepal S07 (RU, официальное)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_S07.pdf', '9,2 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Deepal S07 (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_S07.pdf', '9,2 ÐÐ'),
   ],
   'deepal-g318-ru-ofitsialnaya': [
-    ('Руководство по эксплуатации Deepal G318 (RU, официальное)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_G318.pdf', '8,8 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Deepal G318 (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://deepal-motors.ru/files/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_DEEPAL_G318.pdf', '8,8 ÐÐ'),
   ],
   'deepal-l07-s05-s09': [
-    ('Руководство пользователя Deepal S05 (RU)', 'https://deepal-club.ru/attachments/manual_ru_deepal_s05-pdf.736/', '2,5 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Deepal S05 (RU)', 'https://deepal-club.ru/attachments/manual_ru_deepal_s05-pdf.736/', '2,5 ÐÐ'),
   ],
 
   'gac-aion-s-plus-aion-v': [
-    ('Руководство пользователя GAC AION V (RU, изд. 07.2025)', 'https://gac-club.ru/attachments/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8-aion-v-pdf.2849/', '14,4 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ GAC AION V (RU, Ð¸Ð·Ð´. 07.2025)', 'https://gac-club.ru/attachments/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8-aion-v-pdf.2849/', '14,4 ÐÐ'),
   ],
 
   'geely-ex5-monjaro-hi-p-phev': [
-    ('Руководство по эксплуатации Geely Monjaro (RU)', 'https://tochka-geely.by/wp-content/uploads/2025/12/rukovodstvo-po-ekspluataczii-monjaro.pdf', '5 МБ'),
-    ('Руководство по эксплуатации Geely KX11 PHEV (Monjaro PHEV, RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_KX11_PHEV.pdf', '74 МБ'),
-    ('Руководство по мультимедийной системе Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/Monjaro%20Multimedia%20Manual.pdf', '3 МБ'),
-    ('Сервисная книжка Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/service-book.pdf', '1,3 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Geely Monjaro (RU)', 'https://tochka-geely.by/wp-content/uploads/2025/12/rukovodstvo-po-ekspluataczii-monjaro.pdf', '5 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Geely KX11 PHEV (Monjaro PHEV, RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_KX11_PHEV.pdf', '74 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ Ð¼ÑÐ»ÑÑÐ¸Ð¼ÐµÐ´Ð¸Ð¹Ð½Ð¾Ð¹ ÑÐ¸ÑÑÐµÐ¼Ðµ Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/Monjaro%20Multimedia%20Manual.pdf', '3 ÐÐ'),
+    ('Ð¡ÐµÑÐ²Ð¸ÑÐ½Ð°Ñ ÐºÐ½Ð¸Ð¶ÐºÐ° Monjaro (RU)', 'https://chats.chinamobil.ru/files/geely-monjaro-club/applicationpdf/service-book.pdf', '1,3 ÐÐ'),
   ],
   'haval-h6-phev': [
-    ('Руководство пользователя Haval H6 PHEV (RU, изд. 08.2025)', 'https://cis.haval-motor.kz/userdata/items/items_88/file_ru.pdf', '3,2 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Haval H6 PHEV (RU, Ð¸Ð·Ð´. 08.2025)', 'https://cis.haval-motor.kz/userdata/items/items_88/file_ru.pdf', '3,2 ÐÐ'),
   ],
 
   'hongqi-e-hs9': [
-    ('E-HS9 — руководство пользователя (RUS)', 'https://chats.chinamobil.ru/files/hongqi-club-chat/applicationpdf/E-HS9%20%E2%80%94%20User%20Manual%20(RUS).pdf', '81 МБ'),
+    ('E-HS9 â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RUS)', 'https://chats.chinamobil.ru/files/hongqi-club-chat/applicationpdf/E-HS9%20%E2%80%94%20User%20Manual%20(RUS).pdf', '81 ÐÐ'),
   ],
   'livan-x3-pro-s6-pro': [
-    ('Руководство по эксплуатации Livan X3 Pro (RU)', 'https://wiki.cars7.ru/images/f/fb/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_Livan_X3_PRO.pdf', '3,7 МБ'),
-    ('Руководство по эксплуатации Livan С6 Pro (RU, официальный)', 'https://livan-motors.ru/storage/model/manuals/sUUmTOe15K7LnEPRsxN5loebOAV5PGGAtfejFVkt.pdf', '62 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Livan X3 Pro (RU)', 'https://wiki.cars7.ru/images/f/fb/%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE_%D0%BF%D0%BE_%D1%8D%D0%BA%D1%81%D0%BF%D0%BB%D1%83%D0%B0%D1%82%D0%B0%D1%86%D0%B8%D0%B8_Livan_X3_PRO.pdf', '3,7 ÐÐ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Livan Ð¡6 Pro (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹)', 'https://livan-motors.ru/storage/model/manuals/sUUmTOe15K7LnEPRsxN5loebOAV5PGGAtfejFVkt.pdf', '62 ÐÐ'),
   ],
   'evolute-i-jet-i-pro-i-space-i-joy-i-joa': [
-    ('Руководство по эксплуатации Evolute i-Pro (RU, официальное)', 'https://www.evolute.ru/media-link/i-pro-manual', 'PDF'),
-    ('Руководство по эксплуатации Evolute i-Jet (RU, официальное)', 'https://www.evolute.ru/media-link/i-jet-manual', 'PDF'),
-    ('Руководство по эксплуатации Evolute i-Sky (RU, официальное)', 'https://www.evolute.ru/media-link/i-sky-manual', 'PDF'),
-    ('Руководство по эксплуатации Evolute i-Space (RU, официальное)', 'https://www.evolute.ru/media-link/i-space-manual', 'PDF'),
-    ('Руководство по эксплуатации Evolute i-Joy (RU, официальное)', 'https://www.evolute.ru/media-link/i-joy-manual', 'PDF'),
-    ('Руководство по эксплуатации Evolute i-Van (RU, официальное)', 'https://www.evolute.ru/media-link/i-van-manual', 'PDF'),
-    ('Evolute i-Space 2026 — руководство (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2026.pdf', '17,5 МБ'),
-    ('Evolute i-Space 2025 — руководство (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2025.pdf', '17,7 МБ'),
-    ('Evolute i-Space — сервисная книжка 2026 (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_service_book_2026.pdf', '0,3 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Pro (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-pro-manual', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Jet (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-jet-manual', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Sky (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-sky-manual', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Space (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-space-manual', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Joy (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-joy-manual', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Evolute i-Van (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://www.evolute.ru/media-link/i-van-manual', 'PDF'),
+    ('Evolute i-Space 2026 â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2026.pdf', '17,5 ÐÐ'),
+    ('Evolute i-Space 2025 â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_manual_2025.pdf', '17,7 ÐÐ'),
+    ('Evolute i-Space â ÑÐµÑÐ²Ð¸ÑÐ½Ð°Ñ ÐºÐ½Ð¸Ð¶ÐºÐ° 2026 (RU)', 'https://raw.githubusercontent.com/rin-nas/Evolute-I-Space/main/Evolute_I-Space_service_book_2026.pdf', '0,3 ÐÐ'),
   ],
   'moskvich-3e-6': [
-    ('Руководство по эксплуатации Москвич 3е (RU, официальное)', 'https://storage.yandexcloud.net/s3-moskvich-new/files/1f10/69/64202b5bbba76346f456cb2b49f230a55a1f26d4.pdf', 'PDF'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ ÐÐ¾ÑÐºÐ²Ð¸Ñ 3Ðµ (RU, Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ)', 'https://storage.yandexcloud.net/s3-moskvich-new/files/1f10/69/64202b5bbba76346f456cb2b49f230a55a1f26d4.pdf', 'PDF'),
   ],
   'exeed-exlantix-et-es-sterra': [
-    ('Руководство по эксплуатации Exlantix ET (RU)', 'https://disk.yandex.ru/i/V8VqTHVy1FkGCA', 'Яндекс.Диск'),
-    ('Сервисная книжка Exlantix ET (RU)', 'https://disk.yandex.ru/i/-Ek84tjM4FjU3w', 'Яндекс.Диск'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Exlantix ET (RU)', 'https://disk.yandex.ru/i/V8VqTHVy1FkGCA', 'Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ¸ÑÐº'),
+    ('Ð¡ÐµÑÐ²Ð¸ÑÐ½Ð°Ñ ÐºÐ½Ð¸Ð¶ÐºÐ° Exlantix ET (RU)', 'https://disk.yandex.ru/i/-Ek84tjM4FjU3w', 'Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ¸ÑÐº'),
   ],
   'jetour-t1-t2-phev': [
-    ('Руководство по эксплуатации Jetour T2 (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20User%20Manual%20Russian.pdf', '181 МБ'),
-    ('Jetour T2 — электрические схемы (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D1%81%D1%85%D0%B5%D0%BC%D1%8B%20(RU).pdf', '53 МБ'),
+    ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Jetour T2 (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20User%20Manual%20Russian.pdf', '181 ÐÐ'),
+    ('Jetour T2 â ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÐºÐ¸Ðµ ÑÑÐµÐ¼Ñ (RU)', 'https://chats.chinamobil.ru/files/jetour-t2-club/applicationpdf/T2%20%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D1%81%D1%85%D0%B5%D0%BC%D1%8B%20(RU).pdf', '53 ÐÐ'),
   ],
   'jaecoo-7-phev': [
-    ('Jaecoo 7 PHEV — Manual (EN, SHS)', 'https://jaecooforums.com/assets/docs/Jaecoo-J7-PHEV-User-Manual.pdf', '8,7 МБ'),
+    ('Jaecoo 7 PHEV â Manual (EN, SHS)', 'https://jaecooforums.com/assets/docs/Jaecoo-J7-PHEV-User-Manual.pdf', '8,7 ÐÐ'),
   ],
 
   'leapmotor-c10-c11-c01-b10-a05': [
-    ('Leapmotor C10 EV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10---documents/1782892031691c10_user_manual-(1).pdf?sfvrsn=b3fd07c1_53', '4,3 МБ'),
-    ('Leapmotor C10 REEV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10-hybrid-ev/1782892047939c10_hev_user_manual.pdf?sfvrsn=ed8d7ba3_50', '5,8 МБ'),
-    ('Leapmotor B10 EV — Manual (EN)', 'https://www.leapmotor.net/docs/default-source/b10---2024/1782892039310b10_user_manual-(1).pdf?sfvrsn=97798b08_49', '5,7 МБ'),
+    ('Leapmotor C10 EV â Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10---documents/1782892031691c10_user_manual-(1).pdf?sfvrsn=b3fd07c1_53', '4,3 ÐÐ'),
+    ('Leapmotor C10 REEV â Manual (EN)', 'https://www.leapmotor.net/docs/default-source/c10-hybrid-ev/1782892047939c10_hev_user_manual.pdf?sfvrsn=ed8d7ba3_50', '5,8 ÐÐ'),
+    ('Leapmotor B10 EV â Manual (EN)', 'https://www.leapmotor.net/docs/default-source/b10---2024/1782892039310b10_user_manual-(1).pdf?sfvrsn=97798b08_49', '5,7 ÐÐ'),
   ],
 
   'leapmotor-t03': [
-    ('Leapmotor T03 — Manual (EN, изд. 11.2025)', 'https://www.leapmotor.net/docs/default-source/t03-library/t03usermanual2025-11-2025_present_compressed.pdf?sfvrsn=ce743b1_56', '4,2 МБ'),
+    ('Leapmotor T03 â Manual (EN, Ð¸Ð·Ð´. 11.2025)', 'https://www.leapmotor.net/docs/default-source/t03-library/t03usermanual2025-11-2025_present_compressed.pdf?sfvrsn=ce743b1_56', '4,2 ÐÐ'),
   ],
 
   'skywell-et5-el5': [
-    ('Мультимедийная система Skywell ET-5/HT-i (RU)', 'https://expocar.ru/wp-content/themes/expocar/img/skywell/RUKOVODSTVO_multimedia.pdf', '3,1 МБ'),
+    ('ÐÑÐ»ÑÑÐ¸Ð¼ÐµÐ´Ð¸Ð¹Ð½Ð°Ñ ÑÐ¸ÑÑÐµÐ¼Ð° Skywell ET-5/HT-i (RU)', 'https://expocar.ru/wp-content/themes/expocar/img/skywell/RUKOVODSTVO_multimedia.pdf', '3,1 ÐÐ'),
   ],
 
   'kia-ev6-kr': [
-    ('Kia EV6 (2025) — руководство пользователя (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV6_25MY_RUS.pdf', '11 МБ'),
+    ('Kia EV6 (2025) â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV6_25MY_RUS.pdf', '11 ÐÐ'),
   ],
   'kia-ev9-kr': [
-    ('Kia EV9 (2025) — руководство пользователя (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV9_25MY_RUS.pdf', '13 МБ'),
+    ('Kia EV9 (2025) â ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ (RUS)', 'https://cdn.modera.org/original/i/kia-baltic/Manuals/RUS/EV9_25MY_RUS.pdf', '13 ÐÐ'),
   ],
 }
 
@@ -1547,20 +1549,20 @@ BRAND_SITES = {
 
 
 def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
-    """Интерактивный калькулятор зарядки: пользователь подставляет ёмкость батареи и тариф."""
+    """ÐÐ½ÑÐµÑÐ°ÐºÑÐ¸Ð²Ð½ÑÐ¹ ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸: Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ Ð¿Ð¾Ð´ÑÑÐ°Ð²Ð»ÑÐµÑ ÑÐ¼ÐºÐ¾ÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ ÑÐ°ÑÐ¸Ñ."""
     cap_def = 25 if str(m.get('type')) == 'PHEV' else 60
-    has_min = bool(obc_n) and bool(dcp_n) and ('мин' in (dcp_s or ''))
+    has_min = bool(obc_n) and bool(dcp_n) and ('Ð¼Ð¸Ð½' in (dcp_s or ''))
     dc_kw = (dcp_n if (dcp_n and dcp_n >= 40 and not has_min) else 0)
-    html_out = ('<h2 class="text-lg text-gray-900 mt-8">Калькулятор зарядки для вашей машины</h2>'
-      '<p class="note">Подставьте ёмкость батареи и тариф — расчёт обновляется на ходу. Мощности — пределы именно этой модели.</p>'
+    html_out = ('<h2 class="text-lg text-gray-900 mt-8">ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð´Ð»Ñ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ</h2>'
+      '<p class="note">ÐÐ¾Ð´ÑÑÐ°Ð²ÑÑÐµ ÑÐ¼ÐºÐ¾ÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ ÑÐ°ÑÐ¸Ñ â ÑÐ°ÑÑÑÑ Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÐµÑÑÑ Ð½Ð° ÑÐ¾Ð´Ñ. ÐÐ¾ÑÐ½Ð¾ÑÑÐ¸ â Ð¿ÑÐµÐ´ÐµÐ»Ñ Ð¸Ð¼ÐµÐ½Ð½Ð¾ ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸.</p>'
       '<div class="calc-grid" id="chg-calc" data-obc="' + str(obc_n or 0) + '" data-dcp-kw="' + str(dc_kw or 0) + '" data-dcp-min="' + html.escape(dcp_s or '') + '">'
       '<div class="cin">'
-      '<label for="cc-cap">Батарея, кВт·ч</label><input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1">'
-      '<label for="cc-tarif" style="margin-top:12px">Тариф, ₽/кВт·ч</label><input id="cc-tarif" type="number" value="5.50" step="0.1" min="0.5" max="40">'
-      '<label for="cc-cons" style="margin-top:12px">Расход, кВт·ч/100 км</label><input id="cc-cons" type="number" value="18" min="5" max="50" step="1">'
-      '<p class="note" style="margin:12px 0 0">Ночной тариф дома обычно 3–4 ₽, станции в городе 15–25 ₽ — подставьте свой.</p>'
+      '<label for="cc-cap">ÐÐ°ÑÐ°ÑÐµÑ, ÐºÐÑÂ·Ñ</label><input id="cc-cap" type="number" value="' + str(cap_def) + '" min="4" max="250" step="1">'
+      '<label for="cc-tarif" style="margin-top:12px">Ð¢Ð°ÑÐ¸Ñ, â½/ÐºÐÑÂ·Ñ</label><input id="cc-tarif" type="number" value="5.50" step="0.1" min="0.5" max="40">'
+      '<label for="cc-cons" style="margin-top:12px">Ð Ð°ÑÑÐ¾Ð´, ÐºÐÑÂ·Ñ/100 ÐºÐ¼</label><input id="cc-cons" type="number" value="18" min="5" max="50" step="1">'
+      '<p class="note" style="margin:12px 0 0">ÐÐ¾ÑÐ½Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ Ð´Ð¾Ð¼Ð° Ð¾Ð±ÑÑÐ½Ð¾ 3â4 â½, ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð³Ð¾ÑÐ¾Ð´Ðµ 15â25 â½ â Ð¿Ð¾Ð´ÑÑÐ°Ð²ÑÑÐµ ÑÐ²Ð¾Ð¹.</p>'
       '</div><div class="cout" id="cc-out"></div></div>'
-      '<p class="note">Расчёт базовый: фактическая стоимость сессии на публичных быстрых ЭЗС может включать поминутные тарифы операторов за удержание коннектора — полный разбор в гайде <a href="/pain/plata-za-prostoy.html">«Плата за простой»</a>.</p>')
+      '<p class="note">Ð Ð°ÑÑÑÑ Ð±Ð°Ð·Ð¾Ð²ÑÐ¹: ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ°Ñ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ ÑÐµÑÑÐ¸Ð¸ Ð½Ð° Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ Ð±ÑÑÑÑÑÑ Ð­ÐÐ¡ Ð¼Ð¾Ð¶ÐµÑ Ð²ÐºÐ»ÑÑÐ°ÑÑ Ð¿Ð¾Ð¼Ð¸Ð½ÑÑÐ½ÑÐµ ÑÐ°ÑÐ¸ÑÑ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ¾Ð² Ð·Ð° ÑÐ´ÐµÑÐ¶Ð°Ð½Ð¸Ðµ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ° â Ð¿Ð¾Ð»Ð½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/plata-za-prostoy.html">Â«ÐÐ»Ð°ÑÐ° Ð·Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹Â»</a>.</p>')
     js = (
       '<script>(function(){var box=document.getElementById("chg-calc");if(!box)return;'
       'var obc=parseFloat(box.getAttribute("data-obc")||"0")||0;'
@@ -1568,7 +1570,7 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
       'var dmin=box.getAttribute("data-dcp-min")||"";'
       'function f1(x){return (Math.round(x*10)/10).toString().replace(".",",")}'
       'function f0(x){return Math.round(x)}'
-      'function fmt(n){return n.toLocaleString("ru-RU")+" ₽"}'
+      'function fmt(n){return n.toLocaleString("ru-RU")+" â½"}'
       'function recalc(){'
       'var cap=parseFloat(document.getElementById("cc-cap").value)||60;'
       'var tarif=parseFloat(document.getElementById("cc-tarif").value)||0;'
@@ -1576,76 +1578,62 @@ def calc_block(m, obc_n, dcp_n, obc_s, dcp_s):
       'var rows="";'
       'if(obc>0){var s1=Math.min(obc,3.3),t1=cap/s1;var s2=Math.min(obc,7),t2=cap/s2;'
       'var s3=(obc<=7.5)?Math.min(obc,7):obc,t3=cap/s3;'
-      'rows+="<tr><td>Розетка 220 В</td><td>"+f1(s1)+" кВт</td><td>"+f1(t1)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";'
-      'rows+="<tr><td>Станция 7 кВт (AC)</td><td>"+f1(s2)+" кВт</td><td>"+f1(t2)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";'
-      'rows+="<tr><td>Станция 11–22 кВт (AC, 3ф)</td><td>"+f1(s3)+" кВт</td><td>"+f1(t3)+" ч</td><td>"+fmt(cap*tarif)+"</td></tr>";}'
-      'if(dcw>0){rows+="<tr><td>Быстрая станция (DC)</td><td>"+f1(dcw)+" кВт</td><td>0→80% ≈ "+f0(48/dcw*60)+" мин</td><td>—</td></tr>";}'
-      'else if(dmin){rows+="<tr><td>Быстрая станция (DC)</td><td colspan=\\"3\\">по данным модели: "+dmin+"</td></tr>";}'
-      'rows+="<tr><td>100 км поездки (дома)</td><td>"+f1(cons)+" кВт·ч</td><td>—</td><td>"+fmt(cons*tarif)+"</td></tr>";'
-      'document.getElementById("cc-out").innerHTML="<div style=\\"display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px\\">"\n       + "<div class=\\"f\\"><div class=\\"k\\">100 км дома</div><div class=\\"v\\">"+fmt(cons*tarif)+"</div></div>"\n       + (dcw>0?"<div class=\\"f\\"><div class=\\"k\\">0→80% на DC</div><div class=\\"v\\">≈"+f0(48/dcw*60)+" мин</div></div>":"")\n       + (obc>0?"<div class=\\"f\\"><div class=\\"k\\">Полная зарядка дома</div><div class=\\"v\\">"+fmt(cap*tarif)+"</div></div>":"")\n       + "</div><table><tr><th>Вариант</th><th>Мощность</th><th>Время</th><th>Стоимость</th></tr>"+rows+"</table><p class=\\"note\\">Тариф "+tarif+" ₽/кВт·ч — подставьте свой; реальное время зависит от температуры батареи и загрузки станции.</p>";}'
+      'rows+="<tr><td>Ð Ð¾Ð·ÐµÑÐºÐ° 220 Ð</td><td>"+f1(s1)+" ÐºÐÑ</td><td>"+f1(t1)+" Ñ</td><td>"+fmt(cap*tarif)+"</td></tr>";'
+      'rows+="<tr><td>Ð¡ÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ (AC)</td><td>"+f1(s2)+" ÐºÐÑ</td><td>"+f1(t2)+" Ñ</td><td>"+fmt(cap*tarif)+"</td></tr>";'
+      'rows+="<tr><td>Ð¡ÑÐ°Ð½ÑÐ¸Ñ 11â22 ÐºÐÑ (AC, 3Ñ)</td><td>"+f1(s3)+" ÐºÐÑ</td><td>"+f1(t3)+" Ñ</td><td>"+fmt(cap*tarif)+"</td></tr>";}'
+      'if(dcw>0){rows+="<tr><td>ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ (DC)</td><td>"+f1(dcw)+" ÐºÐÑ</td><td>0â80% â "+f0(48/dcw*60)+" Ð¼Ð¸Ð½</td><td>â</td></tr>";}'
+      'else if(dmin){rows+="<tr><td>ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ (DC)</td><td colspan=\\"3\\">Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¼Ð¾Ð´ÐµÐ»Ð¸: "+dmin+"</td></tr>";}'
+      'rows+="<tr><td>100 ÐºÐ¼ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸ (Ð´Ð¾Ð¼Ð°)</td><td>"+f1(cons)+" ÐºÐÑÂ·Ñ</td><td>â</td><td>"+fmt(cons*tarif)+"</td></tr>";'
+      'document.getElementById("cc-out").innerHTML="<div style=\\"display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px\\">"\n       + "<div class=\\"f\\"><div class=\\"k\\">100 ÐºÐ¼ Ð´Ð¾Ð¼Ð°</div><div class=\\"v\\">"+fmt(cons*tarif)+"</div></div>"\n       + (dcw>0?"<div class=\\"f\\"><div class=\\"k\\">0â80% Ð½Ð° DC</div><div class=\\"v\\">â"+f0(48/dcw*60)+" Ð¼Ð¸Ð½</div></div>":"")\n       + (obc>0?"<div class=\\"f\\"><div class=\\"k\\">ÐÐ¾Ð»Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð¾Ð¼Ð°</div><div class=\\"v\\">"+fmt(cap*tarif)+"</div></div>":"")\n       + "</div><table><tr><th>ÐÐ°ÑÐ¸Ð°Ð½Ñ</th><th>ÐÐ¾ÑÐ½Ð¾ÑÑÑ</th><th>ÐÑÐµÐ¼Ñ</th><th>Ð¡ÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ</th></tr>"+rows+"</table><p class=\\"note\\">Ð¢Ð°ÑÐ¸Ñ "+tarif+" â½/ÐºÐÑÂ·Ñ â Ð¿Ð¾Ð´ÑÑÐ°Ð²ÑÑÐµ ÑÐ²Ð¾Ð¹; ÑÐµÐ°Ð»ÑÐ½Ð¾Ðµ Ð²ÑÐµÐ¼Ñ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸.</p>";}'
       '["cc-cap","cc-tarif","cc-cons"].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener("input",recalc)});recalc();})();</script>')
     return html_out + js
 
 
-# --- Уникальные секции топ-моделей: «зарядка в России» с фактами из базы (волна 3, 01.11) ---
+# --- Ð£Ð½Ð¸ÐºÐ°Ð»ÑÐ½ÑÐµ ÑÐµÐºÑÐ¸Ð¸ ÑÐ¾Ð¿-Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹: Â«Ð·Ð°ÑÑÐ´ÐºÐ° Ð² Ð Ð¾ÑÑÐ¸Ð¸Â» Ñ ÑÐ°ÐºÑÐ°Ð¼Ð¸ Ð¸Ð· Ð±Ð°Ð·Ñ (Ð²Ð¾Ð»Ð½Ð° 3, 01.11) ---
 MODEL_EXTRA = {
- 'zeekr-001-001-fr': ('<h2>Зарядка Zeekr 001 в России: что важно знать</h2>'
-  '<p>Под запросы «zeekr 001 какой разъём» и «zeekr 001 зарядка в России»: разъёмы GB/T AC и GB/T DC, быстрая зарядка 10–80% за 15–30 минут на мощных станциях. Главная ловушка моделей 001 — <b>бортовое зарядное</b>: до февраля 2023 года — 11 кВт (3 фазы), после — только 7 кВт (одна фаза). Если у вас поздняя машина, трёхфазная станция 22 кВт ей ничего не даст — платите за 7 кВт. Медленная зарядка городских станций Type 2 — только через адаптер (<a href="/catalog/adapter-type2-gbt-premium.html">вариант премиум</a>, <a href="/catalog/adapter-type2-gbt-base.html">базовый</a>).</p>'
-  '<p>Дополнительно: официальный мануал — в <a href="/blog/rukovodstva-na-russkom.html">базе руководств на русском</a>; аккаунты и обновления Zeekr завязаны на китайские сети — синхронизация времени и расписаний обсуждается в <a href="/pain/domashnie-stancii.html">гайде по домашним станциям</a>. Проверено на данных базы: {BD}.</p>'),
- 'zeekr-007-007gt': ('<h2>Zeekr 007: быстрая зарядка до 500 кВт — что это значит на практике</h2>'
-  '<p>007/007GT — 800-вольтовая платформа: паспортный максимум приёма до 500 кВт (кривая 4,5C) — один из лучших показателей в базе. В реальности российские станции редко выдают больше 150–240 кВт на порт, поэтому ожидайте «максимум площадки», а не паспортную цифру. Разъёмы GB/T AC (1 фаза) и GB/T DC; OBC 7 кВт — трёхфазная домашняя станция не даст прироста. Для городских Type 2 станций нужен адаптер (<a href="/catalog/adapter-type2-gbt-premium.html">каталог</a>). Проверено на данных базы: {BD}.</p>'),
- 'zeekr-009-009-grand': ('<h2>Zeekr 009: зарядка большого вэна</h2>'
-  '<p>Модель для семей и трансферов: GB/T AC/DC, быстрая зарядка порядка 200 кВт по паспорту. Особенность 009 — большая батарея: на слабой AC-сети полная зарядка занимает ночь и больше; для быстрых сессий выбирайте станции 150+ кВт. OBC в разных партиях различается — уточняйте по VIN в <a href="/vin/">VIN-справочнике</a>. Адаптер Type 2 → GB/T для городских станций — <a href="/catalog/adapter-type2-gbt-premium.html">в каталоге</a>. Проверено на данных базы: {BD}.</p>'),
- 'li-auto-l6-l7-l8-l9-2022-2025': ('<h2>Li Auto L6–L9: правда о скорости зарядки</h2>'
-  '<p>Под запросы «li auto l7 зарядка» и «li auto l9 адаптер»: разъёмы GB/T AC и GB/T DC. Важно: бортовое зарядное — только 7 кВт (одна фаза), а по DC-порту модель принимает до ~90 кВт — заметно ниже, чем у чистых EV на 800-вольтовых платформах. Стратегия для Li: ночная домашняя/парковочная зарядка на 7 кВт (за ночь батарея восстанавливается полностью) + быстрые дозарядки без ожидания «суперскорости». Для городских Type 2 станций — адаптер (<a href="/catalog/adapter-type2-gbt-base.html">базовый</a>). Налоговый нюанс: как гибриды с ДВС, L-серия не подпадает под региональные льготы для электромобилей (<a href="/blog/transportnyi-nalog-elektromobilya.html">таблица регионов</a>). Проверено на данных базы: {BD}.</p>'),
- 'li-auto-i6-i8': ('<h2>Li Auto i6/i8: первая настоящая EV-платформа Li</h2>'
-  '<p>В отличие от L-серии с ДВС-генератором, i6/i8 — 800-вольтовые электромобили: GB/T AC/DC, быстрая зарядка на соответствующих станциях. OBC в разных версиях различается — уточняйте по документам; стандартный сценарий для GB/T-машин — адаптер Type 2 → GB/T для городских станций (<a href="/catalog/">каталог</a>). Как BEV, i6/i8 подпадают под региональные налоговые льготы, L-серия — нет (<a href="/blog/transportnyi-nalog-elektromobilya.html">гайд</a>). Проверено на данных базы: {BD}.</p>'),
- 'voyah-free-evr-gibrid': ('<h2>Voyah Free EVR: зарядка последовательного гибрида</h2>'
-  '<p>Free EVR (гибрид с ДВС-генератором): GB/T AC/DC, OBC 6,6–7 кВт в партиях 2024–25, 11 кВт — опция; по DC — до 80 кВт. Это машина, где ДВС снимает страх «встать»: дальние перегоны — на топливе, город — на электричестве. Для городской AC-зарядки нужен адаптер Type 2 → GB/T (<a href="/catalog/adapter-type2-gbt-premium.html">каталог</a>). Бонус: Voyah — в перечне субсидируемых моделей российской сборки (<a href="/blog/subsidii-na-elektromobil-2026.html">условия субсидии 35%</a>). Проверено на данных базы: {BD}.</p>'),
- 'voyah-free-ev-rannie-ofitsialnye-ru': ('<h2>Voyah Free EV (официальные RU): европейские разъёмы</h2>'
-  '<p>Важное отличие от «китайских» партий: официально поставляемые в РФ Free EV — с Type 2/CCS2 и OBC 11 кВт (3 фазы): российская инфраструктура Type 2 работает напрямую, адаптеры не нужны, а трёхфазная домашняя станция даёт полный прирост скорости. Редкий случай «европейской» комплектации среди китайских брендов — проверяйте по документам, не по внешнему виду. Детали зарядки — в <a href="/pain/domashnie-stancii.html">гайде по домашним станциям</a>. Проверено на данных базы: {BD}.</p>'),
- 'byd-song-plus-ev': ('<h2>BYD Song Plus EV: зарядка и кейс из практики</h2>'
-  '<p>Разъёмы GB/T AC и GB/T DC. Из практики владельцев: BYD корректно работает на большинстве GB/T-станций, а вот связка «CCS2-адаптер + станция» требует проверки — разбор сбоев согласования в <a href="/blog/handshake-oshibka-dc-zaryadki.html">статье о handshake</a>. Медленная городская зарядка — через адаптер Type 2 → GB/T (<a href="/catalog/adapter-type2-gbt-base.html">базовый</a>). Проверено на данных базы: {BD}.</p>'),
- 'byd-song-plus-dm-i-sealion-05': ('<h2>BYD Song Plus DM-i / Sealion 05: гибридная зарядка</h2>'
-  '<p>Как PHEV, Song Plus DM-i заряжается медленнее чистых EV: OBC обычно 3,3–7 кВт, DC-порта в базовых версиях может не быть — уточняйте комплектацию. Ночная зарядка от станции 7 кВт покрывает городской пробег дня; на трассе машина живёт как обычная гибридная. Зарядное оборудование — <a href="/catalog/">в каталоге</a>. Проверено на данных базы: {BD}.</p>'),
- 'changan-qiyuan-q05-q06-q07': ('<h2>Changan Qiyuan Q05/Q06/Q07: зарядка из Китая</h2>'
-  '<p>Разъёмы GB/T AC/DC; по данным обсуждений владельцев на 4PDA, быстрая зарядка 30–80% занимает около 15 минут на станциях соответствующей мощности, DC-лимит базовых версий уточняется. Хозяйственные нюансы: русский язык зашит в комплектациях Max и ниже, Ultra+ требует русификации; расписание зарядки может жить по «китайскому времени» — подробности в <a href="/pain/domashnie-stancii.html">гайде по домашним станциям</a>. Экономику посчитайте в <a href="/calculator/">калькуляторе</a>. Проверено на данных базы: {BD}.</p>'),
- 'avatr-11-12-ofitsialno-ru': ('<h2>Avatr 11/12: официальный импорт — свои правила</h2>'
-  '<p>Редкий случай «китайца» с европейскими разъёмами: Type 2/CCS2, OBC 11 кВт (3 фазы), быстрая зарядка до 240 кВт. Российская инфраструктура Type 2/CCS2 работает напрямую — адаптеры не нужны, а трёхфазная домашняя станция раскрывает OBC полностью. Это делает Avatr одним из самых «бесшовных» китайских EV для России. Домашняя станция — <a href="/pain/domashnie-stancii.html">гайд</a>, быстрые станции — <a href="/pain/zaryadka-na-trasse.html">карта и планирование</a>. Проверено на данных базы: {BD}.</p>'),
+ 'zeekr-001-001-fr': ('<h2>ÐÐ°ÑÑÐ´ÐºÐ° Zeekr 001 Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÑÐ¾ Ð²Ð°Ð¶Ð½Ð¾ Ð·Ð½Ð°ÑÑ</h2>'
+  '<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«zeekr 001 ÐºÐ°ÐºÐ¾Ð¹ ÑÐ°Ð·ÑÑÐ¼Â» Ð¸ Â«zeekr 001 Ð·Ð°ÑÑÐ´ÐºÐ° Ð² Ð Ð¾ÑÑÐ¸Ð¸Â»: ÑÐ°Ð·ÑÑÐ¼Ñ GB/T AC Ð¸ GB/T DC, Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° 10â80% Ð·Ð° 15â30 Ð¼Ð¸Ð½ÑÑ Ð½Ð° Ð¼Ð¾ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ. ÐÐ»Ð°Ð²Ð½Ð°Ñ Ð»Ð¾Ð²ÑÑÐºÐ° Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ 001 â <b>Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ</b>: Ð´Ð¾ ÑÐµÐ²ÑÐ°Ð»Ñ 2023 Ð³Ð¾Ð´Ð° â 11 ÐºÐÑ (3 ÑÐ°Ð·Ñ), Ð¿Ð¾ÑÐ»Ðµ â ÑÐ¾Ð»ÑÐºÐ¾ 7 ÐºÐÑ (Ð¾Ð´Ð½Ð° ÑÐ°Ð·Ð°). ÐÑÐ»Ð¸ Ñ Ð²Ð°Ñ Ð¿Ð¾Ð·Ð´Ð½ÑÑ Ð¼Ð°ÑÐ¸Ð½Ð°, ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ 22 ÐºÐÑ ÐµÐ¹ Ð½Ð¸ÑÐµÐ³Ð¾ Ð½Ðµ Ð´Ð°ÑÑ â Ð¿Ð»Ð°ÑÐ¸ÑÐµ Ð·Ð° 7 ÐºÐÑ. ÐÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ Type 2 â ÑÐ¾Ð»ÑÐºÐ¾ ÑÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ (<a href="/catalog/adapter-type2-gbt-premium.html">Ð²Ð°ÑÐ¸Ð°Ð½Ñ Ð¿ÑÐµÐ¼Ð¸ÑÐ¼</a>, <a href="/catalog/adapter-type2-gbt-base.html">Ð±Ð°Ð·Ð¾Ð²ÑÐ¹</a>).</p>'
+  '<p>ÐÐ¾Ð¿Ð¾Ð»Ð½Ð¸ÑÐµÐ»ÑÐ½Ð¾: Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹ Ð¼Ð°Ð½ÑÐ°Ð» â Ð² <a href="/blog/rukovodstva-na-russkom.html">Ð±Ð°Ð·Ðµ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ² Ð½Ð° ÑÑÑÑÐºÐ¾Ð¼</a>; Ð°ÐºÐºÐ°ÑÐ½ÑÑ Ð¸ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ñ Zeekr Ð·Ð°Ð²ÑÐ·Ð°Ð½Ñ Ð½Ð° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ðµ ÑÐµÑÐ¸ â ÑÐ¸Ð½ÑÑÐ¾Ð½Ð¸Ð·Ð°ÑÐ¸Ñ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð¸ ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ð¹ Ð¾Ð±ÑÑÐ¶Ð´Ð°ÐµÑÑÑ Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'zeekr-007-007gt': ('<h2>Zeekr 007: Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð¾ 500 ÐºÐÑ â ÑÑÐ¾ ÑÑÐ¾ Ð·Ð½Ð°ÑÐ¸Ñ Ð½Ð° Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ</h2>'
+  '<p>007/007GT â 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð°Ñ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ð°: Ð¿Ð°ÑÐ¿Ð¾ÑÑÐ½ÑÐ¹ Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ Ð¿ÑÐ¸ÑÐ¼Ð° Ð´Ð¾ 500 ÐºÐÑ (ÐºÑÐ¸Ð²Ð°Ñ 4,5C) â Ð¾Ð´Ð¸Ð½ Ð¸Ð· Ð»ÑÑÑÐ¸Ñ Ð¿Ð¾ÐºÐ°Ð·Ð°ÑÐµÐ»ÐµÐ¹ Ð² Ð±Ð°Ð·Ðµ. Ð ÑÐµÐ°Ð»ÑÐ½Ð¾ÑÑÐ¸ ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ ÑÐµÐ´ÐºÐ¾ Ð²ÑÐ´Ð°ÑÑ Ð±Ð¾Ð»ÑÑÐµ 150â240 ÐºÐÑ Ð½Ð° Ð¿Ð¾ÑÑ, Ð¿Ð¾ÑÑÐ¾Ð¼Ñ Ð¾Ð¶Ð¸Ð´Ð°Ð¹ÑÐµ Â«Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ Ð¿Ð»Ð¾ÑÐ°Ð´ÐºÐ¸Â», Ð° Ð½Ðµ Ð¿Ð°ÑÐ¿Ð¾ÑÑÐ½ÑÑ ÑÐ¸ÑÑÑ. Ð Ð°Ð·ÑÑÐ¼Ñ GB/T AC (1 ÑÐ°Ð·Ð°) Ð¸ GB/T DC; OBC 7 ÐºÐÑ â ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ Ð´Ð°ÑÑ Ð¿ÑÐ¸ÑÐ¾ÑÑÐ°. ÐÐ»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ Type 2 ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½ÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ (<a href="/catalog/adapter-type2-gbt-premium.html">ÐºÐ°ÑÐ°Ð»Ð¾Ð³</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'zeekr-009-009-grand': ('<h2>Zeekr 009: Ð·Ð°ÑÑÐ´ÐºÐ° Ð±Ð¾Ð»ÑÑÐ¾Ð³Ð¾ Ð²ÑÐ½Ð°</h2>'
+  '<p>ÐÐ¾Ð´ÐµÐ»Ñ Ð´Ð»Ñ ÑÐµÐ¼ÐµÐ¹ Ð¸ ÑÑÐ°Ð½ÑÑÐµÑÐ¾Ð²: GB/T AC/DC, Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾ÑÑÐ´ÐºÐ° 200 ÐºÐÑ Ð¿Ð¾ Ð¿Ð°ÑÐ¿Ð¾ÑÑÑ. ÐÑÐ¾Ð±ÐµÐ½Ð½Ð¾ÑÑÑ 009 â Ð±Ð¾Ð»ÑÑÐ°Ñ Ð±Ð°ÑÐ°ÑÐµÑ: Ð½Ð° ÑÐ»Ð°Ð±Ð¾Ð¹ AC-ÑÐµÑÐ¸ Ð¿Ð¾Ð»Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð½Ð¾ÑÑ Ð¸ Ð±Ð¾Ð»ÑÑÐµ; Ð´Ð»Ñ Ð±ÑÑÑÑÑÑ ÑÐµÑÑÐ¸Ð¹ Ð²ÑÐ±Ð¸ÑÐ°Ð¹ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ 150+ ÐºÐÑ. OBC Ð² ÑÐ°Ð·Ð½ÑÑ Ð¿Ð°ÑÑÐ¸ÑÑ ÑÐ°Ð·Ð»Ð¸ÑÐ°ÐµÑÑÑ â ÑÑÐ¾ÑÐ½ÑÐ¹ÑÐµ Ð¿Ð¾ VIN Ð² <a href="/vin/">VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐµ</a>. ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 â GB/T Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ â <a href="/catalog/adapter-type2-gbt-premium.html">Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'li-auto-l6-l7-l8-l9-2022-2025': ('<h2>Li Auto L6âL9: Ð¿ÑÐ°Ð²Ð´Ð° Ð¾ ÑÐºÐ¾ÑÐ¾ÑÑÐ¸ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2>'
+  '<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«li auto l7 Ð·Ð°ÑÑÐ´ÐºÐ°Â» Ð¸ Â«li auto l9 Ð°Ð´Ð°Ð¿ÑÐµÑÂ»: ÑÐ°Ð·ÑÑÐ¼Ñ GB/T AC Ð¸ GB/T DC. ÐÐ°Ð¶Ð½Ð¾: Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ â ÑÐ¾Ð»ÑÐºÐ¾ 7 ÐºÐÑ (Ð¾Ð´Ð½Ð° ÑÐ°Ð·Ð°), Ð° Ð¿Ð¾ DC-Ð¿Ð¾ÑÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð´Ð¾ ~90 ÐºÐÑ â Ð·Ð°Ð¼ÐµÑÐ½Ð¾ Ð½Ð¸Ð¶Ðµ, ÑÐµÐ¼ Ñ ÑÐ¸ÑÑÑÑ EV Ð½Ð° 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÑ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ð°Ñ. Ð¡ÑÑÐ°ÑÐµÐ³Ð¸Ñ Ð´Ð»Ñ Li: Ð½Ð¾ÑÐ½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ/Ð¿Ð°ÑÐºÐ¾Ð²Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° 7 ÐºÐÑ (Ð·Ð° Ð½Ð¾ÑÑ Ð±Ð°ÑÐ°ÑÐµÑ Ð²Ð¾ÑÑÑÐ°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑÑÑ Ð¿Ð¾Ð»Ð½Ð¾ÑÑÑÑ) + Ð±ÑÑÑÑÑÐµ Ð´Ð¾Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð±ÐµÐ· Ð¾Ð¶Ð¸Ð´Ð°Ð½Ð¸Ñ Â«ÑÑÐ¿ÐµÑÑÐºÐ¾ÑÐ¾ÑÑÐ¸Â». ÐÐ»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ Type 2 ÑÑÐ°Ð½ÑÐ¸Ð¹ â Ð°Ð´Ð°Ð¿ÑÐµÑ (<a href="/catalog/adapter-type2-gbt-base.html">Ð±Ð°Ð·Ð¾Ð²ÑÐ¹</a>). ÐÐ°Ð»Ð¾Ð³Ð¾Ð²ÑÐ¹ Ð½ÑÐ°Ð½Ñ: ÐºÐ°Ðº Ð³Ð¸Ð±ÑÐ¸Ð´Ñ Ñ ÐÐÐ¡, L-ÑÐµÑÐ¸Ñ Ð½Ðµ Ð¿Ð¾Ð´Ð¿Ð°Ð´Ð°ÐµÑ Ð¿Ð¾Ð´ ÑÐµÐ³Ð¸Ð¾Ð½Ð°Ð»ÑÐ½ÑÐµ Ð»ÑÐ³Ð¾ÑÑ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ (<a href="/blog/transportnyi-nalog-elektromobilya.html">ÑÐ°Ð±Ð»Ð¸ÑÐ° ÑÐµÐ³Ð¸Ð¾Ð½Ð¾Ð²</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'li-auto-i6-i8': ('<h2>Li Auto i6/i8: Ð¿ÐµÑÐ²Ð°Ñ Ð½Ð°ÑÑÐ¾ÑÑÐ°Ñ EV-Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ð° Li</h2>'
+  '<p>Ð Ð¾ÑÐ»Ð¸ÑÐ¸Ðµ Ð¾Ñ L-ÑÐµÑÐ¸Ð¸ Ñ ÐÐÐ¡-Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼, i6/i8 â 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐµ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ð¸: GB/T AC/DC, Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²ÑÑÑÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸ÑÑ. OBC Ð² ÑÐ°Ð·Ð½ÑÑ Ð²ÐµÑÑÐ¸ÑÑ ÑÐ°Ð·Ð»Ð¸ÑÐ°ÐµÑÑÑ â ÑÑÐ¾ÑÐ½ÑÐ¹ÑÐµ Ð¿Ð¾ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ð¼; ÑÑÐ°Ð½Ð´Ð°ÑÑÐ½ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð´Ð»Ñ GB/T-Ð¼Ð°ÑÐ¸Ð½ â Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 â GB/T Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ (<a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³</a>). ÐÐ°Ðº BEV, i6/i8 Ð¿Ð¾Ð´Ð¿Ð°Ð´Ð°ÑÑ Ð¿Ð¾Ð´ ÑÐµÐ³Ð¸Ð¾Ð½Ð°Ð»ÑÐ½ÑÐµ Ð½Ð°Ð»Ð¾Ð³Ð¾Ð²ÑÐµ Ð»ÑÐ³Ð¾ÑÑ, L-ÑÐµÑÐ¸Ñ â Ð½ÐµÑ (<a href="/blog/transportnyi-nalog-elektromobilya.html">Ð³Ð°Ð¹Ð´</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'voyah-free-evr-gibrid': ('<h2>Voyah Free EVR: Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¸Ð±ÑÐ¸Ð´Ð°</h2>'
+  '<p>Free EVR (Ð³Ð¸Ð±ÑÐ¸Ð´ Ñ ÐÐÐ¡-Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼): GB/T AC/DC, OBC 6,6â7 ÐºÐÑ Ð² Ð¿Ð°ÑÑÐ¸ÑÑ 2024â25, 11 ÐºÐÑ â Ð¾Ð¿ÑÐ¸Ñ; Ð¿Ð¾ DC â Ð´Ð¾ 80 ÐºÐÑ. Ð­ÑÐ¾ Ð¼Ð°ÑÐ¸Ð½Ð°, Ð³Ð´Ðµ ÐÐÐ¡ ÑÐ½Ð¸Ð¼Ð°ÐµÑ ÑÑÑÐ°Ñ Â«Ð²ÑÑÐ°ÑÑÂ»: Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¿ÐµÑÐµÐ³Ð¾Ð½Ñ â Ð½Ð° ÑÐ¾Ð¿Ð»Ð¸Ð²Ðµ, Ð³Ð¾ÑÐ¾Ð´ â Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ðµ. ÐÐ»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ AC-Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½ÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 â GB/T (<a href="/catalog/adapter-type2-gbt-premium.html">ÐºÐ°ÑÐ°Ð»Ð¾Ð³</a>). ÐÐ¾Ð½ÑÑ: Voyah â Ð² Ð¿ÐµÑÐµÑÐ½Ðµ ÑÑÐ±ÑÐ¸Ð´Ð¸ÑÑÐµÐ¼ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¾Ð¹ ÑÐ±Ð¾ÑÐºÐ¸ (<a href="/blog/subsidii-na-elektromobil-2026.html">ÑÑÐ»Ð¾Ð²Ð¸Ñ ÑÑÐ±ÑÐ¸Ð´Ð¸Ð¸ 35%</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'voyah-free-ev-rannie-ofitsialnye-ru': ('<h2>Voyah Free EV (Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ RU): ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ðµ ÑÐ°Ð·ÑÑÐ¼Ñ</h2>'
+  '<p>ÐÐ°Ð¶Ð½Ð¾Ðµ Ð¾ÑÐ»Ð¸ÑÐ¸Ðµ Ð¾Ñ Â«ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸ÑÂ» Ð¿Ð°ÑÑÐ¸Ð¹: Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾ Ð¿Ð¾ÑÑÐ°Ð²Ð»ÑÐµÐ¼ÑÐµ Ð² Ð Ð¤ Free EV â Ñ Type 2/CCS2 Ð¸ OBC 11 ÐºÐÑ (3 ÑÐ°Ð·Ñ): ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ°Ñ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ° Type 2 ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð½Ðµ Ð½ÑÐ¶Ð½Ñ, Ð° ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð´Ð°ÑÑ Ð¿Ð¾Ð»Ð½ÑÐ¹ Ð¿ÑÐ¸ÑÐ¾ÑÑ ÑÐºÐ¾ÑÐ¾ÑÑÐ¸. Ð ÐµÐ´ÐºÐ¸Ð¹ ÑÐ»ÑÑÐ°Ð¹ Â«ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¹Â» ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸ ÑÑÐµÐ´Ð¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ Ð±ÑÐµÐ½Ð´Ð¾Ð² â Ð¿ÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ Ð¿Ð¾ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ð¼, Ð½Ðµ Ð¿Ð¾ Ð²Ð½ÐµÑÐ½ÐµÐ¼Ñ Ð²Ð¸Ð´Ñ. ÐÐµÑÐ°Ð»Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ¸ â Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'byd-song-plus-ev': ('<h2>BYD Song Plus EV: Ð·Ð°ÑÑÐ´ÐºÐ° Ð¸ ÐºÐµÐ¹Ñ Ð¸Ð· Ð¿ÑÐ°ÐºÑÐ¸ÐºÐ¸</h2>'
+  '<p>Ð Ð°Ð·ÑÑÐ¼Ñ GB/T AC Ð¸ GB/T DC. ÐÐ· Ð¿ÑÐ°ÐºÑÐ¸ÐºÐ¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²: BYD ÐºÐ¾ÑÑÐµÐºÑÐ½Ð¾ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð° Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ðµ GB/T-ÑÑÐ°Ð½ÑÐ¸Ð¹, Ð° Ð²Ð¾Ñ ÑÐ²ÑÐ·ÐºÐ° Â«CCS2-Ð°Ð´Ð°Ð¿ÑÐµÑ + ÑÑÐ°Ð½ÑÐ¸ÑÂ» ÑÑÐµÐ±ÑÐµÑ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ â ÑÐ°Ð·Ð±Ð¾Ñ ÑÐ±Ð¾ÐµÐ² ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ñ Ð² <a href="/blog/handshake-oshibka-dc-zaryadki.html">ÑÑÐ°ÑÑÐµ Ð¾ handshake</a>. ÐÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° â ÑÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 â GB/T (<a href="/catalog/adapter-type2-gbt-base.html">Ð±Ð°Ð·Ð¾Ð²ÑÐ¹</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'byd-song-plus-dm-i-sealion-05': ('<h2>BYD Song Plus DM-i / Sealion 05: Ð³Ð¸Ð±ÑÐ¸Ð´Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</h2>'
+  '<p>ÐÐ°Ðº PHEV, Song Plus DM-i Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµ ÑÐ¸ÑÑÑÑ EV: OBC Ð¾Ð±ÑÑÐ½Ð¾ 3,3â7 ÐºÐÑ, DC-Ð¿Ð¾ÑÑÐ° Ð² Ð±Ð°Ð·Ð¾Ð²ÑÑ Ð²ÐµÑÑÐ¸ÑÑ Ð¼Ð¾Ð¶ÐµÑ Ð½Ðµ Ð±ÑÑÑ â ÑÑÐ¾ÑÐ½ÑÐ¹ÑÐµ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ñ. ÐÐ¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸ 7 ÐºÐÑ Ð¿Ð¾ÐºÑÑÐ²Ð°ÐµÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ Ð¿ÑÐ¾Ð±ÐµÐ³ Ð´Ð½Ñ; Ð½Ð° ÑÑÐ°ÑÑÐµ Ð¼Ð°ÑÐ¸Ð½Ð° Ð¶Ð¸Ð²ÑÑ ÐºÐ°Ðº Ð¾Ð±ÑÑÐ½Ð°Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ð½Ð°Ñ. ÐÐ°ÑÑÐ´Ð½Ð¾Ðµ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ â <a href="/catalog/">Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'changan-qiyuan-q05-q06-q07': ('<h2>Changan Qiyuan Q05/Q06/Q07: Ð·Ð°ÑÑÐ´ÐºÐ° Ð¸Ð· ÐÐ¸ÑÐ°Ñ</h2>'
+  '<p>Ð Ð°Ð·ÑÑÐ¼Ñ GB/T AC/DC; Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¾Ð±ÑÑÐ¶Ð´ÐµÐ½Ð¸Ð¹ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð½Ð° 4PDA, Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° 30â80% Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð¾ÐºÐ¾Ð»Ð¾ 15 Ð¼Ð¸Ð½ÑÑ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸ÑÑ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²ÑÑÑÐµÐ¹ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, DC-Ð»Ð¸Ð¼Ð¸Ñ Ð±Ð°Ð·Ð¾Ð²ÑÑ Ð²ÐµÑÑÐ¸Ð¹ ÑÑÐ¾ÑÐ½ÑÐµÑÑÑ. Ð¥Ð¾Ð·ÑÐ¹ÑÑÐ²ÐµÐ½Ð½ÑÐµ Ð½ÑÐ°Ð½ÑÑ: ÑÑÑÑÐºÐ¸Ð¹ ÑÐ·ÑÐº Ð·Ð°ÑÐ¸Ñ Ð² ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸ÑÑ Max Ð¸ Ð½Ð¸Ð¶Ðµ, Ultra+ ÑÑÐµÐ±ÑÐµÑ ÑÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸; ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¼Ð¾Ð¶ÐµÑ Ð¶Ð¸ÑÑ Ð¿Ð¾ Â«ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð¼Ñ Ð²ÑÐµÐ¼ÐµÐ½Ð¸Â» â Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½Ð¾ÑÑÐ¸ Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼</a>. Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸ÐºÑ Ð¿Ð¾ÑÑÐ¸ÑÐ°Ð¹ÑÐµ Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'avatr-11-12-ofitsialno-ru': ('<h2>Avatr 11/12: Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹ Ð¸Ð¼Ð¿Ð¾ÑÑ â ÑÐ²Ð¾Ð¸ Ð¿ÑÐ°Ð²Ð¸Ð»Ð°</h2>'
+  '<p>Ð ÐµÐ´ÐºÐ¸Ð¹ ÑÐ»ÑÑÐ°Ð¹ Â«ÐºÐ¸ÑÐ°Ð¹ÑÐ°Â» Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¼Ð¸ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼Ð¸: Type 2/CCS2, OBC 11 ÐºÐÑ (3 ÑÐ°Ð·Ñ), Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð¾ 240 ÐºÐÑ. Ð Ð¾ÑÑÐ¸Ð¹ÑÐºÐ°Ñ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ° Type 2/CCS2 ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ â Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð½Ðµ Ð½ÑÐ¶Ð½Ñ, Ð° ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ°ÑÐºÑÑÐ²Ð°ÐµÑ OBC Ð¿Ð¾Ð»Ð½Ð¾ÑÑÑÑ. Ð­ÑÐ¾ Ð´ÐµÐ»Ð°ÐµÑ Avatr Ð¾Ð´Ð½Ð¸Ð¼ Ð¸Ð· ÑÐ°Ð¼ÑÑ Â«Ð±ÐµÑÑÐ¾Ð²Ð½ÑÑÂ» ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð´Ð»Ñ Ð Ð¾ÑÑÐ¸Ð¸. ÐÐ¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ â <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´</a>, Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â <a href="/pain/zaryadka-na-trasse.html">ÐºÐ°ÑÑÐ° Ð¸ Ð¿Ð»Ð°Ð½Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
 }
-
-
-def AEO_DIRECT(m, pname):
-    """Детерминированный «Прямой ответ» для ИИ-поисковиков: только факты из базы модели."""
-    def e(v): return html.escape(str(v)) if v else '—'
-    parts = ['<div class="tldr" style="margin:12px 0 0"><b>Прямой ответ:</b> ' + html.escape(pname)
-             + ' (годы: ' + e(m.get('years')) + ', рынок вывоза: ' + e(m.get('market')) + ') — разъёмы: AC '
-             + e(m.get('ac')) + ', DC ' + e(m.get('dc')) + '.']
-    if m.get('obc'): parts.append(' Бортовое зарядное: ' + e(m['obc']) + '.')
-    if m.get('dcp'): parts.append(' Быстрая зарядка: ' + e(m['dcp']) + '.')
-    if m.get('sol'): parts.append(' Что докупить: ' + e(m['sol']))
-    parts.append('</div>')
-    return ''.join(parts)
-
 
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
     s_m = slug(m['brand']) + '-' + slug(m['model'])
-    sl = 'models/' + s_m  # канонический URL: /models/{slug}/
+    sl = 'models/' + s_m  # ÐºÐ°Ð½Ð¾Ð½Ð¸ÑÐµÑÐºÐ¸Ð¹ URL: /models/{slug}/
     pain_html = '<div class="prob-grid">' + ''.join(
         '<div class="pt"><h3><span class="pain-id">' + i + '</span> ' + html.escape(PAINS[i]["pain"]) + '</h3>'
-        '<div class="sol"><b>Кому актуально:</b> ' + html.escape(PAINS[i]["who"]) + '</div>'
-        '<div class="sol"><b>Решение:</b> ' + html.escape(PAINS[i]["sol"]) + '</div>'
+        '<div class="sol"><b>ÐÐ¾Ð¼Ñ Ð°ÐºÑÑÐ°Ð»ÑÐ½Ð¾:</b> ' + html.escape(PAINS[i]["who"]) + '</div>'
+        '<div class="sol"><b>Ð ÐµÑÐµÐ½Ð¸Ðµ:</b> ' + html.escape(PAINS[i]["sol"]) + '</div>'
         '<p class="src">' + src_html(PAINS[i]) + '</p></div>' for i in ids) + '</div>'
-    rows = ('<tr><td>AC (медленная)</td><td>' + html.escape(str(m.get("ac") or "—")) + '</td></tr>'
-     '<tr><td>DC (быстрая)</td><td>' + html.escape(str(m.get("dc") or "—")) + '</td></tr>'
-     '<tr><td>Бортовое зарядное (OBC)</td><td>' + html.escape(str(m.get("obc") or "—")) + '</td></tr>'
-     '<tr><td>Мощность DC</td><td>' + html.escape(str(m.get("dcp") or "—")) + '</td></tr>'
-     '<tr><td>Рынок вывоза</td><td>' + html.escape(str(m.get("market"))) + '</td></tr>')
+    rows = ('<tr><td>AC (Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ)</td><td>' + html.escape(str(m.get("ac") or "â")) + '</td></tr>'
+     '<tr><td>DC (Ð±ÑÑÑÑÐ°Ñ)</td><td>' + html.escape(str(m.get("dc") or "â")) + '</td></tr>'
+     '<tr><td>ÐÐ¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ (OBC)</td><td>' + html.escape(str(m.get("obc") or "â")) + '</td></tr>'
+     '<tr><td>ÐÐ¾ÑÐ½Ð¾ÑÑÑ DC</td><td>' + html.escape(str(m.get("dcp") or "â")) + '</td></tr>'
+     '<tr><td>Ð ÑÐ½Ð¾Ðº Ð²ÑÐ²Ð¾Ð·Ð°</td><td>' + html.escape(str(m.get("market"))) + '</td></tr>')
     sol_block = html.escape(str(m['sol'])) if m.get('sol') else ''
     note = html.escape(str(m['note'])) if m.get('note') else ''
-    # Таблица «сколько реально занимает зарядка» на примере батареи 60 кВт·ч
+    # Ð¢Ð°Ð±Ð»Ð¸ÑÐ° Â«ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÐµÐ°Ð»ÑÐ½Ð¾ Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð·Ð°ÑÑÐ´ÐºÐ°Â» Ð½Ð° Ð¿ÑÐ¸Ð¼ÐµÑÐµ Ð±Ð°ÑÐ°ÑÐµÐ¸ 60 ÐºÐÑÂ·Ñ
     obc_s = str(m.get('obc') or '')
     dcp_s = str(m.get('dcp') or '')
     def _num(s):
@@ -1653,7 +1641,7 @@ def model_page(m, outdir):
         for ch in s:
             if ch.isdigit() or ch in ',.':
                 t += ch
-            elif t and (ch in ' 	-–'):
+            elif t and (ch in ' 	-â'):
                 break
         t = t.strip(',. ')
         try: return float(t.replace(',', '.'))
@@ -1667,44 +1655,44 @@ def model_page(m, outdir):
         t_sock = CAP / socket_kw
         ac7 = min(obc_n, 7.0); t_ac7 = CAP / ac7
         if obc_n <= 7.5:
-            ac3 = 'даст только ' + _fmt1(ac7) + ' кВт (однофазный OBC)'
+            ac3 = 'Ð´Ð°ÑÑ ÑÐ¾Ð»ÑÐºÐ¾ ' + _fmt1(ac7) + ' ÐºÐÑ (Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐ¹ OBC)'
             t_ac3 = t_ac7
         else:
-            ac3 = 'использует OBC ' + _fmt1(obc_n) + ' кВт'
+            ac3 = 'Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐµÑ OBC ' + _fmt1(obc_n) + ' ÐºÐÑ'
             t_ac3 = CAP / obc_n
-        rows2 = ('<tr><td>Розетка 220 В</td><td>' + _fmt1(socket_kw) + ' кВт (ограничение OBC/розетки)</td><td>Портативное ЗУ + отдельная линия, автомат 32А</td><td>≈ ' + _fmt1(t_sock) + ' ч</td></tr>'
-         '<tr><td>Станция 7 кВт (AC, 1ф)</td><td>' + _fmt1(ac7) + ' кВт</td><td>Штатный кабель Type 2 / GB/T</td><td>≈ ' + _fmt1(t_ac7) + ' ч</td></tr>'
-         '<tr><td>Станция 11–22 кВт (AC, 3ф)</td><td>' + ac3 + '</td><td>Три фазы у парковки</td><td>≈ ' + _fmt1(t_ac3) + ' ч</td></tr>')
+        rows2 = ('<tr><td>Ð Ð¾Ð·ÐµÑÐºÐ° 220 Ð</td><td>' + _fmt1(socket_kw) + ' ÐºÐÑ (Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ OBC/ÑÐ¾Ð·ÐµÑÐºÐ¸)</td><td>ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð¾Ðµ ÐÐ£ + Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ, Ð°Ð²ÑÐ¾Ð¼Ð°Ñ 32Ð</td><td>â ' + _fmt1(t_sock) + ' Ñ</td></tr>'
+         '<tr><td>Ð¡ÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ (AC, 1Ñ)</td><td>' + _fmt1(ac7) + ' ÐºÐÑ</td><td>Ð¨ÑÐ°ÑÐ½ÑÐ¹ ÐºÐ°Ð±ÐµÐ»Ñ Type 2 / GB/T</td><td>â ' + _fmt1(t_ac7) + ' Ñ</td></tr>'
+         '<tr><td>Ð¡ÑÐ°Ð½ÑÐ¸Ñ 11â22 ÐºÐÑ (AC, 3Ñ)</td><td>' + ac3 + '</td><td>Ð¢ÑÐ¸ ÑÐ°Ð·Ñ Ñ Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐ¸</td><td>â ' + _fmt1(t_ac3) + ' Ñ</td></tr>')
     else:
         rows2 = ''
-    if dcp_n and ('мин' in dcp_s or 'Мин' in dcp_s):
-        rows2 += '<tr><td>Быстрая станция (DC)</td><td>' + html.escape(dcp_s) + '</td><td>Пистолет ' + html.escape(str(m.get('dc') or '—')) + ' на станции</td><td>по данным модели</td></tr>'
-    elif dcp_n and ('кВт' in dcp_s) and dcp_n >= 40:
+    if dcp_n and ('Ð¼Ð¸Ð½' in dcp_s or 'ÐÐ¸Ð½' in dcp_s):
+        rows2 += '<tr><td>ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ (DC)</td><td>' + html.escape(dcp_s) + '</td><td>ÐÐ¸ÑÑÐ¾Ð»ÐµÑ ' + html.escape(str(m.get('dc') or 'â')) + ' Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸</td><td>Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¼Ð¾Ð´ÐµÐ»Ð¸</td></tr>'
+    elif dcp_n and ('ÐºÐÑ' in dcp_s) and dcp_n >= 40:
         t80 = 48.0 / dcp_n * 60
-        rows2 += '<tr><td>Быстрая станция (DC)</td><td>до ' + _fmt1(dcp_n) + ' кВт</td><td>Пистолет ' + html.escape(str(m.get('dc') or '—')) + ' на станции</td><td>0→80% ≈ ' + str(int(round(t80))) + ' мин</td></tr>'
+        rows2 += '<tr><td>ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ (DC)</td><td>Ð´Ð¾ ' + _fmt1(dcp_n) + ' ÐºÐÑ</td><td>ÐÐ¸ÑÑÐ¾Ð»ÐµÑ ' + html.escape(str(m.get('dc') or 'â')) + ' Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸</td><td>0â80% â ' + str(int(round(t80))) + ' Ð¼Ð¸Ð½</td></tr>'
     if rows2:
-        chg_table = ('<h2 class="text-lg text-gray-900 mt-8">Сколько занимает зарядка на практике</h2>'
-         '<p class="note">Время посчитано для батареи 60 кВт·ч; для своей машины умножьте на её ёмкость. Реальная скорость зависит от температуры батареи и загрузки станции.</p>'
-         '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th class="px-6 py-3 text-xs uppercase text-gray-500">Вариант</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Мощность на машине</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Что нужно</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Время</th></tr>' + rows2 + '</table></div>')
+        chg_table = ('<h2 class="text-lg text-gray-900 mt-8">Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ</h2>'
+         '<p class="note">ÐÑÐµÐ¼Ñ Ð¿Ð¾ÑÑÐ¸ÑÐ°Ð½Ð¾ Ð´Ð»Ñ Ð±Ð°ÑÐ°ÑÐµÐ¸ 60 ÐºÐÑÂ·Ñ; Ð´Ð»Ñ ÑÐ²Ð¾ÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ ÑÐ¼Ð½Ð¾Ð¶ÑÑÐµ Ð½Ð° ÐµÑ ÑÐ¼ÐºÐ¾ÑÑÑ. Ð ÐµÐ°Ð»ÑÐ½Ð°Ñ ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸.</p>'
+         '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th class="px-6 py-3 text-xs uppercase text-gray-500">ÐÐ°ÑÐ¸Ð°Ð½Ñ</th><th class="px-6 py-3 text-xs uppercase text-gray-500">ÐÐ¾ÑÐ½Ð¾ÑÑÑ Ð½Ð° Ð¼Ð°ÑÐ¸Ð½Ðµ</th><th class="px-6 py-3 text-xs uppercase text-gray-500">Ð§ÑÐ¾ Ð½ÑÐ¶Ð½Ð¾</th><th class="px-6 py-3 text-xs uppercase text-gray-500">ÐÑÐµÐ¼Ñ</th></tr>' + rows2 + '</table></div>')
     else:
         chg_table = ''
-    srcrow = ('<p class="src">Источник спецификации: <a href="' + m["src"] + '">' + re.sub(r"^https?://(www\\.)?","",str(m["src"])) + '</a></p>') if m.get('src') and str(m['src']).startswith('http') else ''
+    srcrow = ('<p class="src">ÐÑÑÐ¾ÑÐ½Ð¸Ðº ÑÐ¿ÐµÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸: <a href="' + m["src"] + '">' + re.sub(r"^https?://(www\\.)?","",str(m["src"])) + '</a></p>') if m.get('src') and str(m['src']).startswith('http') else ''
     vin_link = ''
     if m['brand'].strip() in VIN_BRANDS:
-        vin_link = ('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">VIN и история машины</h3><p>Владеете или выбираете с пробегом? Смотрите страницу '
-          '<a href="/vin/'+slug(m['brand'])+'.html">VIN ' + html.escape(m['brand']) + '</a>: где табличка, код модельного года на 10-й позиции, '
-          'бесплатная проверка ГИБДД и что проверить в ЭПТС/СБКТС у параллельного импорта.</p></div>')
-    faq = ('<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Каким разъёмом заряжается ' + html.escape(pname) + '?</summary>'
-     '<p>AC: ' + html.escape(str(m.get("ac") or "—")) + '. DC: ' + html.escape(str(m.get("dc") or "—")) + '. Разъём зависит от рынка вывоза: ' + html.escape(str(m.get("market"))) + '.</p></details>'
-     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Можно ли зарядить ' + html.escape(pname) + ' от обычной розетки 220В?</summary>'
-     '<p>Да, портативным зарядным устройством: обычная розетка даёт примерно 2,3–3,5 кВт. Паспортные «6–8 часов до 100%» относятся к станции 7 кВт — от розетки дольше. Нужны отдельная линия и автомат 32А.</p></details>'
-     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">Какие типичные проблемы у ' + html.escape(pname) + '?</summary><p>Смотрите блок «Проблемы и решения» выше — собрано по отзывам владельцев и профильных сервисов, со ссылками на первоисточники.</p></details>')
+        vin_link = ('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">VIN Ð¸ Ð¸ÑÑÐ¾ÑÐ¸Ñ Ð¼Ð°ÑÐ¸Ð½Ñ</h3><p>ÐÐ»Ð°Ð´ÐµÐµÑÐµ Ð¸Ð»Ð¸ Ð²ÑÐ±Ð¸ÑÐ°ÐµÑÐµ Ñ Ð¿ÑÐ¾Ð±ÐµÐ³Ð¾Ð¼? Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ '
+          '<a href="/vin/'+slug(m['brand'])+'.html">VIN ' + html.escape(m['brand']) + '</a>: Ð³Ð´Ðµ ÑÐ°Ð±Ð»Ð¸ÑÐºÐ°, ÐºÐ¾Ð´ Ð¼Ð¾Ð´ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¾Ð´Ð° Ð½Ð° 10-Ð¹ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸, '
+          'Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð°Ñ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° ÐÐÐÐÐ Ð¸ ÑÑÐ¾ Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð² Ð­ÐÐ¢Ð¡/Ð¡ÐÐÐ¢Ð¡ Ñ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ°.</p></div>')
+    faq = ('<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">ÐÐ°ÐºÐ¸Ð¼ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ' + html.escape(pname) + '?</summary>'
+     '<p>AC: ' + html.escape(str(m.get("ac") or "â")) + '. DC: ' + html.escape(str(m.get("dc") or "â")) + '. Ð Ð°Ð·ÑÑÐ¼ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ½ÐºÐ° Ð²ÑÐ²Ð¾Ð·Ð°: ' + html.escape(str(m.get("market"))) + '.</p></details>'
+     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">ÐÐ¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ' + html.escape(pname) + ' Ð¾Ñ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð?</summary>'
+     '<p>ÐÐ°, Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½ÑÐ¼ Ð·Ð°ÑÑÐ´Ð½ÑÐ¼ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾Ð¼: Ð¾Ð±ÑÑÐ½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° Ð´Ð°ÑÑ Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ 2,3â3,5 ÐºÐÑ. ÐÐ°ÑÐ¿Ð¾ÑÑÐ½ÑÐµ Â«6â8 ÑÐ°ÑÐ¾Ð² Ð´Ð¾ 100%Â» Ð¾ÑÐ½Ð¾ÑÑÑÑÑ Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸ 7 ÐºÐÑ â Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð´Ð¾Ð»ÑÑÐµ. ÐÑÐ¶Ð½Ñ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ Ð¸ Ð°Ð²ÑÐ¾Ð¼Ð°Ñ 32Ð.</p></details>'
+     '<details class="rounded-lg break-words border bg-white border-gray-300 p-4 my-2"><summary class="font-semibold cursor-pointer">ÐÐ°ÐºÐ¸Ðµ ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ñ ' + html.escape(pname) + '?</summary><p>Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ Ð±Ð»Ð¾Ðº Â«ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸ÑÂ» Ð²ÑÑÐµ â ÑÐ¾Ð±ÑÐ°Ð½Ð¾ Ð¿Ð¾ Ð¾ÑÐ·ÑÐ²Ð°Ð¼ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð¸ Ð¿ÑÐ¾ÑÐ¸Ð»ÑÐ½ÑÑ ÑÐµÑÐ²Ð¸ÑÐ¾Ð², ÑÐ¾ ÑÑÑÐ»ÐºÐ°Ð¼Ð¸ Ð½Ð° Ð¿ÐµÑÐ²Ð¾Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸.</p></details>')
     faq_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "FAQPage",
         "mainEntity": [
-          {"@type": "Question", "name": "Каким разъёмом заряжается " + pname + "?", "acceptedAnswer": {"@type": "Answer", "text": "AC: " + str(m.get('ac') or '—') + ". DC: " + str(m.get('dc') or '—') + ". Разъём зависит от рынка вывоза: " + str(m.get('market')) + "."}},
-          {"@type": "Question", "name": "Можно ли зарядить " + pname + " от обычной розетки 220В?", "acceptedAnswer": {"@type": "Answer", "text": "Да, портативным зарядным устройством: розетка даёт 2,3–3,5 кВт. Нужны отдельная линия и автомат 32А; от розетки до 100% дольше, чем от станции 7 кВт."}},
-          {"@type": "Question", "name": "Какие типичные проблемы у " + pname + "?", "acceptedAnswer": {"@type": "Answer", "text": "Смотрите раздел «Проблемы и решения»: типичные поломки и жизненные ситуации владельцев этой модели с решениями и ссылками на первоисточники."}}
+          {"@type": "Question", "name": "ÐÐ°ÐºÐ¸Ð¼ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ " + pname + "?", "acceptedAnswer": {"@type": "Answer", "text": "AC: " + str(m.get('ac') or 'â') + ". DC: " + str(m.get('dc') or 'â') + ". Ð Ð°Ð·ÑÑÐ¼ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ½ÐºÐ° Ð²ÑÐ²Ð¾Ð·Ð°: " + str(m.get('market')) + "."}},
+          {"@type": "Question", "name": "ÐÐ¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð·Ð°ÑÑÐ´Ð¸ÑÑ " + pname + " Ð¾Ñ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð?", "acceptedAnswer": {"@type": "Answer", "text": "ÐÐ°, Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½ÑÐ¼ Ð·Ð°ÑÑÐ´Ð½ÑÐ¼ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾Ð¼: ÑÐ¾Ð·ÐµÑÐºÐ° Ð´Ð°ÑÑ 2,3â3,5 ÐºÐÑ. ÐÑÐ¶Ð½Ñ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ Ð¸ Ð°Ð²ÑÐ¾Ð¼Ð°Ñ 32Ð; Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð´Ð¾ 100% Ð´Ð¾Ð»ÑÑÐµ, ÑÐµÐ¼ Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸ 7 ÐºÐÑ."}},
+          {"@type": "Question", "name": "ÐÐ°ÐºÐ¸Ðµ ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ñ " + pname + "?", "acceptedAnswer": {"@type": "Answer", "text": "Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ ÑÐ°Ð·Ð´ÐµÐ» Â«ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸ÑÂ»: ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ¸ Ð¸ Ð¶Ð¸Ð·Ð½ÐµÐ½Ð½ÑÐµ ÑÐ¸ÑÑÐ°ÑÐ¸Ð¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸ Ð¸ ÑÑÑÐ»ÐºÐ°Ð¼Ð¸ Ð½Ð° Ð¿ÐµÑÐ²Ð¾Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸."}}
         ]
     }, ensure_ascii=False) + '</script>'
     parts = []
@@ -1712,37 +1700,36 @@ def model_page(m, outdir):
     photo0 = ''
     if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', mkey0 + '.jpg')):
         photo0 = '/assets/photos/' + mkey0 + '.jpg'
-    photo_html = (('<img class="mphoto" src="' + photo0 + '" alt="' + html.escape(pname) + ' — фото модели, Wikimedia Commons" loading="lazy">') if photo0 else ('<div class="mphoto-fb"><div>' + html.escape(m['brand'].upper()) + '</div></div>'))
+    photo_html = (('<img class="mphoto" src="' + photo0 + '" alt="' + html.escape(pname) + ' â ÑÐ¾ÑÐ¾ Ð¼Ð¾Ð´ÐµÐ»Ð¸, Wikimedia Commons" loading="lazy">') if photo0 else ('<div class="mphoto-fb"><div>' + html.escape(m['brand'].upper()) + '</div></div>'))
     parts.append('<div class="mhero"><div>'
       + '<div class="brand-chip" style="background:#2563EB">' + html.escape(m['brand']) + '</div>'
-      + '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight my-4">' + html.escape(pname) + ': разъёмы, зарядка и решения</h1>'
-      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' ввоз</span></div>'
-      + '<p class="note" style="margin:0 0 14px">Разъём зависит от рынка вывоза, а не от марки — сверьте по фото лючка или VIN.</p>'
-      + '<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подобрать комплект</a>'
-      + '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/calculator/">Калькулятор зарядки</a></div>'
+      + '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight my-4">' + html.escape(pname) + ': ÑÐ°Ð·ÑÑÐ¼Ñ, Ð·Ð°ÑÑÐ´ÐºÐ° Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ</h1>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px"><span class="inline-block px-3 py-1 rounded-lg bg-green-600 text-white text-xs font-semibold">' + m['years'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['type'] + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + grp + '</span><span class="inline-block px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">' + m['freq'] + ' Ð²Ð²Ð¾Ð·</span></div>'
+      + '<p class="note" style="margin:0 0 14px">Ð Ð°Ð·ÑÑÐ¼ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ½ÐºÐ° Ð²ÑÐ²Ð¾Ð·Ð°, Ð° Ð½Ðµ Ð¾Ñ Ð¼Ð°ÑÐºÐ¸ â ÑÐ²ÐµÑÑÑÐµ Ð¿Ð¾ ÑÐ¾ÑÐ¾ Ð»ÑÑÐºÐ° Ð¸Ð»Ð¸ VIN.</p>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</a>'
+      + '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/calculator/">ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</a></div>'
       + '</div><div>' + photo_html + '</div></div>')
-    parts.append(AEO_DIRECT(m, pname))
-    parts.append('<h2 class="text-lg text-gray-900 mt-8">Разъёмы и мощность зарядки</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
     parts.append(port_visual(m))
     if chg_table: parts.append(chg_table)
-    parts.append('<h2 class="text-lg text-gray-900 mt-8">Что понадобится для зарядки этой модели</h2>')
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">Ð§ÑÐ¾ Ð¿Ð¾Ð½Ð°Ð´Ð¾Ð±Ð¸ÑÑÑ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸</h2>')
     _gbt = ('gbt' in str(m.get('ac','')).lower()) or ('gb/t' in str(m.get('ac','')).lower())
     if _gbt:
         parts.append('<div class="prob-grid">'
-          + '<div class="pt"><div class="brand-chip" style="background:#2563EB">Обязательно</div><h3 style="margin-top:8px">Адаптер Type 2 → GB/T</h3>'
-          + '<div class="sol">У машины китайский порт GB/T, а большинство городских станций — Type 2. Без адаптера машина «не видит» 90% станций в городе. Вариант от 4 500 ₽ в <a href="/catalog/">каталоге</a>.</div></div>'
-          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">Дом</div><h3 style="margin-top:8px">Портативная зарядка GB/T 3,5–7 кВт</h3>'
-          + '<div class="sol">Зарядка от любой розетки 220 В: дача, дом, парковка. Спасает зимой и в поездках. От 9 500 ₽ — <a href="/catalog/">портативки</a>.</div></div>'
-          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">В перспективе</div><h3 style="margin-top:8px">Настенная станция 7 кВт</h3>'
-          + '<div class="sol">Ночная зарядка по домашнему тарифу — в 3–4 раза дешевле станций. Смета — в <a href="/pain/domashnie-stancii.html">гайде</a>, монтаж — <a href="/services/ustanovka-stancii.html">услуга</a>.</div></div></div>')
+          + '<div class="pt"><div class="brand-chip" style="background:#2563EB">ÐÐ±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾</div><h3 style="margin-top:8px">ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 â GB/T</h3>'
+          + '<div class="sol">Ð£ Ð¼Ð°ÑÐ¸Ð½Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ Ð¿Ð¾ÑÑ GB/T, Ð° Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð¾ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ â Type 2. ÐÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ° Ð¼Ð°ÑÐ¸Ð½Ð° Â«Ð½Ðµ Ð²Ð¸Ð´Ð¸ÑÂ» 90% ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð³Ð¾ÑÐ¾Ð´Ðµ. ÐÐ°ÑÐ¸Ð°Ð½Ñ Ð¾Ñ 4 500 â½ Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">ÐÐ¾Ð¼</div><h3 style="margin-top:8px">ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° GB/T 3,5â7 ÐºÐÑ</h3>'
+          + '<div class="sol">ÐÐ°ÑÑÐ´ÐºÐ° Ð¾Ñ Ð»ÑÐ±Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220 Ð: Ð´Ð°ÑÐ°, Ð´Ð¾Ð¼, Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐ°. Ð¡Ð¿Ð°ÑÐ°ÐµÑ Ð·Ð¸Ð¼Ð¾Ð¹ Ð¸ Ð² Ð¿Ð¾ÐµÐ·Ð´ÐºÐ°Ñ. ÐÑ 9 500 â½ â <a href="/catalog/">Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ¸</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">Ð Ð¿ÐµÑÑÐ¿ÐµÐºÑÐ¸Ð²Ðµ</div><h3 style="margin-top:8px">ÐÐ°ÑÑÐµÐ½Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ</h3>'
+          + '<div class="sol">ÐÐ¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¼Ñ ÑÐ°ÑÐ¸ÑÑ â Ð² 3â4 ÑÐ°Ð·Ð° Ð´ÐµÑÐµÐ²Ð»Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¹. Ð¡Ð¼ÐµÑÐ° â Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ</a>, Ð¼Ð¾Ð½ÑÐ°Ð¶ â <a href="/services/ustanovka-stancii.html">ÑÑÐ»ÑÐ³Ð°</a>.</div></div></div>')
     else:
         parts.append('<div class="prob-grid">'
-          + '<div class="pt"><div class="brand-chip" style="background:#2563EB">Стандарт</div><h3 style="margin-top:8px">Type 2 / CCS2 — без переходников</h3>'
-          + '<div class="sol">Городские станции, домашние wallbox и быстрые CCS2 подходят напрямую — адаптеры не нужны.</div></div>'
-          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">Дом</div><h3 style="margin-top:8px">Домашняя станция 7–22 кВт</h3>'
-          + '<div class="sol">Ускоряет ночную зарядку и дешевле по тарифу. Разбор — в <a href="/pain/domashnie-stancii.html">гайде</a>.</div></div>'
-          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">Дорожный запас</div><h3 style="margin-top:8px">Портативная зарядка Type 2</h3>'
-          + '<div class="sol">Резервный вариант на даче и в дороге: <a href="/catalog/">в каталоге</a> от 7 500 ₽.</div></div></div>')
+          + '<div class="pt"><div class="brand-chip" style="background:#2563EB">Ð¡ÑÐ°Ð½Ð´Ð°ÑÑ</div><h3 style="margin-top:8px">Type 2 / CCS2 â Ð±ÐµÐ· Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð²</h3>'
+          + '<div class="sol">ÐÐ¾ÑÐ¾Ð´ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ðµ wallbox Ð¸ Ð±ÑÑÑÑÑÐµ CCS2 Ð¿Ð¾Ð´ÑÐ¾Ð´ÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ â Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð½Ðµ Ð½ÑÐ¶Ð½Ñ.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#3d6fa6">ÐÐ¾Ð¼</div><h3 style="margin-top:8px">ÐÐ¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ 7â22 ÐºÐÑ</h3>'
+          + '<div class="sol">Ð£ÑÐºÐ¾ÑÑÐµÑ Ð½Ð¾ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ Ð¸ Ð´ÐµÑÐµÐ²Ð»Ðµ Ð¿Ð¾ ÑÐ°ÑÐ¸ÑÑ. Ð Ð°Ð·Ð±Ð¾Ñ â Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ</a>.</div></div>'
+          + '<div class="pt"><div class="brand-chip" style="background:#8b5cf6">ÐÐ¾ÑÐ¾Ð¶Ð½ÑÐ¹ Ð·Ð°Ð¿Ð°Ñ</div><h3 style="margin-top:8px">ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Type 2</h3>'
+          + '<div class="sol">Ð ÐµÐ·ÐµÑÐ²Ð½ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ Ð½Ð° Ð´Ð°ÑÐµ Ð¸ Ð² Ð´Ð¾ÑÐ¾Ð³Ðµ: <a href="/catalog/">Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a> Ð¾Ñ 7 500 â½.</div></div></div>')
     parts.append(calc_block(m, obc_n, dcp_n, obc_s, dcp_s))
     docs_block = ''
     docs_items = []
@@ -1758,40 +1745,40 @@ def model_page(m, outdir):
         if vitem: docs_items = vitem + docs_items
     if mkey in DOCS_MODELS:
         docs_items = DOCS_MODELS[mkey] + docs_items
-    guides = '<a href="/pain/stoimost-zaryadki.html">Сколько стоит зарядка</a> · <a href="/pain/zaryadka-na-trasse.html">Зарядка на трассе</a> ·'
+    guides = '<a href="/pain/stoimost-zaryadki.html">Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</a> Â· <a href="/pain/zaryadka-na-trasse.html">ÐÐ°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÑÐ°ÑÑÐµ</a> Â·'
     if mkey in [c[0] for c in COST_MODELS]:
-        guides += ' · <a href="/cost/' + mkey + '.html">Сколько стоит зарядка этой модели</a>'
+        guides += ' Â· <a href="/cost/' + mkey + '.html">Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ° ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸</a>'
     if docs_items:
         docs_links = ''.join('<li><a href="' + u + '" target="_blank" rel="noopener nofollow">' + html.escape(n) + '</a>' + (' <span class="tag">' + sz + '</span>' if sz else '') + '</li>' for n, u, sz in docs_items)
         site = BRAND_SITES.get(m['brand'])
-        site_html = ('<p class="note">Официальный сайт: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<div class="docs-box"><h2 class="text-lg text-gray-900 mt-0">Скачать руководство и материалы (PDF)</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
-          '<p class="note">Актуальное руководство всегда ищите на сайте марки. Полезные гайды сайта: ' + guides + '</p>'
+        site_html = ('<p class="note">ÐÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ°Ð¹Ñ: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
+        docs_block = ('<div class="docs-box"><h2 class="text-lg text-gray-900 mt-0">Ð¡ÐºÐ°ÑÐ°ÑÑ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¸ Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ñ (PDF)</h2><div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><ul class="list-disc pl-6">' + docs_links + '</ul>'
+          '<p class="note">ÐÐºÑÑÐ°Ð»ÑÐ½Ð¾Ðµ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð²ÑÐµÐ³Ð´Ð° Ð¸ÑÐ¸ÑÐµ Ð½Ð° ÑÐ°Ð¹ÑÐµ Ð¼Ð°ÑÐºÐ¸. ÐÐ¾Ð»ÐµÐ·Ð½ÑÐµ Ð³Ð°Ð¹Ð´Ñ ÑÐ°Ð¹ÑÐ°: ' + guides + '</p>'
           + site_html + '</div></div>')
     else:
         site = BRAND_SITES.get(m['brand'])
-        site_html = ('<p class="note">Официальный сайт производителя: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
-        docs_block = ('<div class="docs-box"><h2>Скачать руководство и материалы (PDF)</h2><div class="lcard docs">'
-          '<p class="note">Официальное руководство по эксплуатации хранится у дилера и на сайте марки; у параллельного импорта просите сканы у продавца или в клубных чатах.</p>'
-          '<p class="note">Полезные гайды сайта: ' + guides + '</p>' + site_html + '</div></div>')
+        site_html = ('<p class="note">ÐÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ°Ð¹Ñ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ: <a href="' + site + '" target="_blank" rel="noopener">' + re.sub(r"^https?://(www\.)?", "", site).rstrip('/') + '</a></p>' if site else '')
+        docs_block = ('<div class="docs-box"><h2>Ð¡ÐºÐ°ÑÐ°ÑÑ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¸ Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ñ (PDF)</h2><div class="lcard docs">'
+          '<p class="note">ÐÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð¿Ð¾ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ ÑÑÐ°Ð½Ð¸ÑÑÑ Ñ Ð´Ð¸Ð»ÐµÑÐ° Ð¸ Ð½Ð° ÑÐ°Ð¹ÑÐµ Ð¼Ð°ÑÐºÐ¸; Ñ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ° Ð¿ÑÐ¾ÑÐ¸ÑÐµ ÑÐºÐ°Ð½Ñ Ñ Ð¿ÑÐ¾Ð´Ð°Ð²ÑÐ° Ð¸Ð»Ð¸ Ð² ÐºÐ»ÑÐ±Ð½ÑÑ ÑÐ°ÑÐ°Ñ.</p>'
+          '<p class="note">ÐÐ¾Ð»ÐµÐ·Ð½ÑÐµ Ð³Ð°Ð¹Ð´Ñ ÑÐ°Ð¹ÑÐ°: ' + guides + '</p>' + site_html + '</div></div>')
 
     parts.append(vin_link)
     parts.append(docs_block)
     if sol_block:
-        parts.append('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">Что понадобится для зарядки</h3><p class="text-sm text-gray-600">' + sol_block + '</p></div>')
+        parts.append('<div class="rounded-lg break-words border bg-white border-gray-300 p-5 my-4"><h3 class="font-semibold text-gray-900">Ð§ÑÐ¾ Ð¿Ð¾Ð½Ð°Ð´Ð¾Ð±Ð¸ÑÑÑ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</h3><p class="text-sm text-gray-600">' + sol_block + '</p></div>')
     cat_block = catalog.catalog_block_for(m, pname)
     if cat_block: parts.append(cat_block)
     if note:
-        parts.append('<p class="note"><b>Примечание:</b> ' + note + '</p>')
+        parts.append('<p class="note"><b>ÐÑÐ¸Ð¼ÐµÑÐ°Ð½Ð¸Ðµ:</b> ' + note + '</p>')
     parts.append(srcrow)
-    parts.append('<h2 class="text-lg text-gray-900 mt-8">Проблемы и решения для владельцев</h2>')
+    parts.append('<h2 class="text-lg text-gray-900 mt-8">ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ Ð´Ð»Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²</h2>')
     parts.append(pain_html)
     parts.append(faq)
     parts.append(faq_ld)
     model_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "BlogPosting",
-        "headline": pname + ": зарядка в России — разъёмы, адаптеры, скорость",
-        "description": "Разъёмы и скорость зарядки " + pname + " на российских станциях: домашняя и быстрая зарядка, адаптеры, совместимость и типичные проблемы.",
+        "headline": pname + ": Ð·Ð°ÑÑÐ´ÐºÐ° Ð² Ð Ð¾ÑÑÐ¸Ð¸ â ÑÐ°Ð·ÑÑÐ¼Ñ, Ð°Ð´Ð°Ð¿ÑÐµÑÑ, ÑÐºÐ¾ÑÐ¾ÑÑÑ",
+        "description": "Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ " + pname + " Ð½Ð° ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸ÑÑ: Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð¸ Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°, Ð°Ð´Ð°Ð¿ÑÐµÑÑ, ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ Ð¸ ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ.",
         "inLanguage": "ru",
         "dateModified": BUILD_DATE,
         "author": {"@type": "Organization", "name": SITE_NAME},
@@ -1801,36 +1788,36 @@ def model_page(m, outdir):
     parts.append(model_ld)
     parts.append('<div class="rounded-lg break-words bg-gray-100 p-5 my-4"><div class="flex flex-wrap items-center gap-6">'
       '<div class="md:w-2/3 w-full">'
-      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h3 class="font-semibold text-gray-900 my-2">Гид по зарядке: все ' + str(len(MODELS)) + ' моделей + чек-лист покупки</h3>'
-      '<p class="text-sm text-gray-600">Разъёмы и мощность каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист из 20 пунктов.</p>'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">ÐÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ Â· PDF</span>'
+      '<h3 class="font-semibold text-gray-900 my-2">ÐÐ¸Ð´ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ: Ð²ÑÐµ ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ + ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸</h3>'
+      '<p class="text-sm text-gray-600">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸, 12 ÑÐ°ÑÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸, ÑÑÐ¸ Ð³Ð¾ÑÐ¾Ð²ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð¸ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¸Ð· 20 Ð¿ÑÐ½ÐºÑÐ¾Ð².</p>'
       '</div><div class="md:w-auto w-full">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>â¬ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF</a>'
       '</div></div></div>')
     parts.append(MODEL_EXTRA.get(slug(m['brand'])+'-'+slug(m['model']),'').replace('{BD}',BUILD_DATE))
-    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Сравнить с другой моделью</a><a class="btn ghost" href="' + TG_CHANNEL + '">Канал «Запас хода»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    parts.append('<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</a><a class="btn ghost" href="/compare/?a=' + slug(m['brand']) + '-' + slug(m['model']) + '">Ð¡ÑÐ°Ð²Ð½Ð¸ÑÑ Ñ Ð´ÑÑÐ³Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»ÑÑ</a><a class="btn ghost" href="' + TG_CHANNEL + '">ÐÐ°Ð½Ð°Ð» Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</a><a class="btn ghost share" href="#" onclick="sharePg();return false;">ÐÐ¾Ð´ÐµÐ»Ð¸ÑÑÑÑ</a></div>')
     body = ''.join(parts)
     ac_s = str(m.get('ac') or '')
     is_gbt = ('GB/T' in ac_s) and ('Type 2' not in ac_s) and ('Type 1' not in ac_s) and ('NACS' not in ac_s)
-    adapter_word = 'GB/T' if is_gbt else 'совместимый адаптер'
-    ptitle = pname if len(pname) <= 45 else pname[:43].rstrip() + '…'
+    adapter_word = 'GB/T' if is_gbt else 'ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ'
+    ptitle = pname if len(pname) <= 45 else pname[:43].rstrip() + 'â¦'
     write_page(os.path.join(outdir, 'models', s_m, 'index.html'),
-        'Зарядка для ' + ptitle + ': разъёмы, кабели, переходники | Запас Хода',
-        'Решение проблем с зарядкой ' + pname + ' в России. Какая мощность нужна, сколько времени заряжается от розетки 220В и какой адаптер ' + adapter_word + ' купить.',
+        'ÐÐ°ÑÑÐ´ÐºÐ° Ð´Ð»Ñ ' + ptitle + ': ÑÐ°Ð·ÑÑÐ¼Ñ, ÐºÐ°Ð±ÐµÐ»Ð¸, Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸ | ÐÐ°Ð¿Ð°Ñ Ð¥Ð¾Ð´Ð°',
+        'Ð ÐµÑÐµÐ½Ð¸Ðµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹ ' + pname + ' Ð² Ð Ð¾ÑÑÐ¸Ð¸. ÐÐ°ÐºÐ°Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð½ÑÐ¶Ð½Ð°, ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220Ð Ð¸ ÐºÐ°ÐºÐ¾Ð¹ Ð°Ð´Ð°Ð¿ÑÐµÑ ' + adapter_word + ' ÐºÑÐ¿Ð¸ÑÑ.',
         body, '/models/' + s_m + '/', og='/assets/og/m-'+slug(m['brand'])+'-'+slug(m['model'])+'.png',
-        crumbs=[('/','Модели'),('',pname)])
-    # старый .html -> 301-подобный редирект на новую структуру
+        crumbs=[('/','ÐÐ¾Ð´ÐµÐ»Ð¸'),('',pname)])
+    # ÑÑÐ°ÑÑÐ¹ .html -> 301-Ð¿Ð¾Ð´Ð¾Ð±Ð½ÑÐ¹ ÑÐµÐ´Ð¸ÑÐµÐºÑ Ð½Ð° Ð½Ð¾Ð²ÑÑ ÑÑÑÑÐºÑÑÑÑ
     os.makedirs(os.path.join(outdir, 'models'), exist_ok=True)
     open(os.path.join(outdir, 'models', s_m + '.html'), 'w', encoding='utf-8').write(
         '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow">'
         '<link rel="canonical" href="' + SITE_DOMAIN + '/models/' + s_m + '/">'
         '<meta http-equiv="refresh" content="0; url=/models/' + s_m + '/">'
         '<script>location.replace("/models/' + s_m + '/");</script>'
-        '<title>' + html.escape(pname) + ' — страница переехала</title></head><body>'
-        '<p>Страница модели «' + html.escape(pname) + '» теперь здесь: <a href="/models/' + s_m + '/">/models/' + s_m + '/</a></p></body></html>')
+        '<title>' + html.escape(pname) + ' â ÑÑÑÐ°Ð½Ð¸ÑÐ° Ð¿ÐµÑÐµÐµÑÐ°Ð»Ð°</title></head><body>'
+        '<p>Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð¼Ð¾Ð´ÐµÐ»Ð¸ Â«' + html.escape(pname) + 'Â» ÑÐµÐ¿ÐµÑÑ Ð·Ð´ÐµÑÑ: <a href="/models/' + s_m + '/">/models/' + s_m + '/</a></p></body></html>')
     return sl
 
-# ================= НОВОСТИ =================
+# ================= ÐÐÐÐÐ¡Ð¢Ð =================
 def load_news(data_dir):
     ndir = os.path.join(data_dir, 'news')
     items = []
@@ -1859,7 +1846,7 @@ def news_slug_page(it):
     return '/news/' + it['date'] + '-' + it['slug'] + '.html'
 
 def month_ru(mn):
-    return ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'][mn-1]
+    return ['ÑÐ½Ð²Ð°ÑÑ','ÑÐµÐ²ÑÐ°Ð»Ñ','Ð¼Ð°ÑÑÐ°','Ð°Ð¿ÑÐµÐ»Ñ','Ð¼Ð°Ñ','Ð¸ÑÐ½Ñ','Ð¸ÑÐ»Ñ','Ð°Ð²Ð³ÑÑÑÐ°','ÑÐµÐ½ÑÑÐ±ÑÑ','Ð¾ÐºÑÑÐ±ÑÑ','Ð½Ð¾ÑÐ±ÑÑ','Ð´ÐµÐºÐ°Ð±ÑÑ'][mn-1]
 
 def fmt_date(d):
     try:
@@ -1872,17 +1859,17 @@ def news_page(it, outdir, news_map):
     mid = news_map.get(it['slug'])
     if mid: discuss = TG_CHANNEL + '/' + str(mid)
     parts = []
-    parts.append('<a class="back" href="/news/">← Все новости</a>')
+    parts.append('<a class="back" href="/news/">â ÐÑÐµ Ð½Ð¾Ð²Ð¾ÑÑÐ¸</a>')
     parts.append('<h1>' + html.escape(it['title']) + '</h1>')
-    parts.append('<p class="newsdate">' + fmt_date(it['date']) + ' · Запас хода</p>')
+    parts.append('<p class="newsdate">' + fmt_date(it['date']) + ' Â· ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°</p>')
     parts.append(it['body'])
     rel_models = it.get('related') or []
     if rel_models:
-        parts.append('<h2>Связанные страницы справочника</h2><p class="note">' + ', '.join(rel_models) + '</p>')
+        parts.append('<h2>Ð¡Ð²ÑÐ·Ð°Ð½Ð½ÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°</h2><p class="note">' + ', '.join(rel_models) + '</p>')
     parts.append('<hr class="sep">')
-    parts.append('<div class="cta"><a class="btn lime" href="' + discuss + '">Обсудить в Telegram</a>'
-     '<a class="btn ghost" href="' + TG_BOT_APP + '">Каталог аксессуаров</a>'
-     '<a class="btn ghost share" href="#" onclick="sharePg();return false;">Поделиться</a></div>')
+    parts.append('<div class="cta"><a class="btn lime" href="' + discuss + '">ÐÐ±ÑÑÐ´Ð¸ÑÑ Ð² Telegram</a>'
+     '<a class="btn ghost" href="' + TG_BOT_APP + '">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð²</a>'
+     '<a class="btn ghost share" href="#" onclick="sharePg();return false;">ÐÐ¾Ð´ÐµÐ»Ð¸ÑÑÑÑ</a></div>')
     body = ''.join(parts)
     news_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -1895,10 +1882,10 @@ def news_page(it, outdir, news_map):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + news_slug_page(it)
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'news',sl_file), TITLE_SHORT.get(it['title'], it['title']) + ' | Запас хода',
+    write_page(os.path.join(outdir,'news',sl_file), TITLE_SHORT.get(it['title'], it['title']) + ' | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
         it.get('teaser') or it['title'], body, news_slug_page(it),
         og='/assets/og/n-'+it['date']+'-'+it['slug']+'.png',
-        crumbs=[('/news/','Новости'),('',it['title'])], extra_ld=news_ld)
+        crumbs=[('/news/','ÐÐ¾Ð²Ð¾ÑÑÐ¸'),('',it['title'])], extra_ld=news_ld)
 
 def news_index(items, outdir):
     cards = ''
@@ -1907,15 +1894,15 @@ def news_index(items, outdir):
           '<img src="/assets/og/n-' + it['date'] + '-' + it['slug'] + '.png" alt="' + html.escape(it['title']) + '" loading="lazy">'
           '<div class="inner"><span class="newsdate">' + fmt_date(it['date']) + '</span>'
           '<b>' + html.escape(it['title']) + '</b><span>' + html.escape(it.get('teaser') or '') + '</span></div></a>')
-    body = ('<div class="hero"><div class="kicker">Лента</div><h1>Новости и разборы</h1>'
-     '<p class="lede">Практика владения EV в России: цифры, зима, зарядка, новые модели. Коротко и по делу.</p>'
-     '<input class="search" id="q" placeholder="Поиск по новостям: зима, адаптер, батарея…"></div>'
+    body = ('<div class="hero"><div class="kicker">ÐÐµÐ½ÑÐ°</div><h1>ÐÐ¾Ð²Ð¾ÑÑÐ¸ Ð¸ ÑÐ°Ð·Ð±Ð¾ÑÑ</h1>'
+     '<p class="lede">ÐÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ EV Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ¸ÑÑÑ, Ð·Ð¸Ð¼Ð°, Ð·Ð°ÑÑÐ´ÐºÐ°, Ð½Ð¾Ð²ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸. ÐÐ¾ÑÐ¾ÑÐºÐ¾ Ð¸ Ð¿Ð¾ Ð´ÐµÐ»Ñ.</p>'
+     '<input class="search" id="q" placeholder="ÐÐ¾Ð¸ÑÐº Ð¿Ð¾ Ð½Ð¾Ð²Ð¾ÑÑÑÐ¼: Ð·Ð¸Ð¼Ð°, Ð°Ð´Ð°Ð¿ÑÐµÑ, Ð±Ð°ÑÐ°ÑÐµÑâ¦"></div>'
      '<div class="grid" id="nlist">' + cards + '</div>'
      '<script>document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase();'
      'document.querySelectorAll("#nlist .newscard").forEach(function(c){var t=(c.textContent||"").toLowerCase();'
      'c.style.display=t.indexOf(q)>=0?"":"none"});});</script>')
-    write_page(os.path.join(outdir,'news','index.html'), 'Новости об электромобилях в России | Запас хода',
-        'Лента: цифры, зима, зарядка, новые модели EV в России. Каждая новость — отдельная страница с разбором.', body, '/news/')
+    write_page(os.path.join(outdir,'news','index.html'), 'ÐÐ¾Ð²Ð¾ÑÑÐ¸ Ð¾Ð± ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÑ Ð² Ð Ð¾ÑÑÐ¸Ð¸ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐµÐ½ÑÐ°: ÑÐ¸ÑÑÑ, Ð·Ð¸Ð¼Ð°, Ð·Ð°ÑÑÐ´ÐºÐ°, Ð½Ð¾Ð²ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ EV Ð² Ð Ð¾ÑÑÐ¸Ð¸. ÐÐ°Ð¶Ð´Ð°Ñ Ð½Ð¾Ð²Ð¾ÑÑÑ â Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ ÑÑÑÐ°Ð½Ð¸ÑÐ° Ñ ÑÐ°Ð·Ð±Ð¾ÑÐ¾Ð¼.', body, '/news/')
 
 def news_feed(items, outdir):
     ch = ''
@@ -1926,19 +1913,19 @@ def news_feed(items, outdir):
          '<pubDate>' + it['date'] + 'T09:00:00+03:00</pubDate>'
          '<description>' + html.escape(it.get('teaser') or '') + '</description></item>')
     xml = ('<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>'
-     '<title>' + SITE_NAME + ' — новости EV в России</title><link>' + SITE_DOMAIN + '/news/</link>'
-     '<description>Практика владения электромобилем в России: цифры, зима, зарядка, аксессуары</description><language>ru</language>' + ch + '</channel></rss>')
+     '<title>' + SITE_NAME + ' â Ð½Ð¾Ð²Ð¾ÑÑÐ¸ EV Ð² Ð Ð¾ÑÑÐ¸Ð¸</title><link>' + SITE_DOMAIN + '/news/</link>'
+     '<description>ÐÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼ Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ¸ÑÑÑ, Ð·Ð¸Ð¼Ð°, Ð·Ð°ÑÑÐ´ÐºÐ°, Ð°ÐºÑÐµÑÑÑÐ°ÑÑ</description><language>ru</language>' + ch + '</channel></rss>')
     with open(os.path.join(outdir,'feed.xml'),'w',encoding='utf-8') as f: f.write(xml)
 
-# ================= КАРТА ЗАРЯДНЫХ СТАНЦИЙ =================
+# ================= ÐÐÐ Ð¢Ð ÐÐÐ Ð¯ÐÐÐ«Ð¥ Ð¡Ð¢ÐÐÐ¦ÐÐ =================
 CITIES = [
- ('Москва','55.62,37.28,56.05,38.05'),('Санкт-Петербург','59.75,30.05,60.12,30.62'),
- ('Нижний Новгород','56.18,43.74,56.40,44.10'),('Екатеринбург','56.72,60.48,56.94,60.75'),
- ('Новосибирск','54.94,82.80,55.10,83.10'),('Казань','55.70,49.05,55.90,49.28'),
- ('Краснодар','44.95,38.88,45.10,39.08'),('Ростов-на-Дону','47.16,39.60,47.32,39.82'),
- ('Сочи','43.50,39.60,43.68,39.85'),('Владивосток','43.05,131.80,43.24,132.05'),
- ('Симферополь','44.88,34.05,45.00,34.20'),('Минск','53.82,27.44,53.98,27.66'),
- ('Алматы','43.17,76.80,43.32,76.99')]
+ ('ÐÐ¾ÑÐºÐ²Ð°','55.62,37.28,56.05,38.05'),('Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³','59.75,30.05,60.12,30.62'),
+ ('ÐÐ¸Ð¶Ð½Ð¸Ð¹ ÐÐ¾Ð²Ð³Ð¾ÑÐ¾Ð´','56.18,43.74,56.40,44.10'),('ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³','56.72,60.48,56.94,60.75'),
+ ('ÐÐ¾Ð²Ð¾ÑÐ¸Ð±Ð¸ÑÑÐº','54.94,82.80,55.10,83.10'),('ÐÐ°Ð·Ð°Ð½Ñ','55.70,49.05,55.90,49.28'),
+ ('ÐÑÐ°ÑÐ½Ð¾Ð´Ð°Ñ','44.95,38.88,45.10,39.08'),('Ð Ð¾ÑÑÐ¾Ð²-Ð½Ð°-ÐÐ¾Ð½Ñ','47.16,39.60,47.32,39.82'),
+ ('Ð¡Ð¾ÑÐ¸','43.50,39.60,43.68,39.85'),('ÐÐ»Ð°Ð´Ð¸Ð²Ð¾ÑÑÐ¾Ðº','43.05,131.80,43.24,132.05'),
+ ('Ð¡Ð¸Ð¼ÑÐµÑÐ¾Ð¿Ð¾Ð»Ñ','44.88,34.05,45.00,34.20'),('ÐÐ¸Ð½ÑÐº','53.82,27.44,53.98,27.66'),
+ ('ÐÐ»Ð¼Ð°ÑÑ','43.17,76.80,43.32,76.99')]
 
 def map_page(outdir):
     from collections import Counter as _Cnt
@@ -1962,8 +1949,8 @@ var YNDX='https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=24.10.29-0&x
 function initMap(){
   mymap=L.map('map',{preferCanvas:true,zoomControl:true}).setView([55.75,37.6],10);
   mymap.attributionControl.setPrefix('');
-  L.tileLayer(YNDX,{maxZoom:19,attribution:'© Яндекс'}).addTo(mymap);
-  fetch('/charging/stations.json').then(function(r){return r.json()}).then(function(d){ALL=d;showCity(0);mymap.on('moveend',function(){draw();});}).catch(function(){document.getElementById('mstat').textContent='Не удалось загрузить список станций';});
+  L.tileLayer(YNDX,{maxZoom:19,attribution:'Â© Ð¯Ð½Ð´ÐµÐºÑ'}).addTo(mymap);
+  fetch('/charging/stations.json').then(function(r){return r.json()}).then(function(d){ALL=d;showCity(0);mymap.on('moveend',function(){draw();});}).catch(function(){document.getElementById('mstat').textContent='ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð·Ð°Ð³ÑÑÐ·Ð¸ÑÑ ÑÐ¿Ð¸ÑÐ¾Ðº ÑÑÐ°Ð½ÑÐ¸Ð¹';});
 }
 function showCity(idx){
   var bb=CITIES[idx][1].split(',');
@@ -1981,15 +1968,15 @@ function draw(){
       n++;
       if(mk<2500){
         mk++;
-        var txt='<b>'+s.n+'</b>'+(s.op?'<br>Сеть: '+s.op:'')+(s.a?'<br>Адрес: '+s.a:'')+(s.pw?'<br>Мощность: до '+s.pw+' кВт':'')+(s.c?'<br>Портов: '+s.c:'')+(s.s&&s.s.length?'<br>Разъёмы: '+s.s.join(', '):'');var promo='';if(s.s&&s.s.length){var cs2=false,t2=false;for(var qi=0;qi<s.s.length;qi++){var q=String(s.s[qi]).toLowerCase();if(q.indexOf('ccs2')>=0)cs2=true;if(q.indexOf('type 2')>=0||q.indexOf('type2')>=0)t2=true;}if(cs2)promo='<br><div class="zs-mpromo"><b>Владеете китайским EV?</b> Для этой станции нужен DC-адаптер CCS2\u2192GB/T (250\u2013300 А). <a href="/catalog/adapter-ccs2-gbt-dc.html">Купить со скидкой 10%% — промокод '+PROMO+'</a></div>';else if(t2)promo='<br><div class="zs-mpromo"><b>Владеете китайским EV?</b> Для этой станции нужен адаптер Type 2\u2192GB/T (22 кВт). <a href="/catalog/adapter-type2-gbt-premium.html">Купить со скидкой 10%% — промокод '+PROMO+'</a></div>';}
+        var txt='<b>'+s.n+'</b>'+(s.op?'<br>Ð¡ÐµÑÑ: '+s.op:'')+(s.a?'<br>ÐÐ´ÑÐµÑ: '+s.a:'')+(s.pw?'<br>ÐÐ¾ÑÐ½Ð¾ÑÑÑ: Ð´Ð¾ '+s.pw+' ÐºÐÑ':'')+(s.c?'<br>ÐÐ¾ÑÑÐ¾Ð²: '+s.c:'')+(s.s&&s.s.length?'<br>Ð Ð°Ð·ÑÑÐ¼Ñ: '+s.s.join(', '):'');var promo='';if(s.s&&s.s.length){var cs2=false,t2=false;for(var qi=0;qi<s.s.length;qi++){var q=String(s.s[qi]).toLowerCase();if(q.indexOf('ccs2')>=0)cs2=true;if(q.indexOf('type 2')>=0||q.indexOf('type2')>=0)t2=true;}if(cs2)promo='<br><div class="zs-mpromo"><b>ÐÐ»Ð°Ð´ÐµÐµÑÐµ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¼ EV?</b> ÐÐ»Ñ ÑÑÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½ÑÐ¶ÐµÐ½ DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2\u2192GB/T (250\u2013300 Ð). <a href="/catalog/adapter-ccs2-gbt-dc.html">ÐÑÐ¿Ð¸ÑÑ ÑÐ¾ ÑÐºÐ¸Ð´ÐºÐ¾Ð¹ 10%% â Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ '+PROMO+'</a></div>';else if(t2)promo='<br><div class="zs-mpromo"><b>ÐÐ»Ð°Ð´ÐµÐµÑÐµ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¼ EV?</b> ÐÐ»Ñ ÑÑÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½ÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2\u2192GB/T (22 ÐºÐÑ). <a href="/catalog/adapter-type2-gbt-premium.html">ÐÑÐ¿Ð¸ÑÑ ÑÐ¾ ÑÐºÐ¸Ð´ÐºÐ¾Ð¹ 10%% â Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ '+PROMO+'</a></div>';}
         var col=(s.pw&&s.pw>=50)?'#2563EB':'#1e98ff';var m=L.circleMarker([s.lat,s.lon],{radius:5,color:col,weight:1.5,fillColor:col,fillOpacity:0.85});
-        m.bindPopup(txt+promo+'<br><a href="https://yandex.ru/maps/?pt='+s.lon+','+s.lat+'&z=17" target="_blank" rel="noopener">открыть в Яндекс.Картах</a>');
+        m.bindPopup(txt+promo+'<br><a href="https://yandex.ru/maps/?pt='+s.lon+','+s.lat+'&z=17" target="_blank" rel="noopener">Ð¾ÑÐºÑÑÑÑ Ð² Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ°ÑÑÐ°Ñ</a>');
         m.bindTooltip(s.n,{direction:'top',offset:[0,-4]});
         layer.addLayer(m);
       }
     }
   });
-  document.getElementById('mstat').textContent='Станций в области: '+n+(ALL.updated?(' · данные от '+ALL.updated):'');
+  document.getElementById('mstat').textContent='Ð¡ÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð¾Ð±Ð»Ð°ÑÑÐ¸: '+n+(ALL.updated?(' Â· Ð´Ð°Ð½Ð½ÑÐµ Ð¾Ñ '+ALL.updated):'');
 }
 function renderList(bb){
   if(!ALL)return;
@@ -1997,131 +1984,127 @@ function renderList(bb){
   var hits=[];
   ALL.stations.forEach(function(s){if(s.lat>=la1&&s.lat<=la2&&s.lon>=lo1&&s.lon<=lo2)hits.push(s);});
   var lim=hits.slice(0,50);
-  var html=`<p class="note">Найдено станций: <b>`+hits.length+`</b>`+(ALL.updated?` · данные от `+ALL.updated:``)+`</p>`;
-  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:(s.a?``:`<span class="staddr">адрес не размечен в OSM</span>`))+(s.op?`<span class="sttag">Сеть: `+s.op+`</span>`:``)+(s.pw?`<span class="sttag">До `+s.pw+` кВт</span>`:``)+(s.c?`<span class="sttag">Портов: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Разъёмы: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">На карте ↗</a></div>`;}).join(``);
-  if(hits.length>lim.length)html+=`<p class="note">Показаны первые 50 из `+hits.length+` — остальные на карте.</p>`;
+  var html=`<p class="note">ÐÐ°Ð¹Ð´ÐµÐ½Ð¾ ÑÑÐ°Ð½ÑÐ¸Ð¹: <b>`+hits.length+`</b>`+(ALL.updated?` Â· Ð´Ð°Ð½Ð½ÑÐµ Ð¾Ñ `+ALL.updated:``)+`</p>`;
+  html+=lim.map(function(s){return `<div class="strow"><b>`+s.n+`</b>`+(s.a?`<span class="staddr">`+s.a+`</span>`:(s.a?``:`<span class="staddr">Ð°Ð´ÑÐµÑ Ð½Ðµ ÑÐ°Ð·Ð¼ÐµÑÐµÐ½ Ð² OSM</span>`))+(s.op?`<span class="sttag">Ð¡ÐµÑÑ: `+s.op+`</span>`:``)+(s.pw?`<span class="sttag">ÐÐ¾ `+s.pw+` ÐºÐÑ</span>`:``)+(s.c?`<span class="sttag">ÐÐ¾ÑÑÐ¾Ð²: `+s.c+`</span>`:``)+(s.s&&s.s.length?`<span class="sttag">Ð Ð°Ð·ÑÑÐ¼Ñ: `+s.s.join(", ")+`</span>`:``)+`<a class="stlink" href="https://yandex.ru/maps/?pt=`+s.lon+`,`+s.lat+`&z=17" target="_blank" rel="noopener">ÐÐ° ÐºÐ°ÑÑÐµ â</a></div>`;}).join(``);
+  if(hits.length>lim.length)html+=`<p class="note">ÐÐ¾ÐºÐ°Ð·Ð°Ð½Ñ Ð¿ÐµÑÐ²ÑÐµ 50 Ð¸Ð· `+hits.length+` â Ð¾ÑÑÐ°Ð»ÑÐ½ÑÐµ Ð½Ð° ÐºÐ°ÑÑÐµ.</p>`;
   document.getElementById('stlist').innerHTML=html;
-  document.getElementById('mstat').textContent='Станций в области: '+hits.length+(ALL.updated?(' · данные от '+ALL.updated):'');
+  document.getElementById('mstat').textContent='Ð¡ÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð¾Ð±Ð»Ð°ÑÑÐ¸: '+hits.length+(ALL.updated?(' Â· Ð´Ð°Ð½Ð½ÑÐµ Ð¾Ñ '+ALL.updated):'');
 }
 initMap();
 document.querySelectorAll('.cbtn').forEach(function(b){b.addEventListener('click',function(){var idx=parseInt(b.dataset.ci);if(ALL)showCity(idx);});});
 """ % (json.dumps([[c, bb] for c, bb in CITIES], ensure_ascii=False), json.dumps(MAP_PROMO_CODE))
-    body = ('<div class="hero"><div class="kicker">Карта</div><h1>Зарядные станции рядом</h1>'
-     '<p class="lede">Карта зарядной инфраструктуры: тайлы Яндекс.Карт, станции из открытой базы OpenStreetMap. Выберите город — покажем точки, сети, разъёмы и мощность (где указана в базе). Адреса — из разметки OpenStreetMap и обратного геокодирования по координатам (ближайший адрес — возможна неточность номера дома). Знаете станцию, которой нет на карте? Добавьте её в OpenStreetMap (openstreetmap.org) — она попадёт в нашу базу при следующем обновлении.</p></div>'
-     '<div class="cbtns">' + city_btns + '</div>'      '<p class="note">Подробно по городам: ' + city_links + '</p>'
+    body = ('<div class="hero"><div class="kicker">ÐÐ°ÑÑÐ°</div><h1>ÐÐ°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ ÑÑÐ´Ð¾Ð¼</h1>'
+     '<p class="lede">ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ: ÑÐ°Ð¹Ð»Ñ Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ°ÑÑ, ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸Ð· Ð¾ÑÐºÑÑÑÐ¾Ð¹ Ð±Ð°Ð·Ñ OpenStreetMap. ÐÑÐ±ÐµÑÐ¸ÑÐµ Ð³Ð¾ÑÐ¾Ð´ â Ð¿Ð¾ÐºÐ°Ð¶ÐµÐ¼ ÑÐ¾ÑÐºÐ¸, ÑÐµÑÐ¸, ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ (Ð³Ð´Ðµ ÑÐºÐ°Ð·Ð°Ð½Ð° Ð² Ð±Ð°Ð·Ðµ). ÐÐ´ÑÐµÑÐ° â Ð¸Ð· ÑÐ°Ð·Ð¼ÐµÑÐºÐ¸ OpenStreetMap Ð¸ Ð¾Ð±ÑÐ°ÑÐ½Ð¾Ð³Ð¾ Ð³ÐµÐ¾ÐºÐ¾Ð´Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ñ Ð¿Ð¾ ÐºÐ¾Ð¾ÑÐ´Ð¸Ð½Ð°ÑÐ°Ð¼ (Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑÐ¸Ð¹ Ð°Ð´ÑÐµÑ â Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð° Ð½ÐµÑÐ¾ÑÐ½Ð¾ÑÑÑ Ð½Ð¾Ð¼ÐµÑÐ° Ð´Ð¾Ð¼Ð°). ÐÐ½Ð°ÐµÑÐµ ÑÑÐ°Ð½ÑÐ¸Ñ, ÐºÐ¾ÑÐ¾ÑÐ¾Ð¹ Ð½ÐµÑ Ð½Ð° ÐºÐ°ÑÑÐµ? ÐÐ¾Ð±Ð°Ð²ÑÑÐµ ÐµÑ Ð² OpenStreetMap (openstreetmap.org) â Ð¾Ð½Ð° Ð¿Ð¾Ð¿Ð°Ð´ÑÑ Ð² Ð½Ð°ÑÑ Ð±Ð°Ð·Ñ Ð¿ÑÐ¸ ÑÐ»ÐµÐ´ÑÑÑÐµÐ¼ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ð¸.</p></div>'
+     '<div class="cbtns">' + city_btns + '</div>'      '<p class="note">ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾ Ð¿Ð¾ Ð³Ð¾ÑÐ¾Ð´Ð°Ð¼: ' + city_links + '</p>'
      '<div id="map" class="nmap"></div>'
-     '<p class="note" id="mstat">Загрузка данных…</p>'
-     '<h2>Станции в выбранном городе</h2>'
-     '<div id="stlist" class="stlist"><p class="note">Выберите город, чтобы увидеть список с адресами.</p></div>'
-     '<h2>Как пользоваться картой</h2>'
-     '<div class="lcard"><p>Каждая точка — зарядная станция. Клик по метке покажет название, адрес (если есть в базе) и разъёмы. '
-     'Покрытие в мегаполисах хорошее, в малых городах — частичное; станцию можно добавить в OSM за пару минут.</p></div>'
-     '<p class="note">База данных © участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). Картографическая основа © Яндекс. База обновляется автоматически.</p>'
-     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/pains.html">Проблемы и решения</a></div>'
+     '<p class="note" id="mstat">ÐÐ°Ð³ÑÑÐ·ÐºÐ° Ð´Ð°Ð½Ð½ÑÑâ¦</p>'
+     '<h2>Ð¡ÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð²ÑÐ±ÑÐ°Ð½Ð½Ð¾Ð¼ Ð³Ð¾ÑÐ¾Ð´Ðµ</h2>'
+     '<div id="stlist" class="stlist"><p class="note">ÐÑÐ±ÐµÑÐ¸ÑÐµ Ð³Ð¾ÑÐ¾Ð´, ÑÑÐ¾Ð±Ñ ÑÐ²Ð¸Ð´ÐµÑÑ ÑÐ¿Ð¸ÑÐ¾Ðº Ñ Ð°Ð´ÑÐµÑÐ°Ð¼Ð¸.</p></div>'
+     '<h2>ÐÐ°Ðº Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÑÑÑ ÐºÐ°ÑÑÐ¾Ð¹</h2>'
+     '<div class="lcard"><p>ÐÐ°Ð¶Ð´Ð°Ñ ÑÐ¾ÑÐºÐ° â Ð·Ð°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ. ÐÐ»Ð¸Ðº Ð¿Ð¾ Ð¼ÐµÑÐºÐµ Ð¿Ð¾ÐºÐ°Ð¶ÐµÑ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ, Ð°Ð´ÑÐµÑ (ÐµÑÐ»Ð¸ ÐµÑÑÑ Ð² Ð±Ð°Ð·Ðµ) Ð¸ ÑÐ°Ð·ÑÑÐ¼Ñ. '
+     'ÐÐ¾ÐºÑÑÑÐ¸Ðµ Ð² Ð¼ÐµÐ³Ð°Ð¿Ð¾Ð»Ð¸ÑÐ°Ñ ÑÐ¾ÑÐ¾ÑÐµÐµ, Ð² Ð¼Ð°Ð»ÑÑ Ð³Ð¾ÑÐ¾Ð´Ð°Ñ â ÑÐ°ÑÑÐ¸ÑÐ½Ð¾Ðµ; ÑÑÐ°Ð½ÑÐ¸Ñ Ð¼Ð¾Ð¶Ð½Ð¾ Ð´Ð¾Ð±Ð°Ð²Ð¸ÑÑ Ð² OSM Ð·Ð° Ð¿Ð°ÑÑ Ð¼Ð¸Ð½ÑÑ.</p></div>'
+     '<p class="note">ÐÐ°Ð·Ð° Ð´Ð°Ð½Ð½ÑÑ Â© ÑÑÐ°ÑÑÐ½Ð¸ÐºÐ¸ <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL). ÐÐ°ÑÑÐ¾Ð³ÑÐ°ÑÐ¸ÑÐµÑÐºÐ°Ñ Ð¾ÑÐ½Ð¾Ð²Ð° Â© Ð¯Ð½Ð´ÐµÐºÑ. ÐÐ°Ð·Ð° Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÐµÑÑÑ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸.</p>'
+     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</a><a class="btn ghost" href="/pains.html">ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ</a></div>'
      '<link rel="stylesheet" href="/assets/leaflet/leaflet.css">'
      '<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.css">'
       '<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css">'
       '<script src="/assets/leaflet/leaflet.js"></script>'
       '<script src="/assets/leaflet/leaflet.markercluster.js"></script>'
      '<script>' + js + '</script>')
-    write_page(os.path.join(outdir,'charging','index.html'), 'Карта зарядных станций для электромобилей | Запас хода',
-        'Карта зарядных станций на Яндекс.Картах: Москва, Санкт-Петербург, Екатеринбург, Казань и другие города. Список станций с адресами, операторами и разъёмами.',
-        body, '/charging/', crumbs=[('', 'Карта ЗУ')])
+    write_page(os.path.join(outdir,'charging','index.html'), 'ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½Ð° Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ°ÑÑÐ°Ñ: ÐÐ¾ÑÐºÐ²Ð°, Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³, ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³, ÐÐ°Ð·Ð°Ð½Ñ Ð¸ Ð´ÑÑÐ³Ð¸Ðµ Ð³Ð¾ÑÐ¾Ð´Ð°. Ð¡Ð¿Ð¸ÑÐ¾Ðº ÑÑÐ°Ð½ÑÐ¸Ð¹ Ñ Ð°Ð´ÑÐµÑÐ°Ð¼Ð¸, Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ°Ð¼Ð¸ Ð¸ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼Ð¸.',
+        body, '/charging/', crumbs=[('', 'ÐÐ°ÑÑÐ° ÐÐ£')])
 
 
 def search_page(outdir, index_items):
     js = json.dumps(index_items, ensure_ascii=False)
-    body = ('<div class="hero"><div class="kicker">Поиск</div><h1>Поиск по справочнику</h1>'
-     '<p class="lede">Модели, проблемы, новости и VIN — всё в одном поиске.</p></div>'
-     '<input class="search" id="q" placeholder="Например: Zeekr, адаптер, зимой, VIN…">'
+    body = ('<div class="hero"><div class="kicker">ÐÐ¾Ð¸ÑÐº</div><h1>ÐÐ¾Ð¸ÑÐº Ð¿Ð¾ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÑ</h1>'
+     '<p class="lede">ÐÐ¾Ð´ÐµÐ»Ð¸, Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ, Ð½Ð¾Ð²Ð¾ÑÑÐ¸ Ð¸ VIN â Ð²ÑÑ Ð² Ð¾Ð´Ð½Ð¾Ð¼ Ð¿Ð¾Ð¸ÑÐºÐµ.</p></div>'
+     '<input class="search" id="q" placeholder="ÐÐ°Ð¿ÑÐ¸Ð¼ÐµÑ: Zeekr, Ð°Ð´Ð°Ð¿ÑÐµÑ, Ð·Ð¸Ð¼Ð¾Ð¹, VINâ¦">'
      '<div id="res"></div>'
      '<script>var IDX=' + js + ';'
      'document.getElementById("q").addEventListener("input",function(){var q=this.value.toLowerCase().trim();var out="";'
      'if(q){var hits=IDX.filter(function(x){return (x.t+" "+x.d).toLowerCase().indexOf(q)>=0}).slice(0,40);'
      'out=hits.map(function(x){return "<a class=mcard href="+x.u+"><b>"+x.t+"</b><span>"+x.d+"</span></a>"}).join("");'
-     'if(!hits.length)out="<p class=note>Ничего не нашлось. Попробуйте другое слово.</p>";}'
+     'if(!hits.length)out="<p class=note>ÐÐ¸ÑÐµÐ³Ð¾ Ð½Ðµ Ð½Ð°ÑÐ»Ð¾ÑÑ. ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð´ÑÑÐ³Ð¾Ðµ ÑÐ»Ð¾Ð²Ð¾.</p>";}'
      'document.getElementById("res").innerHTML=out;});</script>')
-    write_page(os.path.join(outdir,'search.html'), 'Поиск | Запас хода',
-        'Поиск по ' + str(len(MODELS)) + ' моделям, руководствам, новостям и VIN-справочнику.', body, '/search.html', noindex=True)
+    write_page(os.path.join(outdir,'search.html'), 'ÐÐ¾Ð¸ÑÐº | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐ¾Ð¸ÑÐº Ð¿Ð¾ ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÑÐ¼, ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð°Ð¼, Ð½Ð¾Ð²Ð¾ÑÑÑÐ¼ Ð¸ VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÑ.', body, '/search.html', noindex=True)
 
 def credits_page(outdir, write_page):
-    """Лицензии фотографий моделей (Wikimedia Commons)."""
+    """ÐÐ¸ÑÐµÐ½Ð·Ð¸Ð¸ ÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¹ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ (Wikimedia Commons)."""
     items = []
     for mkey, m in PHOTO_META.items():
         items.append('<tr><td>' + html.escape(mkey.replace('-', ' ')) + '</td><td><a href="https://commons.wikimedia.org/wiki/' + html.escape(m['title'].replace(' ', '_')) + '" target="_blank" rel="noopener nofollow">' + html.escape(m['title']) + '</a></td><td>' + html.escape(m.get('author','')) + '</td><td>' + html.escape(m.get('license','')) + '</td></tr>')
-    body = ('<h1>Фотографии моделей: источники и лицензии</h1>'
-      '<p class="lede">Фотографии автомобилей на страницах моделей и главной взяты из открытой медиабиблиотеки Wikimedia Commons (Wikimedia Foundation) по лицензии CC. Указываем авторов — так требует лицензия.</p>'
-      '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th>Модель</th><th>Файл на Commons</th><th>Автор</th><th>Лицензия</th></tr>' + ''.join(items) + '</table></div>')
-    write_page(os.path.join(outdir, 'credits.html'), 'Лицензии фотографий — Wikimedia Commons | Запас хода',
-        'Авторы и лицензии фотографий моделей, использованных на сайте zapashoda-ev.ru (Wikimedia Commons).',
-        art_enhance(body, SITE_DOMAIN + '/credits.html', 'Лицензии фотографий', BUILD_DATE), '/credits.html', crumbs=[('', 'Лицензии')])
+    body = ('<h1>Ð¤Ð¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¸ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹: Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸ Ð¸ Ð»Ð¸ÑÐµÐ½Ð·Ð¸Ð¸</h1>'
+      '<p class="lede">Ð¤Ð¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¸ Ð°Ð²ÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐ°Ñ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð¸ Ð³Ð»Ð°Ð²Ð½Ð¾Ð¹ Ð²Ð·ÑÑÑ Ð¸Ð· Ð¾ÑÐºÑÑÑÐ¾Ð¹ Ð¼ÐµÐ´Ð¸Ð°Ð±Ð¸Ð±Ð»Ð¸Ð¾ÑÐµÐºÐ¸ Wikimedia Commons (Wikimedia Foundation) Ð¿Ð¾ Ð»Ð¸ÑÐµÐ½Ð·Ð¸Ð¸ CC. Ð£ÐºÐ°Ð·ÑÐ²Ð°ÐµÐ¼ Ð°Ð²ÑÐ¾ÑÐ¾Ð² â ÑÐ°Ðº ÑÑÐµÐ±ÑÐµÑ Ð»Ð¸ÑÐµÐ½Ð·Ð¸Ñ.</p>'
+      '<div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full"><tr><th>ÐÐ¾Ð´ÐµÐ»Ñ</th><th>Ð¤Ð°Ð¹Ð» Ð½Ð° Commons</th><th>ÐÐ²ÑÐ¾Ñ</th><th>ÐÐ¸ÑÐµÐ½Ð·Ð¸Ñ</th></tr>' + ''.join(items) + '</table></div>')
+    write_page(os.path.join(outdir, 'credits.html'), 'ÐÐ¸ÑÐµÐ½Ð·Ð¸Ð¸ ÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¹ â Wikimedia Commons | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐ²ÑÐ¾ÑÑ Ð¸ Ð»Ð¸ÑÐµÐ½Ð·Ð¸Ð¸ ÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¹ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, Ð¸ÑÐ¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°Ð½Ð½ÑÑ Ð½Ð° ÑÐ°Ð¹ÑÐµ zapashoda-ev.ru (Wikimedia Commons).',
+        art_enhance(body, SITE_DOMAIN + '/credits.html', 'ÐÐ¸ÑÐµÐ½Ð·Ð¸Ð¸ ÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¹', BUILD_DATE), '/credits.html', crumbs=[('', 'ÐÐ¸ÑÐµÐ½Ð·Ð¸Ð¸')])
     return
 
 # ================= LLMS.TXT =================
 def llms_files(outdir, news):
     canon = [
-      ('Каталог моделей', '/', '' + str(len(MODELS)) + ' моделей EV в РФ: разъёмы, мощности, проблемы, решения'),
-      ('Руководства по проблемам', '/pains.html', '12 практических руководств с решениями'),
-      ('Новости', '/news/', 'Лента: цифры, зима, зарядка, новые модели'),
-      ('Карта зарядных станций', '/charging/', 'Зарядные станции по данным OpenStreetMap'),
-      ('VIN-справочник', '/vin/', 'Структура VIN, коды года, проверка истории для EV в РФ'),
-      ('О проекте', '/about.html', 'Методика и источники справочника'),
+      ('ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹', '/', '' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV Ð² Ð Ð¤: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ, ÑÐµÑÐµÐ½Ð¸Ñ'),
+      ('Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð° Ð¿Ð¾ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð°Ð¼', '/pains.html', '12 Ð¿ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ñ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ² Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸'),
+      ('ÐÐ¾Ð²Ð¾ÑÑÐ¸', '/news/', 'ÐÐµÐ½ÑÐ°: ÑÐ¸ÑÑÑ, Ð·Ð¸Ð¼Ð°, Ð·Ð°ÑÑÐ´ÐºÐ°, Ð½Ð¾Ð²ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸'),
+      ('ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹', '/charging/', 'ÐÐ°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ OpenStreetMap'),
+      ('VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº', '/vin/', 'Ð¡ÑÑÑÐºÑÑÑÐ° VIN, ÐºÐ¾Ð´Ñ Ð³Ð¾Ð´Ð°, Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸ Ð´Ð»Ñ EV Ð² Ð Ð¤'),
+      ('Ð Ð¿ÑÐ¾ÐµÐºÑÐµ', '/about.html', 'ÐÐµÑÐ¾Ð´Ð¸ÐºÐ° Ð¸ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°'),
     ]
-    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: ' + str(len(MODELS)) + ' моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: ' + BUILD_DATE + '). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
-    txt += '## Разделы\n\n'
+    txt = '# ' + SITE_NAME + '\n\n> ÐÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼ Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ°Ð·ÑÑÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), Ð·Ð¸Ð¼Ð½ÑÑ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ñ, ÑÐµÐ°Ð»ÑÐ½ÑÐµ ÑÐ°ÑÑÐ¾Ð´Ñ, VIN-Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ°. ÐÐ°Ð·Ð°: ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ 2019â2026, Ð²Ð²ÐµÐ·ÑÐ½Ð½ÑÑ Ð² Ð Ð¤, 76 ÑÐ¸Ð¿Ð¸ÑÐ½ÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸ Ð¸ ÑÑÑÐ»ÐºÐ°Ð¼Ð¸ Ð½Ð° Ð¿ÐµÑÐ²Ð¾Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸.\n>\n> ÐÐ¾Ð½ÑÐµÐ½Ñ: ÑÐµÐ´Ð°ÐºÑÐ¸Ñ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â». ÐÐ±Ð½Ð¾Ð²Ð»ÑÐµÑÑÑ ÑÐµÐ³ÑÐ»ÑÑÐ½Ð¾ (Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÐµÐµ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ: 2026-10-30). ÐÐ°Ð¶Ð´Ð¾Ðµ ÑÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ð¸Ðµ Ð² ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð°Ñ ÑÐ½Ð°Ð±Ð¶ÐµÐ½Ð¾ ÑÑÑÐ»ÐºÐ¾Ð¹ Ð½Ð° Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº (Ð¿ÑÐ¾ÑÐ¸Ð»ÑÐ½ÑÐµ Ð¡ÐÐ, ÑÐ¾ÑÑÐ¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ², ÑÐµÑÐ²Ð¸ÑÐ½ÑÐµ Ð¼Ð°Ð½ÑÐ°Ð»Ñ).\n> ÐÐ¸Ð½Ð¸-Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ñ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð¾Ð¼ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð² Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸: https://t.me/zapashoda_ev_bot/app\n> ÐÐ°Ð½Ð°Ð» Ñ Ð½Ð¾Ð²Ð¾ÑÑÑÐ¼Ð¸: https://t.me/zapashoda_ev\n> ÐÐ¾Ð»Ð½ÑÐ¹ ÑÐµÐºÑÑ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ° Ð´Ð»Ñ ÐÐ: https://zapashoda-ev.ru/llms-full.txt\n> ÐÐ¾Ð½ÑÐ°ÐºÑÑ: ÑÐµÑÐµÐ· Telegram-Ð±Ð¾Ñ Ð¸Ð»Ð¸ ÐºÐ°Ð½Ð°Ð» (Ð±ÑÑÑÑÑÐ¹ Ð¾ÑÐ²ÐµÑ).\n\n'
+    txt += '## Ð Ð°Ð·Ð´ÐµÐ»Ñ\n\n'
     for t,u,d in canon: txt += '- [' + t + '](' + SITE_DOMAIN + u + '): ' + d + '\n'
-    txt += '\n## Популярные модели\n\n'
+    txt += '\n## ÐÐ¾Ð¿ÑÐ»ÑÑÐ½ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸\n\n'
     pop = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Avatr 11','Xiaomi SU7','BYD Song Plus EV','BYD Yuan Plus','Geely EX5','Geely Galaxy E5','Deepal S07','Evolute i-Jet','Moskvich 3e','Tesla Model 3','VW ID.3','BMW i4','Nissan Leaf']
     seen = set()
     for pn in pop:
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
         if hit and hit[0]['model'] not in seen:
             m = hit[0]; seen.add(m['model'])
-            txt += '- [' + m['brand'] + ' ' + m['model'] + '](' + SITE_DOMAIN + '/models/' + slug(m['brand']) + '-' + slug(m['model']) + '/): разъёмы ' + str(m.get('ac') or '?') + ' / ' + str(m.get('dc') or '?') + '\n'
-    txt += '\n## Руководства по проблемам\n\n'
+            txt += '- [' + m['brand'] + ' ' + m['model'] + '](' + SITE_DOMAIN + '/models/' + slug(m['brand']) + '-' + slug(m['model']) + '/): ÑÐ°Ð·ÑÑÐ¼Ñ ' + str(m.get('ac') or '?') + ' / ' + str(m.get('dc') or '?') + '\n'
+    txt += '\n## Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð° Ð¿Ð¾ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð°Ð¼\n\n'
     for sl,t,d,_ in PAIN_ARTICLES: txt += '- [' + t + '](' + SITE_DOMAIN + '/pain/' + sl + '.html): ' + d + '\n'
-    txt += '\n## Быстрые ответы (краткие выводы для цитирования)\n\n'
+    txt += '\n## ÐÑÑÑÑÑÐµ Ð¾ÑÐ²ÐµÑÑ (ÐºÑÐ°ÑÐºÐ¸Ðµ Ð²ÑÐ²Ð¾Ð´Ñ Ð´Ð»Ñ ÑÐ¸ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð¸Ñ)\n\n'
     for sl,t,d,pids in PAIN_ARTICLES:
-        txt += '- ' + t + ' → ' + tl_short(pids) + ' Подробно с источниками: ' + SITE_DOMAIN + '/pain/' + sl + '.html\n'
+        txt += '- ' + t + ' â ' + tl_short(pids) + ' ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾ Ñ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ°Ð¼Ð¸: ' + SITE_DOMAIN + '/pain/' + sl + '.html\n'
     if news:
-        txt += '\n## Свежие новости\n\n'
+        txt += '\n## Ð¡Ð²ÐµÐ¶Ð¸Ðµ Ð½Ð¾Ð²Ð¾ÑÑÐ¸\n\n'
         for it in news[:20]: txt += '- [' + it['title'] + '](' + SITE_DOMAIN + news_slug_page(it) + '): ' + (it.get('teaser') or '') + '\n'
-    txt += '\n## Экспертные статьи блога\n\n'
-    _blog_slugs = [s for s, _, _ in services.BLOG_ARTICLES] + ['zeekr-001-gbt-diff', 'li-l7-battery-heat', 'workersbee-vs-auxus', 'b2b-reglament-vydachi-ev', '800v-zaryadka-ev-rossiya', 'erekv-domashnyaya-zaryadka', 'sertifikaciya-ezs-rf-2026']
-    for _bs in _blog_slugs:
-        txt += '- [' + _bs.replace('-', ' ') + '](' + SITE_DOMAIN + '/blog/' + _bs + '.html)\n'
     with open(os.path.join(outdir,'llms.txt'),'w',encoding='utf-8') as f: f.write(txt)
 
-    full = txt + '\n\n# ПОЛНЫЙ ТЕКСТ РУКОВОДСТВ\n\n'
+    full = txt + '\n\n# ÐÐÐÐÐ«Ð Ð¢ÐÐÐ¡Ð¢ Ð Ð£ÐÐÐÐÐÐ¡Ð¢Ð\n\n'
     for sl,t,d,pids in PAIN_ARTICLES:
         full += '## ' + t + '\n\n' + d + '\n\n'
         for i in pids:
             p = PAINS[i]
-            full += '### ' + p['pain'] + ' [' + i + ']\nКому: ' + p['who'] + '\nРешение: ' + p['sol'] + '\n' + src_html(p).replace('<a href="','( ').replace('</a>',' )').replace('Источники: ','Источники: ') + '\n\n'
-    full += '# МОДЕЛИ: РАЗЪЁМЫ\n\n'
+            full += '### ' + p['pain'] + ' [' + i + ']\nÐÐ¾Ð¼Ñ: ' + p['who'] + '\nÐ ÐµÑÐµÐ½Ð¸Ðµ: ' + p['sol'] + '\n' + src_html(p).replace('<a href="','( ').replace('</a>',' )').replace('ÐÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸: ','ÐÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸: ') + '\n\n'
+    full += '# ÐÐÐÐÐÐ: Ð ÐÐÐªÐÐÐ«\n\n'
     for m in MODELS:
         full += '## ' + m['brand'] + ' ' + m['model'] + ' (' + m['years'] + ', ' + m['type'] + ', ' + m['market'] + ')\n'
-        full += 'AC: ' + str(m.get('ac') or '—') + ' | DC: ' + str(m.get('dc') or '—') + ' | OBC: ' + str(m.get('obc') or '—') + ' | DC-мощность: ' + str(m.get('dcp') or '—') + '\n'
-        if m.get('sol'): full += 'Для зарядки: ' + str(m['sol']) + '\n'
+        full += 'AC: ' + str(m.get('ac') or 'â') + ' | DC: ' + str(m.get('dc') or 'â') + ' | OBC: ' + str(m.get('obc') or 'â') + ' | DC-Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ: ' + str(m.get('dcp') or 'â') + '\n'
+        if m.get('sol'): full += 'ÐÐ»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸: ' + str(m['sol']) + '\n'
         full += '\n'
     if news:
-        full += '# НОВОСТИ\n\n'
+        full += '# ÐÐÐÐÐ¡Ð¢Ð\n\n'
         for it in news:
             full += '## ' + it['title'] + ' (' + it['date'] + ')\n' + (it.get('teaser') or '') + '\n\n' + it['body'].replace('</p><p>','\n\n').replace('<p>','').replace('</p>','') + '\n\n'
     with open(os.path.join(outdir,'llms-full.txt'),'w',encoding='utf-8') as f: f.write(full)
 
-# ================= OG-КАРТОЧКИ (PIL) =================
+# ================= OG-ÐÐÐ Ð¢ÐÐ§ÐÐ (PIL) =================
 def og_gen(outdir, jobs):
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
-        print('PIL недоступен — OG-карточки пропущены'); return
+        print('PIL Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½ â OG-ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð¿ÑÐ¾Ð¿ÑÑÐµÐ½Ñ'); return
     here = os.path.dirname(os.path.abspath(__file__))
     fb = os.path.join(here, 'assets', 'fonts', 'DejaVuSans-Bold.ttf')
     if not os.path.exists(fb):
         fb = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
     if not os.path.exists(fb):
-        print('Шрифт не найден — OG пропущены'); return
+        print('Ð¨ÑÐ¸ÑÑ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ â OG Ð¿ÑÐ¾Ð¿ÑÑÐµÐ½Ñ'); return
     f_big = ImageFont.truetype(fb, 62); f_small = ImageFont.truetype(fb, 30); f_url = ImageFont.truetype(fb, 26)
     ogdir = os.path.join(outdir, 'assets', 'og')
     os.makedirs(ogdir, exist_ok=True)
@@ -2150,26 +2133,26 @@ def og_gen(outdir, jobs):
         y = 250
         for ln in lines:
             dr.text((60, y), ln, font=f_big, fill=fg); y += 74
-        dr.text((60, 520), 'ЗАПАС ХОДА · ПРАКТИКА EV В РОССИИ', font=f_small, fill=sub)
+        dr.text((60, 520), 'ÐÐÐÐÐ¡ Ð¥ÐÐÐ Â· ÐÐ ÐÐÐ¢ÐÐÐ EV Ð Ð ÐÐ¡Ð¡ÐÐ', font=f_small, fill=sub)
         dr.text((60, 566), SITE_DOMAIN.replace('https://','').replace('http://',''), font=f_url, fill=(GOLD if is_b2b else MUT))
         p = os.path.join(outdir, rel.lstrip('/'))
         os.makedirs(os.path.dirname(p), exist_ok=True)
         img.save(p, 'PNG', optimize=True)
-    print('OG-карточек:', len(jobs))
+    print('OG-ÐºÐ°ÑÑÐ¾ÑÐµÐº:', len(jobs))
 
 
 def og_model_cards(outdir):
-    """Богатые OG-плашки моделей «Проверь свою машину»: бренд-палитра, разъёмы, мощность."""
+    """ÐÐ¾Ð³Ð°ÑÑÐµ OG-Ð¿Ð»Ð°ÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Â«ÐÑÐ¾Ð²ÐµÑÑ ÑÐ²Ð¾Ñ Ð¼Ð°ÑÐ¸Ð½ÑÂ»: Ð±ÑÐµÐ½Ð´-Ð¿Ð°Ð»Ð¸ÑÑÐ°, ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ."""
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
-        print('PIL недоступен — модельные OG пропущены'); return
+        print('PIL Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½ â Ð¼Ð¾Ð´ÐµÐ»ÑÐ½ÑÐµ OG Ð¿ÑÐ¾Ð¿ÑÑÐµÐ½Ñ'); return
     here = os.path.dirname(os.path.abspath(__file__))
     fb = os.path.join(here, 'assets', 'fonts', 'DejaVuSans-Bold.ttf')
     if not os.path.exists(fb):
         fb = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
     if not os.path.exists(fb):
-        print('Шрифт не найден — модельные OG пропущены'); return
+        print('Ð¨ÑÐ¸ÑÑ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ â Ð¼Ð¾Ð´ÐµÐ»ÑÐ½ÑÐµ OG Ð¿ÑÐ¾Ð¿ÑÑÐµÐ½Ñ'); return
     ogdir = os.path.join(outdir, 'assets', 'og')
     os.makedirs(ogdir, exist_ok=True)
     MARINE = (0, 58, 64); ACID = (200, 234, 149); WHITE = (245, 245, 247)
@@ -2178,20 +2161,20 @@ def og_model_cards(outdir):
     f_fact = ImageFont.truetype(fb, 30); f_foot = ImageFont.truetype(fb, 27)
     def _kw(s):
         if not s: return None
-        mm = re.search(r'(?:до\s*)?~?\s*(\d[\d\s]{0,3}(?:\+\d+)?)\+?\s*кВт', s)
-        return mm.group(1).replace(' ', '') + ' кВт' if mm else None
+        mm = re.search(r'(?:Ð´Ð¾\s*)?~?\s*(\d[\d\s]{0,3}(?:\+\d+)?)\+?\s*ÐºÐÑ', s)
+        return mm.group(1).replace(' ', '') + ' ÐºÐÑ' if mm else None
     def _facts(m):
         fs = []
         if m.get('ac'): fs.append('AC: ' + str(m['ac']))
         if m.get('dc'):
             d = 'DC: ' + str(m['dc'])
             k = _kw(str(m.get('dcp') or ''))
-            if k: d += ' · до ' + k
+            if k: d += ' Â· Ð´Ð¾ ' + k
             fs.append(d)
         ob = str(m.get('obc') or '')
         if ob:
             o = ob.split('/')[0].split('(')[0].strip()
-            if o and o not in ('—', '-'): fs.append('OBC: ' + (o if 'кВт' in o else o + ' кВт'))
+            if o and o not in ('â', '-'): fs.append('OBC: ' + (o if 'ÐºÐÑ' in o else o + ' ÐºÐÑ'))
         return fs[:3]
     n = 0
     for m in MODELS:
@@ -2199,17 +2182,17 @@ def og_model_cards(outdir):
         rel = '/assets/og/m-' + sl + '.png'
         img = Image.new('RGB', (1200, 630), MARINE)
         dr = ImageDraw.Draw(img)
-        # логотип: зелёный скруглённый квадрат + белая молния
+        # Ð»Ð¾Ð³Ð¾ÑÐ¸Ð¿: Ð·ÐµÐ»ÑÐ½ÑÐ¹ ÑÐºÑÑÐ³Ð»ÑÐ½Ð½ÑÐ¹ ÐºÐ²Ð°Ð´ÑÐ°Ñ + Ð±ÐµÐ»Ð°Ñ Ð¼Ð¾Ð»Ð½Ð¸Ñ
         dr.rounded_rectangle([64, 62, 138, 142], radius=16, outline=WHITE, width=6)
         dr.rounded_rectangle([140, 90, 152, 114], radius=5, fill=WHITE)
         dr.polygon([(103, 76), (83, 106), (96, 106), (89, 128), (118, 98), (104, 98), (112, 76)], fill=ACID)
-        # бейдж
-        bt = 'ПРОВЕРЬ СВОЮ МАШИНУ'
+        # Ð±ÐµÐ¹Ð´Ð¶
+        bt = 'ÐÐ ÐÐÐÐ Ð¬ Ð¡ÐÐÐ® ÐÐÐ¨ÐÐÐ£'
         tw = dr.textlength(bt, font=f_badge)
         bx, by = 190, 62
         dr.rounded_rectangle([bx, by, bx + tw + 40, by + 46], radius=10, fill=ACID)
         dr.text((bx + 20, by + 7), bt, font=f_badge, fill=MARINE)
-        # название модели
+        # Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»Ð¸
         title = m['brand'] + ' ' + m['model']
         lines = []; cur = ''
         for w in title.split():
@@ -2223,32 +2206,32 @@ def og_model_cards(outdir):
         y = 196
         for ln in lines:
             dr.text((60, y), ln, font=f_title, fill=WHITE); y += 80
-        # факты
+        # ÑÐ°ÐºÑÑ
         y += 14
         for f in _facts(m):
-            s = f if len(f) <= 52 else f[:51].rstrip() + '…'
+            s = f if len(f) <= 52 else f[:51].rstrip() + 'â¦'
             dr.text((60, y), s, font=f_fact, fill=ACID); y += 46
-        # футер
+        # ÑÑÑÐµÑ
         dr.line([60, 540, 1140, 540], fill=LINE, width=2)
-        dr.text((60, 566), 'ЗАПАС ХОДА · zapashoda-ev.ru · разъёмы, решения, аксессуары', font=f_foot, fill=MUT)
+        dr.text((60, 566), 'ÐÐÐÐÐ¡ Ð¥ÐÐÐ Â· zapashoda-ev.ru Â· ÑÐ°Ð·ÑÑÐ¼Ñ, ÑÐµÑÐµÐ½Ð¸Ñ, Ð°ÐºÑÐµÑÑÑÐ°ÑÑ', font=f_foot, fill=MUT)
         p = os.path.join(outdir, rel.lstrip('/'))
         os.makedirs(os.path.dirname(p), exist_ok=True)
         img.save(p, 'PNG', optimize=True)
         n += 1
-    print('OG-моделей (богатые):', n)
+    print('OG-Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ (Ð±Ð¾Ð³Ð°ÑÑÐµ):', n)
 
 
-# ================= ГЛАВНАЯ, ПРОЧИЕ, SITEMAP =================
+# ================= ÐÐÐÐÐÐÐ¯, ÐÐ ÐÐ§ÐÐ, SITEMAP =================
 
-# ====== ШАБЛОННЫЕ КОМПОНЕНТЫ FreshCart ======
+# ====== Ð¨ÐÐÐÐÐÐÐ«Ð ÐÐÐÐÐÐÐÐÐ¢Ð« FreshCart ======
 
 def shop_tpl_card(p):
-    """Карточка товара как в FreshCart index.html (Popular Products), с хуками заявки."""
+    """ÐÐ°ÑÑÐ¾ÑÐºÐ° ÑÐ¾Ð²Ð°ÑÐ° ÐºÐ°Ðº Ð² FreshCart index.html (Popular Products), Ñ ÑÑÐºÐ°Ð¼Ð¸ Ð·Ð°ÑÐ²ÐºÐ¸."""
     tag = catalog.TAGS.get(p['id'])
     hit = ('<div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-green-600 text-white">' + html.escape(tag) + '</span></div>' if tag else '')
     sp = catalog.SPECS.get(p['id'], [])
     spec = html.escape(str(sp[0][1])) if sp else ''
-    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
+    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAdd(' + str(p['id']) + ',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>Ð Ð·Ð°ÑÐ²ÐºÑ</span></button>')
     f = catalog.SKU_IMG_FILES.get(p['id'])
     img = f if f else '/assets/og/default.png'
     return ('<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="' + html.escape(p['cat']) + '" data-ln="' + catalog.ln_of(p) + '" data-price="' + str(p['price']) + '">'
@@ -2268,14 +2251,14 @@ def _tpl_bundle_card(b):
     items_txt = ', '.join(catalog.PIDX[i]['name'].split(',')[0] for i in b['items'])
     save = b['was'] - b['price']
     img_tag = ('<img src="/assets/sku/bundle-set.webp" alt="' + html.escape(b['name']) + '" loading="lazy" decoding="async" class="w-full h-auto">' if b['id'] == 'b-gbt' else '<div class="py-6 text-center"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></div>')
-    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>В заявку</span></button>')
+    add_btn = ('<button type="button" class="btn inline-flex items-center gap-x-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 pc-add sku-add" onclick="ofAddB(\'' + b['id'] + '\',this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg><span>Ð Ð·Ð°ÑÐ²ÐºÑ</span></button>')
     return ('<div class="flex-0 block w-full md:w-auto">'
       '<div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product">'
       '<div class="flex-auto p-4">'
-      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="save-badge inline-block bg-red-600 text-white">Выгода ' + catalog.fmt_price(save) + '</span></div>' + img_tag + '</div>'
-      '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>Комплект</small></a>'
+      '<div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="save-badge inline-block bg-red-600 text-white">ÐÑÐ³Ð¾Ð´Ð° ' + catalog.fmt_price(save) + '</span></div>' + img_tag + '</div>'
+      '<div class="flex flex-col gap-3"><a class="text-decoration-none text-gray-500"><small>ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</small></a>'
       '<h3 class="text-base" style="white-space:normal"><span class="text-gray-800">' + html.escape(b['name']) + '</span></h3>'
-      '<small class="text-gray-500" style="display:block">В комплекте: ' + html.escape(items_txt) + '</small>'
+      '<small class="text-gray-500" style="display:block">Ð ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐµ: ' + html.escape(items_txt) + '</small>'
       + (('<small class="text-gray-500" style="display:block">' + html.escape(str(b.get('desc'))) + '</small>') if b.get('desc') else '')
       + '<div class="flex justify-between items-center">'
       '<div><span class="text-gray-900 font-semibold">' + catalog.fmt_price(b['price']) + '</span><span class="old-price">' + catalog.fmt_price(b['was']) + '</span></div>'
@@ -2283,18 +2266,18 @@ def _tpl_bundle_card(b):
       '</div></div></div></div></div>')
 
 def _tpl_blog_card(href, kind, title, teaser, img):
-    cat = kind if kind else 'Статья'
+    cat = kind if kind else 'Ð¡ÑÐ°ÑÑÑ'
     return ('<div><a href="' + href + '" style="text-decoration:none;color:inherit"><div class="blogcard h-full">'
       + '<span class="cat">' + html.escape(cat) + '</span>'
       + '<h3>' + html.escape(str(title)) + '</h3>'
       + '<p>' + html.escape(str(teaser)[:150]) + '</p>'
-      + '<span class="go">Читать статью →</span>'
+      + '<span class="go">Ð§Ð¸ÑÐ°ÑÑ ÑÑÐ°ÑÑÑ â</span>'
       + '</div></a></div>')
 
 def survivor_hall_html():
-    """UGC «Зал славы выживших»: только РЕАЛЬНЫЕ верифицированные истории.
-    Источник: data/survivors.json (пополняется вручную из листа verified_survivors
-    после проверки владельцем). Пусто — честная заглушка, без выдуманных отзывов."""
+    """UGC Â«ÐÐ°Ð» ÑÐ»Ð°Ð²Ñ Ð²ÑÐ¶Ð¸Ð²ÑÐ¸ÑÂ»: ÑÐ¾Ð»ÑÐºÐ¾ Ð ÐÐÐÐ¬ÐÐ«Ð Ð²ÐµÑÐ¸ÑÐ¸ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐµ Ð¸ÑÑÐ¾ÑÐ¸Ð¸.
+    ÐÑÑÐ¾ÑÐ½Ð¸Ðº: data/survivors.json (Ð¿Ð¾Ð¿Ð¾Ð»Ð½ÑÐµÑÑÑ Ð²ÑÑÑÐ½ÑÑ Ð¸Ð· Ð»Ð¸ÑÑÐ° verified_survivors
+    Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ¼). ÐÑÑÑÐ¾ â ÑÐµÑÑÐ½Ð°Ñ Ð·Ð°Ð³Ð»ÑÑÐºÐ°, Ð±ÐµÐ· Ð²ÑÐ´ÑÐ¼Ð°Ð½Ð½ÑÑ Ð¾ÑÐ·ÑÐ²Ð¾Ð²."""
     import json as _json
     data = []
     try:
@@ -2305,15 +2288,15 @@ def survivor_hall_html():
         data = []
     if not data:
         return ('<section class="lg:my-14 my-8 band"><div class="container">'
-          '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
+          '<h2 class="text-lg text-gray-900">ÐÐ°Ð» ÑÐ»Ð°Ð²Ñ Ð²ÑÐ¶Ð¸Ð²ÑÐ¸Ñ <span class="text-gray-500 text-sm font-normal">â Ð¸ÑÑÐ¾ÑÐ¸Ð¸ ÑÐµÐ°Ð»ÑÐ½ÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²</span></h2>'
           '<div class="rounded-lg break-words border border-dashed" style="border-color:var(--line);background:#fff;padding:26px 24px;margin-top:10px">'
-          '<p style="margin:0 0 8px;font-weight:700;color:var(--accent)">Раздел открыт — и он честный.</p>'
-          '<p style="margin:0 0 14px;color:var(--muted);font-size:14.5px;max-width:740px">Мы не публикуем выдуманные отзывы. Здесь появятся верифицированные истории с фото: где встали, что спасло, сколько стоило. Хотите быть первым — расскажите свою на форуме.</p>'
-          '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700" href="/forum/">Рассказать историю →</a>'
+          '<p style="margin:0 0 8px;font-weight:700;color:var(--accent)">Ð Ð°Ð·Ð´ÐµÐ» Ð¾ÑÐºÑÑÑ â Ð¸ Ð¾Ð½ ÑÐµÑÑÐ½ÑÐ¹.</p>'
+          '<p style="margin:0 0 14px;color:var(--muted);font-size:14.5px;max-width:740px">ÐÑ Ð½Ðµ Ð¿ÑÐ±Ð»Ð¸ÐºÑÐµÐ¼ Ð²ÑÐ´ÑÐ¼Ð°Ð½Ð½ÑÐµ Ð¾ÑÐ·ÑÐ²Ñ. ÐÐ´ÐµÑÑ Ð¿Ð¾ÑÐ²ÑÑÑÑ Ð²ÐµÑÐ¸ÑÐ¸ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐµ Ð¸ÑÑÐ¾ÑÐ¸Ð¸ Ñ ÑÐ¾ÑÐ¾: Ð³Ð´Ðµ Ð²ÑÑÐ°Ð»Ð¸, ÑÑÐ¾ ÑÐ¿Ð°ÑÐ»Ð¾, ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ð»Ð¾. Ð¥Ð¾ÑÐ¸ÑÐµ Ð±ÑÑÑ Ð¿ÐµÑÐ²ÑÐ¼ â ÑÐ°ÑÑÐºÐ°Ð¶Ð¸ÑÐµ ÑÐ²Ð¾Ñ Ð½Ð° ÑÐ¾ÑÑÐ¼Ðµ.</p>'
+          '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700" href="/forum/">Ð Ð°ÑÑÐºÐ°Ð·Ð°ÑÑ Ð¸ÑÑÐ¾ÑÐ¸Ñ â</a>'
           '</div></div></section>')
     cards = ''
     for it in data[:24]:
-        img = ('<img src="' + html.escape(str(it.get('photo', ''))) + '" alt="' + html.escape(str(it.get('title', 'История'))) + '" loading="lazy" style="width:100%;display:block">') if it.get('photo') else ''
+        img = ('<img src="' + html.escape(str(it.get('photo', ''))) + '" alt="' + html.escape(str(it.get('title', 'ÐÑÑÐ¾ÑÐ¸Ñ'))) + '" loading="lazy" style="width:100%;display:block">') if it.get('photo') else ''
         tag = ('<span class="tag">' + html.escape(str(it.get('model', ''))) + '</span>') if it.get('model') else ''
         place = ('<span class="tag">' + html.escape(str(it.get('place', ''))) + '</span>') if it.get('place') else ''
         cards += ('<div class="ugc-card">' + img +
@@ -2321,13 +2304,13 @@ def survivor_hall_html():
           '<p style="margin:8px 0 10px;font-size:14px;line-height:1.7;color:var(--muted)">' + html.escape(str(it.get('text', ''))) + '</p>'
           '<div style="font-size:12px;color:var(--muted)">' + tag + place + '</div></div></div>')
     return ('<section class="lg:my-14 my-8 band"><div class="container">'
-      '<h2 class="text-lg text-gray-900">Зал славы выживших <span class="text-gray-500 text-sm font-normal">— истории реальных владельцев</span></h2>'
+      '<h2 class="text-lg text-gray-900">ÐÐ°Ð» ÑÐ»Ð°Ð²Ñ Ð²ÑÐ¶Ð¸Ð²ÑÐ¸Ñ <span class="text-gray-500 text-sm font-normal">â Ð¸ÑÑÐ¾ÑÐ¸Ð¸ ÑÐµÐ°Ð»ÑÐ½ÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²</span></h2>'
       '<div class="ugc-grid">' + cards + '</div></div></section>')
 
 def home_page(outdir, news=None):
     feat_slugs = {'phev-rossiya-2026','strakhovka-ev-phev-2026','zeekr-001-razyom-i-problemy'}
-    blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','Блог',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
-    blog_cards += _tpl_blog_card('/blog/winter-ev-2026.html','Флагман', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?', 'Честный разбор физики мороза, деградации CLTC-запаса хода и 3 правила выживания для электромобиля в -20°C.', '/assets/og/b-winter-ev-2026.png')
+    blog_cards = ''.join(_tpl_blog_card('/blog/'+sl+'.html','ÐÐ»Ð¾Ð³',t,d,'/assets/og/b-'+sl+'.png') for sl,t,d in services.BLOG_ARTICLES if sl in feat_slugs)
+    blog_cards += _tpl_blog_card('/blog/winter-ev-2026.html','Ð¤Ð»Ð°Ð³Ð¼Ð°Ð½', 'ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾: Ð½Ð° ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð¿ÑÐ¾ÑÐµÐ½ÑÐ¾Ð² Ð¼Ð¾ÑÐ¾Ð· ÑÐµÐ°Ð»ÑÐ½Ð¾ Â«ÑÐµÐ¶ÐµÑÂ» Ð±Ð°ÑÐ°ÑÐµÑ Zeekr, Li Auto Ð¸ Voyah Ð² Ð Ð¾ÑÑÐ¸Ð¸?', 'Ð§ÐµÑÑÐ½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ ÑÐ¸Ð·Ð¸ÐºÐ¸ Ð¼Ð¾ÑÐ¾Ð·Ð°, Ð´ÐµÐ³ÑÐ°Ð´Ð°ÑÐ¸Ð¸ CLTC-Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¾Ð´Ð° Ð¸ 3 Ð¿ÑÐ°Ð²Ð¸Ð»Ð° Ð²ÑÐ¶Ð¸Ð²Ð°Ð½Ð¸Ñ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² -20Â°C.', '/assets/og/b-winter-ev-2026.png')
     news_cards = ''
     if news:
         try: ns = sorted(news, key=lambda it: it.get('date',''), reverse=True)[:3]
@@ -2336,39 +2319,39 @@ def home_page(outdir, news=None):
             tt = str(it.get('title',''))[:120]
             dd = str(it.get('teaser',''))[:150]
             img = '/assets/og/' + (it.get('og') if it.get('og') else 'default.png')
-            news_cards += _tpl_blog_card(news_slug_page(it),'Новости',tt,dd,img)
+            news_cards += _tpl_blog_card(news_slug_page(it),'ÐÐ¾Ð²Ð¾ÑÑÐ¸',tt,dd,img)
 
     CAT_ICONS = {
-      'Адаптеры': '<path d="M7 12h6a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H9" /><path d="M13 12H7a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4h2" /><path d="M7 8h10" /><path d="M9 4v4" /><path d="M9 16v4" /><path d="M15 4v2" /><path d="M15 14v2" /><path d="M9 4h6v4" />',
-      'Кабели': '<path d="M9 4v8a3 3 0 0 0 3 3h6" /><path d="M9 4h-4v8h4z" /><path d="M18 19l2-2-2-2" /><path d="M20 17h-2" /><path d="M4 4h5v8H4z" />',
-      'Зарядки': '<path d="M12 3l-6 8h4l-2 9 8-11h-4l0-6" /><path d="M12 3l-2 0 2 6" />',
-      'Станции': '<rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 7h6v5a3 3 0 0 1-3 3v0a3 3 0 0 1-3-3z" /><path d="M12 15v4" />',
+      'ÐÐ´Ð°Ð¿ÑÐµÑÑ': '<path d="M7 12h6a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H9" /><path d="M13 12H7a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4h2" /><path d="M7 8h10" /><path d="M9 4v4" /><path d="M9 16v4" /><path d="M15 4v2" /><path d="M15 14v2" /><path d="M9 4h6v4" />',
+      'ÐÐ°Ð±ÐµÐ»Ð¸': '<path d="M9 4v8a3 3 0 0 0 3 3h6" /><path d="M9 4h-4v8h4z" /><path d="M18 19l2-2-2-2" /><path d="M20 17h-2" /><path d="M4 4h5v8H4z" />',
+      'ÐÐ°ÑÑÐ´ÐºÐ¸': '<path d="M12 3l-6 8h4l-2 9 8-11h-4l0-6" /><path d="M12 3l-2 0 2 6" />',
+      'Ð¡ÑÐ°Ð½ÑÐ¸Ð¸': '<rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 7h6v5a3 3 0 0 1-3 3v0a3 3 0 0 1-3-3z" /><path d="M12 15v4" />',
       'V2L': '<path d="M8 8a4 4 0 1 1 8 0c0 2-1 3-2 4v2a2 2 0 0 1-4 0v-2c-1-1-2-2-2-4" /><path d="M10 18h4" />',
-      'Аксессуары': '<path d="M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /><path d="M8 8V6a4 4 0 0 1 8 0v2" />',
+      'ÐÐºÑÐµÑÑÑÐ°ÑÑ': '<path d="M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /><path d="M8 8V6a4 4 0 0 1 8 0v2" />',
     }
     def cat_card(c):
-        ic = CAT_ICONS.get(c, CAT_ICONS['Аксессуары'])
+        ic = CAT_ICONS.get(c, CAT_ICONS['ÐÐºÑÐµÑÑÑÐ°ÑÑ'])
         return ('<div><a href="/catalog/"><div class="rounded-lg break-words border bg-white border-gray-300 transition duration-75 hover:transition hover:duration-500 ease-in-out hover:border-green-600 hover:shadow-md">'
           '<div class="py-8 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mb-3 m-auto text-green-600">'+ic+'</svg>'
           '<div class="text-base text-gray-800">'+c+'</div></div></div></a></div>')
-    cats_html = ''.join(cat_card(c) for c in ['Адаптеры','Кабели','Зарядки','Станции','V2L','Аксессуары'])
+    cats_html = ''.join(cat_card(c) for c in ['ÐÐ´Ð°Ð¿ÑÐµÑÑ','ÐÐ°Ð±ÐµÐ»Ð¸','ÐÐ°ÑÑÐ´ÐºÐ¸','Ð¡ÑÐ°Ð½ÑÐ¸Ð¸','V2L','ÐÐºÑÐµÑÑÑÐ°ÑÑ'])
     hits = ''.join(shop_tpl_card(catalog.PIDX[i]) for i in [1,5,19,23])
     def tool_tile(href, title, icon):
         return ('<div><a href="'+href+'"><div class="rounded-lg break-words border bg-white border-gray-300 transition duration-75 hover:transition hover:duration-500 ease-in-out hover:border-green-600 hover:shadow-md">'
           '<div class="py-6 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mb-3 m-auto text-green-600">'+icon+'</svg>'
           '<div class="text-base text-gray-800 font-medium">'+title+'</div></div></div></a></div>')
     tools_html = (''.join(tool_tile(u,t,i) for u,t,i in [
-      ('/quiz/','Подбор за 30 секунд','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="16.6" r="1.1"/>'),
-      ('/charging/','Карта станций','<path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z"/><circle cx="12" cy="11" r="2.2"/>'),
-      ('/vin/','VIN-проверка','<circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 21 21"/>'),
-      ('/forum/','Форум сообщества','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
-      ('/models/','Все модели','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
-      ('/b2b/','Дилерам','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
-      ('/matrix/','Матрица совместимости','<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 9v11"/><path d="M15 9v11"/>'),
-      ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
-      ('/compare/','Сравнение моделей','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
-      (GUIDE_PDF,'Гид PDF (бесплатно)','<path d="M12 4v10"/><path d="M7.5 9.5 12 14l4.5-4.5"/><path d="M5 20h14"/>'),
-      ('/blog/','Гайды и обзоры','<path d="M4 5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2z"/><path d="M8 9h8M8 13h5"/>'),
+      ('/quiz/','ÐÐ¾Ð´Ð±Ð¾Ñ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="16.6" r="1.1"/>'),
+      ('/charging/','ÐÐ°ÑÑÐ° ÑÑÐ°Ð½ÑÐ¸Ð¹','<path d="M12 21c4-4.2 6-7.3 6-10a6 6 0 1 0-12 0c0 2.7 2 5.8 6 10Z"/><circle cx="12" cy="11" r="2.2"/>'),
+      ('/vin/','VIN-Ð¿ÑÐ¾Ð²ÐµÑÐºÐ°','<circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 21 21"/>'),
+      ('/forum/','Ð¤Ð¾ÑÑÐ¼ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°','<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
+      ('/models/','ÐÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸','<path d="M3 13l2-5h14l2 5"/><rect x="3" y="13" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.4"/><circle cx="16.5" cy="17.5" r="1.4"/>'),
+      ('/b2b/','ÐÐ¸Ð»ÐµÑÐ°Ð¼','<path d="M4 20V9l8-5 8 5v11"/><rect x="9" y="13" width="6" height="7"/>'),
+      ('/matrix/','ÐÐ°ÑÑÐ¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸','<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 9v11"/><path d="M15 9v11"/>'),
+      ('/compare/','Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
+      ('/compare/','Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹','<path d="M4 6h7M4 12h10M4 18h7M13 3l4 3-4 3"/><path d="M17 6H9"/><path d="M14 15l4 3-4 3"/><path d="M18 18H9"/>'),
+      (GUIDE_PDF,'ÐÐ¸Ð´ PDF (Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾)','<path d="M12 4v10"/><path d="M7.5 9.5 12 14l4.5-4.5"/><path d="M5 20h14"/>'),
+      ('/blog/','ÐÐ°Ð¹Ð´Ñ Ð¸ Ð¾Ð±Ð·Ð¾ÑÑ','<path d="M4 5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2z"/><path d="M8 9h8M8 13h5"/>'),
     ]))
     pop_names = ['Zeekr 001','Zeekr 007','Zeekr 7X','Li Auto L6','Voyah Free','Xiaomi SU7','BYD Song Plus EV','Tesla Model 3']
     pop_cards = ''
@@ -2382,11 +2365,11 @@ def home_page(outdir, news=None):
           '<div class="flex-auto p-4"><div class="text-center relative flex justify-center">'
           '<a href="/models/'+sl+'/" style="display:block">'+
               (('<img class="mcard-photo" src="/assets/photos/'+sl+'.jpg" alt="'+html.escape(m['brand']+' '+m['model'])+' (Wikimedia Commons)" loading="lazy">') if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),'assets','photos',sl+'.jpg')) else ('<div class="mphoto-fb"><div style="font-size:20px">'+html.escape(m['brand'].upper())+'</div></div>')) +
-              '<div class="p-3" style="padding:12px"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' · '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Разъёмы и решения →</div></div></a>'
+              '<div class="p-3" style="padding:12px"><b class="text-base text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</b><div class="text-sm text-gray-500 mt-1">'+m['years']+' Â· '+m['type']+'</div><div class="text-sm font-semibold text-green-600 mt-2">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ â</div></div></a>'
           '<div class="flex flex-col gap-3"><a href="/models/'+sl+'/" class="text-decoration-none text-gray-500"><small>'+meta+'</small></a>'
           '<h3 class="text-base truncate"><a href="/models/'+sl+'/" class="text-gray-800">'+html.escape(m['brand']+' '+m['model'])+'</a></h3>'
           '<div class="flex justify-between items-center"><small class="text-gray-500">'+html.escape(str(m.get('ac') or ''))+'</small>'
-          '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'/">Разъёмы →</a></div>'
+          '<a class="text-green-600 font-semibold text-sm" href="/models/'+sl+'/">Ð Ð°Ð·ÑÑÐ¼Ñ â</a></div>'
           '</div></div></div></div></div>')
     bcounts = {}
     for m in MODELS:
@@ -2394,8 +2377,8 @@ def home_page(outdir, news=None):
         bcounts[b] = bcounts.get(b, 0) + 1
     brand_html = ''.join('<a class="inline-flex items-center px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-800 hover:border-green-600 hover:text-green-600 text-sm font-medium" href="/models/?brand='+html.escape(b).replace(' ','%20')+'">'+html.escape(b)+'<span class="ml-2 text-green-600 font-bold">'+str(n)+'</span></a>' for b,n in sorted(bcounts.items(), key=lambda x:-x[1])[:16])
     art_cards = ''.join('<div class="pain-card"><a href="/pain/'+sl+'.html"><div class="rounded-lg break-words border bg-white border-gray-300 hover:border-green-600 hover:shadow-md transition p-4 h-full">'
-      '<small class="text-gray-500">Проблемы</small><h3 class="text-base font-semibold text-gray-800 mt-2">'+html.escape(title)+'</h3>'
-      '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p><span class="go">Читать статью →</span></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
+      '<small class="text-gray-500">ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ</small><h3 class="text-base font-semibold text-gray-800 mt-2">'+html.escape(title)+'</h3>'
+      '<p class="text-sm text-gray-600 mt-2" style="margin:0">'+html.escape(desc)+'</p><span class="go">Ð§Ð¸ÑÐ°ÑÑ ÑÑÐ°ÑÑÑ â</span></div></a></div>' for sl,title,desc,pids in PAIN_ARTICLES[:6])
     hero_photo = ''
     for pn in ['Zeekr 001','Li Auto L6']:
         hit = [m for m in MODELS if pn.lower() in (m['brand']+' '+m['model']).lower()]
@@ -2404,9 +2387,9 @@ def home_page(outdir, news=None):
         sl = slug(m['brand'])+'-'+slug(m['model'])
         _pf = '/assets/photos/'+sl+'.jpg'
         if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos', sl + '.jpg')):
-            hero_photo = ('<a href="/models/'+sl+'/" class="zhero-photo" aria-label="'+html.escape(m['brand']+' '+m['model'])+' — разъёмы и решения">'
-              + '<img src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' — зарядка, Wikimedia Commons" loading="eager" fetchpriority="high">'
-              + '<span class="zcap">'+html.escape(m['brand']+' '+m['model'])+'<span>Разъёмы и решения →</span></span></a>')
+            hero_photo = ('<a href="/models/'+sl+'/" class="zhero-photo" aria-label="'+html.escape(m['brand']+' '+m['model'])+' â ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ">'
+              + '<img src="'+_pf+'" alt="'+html.escape(m['brand']+' '+m['model'])+' â Ð·Ð°ÑÑÐ´ÐºÐ°, Wikimedia Commons" loading="eager" fetchpriority="high">'
+              + '<span class="zcap">'+html.escape(m['brand']+' '+m['model'])+'<span>Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ â</span></span></a>')
             break
     if not hero_photo:
         hero_photo = '<div class="mphoto-fb"><div style="font-size:24px">EV</div></div>'
@@ -2414,75 +2397,75 @@ def home_page(outdir, news=None):
       '<div class="container">'
       '<div class="zhero-grid">'
       '<div class="zhero-copy">'
-      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold hero-badge">Справочник EV · <span data-count="' + str(len(MODELS)) + '">' + str(len(MODELS)) + '</span> моделей в России</span>'
-      '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'Как без боли заряжать электромобиль в России') + '</h1>'
-      '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Разъёмы, реальные проблемы и проверенные решения: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Плюс каталог адаптеров, кабелей и зарядок с оплатой дилеру при получении.') + '</p>'
+      '<span class="inline-block p-2 text-sm align-baseline leading-none rounded-lg bg-green-600 text-white font-semibold hero-badge">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº EV Â· <span data-count="' + str(len(MODELS)) + '">' + str(len(MODELS)) + '</span> Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð² Ð Ð¾ÑÑÐ¸Ð¸</span>'
+      '<h1 class="text-gray-900 text-2xl lg:text-4xl font-bold leading-tight my-5 zhero-h1">' + html.escape(CFG_HERO_TITLE or 'ÐÐ°Ðº Ð±ÐµÐ· Ð±Ð¾Ð»Ð¸ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² Ð Ð¾ÑÑÐ¸Ð¸') + '</h1>'
+      '<p class="text-md text-gray-600 zhero-sub" style="max-width:560px;margin:0 0 22px">' + html.escape(CFG_HERO_SUB or 'Ð Ð°Ð·ÑÑÐ¼Ñ, ÑÐµÐ°Ð»ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐµ ÑÐµÑÐµÐ½Ð¸Ñ: GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. ÐÐ»ÑÑ ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð², ÐºÐ°Ð±ÐµÐ»ÐµÐ¹ Ð¸ Ð·Ð°ÑÑÐ´Ð¾Ðº Ñ Ð¾Ð¿Ð»Ð°ÑÐ¾Ð¹ Ð´Ð¸Ð»ÐµÑÑ Ð¿ÑÐ¸ Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ð¸.') + '</p>'
       '<div class="flex gap-3 flex-wrap items-center">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 btn-primary" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
-      '<a class="btn zhero-ghost" href="/catalog/">Каталог аксессуаров</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 btn-primary" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a>'
+      '<a class="btn zhero-ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð²</a>'
       '</div></div>'
       '<div class="zhero-media">' + hero_photo + '</div>'
       '</div></div></section>'
       + calc_widget_html() + CALC_SCRIPT + survivor_hall_html() +
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Категории каталога <a class="see-all" href="/catalog/">весь каталог →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÐ°ÑÐµÐ³Ð¾ÑÐ¸Ð¸ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° <a class="see-all" href="/catalog/">Ð²ÐµÑÑ ÐºÐ°ÑÐ°Ð»Ð¾Ð³ â</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">' + cats_html + '</div></div></section>'
       '<section class="lg:my-14 my-8 band"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Инструменты справочника</h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÐ½ÑÑÑÑÐ¼ÐµÐ½ÑÑ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°</h2></div></div>'
       '<div class="grid gap-4 grid-cols-2 md:grid-cols-3">' + tools_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
       '<div class="flex flex-wrap items-center gap-8">'
       '<div class="md:w-2/3 w-full">'
-      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Бесплатно · PDF</span>'
-      '<h2 class="text-lg text-gray-900 font-semibold my-3">Гид по зарядке и разъёмам: ' + str(len(MODELS)) + ' моделей</h2>'
-      '<p class="text-sm text-gray-600" style="max-width:640px">Разъёмы и мощность зарядки каждой модели, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов. Собран из реальных кейсов владельцев — можно переслать другу, который выбирает электромобиль.</p>'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">ÐÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ Â· PDF</span>'
+      '<h2 class="text-lg text-gray-900 font-semibold my-3">ÐÐ¸Ð´ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ Ð¸ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼: ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹</h2>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸, 12 ÑÐ°ÑÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸, ÑÑÐ¸ Ð³Ð¾ÑÐ¾Ð²ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð¸ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð¸Ð· 20 Ð¿ÑÐ½ÐºÑÐ¾Ð². Ð¡Ð¾Ð±ÑÐ°Ð½ Ð¸Ð· ÑÐµÐ°Ð»ÑÐ½ÑÑ ÐºÐµÐ¹ÑÐ¾Ð² Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² â Ð¼Ð¾Ð¶Ð½Ð¾ Ð¿ÐµÑÐµÑÐ»Ð°ÑÑ Ð´ÑÑÐ³Ñ, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð²ÑÐ±Ð¸ÑÐ°ÐµÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ.</p>'
       '</div><div class="md:w-auto w-full md:text-right">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF</a>'
-      '<p class="text-xs text-gray-500 mt-2">PDF · 0,1 МБ · можно переслать другу</p>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="' + GUIDE_PDF + '" download>â¬ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF</a>'
+      '<p class="text-xs text-gray-500 mt-2">PDF Â· 0,1 ÐÐ Â· Ð¼Ð¾Ð¶Ð½Ð¾ Ð¿ÐµÑÐµÑÐ»Ð°ÑÑ Ð´ÑÑÐ³Ñ</p>'
       '</div></div></div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Популярные товары</h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÐ¾Ð¿ÑÐ»ÑÑÐ½ÑÐµ ÑÐ¾Ð²Ð°ÑÑ</h2></div></div>'
       '<div class="products-grid">' + hits + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Комплекты — выгоднее по отдельности</h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑÑ â Ð²ÑÐ³Ð¾Ð´Ð½ÐµÐµ Ð¿Ð¾ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð¾ÑÑÐ¸</h2></div></div>'
       '<div class="block w-full xl:grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">'
       '<div class="block w-full md:w-auto"><div class="rounded-lg" style="background:linear-gradient(135deg,#0d7e0f,#2563EB);min-height:340px;padding:32px 24px;display:flex;flex-direction:column;justify-content:space-between">'
-      '<div><h3 class="text-lg text-white font-bold">Готовый комплект для вашей машины</h3>'
-      '<p class="text-white text-base mt-2">Адаптер + кабель + держатель + зимний набор. Оплата — дилеру при получении.</p></div>'
-      '<a href="/catalog/" class="btn bg-white text-gray-800 border-white">Смотреть комплекты</a></div></div>'
+      '<div><h3 class="text-lg text-white font-bold">ÐÐ¾ÑÐ¾Ð²ÑÐ¹ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð´Ð»Ñ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ</h3>'
+      '<p class="text-white text-base mt-2">ÐÐ´Ð°Ð¿ÑÐµÑ + ÐºÐ°Ð±ÐµÐ»Ñ + Ð´ÐµÑÐ¶Ð°ÑÐµÐ»Ñ + Ð·Ð¸Ð¼Ð½Ð¸Ð¹ Ð½Ð°Ð±Ð¾Ñ. ÐÐ¿Ð»Ð°ÑÐ° â Ð´Ð¸Ð»ÐµÑÑ Ð¿ÑÐ¸ Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ð¸.</p></div>'
+      '<a href="/catalog/" class="btn bg-white text-gray-800 border-white">Ð¡Ð¼Ð¾ÑÑÐµÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÑ</a></div></div>'
       + ''.join(_tpl_bundle_card(b) for b in catalog.BUNDLES) +
       '</div></div></section>'
       '<section class="lg:my-14 my-8 band"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Трендовые модели <a class="see-all" href="/models/">все ' + str(len(MODELS)) + ' →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Ð¢ÑÐµÐ½Ð´Ð¾Ð²ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ <a class="see-all" href="/models/">Ð²ÑÐµ ' + str(len(MODELS)) + ' â</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">' + pop_cards + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Бренды</h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÑÐµÐ½Ð´Ñ</h2></div></div>'
       '<div class="flex flex-wrap gap-3">' + brand_html + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Частые проблемы — быстрые ответы <a class="see-all" href="/pains.html">все статьи →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Ð§Ð°ÑÑÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ â Ð±ÑÑÑÑÑÐµ Ð¾ÑÐ²ÐµÑÑ <a class="see-all" href="/pains.html">Ð²ÑÐµ ÑÑÐ°ÑÑÐ¸ â</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">' + art_cards + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Гайды в блоге <a class="see-all" href="/blog/">весь блог →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">ÐÐ°Ð¹Ð´Ñ Ð² Ð±Ð»Ð¾Ð³Ðµ <a class="see-all" href="/blog/">Ð²ÐµÑÑ Ð±Ð»Ð¾Ð³ â</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 md:grid-cols-3">' + blog_cards + '</div></div></section>'
       '<section class="lg:my-14 my-8"><div class="container">'
-      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Свежие новости EV <a class="see-all" href="/news/">все новости →</a></h2></div></div>'
+      '<div class="flex flex-wrap"><div class="md:w-full mb-6"><h2 class="text-lg text-gray-900">Ð¡Ð²ÐµÐ¶Ð¸Ðµ Ð½Ð¾Ð²Ð¾ÑÑÐ¸ EV <a class="see-all" href="/news/">Ð²ÑÐµ Ð½Ð¾Ð²Ð¾ÑÑÐ¸ â</a></h2></div></div>'
       '<div class="grid gap-4 grid-cols-1 md:grid-cols-3">' + news_cards + '</div></div></section>'
       '<section class="my-10"><div class="container"><div class="flex gap-3 flex-wrap">'
-      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700" href="/catalog/">Каталог аксессуаров</a>'
-      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="' + TG_CHANNEL + '">Канал «Запас хода»</a>'
-      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/charging/">Карта станций</a>'
+      '<a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð²</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="' + TG_CHANNEL + '">ÐÐ°Ð½Ð°Ð» Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</a>'
+      '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/charging/">ÐÐ°ÑÑÐ° ÑÑÐ°Ð½ÑÐ¸Ð¹</a>'
       '</div></div></section>')
     web_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "WebSite",
         "name": SITE_NAME,
         "url": SITE_DOMAIN + '/',
         "inLanguage": "ru",
-        "description": "Справочник по зарядке электромобилей в России: разъёмы, мощности, проблемы и решения для 145 моделей",
+        "description": "Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ Ð´Ð»Ñ 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹",
         "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": SITE_DOMAIN + "/search.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}
     }, ensure_ascii=False) + '</script>'
     org_ld = '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "Organization","name": SITE_NAME, "url": SITE_DOMAIN + '/',"logo": SITE_DOMAIN + '/apple-touch-icon.png',"sameAs": ['https://t.me/zapashoda_ev']}, ensure_ascii=False) + '</script>'
     web_ld = web_ld + org_ld
-    # Волна 1.8 / R-06: динамические VideoObject из data/shorts.json
+    # ÐÐ¾Ð»Ð½Ð° 1.8 / R-06: Ð´Ð¸Ð½Ð°Ð¼Ð¸ÑÐµÑÐºÐ¸Ðµ VideoObject Ð¸Ð· data/shorts.json
     try:
         _sh_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'shorts.json')
         _sh = json.load(open(_sh_path, encoding='utf-8')) if os.path.isfile(_sh_path) else {'shorts': []}
@@ -2491,8 +2474,8 @@ def home_page(outdir, news=None):
             if not _s.get('url'):
                 continue
             _vids.append({"@context": "https://schema.org", "@type": "VideoObject",
-                "name": (_s.get('title') or 'Шорт «Запас хода»')[:110],
-                "description": (_s.get('desc') or 'Короткое видео по зарядке электромобиля в России.'),
+                "name": (_s.get('title') or 'Ð¨Ð¾ÑÑ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»')[:110],
+                "description": (_s.get('desc') or 'ÐÐ¾ÑÐ¾ÑÐºÐ¾Ðµ Ð²Ð¸Ð´ÐµÐ¾ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² Ð Ð¾ÑÑÐ¸Ð¸.'),
                 "thumbnailUrl": SITE_DOMAIN + '/assets/og/default.png',
                 "uploadDate": (_s.get('added') or BUILD_DATE),
                 "contentUrl": SITE_DOMAIN + _s['url'],
@@ -2502,14 +2485,14 @@ def home_page(outdir, news=None):
     except Exception as _e:
         print('shorts video LD:', repr(_e)[:120])
 
-    write_page(os.path.join(outdir,'index.html'), 'Запас хода — разъёмы зарядки и решения для 145 моделей EV',
-        'Справочник: какой разъём зарядки у Zeekr, BYD, Voyah, Li Auto, Leaf и 130+ других моделей, типичные проблемы владельцев и решения, карта ЗУ и VIN-проверка.',
+    write_page(os.path.join(outdir,'index.html'), 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â ÑÐ°Ð·ÑÑÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ Ð´Ð»Ñ 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV',
+        'Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº: ÐºÐ°ÐºÐ¾Ð¹ ÑÐ°Ð·ÑÑÐ¼ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ñ Zeekr, BYD, Voyah, Li Auto, Leaf Ð¸ 130+ Ð´ÑÑÐ³Ð¸Ñ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ, ÐºÐ°ÑÑÐ° ÐÐ£ Ð¸ VIN-Ð¿ÑÐ¾Ð²ÐµÑÐºÐ°.',
         body, '/', extra_ld=web_ld)
 def pains_index(outdir):
-    arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span><span class="mgo">Читать гайд →</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
-    write_page(os.path.join(outdir,'pains.html'), 'Проблемы и решения электромобилей | Запас хода',
-        'Не заряжается, подогрев батареи, зарядка от розетки, адаптеры GB/T и CCS2, кабель не отдаёт, 12В АКБ, CHAdeMO — решения с источниками.',
-        '<h1>Типичные проблемы электромобилей и их решения</h1><p class="lede">Руководства по самым частым болям владельцев — со ссылками на первоисточники.</p><div class="grid">'+arts+'</div>', '/pains.html')
+    arts = ''.join('<a class="mcard" href="/pain/'+sl+'.html"><b>'+title+'</b><span>'+desc+'</span><span class="mgo">Ð§Ð¸ÑÐ°ÑÑ Ð³Ð°Ð¹Ð´ â</span></a>' for sl,title,desc,pids in PAIN_ARTICLES)
+    write_page(os.path.join(outdir,'pains.html'), 'ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ, Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸, Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸, Ð°Ð´Ð°Ð¿ÑÐµÑÑ GB/T Ð¸ CCS2, ÐºÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑ, 12Ð ÐÐÐ, CHAdeMO â ÑÐµÑÐµÐ½Ð¸Ñ Ñ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ°Ð¼Ð¸.',
+        '<h1>Ð¢Ð¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð¸ Ð¸Ñ ÑÐµÑÐµÐ½Ð¸Ñ</h1><p class="lede">Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð° Ð¿Ð¾ ÑÐ°Ð¼ÑÐ¼ ÑÐ°ÑÑÑÐ¼ Ð±Ð¾Ð»ÑÐ¼ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² â ÑÐ¾ ÑÑÑÐ»ÐºÐ°Ð¼Ð¸ Ð½Ð° Ð¿ÐµÑÐ²Ð¾Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸.</p><div class="grid">'+arts+'</div>', '/pains.html')
 
 def _fmt1(x):
     s = ('%.1f' % x).rstrip('0').rstrip('.').replace('.', ',')
@@ -2519,7 +2502,7 @@ def tl_short(pids, maxs=2):
     out = []
     for i in pids[:2]:
         s = PAINS[i]['sol'].split('. ')[0].strip()
-        if len(s) > 160: s = s[:157].rstrip() + '…'
+        if len(s) > 160: s = s[:157].rstrip() + 'â¦'
         out.append(s)
     return '. '.join(out) + '.'
 
@@ -2540,220 +2523,220 @@ if(more){var mb=more.querySelector('button');
  document.addEventListener('keydown',function(e){if(e.key==='Escape')mToggle(false);});}
 })();</script>"""
 
-BUILD_DATE = None  # задаётся в main()
+BUILD_DATE = None  # Ð·Ð°Ð´Ð°ÑÑÑÑ Ð² main()
 
 
-# --- SEO-интро болевых статей: формулировки пользователей, «проверено», перелинковка (01.11) ---
+# --- SEO-Ð¸Ð½ÑÑÐ¾ Ð±Ð¾Ð»ÐµÐ²ÑÑ ÑÑÐ°ÑÐµÐ¹: ÑÐ¾ÑÐ¼ÑÐ»Ð¸ÑÐ¾Ð²ÐºÐ¸ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»ÐµÐ¹, Â«Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð¾Â», Ð¿ÐµÑÐµÐ»Ð¸Ð½ÐºÐ¾Ð²ÐºÐ° (01.11) ---
 PAIN_INTRO = {
- 'ne-zaryazhaetsya': ('<h2>Электромобиль не заряжается: с чего начать</h2>'
-  '<p>Ищете ответ на вопрос «электромобиль не заряжается» или «почему не идёт зарядка от станции»? Начните с разделения проблемы на три сценария. Первый: станция не выдаёт заряд вообще — тогда виноват терминал, и поможет алгоритм из статьи <a href="/blog/stanciya-ne-rabotaet.html">«Зарядная станция не работает»</a> (по отраслевым данным, до 26% станций бывают неисправны). Второй: станция начинает, но сессия обрывается — это согласование машины и станции, см. <a href="/blog/handshake-oshibka-dc-zaryadki.html">разбор handshake-сбоев</a> и кейс <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">кода 0x13 у Evolute</a>. Третий: машина не принимает заряд нигде — скорее всего, дело в бортовой системе (12-вольтовая АКБ, порт, OBC), и здесь работают карточки ниже.</p>'
-  '<p>Быстрая проверка за 5 минут: другая машина на этой же станции → другая станция для вашей машины → медленный AC-порт вместо быстрого. Карточки ниже — по частоте случаев в нашей базе. Проверено на данных базы: {BD}.</p>'),
- 'adapter-gbt': ('<h2>Адаптер Type 2 GB/T: какой переходник нужен вашей машине</h2>'
-  '<p>Под запросы «адаптер Type 2 GB/T», «переходник для зарядки китайского электромобиля» и «адаптер GB/T» — короткая карта решений. Если у вас машина из Китая с разъёмом GB/T, а рядом станции Type 2 — нужен адаптер Type 2 → GB/T AC (от 4–9 тыс. ₽, до 22 кВт). Если планируете быстрые станции CCS2 — отдельный DC-адаптер CCS2 → GB/T, который дороже и требовательнее к совместимости (почему он «капризнее» — в статье про <a href="/blog/handshake-oshibka-dc-zaryadki.html">сбои согласования</a>). Обратный адаптер GB/T → Type 2 нужен европейской машине на китайской станции.</p>'
-  '<p>Готовые варианты с поддержкой протокола — в <a href="/catalog/">каталоге</a>. Проверено на данных базы: {BD}.</p>'),
- 'podogrev-batarei': ('<h2>Подогрев батареи: как включить и зачем он зимой</h2>'
-  '<p>К запросам «подогрев батареи как включить» и «зимняя зарядка медленнее» — главное: на морозе скорость приёма заряда падает на 30–50%, и первые 15–20 минут сессии идут на пониженной мощности, пока батарея не прогреется. У машин с тепловым контуром прогрев включается через приложение или автоматически при навигации к станции; у части машин (например, Evolute ранних партий) подогрева нет — помогает только движение перед зарядкой. Подробно: <a href="/blog/zimnyaya-zaryadka-medlennee.html">почему зимой зарядка медленнее</a>.</p>'
-  '<p>Проверено на данных базы: {BD}.</p>'),
- 'zaryadka-ot-rozetki': ('<h2>Зарядка от розетки и переносная зарядка: что реально работает</h2>'
-  '<p>Ищете «зарядку от розетки» или «переносную зарядку для электромобиля»? Короткий ответ: зарядить можно и от обычной розетки, но медленно — у большинства китайских EV бортовое зарядное ограничено 3,3–7 кВт, а обычная розетка стабильно держит 10–13 А. Для регулярной зарядки лучше отдельная линия или станция; переносное ЗУ с пистолетом GB/T — компромисс «возить с собой» (готовые варианты — в <a href="/catalog/">каталоге</a>, в том числе удлинители с полным заземлением: <a href="/pain/udlinitel.html">гайд по удлинителям</a>). Проверено на данных базы: {BD}.</p>'),
- 'domashnie-stancii': ('<h2>Зарядная станция для дома: как выбрать и сколько стоит</h2>'
-  '<p>Под запросы «зарядная станция для дома купить» и «домашняя зарядка для электромобиля»: три фактора решают всё — разъём вашей машины (GB/T или Type 2), мощность бортового зарядного (OBC) и электрика парковки (автомат, кабель, заземление). Трёхфазная станция на 22 кВт бесполезна, если машина принимает только однофазные 7 кВт — платите за то, что реально использует бортовое зарядное. Стоимость установки и шорт-лист моделей — ниже и в <a href="/services/ustanovka-stancii.html">услуге установки станции</a>; экономику ночной зарядки посчитает <a href="/calculator/">калькулятор</a>. Проверено на данных базы: {BD}.</p>'),
- 'zaryadka-na-trasse': ('<h2>Зарядка на трассе М-4, М-11, М-12: где станции и что учесть</h2>'
-  '<p>Под запросы «зарядка на трассе М-4», «зарядные станции на М-11» и «дальняя поездка на электромобиле»: планируйте не только станции, но и запасные — до 26% точек бывают неисправны. Практика: станции на 60–100 кВт «прощают» несовместимости чаще, чем терминалы 150+ кВт. Бонус для машин российской сборки: до конца 2026 года проезд по М-1, М-3, М-4, М-11, М-12 и ЦКАД бесплатный — правила оформления в <a href="/blog/besplatnye-trassy-parkovka-ev.html">статье о бесплатных трассах</a>. Проверено на данных базы: {BD}.</p>'),
- 'kabel-ne-otdaet': ('<p>Запрос «кабель не отдаёт мощность» обычно означает одно из трёх: станция режет мощность (смотрите статус сессии в приложении), машина ограничивает приём (OBC или температура батареи), либо кабель/адаптер греется и снижает ток по защите. Разбор по шагам — в карточках ниже. Проверено на данных базы: {BD}.</p><h2>Три причины — по убыванию частоты</h2><ol><li><b>Машина ограничивает приём.</b> SOC выше 60–70% — кривая заряда падает почти всегда; выше 80% — вдвое-втрое. На морозе BMS греет ячейки и режет ток. Это норма, а не поломка.</li><li><b>Станция режет по своему состоянию:</b> перегрев коннектора, деление мощности между коннекторами (две машины на одном терминале = по половине), износ или устаревшая прошивка. Проверка: вторая машина на том же терминале.</li><li><b>Кабель или адаптер греется и снижает ток по защите.</b> У дешёвых кабелей сечение меньше необходимого, у адаптеров без охлаждения — та же история. Смотрите не «максимум», а допустимую непрерывную мощность в карточке товара.</li></ol><h2>Чек-лист за 2 минуты</h2><ol><li>Посмотрите SOC в начале сессии — выше 70%? Это объясняет всё.</li><li>На морозе включите предпрогрев батареи и перезапустите сессию — гайд <a href="/pain/podogrev-batarei.html">о подогреве батареи</a>.</li><li>Попробуйте вторую машину на той же станции: если и она «режет» — дело в станции, ищите другую точку.</li><li>Сравните на второй станции вашей сети: если и там мало — причина в машине или адаптере.</li><li>Пощупайте коннектор: ощутимо горячий — слабое звено найдено, меняйте кабель/адаптер или снижайте ток.</li></ol><h2>Если «режет» системно</h2><p>Внезапное и постоянное ограничение иногда оказывается началом проблемы протокола: перезапустите сессию, обновите ПО машины и сверьтесь с <a href="/pain/ne-zaryazhaetsya.html">чек-листом «не заряжается»</a>. Если повторяется на разных станциях — заведите разбор в гайде по вашей модели: там собраны версии и решения сообщества.</p>'),
- 'stoimost-zaryadki': ('<p>Под запрос «сколько стоит зарядить электромобиль»: диапазоны ниже посчитаны по реальным тарифам 2026 года (ночной тариф в Москве 3,8 ₽/кВт·ч, публичные станции 10–25 ₽). Свою цифру под конкретную машину и тариф считает <a href="/calculator/">калькулятор</a>. Проверено на данных базы: {BD}.</p>'),
+ 'ne-zaryazhaetsya': ('<h2>Ð­Ð»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð½Ðµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ: Ñ ÑÐµÐ³Ð¾ Ð½Ð°ÑÐ°ÑÑ</h2>'
+  '<p>ÐÑÐµÑÐµ Ð¾ÑÐ²ÐµÑ Ð½Ð° Ð²Ð¾Ð¿ÑÐ¾Ñ Â«ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð½Ðµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑÂ» Ð¸Ð»Ð¸ Â«Ð¿Ð¾ÑÐµÐ¼Ñ Ð½Ðµ Ð¸Ð´ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸Â»? ÐÐ°ÑÐ½Ð¸ÑÐµ Ñ ÑÐ°Ð·Ð´ÐµÐ»ÐµÐ½Ð¸Ñ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð½Ð° ÑÑÐ¸ ÑÑÐµÐ½Ð°ÑÐ¸Ñ. ÐÐµÑÐ²ÑÐ¹: ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ Ð²ÑÐ´Ð°ÑÑ Ð·Ð°ÑÑÐ´ Ð²Ð¾Ð¾Ð±ÑÐµ â ÑÐ¾Ð³Ð´Ð° Ð²Ð¸Ð½Ð¾Ð²Ð°Ñ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð», Ð¸ Ð¿Ð¾Ð¼Ð¾Ð¶ÐµÑ Ð°Ð»Ð³Ð¾ÑÐ¸ÑÐ¼ Ð¸Ð· ÑÑÐ°ÑÑÐ¸ <a href="/blog/stanciya-ne-rabotaet.html">Â«ÐÐ°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑÂ»</a> (Ð¿Ð¾ Ð¾ÑÑÐ°ÑÐ»ÐµÐ²ÑÐ¼ Ð´Ð°Ð½Ð½ÑÐ¼, Ð´Ð¾ 26% ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð±ÑÐ²Ð°ÑÑ Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ñ). ÐÑÐ¾ÑÐ¾Ð¹: ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑ, Ð½Ð¾ ÑÐµÑÑÐ¸Ñ Ð¾Ð±ÑÑÐ²Ð°ÐµÑÑÑ â ÑÑÐ¾ ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸, ÑÐ¼. <a href="/blog/handshake-oshibka-dc-zaryadki.html">ÑÐ°Ð·Ð±Ð¾Ñ handshake-ÑÐ±Ð¾ÐµÐ²</a> Ð¸ ÐºÐµÐ¹Ñ <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">ÐºÐ¾Ð´Ð° 0x13 Ñ Evolute</a>. Ð¢ÑÐµÑÐ¸Ð¹: Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ðµ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð·Ð°ÑÑÐ´ Ð½Ð¸Ð³Ð´Ðµ â ÑÐºÐ¾ÑÐµÐµ Ð²ÑÐµÐ³Ð¾, Ð´ÐµÐ»Ð¾ Ð² Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¸ÑÑÐµÐ¼Ðµ (12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð°Ñ ÐÐÐ, Ð¿Ð¾ÑÑ, OBC), Ð¸ Ð·Ð´ÐµÑÑ ÑÐ°Ð±Ð¾ÑÐ°ÑÑ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð½Ð¸Ð¶Ðµ.</p>'
+  '<p>ÐÑÑÑÑÐ°Ñ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð·Ð° 5 Ð¼Ð¸Ð½ÑÑ: Ð´ÑÑÐ³Ð°Ñ Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ð° ÑÑÐ¾Ð¹ Ð¶Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â Ð´ÑÑÐ³Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð´Ð»Ñ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ â Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÐ¹ AC-Ð¿Ð¾ÑÑ Ð²Ð¼ÐµÑÑÐ¾ Ð±ÑÑÑÑÐ¾Ð³Ð¾. ÐÐ°ÑÑÐ¾ÑÐºÐ¸ Ð½Ð¸Ð¶Ðµ â Ð¿Ð¾ ÑÐ°ÑÑÐ¾ÑÐµ ÑÐ»ÑÑÐ°ÐµÐ² Ð² Ð½Ð°ÑÐµÐ¹ Ð±Ð°Ð·Ðµ. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'adapter-gbt': ('<h2>ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 GB/T: ÐºÐ°ÐºÐ¾Ð¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð½ÑÐ¶ÐµÐ½ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ðµ</h2>'
+  '<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 GB/TÂ», Â«Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð³Ð¾ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ» Ð¸ Â«Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TÂ» â ÐºÐ¾ÑÐ¾ÑÐºÐ°Ñ ÐºÐ°ÑÑÐ° ÑÐµÑÐµÐ½Ð¸Ð¹. ÐÑÐ»Ð¸ Ñ Ð²Ð°Ñ Ð¼Ð°ÑÐ¸Ð½Ð° Ð¸Ð· ÐÐ¸ÑÐ°Ñ Ñ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼ GB/T, Ð° ÑÑÐ´Ð¾Ð¼ ÑÑÐ°Ð½ÑÐ¸Ð¸ Type 2 â Ð½ÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Type 2 â GB/T AC (Ð¾Ñ 4â9 ÑÑÑ. â½, Ð´Ð¾ 22 ÐºÐÑ). ÐÑÐ»Ð¸ Ð¿Ð»Ð°Ð½Ð¸ÑÑÐµÑÐµ Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ CCS2 â Ð¾ÑÐ´ÐµÐ»ÑÐ½ÑÐ¹ DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2 â GB/T, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð´Ð¾ÑÐ¾Ð¶Ðµ Ð¸ ÑÑÐµÐ±Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½ÐµÐµ Ðº ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ (Ð¿Ð¾ÑÐµÐ¼Ñ Ð¾Ð½ Â«ÐºÐ°Ð¿ÑÐ¸Ð·Ð½ÐµÐµÂ» â Ð² ÑÑÐ°ÑÑÐµ Ð¿ÑÐ¾ <a href="/blog/handshake-oshibka-dc-zaryadki.html">ÑÐ±Ð¾Ð¸ ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ñ</a>). ÐÐ±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/T â Type 2 Ð½ÑÐ¶ÐµÐ½ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ðµ Ð½Ð° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸.</p>'
+  '<p>ÐÐ¾ÑÐ¾Ð²ÑÐµ Ð²Ð°ÑÐ¸Ð°Ð½ÑÑ Ñ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÐ¾Ð¹ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð° â Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'podogrev-batarei': ('<h2>ÐÐ¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸: ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ Ð¸ Ð·Ð°ÑÐµÐ¼ Ð¾Ð½ Ð·Ð¸Ð¼Ð¾Ð¹</h2>'
+  '<p>Ð Ð·Ð°Ð¿ÑÐ¾ÑÐ°Ð¼ Â«Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑÂ» Ð¸ Â«Ð·Ð¸Ð¼Ð½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµÂ» â Ð³Ð»Ð°Ð²Ð½Ð¾Ðµ: Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð¿ÑÐ¸ÑÐ¼Ð° Ð·Ð°ÑÑÐ´Ð° Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð° 30â50%, Ð¸ Ð¿ÐµÑÐ²ÑÐµ 15â20 Ð¼Ð¸Ð½ÑÑ ÑÐµÑÑÐ¸Ð¸ Ð¸Ð´ÑÑ Ð½Ð° Ð¿Ð¾Ð½Ð¸Ð¶ÐµÐ½Ð½Ð¾Ð¹ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, Ð¿Ð¾ÐºÐ° Ð±Ð°ÑÐ°ÑÐµÑ Ð½Ðµ Ð¿ÑÐ¾Ð³ÑÐµÐµÑÑÑ. Ð£ Ð¼Ð°ÑÐ¸Ð½ Ñ ÑÐµÐ¿Ð»Ð¾Ð²ÑÐ¼ ÐºÐ¾Ð½ÑÑÑÐ¾Ð¼ Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð²ÐºÐ»ÑÑÐ°ÐµÑÑÑ ÑÐµÑÐµÐ· Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð¸Ð»Ð¸ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸ Ð¿ÑÐ¸ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ð¸ Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸; Ñ ÑÐ°ÑÑÐ¸ Ð¼Ð°ÑÐ¸Ð½ (Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ, Evolute ÑÐ°Ð½Ð½Ð¸Ñ Ð¿Ð°ÑÑÐ¸Ð¹) Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ²Ð° Ð½ÐµÑ â Ð¿Ð¾Ð¼Ð¾Ð³Ð°ÐµÑ ÑÐ¾Ð»ÑÐºÐ¾ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ð¿ÐµÑÐµÐ´ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹. ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾: <a href="/blog/zimnyaya-zaryadka-medlennee.html">Ð¿Ð¾ÑÐµÐ¼Ñ Ð·Ð¸Ð¼Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµ</a>.</p>'
+  '<p>ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'zaryadka-ot-rozetki': ('<h2>ÐÐ°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¸ Ð¿ÐµÑÐµÐ½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°: ÑÑÐ¾ ÑÐµÐ°Ð»ÑÐ½Ð¾ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ</h2>'
+  '<p>ÐÑÐµÑÐµ Â«Ð·Ð°ÑÑÐ´ÐºÑ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸Â» Ð¸Ð»Ð¸ Â«Ð¿ÐµÑÐµÐ½Ð¾ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ»? ÐÐ¾ÑÐ¾ÑÐºÐ¸Ð¹ Ð¾ÑÐ²ÐµÑ: Ð·Ð°ÑÑÐ´Ð¸ÑÑ Ð¼Ð¾Ð¶Ð½Ð¾ Ð¸ Ð¾Ñ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸, Ð½Ð¾ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾ â Ñ Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¾ 3,3â7 ÐºÐÑ, Ð° Ð¾Ð±ÑÑÐ½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° ÑÑÐ°Ð±Ð¸Ð»ÑÐ½Ð¾ Ð´ÐµÑÐ¶Ð¸Ñ 10â13 Ð. ÐÐ»Ñ ÑÐµÐ³ÑÐ»ÑÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð»ÑÑÑÐµ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ Ð¸Ð»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ñ; Ð¿ÐµÑÐµÐ½Ð¾ÑÐ½Ð¾Ðµ ÐÐ£ Ñ Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÐ¾Ð¼ GB/T â ÐºÐ¾Ð¼Ð¿ÑÐ¾Ð¼Ð¸ÑÑ Â«Ð²Ð¾Ð·Ð¸ÑÑ Ñ ÑÐ¾Ð±Ð¾Ð¹Â» (Ð³Ð¾ÑÐ¾Ð²ÑÐµ Ð²Ð°ÑÐ¸Ð°Ð½ÑÑ â Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>, Ð² ÑÐ¾Ð¼ ÑÐ¸ÑÐ»Ðµ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ð¸ Ñ Ð¿Ð¾Ð»Ð½ÑÐ¼ Ð·Ð°Ð·ÐµÐ¼Ð»ÐµÐ½Ð¸ÐµÐ¼: <a href="/pain/udlinitel.html">Ð³Ð°Ð¹Ð´ Ð¿Ð¾ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»ÑÐ¼</a>). ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'domashnie-stancii': ('<h2>ÐÐ°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð°: ÐºÐ°Ðº Ð²ÑÐ±ÑÐ°ÑÑ Ð¸ ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ</h2>'
+  '<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«Ð·Ð°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð° ÐºÑÐ¿Ð¸ÑÑÂ» Ð¸ Â«Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ»: ÑÑÐ¸ ÑÐ°ÐºÑÐ¾ÑÐ° ÑÐµÑÐ°ÑÑ Ð²ÑÑ â ÑÐ°Ð·ÑÑÐ¼ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ (GB/T Ð¸Ð»Ð¸ Type 2), Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð³Ð¾ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð³Ð¾ (OBC) Ð¸ ÑÐ»ÐµÐºÑÑÐ¸ÐºÐ° Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐ¸ (Ð°Ð²ÑÐ¾Ð¼Ð°Ñ, ÐºÐ°Ð±ÐµÐ»Ñ, Ð·Ð°Ð·ÐµÐ¼Ð»ÐµÐ½Ð¸Ðµ). Ð¢ÑÑÑÑÐ°Ð·Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ð° 22 ÐºÐÑ Ð±ÐµÑÐ¿Ð¾Ð»ÐµÐ·Ð½Ð°, ÐµÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ ÑÐ¾Ð»ÑÐºÐ¾ Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐµ 7 ÐºÐÑ â Ð¿Ð»Ð°ÑÐ¸ÑÐµ Ð·Ð° ÑÐ¾, ÑÑÐ¾ ÑÐµÐ°Ð»ÑÐ½Ð¾ Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐµÑ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ. Ð¡ÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ ÑÑÑÐ°Ð½Ð¾Ð²ÐºÐ¸ Ð¸ ÑÐ¾ÑÑ-Ð»Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ â Ð½Ð¸Ð¶Ðµ Ð¸ Ð² <a href="/services/ustanovka-stancii.html">ÑÑÐ»ÑÐ³Ðµ ÑÑÑÐ°Ð½Ð¾Ð²ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸</a>; ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸ÐºÑ Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¿Ð¾ÑÑÐ¸ÑÐ°ÐµÑ <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'zaryadka-na-trasse': ('<h2>ÐÐ°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÑÐ°ÑÑÐµ Ð-4, Ð-11, Ð-12: Ð³Ð´Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸ ÑÑÐ¾ ÑÑÐµÑÑÑ</h2>'
+  '<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÑÐ°ÑÑÐµ Ð-4Â», Â«Ð·Ð°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð° Ð-11Â» Ð¸ Â«Ð´Ð°Ð»ÑÐ½ÑÑ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ° Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÂ»: Ð¿Ð»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð½Ðµ ÑÐ¾Ð»ÑÐºÐ¾ ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð½Ð¾ Ð¸ Ð·Ð°Ð¿Ð°ÑÐ½ÑÐµ â Ð´Ð¾ 26% ÑÐ¾ÑÐµÐº Ð±ÑÐ²Ð°ÑÑ Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ñ. ÐÑÐ°ÐºÑÐ¸ÐºÐ°: ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð° 60â100 ÐºÐÑ Â«Ð¿ÑÐ¾ÑÐ°ÑÑÂ» Ð½ÐµÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ ÑÐ°ÑÐµ, ÑÐµÐ¼ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ñ 150+ ÐºÐÑ. ÐÐ¾Ð½ÑÑ Ð´Ð»Ñ Ð¼Ð°ÑÐ¸Ð½ ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¾Ð¹ ÑÐ±Ð¾ÑÐºÐ¸: Ð´Ð¾ ÐºÐ¾Ð½ÑÐ° 2026 Ð³Ð¾Ð´Ð° Ð¿ÑÐ¾ÐµÐ·Ð´ Ð¿Ð¾ Ð-1, Ð-3, Ð-4, Ð-11, Ð-12 Ð¸ Ð¦ÐÐÐ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½ÑÐ¹ â Ð¿ÑÐ°Ð²Ð¸Ð»Ð° Ð¾ÑÐ¾ÑÐ¼Ð»ÐµÐ½Ð¸Ñ Ð² <a href="/blog/besplatnye-trassy-parkovka-ev.html">ÑÑÐ°ÑÑÐµ Ð¾ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½ÑÑ ÑÑÐ°ÑÑÐ°Ñ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
+ 'kabel-ne-otdaet': ('<p>ÐÐ°Ð¿ÑÐ¾Ñ Â«ÐºÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑÂ» Ð¾Ð±ÑÑÐ½Ð¾ Ð¾Ð·Ð½Ð°ÑÐ°ÐµÑ Ð¾Ð´Ð½Ð¾ Ð¸Ð· ÑÑÑÑ: ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐµÐ¶ÐµÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ (ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ ÑÑÐ°ÑÑÑ ÑÐµÑÑÐ¸Ð¸ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸), Ð¼Ð°ÑÐ¸Ð½Ð° Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐ¸Ð²Ð°ÐµÑ Ð¿ÑÐ¸ÑÐ¼ (OBC Ð¸Ð»Ð¸ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ° Ð±Ð°ÑÐ°ÑÐµÐ¸), Ð»Ð¸Ð±Ð¾ ÐºÐ°Ð±ÐµÐ»Ñ/Ð°Ð´Ð°Ð¿ÑÐµÑ Ð³ÑÐµÐµÑÑÑ Ð¸ ÑÐ½Ð¸Ð¶Ð°ÐµÑ ÑÐ¾Ðº Ð¿Ð¾ Ð·Ð°ÑÐ¸ÑÐµ. Ð Ð°Ð·Ð±Ð¾Ñ Ð¿Ð¾ ÑÐ°Ð³Ð°Ð¼ â Ð² ÐºÐ°ÑÑÐ¾ÑÐºÐ°Ñ Ð½Ð¸Ð¶Ðµ. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p><h2>Ð¢ÑÐ¸ Ð¿ÑÐ¸ÑÐ¸Ð½Ñ â Ð¿Ð¾ ÑÐ±ÑÐ²Ð°Ð½Ð¸Ñ ÑÐ°ÑÑÐ¾ÑÑ</h2><ol><li><b>ÐÐ°ÑÐ¸Ð½Ð° Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐ¸Ð²Ð°ÐµÑ Ð¿ÑÐ¸ÑÐ¼.</b> SOC Ð²ÑÑÐµ 60â70% â ÐºÑÐ¸Ð²Ð°Ñ Ð·Ð°ÑÑÐ´Ð° Ð¿Ð°Ð´Ð°ÐµÑ Ð¿Ð¾ÑÑÐ¸ Ð²ÑÐµÐ³Ð´Ð°; Ð²ÑÑÐµ 80% â Ð²Ð´Ð²Ð¾Ðµ-Ð²ÑÑÐ¾Ðµ. ÐÐ° Ð¼Ð¾ÑÐ¾Ð·Ðµ BMS Ð³ÑÐµÐµÑ ÑÑÐµÐ¹ÐºÐ¸ Ð¸ ÑÐµÐ¶ÐµÑ ÑÐ¾Ðº. Ð­ÑÐ¾ Ð½Ð¾ÑÐ¼Ð°, Ð° Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ°.</li><li><b>Ð¡ÑÐ°Ð½ÑÐ¸Ñ ÑÐµÐ¶ÐµÑ Ð¿Ð¾ ÑÐ²Ð¾ÐµÐ¼Ñ ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ñ:</b> Ð¿ÐµÑÐµÐ³ÑÐµÐ² ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ°, Ð´ÐµÐ»ÐµÐ½Ð¸Ðµ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ð¼ÐµÐ¶Ð´Ñ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ°Ð¼Ð¸ (Ð´Ð²Ðµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° Ð¾Ð´Ð½Ð¾Ð¼ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ðµ = Ð¿Ð¾ Ð¿Ð¾Ð»Ð¾Ð²Ð¸Ð½Ðµ), Ð¸Ð·Ð½Ð¾Ñ Ð¸Ð»Ð¸ ÑÑÑÐ°ÑÐµÐ²ÑÐ°Ñ Ð¿ÑÐ¾ÑÐ¸Ð²ÐºÐ°. ÐÑÐ¾Ð²ÐµÑÐºÐ°: Ð²ÑÐ¾ÑÐ°Ñ Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ð° ÑÐ¾Ð¼ Ð¶Ðµ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ðµ.</li><li><b>ÐÐ°Ð±ÐµÐ»Ñ Ð¸Ð»Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð³ÑÐµÐµÑÑÑ Ð¸ ÑÐ½Ð¸Ð¶Ð°ÐµÑ ÑÐ¾Ðº Ð¿Ð¾ Ð·Ð°ÑÐ¸ÑÐµ.</b> Ð£ Ð´ÐµÑÑÐ²ÑÑ ÐºÐ°Ð±ÐµÐ»ÐµÐ¹ ÑÐµÑÐµÐ½Ð¸Ðµ Ð¼ÐµÐ½ÑÑÐµ Ð½ÐµÐ¾Ð±ÑÐ¾Ð´Ð¸Ð¼Ð¾Ð³Ð¾, Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð² Ð±ÐµÐ· Ð¾ÑÐ»Ð°Ð¶Ð´ÐµÐ½Ð¸Ñ â ÑÐ° Ð¶Ðµ Ð¸ÑÑÐ¾ÑÐ¸Ñ. Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ Ð½Ðµ Â«Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼Â», Ð° Ð´Ð¾Ð¿ÑÑÑÐ¸Ð¼ÑÑ Ð½ÐµÐ¿ÑÐµÑÑÐ²Ð½ÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð² ÐºÐ°ÑÑÐ¾ÑÐºÐµ ÑÐ¾Ð²Ð°ÑÐ°.</li></ol><h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð·Ð° 2 Ð¼Ð¸Ð½ÑÑÑ</h2><ol><li>ÐÐ¾ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ SOC Ð² Ð½Ð°ÑÐ°Ð»Ðµ ÑÐµÑÑÐ¸Ð¸ â Ð²ÑÑÐµ 70%? Ð­ÑÐ¾ Ð¾Ð±ÑÑÑÐ½ÑÐµÑ Ð²ÑÑ.</li><li>ÐÐ° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð²ÐºÐ»ÑÑÐ¸ÑÐµ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ Ð¿ÐµÑÐµÐ·Ð°Ð¿ÑÑÑÐ¸ÑÐµ ÑÐµÑÑÐ¸Ñ â Ð³Ð°Ð¹Ð´ <a href="/pain/podogrev-batarei.html">Ð¾ Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ²Ðµ Ð±Ð°ÑÐ°ÑÐµÐ¸</a>.</li><li>ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð²ÑÐ¾ÑÑÑ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° ÑÐ¾Ð¹ Ð¶Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸: ÐµÑÐ»Ð¸ Ð¸ Ð¾Ð½Ð° Â«ÑÐµÐ¶ÐµÑÂ» â Ð´ÐµÐ»Ð¾ Ð² ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð¸ÑÐ¸ÑÐµ Ð´ÑÑÐ³ÑÑ ÑÐ¾ÑÐºÑ.</li><li>Ð¡ÑÐ°Ð²Ð½Ð¸ÑÐµ Ð½Ð° Ð²ÑÐ¾ÑÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð²Ð°ÑÐµÐ¹ ÑÐµÑÐ¸: ÐµÑÐ»Ð¸ Ð¸ ÑÐ°Ð¼ Ð¼Ð°Ð»Ð¾ â Ð¿ÑÐ¸ÑÐ¸Ð½Ð° Ð² Ð¼Ð°ÑÐ¸Ð½Ðµ Ð¸Ð»Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑÐµ.</li><li>ÐÐ¾ÑÑÐ¿Ð°Ð¹ÑÐµ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ: Ð¾ÑÑÑÐ¸Ð¼Ð¾ Ð³Ð¾ÑÑÑÐ¸Ð¹ â ÑÐ»Ð°Ð±Ð¾Ðµ Ð·Ð²ÐµÐ½Ð¾ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾, Ð¼ÐµÐ½ÑÐ¹ÑÐµ ÐºÐ°Ð±ÐµÐ»Ñ/Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸Ð»Ð¸ ÑÐ½Ð¸Ð¶Ð°Ð¹ÑÐµ ÑÐ¾Ðº.</li></ol><h2>ÐÑÐ»Ð¸ Â«ÑÐµÐ¶ÐµÑÂ» ÑÐ¸ÑÑÐµÐ¼Ð½Ð¾</h2><p>ÐÐ½ÐµÐ·Ð°Ð¿Ð½Ð¾Ðµ Ð¸ Ð¿Ð¾ÑÑÐ¾ÑÐ½Ð½Ð¾Ðµ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ Ð¸Ð½Ð¾Ð³Ð´Ð° Ð¾ÐºÐ°Ð·ÑÐ²Ð°ÐµÑÑÑ Ð½Ð°ÑÐ°Ð»Ð¾Ð¼ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð°: Ð¿ÐµÑÐµÐ·Ð°Ð¿ÑÑÑÐ¸ÑÐµ ÑÐµÑÑÐ¸Ñ, Ð¾Ð±Ð½Ð¾Ð²Ð¸ÑÐµ ÐÐ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¸ ÑÐ²ÐµÑÑÑÐµÑÑ Ñ <a href="/pain/ne-zaryazhaetsya.html">ÑÐµÐº-Ð»Ð¸ÑÑÐ¾Ð¼ Â«Ð½Ðµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑÂ»</a>. ÐÑÐ»Ð¸ Ð¿Ð¾Ð²ÑÐ¾ÑÑÐµÑÑÑ Ð½Ð° ÑÐ°Ð·Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ â Ð·Ð°Ð²ÐµÐ´Ð¸ÑÐµ ÑÐ°Ð·Ð±Ð¾Ñ Ð² Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð²Ð°ÑÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸: ÑÐ°Ð¼ ÑÐ¾Ð±ÑÐ°Ð½Ñ Ð²ÐµÑÑÐ¸Ð¸ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°.</p>'),
+ 'stoimost-zaryadki': ('<p>ÐÐ¾Ð´ Ð·Ð°Ð¿ÑÐ¾Ñ Â«ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ»: Ð´Ð¸Ð°Ð¿Ð°Ð·Ð¾Ð½Ñ Ð½Ð¸Ð¶Ðµ Ð¿Ð¾ÑÑÐ¸ÑÐ°Ð½Ñ Ð¿Ð¾ ÑÐµÐ°Ð»ÑÐ½ÑÐ¼ ÑÐ°ÑÐ¸ÑÐ°Ð¼ 2026 Ð³Ð¾Ð´Ð° (Ð½Ð¾ÑÐ½Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ Ð² ÐÐ¾ÑÐºÐ²Ðµ 3,8 â½/ÐºÐÑÂ·Ñ, Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ 10â25 â½). Ð¡Ð²Ð¾Ñ ÑÐ¸ÑÑÑ Ð¿Ð¾Ð´ ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÑ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¸ ÑÐ°ÑÐ¸Ñ ÑÑÐ¸ÑÐ°ÐµÑ <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ</a>. ÐÑÐ¾Ð²ÐµÑÐµÐ½Ð¾ Ð½Ð° Ð´Ð°Ð½Ð½ÑÑ Ð±Ð°Ð·Ñ: {BD}.</p>'),
 }
 
 
-# --- Расширенные секции болевых статей: кейсы, чек-листы, таблицы (волна рерайта №2, 01.11) ---
-# ===== Инфографики: вставка в статьи (slug → HTML) =====
+# --- Ð Ð°ÑÑÐ¸ÑÐµÐ½Ð½ÑÐµ ÑÐµÐºÑÐ¸Ð¸ Ð±Ð¾Ð»ÐµÐ²ÑÑ ÑÑÐ°ÑÐµÐ¹: ÐºÐµÐ¹ÑÑ, ÑÐµÐº-Ð»Ð¸ÑÑÑ, ÑÐ°Ð±Ð»Ð¸ÑÑ (Ð²Ð¾Ð»Ð½Ð° ÑÐµÑÐ°Ð¹ÑÐ° â2, 01.11) ---
+# ===== ÐÐ½ÑÐ¾Ð³ÑÐ°ÑÐ¸ÐºÐ¸: Ð²ÑÑÐ°Ð²ÐºÐ° Ð² ÑÑÐ°ÑÑÐ¸ (slug â HTML) =====
 INFOGRAPHICS = {
- 'stanciya-otdaet-pol-moshchnosti': ('<div class="facts"><div class="f"><div class="k">Реальность сети</div><div class="v">до 26%</div><div class="d">станций «мертвы» или отказывают — проверяйте статус в приложении оператора до выезда</div></div><div class="f"><div class="k">Кривая заряда</div><div class="v">50% → падает</div><div class="d">после 50–60% SOC мощность плавно снижается, на 80–90% — сильно</div></div><div class="f"><div class="k">Правило</div><div class="v">0→60% быстрее</div><div class="d">две дозарядки до 60% дают больше км за час ожидания, чем одна до 100%</div></div><div class="f"><div class="k">Совет</div><div class="v">+10 минут</div><div class="d">планируйте дозарядку по карте и оставляйте запас на неработающую станцию</div></div></div>'),
- 'zapas-hoda-zimoy': ('<div class="facts"><div class="f"><div class="k">При −10°C</div><div class="v">−20–30%</div><div class="d">от паспортного запаса у машин с тепловым насосом (Tesla, Zeekr, Voyah)</div></div><div class="f"><div class="k">При −20°C и ниже</div><div class="v">−40–50%</div><div class="d">особенно на коротких поездках с частыми прогревами</div></div><div class="f"><div class="k">Главный «пожиратель»</div><div class="v">печка</div><div class="d">ТЭН без теплового насоса съедает до 30–40 км пробега</div></div><div class="f"><div class="k">Приём</div><div class="v">+7–15%</div><div class="d">предварительный прогрев от розетки перед выездом возвращает запас</div></div></div>'),
- 'poteri-pri-zaryadke': ('<div class="facts"><div class="f"><div class="k">Типовые потери</div><div class="v">5–15%</div><div class="d">кВт·ч со счётчика не «приходит» в батарею — это преобразование и тепло</div></div><div class="f"><div class="k">AC-зарядка</div><div class="v">3–8%</div><div class="d">выпрямитель в машине, длинные сессии — потери в кабеле</div></div><div class="f"><div class="k">DC-зарядка</div><div class="v">4–9%</div><div class="d">преобразование на станции, охлаждение</div></div><div class="f"><div class="k">Зимой</div><div class="v">+3–6%</div><div class="d">батарея греется во время заряда — часть энергии уходит на это</div></div></div>'),
+ 'stanciya-otdaet-pol-moshchnosti': ('<div class="facts"><div class="f"><div class="k">Ð ÐµÐ°Ð»ÑÐ½Ð¾ÑÑÑ ÑÐµÑÐ¸</div><div class="v">Ð´Ð¾ 26%</div><div class="d">ÑÑÐ°Ð½ÑÐ¸Ð¹ Â«Ð¼ÐµÑÑÐ²ÑÂ» Ð¸Ð»Ð¸ Ð¾ÑÐºÐ°Ð·ÑÐ²Ð°ÑÑ â Ð¿ÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ ÑÑÐ°ÑÑÑ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ° Ð´Ð¾ Ð²ÑÐµÐ·Ð´Ð°</div></div><div class="f"><div class="k">ÐÑÐ¸Ð²Ð°Ñ Ð·Ð°ÑÑÐ´Ð°</div><div class="v">50% â Ð¿Ð°Ð´Ð°ÐµÑ</div><div class="d">Ð¿Ð¾ÑÐ»Ðµ 50â60% SOC Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¿Ð»Ð°Ð²Ð½Ð¾ ÑÐ½Ð¸Ð¶Ð°ÐµÑÑÑ, Ð½Ð° 80â90% â ÑÐ¸Ð»ÑÐ½Ð¾</div></div><div class="f"><div class="k">ÐÑÐ°Ð²Ð¸Ð»Ð¾</div><div class="v">0â60% Ð±ÑÑÑÑÐµÐµ</div><div class="d">Ð´Ð²Ðµ Ð´Ð¾Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð´Ð¾ 60% Ð´Ð°ÑÑ Ð±Ð¾Ð»ÑÑÐµ ÐºÐ¼ Ð·Ð° ÑÐ°Ñ Ð¾Ð¶Ð¸Ð´Ð°Ð½Ð¸Ñ, ÑÐµÐ¼ Ð¾Ð´Ð½Ð° Ð´Ð¾ 100%</div></div><div class="f"><div class="k">Ð¡Ð¾Ð²ÐµÑ</div><div class="v">+10 Ð¼Ð¸Ð½ÑÑ</div><div class="d">Ð¿Ð»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð´Ð¾Ð·Ð°ÑÑÐ´ÐºÑ Ð¿Ð¾ ÐºÐ°ÑÑÐµ Ð¸ Ð¾ÑÑÐ°Ð²Ð»ÑÐ¹ÑÐµ Ð·Ð°Ð¿Ð°Ñ Ð½Ð° Ð½ÐµÑÐ°Ð±Ð¾ÑÐ°ÑÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ</div></div></div>'),
+ 'zapas-hoda-zimoy': ('<div class="facts"><div class="f"><div class="k">ÐÑÐ¸ â10Â°C</div><div class="v">â20â30%</div><div class="d">Ð¾Ñ Ð¿Ð°ÑÐ¿Ð¾ÑÑÐ½Ð¾Ð³Ð¾ Ð·Ð°Ð¿Ð°ÑÐ° Ñ Ð¼Ð°ÑÐ¸Ð½ Ñ ÑÐµÐ¿Ð»Ð¾Ð²ÑÐ¼ Ð½Ð°ÑÐ¾ÑÐ¾Ð¼ (Tesla, Zeekr, Voyah)</div></div><div class="f"><div class="k">ÐÑÐ¸ â20Â°C Ð¸ Ð½Ð¸Ð¶Ðµ</div><div class="v">â40â50%</div><div class="d">Ð¾ÑÐ¾Ð±ÐµÐ½Ð½Ð¾ Ð½Ð° ÐºÐ¾ÑÐ¾ÑÐºÐ¸Ñ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ°Ñ Ñ ÑÐ°ÑÑÑÐ¼Ð¸ Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð°Ð¼Ð¸</div></div><div class="f"><div class="k">ÐÐ»Ð°Ð²Ð½ÑÐ¹ Â«Ð¿Ð¾Ð¶Ð¸ÑÐ°ÑÐµÐ»ÑÂ»</div><div class="v">Ð¿ÐµÑÐºÐ°</div><div class="d">Ð¢Ð­Ð Ð±ÐµÐ· ÑÐµÐ¿Ð»Ð¾Ð²Ð¾Ð³Ð¾ Ð½Ð°ÑÐ¾ÑÐ° ÑÑÐµÐ´Ð°ÐµÑ Ð´Ð¾ 30â40 ÐºÐ¼ Ð¿ÑÐ¾Ð±ÐµÐ³Ð°</div></div><div class="f"><div class="k">ÐÑÐ¸ÑÐ¼</div><div class="v">+7â15%</div><div class="d">Ð¿ÑÐµÐ´Ð²Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÐ¹ Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¿ÐµÑÐµÐ´ Ð²ÑÐµÐ·Ð´Ð¾Ð¼ Ð²Ð¾Ð·Ð²ÑÐ°ÑÐ°ÐµÑ Ð·Ð°Ð¿Ð°Ñ</div></div></div>'),
+ 'poteri-pri-zaryadke': ('<div class="facts"><div class="f"><div class="k">Ð¢Ð¸Ð¿Ð¾Ð²ÑÐµ Ð¿Ð¾ÑÐµÑÐ¸</div><div class="v">5â15%</div><div class="d">ÐºÐÑÂ·Ñ ÑÐ¾ ÑÑÑÑÑÐ¸ÐºÐ° Ð½Ðµ Â«Ð¿ÑÐ¸ÑÐ¾Ð´Ð¸ÑÂ» Ð² Ð±Ð°ÑÐ°ÑÐµÑ â ÑÑÐ¾ Ð¿ÑÐµÐ¾Ð±ÑÐ°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÑÐµÐ¿Ð»Ð¾</div></div><div class="f"><div class="k">AC-Ð·Ð°ÑÑÐ´ÐºÐ°</div><div class="v">3â8%</div><div class="d">Ð²ÑÐ¿ÑÑÐ¼Ð¸ÑÐµÐ»Ñ Ð² Ð¼Ð°ÑÐ¸Ð½Ðµ, Ð´Ð»Ð¸Ð½Ð½ÑÐµ ÑÐµÑÑÐ¸Ð¸ â Ð¿Ð¾ÑÐµÑÐ¸ Ð² ÐºÐ°Ð±ÐµÐ»Ðµ</div></div><div class="f"><div class="k">DC-Ð·Ð°ÑÑÐ´ÐºÐ°</div><div class="v">4â9%</div><div class="d">Ð¿ÑÐµÐ¾Ð±ÑÐ°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð¾ÑÐ»Ð°Ð¶Ð´ÐµÐ½Ð¸Ðµ</div></div><div class="f"><div class="k">ÐÐ¸Ð¼Ð¾Ð¹</div><div class="v">+3â6%</div><div class="d">Ð±Ð°ÑÐ°ÑÐµÑ Ð³ÑÐµÐµÑÑÑ Ð²Ð¾ Ð²ÑÐµÐ¼Ñ Ð·Ð°ÑÑÐ´Ð° â ÑÐ°ÑÑÑ ÑÐ½ÐµÑÐ³Ð¸Ð¸ ÑÑÐ¾Ð´Ð¸Ñ Ð½Ð° ÑÑÐ¾</div></div></div>'),
 }
 
-PAIN_EXTRA = {'poteri-pri-zaryadke': ('<h2>Куда деваются кВт·ч со счётчика</h2><p>Счётчик станции намотал 50 кВт·ч, а «пришло» в батарею 45. Эти 5 кВт·ч не пропали и не «украдены» — это физика процесса, и у неё четыре понятных источника.</p><h2>Четыре источника потерь</h2><ol><li><b>Преобразование.</b> Переменный ток в постоянный превращает выпрямитель — на AC-зарядке это бортовой зарядник машины (КПД около 92–95%), на DC — станция (91–95%). Каждый процент — это греющийся прибор.</li><li><b>Прогрев и бортовое потребление.</b> Пока машина заряжается, она тратит энергию на климат, термоконтур батареи, электронику. Зимой эта доля заметно больше — гайд <a href="/pain/zapas-hoda-zimoy.html">о зимнем запасе хода</a>.</li><li><b>Кабель и соединения.</b> Сопротивление кабеля и клемм греет их, а не батарею. На плохих контактах потери растут — и греется то, что не должно.</li><li><b>Балансировка ячеек.</b> В конце заряда BMS выравнивает ячейки — на этом этапе потери максимальны. Ещё один аргумент против «дозаряда до 100%» без нужды.</li></ol><h2>Когда потери больше всего</h2><ul><li>Медленная зарядка от бытовой розетки: длинный тонкий кабель и слабый выпрямитель — до 10–15% потерь. Быстрая DC — обычно 5–8%.</li><li>Мороз: часть энергии уходит на прогрев батареи — закладывайте 10–20% сверх плана на зимние зарядки.</li><li>Дозаряд «хвоста» с 90 до 100%: почти весь этот отрезок — балансировка.</li></ul><h2>Как считать честную стоимость километра</h2><p>Считайте по счётчику станции, а не по ёмкости батареи: реальная цена километра на 5–10% выше «табличной». Удобнее всего — в <a href="/calculator/">калькуляторе</a>: он учитывает цену сети и сценарий (дом/столб/трасса). Полный разбор цен — в гайде <a href="/pain/stoimost-zaryadki.html">сколько стоит зарядить электромобиль</a>.</p>'),
- 'zaryadka-pod-dozhdyom': ('<h2>Почему конструкция это допускает</h2><p>Разъёмы EV спроектированы под уличную эксплуатацию: контакты надёжно изолированы до момента стыковки, датчики в порте проверяют температуру и целостность цепи до подачи мощности, а сама последовательность «стыковка → проверка → питание» исключает искру под дождём. Если бы зарядка под дождём была опасна, весь парк публичных станций не работал бы круглый год.</p><h2>Что действительно нужно проверить</h2><ol><li>Коннектор сухой и чистый внутри: грязь и снег в контактах — не про электробезопасность, а про нагрев и плохой контакт.</li><li>Кабель не лежит в луже в месте повреждения изоляции — осмотрите его перед подключением.</li><li>Розетка (если заряжаетесь от бытовой сети) защищена дифавтоматом — это требование к домашней инфраструктуре, гайд <a href="/pain/zaryadka-ot-rozetki.html">зарядка от розетки</a>.</li></ol><h2>Три ситуации, когда лучше переждать</h2><ul><li>Гроза с молниями рядом с ЛЭП или подстанцией: риск не в вашей зарядке, а в скачках напряжения сети.</li><li>Станция с повреждённым корпусом или следами вскрытия — обойдите её.</li><li>Наводнение: когда уровень воды выше нижней кромки терминала — это уже вопрос не дождя, а объекта.</li></ul><p>Итог: заряжать под дождём безопасно — конструкция для этого и создавалась. Проверяйте целостность кабеля и состояние терминала, и всё остальное сделает автоматика. Если после ливня станция отказывается стартовать — сверяйтесь с <a href="/blog/stanciya-ne-rabotaet.html">планом действий у станции</a>.</p>'),
- 'stanciya-otdaet-pol-moshchnosti': ('<h2>Почему «150 кВт» превращаются в 60</h2><p>Цифра на корпусе станции — потолок, а не гарантия. Реальная мощность при DC — минимум из пяти ограничений: станция (состояние и загрузка), протокол согласования (что запросила машина), состояние батареи (SOC и температура), кабель/адаптер, температура окружения. Фактический ток смотрите в приложении машины — там видно, кто именно «срезает».</p><h2>Пять ограничений по очереди</h2><ol><li><b>Кривая заряда:</b> выше 60–70% SOC мощность падает почти всегда, выше 80% — вдвое-втрое. Норма, а не поломка.</li><li><b>Температура батареи:</b> на морозе BMS греет ячейки и ограничивает ток; в жару охлаждает. Оба сценария — норма; лечится предпрогревом до приезда.</li><li><b>Протокол:</b> китайские GB/T-машины на старых станциях иногда согласуются на минимальный ток — помогает перезапуск сессии или обновление ПО. Подробно в <a href="/pain/adapter-gbt.html">гайде об адаптерах</a>.</li><li><b>Станция:</b> делит мощность между коннекторами, режет при перегреве кабеля или просто изношена — проверка второй машиной.</li><li><b>Кабель/адаптер:</b> греется и по защите снижает ток — разбор в <a href="/pain/kabel-ne-otdaet.html">гайде «кабель не отдаёт»</a>.</li></ol><h2>Чек-лист за 3 минуты</h2><ol><li>SOC в начале сессии — выше 70%? Это и есть ответ.</li><li>Фактический ток — в приложении машины, не станции.</li><li>Проверьте, не делит ли станция мощность со вторым коннектором.</li><li>На морозе — предпрогрев + перезапуск сессии.</li><li>Если «режет» и вторую машину — это станция: снимите кейс, отправьте в поддержку, найдите другую точку.</li></ol><h2>Чего не делать</h2><p>Не разгоняйте адаптеры сверх допустимой мощности и не покупайте «дешёвый мощный» без охлаждения: перегрев — самый частый сценарий, когда мощности становится ещё меньше. Допустимая непрерывная мощность указана в <a href="/catalog/">каталоге</a>. Если ограничение повторяется на разных станциях — сверьтесь с гайдом по вашей модели: там собраны версии и решения по конкретным машинам.</p>'),
- 'plata-za-prostoy': ('<h2>Как считается простой</h2><p>У большинства операторов счёт складывается из трёх частей: тариф за кВт·ч (или за минуту), тариф за простой (idle fee) и иногда фикс за сессию. Простой начинает тикать, когда сессия активна, а машина перестала принимать мощность: заполнилась до лимита, греется на морозе или кабель вытащили не вовремя. Главное правило: завершайте сессию в приложении сразу после окончания заряда.</p><h2>Три ситуации, когда простой «прилетает»</h2><ul><li>«Дозаряд до 100%» на быстрой станции: после 80% машина принимает мало, а поминутный счёт тикает — самая дорогая стратегия. 80% — и уезжать.</li><li>Заснули на станции: idle fee включается у большинства сетей через 10–30 минут после окончания заряда — точные лимиты смотрите в приложении своей сети.</li><li>Мороз: сессия активна, а машина не принимает — BMS греет батарею, время идёт. Планируйте предпрогрев до приезда (<a href="/pain/podogrev-batarei.html">гайд</a>).</li></ul><h2>Если списали несправедливо</h2><p>Скриншот статуса и времени сессии — в поддержку оператора: случаи «машина не принимала из-за ошибки станции» обычно пересчитывают. Пошаговая последовательность — в статье <a href="/blog/stanciya-ne-rabotaet.html">«Станция не работает: чья вина»</a>.</p><p>И главное экономическое: посчитайте свой профиль в <a href="/calculator/">калькуляторе</a> — на поминутных сетях профиль «80% и уезжать» экономит заметные деньги в месяц. А по стоимости километра — гайд <a href="/pain/stoimost-zaryadki.html">сколько стоит зарядка</a>.</p>'),
- 'tesla': ('<h2>Какая у вас сборка: Европа или США</h2><p>Разъём зарядки Tesla зависит от рынка вывоза. Европейские сборки (Model 3, Model Y для ЕС) — Type 2 для переменного тока и CCS2 для быстрой зарядки: это стандарт наших публичных станций, машина заряжается от них напрямую, без переходников. Американские сборки — J1772 (Type 1) для AC и NACS (коннектор Supercharger) для DC: для наших станций нужны переходники, а Supercharger в России не работает — у сети Tesla нет роуминга и активации учётной записи для нашего региона.</p><h2>Supercharger: почему «переходник не решит»</h2><p>Коннектор NACS физически не совпадает ни с GB/T, ни с Type 2 станциями: проблема не «в переходнике», а в том, что сеть закрыта. Практика владельцев в России: заряжаться от публичной инфраструктуры обычными разъёмами своей сборки. Для EU-сборок это полноценный сценарий — дома ночью на Type 2-станции, на трассе CCS2.</p><h2>Что работает на практике</h2><ul><li>EU-сборки: Type 2 AC-станции 7–22 кВт — ночная и городская зарядка; CCS2 — быстрая на трассе.</li><li>US-сборки: AC через <a href="/catalog/adapter-type1-type2.html">адаптер Type 1 → Type 2</a>; DC-сценарии ограничены — подробно в гайде <a href="/pain/type1-ccs1.html">о машинах из США и Кореи</a>.</li><li>Про адаптер NACS честно: <a href="/catalog/adapter-nacs-ccs2-type2.html">адаптер NACS ↔ Type 2/CCS2 в каталоге</a> даёт сценарии с европейской инфраструктурой, но не открывает Supercharger.</li></ul><h2>Частые вопросы владельцев Tesla в России</h2><ul><li>«Можно ли зарядить Tesla от китайской GB/T-станции?» — только через цепочку переходников, и это неустойчивое решение: перед покупкой сверьте совместимость с вашей сборкой.</li><li>«Лючок заряда не открывается на морозе» — типовая история при просевшем 12-вольтовом АКБ: замок питается от 12 В, гайд <a href="/pain/12v-akb.html">здесь</a>.</li><li>«Машина перестала заряжаться от станции» — начните с <a href="/pain/ne-zaryazhaetsya.html">полного чек-листа причин</a>.</li></ul><p>Перед покупкой Tesla из США сверьте разъём по нашей странице модели и посчитайте стоимость владения в <a href="/calculator/">калькуляторе</a>: электричества машина расходует как обычный EV, а вот с инфраструктурой сценарии другие.</p>'),
- 'chademo': ('<h2>CHAdeMO в России: состояние на 2026</h2><p>CHAdeMO — японский протокол быстрой зарядки: Nissan Leaf, Mitsubishi Outlander PHEV и несколько других японских машин. Инфраструктура под него в стране сворачивается: в нашей базе из 2073 станций разъём CHAdeMO практически не встречается — операторы меняют коннекторы на CCS2/GB/T или выводят старые станции из работы. Поэтому владельцу CHAdeMO-машины строить дальние маршруты «по быстрым зарядкам» уже нельзя: живая сеть — это в первую очередь AC.</p><h2>Почему Leaf «садится» от быстрых зарядок</h2><p>Nissan Leaf (2011–2019) не имеет активного охлаждения батареи: каждый быстрый заряд нагревает ячейки, и ёмкость со временем падает заметно быстрее, чем у машин с термоконтуром. Опыт сообщества сводится к правилу: быстрые зарядки — только в поездках и до 80%, повседневная зарядка — AC от розетки или станции 7–22 кВт. Как распознать деградацию и что с ней делать — в статье <a href="/blog/nissan-leaf-v-rossii.html">о Leaf в России</a>.</p><h2>Чек-лист владельца CHAdeMO</h2><ol><li>Уточните фактическую мощность OBC: ранние Leaf — 3,6 кВт, позже 6,6 кВт — от этого зависит время ночной зарядки.</li><li>Дальние поездки планируйте вокруг AC-станций или с переноской от розетки — гайд <a href="/pain/zaryadka-ot-rozetki.html">зарядка от розетки</a>.</li><li>Не ориентируйтесь на устаревшие карты с CHAdeMO-портами: сверяйтесь с <a href="/charging/">нашей картой</a> и статусом в приложении оператора.</li><li>Следите за состоянием батареи: в Leaf доступ к данным состояния (SOH) есть через диагностический разъём и сторонние приложения.</li></ol><p>Если выбираете машину для дальних поездок — CHAdeMO сегодня не лучший выбор: смотрите модели с CCS2 или GB/T в <a href="/models/">каталоге моделей</a> и сверяйте разъём по VIN перед покупкой.</p>'),
- 'lyuchok': ('<h2>Почему лючок заклинивает именно зимой</h2><p>Три причины почти всегда работают вместе: замёрзшая влага в замке лючка, загустевшая смазка механизма и просевший 12-вольтовый АКБ, от которого питается привод замка. Поэтому «лючок не открывается» зимой чаще симптом, чем поломка: машина «уснула» целиком, а лючок просто заметнее всего.</p><h2>Аварийный тросик: где искать</h2><p>У большинства моделей есть механическая разблокировка: тросик или рычаг в багажнике — под обшивкой, в нише запаски или рядом с фонарём. Точное место описано в инструкции к вашей машине. Потяните тросик — лючок откроется без электроники. Если и это не помогает — отогрейте зону замка: тёплый воздух из салона или фен на 10–15 минут обычно решают. Кипяток лить не стоит: резкий перепад вредит лакокрасочному покрытию, а вода снова замёрзнет через час.</p><h2>Профилактика на зиму</h2><ol><li>Обработайте петли и механизм замка силиконовой смазкой до заморозков: <a href="/catalog/smazka-silikonom-zima.html">силиконовая смазка в каталоге</a> — не густеет на морозе.</li><li>Не мойте машину горячей водой перед ночной стоянкой на улице: оставшаяся влага в замке замёрзнет.</li><li>Следите за 12-вольтовым АКБ: если одновременно не работают лючок, замок кабеля и двери — начните с <a href="/pain/12v-akb.html">гайда про 12-вольтовый АКБ</a>.</li><li>Если коннектор «застрял» в порте после зарядки — это отдельная история: <a href="/pain/kabel-ne-otdaet.html">гайд «Кабель не отдаёт из порта»</a>.</li></ol><p>Проверьте в инструкции к своей модели: у многих машин лючок открывается из приложения или по кнопке на ключе — зимой это экономит время и нервы.</p>'),
- 'zapas-hoda-zimoy': ('<h2>Почему зимой теряется больше всего</h2><p>Зимой батарея одновременно отдаёт меньше и тратит больше. Главный «пожиратель» — отопление салона: на морозе ниже −10 °C обогреватель забирает порядка 2–4 кВт·ч каждый час пути. Для машины с батареей 60 кВт·ч это заметная часть запаса уже за пару часов городского трафика. Второй фактор — подогрев батареи: на сильном морозе BMS греет ячейки перед быстрым зарядом, и это тоже расход из пачека. Третий — сопротивление качению и вязкость смазки в редукторе: на холоде и холодных шинах машина едет «тяжелее».</p><h2>Ориентиры: сколько остаётся при разных температурах</h2><p>Сводная картина по владельцам в сообществах выглядит так: при +5…0 °C теряется порядка 15–20% запаса, при −10 °C — 25–35%, при −20 °C и ниже с работающей печкой — до 40–45%. Бортовой компьютер при морозе часто «оптимистичнее» реальности, поэтому планируйте маршрут по 70–75% от летнего запаса в межсезонье и по 60–65% в крепкий мороз. Это ориентир, а не гарантия: у машин с тепловым насосом падение меньше — отопление на 30–50% эффективнее.</p><h2>Шесть приёмов, которые возвращают километры</h2><ol><li>Предпрогрев салона до отъезда — пока машина стоит на зарядке или в гараже. Каждый километр «отопления от стены» — это километр, который не отнимут у батареи в дороге.</li><li>Скорость 90–100 км/ч вместо 120 — на трассе экономия 15–20% за счёт аэродинамики.</li><li>Подогрев сидений вместо печки — он забирает в разы меньше энергии.</li><li>Не оставляйте машину на морозе «на нуле»: глубокий разряд на холоде ускоряет деградацию и добавляет проблем с 12-вольтовым АКБ.</li><li>Заряжайте чаще до 80%, а не «до нуля»: зимой нижние 10–15% ёмкости часто недоступны — BMS блокирует их на сильном холоде.</li><li>Планируйте остановки заранее: на морозе время быстрой зарядки растёт на 30–50% — берите запас по времени, а не только по километрам.</li></ol><p>Тёплый паркинг или подземная стоянка на ночь — самый недооценённый приём: машина, которая стояла в тепле, утром едет дальше на десятки километров. Подробнее о том, как машина греет батарею перед быстрой зарядкой, — в гайде <a href="/pain/podogrev-batarei.html">о подогреве батареи</a>; о замедленной зимней зарядке — в статье <a href="/blog/zimnyaya-zaryadka-medlennee.html">«Почему зимой зарядка медленнее»</a>. Найти станцию по маршруту можно на <a href="/charging/">карте зарядных станций</a>, посчитать стоимость зимнего месяца — в <a href="/calculator/">калькуляторе</a>.</p>'),
- 'type1-ccs1': ('<h2>Шаг 1: определите, что у вас за разъём</h2><p>Машины из США и Кореи обычно несут разъёмы J1772 (Type 1) для переменного тока и CCS1 для быстрой зарядки. Европейские сборки тех же моделей — Type 2 и CCS2. Это кардинально разные истории: у Tesla Model Y американской сборки — Type 1/CCS1, у европейской — Type 2/CCS2, и адаптеры для них не взаимозаменяемы. Проще всего свериться с нашей страницей модели: у каждой из 145 моделей на сайте указан фактический разъём зарядки, раздел «Разъёмы».</p><h2>Шаг 2: зарядка переменным током — самая простая</h2><p>Публичные станции AC в России почти все с разъёмом Type 2 (7–22 кВт). Для машины с Type 1 нужен <a href="/catalog/adapter-type1-type2.html">адаптер Type 1 → Type 2</a>: он превращает Type 2-коннектор станции в Type 1-гнездо машины. Скорость останется на уровне машины — обычно 7–11 кВт, этого хватает для ночной домашней зарядки и городских дозарядок. Переходник Type 1/Type 2 — компактный, живёт в багажнике, не требует допусков.</p><h2>Шаг 3: быстрая зарядка — сложнее</h2><p>Для быстрой зарядки важен разъём станций. Быстрые станции в РФ делятся на две группы: с европейскими CCS2-коннекторами и с китайскими GB/T. Если у машины CCS1, прямой путь к CCS2-станции отсутствует: CCS1 и CCS2 несовместимы физически. Рабочий сценарий для китайско-адаптированных машин — <a href="/catalog/adapter-ccs2-gbt-dc.html">DC-адаптер CCS2 → GB/T</a>, но он работает только для машин с CCS2-портом, а не с CCS1. Владельцам машин с CCS1 остаётся: зарядка AC (шаг 2), либо поездка к Type 2-совместимым DC-станциям через переходники, совместимые с конкретной моделью — сверяйтесь с гайдом по вашей модели до покупки адаптера.</p><h2>Чек-лист перед покупкой машины из США/Кореи</h2><ol><li>Уточните сборку машины (США/Корея = Type 1/CCS1; Европа = Type 2/CCS2) — по VIN или конфигурации.</li><li>Проверьте, есть ли DC-порт CCS1 и поддерживает ли машину быстрая зарядка вообще (некоторые Core-модели — только AC).</li><li>Запланируйте бюджет на адаптер Type 1 → Type 2 — он нужен почти сразу после покупки.</li><li>Проверьте профиль быстрой зарядки в гайде по модели: мощность DC-зарядки и требования к разъёму.</li></ol><p>Если разъём так и не определили, сфотографируйте порт зарядки и покажите в нашем телеграм-канале — подскажем по опыту сообщества.</p>'),
- 'udlinitel': ('<h2>Почему дешёвый удлинитель опасен</h2><p>Обычный бытовой удлинитель рассчитан на 10–16 А по тонкому проводу 1–1,5 мм². Зарядка от 7 кВт тянет 32 А непрерывно, часами: провод с недостаточным сечением греется, изоляция стареет, контакт в розетке разогревается. Симптом перегрева — тёплый штекер, запах пластика, срабатывание автомата. Это не «теория», а самая частая причина выгорания розеток у владельцев, которые попробовали сэкономить.</p><h2>Правила удлинителя для зарядки</h2><ol><li>Сечение провода — 2,5 мм² и выше, для длинных пролетов — 4 мм². На упаковке ищите именно сечение, а не «16 А» на ярлыке.</li><li>Длина — по возможности до 10–15 м: чем длиннее, тем больше падение напряжения и риск, что зарядка оборвётся или снизит ток.</li><li>Если используете катушку — полностью размотайте. Смотанная катушка не охлаждается и перегревается быстрее всего.</li><li>Степень защиты IP44 и выше — зарядка идёт на улице и во влажной среде.</li><li>Автомат в щитке — С-характеристика 16 А на линию зарядки: дешёвый удлинитель с «мощностью 3500 Вт» на коробке не всегда честно держит 16 А часами.</li></ol><h2>Готовые удлинительные кабели для зарядки</h2><p>В каталоге есть готовые решения под конкретный разъём: <a href="/catalog/udlinitel-type2-type2-5m.html">удлинитель Type 2 → Type 2, 5 м, 32 А</a> и <a href="/catalog/udlinitel-gbt-gbt-5m.html">удлинитель GB/T → GB/T, 5 м, 32 А</a>. Это не «переходник», а кабель с сечением под 32 А — то, что нужно для домашней стационарной и переносной зарядки на полную мощность. Подробнее о домашнем подключении — в гайде <a href="/pain/domashnie-stancii.html">о зарядной станции для дома</a>.</p>'),
- '12v-akb': ('<h2>Зачем электромобилю обычный 12-вольтовый аккумулятор</h2><p>Главная батарея питает мотор, но дворники, замки, свет, мультимедиа и ЭБУ работают от 12-вольтового аккумулятора, который подзаряжается DC/DC-конвертером от главной батареи. Если 12-вольтовый АКБ разряжается, машина «засыпает» целиком: не открываются двери, не разблокируется коннектор зарядного кабеля, не стартует зарядка — симптомы совпадают с «неисправной станцией», хотя виноват маленький АКБ.</p><h2>Симптомы умирающего 12-вольтового АКБ</h2><ul><li>Машина простояла неделю-две на морозе и «не оживает» — классическая история зимнего простоя.</li><li>Кабель зарядки не отдаётся из порта — замок коннектора питается от 12 В; подробности в гайде <a href="/pain/kabel-ne-otdaet.html">«Кабель не отдаёт из порта»</a>.</li><li>Ошибки «низкое напряжение 12V» в бортовом компьютере.</li><li>Зарядка запускается, но обрывается при старте — на пике потребления DC/DC не хватает.</li></ul><h2>Что делать</h2><p>Первым делом — прикурить от 12-вольтового источника (второго авто, бустера): большинство машин позволяют запуск бортсети от внешнего 12 В без снятия АКБ, клеммы обычно под капотом или в багажнике (у ряда моделей — под ковриком багажника; на Zeekr 001, например, именно там). После восстановления дайте машине поработать 20–30 минут — DC/DC подзарядит АКБ. Если простоя случаются регулярно, проверьте утечки (охранная система, сторонние аксессуары) и замерьте АКБ на СТО: замена 12-вольтового аккумулятора — недорогая и рутинная процедура.</p><p>Если машина перестала заряжаться целиком — начните с гайда <a href="/pain/ne-zaryazhaetsya.html">«Не заряжается электромобиль»</a>: там полный чек-лист причин.</p>'),
- 'ne-zaryazhaetsya': ('<h2>Как это выглядит на практике</h2>'
-  '<p>Реальный кейс из сообщества владельцев: Evolute i-Space перестал принимать быструю зарядку — все станции выдают код ошибки 0x13. Половина владельцев перепрошивает голову, половина спасается простым приёмом: сброс клеммы 12-вольтовой батареи (она в багажнике под ковриком) на 5–10 минут. Подробно мы разобрали это в <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">статье про код 0x13</a>. Мораль: до визита в сервис попробуйте самый дешёвый сценарий.</p>'
-  '<p>Вторая частая история — «встал на станции, а станция мёртвая». По данным отраслевого обзора, до 26% станций бывают неисправны при работающем статусе в приложении: обрыв кабеля, ошибка обменного протокола, зависший терминал (<a href="https://electro.cars/tpost/xfmkaf0821-problemi-s-infrastrukturoi-zaryadki-chto" target="_blank" rel="noopener">Electro.cars</a>). Опытный водитель держит в маршруте вторую станцию — всегда. Что делать при списании денег за неработающую сессию — в статье <a href="/blog/stanciya-ne-rabotaet.html">«Зарядная станция не работает: чья вина»</a>.</p>'
-  '<h2>Чек-лист: если машина не заряжается</h2>'
+PAIN_EXTRA = {'poteri-pri-zaryadke': ('<h2>ÐÑÐ´Ð° Ð´ÐµÐ²Ð°ÑÑÑÑ ÐºÐÑÂ·Ñ ÑÐ¾ ÑÑÑÑÑÐ¸ÐºÐ°</h2><p>Ð¡ÑÑÑÑÐ¸Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð°Ð¼Ð¾ÑÐ°Ð» 50 ÐºÐÑÂ·Ñ, Ð° Â«Ð¿ÑÐ¸ÑÐ»Ð¾Â» Ð² Ð±Ð°ÑÐ°ÑÐµÑ 45. Ð­ÑÐ¸ 5 ÐºÐÑÂ·Ñ Ð½Ðµ Ð¿ÑÐ¾Ð¿Ð°Ð»Ð¸ Ð¸ Ð½Ðµ Â«ÑÐºÑÐ°Ð´ÐµÐ½ÑÂ» â ÑÑÐ¾ ÑÐ¸Ð·Ð¸ÐºÐ° Ð¿ÑÐ¾ÑÐµÑÑÐ°, Ð¸ Ñ Ð½ÐµÑ ÑÐµÑÑÑÐµ Ð¿Ð¾Ð½ÑÑÐ½ÑÑ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ°.</p><h2>Ð§ÐµÑÑÑÐµ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ° Ð¿Ð¾ÑÐµÑÑ</h2><ol><li><b>ÐÑÐµÐ¾Ð±ÑÐ°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ.</b> ÐÐµÑÐµÐ¼ÐµÐ½Ð½ÑÐ¹ ÑÐ¾Ðº Ð² Ð¿Ð¾ÑÑÐ¾ÑÐ½Ð½ÑÐ¹ Ð¿ÑÐµÐ²ÑÐ°ÑÐ°ÐµÑ Ð²ÑÐ¿ÑÑÐ¼Ð¸ÑÐµÐ»Ñ â Ð½Ð° AC-Ð·Ð°ÑÑÐ´ÐºÐµ ÑÑÐ¾ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¹ Ð·Ð°ÑÑÐ´Ð½Ð¸Ðº Ð¼Ð°ÑÐ¸Ð½Ñ (ÐÐÐ Ð¾ÐºÐ¾Ð»Ð¾ 92â95%), Ð½Ð° DC â ÑÑÐ°Ð½ÑÐ¸Ñ (91â95%). ÐÐ°Ð¶Ð´ÑÐ¹ Ð¿ÑÐ¾ÑÐµÐ½Ñ â ÑÑÐ¾ Ð³ÑÐµÑÑÐ¸Ð¹ÑÑ Ð¿ÑÐ¸Ð±Ð¾Ñ.</li><li><b>ÐÑÐ¾Ð³ÑÐµÐ² Ð¸ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð¿Ð¾ÑÑÐµÐ±Ð»ÐµÐ½Ð¸Ðµ.</b> ÐÐ¾ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ð° Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ, Ð¾Ð½Ð° ÑÑÐ°ÑÐ¸Ñ ÑÐ½ÐµÑÐ³Ð¸Ñ Ð½Ð° ÐºÐ»Ð¸Ð¼Ð°Ñ, ÑÐµÑÐ¼Ð¾ÐºÐ¾Ð½ÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸, ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÑ. ÐÐ¸Ð¼Ð¾Ð¹ ÑÑÐ° Ð´Ð¾Ð»Ñ Ð·Ð°Ð¼ÐµÑÐ½Ð¾ Ð±Ð¾Ð»ÑÑÐµ â Ð³Ð°Ð¹Ð´ <a href="/pain/zapas-hoda-zimoy.html">Ð¾ Ð·Ð¸Ð¼Ð½ÐµÐ¼ Ð·Ð°Ð¿Ð°ÑÐµ ÑÐ¾Ð´Ð°</a>.</li><li><b>ÐÐ°Ð±ÐµÐ»Ñ Ð¸ ÑÐ¾ÐµÐ´Ð¸Ð½ÐµÐ½Ð¸Ñ.</b> Ð¡Ð¾Ð¿ÑÐ¾ÑÐ¸Ð²Ð»ÐµÐ½Ð¸Ðµ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸ ÐºÐ»ÐµÐ¼Ð¼ Ð³ÑÐµÐµÑ Ð¸Ñ, Ð° Ð½Ðµ Ð±Ð°ÑÐ°ÑÐµÑ. ÐÐ° Ð¿Ð»Ð¾ÑÐ¸Ñ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ñ Ð¿Ð¾ÑÐµÑÐ¸ ÑÐ°ÑÑÑÑ â Ð¸ Ð³ÑÐµÐµÑÑÑ ÑÐ¾, ÑÑÐ¾ Ð½Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð¾.</li><li><b>ÐÐ°Ð»Ð°Ð½ÑÐ¸ÑÐ¾Ð²ÐºÐ° ÑÑÐµÐµÐº.</b> Ð ÐºÐ¾Ð½ÑÐµ Ð·Ð°ÑÑÐ´Ð° BMS Ð²ÑÑÐ°Ð²Ð½Ð¸Ð²Ð°ÐµÑ ÑÑÐµÐ¹ÐºÐ¸ â Ð½Ð° ÑÑÐ¾Ð¼ ÑÑÐ°Ð¿Ðµ Ð¿Ð¾ÑÐµÑÐ¸ Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½Ñ. ÐÑÑ Ð¾Ð´Ð¸Ð½ Ð°ÑÐ³ÑÐ¼ÐµÐ½Ñ Ð¿ÑÐ¾ÑÐ¸Ð² Â«Ð´Ð¾Ð·Ð°ÑÑÐ´Ð° Ð´Ð¾ 100%Â» Ð±ÐµÐ· Ð½ÑÐ¶Ð´Ñ.</li></ol><h2>ÐÐ¾Ð³Ð´Ð° Ð¿Ð¾ÑÐµÑÐ¸ Ð±Ð¾Ð»ÑÑÐµ Ð²ÑÐµÐ³Ð¾</h2><ul><li>ÐÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸: Ð´Ð»Ð¸Ð½Ð½ÑÐ¹ ÑÐ¾Ð½ÐºÐ¸Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸ ÑÐ»Ð°Ð±ÑÐ¹ Ð²ÑÐ¿ÑÑÐ¼Ð¸ÑÐµÐ»Ñ â Ð´Ð¾ 10â15% Ð¿Ð¾ÑÐµÑÑ. ÐÑÑÑÑÐ°Ñ DC â Ð¾Ð±ÑÑÐ½Ð¾ 5â8%.</li><li>ÐÐ¾ÑÐ¾Ð·: ÑÐ°ÑÑÑ ÑÐ½ÐµÑÐ³Ð¸Ð¸ ÑÑÐ¾Ð´Ð¸Ñ Ð½Ð° Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ â Ð·Ð°ÐºÐ»Ð°Ð´ÑÐ²Ð°Ð¹ÑÐµ 10â20% ÑÐ²ÐµÑÑ Ð¿Ð»Ð°Ð½Ð° Ð½Ð° Ð·Ð¸Ð¼Ð½Ð¸Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸.</li><li>ÐÐ¾Ð·Ð°ÑÑÐ´ Â«ÑÐ²Ð¾ÑÑÐ°Â» Ñ 90 Ð´Ð¾ 100%: Ð¿Ð¾ÑÑÐ¸ Ð²ÐµÑÑ ÑÑÐ¾Ñ Ð¾ÑÑÐµÐ·Ð¾Ðº â Ð±Ð°Ð»Ð°Ð½ÑÐ¸ÑÐ¾Ð²ÐºÐ°.</li></ul><h2>ÐÐ°Ðº ÑÑÐ¸ÑÐ°ÑÑ ÑÐµÑÑÐ½ÑÑ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ°</h2><p>Ð¡ÑÐ¸ÑÐ°Ð¹ÑÐµ Ð¿Ð¾ ÑÑÑÑÑÐ¸ÐºÑ ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð° Ð½Ðµ Ð¿Ð¾ ÑÐ¼ÐºÐ¾ÑÑÐ¸ Ð±Ð°ÑÐ°ÑÐµÐ¸: ÑÐµÐ°Ð»ÑÐ½Ð°Ñ ÑÐµÐ½Ð° ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ° Ð½Ð° 5â10% Ð²ÑÑÐµ Â«ÑÐ°Ð±Ð»Ð¸ÑÐ½Ð¾Ð¹Â». Ð£Ð´Ð¾Ð±Ð½ÐµÐµ Ð²ÑÐµÐ³Ð¾ â Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a>: Ð¾Ð½ ÑÑÐ¸ÑÑÐ²Ð°ÐµÑ ÑÐµÐ½Ñ ÑÐµÑÐ¸ Ð¸ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ (Ð´Ð¾Ð¼/ÑÑÐ¾Ð»Ð±/ÑÑÐ°ÑÑÐ°). ÐÐ¾Ð»Ð½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ ÑÐµÐ½ â Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/stoimost-zaryadki.html">ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ</a>.</p>'),
+ 'zaryadka-pod-dozhdyom': ('<h2>ÐÐ¾ÑÐµÐ¼Ñ ÐºÐ¾Ð½ÑÑÑÑÐºÑÐ¸Ñ ÑÑÐ¾ Ð´Ð¾Ð¿ÑÑÐºÐ°ÐµÑ</h2><p>Ð Ð°Ð·ÑÑÐ¼Ñ EV ÑÐ¿ÑÐ¾ÐµÐºÑÐ¸ÑÐ¾Ð²Ð°Ð½Ñ Ð¿Ð¾Ð´ ÑÐ»Ð¸ÑÐ½ÑÑ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ñ: ÐºÐ¾Ð½ÑÐ°ÐºÑÑ Ð½Ð°Ð´ÑÐ¶Ð½Ð¾ Ð¸Ð·Ð¾Ð»Ð¸ÑÐ¾Ð²Ð°Ð½Ñ Ð´Ð¾ Ð¼Ð¾Ð¼ÐµÐ½ÑÐ° ÑÑÑÐºÐ¾Ð²ÐºÐ¸, Ð´Ð°ÑÑÐ¸ÐºÐ¸ Ð² Ð¿Ð¾ÑÑÐµ Ð¿ÑÐ¾Ð²ÐµÑÑÑÑ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð¸ ÑÐµÐ»Ð¾ÑÑÐ½Ð¾ÑÑÑ ÑÐµÐ¿Ð¸ Ð´Ð¾ Ð¿Ð¾Ð´Ð°ÑÐ¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, Ð° ÑÐ°Ð¼Ð° Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½Ð¾ÑÑÑ Â«ÑÑÑÐºÐ¾Ð²ÐºÐ° â Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° â Ð¿Ð¸ÑÐ°Ð½Ð¸ÐµÂ» Ð¸ÑÐºÐ»ÑÑÐ°ÐµÑ Ð¸ÑÐºÑÑ Ð¿Ð¾Ð´ Ð´Ð¾Ð¶Ð´ÑÐ¼. ÐÑÐ»Ð¸ Ð±Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾Ð´ Ð´Ð¾Ð¶Ð´ÑÐ¼ Ð±ÑÐ»Ð° Ð¾Ð¿Ð°ÑÐ½Ð°, Ð²ÐµÑÑ Ð¿Ð°ÑÐº Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°Ð» Ð±Ñ ÐºÑÑÐ³Ð»ÑÐ¹ Ð³Ð¾Ð´.</p><h2>Ð§ÑÐ¾ Ð´ÐµÐ¹ÑÑÐ²Ð¸ÑÐµÐ»ÑÐ½Ð¾ Ð½ÑÐ¶Ð½Ð¾ Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ</h2><ol><li>ÐÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ ÑÑÑÐ¾Ð¹ Ð¸ ÑÐ¸ÑÑÑÐ¹ Ð²Ð½ÑÑÑÐ¸: Ð³ÑÑÐ·Ñ Ð¸ ÑÐ½ÐµÐ³ Ð² ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ñ â Ð½Ðµ Ð¿ÑÐ¾ ÑÐ»ÐµÐºÑÑÐ¾Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÑ, Ð° Ð¿ÑÐ¾ Ð½Ð°Ð³ÑÐµÐ² Ð¸ Ð¿Ð»Ð¾ÑÐ¾Ð¹ ÐºÐ¾Ð½ÑÐ°ÐºÑ.</li><li>ÐÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð»ÐµÐ¶Ð¸Ñ Ð² Ð»ÑÐ¶Ðµ Ð² Ð¼ÐµÑÑÐµ Ð¿Ð¾Ð²ÑÐµÐ¶Ð´ÐµÐ½Ð¸Ñ Ð¸Ð·Ð¾Ð»ÑÑÐ¸Ð¸ â Ð¾ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ ÐµÐ³Ð¾ Ð¿ÐµÑÐµÐ´ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸ÐµÐ¼.</li><li>Ð Ð¾Ð·ÐµÑÐºÐ° (ÐµÑÐ»Ð¸ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÐµÑÑ Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐµÑÐ¸) Ð·Ð°ÑÐ¸ÑÐµÐ½Ð° Ð´Ð¸ÑÐ°Ð²ÑÐ¾Ð¼Ð°ÑÐ¾Ð¼ â ÑÑÐ¾ ÑÑÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ðµ Ðº Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐµ, Ð³Ð°Ð¹Ð´ <a href="/pain/zaryadka-ot-rozetki.html">Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸</a>.</li></ol><h2>Ð¢ÑÐ¸ ÑÐ¸ÑÑÐ°ÑÐ¸Ð¸, ÐºÐ¾Ð³Ð´Ð° Ð»ÑÑÑÐµ Ð¿ÐµÑÐµÐ¶Ð´Ð°ÑÑ</h2><ul><li>ÐÑÐ¾Ð·Ð° Ñ Ð¼Ð¾Ð»Ð½Ð¸ÑÐ¼Ð¸ ÑÑÐ´Ð¾Ð¼ Ñ ÐÐ­Ð Ð¸Ð»Ð¸ Ð¿Ð¾Ð´ÑÑÐ°Ð½ÑÐ¸ÐµÐ¹: ÑÐ¸ÑÐº Ð½Ðµ Ð² Ð²Ð°ÑÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐµ, Ð° Ð² ÑÐºÐ°ÑÐºÐ°Ñ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ñ ÑÐµÑÐ¸.</li><li>Ð¡ÑÐ°Ð½ÑÐ¸Ñ Ñ Ð¿Ð¾Ð²ÑÐµÐ¶Ð´ÑÐ½Ð½ÑÐ¼ ÐºÐ¾ÑÐ¿ÑÑÐ¾Ð¼ Ð¸Ð»Ð¸ ÑÐ»ÐµÐ´Ð°Ð¼Ð¸ Ð²ÑÐºÑÑÑÐ¸Ñ â Ð¾Ð±Ð¾Ð¹Ð´Ð¸ÑÐµ ÐµÑ.</li><li>ÐÐ°Ð²Ð¾Ð´Ð½ÐµÐ½Ð¸Ðµ: ÐºÐ¾Ð³Ð´Ð° ÑÑÐ¾Ð²ÐµÐ½Ñ Ð²Ð¾Ð´Ñ Ð²ÑÑÐµ Ð½Ð¸Ð¶Ð½ÐµÐ¹ ÐºÑÐ¾Ð¼ÐºÐ¸ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ð° â ÑÑÐ¾ ÑÐ¶Ðµ Ð²Ð¾Ð¿ÑÐ¾Ñ Ð½Ðµ Ð´Ð¾Ð¶Ð´Ñ, Ð° Ð¾Ð±ÑÐµÐºÑÐ°.</li></ul><p>ÐÑÐ¾Ð³: Ð·Ð°ÑÑÐ¶Ð°ÑÑ Ð¿Ð¾Ð´ Ð´Ð¾Ð¶Ð´ÑÐ¼ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ â ÐºÐ¾Ð½ÑÑÑÑÐºÑÐ¸Ñ Ð´Ð»Ñ ÑÑÐ¾Ð³Ð¾ Ð¸ ÑÐ¾Ð·Ð´Ð°Ð²Ð°Ð»Ð°ÑÑ. ÐÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ ÑÐµÐ»Ð¾ÑÑÐ½Ð¾ÑÑÑ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸ ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ðµ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ð°, Ð¸ Ð²ÑÑ Ð¾ÑÑÐ°Ð»ÑÐ½Ð¾Ðµ ÑÐ´ÐµÐ»Ð°ÐµÑ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÐºÐ°. ÐÑÐ»Ð¸ Ð¿Ð¾ÑÐ»Ðµ Ð»Ð¸Ð²Ð½Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¾ÑÐºÐ°Ð·ÑÐ²Ð°ÐµÑÑÑ ÑÑÐ°ÑÑÐ¾Ð²Ð°ÑÑ â ÑÐ²ÐµÑÑÐ¹ÑÐµÑÑ Ñ <a href="/blog/stanciya-ne-rabotaet.html">Ð¿Ð»Ð°Ð½Ð¾Ð¼ Ð´ÐµÐ¹ÑÑÐ²Ð¸Ð¹ Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸</a>.</p>'),
+ 'stanciya-otdaet-pol-moshchnosti': ('<h2>ÐÐ¾ÑÐµÐ¼Ñ Â«150 ÐºÐÑÂ» Ð¿ÑÐµÐ²ÑÐ°ÑÐ°ÑÑÑÑ Ð² 60</h2><p>Ð¦Ð¸ÑÑÐ° Ð½Ð° ÐºÐ¾ÑÐ¿ÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â Ð¿Ð¾ÑÐ¾Ð»Ð¾Ðº, Ð° Ð½Ðµ Ð³Ð°ÑÐ°Ð½ÑÐ¸Ñ. Ð ÐµÐ°Ð»ÑÐ½Ð°Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¿ÑÐ¸ DC â Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ Ð¸Ð· Ð¿ÑÑÐ¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ð¹: ÑÑÐ°Ð½ÑÐ¸Ñ (ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ðµ Ð¸ Ð·Ð°Ð³ÑÑÐ·ÐºÐ°), Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð» ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ñ (ÑÑÐ¾ Ð·Ð°Ð¿ÑÐ¾ÑÐ¸Ð»Ð° Ð¼Ð°ÑÐ¸Ð½Ð°), ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ðµ Ð±Ð°ÑÐ°ÑÐµÐ¸ (SOC Ð¸ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ°), ÐºÐ°Ð±ÐµÐ»Ñ/Ð°Ð´Ð°Ð¿ÑÐµÑ, ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ° Ð¾ÐºÑÑÐ¶ÐµÐ½Ð¸Ñ. Ð¤Ð°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ð¹ ÑÐ¾Ðº ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¼Ð°ÑÐ¸Ð½Ñ â ÑÐ°Ð¼ Ð²Ð¸Ð´Ð½Ð¾, ÐºÑÐ¾ Ð¸Ð¼ÐµÐ½Ð½Ð¾ Â«ÑÑÐµÐ·Ð°ÐµÑÂ».</p><h2>ÐÑÑÑ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ð¹ Ð¿Ð¾ Ð¾ÑÐµÑÐµÐ´Ð¸</h2><ol><li><b>ÐÑÐ¸Ð²Ð°Ñ Ð·Ð°ÑÑÐ´Ð°:</b> Ð²ÑÑÐµ 60â70% SOC Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¿Ð°Ð´Ð°ÐµÑ Ð¿Ð¾ÑÑÐ¸ Ð²ÑÐµÐ³Ð´Ð°, Ð²ÑÑÐµ 80% â Ð²Ð´Ð²Ð¾Ðµ-Ð²ÑÑÐ¾Ðµ. ÐÐ¾ÑÐ¼Ð°, Ð° Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ°.</li><li><b>Ð¢ÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ° Ð±Ð°ÑÐ°ÑÐµÐ¸:</b> Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ BMS Ð³ÑÐµÐµÑ ÑÑÐµÐ¹ÐºÐ¸ Ð¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐ¸Ð²Ð°ÐµÑ ÑÐ¾Ðº; Ð² Ð¶Ð°ÑÑ Ð¾ÑÐ»Ð°Ð¶Ð´Ð°ÐµÑ. ÐÐ±Ð° ÑÑÐµÐ½Ð°ÑÐ¸Ñ â Ð½Ð¾ÑÐ¼Ð°; Ð»ÐµÑÐ¸ÑÑÑ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð¾Ð¼ Ð´Ð¾ Ð¿ÑÐ¸ÐµÐ·Ð´Ð°.</li><li><b>ÐÑÐ¾ÑÐ¾ÐºÐ¾Ð»:</b> ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ðµ GB/T-Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° ÑÑÐ°ÑÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð¸Ð½Ð¾Ð³Ð´Ð° ÑÐ¾Ð³Ð»Ð°ÑÑÑÑÑÑ Ð½Ð° Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ¾Ðº â Ð¿Ð¾Ð¼Ð¾Ð³Ð°ÐµÑ Ð¿ÐµÑÐµÐ·Ð°Ð¿ÑÑÐº ÑÐµÑÑÐ¸Ð¸ Ð¸Ð»Ð¸ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ ÐÐ. ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾ Ð² <a href="/pain/adapter-gbt.html">Ð³Ð°Ð¹Ð´Ðµ Ð¾Ð± Ð°Ð´Ð°Ð¿ÑÐµÑÐ°Ñ</a>.</li><li><b>Ð¡ÑÐ°Ð½ÑÐ¸Ñ:</b> Ð´ÐµÐ»Ð¸Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¼ÐµÐ¶Ð´Ñ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ°Ð¼Ð¸, ÑÐµÐ¶ÐµÑ Ð¿ÑÐ¸ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ðµ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸Ð»Ð¸ Ð¿ÑÐ¾ÑÑÐ¾ Ð¸Ð·Ð½Ð¾ÑÐµÐ½Ð° â Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð²ÑÐ¾ÑÐ¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ð¾Ð¹.</li><li><b>ÐÐ°Ð±ÐµÐ»Ñ/Ð°Ð´Ð°Ð¿ÑÐµÑ:</b> Ð³ÑÐµÐµÑÑÑ Ð¸ Ð¿Ð¾ Ð·Ð°ÑÐ¸ÑÐµ ÑÐ½Ð¸Ð¶Ð°ÐµÑ ÑÐ¾Ðº â ÑÐ°Ð·Ð±Ð¾Ñ Ð² <a href="/pain/kabel-ne-otdaet.html">Ð³Ð°Ð¹Ð´Ðµ Â«ÐºÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑÂ»</a>.</li></ol><h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð·Ð° 3 Ð¼Ð¸Ð½ÑÑÑ</h2><ol><li>SOC Ð² Ð½Ð°ÑÐ°Ð»Ðµ ÑÐµÑÑÐ¸Ð¸ â Ð²ÑÑÐµ 70%? Ð­ÑÐ¾ Ð¸ ÐµÑÑÑ Ð¾ÑÐ²ÐµÑ.</li><li>Ð¤Ð°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ð¹ ÑÐ¾Ðº â Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¼Ð°ÑÐ¸Ð½Ñ, Ð½Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸.</li><li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ, Ð½Ðµ Ð´ÐµÐ»Ð¸Ñ Ð»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÑÐ¾ Ð²ÑÐ¾ÑÑÐ¼ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ¾Ð¼.</li><li>ÐÐ° Ð¼Ð¾ÑÐ¾Ð·Ðµ â Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² + Ð¿ÐµÑÐµÐ·Ð°Ð¿ÑÑÐº ÑÐµÑÑÐ¸Ð¸.</li><li>ÐÑÐ»Ð¸ Â«ÑÐµÐ¶ÐµÑÂ» Ð¸ Ð²ÑÐ¾ÑÑÑ Ð¼Ð°ÑÐ¸Ð½Ñ â ÑÑÐ¾ ÑÑÐ°Ð½ÑÐ¸Ñ: ÑÐ½Ð¸Ð¼Ð¸ÑÐµ ÐºÐµÐ¹Ñ, Ð¾ÑÐ¿ÑÐ°Ð²ÑÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ, Ð½Ð°Ð¹Ð´Ð¸ÑÐµ Ð´ÑÑÐ³ÑÑ ÑÐ¾ÑÐºÑ.</li></ol><h2>Ð§ÐµÐ³Ð¾ Ð½Ðµ Ð´ÐµÐ»Ð°ÑÑ</h2><p>ÐÐµ ÑÐ°Ð·Ð³Ð¾Ð½ÑÐ¹ÑÐµ Ð°Ð´Ð°Ð¿ÑÐµÑÑ ÑÐ²ÐµÑÑ Ð´Ð¾Ð¿ÑÑÑÐ¸Ð¼Ð¾Ð¹ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ð¸ Ð½Ðµ Ð¿Ð¾ÐºÑÐ¿Ð°Ð¹ÑÐµ Â«Ð´ÐµÑÑÐ²ÑÐ¹ Ð¼Ð¾ÑÐ½ÑÐ¹Â» Ð±ÐµÐ· Ð¾ÑÐ»Ð°Ð¶Ð´ÐµÐ½Ð¸Ñ: Ð¿ÐµÑÐµÐ³ÑÐµÐ² â ÑÐ°Ð¼ÑÐ¹ ÑÐ°ÑÑÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹, ÐºÐ¾Ð³Ð´Ð° Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ ÑÑÐ°Ð½Ð¾Ð²Ð¸ÑÑÑ ÐµÑÑ Ð¼ÐµÐ½ÑÑÐµ. ÐÐ¾Ð¿ÑÑÑÐ¸Ð¼Ð°Ñ Ð½ÐµÐ¿ÑÐµÑÑÐ²Ð½Ð°Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÑÐºÐ°Ð·Ð°Ð½Ð° Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>. ÐÑÐ»Ð¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ Ð¿Ð¾Ð²ÑÐ¾ÑÑÐµÑÑÑ Ð½Ð° ÑÐ°Ð·Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ â ÑÐ²ÐµÑÑÑÐµÑÑ Ñ Ð³Ð°Ð¹Ð´Ð¾Ð¼ Ð¿Ð¾ Ð²Ð°ÑÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸: ÑÐ°Ð¼ ÑÐ¾Ð±ÑÐ°Ð½Ñ Ð²ÐµÑÑÐ¸Ð¸ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ Ð¿Ð¾ ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÐ¼ Ð¼Ð°ÑÐ¸Ð½Ð°Ð¼.</p>'),
+ 'plata-za-prostoy': ('<h2>ÐÐ°Ðº ÑÑÐ¸ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¾ÑÑÐ¾Ð¹</h2><p>Ð£ Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð° Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ¾Ð² ÑÑÑÑ ÑÐºÐ»Ð°Ð´ÑÐ²Ð°ÐµÑÑÑ Ð¸Ð· ÑÑÑÑ ÑÐ°ÑÑÐµÐ¹: ÑÐ°ÑÐ¸Ñ Ð·Ð° ÐºÐÑÂ·Ñ (Ð¸Ð»Ð¸ Ð·Ð° Ð¼Ð¸Ð½ÑÑÑ), ÑÐ°ÑÐ¸Ñ Ð·Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹ (idle fee) Ð¸ Ð¸Ð½Ð¾Ð³Ð´Ð° ÑÐ¸ÐºÑ Ð·Ð° ÑÐµÑÑÐ¸Ñ. ÐÑÐ¾ÑÑÐ¾Ð¹ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑ ÑÐ¸ÐºÐ°ÑÑ, ÐºÐ¾Ð³Ð´Ð° ÑÐµÑÑÐ¸Ñ Ð°ÐºÑÐ¸Ð²Ð½Ð°, Ð° Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÐµÑÐµÑÑÐ°Ð»Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ: Ð·Ð°Ð¿Ð¾Ð»Ð½Ð¸Ð»Ð°ÑÑ Ð´Ð¾ Ð»Ð¸Ð¼Ð¸ÑÐ°, Ð³ÑÐµÐµÑÑÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Ð²ÑÑÐ°ÑÐ¸Ð»Ð¸ Ð½Ðµ Ð²Ð¾Ð²ÑÐµÐ¼Ñ. ÐÐ»Ð°Ð²Ð½Ð¾Ðµ Ð¿ÑÐ°Ð²Ð¸Ð»Ð¾: Ð·Ð°Ð²ÐµÑÑÐ°Ð¹ÑÐµ ÑÐµÑÑÐ¸Ñ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ ÑÑÐ°Ð·Ñ Ð¿Ð¾ÑÐ»Ðµ Ð¾ÐºÐ¾Ð½ÑÐ°Ð½Ð¸Ñ Ð·Ð°ÑÑÐ´Ð°.</p><h2>Ð¢ÑÐ¸ ÑÐ¸ÑÑÐ°ÑÐ¸Ð¸, ÐºÐ¾Ð³Ð´Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹ Â«Ð¿ÑÐ¸Ð»ÐµÑÐ°ÐµÑÂ»</h2><ul><li>Â«ÐÐ¾Ð·Ð°ÑÑÐ´ Ð´Ð¾ 100%Â» Ð½Ð° Ð±ÑÑÑÑÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸: Ð¿Ð¾ÑÐ»Ðµ 80% Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð¼Ð°Ð»Ð¾, Ð° Ð¿Ð¾Ð¼Ð¸Ð½ÑÑÐ½ÑÐ¹ ÑÑÑÑ ÑÐ¸ÐºÐ°ÐµÑ â ÑÐ°Ð¼Ð°Ñ Ð´Ð¾ÑÐ¾Ð³Ð°Ñ ÑÑÑÐ°ÑÐµÐ³Ð¸Ñ. 80% â Ð¸ ÑÐµÐ·Ð¶Ð°ÑÑ.</li><li>ÐÐ°ÑÐ½ÑÐ»Ð¸ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸: idle fee Ð²ÐºÐ»ÑÑÐ°ÐµÑÑÑ Ñ Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð° ÑÐµÑÐµÐ¹ ÑÐµÑÐµÐ· 10â30 Ð¼Ð¸Ð½ÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¾ÐºÐ¾Ð½ÑÐ°Ð½Ð¸Ñ Ð·Ð°ÑÑÐ´Ð° â ÑÐ¾ÑÐ½ÑÐµ Ð»Ð¸Ð¼Ð¸ÑÑ ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ ÑÐ²Ð¾ÐµÐ¹ ÑÐµÑÐ¸.</li><li>ÐÐ¾ÑÐ¾Ð·: ÑÐµÑÑÐ¸Ñ Ð°ÐºÑÐ¸Ð²Ð½Ð°, Ð° Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ðµ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ â BMS Ð³ÑÐµÐµÑ Ð±Ð°ÑÐ°ÑÐµÑ, Ð²ÑÐµÐ¼Ñ Ð¸Ð´ÑÑ. ÐÐ»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð´Ð¾ Ð¿ÑÐ¸ÐµÐ·Ð´Ð° (<a href="/pain/podogrev-batarei.html">Ð³Ð°Ð¹Ð´</a>).</li></ul><h2>ÐÑÐ»Ð¸ ÑÐ¿Ð¸ÑÐ°Ð»Ð¸ Ð½ÐµÑÐ¿ÑÐ°Ð²ÐµÐ´Ð»Ð¸Ð²Ð¾</h2><p>Ð¡ÐºÑÐ¸Ð½ÑÐ¾Ñ ÑÑÐ°ÑÑÑÐ° Ð¸ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ ÑÐµÑÑÐ¸Ð¸ â Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ°: ÑÐ»ÑÑÐ°Ð¸ Â«Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ðµ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°Ð»Ð° Ð¸Ð·-Ð·Ð° Ð¾ÑÐ¸Ð±ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸Â» Ð¾Ð±ÑÑÐ½Ð¾ Ð¿ÐµÑÐµÑÑÐ¸ÑÑÐ²Ð°ÑÑ. ÐÐ¾ÑÐ°Ð³Ð¾Ð²Ð°Ñ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½Ð¾ÑÑÑ â Ð² ÑÑÐ°ÑÑÐµ <a href="/blog/stanciya-ne-rabotaet.html">Â«Ð¡ÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ: ÑÑÑ Ð²Ð¸Ð½Ð°Â»</a>.</p><p>Ð Ð³Ð»Ð°Ð²Ð½Ð¾Ðµ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸ÑÐµÑÐºÐ¾Ðµ: Ð¿Ð¾ÑÑÐ¸ÑÐ°Ð¹ÑÐµ ÑÐ²Ð¾Ð¹ Ð¿ÑÐ¾ÑÐ¸Ð»Ñ Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a> â Ð½Ð° Ð¿Ð¾Ð¼Ð¸Ð½ÑÑÐ½ÑÑ ÑÐµÑÑÑ Ð¿ÑÐ¾ÑÐ¸Ð»Ñ Â«80% Ð¸ ÑÐµÐ·Ð¶Ð°ÑÑÂ» ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð·Ð°Ð¼ÐµÑÐ½ÑÐµ Ð´ÐµÐ½ÑÐ³Ð¸ Ð² Ð¼ÐµÑÑÑ. Ð Ð¿Ð¾ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÐ¸ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ° â Ð³Ð°Ð¹Ð´ <a href="/pain/stoimost-zaryadki.html">ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</a>.</p>'),
+ 'tesla': ('<h2>ÐÐ°ÐºÐ°Ñ Ñ Ð²Ð°Ñ ÑÐ±Ð¾ÑÐºÐ°: ÐÐ²ÑÐ¾Ð¿Ð° Ð¸Ð»Ð¸ Ð¡Ð¨Ð</h2><p>Ð Ð°Ð·ÑÑÐ¼ Ð·Ð°ÑÑÐ´ÐºÐ¸ Tesla Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ½ÐºÐ° Ð²ÑÐ²Ð¾Ð·Ð°. ÐÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ðµ ÑÐ±Ð¾ÑÐºÐ¸ (Model 3, Model Y Ð´Ð»Ñ ÐÐ¡) â Type 2 Ð´Ð»Ñ Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑÐ¾ÐºÐ° Ð¸ CCS2 Ð´Ð»Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸: ÑÑÐ¾ ÑÑÐ°Ð½Ð´Ð°ÑÑ Ð½Ð°ÑÐ¸Ñ Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹, Ð¼Ð°ÑÐ¸Ð½Ð° Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¾Ñ Ð½Ð¸Ñ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð±ÐµÐ· Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð². ÐÐ¼ÐµÑÐ¸ÐºÐ°Ð½ÑÐºÐ¸Ðµ ÑÐ±Ð¾ÑÐºÐ¸ â J1772 (Type 1) Ð´Ð»Ñ AC Ð¸ NACS (ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ Supercharger) Ð´Ð»Ñ DC: Ð´Ð»Ñ Ð½Ð°ÑÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½ÑÐ¶Ð½Ñ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸, Ð° Supercharger Ð² Ð Ð¾ÑÑÐ¸Ð¸ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ â Ñ ÑÐµÑÐ¸ Tesla Ð½ÐµÑ ÑÐ¾ÑÐ¼Ð¸Ð½Ð³Ð° Ð¸ Ð°ÐºÑÐ¸Ð²Ð°ÑÐ¸Ð¸ ÑÑÑÑÐ½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð´Ð»Ñ Ð½Ð°ÑÐµÐ³Ð¾ ÑÐµÐ³Ð¸Ð¾Ð½Ð°.</p><h2>Supercharger: Ð¿Ð¾ÑÐµÐ¼Ñ Â«Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð½Ðµ ÑÐµÑÐ¸ÑÂ»</h2><p>ÐÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ NACS ÑÐ¸Ð·Ð¸ÑÐµÑÐºÐ¸ Ð½Ðµ ÑÐ¾Ð²Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð¸ Ñ GB/T, Ð½Ð¸ Ñ Type 2 ÑÑÐ°Ð½ÑÐ¸ÑÐ¼Ð¸: Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð° Ð½Ðµ Â«Ð² Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐµÂ», Ð° Ð² ÑÐ¾Ð¼, ÑÑÐ¾ ÑÐµÑÑ Ð·Ð°ÐºÑÑÑÐ°. ÐÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð² Ð Ð¾ÑÑÐ¸Ð¸: Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ Ð¾Ñ Ð¿ÑÐ±Ð»Ð¸ÑÐ½Ð¾Ð¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÑ Ð¾Ð±ÑÑÐ½ÑÐ¼Ð¸ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼Ð¸ ÑÐ²Ð¾ÐµÐ¹ ÑÐ±Ð¾ÑÐºÐ¸. ÐÐ»Ñ EU-ÑÐ±Ð¾ÑÐ¾Ðº ÑÑÐ¾ Ð¿Ð¾Ð»Ð½Ð¾ÑÐµÐ½Ð½ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ â Ð´Ð¾Ð¼Ð° Ð½Ð¾ÑÑÑ Ð½Ð° Type 2-ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð½Ð° ÑÑÐ°ÑÑÐµ CCS2.</p><h2>Ð§ÑÐ¾ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð° Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ</h2><ul><li>EU-ÑÐ±Ð¾ÑÐºÐ¸: Type 2 AC-ÑÑÐ°Ð½ÑÐ¸Ð¸ 7â22 ÐºÐÑ â Ð½Ð¾ÑÐ½Ð°Ñ Ð¸ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°; CCS2 â Ð±ÑÑÑÑÐ°Ñ Ð½Ð° ÑÑÐ°ÑÑÐµ.</li><li>US-ÑÐ±Ð¾ÑÐºÐ¸: AC ÑÐµÑÐµÐ· <a href="/catalog/adapter-type1-type2.html">Ð°Ð´Ð°Ð¿ÑÐµÑ Type 1 â Type 2</a>; DC-ÑÑÐµÐ½Ð°ÑÐ¸Ð¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ñ â Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½Ð¾ Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/type1-ccs1.html">Ð¾ Ð¼Ð°ÑÐ¸Ð½Ð°Ñ Ð¸Ð· Ð¡Ð¨Ð Ð¸ ÐÐ¾ÑÐµÐ¸</a>.</li><li>ÐÑÐ¾ Ð°Ð´Ð°Ð¿ÑÐµÑ NACS ÑÐµÑÑÐ½Ð¾: <a href="/catalog/adapter-nacs-ccs2-type2.html">Ð°Ð´Ð°Ð¿ÑÐµÑ NACS â Type 2/CCS2 Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a> Ð´Ð°ÑÑ ÑÑÐµÐ½Ð°ÑÐ¸Ð¸ Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ¾Ð¹, Ð½Ð¾ Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑ Supercharger.</li></ul><h2>Ð§Ð°ÑÑÑÐµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Tesla Ð² Ð Ð¾ÑÑÐ¸Ð¸</h2><ul><li>Â«ÐÐ¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð·Ð°ÑÑÐ´Ð¸ÑÑ Tesla Ð¾Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð¹ GB/T-ÑÑÐ°Ð½ÑÐ¸Ð¸?Â» â ÑÐ¾Ð»ÑÐºÐ¾ ÑÐµÑÐµÐ· ÑÐµÐ¿Ð¾ÑÐºÑ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð², Ð¸ ÑÑÐ¾ Ð½ÐµÑÑÑÐ¾Ð¹ÑÐ¸Ð²Ð¾Ðµ ÑÐµÑÐµÐ½Ð¸Ðµ: Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ ÑÐ²ÐµÑÑÑÐµ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ Ñ Ð²Ð°ÑÐµÐ¹ ÑÐ±Ð¾ÑÐºÐ¾Ð¹.</li><li>Â«ÐÑÑÐ¾Ðº Ð·Ð°ÑÑÐ´Ð° Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·ÐµÂ» â ÑÐ¸Ð¿Ð¾Ð²Ð°Ñ Ð¸ÑÑÐ¾ÑÐ¸Ñ Ð¿ÑÐ¸ Ð¿ÑÐ¾ÑÐµÐ²ÑÐµÐ¼ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð¼ ÐÐÐ: Ð·Ð°Ð¼Ð¾Ðº Ð¿Ð¸ÑÐ°ÐµÑÑÑ Ð¾Ñ 12 Ð, Ð³Ð°Ð¹Ð´ <a href="/pain/12v-akb.html">Ð·Ð´ÐµÑÑ</a>.</li><li>Â«ÐÐ°ÑÐ¸Ð½Ð° Ð¿ÐµÑÐµÑÑÐ°Ð»Ð° Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸Â» â Ð½Ð°ÑÐ½Ð¸ÑÐµ Ñ <a href="/pain/ne-zaryazhaetsya.html">Ð¿Ð¾Ð»Ð½Ð¾Ð³Ð¾ ÑÐµÐº-Ð»Ð¸ÑÑÐ° Ð¿ÑÐ¸ÑÐ¸Ð½</a>.</li></ul><p>ÐÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ Tesla Ð¸Ð· Ð¡Ð¨Ð ÑÐ²ÐµÑÑÑÐµ ÑÐ°Ð·ÑÑÐ¼ Ð¿Ð¾ Ð½Ð°ÑÐµÐ¹ ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð¸ Ð¿Ð¾ÑÑÐ¸ÑÐ°Ð¹ÑÐµ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a>: ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ð° Ð¼Ð°ÑÐ¸Ð½Ð° ÑÐ°ÑÑÐ¾Ð´ÑÐµÑ ÐºÐ°Ðº Ð¾Ð±ÑÑÐ½ÑÐ¹ EV, Ð° Ð²Ð¾Ñ Ñ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ¾Ð¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¸ Ð´ÑÑÐ³Ð¸Ðµ.</p>'),
+ 'chademo': ('<h2>CHAdeMO Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ðµ Ð½Ð° 2026</h2><p>CHAdeMO â ÑÐ¿Ð¾Ð½ÑÐºÐ¸Ð¹ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð» Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸: Nissan Leaf, Mitsubishi Outlander PHEV Ð¸ Ð½ÐµÑÐºÐ¾Ð»ÑÐºÐ¾ Ð´ÑÑÐ³Ð¸Ñ ÑÐ¿Ð¾Ð½ÑÐºÐ¸Ñ Ð¼Ð°ÑÐ¸Ð½. ÐÐ½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ° Ð¿Ð¾Ð´ Ð½ÐµÐ³Ð¾ Ð² ÑÑÑÐ°Ð½Ðµ ÑÐ²Ð¾ÑÐ°ÑÐ¸Ð²Ð°ÐµÑÑÑ: Ð² Ð½Ð°ÑÐµÐ¹ Ð±Ð°Ð·Ðµ Ð¸Ð· 2073 ÑÑÐ°Ð½ÑÐ¸Ð¹ ÑÐ°Ð·ÑÑÐ¼ CHAdeMO Ð¿ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸ Ð½Ðµ Ð²ÑÑÑÐµÑÐ°ÐµÑÑÑ â Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÑ Ð¼ÐµÐ½ÑÑÑ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÑ Ð½Ð° CCS2/GB/T Ð¸Ð»Ð¸ Ð²ÑÐ²Ð¾Ð´ÑÑ ÑÑÐ°ÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸Ð· ÑÐ°Ð±Ð¾ÑÑ. ÐÐ¾ÑÑÐ¾Ð¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ CHAdeMO-Ð¼Ð°ÑÐ¸Ð½Ñ ÑÑÑÐ¾Ð¸ÑÑ Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¼Ð°ÑÑÑÑÑÑ Â«Ð¿Ð¾ Ð±ÑÑÑÑÑÐ¼ Ð·Ð°ÑÑÐ´ÐºÐ°Ð¼Â» ÑÐ¶Ðµ Ð½ÐµÐ»ÑÐ·Ñ: Ð¶Ð¸Ð²Ð°Ñ ÑÐµÑÑ â ÑÑÐ¾ Ð² Ð¿ÐµÑÐ²ÑÑ Ð¾ÑÐµÑÐµÐ´Ñ AC.</p><h2>ÐÐ¾ÑÐµÐ¼Ñ Leaf Â«ÑÐ°Ð´Ð¸ÑÑÑÂ» Ð¾Ñ Ð±ÑÑÑÑÑÑ Ð·Ð°ÑÑÐ´Ð¾Ðº</h2><p>Nissan Leaf (2011â2019) Ð½Ðµ Ð¸Ð¼ÐµÐµÑ Ð°ÐºÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ Ð¾ÑÐ»Ð°Ð¶Ð´ÐµÐ½Ð¸Ñ Ð±Ð°ÑÐ°ÑÐµÐ¸: ÐºÐ°Ð¶Ð´ÑÐ¹ Ð±ÑÑÑÑÑÐ¹ Ð·Ð°ÑÑÐ´ Ð½Ð°Ð³ÑÐµÐ²Ð°ÐµÑ ÑÑÐµÐ¹ÐºÐ¸, Ð¸ ÑÐ¼ÐºÐ¾ÑÑÑ ÑÐ¾ Ð²ÑÐµÐ¼ÐµÐ½ÐµÐ¼ Ð¿Ð°Ð´Ð°ÐµÑ Ð·Ð°Ð¼ÐµÑÐ½Ð¾ Ð±ÑÑÑÑÐµÐµ, ÑÐµÐ¼ Ñ Ð¼Ð°ÑÐ¸Ð½ Ñ ÑÐµÑÐ¼Ð¾ÐºÐ¾Ð½ÑÑÑÐ¾Ð¼. ÐÐ¿ÑÑ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð° ÑÐ²Ð¾Ð´Ð¸ÑÑÑ Ðº Ð¿ÑÐ°Ð²Ð¸Ð»Ñ: Ð±ÑÑÑÑÑÐµ Ð·Ð°ÑÑÐ´ÐºÐ¸ â ÑÐ¾Ð»ÑÐºÐ¾ Ð² Ð¿Ð¾ÐµÐ·Ð´ÐºÐ°Ñ Ð¸ Ð´Ð¾ 80%, Ð¿Ð¾Ð²ÑÐµÐ´Ð½ÐµÐ²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° â AC Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¸Ð»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸ 7â22 ÐºÐÑ. ÐÐ°Ðº ÑÐ°ÑÐ¿Ð¾Ð·Ð½Ð°ÑÑ Ð´ÐµÐ³ÑÐ°Ð´Ð°ÑÐ¸Ñ Ð¸ ÑÑÐ¾ Ñ Ð½ÐµÐ¹ Ð´ÐµÐ»Ð°ÑÑ â Ð² ÑÑÐ°ÑÑÐµ <a href="/blog/nissan-leaf-v-rossii.html">Ð¾ Leaf Ð² Ð Ð¾ÑÑÐ¸Ð¸</a>.</p><h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ° CHAdeMO</h2><ol><li>Ð£ÑÐ¾ÑÐ½Ð¸ÑÐµ ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ OBC: ÑÐ°Ð½Ð½Ð¸Ðµ Leaf â 3,6 ÐºÐÑ, Ð¿Ð¾Ð·Ð¶Ðµ 6,6 ÐºÐÑ â Ð¾Ñ ÑÑÐ¾Ð³Ð¾ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð²ÑÐµÐ¼Ñ Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸.</li><li>ÐÐ°Ð»ÑÐ½Ð¸Ðµ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸ Ð¿Ð»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð²Ð¾ÐºÑÑÐ³ AC-ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸Ð»Ð¸ Ñ Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÐ¾Ð¹ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ â Ð³Ð°Ð¹Ð´ <a href="/pain/zaryadka-ot-rozetki.html">Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸</a>.</li><li>ÐÐµ Ð¾ÑÐ¸ÐµÐ½ÑÐ¸ÑÑÐ¹ÑÐµÑÑ Ð½Ð° ÑÑÑÐ°ÑÐµÐ²ÑÐ¸Ðµ ÐºÐ°ÑÑÑ Ñ CHAdeMO-Ð¿Ð¾ÑÑÐ°Ð¼Ð¸: ÑÐ²ÐµÑÑÐ¹ÑÐµÑÑ Ñ <a href="/charging/">Ð½Ð°ÑÐµÐ¹ ÐºÐ°ÑÑÐ¾Ð¹</a> Ð¸ ÑÑÐ°ÑÑÑÐ¾Ð¼ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ°.</li><li>Ð¡Ð»ÐµÐ´Ð¸ÑÐµ Ð·Ð° ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸ÐµÐ¼ Ð±Ð°ÑÐ°ÑÐµÐ¸: Ð² Leaf Ð´Ð¾ÑÑÑÐ¿ Ðº Ð´Ð°Ð½Ð½ÑÐ¼ ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ñ (SOH) ÐµÑÑÑ ÑÐµÑÐµÐ· Ð´Ð¸Ð°Ð³Ð½Ð¾ÑÑÐ¸ÑÐµÑÐºÐ¸Ð¹ ÑÐ°Ð·ÑÑÐ¼ Ð¸ ÑÑÐ¾ÑÐ¾Ð½Ð½Ð¸Ðµ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ.</li></ol><p>ÐÑÐ»Ð¸ Ð²ÑÐ±Ð¸ÑÐ°ÐµÑÐµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð´Ð»Ñ Ð´Ð°Ð»ÑÐ½Ð¸Ñ Ð¿Ð¾ÐµÐ·Ð´Ð¾Ðº â CHAdeMO ÑÐµÐ³Ð¾Ð´Ð½Ñ Ð½Ðµ Ð»ÑÑÑÐ¸Ð¹ Ð²ÑÐ±Ð¾Ñ: ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ñ CCS2 Ð¸Ð»Ð¸ GB/T Ð² <a href="/models/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹</a> Ð¸ ÑÐ²ÐµÑÑÐ¹ÑÐµ ÑÐ°Ð·ÑÑÐ¼ Ð¿Ð¾ VIN Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹.</p>'),
+ 'lyuchok': ('<h2>ÐÐ¾ÑÐµÐ¼Ñ Ð»ÑÑÐ¾Ðº Ð·Ð°ÐºÐ»Ð¸Ð½Ð¸Ð²Ð°ÐµÑ Ð¸Ð¼ÐµÐ½Ð½Ð¾ Ð·Ð¸Ð¼Ð¾Ð¹</h2><p>Ð¢ÑÐ¸ Ð¿ÑÐ¸ÑÐ¸Ð½Ñ Ð¿Ð¾ÑÑÐ¸ Ð²ÑÐµÐ³Ð´Ð° ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð²Ð¼ÐµÑÑÐµ: Ð·Ð°Ð¼ÑÑÐ·ÑÐ°Ñ Ð²Ð»Ð°Ð³Ð° Ð² Ð·Ð°Ð¼ÐºÐµ Ð»ÑÑÐºÐ°, Ð·Ð°Ð³ÑÑÑÐµÐ²ÑÐ°Ñ ÑÐ¼Ð°Ð·ÐºÐ° Ð¼ÐµÑÐ°Ð½Ð¸Ð·Ð¼Ð° Ð¸ Ð¿ÑÐ¾ÑÐµÐ²ÑÐ¸Ð¹ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ ÐÐÐ, Ð¾Ñ ÐºÐ¾ÑÐ¾ÑÐ¾Ð³Ð¾ Ð¿Ð¸ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¸Ð²Ð¾Ð´ Ð·Ð°Ð¼ÐºÐ°. ÐÐ¾ÑÑÐ¾Ð¼Ñ Â«Ð»ÑÑÐ¾Ðº Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑÂ» Ð·Ð¸Ð¼Ð¾Ð¹ ÑÐ°ÑÐµ ÑÐ¸Ð¼Ð¿ÑÐ¾Ð¼, ÑÐµÐ¼ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ°: Ð¼Ð°ÑÐ¸Ð½Ð° Â«ÑÑÐ½ÑÐ»Ð°Â» ÑÐµÐ»Ð¸ÐºÐ¾Ð¼, Ð° Ð»ÑÑÐ¾Ðº Ð¿ÑÐ¾ÑÑÐ¾ Ð·Ð°Ð¼ÐµÑÐ½ÐµÐµ Ð²ÑÐµÐ³Ð¾.</p><h2>ÐÐ²Ð°ÑÐ¸Ð¹Ð½ÑÐ¹ ÑÑÐ¾ÑÐ¸Ðº: Ð³Ð´Ðµ Ð¸ÑÐºÐ°ÑÑ</h2><p>Ð£ Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð° Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ ÐµÑÑÑ Ð¼ÐµÑÐ°Ð½Ð¸ÑÐµÑÐºÐ°Ñ ÑÐ°Ð·Ð±Ð»Ð¾ÐºÐ¸ÑÐ¾Ð²ÐºÐ°: ÑÑÐ¾ÑÐ¸Ðº Ð¸Ð»Ð¸ ÑÑÑÐ°Ð³ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ â Ð¿Ð¾Ð´ Ð¾Ð±ÑÐ¸Ð²ÐºÐ¾Ð¹, Ð² Ð½Ð¸ÑÐµ Ð·Ð°Ð¿Ð°ÑÐºÐ¸ Ð¸Ð»Ð¸ ÑÑÐ´Ð¾Ð¼ Ñ ÑÐ¾Ð½Ð°ÑÑÐ¼. Ð¢Ð¾ÑÐ½Ð¾Ðµ Ð¼ÐµÑÑÐ¾ Ð¾Ð¿Ð¸ÑÐ°Ð½Ð¾ Ð² Ð¸Ð½ÑÑÑÑÐºÑÐ¸Ð¸ Ðº Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ðµ. ÐÐ¾ÑÑÐ½Ð¸ÑÐµ ÑÑÐ¾ÑÐ¸Ðº â Ð»ÑÑÐ¾Ðº Ð¾ÑÐºÑÐ¾ÐµÑÑÑ Ð±ÐµÐ· ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÐ¸. ÐÑÐ»Ð¸ Ð¸ ÑÑÐ¾ Ð½Ðµ Ð¿Ð¾Ð¼Ð¾Ð³Ð°ÐµÑ â Ð¾ÑÐ¾Ð³ÑÐµÐ¹ÑÐµ Ð·Ð¾Ð½Ñ Ð·Ð°Ð¼ÐºÐ°: ÑÑÐ¿Ð»ÑÐ¹ Ð²Ð¾Ð·Ð´ÑÑ Ð¸Ð· ÑÐ°Ð»Ð¾Ð½Ð° Ð¸Ð»Ð¸ ÑÐµÐ½ Ð½Ð° 10â15 Ð¼Ð¸Ð½ÑÑ Ð¾Ð±ÑÑÐ½Ð¾ ÑÐµÑÐ°ÑÑ. ÐÐ¸Ð¿ÑÑÐ¾Ðº Ð»Ð¸ÑÑ Ð½Ðµ ÑÑÐ¾Ð¸Ñ: ÑÐµÐ·ÐºÐ¸Ð¹ Ð¿ÐµÑÐµÐ¿Ð°Ð´ Ð²ÑÐµÐ´Ð¸Ñ Ð»Ð°ÐºÐ¾ÐºÑÐ°ÑÐ¾ÑÐ½Ð¾Ð¼Ñ Ð¿Ð¾ÐºÑÑÑÐ¸Ñ, Ð° Ð²Ð¾Ð´Ð° ÑÐ½Ð¾Ð²Ð° Ð·Ð°Ð¼ÑÑÐ·Ð½ÐµÑ ÑÐµÑÐµÐ· ÑÐ°Ñ.</p><h2>ÐÑÐ¾ÑÐ¸Ð»Ð°ÐºÑÐ¸ÐºÐ° Ð½Ð° Ð·Ð¸Ð¼Ñ</h2><ol><li>ÐÐ±ÑÐ°Ð±Ð¾ÑÐ°Ð¹ÑÐµ Ð¿ÐµÑÐ»Ð¸ Ð¸ Ð¼ÐµÑÐ°Ð½Ð¸Ð·Ð¼ Ð·Ð°Ð¼ÐºÐ° ÑÐ¸Ð»Ð¸ÐºÐ¾Ð½Ð¾Ð²Ð¾Ð¹ ÑÐ¼Ð°Ð·ÐºÐ¾Ð¹ Ð´Ð¾ Ð·Ð°Ð¼Ð¾ÑÐ¾Ð·ÐºÐ¾Ð²: <a href="/catalog/smazka-silikonom-zima.html">ÑÐ¸Ð»Ð¸ÐºÐ¾Ð½Ð¾Ð²Ð°Ñ ÑÐ¼Ð°Ð·ÐºÐ° Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a> â Ð½Ðµ Ð³ÑÑÑÐµÐµÑ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ.</li><li>ÐÐµ Ð¼Ð¾Ð¹ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð³Ð¾ÑÑÑÐµÐ¹ Ð²Ð¾Ð´Ð¾Ð¹ Ð¿ÐµÑÐµÐ´ Ð½Ð¾ÑÐ½Ð¾Ð¹ ÑÑÐ¾ÑÐ½ÐºÐ¾Ð¹ Ð½Ð° ÑÐ»Ð¸ÑÐµ: Ð¾ÑÑÐ°Ð²ÑÐ°ÑÑÑ Ð²Ð»Ð°Ð³Ð° Ð² Ð·Ð°Ð¼ÐºÐµ Ð·Ð°Ð¼ÑÑÐ·Ð½ÐµÑ.</li><li>Ð¡Ð»ÐµÐ´Ð¸ÑÐµ Ð·Ð° 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¼ ÐÐÐ: ÐµÑÐ»Ð¸ Ð¾Ð´Ð½Ð¾Ð²ÑÐµÐ¼ÐµÐ½Ð½Ð¾ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð»ÑÑÐ¾Ðº, Ð·Ð°Ð¼Ð¾Ðº ÐºÐ°Ð±ÐµÐ»Ñ Ð¸ Ð´Ð²ÐµÑÐ¸ â Ð½Ð°ÑÐ½Ð¸ÑÐµ Ñ <a href="/pain/12v-akb.html">Ð³Ð°Ð¹Ð´Ð° Ð¿ÑÐ¾ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ ÐÐÐ</a>.</li><li>ÐÑÐ»Ð¸ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ Â«Ð·Ð°ÑÑÑÑÐ»Â» Ð² Ð¿Ð¾ÑÑÐµ Ð¿Ð¾ÑÐ»Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸ â ÑÑÐ¾ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð¸ÑÑÐ¾ÑÐ¸Ñ: <a href="/pain/kabel-ne-otdaet.html">Ð³Ð°Ð¹Ð´ Â«ÐÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑ Ð¸Ð· Ð¿Ð¾ÑÑÐ°Â»</a>.</li></ol><p>ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð² Ð¸Ð½ÑÑÑÑÐºÑÐ¸Ð¸ Ðº ÑÐ²Ð¾ÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸: Ñ Ð¼Ð½Ð¾Ð³Ð¸Ñ Ð¼Ð°ÑÐ¸Ð½ Ð»ÑÑÐ¾Ðº Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÑÑ Ð¸Ð· Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Ð¸Ð»Ð¸ Ð¿Ð¾ ÐºÐ½Ð¾Ð¿ÐºÐµ Ð½Ð° ÐºÐ»ÑÑÐµ â Ð·Ð¸Ð¼Ð¾Ð¹ ÑÑÐ¾ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð²ÑÐµÐ¼Ñ Ð¸ Ð½ÐµÑÐ²Ñ.</p>'),
+ 'zapas-hoda-zimoy': ('<h2>ÐÐ¾ÑÐµÐ¼Ñ Ð·Ð¸Ð¼Ð¾Ð¹ ÑÐµÑÑÐµÑÑÑ Ð±Ð¾Ð»ÑÑÐµ Ð²ÑÐµÐ³Ð¾</h2><p>ÐÐ¸Ð¼Ð¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÑ Ð¾Ð´Ð½Ð¾Ð²ÑÐµÐ¼ÐµÐ½Ð½Ð¾ Ð¾ÑÐ´Ð°ÑÑ Ð¼ÐµÐ½ÑÑÐµ Ð¸ ÑÑÐ°ÑÐ¸Ñ Ð±Ð¾Ð»ÑÑÐµ. ÐÐ»Ð°Ð²Ð½ÑÐ¹ Â«Ð¿Ð¾Ð¶Ð¸ÑÐ°ÑÐµÐ»ÑÂ» â Ð¾ÑÐ¾Ð¿Ð»ÐµÐ½Ð¸Ðµ ÑÐ°Ð»Ð¾Ð½Ð°: Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð½Ð¸Ð¶Ðµ â10 Â°C Ð¾Ð±Ð¾Ð³ÑÐµÐ²Ð°ÑÐµÐ»Ñ Ð·Ð°Ð±Ð¸ÑÐ°ÐµÑ Ð¿Ð¾ÑÑÐ´ÐºÐ° 2â4 ÐºÐÑÂ·Ñ ÐºÐ°Ð¶Ð´ÑÐ¹ ÑÐ°Ñ Ð¿ÑÑÐ¸. ÐÐ»Ñ Ð¼Ð°ÑÐ¸Ð½Ñ Ñ Ð±Ð°ÑÐ°ÑÐµÐµÐ¹ 60 ÐºÐÑÂ·Ñ ÑÑÐ¾ Ð·Ð°Ð¼ÐµÑÐ½Ð°Ñ ÑÐ°ÑÑÑ Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¶Ðµ Ð·Ð° Ð¿Ð°ÑÑ ÑÐ°ÑÐ¾Ð² Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð³Ð¾ ÑÑÐ°ÑÐ¸ÐºÐ°. ÐÑÐ¾ÑÐ¾Ð¹ ÑÐ°ÐºÑÐ¾Ñ â Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸: Ð½Ð° ÑÐ¸Ð»ÑÐ½Ð¾Ð¼ Ð¼Ð¾ÑÐ¾Ð·Ðµ BMS Ð³ÑÐµÐµÑ ÑÑÐµÐ¹ÐºÐ¸ Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÑÐ¼ Ð·Ð°ÑÑÐ´Ð¾Ð¼, Ð¸ ÑÑÐ¾ ÑÐ¾Ð¶Ðµ ÑÐ°ÑÑÐ¾Ð´ Ð¸Ð· Ð¿Ð°ÑÐµÐºÐ°. Ð¢ÑÐµÑÐ¸Ð¹ â ÑÐ¾Ð¿ÑÐ¾ÑÐ¸Ð²Ð»ÐµÐ½Ð¸Ðµ ÐºÐ°ÑÐµÐ½Ð¸Ñ Ð¸ Ð²ÑÐ·ÐºÐ¾ÑÑÑ ÑÐ¼Ð°Ð·ÐºÐ¸ Ð² ÑÐµÐ´ÑÐºÑÐ¾ÑÐµ: Ð½Ð° ÑÐ¾Ð»Ð¾Ð´Ðµ Ð¸ ÑÐ¾Ð»Ð¾Ð´Ð½ÑÑ ÑÐ¸Ð½Ð°Ñ Ð¼Ð°ÑÐ¸Ð½Ð° ÐµÐ´ÐµÑ Â«ÑÑÐ¶ÐµÐ»ÐµÐµÂ».</p><h2>ÐÑÐ¸ÐµÐ½ÑÐ¸ÑÑ: ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð¾ÑÑÐ°ÑÑÑÑ Ð¿ÑÐ¸ ÑÐ°Ð·Ð½ÑÑ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ°Ñ</h2><p>Ð¡Ð²Ð¾Ð´Ð½Ð°Ñ ÐºÐ°ÑÑÐ¸Ð½Ð° Ð¿Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ°Ð¼ Ð² ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°Ñ Ð²ÑÐ³Ð»ÑÐ´Ð¸Ñ ÑÐ°Ðº: Ð¿ÑÐ¸ +5â¦0 Â°C ÑÐµÑÑÐµÑÑÑ Ð¿Ð¾ÑÑÐ´ÐºÐ° 15â20% Ð·Ð°Ð¿Ð°ÑÐ°, Ð¿ÑÐ¸ â10 Â°C â 25â35%, Ð¿ÑÐ¸ â20 Â°C Ð¸ Ð½Ð¸Ð¶Ðµ Ñ ÑÐ°Ð±Ð¾ÑÐ°ÑÑÐµÐ¹ Ð¿ÐµÑÐºÐ¾Ð¹ â Ð´Ð¾ 40â45%. ÐÐ¾ÑÑÐ¾Ð²Ð¾Ð¹ ÐºÐ¾Ð¼Ð¿ÑÑÑÐµÑ Ð¿ÑÐ¸ Ð¼Ð¾ÑÐ¾Ð·Ðµ ÑÐ°ÑÑÐ¾ Â«Ð¾Ð¿ÑÐ¸Ð¼Ð¸ÑÑÐ¸ÑÐ½ÐµÐµÂ» ÑÐµÐ°Ð»ÑÐ½Ð¾ÑÑÐ¸, Ð¿Ð¾ÑÑÐ¾Ð¼Ñ Ð¿Ð»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð¼Ð°ÑÑÑÑÑ Ð¿Ð¾ 70â75% Ð¾Ñ Ð»ÐµÑÐ½ÐµÐ³Ð¾ Ð·Ð°Ð¿Ð°ÑÐ° Ð² Ð¼ÐµÐ¶ÑÐµÐ·Ð¾Ð½ÑÐµ Ð¸ Ð¿Ð¾ 60â65% Ð² ÐºÑÐµÐ¿ÐºÐ¸Ð¹ Ð¼Ð¾ÑÐ¾Ð·. Ð­ÑÐ¾ Ð¾ÑÐ¸ÐµÐ½ÑÐ¸Ñ, Ð° Ð½Ðµ Ð³Ð°ÑÐ°Ð½ÑÐ¸Ñ: Ñ Ð¼Ð°ÑÐ¸Ð½ Ñ ÑÐµÐ¿Ð»Ð¾Ð²ÑÐ¼ Ð½Ð°ÑÐ¾ÑÐ¾Ð¼ Ð¿Ð°Ð´ÐµÐ½Ð¸Ðµ Ð¼ÐµÐ½ÑÑÐµ â Ð¾ÑÐ¾Ð¿Ð»ÐµÐ½Ð¸Ðµ Ð½Ð° 30â50% ÑÑÑÐµÐºÑÐ¸Ð²Ð½ÐµÐµ.</p><h2>Ð¨ÐµÑÑÑ Ð¿ÑÐ¸ÑÐ¼Ð¾Ð², ÐºÐ¾ÑÐ¾ÑÑÐµ Ð²Ð¾Ð·Ð²ÑÐ°ÑÐ°ÑÑ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÑ</h2><ol><li>ÐÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² ÑÐ°Ð»Ð¾Ð½Ð° Ð´Ð¾ Ð¾ÑÑÐµÐ·Ð´Ð° â Ð¿Ð¾ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ð° ÑÑÐ¾Ð¸Ñ Ð½Ð° Ð·Ð°ÑÑÐ´ÐºÐµ Ð¸Ð»Ð¸ Ð² Ð³Ð°ÑÐ°Ð¶Ðµ. ÐÐ°Ð¶Ð´ÑÐ¹ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑ Â«Ð¾ÑÐ¾Ð¿Ð»ÐµÐ½Ð¸Ñ Ð¾Ñ ÑÑÐµÐ½ÑÂ» â ÑÑÐ¾ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑ, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð½Ðµ Ð¾ÑÐ½Ð¸Ð¼ÑÑ Ñ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð² Ð´Ð¾ÑÐ¾Ð³Ðµ.</li><li>Ð¡ÐºÐ¾ÑÐ¾ÑÑÑ 90â100 ÐºÐ¼/Ñ Ð²Ð¼ÐµÑÑÐ¾ 120 â Ð½Ð° ÑÑÐ°ÑÑÐµ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ 15â20% Ð·Ð° ÑÑÑÑ Ð°ÑÑÐ¾Ð´Ð¸Ð½Ð°Ð¼Ð¸ÐºÐ¸.</li><li>ÐÐ¾Ð´Ð¾Ð³ÑÐµÐ² ÑÐ¸Ð´ÐµÐ½Ð¸Ð¹ Ð²Ð¼ÐµÑÑÐ¾ Ð¿ÐµÑÐºÐ¸ â Ð¾Ð½ Ð·Ð°Ð±Ð¸ÑÐ°ÐµÑ Ð² ÑÐ°Ð·Ñ Ð¼ÐµÐ½ÑÑÐµ ÑÐ½ÐµÑÐ³Ð¸Ð¸.</li><li>ÐÐµ Ð¾ÑÑÐ°Ð²Ð»ÑÐ¹ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Â«Ð½Ð° Ð½ÑÐ»ÐµÂ»: Ð³Ð»ÑÐ±Ð¾ÐºÐ¸Ð¹ ÑÐ°Ð·ÑÑÐ´ Ð½Ð° ÑÐ¾Ð»Ð¾Ð´Ðµ ÑÑÐºÐ¾ÑÑÐµÑ Ð´ÐµÐ³ÑÐ°Ð´Ð°ÑÐ¸Ñ Ð¸ Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¼ ÐÐÐ.</li><li>ÐÐ°ÑÑÐ¶Ð°Ð¹ÑÐµ ÑÐ°ÑÐµ Ð´Ð¾ 80%, Ð° Ð½Ðµ Â«Ð´Ð¾ Ð½ÑÐ»ÑÂ»: Ð·Ð¸Ð¼Ð¾Ð¹ Ð½Ð¸Ð¶Ð½Ð¸Ðµ 10â15% ÑÐ¼ÐºÐ¾ÑÑÐ¸ ÑÐ°ÑÑÐ¾ Ð½ÐµÐ´Ð¾ÑÑÑÐ¿Ð½Ñ â BMS Ð±Ð»Ð¾ÐºÐ¸ÑÑÐµÑ Ð¸Ñ Ð½Ð° ÑÐ¸Ð»ÑÐ½Ð¾Ð¼ ÑÐ¾Ð»Ð¾Ð´Ðµ.</li><li>ÐÐ»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð¾ÑÑÐ°Ð½Ð¾Ð²ÐºÐ¸ Ð·Ð°ÑÐ°Ð½ÐµÐµ: Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð²ÑÐµÐ¼Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÑÐ°ÑÑÑÑ Ð½Ð° 30â50% â Ð±ÐµÑÐ¸ÑÐµ Ð·Ð°Ð¿Ð°Ñ Ð¿Ð¾ Ð²ÑÐµÐ¼ÐµÐ½Ð¸, Ð° Ð½Ðµ ÑÐ¾Ð»ÑÐºÐ¾ Ð¿Ð¾ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ°Ð¼.</li></ol><p>Ð¢ÑÐ¿Ð»ÑÐ¹ Ð¿Ð°ÑÐºÐ¸Ð½Ð³ Ð¸Ð»Ð¸ Ð¿Ð¾Ð´Ð·ÐµÐ¼Ð½Ð°Ñ ÑÑÐ¾ÑÐ½ÐºÐ° Ð½Ð° Ð½Ð¾ÑÑ â ÑÐ°Ð¼ÑÐ¹ Ð½ÐµÐ´Ð¾Ð¾ÑÐµÐ½ÑÐ½Ð½ÑÐ¹ Ð¿ÑÐ¸ÑÐ¼: Ð¼Ð°ÑÐ¸Ð½Ð°, ÐºÐ¾ÑÐ¾ÑÐ°Ñ ÑÑÐ¾ÑÐ»Ð° Ð² ÑÐµÐ¿Ð»Ðµ, ÑÑÑÐ¾Ð¼ ÐµÐ´ÐµÑ Ð´Ð°Ð»ÑÑÐµ Ð½Ð° Ð´ÐµÑÑÑÐºÐ¸ ÐºÐ¸Ð»Ð¾Ð¼ÐµÑÑÐ¾Ð². ÐÐ¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ Ð¾ ÑÐ¾Ð¼, ÐºÐ°Ðº Ð¼Ð°ÑÐ¸Ð½Ð° Ð³ÑÐµÐµÑ Ð±Ð°ÑÐ°ÑÐµÑ Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹, â Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/podogrev-batarei.html">Ð¾ Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ²Ðµ Ð±Ð°ÑÐ°ÑÐµÐ¸</a>; Ð¾ Ð·Ð°Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾Ð¹ Ð·Ð¸Ð¼Ð½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐµ â Ð² ÑÑÐ°ÑÑÐµ <a href="/blog/zimnyaya-zaryadka-medlennee.html">Â«ÐÐ¾ÑÐµÐ¼Ñ Ð·Ð¸Ð¼Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµÂ»</a>. ÐÐ°Ð¹ÑÐ¸ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¿Ð¾ Ð¼Ð°ÑÑÑÑÑÑ Ð¼Ð¾Ð¶Ð½Ð¾ Ð½Ð° <a href="/charging/">ÐºÐ°ÑÑÐµ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹</a>, Ð¿Ð¾ÑÑÐ¸ÑÐ°ÑÑ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ Ð·Ð¸Ð¼Ð½ÐµÐ³Ð¾ Ð¼ÐµÑÑÑÐ° â Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a>.</p>'),
+ 'type1-ccs1': ('<h2>Ð¨Ð°Ð³ 1: Ð¾Ð¿ÑÐµÐ´ÐµÐ»Ð¸ÑÐµ, ÑÑÐ¾ Ñ Ð²Ð°Ñ Ð·Ð° ÑÐ°Ð·ÑÑÐ¼</h2><p>ÐÐ°ÑÐ¸Ð½Ñ Ð¸Ð· Ð¡Ð¨Ð Ð¸ ÐÐ¾ÑÐµÐ¸ Ð¾Ð±ÑÑÐ½Ð¾ Ð½ÐµÑÑÑ ÑÐ°Ð·ÑÑÐ¼Ñ J1772 (Type 1) Ð´Ð»Ñ Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑÐ¾ÐºÐ° Ð¸ CCS1 Ð´Ð»Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸. ÐÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ðµ ÑÐ±Ð¾ÑÐºÐ¸ ÑÐµÑ Ð¶Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ â Type 2 Ð¸ CCS2. Ð­ÑÐ¾ ÐºÐ°ÑÐ´Ð¸Ð½Ð°Ð»ÑÐ½Ð¾ ÑÐ°Ð·Ð½ÑÐµ Ð¸ÑÑÐ¾ÑÐ¸Ð¸: Ñ Tesla Model Y Ð°Ð¼ÐµÑÐ¸ÐºÐ°Ð½ÑÐºÐ¾Ð¹ ÑÐ±Ð¾ÑÐºÐ¸ â Type 1/CCS1, Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¹ â Type 2/CCS2, Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð´Ð»Ñ Ð½Ð¸Ñ Ð½Ðµ Ð²Ð·Ð°Ð¸Ð¼Ð¾Ð·Ð°Ð¼ÐµÐ½ÑÐµÐ¼Ñ. ÐÑÐ¾ÑÐµ Ð²ÑÐµÐ³Ð¾ ÑÐ²ÐµÑÐ¸ÑÑÑÑ Ñ Ð½Ð°ÑÐµÐ¹ ÑÑÑÐ°Ð½Ð¸ÑÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸: Ñ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¸Ð· 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð½Ð° ÑÐ°Ð¹ÑÐµ ÑÐºÐ°Ð·Ð°Ð½ ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ð¹ ÑÐ°Ð·ÑÑÐ¼ Ð·Ð°ÑÑÐ´ÐºÐ¸, ÑÐ°Ð·Ð´ÐµÐ» Â«Ð Ð°Ð·ÑÑÐ¼ÑÂ».</p><h2>Ð¨Ð°Ð³ 2: Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½ÑÐ¼ ÑÐ¾ÐºÐ¾Ð¼ â ÑÐ°Ð¼Ð°Ñ Ð¿ÑÐ¾ÑÑÐ°Ñ</h2><p>ÐÑÐ±Ð»Ð¸ÑÐ½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ AC Ð² Ð Ð¾ÑÑÐ¸Ð¸ Ð¿Ð¾ÑÑÐ¸ Ð²ÑÐµ Ñ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼ Type 2 (7â22 ÐºÐÑ). ÐÐ»Ñ Ð¼Ð°ÑÐ¸Ð½Ñ Ñ Type 1 Ð½ÑÐ¶ÐµÐ½ <a href="/catalog/adapter-type1-type2.html">Ð°Ð´Ð°Ð¿ÑÐµÑ Type 1 â Type 2</a>: Ð¾Ð½ Ð¿ÑÐµÐ²ÑÐ°ÑÐ°ÐµÑ Type 2-ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Type 1-Ð³Ð½ÐµÐ·Ð´Ð¾ Ð¼Ð°ÑÐ¸Ð½Ñ. Ð¡ÐºÐ¾ÑÐ¾ÑÑÑ Ð¾ÑÑÐ°Ð½ÐµÑÑÑ Ð½Ð° ÑÑÐ¾Ð²Ð½Ðµ Ð¼Ð°ÑÐ¸Ð½Ñ â Ð¾Ð±ÑÑÐ½Ð¾ 7â11 ÐºÐÑ, ÑÑÐ¾Ð³Ð¾ ÑÐ²Ð°ÑÐ°ÐµÑ Ð´Ð»Ñ Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ Ð´Ð¾Ð·Ð°ÑÑÐ´Ð¾Ðº. ÐÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Type 1/Type 2 â ÐºÐ¾Ð¼Ð¿Ð°ÐºÑÐ½ÑÐ¹, Ð¶Ð¸Ð²ÑÑ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ, Ð½Ðµ ÑÑÐµÐ±ÑÐµÑ Ð´Ð¾Ð¿ÑÑÐºÐ¾Ð².</p><h2>Ð¨Ð°Ð³ 3: Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° â ÑÐ»Ð¾Ð¶Ð½ÐµÐµ</h2><p>ÐÐ»Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð²Ð°Ð¶ÐµÐ½ ÑÐ°Ð·ÑÑÐ¼ ÑÑÐ°Ð½ÑÐ¸Ð¹. ÐÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð Ð¤ Ð´ÐµÐ»ÑÑÑÑ Ð½Ð° Ð´Ð²Ðµ Ð³ÑÑÐ¿Ð¿Ñ: Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¼Ð¸ CCS2-ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ°Ð¼Ð¸ Ð¸ Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¼Ð¸ GB/T. ÐÑÐ»Ð¸ Ñ Ð¼Ð°ÑÐ¸Ð½Ñ CCS1, Ð¿ÑÑÐ¼Ð¾Ð¹ Ð¿ÑÑÑ Ðº CCS2-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¾ÑÑÑÑÑÑÐ²ÑÐµÑ: CCS1 Ð¸ CCS2 Ð½ÐµÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ñ ÑÐ¸Ð·Ð¸ÑÐµÑÐºÐ¸. Ð Ð°Ð±Ð¾ÑÐ¸Ð¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð´Ð»Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾-Ð°Ð´Ð°Ð¿ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÑ Ð¼Ð°ÑÐ¸Ð½ â <a href="/catalog/adapter-ccs2-gbt-dc.html">DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2 â GB/T</a>, Ð½Ð¾ Ð¾Ð½ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ ÑÐ¾Ð»ÑÐºÐ¾ Ð´Ð»Ñ Ð¼Ð°ÑÐ¸Ð½ Ñ CCS2-Ð¿Ð¾ÑÑÐ¾Ð¼, Ð° Ð½Ðµ Ñ CCS1. ÐÐ»Ð°Ð´ÐµÐ»ÑÑÐ°Ð¼ Ð¼Ð°ÑÐ¸Ð½ Ñ CCS1 Ð¾ÑÑÐ°ÑÑÑÑ: Ð·Ð°ÑÑÐ´ÐºÐ° AC (ÑÐ°Ð³ 2), Ð»Ð¸Ð±Ð¾ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ° Ðº Type 2-ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼ÑÐ¼ DC-ÑÑÐ°Ð½ÑÐ¸ÑÐ¼ ÑÐµÑÐµÐ· Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸, ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼ÑÐµ Ñ ÐºÐ¾Ð½ÐºÑÐµÑÐ½Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»ÑÑ â ÑÐ²ÐµÑÑÐ¹ÑÐµÑÑ Ñ Ð³Ð°Ð¹Ð´Ð¾Ð¼ Ð¿Ð¾ Ð²Ð°ÑÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð´Ð¾ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°.</p><h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¸Ð· Ð¡Ð¨Ð/ÐÐ¾ÑÐµÐ¸</h2><ol><li>Ð£ÑÐ¾ÑÐ½Ð¸ÑÐµ ÑÐ±Ð¾ÑÐºÑ Ð¼Ð°ÑÐ¸Ð½Ñ (Ð¡Ð¨Ð/ÐÐ¾ÑÐµÑ = Type 1/CCS1; ÐÐ²ÑÐ¾Ð¿Ð° = Type 2/CCS2) â Ð¿Ð¾ VIN Ð¸Ð»Ð¸ ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¸Ð¸.</li><li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ, ÐµÑÑÑ Ð»Ð¸ DC-Ð¿Ð¾ÑÑ CCS1 Ð¸ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶Ð¸Ð²Ð°ÐµÑ Ð»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ñ Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð²Ð¾Ð¾Ð±ÑÐµ (Ð½ÐµÐºÐ¾ÑÐ¾ÑÑÐµ Core-Ð¼Ð¾Ð´ÐµÐ»Ð¸ â ÑÐ¾Ð»ÑÐºÐ¾ AC).</li><li>ÐÐ°Ð¿Ð»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ Ð±ÑÐ´Ð¶ÐµÑ Ð½Ð° Ð°Ð´Ð°Ð¿ÑÐµÑ Type 1 â Type 2 â Ð¾Ð½ Ð½ÑÐ¶ÐµÐ½ Ð¿Ð¾ÑÑÐ¸ ÑÑÐ°Ð·Ñ Ð¿Ð¾ÑÐ»Ðµ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸.</li><li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¿ÑÐ¾ÑÐ¸Ð»Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð² Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð¼Ð¾Ð´ÐµÐ»Ð¸: Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ DC-Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ ÑÑÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ñ Ðº ÑÐ°Ð·ÑÑÐ¼Ñ.</li></ol><p>ÐÑÐ»Ð¸ ÑÐ°Ð·ÑÑÐ¼ ÑÐ°Ðº Ð¸ Ð½Ðµ Ð¾Ð¿ÑÐµÐ´ÐµÐ»Ð¸Ð»Ð¸, ÑÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸ÑÑÐ¹ÑÐµ Ð¿Ð¾ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ Ð¿Ð¾ÐºÐ°Ð¶Ð¸ÑÐµ Ð² Ð½Ð°ÑÐµÐ¼ ÑÐµÐ»ÐµÐ³ÑÐ°Ð¼-ÐºÐ°Ð½Ð°Ð»Ðµ â Ð¿Ð¾Ð´ÑÐºÐ°Ð¶ÐµÐ¼ Ð¿Ð¾ Ð¾Ð¿ÑÑÑ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°.</p>'),
+ 'udlinitel': ('<h2>ÐÐ¾ÑÐµÐ¼Ñ Ð´ÐµÑÑÐ²ÑÐ¹ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Ð¾Ð¿Ð°ÑÐµÐ½</h2><p>ÐÐ±ÑÑÐ½ÑÐ¹ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ ÑÐ°ÑÑÑÐ¸ÑÐ°Ð½ Ð½Ð° 10â16 Ð Ð¿Ð¾ ÑÐ¾Ð½ÐºÐ¾Ð¼Ñ Ð¿ÑÐ¾Ð²Ð¾Ð´Ñ 1â1,5 Ð¼Ð¼Â². ÐÐ°ÑÑÐ´ÐºÐ° Ð¾Ñ 7 ÐºÐÑ ÑÑÐ½ÐµÑ 32 Ð Ð½ÐµÐ¿ÑÐµÑÑÐ²Ð½Ð¾, ÑÐ°ÑÐ°Ð¼Ð¸: Ð¿ÑÐ¾Ð²Ð¾Ð´ Ñ Ð½ÐµÐ´Ð¾ÑÑÐ°ÑÐ¾ÑÐ½ÑÐ¼ ÑÐµÑÐµÐ½Ð¸ÐµÐ¼ Ð³ÑÐµÐµÑÑÑ, Ð¸Ð·Ð¾Ð»ÑÑÐ¸Ñ ÑÑÐ°ÑÐµÐµÑ, ÐºÐ¾Ð½ÑÐ°ÐºÑ Ð² ÑÐ¾Ð·ÐµÑÐºÐµ ÑÐ°Ð·Ð¾Ð³ÑÐµÐ²Ð°ÐµÑÑÑ. Ð¡Ð¸Ð¼Ð¿ÑÐ¾Ð¼ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ð° â ÑÑÐ¿Ð»ÑÐ¹ ÑÑÐµÐºÐµÑ, Ð·Ð°Ð¿Ð°Ñ Ð¿Ð»Ð°ÑÑÐ¸ÐºÐ°, ÑÑÐ°Ð±Ð°ÑÑÐ²Ð°Ð½Ð¸Ðµ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ°. Ð­ÑÐ¾ Ð½Ðµ Â«ÑÐµÐ¾ÑÐ¸ÑÂ», Ð° ÑÐ°Ð¼Ð°Ñ ÑÐ°ÑÑÐ°Ñ Ð¿ÑÐ¸ÑÐ¸Ð½Ð° Ð²ÑÐ³Ð¾ÑÐ°Ð½Ð¸Ñ ÑÐ¾Ð·ÐµÑÐ¾Ðº Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ², ÐºÐ¾ÑÐ¾ÑÑÐµ Ð¿Ð¾Ð¿ÑÐ¾Ð±Ð¾Ð²Ð°Ð»Ð¸ ÑÑÐºÐ¾Ð½Ð¾Ð¼Ð¸ÑÑ.</p><h2>ÐÑÐ°Ð²Ð¸Ð»Ð° ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2><ol><li>Ð¡ÐµÑÐµÐ½Ð¸Ðµ Ð¿ÑÐ¾Ð²Ð¾Ð´Ð° â 2,5 Ð¼Ð¼Â² Ð¸ Ð²ÑÑÐµ, Ð´Ð»Ñ Ð´Ð»Ð¸Ð½Ð½ÑÑ Ð¿ÑÐ¾Ð»ÐµÑÐ¾Ð² â 4 Ð¼Ð¼Â². ÐÐ° ÑÐ¿Ð°ÐºÐ¾Ð²ÐºÐµ Ð¸ÑÐ¸ÑÐµ Ð¸Ð¼ÐµÐ½Ð½Ð¾ ÑÐµÑÐµÐ½Ð¸Ðµ, Ð° Ð½Ðµ Â«16 ÐÂ» Ð½Ð° ÑÑÐ»ÑÐºÐµ.</li><li>ÐÐ»Ð¸Ð½Ð° â Ð¿Ð¾ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑÐ¸ Ð´Ð¾ 10â15 Ð¼: ÑÐµÐ¼ Ð´Ð»Ð¸Ð½Ð½ÐµÐµ, ÑÐµÐ¼ Ð±Ð¾Ð»ÑÑÐµ Ð¿Ð°Ð´ÐµÐ½Ð¸Ðµ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ñ Ð¸ ÑÐ¸ÑÐº, ÑÑÐ¾ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ð±Ð¾ÑÐ²ÑÑÑÑ Ð¸Ð»Ð¸ ÑÐ½Ð¸Ð·Ð¸Ñ ÑÐ¾Ðº.</li><li>ÐÑÐ»Ð¸ Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐµÑÐµ ÐºÐ°ÑÑÑÐºÑ â Ð¿Ð¾Ð»Ð½Ð¾ÑÑÑÑ ÑÐ°Ð·Ð¼Ð¾ÑÐ°Ð¹ÑÐµ. Ð¡Ð¼Ð¾ÑÐ°Ð½Ð½Ð°Ñ ÐºÐ°ÑÑÑÐºÐ° Ð½Ðµ Ð¾ÑÐ»Ð°Ð¶Ð´Ð°ÐµÑÑÑ Ð¸ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ð°ÐµÑÑÑ Ð±ÑÑÑÑÐµÐµ Ð²ÑÐµÐ³Ð¾.</li><li>Ð¡ÑÐµÐ¿ÐµÐ½Ñ Ð·Ð°ÑÐ¸ÑÑ IP44 Ð¸ Ð²ÑÑÐµ â Ð·Ð°ÑÑÐ´ÐºÐ° Ð¸Ð´ÑÑ Ð½Ð° ÑÐ»Ð¸ÑÐµ Ð¸ Ð²Ð¾ Ð²Ð»Ð°Ð¶Ð½Ð¾Ð¹ ÑÑÐµÐ´Ðµ.</li><li>ÐÐ²ÑÐ¾Ð¼Ð°Ñ Ð² ÑÐ¸ÑÐºÐµ â Ð¡-ÑÐ°ÑÐ°ÐºÑÐµÑÐ¸ÑÑÐ¸ÐºÐ° 16 Ð Ð½Ð° Ð»Ð¸Ð½Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸: Ð´ÐµÑÑÐ²ÑÐ¹ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Ñ Â«Ð¼Ð¾ÑÐ½Ð¾ÑÑÑÑ 3500 ÐÑÂ» Ð½Ð° ÐºÐ¾ÑÐ¾Ð±ÐºÐµ Ð½Ðµ Ð²ÑÐµÐ³Ð´Ð° ÑÐµÑÑÐ½Ð¾ Ð´ÐµÑÐ¶Ð¸Ñ 16 Ð ÑÐ°ÑÐ°Ð¼Ð¸.</li></ol><h2>ÐÐ¾ÑÐ¾Ð²ÑÐµ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»ÑÐ½ÑÐµ ÐºÐ°Ð±ÐµÐ»Ð¸ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2><p>Ð ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ ÐµÑÑÑ Ð³Ð¾ÑÐ¾Ð²ÑÐµ ÑÐµÑÐµÐ½Ð¸Ñ Ð¿Ð¾Ð´ ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÐ¹ ÑÐ°Ð·ÑÑÐ¼: <a href="/catalog/udlinitel-type2-type2-5m.html">ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ Type 2 â Type 2, 5 Ð¼, 32 Ð</a> Ð¸ <a href="/catalog/udlinitel-gbt-gbt-5m.html">ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ GB/T â GB/T, 5 Ð¼, 32 Ð</a>. Ð­ÑÐ¾ Ð½Ðµ Â«Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÂ», Ð° ÐºÐ°Ð±ÐµÐ»Ñ Ñ ÑÐµÑÐµÐ½Ð¸ÐµÐ¼ Ð¿Ð¾Ð´ 32 Ð â ÑÐ¾, ÑÑÐ¾ Ð½ÑÐ¶Ð½Ð¾ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ ÑÑÐ°ÑÐ¸Ð¾Ð½Ð°ÑÐ½Ð¾Ð¹ Ð¸ Ð¿ÐµÑÐµÐ½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ð° Ð¿Ð¾Ð»Ð½ÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ. ÐÐ¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¼ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸Ð¸ â Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/domashnie-stancii.html">Ð¾ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð´Ð»Ñ Ð´Ð¾Ð¼Ð°</a>.</p>'),
+ '12v-akb': ('<h2>ÐÐ°ÑÐµÐ¼ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¾Ð±ÑÑÐ½ÑÐ¹ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾Ñ</h2><p>ÐÐ»Ð°Ð²Ð½Ð°Ñ Ð±Ð°ÑÐ°ÑÐµÑ Ð¿Ð¸ÑÐ°ÐµÑ Ð¼Ð¾ÑÐ¾Ñ, Ð½Ð¾ Ð´Ð²Ð¾ÑÐ½Ð¸ÐºÐ¸, Ð·Ð°Ð¼ÐºÐ¸, ÑÐ²ÐµÑ, Ð¼ÑÐ»ÑÑÐ¸Ð¼ÐµÐ´Ð¸Ð° Ð¸ Ð­ÐÐ£ ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð¾Ñ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð³Ð¾ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾ÑÐ°, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð¿Ð¾Ð´Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ DC/DC-ÐºÐ¾Ð½Ð²ÐµÑÑÐµÑÐ¾Ð¼ Ð¾Ñ Ð³Ð»Ð°Ð²Ð½Ð¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐ¸. ÐÑÐ»Ð¸ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¹ ÐÐÐ ÑÐ°Ð·ÑÑÐ¶Ð°ÐµÑÑÑ, Ð¼Ð°ÑÐ¸Ð½Ð° Â«Ð·Ð°ÑÑÐ¿Ð°ÐµÑÂ» ÑÐµÐ»Ð¸ÐºÐ¾Ð¼: Ð½Ðµ Ð¾ÑÐºÑÑÐ²Ð°ÑÑÑÑ Ð´Ð²ÐµÑÐ¸, Ð½Ðµ ÑÐ°Ð·Ð±Ð»Ð¾ÐºÐ¸ÑÑÐµÑÑÑ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð³Ð¾ ÐºÐ°Ð±ÐµÐ»Ñ, Ð½Ðµ ÑÑÐ°ÑÑÑÐµÑ Ð·Ð°ÑÑÐ´ÐºÐ° â ÑÐ¸Ð¼Ð¿ÑÐ¾Ð¼Ñ ÑÐ¾Ð²Ð¿Ð°Ð´Ð°ÑÑ Ñ Â«Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸ÐµÐ¹Â», ÑÐ¾ÑÑ Ð²Ð¸Ð½Ð¾Ð²Ð°Ñ Ð¼Ð°Ð»ÐµÐ½ÑÐºÐ¸Ð¹ ÐÐÐ.</p><h2>Ð¡Ð¸Ð¼Ð¿ÑÐ¾Ð¼Ñ ÑÐ¼Ð¸ÑÐ°ÑÑÐµÐ³Ð¾ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð³Ð¾ ÐÐÐ</h2><ul><li>ÐÐ°ÑÐ¸Ð½Ð° Ð¿ÑÐ¾ÑÑÐ¾ÑÐ»Ð° Ð½ÐµÐ´ÐµÐ»Ñ-Ð´Ð²Ðµ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð¸ Â«Ð½Ðµ Ð¾Ð¶Ð¸Ð²Ð°ÐµÑÂ» â ÐºÐ»Ð°ÑÑÐ¸ÑÐµÑÐºÐ°Ñ Ð¸ÑÑÐ¾ÑÐ¸Ñ Ð·Ð¸Ð¼Ð½ÐµÐ³Ð¾ Ð¿ÑÐ¾ÑÑÐ¾Ñ.</li><li>ÐÐ°Ð±ÐµÐ»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑÑÑ Ð¸Ð· Ð¿Ð¾ÑÑÐ° â Ð·Ð°Ð¼Ð¾Ðº ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ° Ð¿Ð¸ÑÐ°ÐµÑÑÑ Ð¾Ñ 12 Ð; Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½Ð¾ÑÑÐ¸ Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/kabel-ne-otdaet.html">Â«ÐÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑ Ð¸Ð· Ð¿Ð¾ÑÑÐ°Â»</a>.</li><li>ÐÑÐ¸Ð±ÐºÐ¸ Â«Ð½Ð¸Ð·ÐºÐ¾Ðµ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ðµ 12VÂ» Ð² Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¼ ÐºÐ¾Ð¼Ð¿ÑÑÑÐµÑÐµ.</li><li>ÐÐ°ÑÑÐ´ÐºÐ° Ð·Ð°Ð¿ÑÑÐºÐ°ÐµÑÑÑ, Ð½Ð¾ Ð¾Ð±ÑÑÐ²Ð°ÐµÑÑÑ Ð¿ÑÐ¸ ÑÑÐ°ÑÑÐµ â Ð½Ð° Ð¿Ð¸ÐºÐµ Ð¿Ð¾ÑÑÐµÐ±Ð»ÐµÐ½Ð¸Ñ DC/DC Ð½Ðµ ÑÐ²Ð°ÑÐ°ÐµÑ.</li></ul><h2>Ð§ÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ</h2><p>ÐÐµÑÐ²ÑÐ¼ Ð´ÐµÐ»Ð¾Ð¼ â Ð¿ÑÐ¸ÐºÑÑÐ¸ÑÑ Ð¾Ñ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð³Ð¾ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ° (Ð²ÑÐ¾ÑÐ¾Ð³Ð¾ Ð°Ð²ÑÐ¾, Ð±ÑÑÑÐµÑÐ°): Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð¾ Ð¼Ð°ÑÐ¸Ð½ Ð¿Ð¾Ð·Ð²Ð¾Ð»ÑÑÑ Ð·Ð°Ð¿ÑÑÐº Ð±Ð¾ÑÑÑÐµÑÐ¸ Ð¾Ñ Ð²Ð½ÐµÑÐ½ÐµÐ³Ð¾ 12 Ð Ð±ÐµÐ· ÑÐ½ÑÑÐ¸Ñ ÐÐÐ, ÐºÐ»ÐµÐ¼Ð¼Ñ Ð¾Ð±ÑÑÐ½Ð¾ Ð¿Ð¾Ð´ ÐºÐ°Ð¿Ð¾ÑÐ¾Ð¼ Ð¸Ð»Ð¸ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ (Ñ ÑÑÐ´Ð° Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ â Ð¿Ð¾Ð´ ÐºÐ¾Ð²ÑÐ¸ÐºÐ¾Ð¼ Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐ°; Ð½Ð° Zeekr 001, Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ, Ð¸Ð¼ÐµÐ½Ð½Ð¾ ÑÐ°Ð¼). ÐÐ¾ÑÐ»Ðµ Ð²Ð¾ÑÑÑÐ°Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ñ Ð´Ð°Ð¹ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ðµ Ð¿Ð¾ÑÐ°Ð±Ð¾ÑÐ°ÑÑ 20â30 Ð¼Ð¸Ð½ÑÑ â DC/DC Ð¿Ð¾Ð´Ð·Ð°ÑÑÐ´Ð¸Ñ ÐÐÐ. ÐÑÐ»Ð¸ Ð¿ÑÐ¾ÑÑÐ¾Ñ ÑÐ»ÑÑÐ°ÑÑÑÑ ÑÐµÐ³ÑÐ»ÑÑÐ½Ð¾, Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÐµÑÐºÐ¸ (Ð¾ÑÑÐ°Ð½Ð½Ð°Ñ ÑÐ¸ÑÑÐµÐ¼Ð°, ÑÑÐ¾ÑÐ¾Ð½Ð½Ð¸Ðµ Ð°ÐºÑÐµÑÑÑÐ°ÑÑ) Ð¸ Ð·Ð°Ð¼ÐµÑÑÑÐµ ÐÐÐ Ð½Ð° Ð¡Ð¢Ð: Ð·Ð°Ð¼ÐµÐ½Ð° 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð³Ð¾ Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾ÑÐ° â Ð½ÐµÐ´Ð¾ÑÐ¾Ð³Ð°Ñ Ð¸ ÑÑÑÐ¸Ð½Ð½Ð°Ñ Ð¿ÑÐ¾ÑÐµÐ´ÑÑÐ°.</p><p>ÐÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÐµÑÐµÑÑÐ°Ð»Ð° Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ ÑÐµÐ»Ð¸ÐºÐ¾Ð¼ â Ð½Ð°ÑÐ½Ð¸ÑÐµ Ñ Ð³Ð°Ð¹Ð´Ð° <a href="/pain/ne-zaryazhaetsya.html">Â«ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ»</a>: ÑÐ°Ð¼ Ð¿Ð¾Ð»Ð½ÑÐ¹ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿ÑÐ¸ÑÐ¸Ð½.</p>'),
+ 'ne-zaryazhaetsya': ('<h2>ÐÐ°Ðº ÑÑÐ¾ Ð²ÑÐ³Ð»ÑÐ´Ð¸Ñ Ð½Ð° Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ</h2>'
+  '<p>Ð ÐµÐ°Ð»ÑÐ½ÑÐ¹ ÐºÐµÐ¹Ñ Ð¸Ð· ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð° Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²: Evolute i-Space Ð¿ÐµÑÐµÑÑÐ°Ð» Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÑÑ Ð±ÑÑÑÑÑÑ Ð·Ð°ÑÑÐ´ÐºÑ â Ð²ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð²ÑÐ´Ð°ÑÑ ÐºÐ¾Ð´ Ð¾ÑÐ¸Ð±ÐºÐ¸ 0x13. ÐÐ¾Ð»Ð¾Ð²Ð¸Ð½Ð° Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð¿ÐµÑÐµÐ¿ÑÐ¾ÑÐ¸Ð²Ð°ÐµÑ Ð³Ð¾Ð»Ð¾Ð²Ñ, Ð¿Ð¾Ð»Ð¾Ð²Ð¸Ð½Ð° ÑÐ¿Ð°ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¾ÑÑÑÐ¼ Ð¿ÑÐ¸ÑÐ¼Ð¾Ð¼: ÑÐ±ÑÐ¾Ñ ÐºÐ»ÐµÐ¼Ð¼Ñ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐ¸ (Ð¾Ð½Ð° Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ Ð¿Ð¾Ð´ ÐºÐ¾Ð²ÑÐ¸ÐºÐ¾Ð¼) Ð½Ð° 5â10 Ð¼Ð¸Ð½ÑÑ. ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾ Ð¼Ñ ÑÐ°Ð·Ð¾Ð±ÑÐ°Ð»Ð¸ ÑÑÐ¾ Ð² <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">ÑÑÐ°ÑÑÐµ Ð¿ÑÐ¾ ÐºÐ¾Ð´ 0x13</a>. ÐÐ¾ÑÐ°Ð»Ñ: Ð´Ð¾ Ð²Ð¸Ð·Ð¸ÑÐ° Ð² ÑÐµÑÐ²Ð¸Ñ Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÑÐ°Ð¼ÑÐ¹ Ð´ÐµÑÑÐ²ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹.</p>'
+  '<p>ÐÑÐ¾ÑÐ°Ñ ÑÐ°ÑÑÐ°Ñ Ð¸ÑÑÐ¾ÑÐ¸Ñ â Â«Ð²ÑÑÐ°Ð» Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð° ÑÑÐ°Ð½ÑÐ¸Ñ Ð¼ÑÑÑÐ²Ð°ÑÂ». ÐÐ¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¾ÑÑÐ°ÑÐ»ÐµÐ²Ð¾Ð³Ð¾ Ð¾Ð±Ð·Ð¾ÑÐ°, Ð´Ð¾ 26% ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð±ÑÐ²Ð°ÑÑ Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ñ Ð¿ÑÐ¸ ÑÐ°Ð±Ð¾ÑÐ°ÑÑÐµÐ¼ ÑÑÐ°ÑÑÑÐµ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸: Ð¾Ð±ÑÑÐ² ÐºÐ°Ð±ÐµÐ»Ñ, Ð¾ÑÐ¸Ð±ÐºÐ° Ð¾Ð±Ð¼ÐµÐ½Ð½Ð¾Ð³Ð¾ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð°, Ð·Ð°Ð²Ð¸ÑÑÐ¸Ð¹ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð» (<a href="https://electro.cars/tpost/xfmkaf0821-problemi-s-infrastrukturoi-zaryadki-chto" target="_blank" rel="noopener">Electro.cars</a>). ÐÐ¿ÑÑÐ½ÑÐ¹ Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ñ Ð´ÐµÑÐ¶Ð¸Ñ Ð² Ð¼Ð°ÑÑÑÑÑÐµ Ð²ÑÐ¾ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ â Ð²ÑÐµÐ³Ð´Ð°. Ð§ÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ Ð¿ÑÐ¸ ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ð¸ Ð´ÐµÐ½ÐµÐ³ Ð·Ð° Ð½ÐµÑÐ°Ð±Ð¾ÑÐ°ÑÑÑÑ ÑÐµÑÑÐ¸Ñ â Ð² ÑÑÐ°ÑÑÐµ <a href="/blog/stanciya-ne-rabotaet.html">Â«ÐÐ°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ: ÑÑÑ Ð²Ð¸Ð½Ð°Â»</a>.</p>'
+  '<h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ: ÐµÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ðµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ</h2>'
   '<ol>'
-  '<li>Проверьте статус сессии в приложении оператора: «завершено» при пустой батарее — значит, сессия сорвалась, а не «машина сломалась».</li>'
-  '<li>Попробуйте другую машину на этой же станции (или спросите владельца соседнего EV): работает — проблема в вашей машине.</li>'
-  '<li>Попробуйте другую станцию той же сети: работает — проблема была в терминале, сообщите в поддержку.</li>'
-  '<li>Перейдите с быстрого DC на медленный AC-порт: если AC работает — смотрите на DC-протоколы (handshake), а не на батарею.</li>'
-  '<li>Сброс 12V-клеммы на 5–10 минут: лечит часть «зависаний» без сервиса.</li>'
-  '<li>Проверьте разъём: следы нагрева, мусор в гнезде, надломленный фиксатор кабеля.</li>'
-  '<li>Если ничего не помогло — фиксируйте код ошибки на дисплее и в приложении: он понадобится сервису (базовые коды разобраны в <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">кейсе 0x13</a>).</li>'
+  '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÐ°ÑÑÑ ÑÐµÑÑÐ¸Ð¸ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ°: Â«Ð·Ð°Ð²ÐµÑÑÐµÐ½Ð¾Â» Ð¿ÑÐ¸ Ð¿ÑÑÑÐ¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐµ â Ð·Ð½Ð°ÑÐ¸Ñ, ÑÐµÑÑÐ¸Ñ ÑÐ¾ÑÐ²Ð°Ð»Ð°ÑÑ, Ð° Ð½Ðµ Â«Ð¼Ð°ÑÐ¸Ð½Ð° ÑÐ»Ð¾Ð¼Ð°Ð»Ð°ÑÑÂ».</li>'
+  '<li>ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð´ÑÑÐ³ÑÑ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° ÑÑÐ¾Ð¹ Ð¶Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ (Ð¸Ð»Ð¸ ÑÐ¿ÑÐ¾ÑÐ¸ÑÐµ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ° ÑÐ¾ÑÐµÐ´Ð½ÐµÐ³Ð¾ EV): ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ â Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð° Ð² Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ðµ.</li>'
+  '<li>ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð´ÑÑÐ³ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ¾Ð¹ Ð¶Ðµ ÑÐµÑÐ¸: ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ â Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð° Ð±ÑÐ»Ð° Ð² ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ðµ, ÑÐ¾Ð¾Ð±ÑÐ¸ÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ.</li>'
+  '<li>ÐÐµÑÐµÐ¹Ð´Ð¸ÑÐµ Ñ Ð±ÑÑÑÑÐ¾Ð³Ð¾ DC Ð½Ð° Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÐ¹ AC-Ð¿Ð¾ÑÑ: ÐµÑÐ»Ð¸ AC ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ â ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð½Ð° DC-Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ñ (handshake), Ð° Ð½Ðµ Ð½Ð° Ð±Ð°ÑÐ°ÑÐµÑ.</li>'
+  '<li>Ð¡Ð±ÑÐ¾Ñ 12V-ÐºÐ»ÐµÐ¼Ð¼Ñ Ð½Ð° 5â10 Ð¼Ð¸Ð½ÑÑ: Ð»ÐµÑÐ¸Ñ ÑÐ°ÑÑÑ Â«Ð·Ð°Ð²Ð¸ÑÐ°Ð½Ð¸Ð¹Â» Ð±ÐµÐ· ÑÐµÑÐ²Ð¸ÑÐ°.</li>'
+  '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ ÑÐ°Ð·ÑÑÐ¼: ÑÐ»ÐµÐ´Ñ Ð½Ð°Ð³ÑÐµÐ²Ð°, Ð¼ÑÑÐ¾Ñ Ð² Ð³Ð½ÐµÐ·Ð´Ðµ, Ð½Ð°Ð´Ð»Ð¾Ð¼Ð»ÐµÐ½Ð½ÑÐ¹ ÑÐ¸ÐºÑÐ°ÑÐ¾Ñ ÐºÐ°Ð±ÐµÐ»Ñ.</li>'
+  '<li>ÐÑÐ»Ð¸ Ð½Ð¸ÑÐµÐ³Ð¾ Ð½Ðµ Ð¿Ð¾Ð¼Ð¾Ð³Ð»Ð¾ â ÑÐ¸ÐºÑÐ¸ÑÑÐ¹ÑÐµ ÐºÐ¾Ð´ Ð¾ÑÐ¸Ð±ÐºÐ¸ Ð½Ð° Ð´Ð¸ÑÐ¿Ð»ÐµÐµ Ð¸ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸: Ð¾Ð½ Ð¿Ð¾Ð½Ð°Ð´Ð¾Ð±Ð¸ÑÑÑ ÑÐµÑÐ²Ð¸ÑÑ (Ð±Ð°Ð·Ð¾Ð²ÑÐµ ÐºÐ¾Ð´Ñ ÑÐ°Ð·Ð¾Ð±ÑÐ°Ð½Ñ Ð² <a href="/blog/evolute-0x13-ne-zaryazhaetsya.html">ÐºÐµÐ¹ÑÐµ 0x13</a>).</li>'
   '</ol>'
-  '<h2>Частые ошибки владельцев</h2>'
+  '<h2>Ð§Ð°ÑÑÑÐµ Ð¾ÑÐ¸Ð±ÐºÐ¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²</h2>'
   '<ul>'
-  '<li>Покупать адаптер «на всякий случай» без проверки протоколов конкретной модели — часть дешёвых адаптеров не выдерживает handshake на 150+ кВт (см. <a href="/blog/handshake-oshibka-dc-zaryadki.html">разбор handshake</a>).</li>'
-  '<li>Считать, что «машина не заряжается» = «батарея умерла». В реальной статистике большинство случаев — инфраструктура и электроника, а не ячейки.</li>'
-  '<li>Игнорировать сезонность: зимой на морозе зарядка медленнее на 30–50% — это норма, а не поломка (<a href="/blog/zimnyaya-zaryadka-medlennee.html">гайд</a>).</li>'
+  '<li>ÐÐ¾ÐºÑÐ¿Ð°ÑÑ Ð°Ð´Ð°Ð¿ÑÐµÑ Â«Ð½Ð° Ð²ÑÑÐºÐ¸Ð¹ ÑÐ»ÑÑÐ°Ð¹Â» Ð±ÐµÐ· Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð¾Ð² ÐºÐ¾Ð½ÐºÑÐµÑÐ½Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ â ÑÐ°ÑÑÑ Ð´ÐµÑÑÐ²ÑÑ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð² Ð½Ðµ Ð²ÑÐ´ÐµÑÐ¶Ð¸Ð²Ð°ÐµÑ handshake Ð½Ð° 150+ ÐºÐÑ (ÑÐ¼. <a href="/blog/handshake-oshibka-dc-zaryadki.html">ÑÐ°Ð·Ð±Ð¾Ñ handshake</a>).</li>'
+  '<li>Ð¡ÑÐ¸ÑÐ°ÑÑ, ÑÑÐ¾ Â«Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ðµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑÂ» = Â«Ð±Ð°ÑÐ°ÑÐµÑ ÑÐ¼ÐµÑÐ»Ð°Â». Ð ÑÐµÐ°Ð»ÑÐ½Ð¾Ð¹ ÑÑÐ°ÑÐ¸ÑÑÐ¸ÐºÐµ Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð¾ ÑÐ»ÑÑÐ°ÐµÐ² â Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐ° Ð¸ ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÐ°, Ð° Ð½Ðµ ÑÑÐµÐ¹ÐºÐ¸.</li>'
+  '<li>ÐÐ³Ð½Ð¾ÑÐ¸ÑÐ¾Ð²Ð°ÑÑ ÑÐµÐ·Ð¾Ð½Ð½Ð¾ÑÑÑ: Ð·Ð¸Ð¼Ð¾Ð¹ Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµ Ð½Ð° 30â50% â ÑÑÐ¾ Ð½Ð¾ÑÐ¼Ð°, Ð° Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ° (<a href="/blog/zimnyaya-zaryadka-medlennee.html">Ð³Ð°Ð¹Ð´</a>).</li>'
   '</ul>'),
- 'adapter-gbt': ('<h2>Какой адаптер покупать: таблица решений</h2>'
-  '<div class="tblwrap"><table><thead><tr><th>Задача</th><th>Адаптер</th><th>Мощность</th><th>Бюджет</th></tr></thead><tbody>'
-  '<tr><td>Городские станции Type 2 для GB/T-машины</td><td>Type 2 → GB/T AC</td><td>до 22 кВт</td><td>от 4–9 тыс. ₽</td></tr>'
-  '<tr><td>Быстрые станции CCS2 для GB/T-машины</td><td>CCS2 → GB/T DC</td><td>до 300 кВт</td><td>от 20 тыс. ₽ (требовательнее к совместимости)</td></tr>'
-  '<tr><td>GB/T-станции для европейской машины</td><td>GB/T → Type 2</td><td>до 22 кВт</td><td>средний сегмент</td></tr>'
-  '<tr><td>US-Tesla на обычных станциях</td><td>NACS → CCS2 / Type 2</td><td>AC + DC</td><td>от 5 тыс. ₽</td></tr>'
+ 'adapter-gbt': ('<h2>ÐÐ°ÐºÐ¾Ð¹ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¿Ð¾ÐºÑÐ¿Ð°ÑÑ: ÑÐ°Ð±Ð»Ð¸ÑÐ° ÑÐµÑÐµÐ½Ð¸Ð¹</h2>'
+  '<div class="tblwrap"><table><thead><tr><th>ÐÐ°Ð´Ð°ÑÐ°</th><th>ÐÐ´Ð°Ð¿ÑÐµÑ</th><th>ÐÐ¾ÑÐ½Ð¾ÑÑÑ</th><th>ÐÑÐ´Ð¶ÐµÑ</th></tr></thead><tbody>'
+  '<tr><td>ÐÐ¾ÑÐ¾Ð´ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Type 2 Ð´Ð»Ñ GB/T-Ð¼Ð°ÑÐ¸Ð½Ñ</td><td>Type 2 â GB/T AC</td><td>Ð´Ð¾ 22 ÐºÐÑ</td><td>Ð¾Ñ 4â9 ÑÑÑ. â½</td></tr>'
+  '<tr><td>ÐÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ CCS2 Ð´Ð»Ñ GB/T-Ð¼Ð°ÑÐ¸Ð½Ñ</td><td>CCS2 â GB/T DC</td><td>Ð´Ð¾ 300 ÐºÐÑ</td><td>Ð¾Ñ 20 ÑÑÑ. â½ (ÑÑÐµÐ±Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½ÐµÐµ Ðº ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸)</td></tr>'
+  '<tr><td>GB/T-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð´Ð»Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ñ</td><td>GB/T â Type 2</td><td>Ð´Ð¾ 22 ÐºÐÑ</td><td>ÑÑÐµÐ´Ð½Ð¸Ð¹ ÑÐµÐ³Ð¼ÐµÐ½Ñ</td></tr>'
+  '<tr><td>US-Tesla Ð½Ð° Ð¾Ð±ÑÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ</td><td>NACS â CCS2 / Type 2</td><td>AC + DC</td><td>Ð¾Ñ 5 ÑÑÑ. â½</td></tr>'
   '</tbody></table></div>'
-  '<p>Почему DC-адаптер «капризнее» AC: CCS2 общается со станцией по протоколу PLC, GB/T DC — по CAN, и адаптер должен переводить переговоры между стандартами (<a href="https://evniculus.eu/ru/blogs/journal/everything-you-need-to-know-about-the-ccs2-to-gbt-adapters-charging-chinese-electric-vehicles-in-europe" target="_blank" rel="noopener">EVniculus</a>). Ранние версии переводчика не работали с рядом станций; современные согласуют большие сети, но правило «проверить на вашей сети» никто не отменял — разбор сбоев согласования в <a href="/blog/handshake-oshibka-dc-zaryadki.html">статье о handshake</a>.</p>'
-  '<p>Для справки: максимальная мощность приёма стандарта GB/T DC — около 230 кВт (<a href="https://www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html" target="_blank" rel="noopener">Дром</a>), так что «планка» адаптера 250–300 А покрывает почти все российские станции. Полностью «отечественный» коннектор класса Xtronik стоит порядка 70 тыс. ₽ — это нишевый вариант для энтузиастов, а не для первой покупки.</p>'
-  '<h2>Чек-лист покупки адаптера</h2>'
+  '<p>ÐÐ¾ÑÐµÐ¼Ñ DC-Ð°Ð´Ð°Ð¿ÑÐµÑ Â«ÐºÐ°Ð¿ÑÐ¸Ð·Ð½ÐµÐµÂ» AC: CCS2 Ð¾Ð±ÑÐ°ÐµÑÑÑ ÑÐ¾ ÑÑÐ°Ð½ÑÐ¸ÐµÐ¹ Ð¿Ð¾ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ñ PLC, GB/T DC â Ð¿Ð¾ CAN, Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð¿ÐµÑÐµÐ²Ð¾Ð´Ð¸ÑÑ Ð¿ÐµÑÐµÐ³Ð¾Ð²Ð¾ÑÑ Ð¼ÐµÐ¶Ð´Ñ ÑÑÐ°Ð½Ð´Ð°ÑÑÐ°Ð¼Ð¸ (<a href="https://evniculus.eu/ru/blogs/journal/everything-you-need-to-know-about-the-ccs2-to-gbt-adapters-charging-chinese-electric-vehicles-in-europe" target="_blank" rel="noopener">EVniculus</a>). Ð Ð°Ð½Ð½Ð¸Ðµ Ð²ÐµÑÑÐ¸Ð¸ Ð¿ÐµÑÐµÐ²Ð¾Ð´ÑÐ¸ÐºÐ° Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°Ð»Ð¸ Ñ ÑÑÐ´Ð¾Ð¼ ÑÑÐ°Ð½ÑÐ¸Ð¹; ÑÐ¾Ð²ÑÐµÐ¼ÐµÐ½Ð½ÑÐµ ÑÐ¾Ð³Ð»Ð°ÑÑÑÑ Ð±Ð¾Ð»ÑÑÐ¸Ðµ ÑÐµÑÐ¸, Ð½Ð¾ Ð¿ÑÐ°Ð²Ð¸Ð»Ð¾ Â«Ð¿ÑÐ¾Ð²ÐµÑÐ¸ÑÑ Ð½Ð° Ð²Ð°ÑÐµÐ¹ ÑÐµÑÐ¸Â» Ð½Ð¸ÐºÑÐ¾ Ð½Ðµ Ð¾ÑÐ¼ÐµÐ½ÑÐ» â ÑÐ°Ð·Ð±Ð¾Ñ ÑÐ±Ð¾ÐµÐ² ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ñ Ð² <a href="/blog/handshake-oshibka-dc-zaryadki.html">ÑÑÐ°ÑÑÐµ Ð¾ handshake</a>.</p>'
+  '<p>ÐÐ»Ñ ÑÐ¿ÑÐ°Ð²ÐºÐ¸: Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½Ð°Ñ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¿ÑÐ¸ÑÐ¼Ð° ÑÑÐ°Ð½Ð´Ð°ÑÑÐ° GB/T DC â Ð¾ÐºÐ¾Ð»Ð¾ 230 ÐºÐÑ (<a href="https://www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html" target="_blank" rel="noopener">ÐÑÐ¾Ð¼</a>), ÑÐ°Ðº ÑÑÐ¾ Â«Ð¿Ð»Ð°Ð½ÐºÐ°Â» Ð°Ð´Ð°Ð¿ÑÐµÑÐ° 250â300 Ð Ð¿Ð¾ÐºÑÑÐ²Ð°ÐµÑ Ð¿Ð¾ÑÑÐ¸ Ð²ÑÐµ ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸. ÐÐ¾Ð»Ð½Ð¾ÑÑÑÑ Â«Ð¾ÑÐµÑÐµÑÑÐ²ÐµÐ½Ð½ÑÐ¹Â» ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾Ñ ÐºÐ»Ð°ÑÑÐ° Xtronik ÑÑÐ¾Ð¸Ñ Ð¿Ð¾ÑÑÐ´ÐºÐ° 70 ÑÑÑ. â½ â ÑÑÐ¾ Ð½Ð¸ÑÐµÐ²ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ Ð´Ð»Ñ ÑÐ½ÑÑÐ·Ð¸Ð°ÑÑÐ¾Ð², Ð° Ð½Ðµ Ð´Ð»Ñ Ð¿ÐµÑÐ²Ð¾Ð¹ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸.</p>'
+  '<h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°</h2>'
   '<ol>'
-  '<li>Определите разъём вашей машины по карточке модели (GB/T AC/DC или Type 2/CCS2) — <a href="/models/">указатель моделей</a>.</li>'
-  '<li>Решите, что закрываете: городскую AC-зарядку (дешёвый адаптер) или быстрые DC (дорогой, с протоколом).</li>'
-  '<li>Проверьте поддержку протокола у продавца: «совместим со всеми станциями» — признак маркетинга, а не факта; спрашивайте список протестированных сетей.</li>'
-  '<li>Покупайте с правом возврата: тестируйте на 2–3 станциях вашего города — наша <a href="/charging/">карта</a> подскажет, какие сети рядом.</li>'
-  '<li>Для AC достаточно 22 кВт: трёхфазная розетка у парковки без машины с трёхфазным OBC не даст прироста (см. <a href="/pain/domashnie-stancii.html">гайд по домашним станциям</a>).</li>'
+  '<li>ÐÐ¿ÑÐµÐ´ÐµÐ»Ð¸ÑÐµ ÑÐ°Ð·ÑÑÐ¼ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¿Ð¾ ÐºÐ°ÑÑÐ¾ÑÐºÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ (GB/T AC/DC Ð¸Ð»Ð¸ Type 2/CCS2) â <a href="/models/">ÑÐºÐ°Ð·Ð°ÑÐµÐ»Ñ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹</a>.</li>'
+  '<li>Ð ÐµÑÐ¸ÑÐµ, ÑÑÐ¾ Ð·Ð°ÐºÑÑÐ²Ð°ÐµÑÐµ: Ð³Ð¾ÑÐ¾Ð´ÑÐºÑÑ AC-Ð·Ð°ÑÑÐ´ÐºÑ (Ð´ÐµÑÑÐ²ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ) Ð¸Ð»Ð¸ Ð±ÑÑÑÑÑÐµ DC (Ð´Ð¾ÑÐ¾Ð³Ð¾Ð¹, Ñ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð¾Ð¼).</li>'
+  '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð° Ñ Ð¿ÑÐ¾Ð´Ð°Ð²ÑÐ°: Â«ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼ ÑÐ¾ Ð²ÑÐµÐ¼Ð¸ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼Ð¸Â» â Ð¿ÑÐ¸Ð·Ð½Ð°Ðº Ð¼Ð°ÑÐºÐµÑÐ¸Ð½Ð³Ð°, Ð° Ð½Ðµ ÑÐ°ÐºÑÐ°; ÑÐ¿ÑÐ°ÑÐ¸Ð²Ð°Ð¹ÑÐµ ÑÐ¿Ð¸ÑÐ¾Ðº Ð¿ÑÐ¾ÑÐµÑÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÑ ÑÐµÑÐµÐ¹.</li>'
+  '<li>ÐÐ¾ÐºÑÐ¿Ð°Ð¹ÑÐµ Ñ Ð¿ÑÐ°Ð²Ð¾Ð¼ Ð²Ð¾Ð·Ð²ÑÐ°ÑÐ°: ÑÐµÑÑÐ¸ÑÑÐ¹ÑÐµ Ð½Ð° 2â3 ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð²Ð°ÑÐµÐ³Ð¾ Ð³Ð¾ÑÐ¾Ð´Ð° â Ð½Ð°ÑÐ° <a href="/charging/">ÐºÐ°ÑÑÐ°</a> Ð¿Ð¾Ð´ÑÐºÐ°Ð¶ÐµÑ, ÐºÐ°ÐºÐ¸Ðµ ÑÐµÑÐ¸ ÑÑÐ´Ð¾Ð¼.</li>'
+  '<li>ÐÐ»Ñ AC Ð´Ð¾ÑÑÐ°ÑÐ¾ÑÐ½Ð¾ 22 ÐºÐÑ: ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° Ñ Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐ¸ Ð±ÐµÐ· Ð¼Ð°ÑÐ¸Ð½Ñ Ñ ÑÑÑÑÑÐ°Ð·Ð½ÑÐ¼ OBC Ð½Ðµ Ð´Ð°ÑÑ Ð¿ÑÐ¸ÑÐ¾ÑÑÐ° (ÑÐ¼. <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼</a>).</li>'
   '</ol>'),
- 'domashnie-stancii': ('<h2>Переносная или стационарная: честное сравнение</h2>'
-  '<div class="tblwrap"><table><thead><tr><th>Критерий</th><th>Переносное ЗУ</th><th>Стационарная станция</th></tr></thead><tbody>'
-  '<tr><td>Цена</td><td>от 6–15 тыс. ₽</td><td>от 30–60 тыс. ₽ + монтаж</td></tr>'
-  '<tr><td>Мобильность</td><td>да, в багажнике</td><td>нет</td></tr>'
-  '<tr><td>Защиты</td><td>зависит от модели; у дешёвых нет контроля утечки DC</td><td>документированные, RCD тип A/B</td></tr>'
-  '<tr><td>Кому подходит</td><td>дом, дача, поездки, резерв</td><td>регулярная ночная зарядка у парковки</td></tr>'
+ 'domashnie-stancii': ('<h2>ÐÐµÑÐµÐ½Ð¾ÑÐ½Ð°Ñ Ð¸Ð»Ð¸ ÑÑÐ°ÑÐ¸Ð¾Ð½Ð°ÑÐ½Ð°Ñ: ÑÐµÑÑÐ½Ð¾Ðµ ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ</h2>'
+  '<div class="tblwrap"><table><thead><tr><th>ÐÑÐ¸ÑÐµÑÐ¸Ð¹</th><th>ÐÐµÑÐµÐ½Ð¾ÑÐ½Ð¾Ðµ ÐÐ£</th><th>Ð¡ÑÐ°ÑÐ¸Ð¾Ð½Ð°ÑÐ½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ</th></tr></thead><tbody>'
+  '<tr><td>Ð¦ÐµÐ½Ð°</td><td>Ð¾Ñ 6â15 ÑÑÑ. â½</td><td>Ð¾Ñ 30â60 ÑÑÑ. â½ + Ð¼Ð¾Ð½ÑÐ°Ð¶</td></tr>'
+  '<tr><td>ÐÐ¾Ð±Ð¸Ð»ÑÐ½Ð¾ÑÑÑ</td><td>Ð´Ð°, Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ</td><td>Ð½ÐµÑ</td></tr>'
+  '<tr><td>ÐÐ°ÑÐ¸ÑÑ</td><td>Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ð¸; Ñ Ð´ÐµÑÑÐ²ÑÑ Ð½ÐµÑ ÐºÐ¾Ð½ÑÑÐ¾Ð»Ñ ÑÑÐµÑÐºÐ¸ DC</td><td>Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐµ, RCD ÑÐ¸Ð¿ A/B</td></tr>'
+  '<tr><td>ÐÐ¾Ð¼Ñ Ð¿Ð¾Ð´ÑÐ¾Ð´Ð¸Ñ</td><td>Ð´Ð¾Ð¼, Ð´Ð°ÑÐ°, Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸, ÑÐµÐ·ÐµÑÐ²</td><td>ÑÐµÐ³ÑÐ»ÑÑÐ½Ð°Ñ Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ñ Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐ¸</td></tr>'
   '</tbody></table></div>'
-  '<p>Почему обычная розетка — не постоянное решение: зарядка EV — многочасовая нагрузка большой мощности, и слабые контакты розетки греются даже при 10–13 А. Опыт электрики сообщества сводится к правилам: выделенная линия от щита, УЗО с учётом пульсирующих утечек (тип A/B), промышленный разъём CEE 32 А вместо бытовой розетки, сечение кабеля по длине линии (<a href="https://www.drive2.ru/l/738952629043866967/" target="_blank" rel="noopener">Drive2, разбор по Changan Q05</a>).</p>'
-  '<h2>Сколько стоит установить станцию в многоэтажке</h2>'
-  '<p>Ориентир по практике: согласование и проектирование — около 60 тыс. ₽; кабели и материалы для трассы 100–150 м — около 75 тыс. ₽; станция — от 150–170 тыс. ₽; монтаж и подключение — около 125 тыс. ₽. Итого при длинной кабельной трассе — 350–600 тыс. ₽, при близком машино-месте заметно дешевле (<a href="https://auto.mail.ru/article/98120-skolko-stoit-zaryadit-ehlektromobil/" target="_blank" rel="noopener">Авто Mail</a>). В частном доме проще: если на дом выделено более 8 кВт, станция с монтажом обходится примерно в 150–220 тыс. ₽.</p>'
-  '<h2>Типичные ошибки</h2>'
+  '<p>ÐÐ¾ÑÐµÐ¼Ñ Ð¾Ð±ÑÑÐ½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° â Ð½Ðµ Ð¿Ð¾ÑÑÐ¾ÑÐ½Ð½Ð¾Ðµ ÑÐµÑÐµÐ½Ð¸Ðµ: Ð·Ð°ÑÑÐ´ÐºÐ° EV â Ð¼Ð½Ð¾Ð³Ð¾ÑÐ°ÑÐ¾Ð²Ð°Ñ Ð½Ð°Ð³ÑÑÐ·ÐºÐ° Ð±Ð¾Ð»ÑÑÐ¾Ð¹ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸, Ð¸ ÑÐ»Ð°Ð±ÑÐµ ÐºÐ¾Ð½ÑÐ°ÐºÑÑ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð³ÑÐµÑÑÑÑ Ð´Ð°Ð¶Ðµ Ð¿ÑÐ¸ 10â13 Ð. ÐÐ¿ÑÑ ÑÐ»ÐµÐºÑÑÐ¸ÐºÐ¸ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð° ÑÐ²Ð¾Ð´Ð¸ÑÑÑ Ðº Ð¿ÑÐ°Ð²Ð¸Ð»Ð°Ð¼: Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ Ð¾Ñ ÑÐ¸ÑÐ°, Ð£ÐÐ Ñ ÑÑÑÑÐ¾Ð¼ Ð¿ÑÐ»ÑÑÐ¸ÑÑÑÑÐ¸Ñ ÑÑÐµÑÐµÐº (ÑÐ¸Ð¿ A/B), Ð¿ÑÐ¾Ð¼ÑÑÐ»ÐµÐ½Ð½ÑÐ¹ ÑÐ°Ð·ÑÑÐ¼ CEE 32 Ð Ð²Ð¼ÐµÑÑÐ¾ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸, ÑÐµÑÐµÐ½Ð¸Ðµ ÐºÐ°Ð±ÐµÐ»Ñ Ð¿Ð¾ Ð´Ð»Ð¸Ð½Ðµ Ð»Ð¸Ð½Ð¸Ð¸ (<a href="https://www.drive2.ru/l/738952629043866967/" target="_blank" rel="noopener">Drive2, ÑÐ°Ð·Ð±Ð¾Ñ Ð¿Ð¾ Changan Q05</a>).</p>'
+  '<h2>Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ ÑÑÑÐ°Ð½Ð¾Ð²Ð¸ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð² Ð¼Ð½Ð¾Ð³Ð¾ÑÑÐ°Ð¶ÐºÐµ</h2>'
+  '<p>ÐÑÐ¸ÐµÐ½ÑÐ¸Ñ Ð¿Ð¾ Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ: ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ Ð¸ Ð¿ÑÐ¾ÐµÐºÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ â Ð¾ÐºÐ¾Ð»Ð¾ 60 ÑÑÑ. â½; ÐºÐ°Ð±ÐµÐ»Ð¸ Ð¸ Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ñ Ð´Ð»Ñ ÑÑÐ°ÑÑÑ 100â150 Ð¼ â Ð¾ÐºÐ¾Ð»Ð¾ 75 ÑÑÑ. â½; ÑÑÐ°Ð½ÑÐ¸Ñ â Ð¾Ñ 150â170 ÑÑÑ. â½; Ð¼Ð¾Ð½ÑÐ°Ð¶ Ð¸ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸Ðµ â Ð¾ÐºÐ¾Ð»Ð¾ 125 ÑÑÑ. â½. ÐÑÐ¾Ð³Ð¾ Ð¿ÑÐ¸ Ð´Ð»Ð¸Ð½Ð½Ð¾Ð¹ ÐºÐ°Ð±ÐµÐ»ÑÐ½Ð¾Ð¹ ÑÑÐ°ÑÑÐµ â 350â600 ÑÑÑ. â½, Ð¿ÑÐ¸ Ð±Ð»Ð¸Ð·ÐºÐ¾Ð¼ Ð¼Ð°ÑÐ¸Ð½Ð¾-Ð¼ÐµÑÑÐµ Ð·Ð°Ð¼ÐµÑÐ½Ð¾ Ð´ÐµÑÐµÐ²Ð»Ðµ (<a href="https://auto.mail.ru/article/98120-skolko-stoit-zaryadit-ehlektromobil/" target="_blank" rel="noopener">ÐÐ²ÑÐ¾ Mail</a>). Ð ÑÐ°ÑÑÐ½Ð¾Ð¼ Ð´Ð¾Ð¼Ðµ Ð¿ÑÐ¾ÑÐµ: ÐµÑÐ»Ð¸ Ð½Ð° Ð´Ð¾Ð¼ Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð¾ Ð±Ð¾Ð»ÐµÐµ 8 ÐºÐÑ, ÑÑÐ°Ð½ÑÐ¸Ñ Ñ Ð¼Ð¾Ð½ÑÐ°Ð¶Ð¾Ð¼ Ð¾Ð±ÑÐ¾Ð´Ð¸ÑÑÑ Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ Ð² 150â220 ÑÑÑ. â½.</p>'
+  '<h2>Ð¢Ð¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¾ÑÐ¸Ð±ÐºÐ¸</h2>'
   '<ul>'
-  '<li>Купить станцию 22 кВт трёхфазную для машины с однофазным OBC 7 кВт — скорость не вырастет: ограничивает бортовое зарядное.</li>'
-  '<li>Ставить УЗО типа AC: для зарядной электроники нужен тип A или B с учётом утечек DC.</li>'
-  '<li>Забыть про «китайское время»: у части машин расписание зарядки живёт по китайскому часовому поясу после русификации — сессии стартуют со сдвигом, лечится настройкой времени блока, а не мультимедиа.</li>'
-  '<li>Заряжать в герметичном шкафу без вентиляции: летом внутри заметно жарче, электроника режет мощность.</li>'
+  '<li>ÐÑÐ¿Ð¸ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ 22 ÐºÐÑ ÑÑÑÑÑÐ°Ð·Ð½ÑÑ Ð´Ð»Ñ Ð¼Ð°ÑÐ¸Ð½Ñ Ñ Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð½ÑÐ¼ OBC 7 ÐºÐÑ â ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð½Ðµ Ð²ÑÑÐ°ÑÑÐµÑ: Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐ¸Ð²Ð°ÐµÑ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ.</li>'
+  '<li>Ð¡ÑÐ°Ð²Ð¸ÑÑ Ð£ÐÐ ÑÐ¸Ð¿Ð° AC: Ð´Ð»Ñ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÐ¸ Ð½ÑÐ¶ÐµÐ½ ÑÐ¸Ð¿ A Ð¸Ð»Ð¸ B Ñ ÑÑÑÑÐ¾Ð¼ ÑÑÐµÑÐµÐº DC.</li>'
+  '<li>ÐÐ°Ð±ÑÑÑ Ð¿ÑÐ¾ Â«ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ðµ Ð²ÑÐµÐ¼ÑÂ»: Ñ ÑÐ°ÑÑÐ¸ Ð¼Ð°ÑÐ¸Ð½ ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¶Ð¸Ð²ÑÑ Ð¿Ð¾ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð¼Ñ ÑÐ°ÑÐ¾Ð²Ð¾Ð¼Ñ Ð¿Ð¾ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ ÑÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸ â ÑÐµÑÑÐ¸Ð¸ ÑÑÐ°ÑÑÑÑÑ ÑÐ¾ ÑÐ´Ð²Ð¸Ð³Ð¾Ð¼, Ð»ÐµÑÐ¸ÑÑÑ Ð½Ð°ÑÑÑÐ¾Ð¹ÐºÐ¾Ð¹ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð±Ð»Ð¾ÐºÐ°, Ð° Ð½Ðµ Ð¼ÑÐ»ÑÑÐ¸Ð¼ÐµÐ´Ð¸Ð°.</li>'
+  '<li>ÐÐ°ÑÑÐ¶Ð°ÑÑ Ð² Ð³ÐµÑÐ¼ÐµÑÐ¸ÑÐ½Ð¾Ð¼ ÑÐºÐ°ÑÑ Ð±ÐµÐ· Ð²ÐµÐ½ÑÐ¸Ð»ÑÑÐ¸Ð¸: Ð»ÐµÑÐ¾Ð¼ Ð²Ð½ÑÑÑÐ¸ Ð·Ð°Ð¼ÐµÑÐ½Ð¾ Ð¶Ð°ÑÑÐµ, ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÐ° ÑÐµÐ¶ÐµÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ.</li>'
   '</ul>'
-  '<p>Экономику проверьте в <a href="/calculator/">калькуляторе</a>: при ночном тарифе 3–4 ₽/кВт·ч 15 000 км в месяц обходятся дешевле, чем 2 000 км на бензине.</p>'),
- 'zaryadka-na-trasse': ('<h2>Планирование трассы: три правила, которые экономят день</h2>'
+  '<p>Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸ÐºÑ Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ Ð² <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐµ</a>: Ð¿ÑÐ¸ Ð½Ð¾ÑÐ½Ð¾Ð¼ ÑÐ°ÑÐ¸ÑÐµ 3â4 â½/ÐºÐÑÂ·Ñ 15 000 ÐºÐ¼ Ð² Ð¼ÐµÑÑÑ Ð¾Ð±ÑÐ¾Ð´ÑÑÑÑ Ð´ÐµÑÐµÐ²Ð»Ðµ, ÑÐµÐ¼ 2 000 ÐºÐ¼ Ð½Ð° Ð±ÐµÐ½Ð·Ð¸Ð½Ðµ.</p>'),
+ 'zaryadka-na-trasse': ('<h2>ÐÐ»Ð°Ð½Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ ÑÑÐ°ÑÑÑ: ÑÑÐ¸ Ð¿ÑÐ°Ð²Ð¸Ð»Ð°, ÐºÐ¾ÑÐ¾ÑÑÐµ ÑÐºÐ¾Ð½Ð¾Ð¼ÑÑ Ð´ÐµÐ½Ñ</h2>'
   '<ol>'
-  '<li><b>Запасная точка.</b> Держите в маршруте вторую станцию на каждом отрезке: до 26% станций бывают неисправны при «зелёном» статусе в приложении, и не все сети честно обновляют статусы.</li>'
-  '<li><b>Мощность — не всё.</b> Станции 60–100 кВт прощают несовместимости протоколов чаще, чем терминалы 150+ кВт: если машина «капризничает» на сверхбыстрой, переключитесь на среднюю.</li>'
-  '<li><b>Плата за простой.</b> У ряда операторов счётчик капает после окончания зарядки, пока машина занимает порт: уезжайте сразу, как только сессия завершена.</li>'
+  '<li><b>ÐÐ°Ð¿Ð°ÑÐ½Ð°Ñ ÑÐ¾ÑÐºÐ°.</b> ÐÐµÑÐ¶Ð¸ÑÐµ Ð² Ð¼Ð°ÑÑÑÑÑÐµ Ð²ÑÐ¾ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ð° ÐºÐ°Ð¶Ð´Ð¾Ð¼ Ð¾ÑÑÐµÐ·ÐºÐµ: Ð´Ð¾ 26% ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð±ÑÐ²Ð°ÑÑ Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ñ Ð¿ÑÐ¸ Â«Ð·ÐµÐ»ÑÐ½Ð¾Ð¼Â» ÑÑÐ°ÑÑÑÐµ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸, Ð¸ Ð½Ðµ Ð²ÑÐµ ÑÐµÑÐ¸ ÑÐµÑÑÐ½Ð¾ Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÑÑ ÑÑÐ°ÑÑÑÑ.</li>'
+  '<li><b>ÐÐ¾ÑÐ½Ð¾ÑÑÑ â Ð½Ðµ Ð²ÑÑ.</b> Ð¡ÑÐ°Ð½ÑÐ¸Ð¸ 60â100 ÐºÐÑ Ð¿ÑÐ¾ÑÐ°ÑÑ Ð½ÐµÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ð¾Ð² ÑÐ°ÑÐµ, ÑÐµÐ¼ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð»Ñ 150+ ÐºÐÑ: ÐµÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° Â«ÐºÐ°Ð¿ÑÐ¸Ð·Ð½Ð¸ÑÐ°ÐµÑÂ» Ð½Ð° ÑÐ²ÐµÑÑÐ±ÑÑÑÑÐ¾Ð¹, Ð¿ÐµÑÐµÐºÐ»ÑÑÐ¸ÑÐµÑÑ Ð½Ð° ÑÑÐµÐ´Ð½ÑÑ.</li>'
+  '<li><b>ÐÐ»Ð°ÑÐ° Ð·Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹.</b> Ð£ ÑÑÐ´Ð° Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ¾Ð² ÑÑÑÑÑÐ¸Ðº ÐºÐ°Ð¿Ð°ÐµÑ Ð¿Ð¾ÑÐ»Ðµ Ð¾ÐºÐ¾Ð½ÑÐ°Ð½Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸, Ð¿Ð¾ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ð° Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð¿Ð¾ÑÑ: ÑÐµÐ·Ð¶Ð°Ð¹ÑÐµ ÑÑÐ°Ð·Ñ, ÐºÐ°Ðº ÑÐ¾Ð»ÑÐºÐ¾ ÑÐµÑÑÐ¸Ñ Ð·Ð°Ð²ÐµÑÑÐµÐ½Ð°.</li>'
   '</ol>'
-  '<p>Зимой добавляйте к плану прогрев: на морозе приём заряда ниже на 30–50%, а первые 15–20 минут сессии идут на пониженной мощности — доехать до станции «на парах» хуже, чем приехать с запасом (см. <a href="/blog/zimnyaya-zaryadka-medlennee.html">гайд по зимней зарядке</a>).</p>'
-  '<h2>Что с платными дорогами</h2>'
-  '<p>До конца 2026 года машины российской сборки ездят по М-1, М-3, М-4, М-11, М-12 и ЦКАД бесплатно — с транспондером T-pass и регистрацией в «Автодоре». Правила и список моделей — в <a href="/blog/besplatnye-trassy-parkovka-ev.html">статье о бесплатных трассах</a>. Импортным EV это не положено, зато для них есть наш <a href="/pain/adapter-gbt.html">гайд по адаптерам</a> — на трассе CCS2-станции встречаются чаще GB/T.</p>'),
- 'podogrev-batarei': ('<h2>Как выжать максимум скорости зимой</h2>'
+  '<p>ÐÐ¸Ð¼Ð¾Ð¹ Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐ¹ÑÐµ Ðº Ð¿Ð»Ð°Ð½Ñ Ð¿ÑÐ¾Ð³ÑÐµÐ²: Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ Ð¿ÑÐ¸ÑÐ¼ Ð·Ð°ÑÑÐ´Ð° Ð½Ð¸Ð¶Ðµ Ð½Ð° 30â50%, Ð° Ð¿ÐµÑÐ²ÑÐµ 15â20 Ð¼Ð¸Ð½ÑÑ ÑÐµÑÑÐ¸Ð¸ Ð¸Ð´ÑÑ Ð½Ð° Ð¿Ð¾Ð½Ð¸Ð¶ÐµÐ½Ð½Ð¾Ð¹ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ â Ð´Ð¾ÐµÑÐ°ÑÑ Ð´Ð¾ ÑÑÐ°Ð½ÑÐ¸Ð¸ Â«Ð½Ð° Ð¿Ð°ÑÐ°ÑÂ» ÑÑÐ¶Ðµ, ÑÐµÐ¼ Ð¿ÑÐ¸ÐµÑÐ°ÑÑ Ñ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼ (ÑÐ¼. <a href="/blog/zimnyaya-zaryadka-medlennee.html">Ð³Ð°Ð¹Ð´ Ð¿Ð¾ Ð·Ð¸Ð¼Ð½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐµ</a>).</p>'
+  '<h2>Ð§ÑÐ¾ Ñ Ð¿Ð»Ð°ÑÐ½ÑÐ¼Ð¸ Ð´Ð¾ÑÐ¾Ð³Ð°Ð¼Ð¸</h2>'
+  '<p>ÐÐ¾ ÐºÐ¾Ð½ÑÐ° 2026 Ð³Ð¾Ð´Ð° Ð¼Ð°ÑÐ¸Ð½Ñ ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¾Ð¹ ÑÐ±Ð¾ÑÐºÐ¸ ÐµÐ·Ð´ÑÑ Ð¿Ð¾ Ð-1, Ð-3, Ð-4, Ð-11, Ð-12 Ð¸ Ð¦ÐÐÐ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ â Ñ ÑÑÐ°Ð½ÑÐ¿Ð¾Ð½Ð´ÐµÑÐ¾Ð¼ T-pass Ð¸ ÑÐµÐ³Ð¸ÑÑÑÐ°ÑÐ¸ÐµÐ¹ Ð² Â«ÐÐ²ÑÐ¾Ð´Ð¾ÑÐµÂ». ÐÑÐ°Ð²Ð¸Ð»Ð° Ð¸ ÑÐ¿Ð¸ÑÐ¾Ðº Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ â Ð² <a href="/blog/besplatnye-trassy-parkovka-ev.html">ÑÑÐ°ÑÑÐµ Ð¾ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½ÑÑ ÑÑÐ°ÑÑÐ°Ñ</a>. ÐÐ¼Ð¿Ð¾ÑÑÐ½ÑÐ¼ EV ÑÑÐ¾ Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¾, Ð·Ð°ÑÐ¾ Ð´Ð»Ñ Ð½Ð¸Ñ ÐµÑÑÑ Ð½Ð°Ñ <a href="/pain/adapter-gbt.html">Ð³Ð°Ð¹Ð´ Ð¿Ð¾ Ð°Ð´Ð°Ð¿ÑÐµÑÐ°Ð¼</a> â Ð½Ð° ÑÑÐ°ÑÑÐµ CCS2-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð²ÑÑÑÐµÑÐ°ÑÑÑÑ ÑÐ°ÑÐµ GB/T.</p>'),
+ 'podogrev-batarei': ('<h2>ÐÐ°Ðº Ð²ÑÐ¶Ð°ÑÑ Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ ÑÐºÐ¾ÑÐ¾ÑÑÐ¸ Ð·Ð¸Ð¼Ð¾Ð¹</h2>'
   '<ol>'
-  '<li><b>Заряжайтесь сразу после поездки:</b> батарея тёплая с дороги, прогрев не нужен — полный приём мощности с первых минут.</li>'
-  '<li><b>Навигация к станции:</b> у машин с тепловым контуром подогрев запускается автоматически при построении маршрута к зарядной точке — просто ставьте станцию в навигацию, а не «езжайте наугад».</li>'
-  '<li><b>Парковка в тепле:</b> подземный паркинг или закрытый гараж экономят 30–60 минут зимнего прогрева и десятки процентов скорости.</li>'
-  '<li><b>Планируйте смену с запасом:</b> запас хода зимой ниже на 25–40%, а сессия дольше — закладывайте это в маршрут (подробно: <a href="/pain/zapas-hoda-zimoy.html">гайд по зимнему запасу хода</a>).</li>'
+  '<li><b>ÐÐ°ÑÑÐ¶Ð°Ð¹ÑÐµÑÑ ÑÑÐ°Ð·Ñ Ð¿Ð¾ÑÐ»Ðµ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸:</b> Ð±Ð°ÑÐ°ÑÐµÑ ÑÑÐ¿Ð»Ð°Ñ Ñ Ð´Ð¾ÑÐ¾Ð³Ð¸, Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð½Ðµ Ð½ÑÐ¶ÐµÐ½ â Ð¿Ð¾Ð»Ð½ÑÐ¹ Ð¿ÑÐ¸ÑÐ¼ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ñ Ð¿ÐµÑÐ²ÑÑ Ð¼Ð¸Ð½ÑÑ.</li>'
+  '<li><b>ÐÐ°Ð²Ð¸Ð³Ð°ÑÐ¸Ñ Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸:</b> Ñ Ð¼Ð°ÑÐ¸Ð½ Ñ ÑÐµÐ¿Ð»Ð¾Ð²ÑÐ¼ ÐºÐ¾Ð½ÑÑÑÐ¾Ð¼ Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð·Ð°Ð¿ÑÑÐºÐ°ÐµÑÑÑ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸ Ð¿ÑÐ¸ Ð¿Ð¾ÑÑÑÐ¾ÐµÐ½Ð¸Ð¸ Ð¼Ð°ÑÑÑÑÑÐ° Ðº Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÐ¾ÑÐºÐµ â Ð¿ÑÐ¾ÑÑÐ¾ ÑÑÐ°Ð²ÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ñ Ð² Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ñ, Ð° Ð½Ðµ Â«ÐµÐ·Ð¶Ð°Ð¹ÑÐµ Ð½Ð°ÑÐ³Ð°Ð´Â».</li>'
+  '<li><b>ÐÐ°ÑÐºÐ¾Ð²ÐºÐ° Ð² ÑÐµÐ¿Ð»Ðµ:</b> Ð¿Ð¾Ð´Ð·ÐµÐ¼Ð½ÑÐ¹ Ð¿Ð°ÑÐºÐ¸Ð½Ð³ Ð¸Ð»Ð¸ Ð·Ð°ÐºÑÑÑÑÐ¹ Ð³Ð°ÑÐ°Ð¶ ÑÐºÐ¾Ð½Ð¾Ð¼ÑÑ 30â60 Ð¼Ð¸Ð½ÑÑ Ð·Ð¸Ð¼Ð½ÐµÐ³Ð¾ Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð° Ð¸ Ð´ÐµÑÑÑÐºÐ¸ Ð¿ÑÐ¾ÑÐµÐ½ÑÐ¾Ð² ÑÐºÐ¾ÑÐ¾ÑÑÐ¸.</li>'
+  '<li><b>ÐÐ»Ð°Ð½Ð¸ÑÑÐ¹ÑÐµ ÑÐ¼ÐµÐ½Ñ Ñ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼:</b> Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° Ð·Ð¸Ð¼Ð¾Ð¹ Ð½Ð¸Ð¶Ðµ Ð½Ð° 25â40%, Ð° ÑÐµÑÑÐ¸Ñ Ð´Ð¾Ð»ÑÑÐµ â Ð·Ð°ÐºÐ»Ð°Ð´ÑÐ²Ð°Ð¹ÑÐµ ÑÑÐ¾ Ð² Ð¼Ð°ÑÑÑÑÑ (Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½Ð¾: <a href="/pain/zapas-hoda-zimoy.html">Ð³Ð°Ð¹Ð´ Ð¿Ð¾ Ð·Ð¸Ð¼Ð½ÐµÐ¼Ñ Ð·Ð°Ð¿Ð°ÑÑ ÑÐ¾Ð´Ð°</a>).</li>'
   '</ol>'
-  '<p>Важно: у части машин (ранние Evolute и др.) теплового контура нет вообще — подогрев батареи не предусмотрен конструкцией, и единственный «подогреватель» — движение. Это не поломка, а особенность комплектации: проверьте свою модель в <a href="/models/">карточке</a>.</p>'),
- 'zaryadka-ot-rozetki': ('<h2>Реальные скорости от розетки</h2>'
-  '<p>Честная таблица для батареи 60 кВт·ч: бытовая розетка 10–13 А — примерно 1,5–3 кВт, полный заряд около 20–30 часов; силовая розетка CEE 32 А с переносным ЗУ — 7 кВт, полный заряд около 9 часов. Реальный кейс владельца BYD Song Plus: заряд от розетки до Хабаровска занял бы «часов 20» на каждую половину маршрута — для города приемлемо, для трассы нет (<a href="https://www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html" target="_blank" rel="noopener">Дром</a>). У Toyota bZ3X от бытовой розетки — только ~1,5 кВт в час: вариант «на крайний случай».</p>'
-  '<p>Что нужно для регулярной зарядки от розетки: выделенная линия от щита, УЗО с учётом пульсирующих утечек, исправная розетка без нагрева контактов. Переносные ЗУ с пистолетом GB/T и Type 2 — в <a href="/catalog/">каталоге</a>; правило «розетка — временный вариант, линия — постоянный» описано в <a href="/pain/domashnie-stancii.html">гайде по домашним станциям</a>.</p>'
-  '<h2>Частые ошибки</h2>'
+  '<p>ÐÐ°Ð¶Ð½Ð¾: Ñ ÑÐ°ÑÑÐ¸ Ð¼Ð°ÑÐ¸Ð½ (ÑÐ°Ð½Ð½Ð¸Ðµ Evolute Ð¸ Ð´Ñ.) ÑÐµÐ¿Ð»Ð¾Ð²Ð¾Ð³Ð¾ ÐºÐ¾Ð½ÑÑÑÐ° Ð½ÐµÑ Ð²Ð¾Ð¾Ð±ÑÐµ â Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð½Ðµ Ð¿ÑÐµÐ´ÑÑÐ¼Ð¾ÑÑÐµÐ½ ÐºÐ¾Ð½ÑÑÑÑÐºÑÐ¸ÐµÐ¹, Ð¸ ÐµÐ´Ð¸Ð½ÑÑÐ²ÐµÐ½Ð½ÑÐ¹ Â«Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ²Ð°ÑÐµÐ»ÑÂ» â Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ. Ð­ÑÐ¾ Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ°, Ð° Ð¾ÑÐ¾Ð±ÐµÐ½Ð½Ð¾ÑÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸: Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ ÑÐ²Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ Ð² <a href="/models/">ÐºÐ°ÑÑÐ¾ÑÐºÐµ</a>.</p>'),
+ 'zaryadka-ot-rozetki': ('<h2>Ð ÐµÐ°Ð»ÑÐ½ÑÐµ ÑÐºÐ¾ÑÐ¾ÑÑÐ¸ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸</h2>'
+  '<p>Ð§ÐµÑÑÐ½Ð°Ñ ÑÐ°Ð±Ð»Ð¸ÑÐ° Ð´Ð»Ñ Ð±Ð°ÑÐ°ÑÐµÐ¸ 60 ÐºÐÑÂ·Ñ: Ð±ÑÑÐ¾Ð²Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° 10â13 Ð â Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ 1,5â3 ÐºÐÑ, Ð¿Ð¾Ð»Ð½ÑÐ¹ Ð·Ð°ÑÑÐ´ Ð¾ÐºÐ¾Ð»Ð¾ 20â30 ÑÐ°ÑÐ¾Ð²; ÑÐ¸Ð»Ð¾Ð²Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° CEE 32 Ð Ñ Ð¿ÐµÑÐµÐ½Ð¾ÑÐ½ÑÐ¼ ÐÐ£ â 7 ÐºÐÑ, Ð¿Ð¾Ð»Ð½ÑÐ¹ Ð·Ð°ÑÑÐ´ Ð¾ÐºÐ¾Ð»Ð¾ 9 ÑÐ°ÑÐ¾Ð². Ð ÐµÐ°Ð»ÑÐ½ÑÐ¹ ÐºÐµÐ¹Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ° BYD Song Plus: Ð·Ð°ÑÑÐ´ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð´Ð¾ Ð¥Ð°Ð±Ð°ÑÐ¾Ð²ÑÐºÐ° Ð·Ð°Ð½ÑÐ» Ð±Ñ Â«ÑÐ°ÑÐ¾Ð² 20Â» Ð½Ð° ÐºÐ°Ð¶Ð´ÑÑ Ð¿Ð¾Ð»Ð¾Ð²Ð¸Ð½Ñ Ð¼Ð°ÑÑÑÑÑÐ° â Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´Ð° Ð¿ÑÐ¸ÐµÐ¼Ð»ÐµÐ¼Ð¾, Ð´Ð»Ñ ÑÑÐ°ÑÑÑ Ð½ÐµÑ (<a href="https://www.drom.ru/info/test-drive/byd-song-plus-gb-t-99183.html" target="_blank" rel="noopener">ÐÑÐ¾Ð¼</a>). Ð£ Toyota bZ3X Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ â ÑÐ¾Ð»ÑÐºÐ¾ ~1,5 ÐºÐÑ Ð² ÑÐ°Ñ: Ð²Ð°ÑÐ¸Ð°Ð½Ñ Â«Ð½Ð° ÐºÑÐ°Ð¹Ð½Ð¸Ð¹ ÑÐ»ÑÑÐ°Ð¹Â».</p>'
+  '<p>Ð§ÑÐ¾ Ð½ÑÐ¶Ð½Ð¾ Ð´Ð»Ñ ÑÐµÐ³ÑÐ»ÑÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸: Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ Ð¾Ñ ÑÐ¸ÑÐ°, Ð£ÐÐ Ñ ÑÑÑÑÐ¾Ð¼ Ð¿ÑÐ»ÑÑÐ¸ÑÑÑÑÐ¸Ñ ÑÑÐµÑÐµÐº, Ð¸ÑÐ¿ÑÐ°Ð²Ð½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° Ð±ÐµÐ· Ð½Ð°Ð³ÑÐµÐ²Ð° ÐºÐ¾Ð½ÑÐ°ÐºÑÐ¾Ð². ÐÐµÑÐµÐ½Ð¾ÑÐ½ÑÐµ ÐÐ£ Ñ Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÐ¾Ð¼ GB/T Ð¸ Type 2 â Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>; Ð¿ÑÐ°Ð²Ð¸Ð»Ð¾ Â«ÑÐ¾Ð·ÐµÑÐºÐ° â Ð²ÑÐµÐ¼ÐµÐ½Ð½ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ, Ð»Ð¸Ð½Ð¸Ñ â Ð¿Ð¾ÑÑÐ¾ÑÐ½Ð½ÑÐ¹Â» Ð¾Ð¿Ð¸ÑÐ°Ð½Ð¾ Ð² <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸ÑÐ¼</a>.</p>'
+  '<h2>Ð§Ð°ÑÑÑÐµ Ð¾ÑÐ¸Ð±ÐºÐ¸</h2>'
   '<ul>'
-  '<li>Купили переноску на 32 А и воткнули в старую розетку: автомат держит 16 А, проводка греется — реальный риск пожара.</li>'
-  '<li>Ожидание, что «трёхфазная розетка ускорит любую машину»: скорость ограничивает бортовое зарядное, а не розетка.</li>'
-  '<li>Регулярная зарядка через длинный смотанный удлинитель: бухта греется — используйте специальные удлинители с полным заземлением (<a href="/pain/udlinitel.html">гайд</a>).</li>'
+  '<li>ÐÑÐ¿Ð¸Ð»Ð¸ Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÑ Ð½Ð° 32 Ð Ð¸ Ð²Ð¾ÑÐºÐ½ÑÐ»Ð¸ Ð² ÑÑÐ°ÑÑÑ ÑÐ¾Ð·ÐµÑÐºÑ: Ð°Ð²ÑÐ¾Ð¼Ð°Ñ Ð´ÐµÑÐ¶Ð¸Ñ 16 Ð, Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÐ° Ð³ÑÐµÐµÑÑÑ â ÑÐµÐ°Ð»ÑÐ½ÑÐ¹ ÑÐ¸ÑÐº Ð¿Ð¾Ð¶Ð°ÑÐ°.</li>'
+  '<li>ÐÐ¶Ð¸Ð´Ð°Ð½Ð¸Ðµ, ÑÑÐ¾ Â«ÑÑÑÑÑÐ°Ð·Ð½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° ÑÑÐºÐ¾ÑÐ¸Ñ Ð»ÑÐ±ÑÑ Ð¼Ð°ÑÐ¸Ð½ÑÂ»: ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐ¸Ð²Ð°ÐµÑ Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ, Ð° Ð½Ðµ ÑÐ¾Ð·ÐµÑÐºÐ°.</li>'
+  '<li>Ð ÐµÐ³ÑÐ»ÑÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° ÑÐµÑÐµÐ· Ð´Ð»Ð¸Ð½Ð½ÑÐ¹ ÑÐ¼Ð¾ÑÐ°Ð½Ð½ÑÐ¹ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ: Ð±ÑÑÑÐ° Ð³ÑÐµÐµÑÑÑ â Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐ¹ÑÐµ ÑÐ¿ÐµÑÐ¸Ð°Ð»ÑÐ½ÑÐµ ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ð¸ Ñ Ð¿Ð¾Ð»Ð½ÑÐ¼ Ð·Ð°Ð·ÐµÐ¼Ð»ÐµÐ½Ð¸ÐµÐ¼ (<a href="/pain/udlinitel.html">Ð³Ð°Ð¹Ð´</a>).</li>'
   '</ul>'),
- 'kabel-ne-otdaet': ('<h2>Диагностика по шагам</h2>'
+ 'kabel-ne-otdaet': ('<h2>ÐÐ¸Ð°Ð³Ð½Ð¾ÑÑÐ¸ÐºÐ° Ð¿Ð¾ ÑÐ°Ð³Ð°Ð¼</h2>'
   '<ol>'
-  '<li>Смотрите статус сессии в приложении: если «завершено» при 40% — сессию оборвала станция или машина; если идёт, но мощность мала — смотрите ограничения.</li>'
-  '<li>Проверьте ограничение по температуре: на холодной батарее мощность режется до прогрева (первые 15–20 минут) — это норма, а не «кабель не отдаёт».</li>'
-  '<li>Сравните на другой станции и другим кабелем: работает нормально — виноват кабель/адаптер или терминал.</li>'
-  '<li>Проверьте потери: энергия из сети на 5–10% выше ёмкости батареи — часть энергии уходит в тепло электроники, это норма, а не «воровство» станции.</li>'
+  '<li>Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ ÑÑÐ°ÑÑÑ ÑÐµÑÑÐ¸Ð¸ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸: ÐµÑÐ»Ð¸ Â«Ð·Ð°Ð²ÐµÑÑÐµÐ½Ð¾Â» Ð¿ÑÐ¸ 40% â ÑÐµÑÑÐ¸Ñ Ð¾Ð±Ð¾ÑÐ²Ð°Ð»Ð° ÑÑÐ°Ð½ÑÐ¸Ñ Ð¸Ð»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð°; ÐµÑÐ»Ð¸ Ð¸Ð´ÑÑ, Ð½Ð¾ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¼Ð°Ð»Ð° â ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ñ.</li>'
+  '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ Ð¿Ð¾ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐµ: Ð½Ð° ÑÐ¾Ð»Ð¾Ð´Ð½Ð¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐµ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÑÐµÐ¶ÐµÑÑÑ Ð´Ð¾ Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð° (Ð¿ÐµÑÐ²ÑÐµ 15â20 Ð¼Ð¸Ð½ÑÑ) â ÑÑÐ¾ Ð½Ð¾ÑÐ¼Ð°, Ð° Ð½Ðµ Â«ÐºÐ°Ð±ÐµÐ»Ñ Ð½Ðµ Ð¾ÑÐ´Ð°ÑÑÂ».</li>'
+  '<li>Ð¡ÑÐ°Ð²Ð½Ð¸ÑÐµ Ð½Ð° Ð´ÑÑÐ³Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸ Ð´ÑÑÐ³Ð¸Ð¼ ÐºÐ°Ð±ÐµÐ»ÐµÐ¼: ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð½Ð¾ÑÐ¼Ð°Ð»ÑÐ½Ð¾ â Ð²Ð¸Ð½Ð¾Ð²Ð°Ñ ÐºÐ°Ð±ÐµÐ»Ñ/Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸Ð»Ð¸ ÑÐµÑÐ¼Ð¸Ð½Ð°Ð».</li>'
+  '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¿Ð¾ÑÐµÑÐ¸: ÑÐ½ÐµÑÐ³Ð¸Ñ Ð¸Ð· ÑÐµÑÐ¸ Ð½Ð° 5â10% Ð²ÑÑÐµ ÑÐ¼ÐºÐ¾ÑÑÐ¸ Ð±Ð°ÑÐ°ÑÐµÐ¸ â ÑÐ°ÑÑÑ ÑÐ½ÐµÑÐ³Ð¸Ð¸ ÑÑÐ¾Ð´Ð¸Ñ Ð² ÑÐµÐ¿Ð»Ð¾ ÑÐ»ÐµÐºÑÑÐ¾Ð½Ð¸ÐºÐ¸, ÑÑÐ¾ Ð½Ð¾ÑÐ¼Ð°, Ð° Ð½Ðµ Â«Ð²Ð¾ÑÐ¾Ð²ÑÑÐ²Ð¾Â» ÑÑÐ°Ð½ÑÐ¸Ð¸.</li>'
   '</ol>'
-  '<p>Если греется разъём или вилка переноски — это уже не «медленно», это опасно: прекращайте сессию, проверяйте контакты и сечение. Регулярный нагрев контактов — причина перегоревших розеток и оплавленных вилок.</p>'),
+  '<p>ÐÑÐ»Ð¸ Ð³ÑÐµÐµÑÑÑ ÑÐ°Ð·ÑÑÐ¼ Ð¸Ð»Ð¸ Ð²Ð¸Ð»ÐºÐ° Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÐ¸ â ÑÑÐ¾ ÑÐ¶Ðµ Ð½Ðµ Â«Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾Â», ÑÑÐ¾ Ð¾Ð¿Ð°ÑÐ½Ð¾: Ð¿ÑÐµÐºÑÐ°ÑÐ°Ð¹ÑÐµ ÑÐµÑÑÐ¸Ñ, Ð¿ÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ ÐºÐ¾Ð½ÑÐ°ÐºÑÑ Ð¸ ÑÐµÑÐµÐ½Ð¸Ðµ. Ð ÐµÐ³ÑÐ»ÑÑÐ½ÑÐ¹ Ð½Ð°Ð³ÑÐµÐ² ÐºÐ¾Ð½ÑÐ°ÐºÑÐ¾Ð² â Ð¿ÑÐ¸ÑÐ¸Ð½Ð° Ð¿ÐµÑÐµÐ³Ð¾ÑÐµÐ²ÑÐ¸Ñ ÑÐ¾Ð·ÐµÑÐ¾Ðº Ð¸ Ð¾Ð¿Ð»Ð°Ð²Ð»ÐµÐ½Ð½ÑÑ Ð²Ð¸Ð»Ð¾Ðº.</p>'),
 }
 
 
-# ===== PAIN_EXTRA2: экспертные секции (фев-ноя 2026, источники) =====
-PAIN_EXTRA2 = {'ne-zaryazhaetsya': ('<h2>Кейс из сервиса: 12 В — узкое место зимой</h2>' '<p>Из практики сервиса по Nissan Leaf: зимой приводят два электрокара, которые «сели совсем». Причина — машина в мороз грелась, израсходовала тяговую батарею, та подсадила 12-вольтовую, а без неё не работают ни нейтралка, ни разблокировка. Лечение — обычное 12-вольтовое зарядное устройство, после которого машина оживает (сервис Leaf, <a href="https://www.bfm.ru/news/541558" rel="noopener nofollow">BFM.ru</a>). Подробности — в <a href="/pain/12v-akb.html">гайде по 12 В</a>.</p>'),
- 'domashnie-stancii': ('<div class="facts"><div class="f"><div class="k">Частный дом</div><div class="v">80–120 тыс ₽</div><div class="d">под ключ со станцией 7 кВт и льготным подключением</div></div><div class="f"><div class="k">ЖК / паркинг</div><div class="v">237–500 тыс ₽</div><div class="d">согласования, проект, АПС, лицензия — 2,5+ месяца</div></div><div class="f"><div class="k">Оборудование</div><div class="v">34,5–77 тыс</div><div class="d">станция AC 7–22 кВт; премиум с балансировкой — до 160–200 тыс</div></div><div class="f"><div class="k">Сигнал тревоги</div><div class="v">«50 тыс под ключ»</div><div class="d">только качественная станция уже 30–77 тыс — экономят на кабеле и защитах</div></div></div>' '<h2>Смета «под ключ»: реальные цифры 2026</h2>' '<table><tr><th>Статья</th><th>Стоимость</th></tr><tr><td>Станция AC 7–22 кВт</td><td>34,5–77 тыс ₽ (премиум — до 160–200 тыс)</td></tr><tr><td>Кабель ВВГнг-LS 3×6 мм²</td><td>300–600 ₽/м</td></tr><tr><td>УЗО типа B + дифавтомат</td><td>≈6,5 тыс ₽</td></tr><tr><td>Прокладка кабеля + монтаж</td><td>18–50 тыс ₽</td></tr><tr><td>Пусконаладка</td><td>≈5 тыс ₽</td></tr><tr><td><b>Итого, частный дом</b></td><td><b>80–120 тыс ₽</b></td></tr></table>' '<p>В ЖК с согласованиями (проект, АПС, кабель нг(А)-HF, разрешение УК) — от 237 тыс ₽; сложные объекты — до 400–500 тыс ₽ (кейсы монтажников: <a href="https://xn--80agenibdvfkjdv4m.xn--p1ai/zaryadnaya-stanciya-dlya-doma" rel="noopener nofollow">электропаркинг.рф</a>; разбор процедур — <a href="https://novostroyrf.ru/articles/tekhnologii/uvelichenie-moshchnosti-v-chastnom-dome-dlya-zaryadki-elektromobilya/" rel="noopener nofollow">novostroyrf</a>). Услуги — в <a href="/services/">разделе услуг</a>.</p>' '<h2>Красные флаги монтажников</h2>' '<ol><li>«Под ключ за 50 тыс» — тонкий кабель, минимум защит, монтаж не по ПУЭ: только станция уже 30–77 тыс ₽.</li><li>Отказ от УЗО типа B — повод сменить подрядчика.</li><li>В частном доме согласование не нужно; в ЖК — разрешение УК обязательно.</li></ol>'),
- 'stoimost-zaryadki': ('<h2>Экономика 2026: есть ли смысл на цифрах</h2>' '<p>Кроссовер с расходом 20 кВт·ч/100 км: ночная домашняя розетка (~4 ₽/кВт·ч) — около 80 ₽ за 100 км; городская медленная станция (~15 ₽/кВт·ч) — 300 ₽; быстрый хаб (~22 ₽/кВт·ч) — 440 ₽. Бензин АИ-95 (~70 ₽/л, 10 л/100 км) — около 700 ₽. С учётом нулевого транспортного налога и бесплатных парковок в Москве годовая экономия может достигать 200–300 тыс ₽ против бензинового аналога (<a href="https://trends.rbc.ru/trends/innovation/cmrm/6a3a4f7a9a79471294c087f1" rel="noopener nofollow">РБК Тренды, обновлено 29.06.2026</a>). Посчитайте под свой тариф — <a href="/calculator/">калькулятор</a>.</p>')
+# ===== PAIN_EXTRA2: ÑÐºÑÐ¿ÐµÑÑÐ½ÑÐµ ÑÐµÐºÑÐ¸Ð¸ (ÑÐµÐ²-Ð½Ð¾Ñ 2026, Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸) =====
+PAIN_EXTRA2 = {'ne-zaryazhaetsya': ('<h2>ÐÐµÐ¹Ñ Ð¸Ð· ÑÐµÑÐ²Ð¸ÑÐ°: 12 Ð â ÑÐ·ÐºÐ¾Ðµ Ð¼ÐµÑÑÐ¾ Ð·Ð¸Ð¼Ð¾Ð¹</h2>' '<p>ÐÐ· Ð¿ÑÐ°ÐºÑÐ¸ÐºÐ¸ ÑÐµÑÐ²Ð¸ÑÐ° Ð¿Ð¾ Nissan Leaf: Ð·Ð¸Ð¼Ð¾Ð¹ Ð¿ÑÐ¸Ð²Ð¾Ð´ÑÑ Ð´Ð²Ð° ÑÐ»ÐµÐºÑÑÐ¾ÐºÐ°ÑÐ°, ÐºÐ¾ÑÐ¾ÑÑÐµ Â«ÑÐµÐ»Ð¸ ÑÐ¾Ð²ÑÐµÐ¼Â». ÐÑÐ¸ÑÐ¸Ð½Ð° â Ð¼Ð°ÑÐ¸Ð½Ð° Ð² Ð¼Ð¾ÑÐ¾Ð· Ð³ÑÐµÐ»Ð°ÑÑ, Ð¸Ð·ÑÐ°ÑÑÐ¾Ð´Ð¾Ð²Ð°Ð»Ð° ÑÑÐ³Ð¾Ð²ÑÑ Ð±Ð°ÑÐ°ÑÐµÑ, ÑÐ° Ð¿Ð¾Ð´ÑÐ°Ð´Ð¸Ð»Ð° 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÑ, Ð° Ð±ÐµÐ· Ð½ÐµÑ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð½Ð¸ Ð½ÐµÐ¹ÑÑÐ°Ð»ÐºÐ°, Ð½Ð¸ ÑÐ°Ð·Ð±Ð»Ð¾ÐºÐ¸ÑÐ¾Ð²ÐºÐ°. ÐÐµÑÐµÐ½Ð¸Ðµ â Ð¾Ð±ÑÑÐ½Ð¾Ðµ 12-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾, Ð¿Ð¾ÑÐ»Ðµ ÐºÐ¾ÑÐ¾ÑÐ¾Ð³Ð¾ Ð¼Ð°ÑÐ¸Ð½Ð° Ð¾Ð¶Ð¸Ð²Ð°ÐµÑ (ÑÐµÑÐ²Ð¸Ñ Leaf, <a href="https://www.bfm.ru/news/541558" rel="noopener nofollow">BFM.ru</a>). ÐÐ¾Ð´ÑÐ¾Ð±Ð½Ð¾ÑÑÐ¸ â Ð² <a href="/pain/12v-akb.html">Ð³Ð°Ð¹Ð´Ðµ Ð¿Ð¾ 12 Ð</a>.</p>'),
+ 'domashnie-stancii': ('<div class="facts"><div class="f"><div class="k">Ð§Ð°ÑÑÐ½ÑÐ¹ Ð´Ð¾Ð¼</div><div class="v">80â120 ÑÑÑ â½</div><div class="d">Ð¿Ð¾Ð´ ÐºÐ»ÑÑ ÑÐ¾ ÑÑÐ°Ð½ÑÐ¸ÐµÐ¹ 7 ÐºÐÑ Ð¸ Ð»ÑÐ³Ð¾ÑÐ½ÑÐ¼ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸ÐµÐ¼</div></div><div class="f"><div class="k">ÐÐ / Ð¿Ð°ÑÐºÐ¸Ð½Ð³</div><div class="v">237â500 ÑÑÑ â½</div><div class="d">ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ñ, Ð¿ÑÐ¾ÐµÐºÑ, ÐÐÐ¡, Ð»Ð¸ÑÐµÐ½Ð·Ð¸Ñ â 2,5+ Ð¼ÐµÑÑÑÐ°</div></div><div class="f"><div class="k">ÐÐ±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ</div><div class="v">34,5â77 ÑÑÑ</div><div class="d">ÑÑÐ°Ð½ÑÐ¸Ñ AC 7â22 ÐºÐÑ; Ð¿ÑÐµÐ¼Ð¸ÑÐ¼ Ñ Ð±Ð°Ð»Ð°Ð½ÑÐ¸ÑÐ¾Ð²ÐºÐ¾Ð¹ â Ð´Ð¾ 160â200 ÑÑÑ</div></div><div class="f"><div class="k">Ð¡Ð¸Ð³Ð½Ð°Ð» ÑÑÐµÐ²Ð¾Ð³Ð¸</div><div class="v">Â«50 ÑÑÑ Ð¿Ð¾Ð´ ÐºÐ»ÑÑÂ»</div><div class="d">ÑÐ¾Ð»ÑÐºÐ¾ ÐºÐ°ÑÐµÑÑÐ²ÐµÐ½Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ¶Ðµ 30â77 ÑÑÑ â ÑÐºÐ¾Ð½Ð¾Ð¼ÑÑ Ð½Ð° ÐºÐ°Ð±ÐµÐ»Ðµ Ð¸ Ð·Ð°ÑÐ¸ÑÐ°Ñ</div></div></div>' '<h2>Ð¡Ð¼ÐµÑÐ° Â«Ð¿Ð¾Ð´ ÐºÐ»ÑÑÂ»: ÑÐµÐ°Ð»ÑÐ½ÑÐµ ÑÐ¸ÑÑÑ 2026</h2>' '<table><tr><th>Ð¡ÑÐ°ÑÑÑ</th><th>Ð¡ÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ</th></tr><tr><td>Ð¡ÑÐ°Ð½ÑÐ¸Ñ AC 7â22 ÐºÐÑ</td><td>34,5â77 ÑÑÑ â½ (Ð¿ÑÐµÐ¼Ð¸ÑÐ¼ â Ð´Ð¾ 160â200 ÑÑÑ)</td></tr><tr><td>ÐÐ°Ð±ÐµÐ»Ñ ÐÐÐÐ½Ð³-LS 3Ã6 Ð¼Ð¼Â²</td><td>300â600 â½/Ð¼</td></tr><tr><td>Ð£ÐÐ ÑÐ¸Ð¿Ð° B + Ð´Ð¸ÑÐ°Ð²ÑÐ¾Ð¼Ð°Ñ</td><td>â6,5 ÑÑÑ â½</td></tr><tr><td>ÐÑÐ¾ÐºÐ»Ð°Ð´ÐºÐ° ÐºÐ°Ð±ÐµÐ»Ñ + Ð¼Ð¾Ð½ÑÐ°Ð¶</td><td>18â50 ÑÑÑ â½</td></tr><tr><td>ÐÑÑÐºÐ¾Ð½Ð°Ð»Ð°Ð´ÐºÐ°</td><td>â5 ÑÑÑ â½</td></tr><tr><td><b>ÐÑÐ¾Ð³Ð¾, ÑÐ°ÑÑÐ½ÑÐ¹ Ð´Ð¾Ð¼</b></td><td><b>80â120 ÑÑÑ â½</b></td></tr></table>' '<p>Ð ÐÐ Ñ ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸ÑÐ¼Ð¸ (Ð¿ÑÐ¾ÐµÐºÑ, ÐÐÐ¡, ÐºÐ°Ð±ÐµÐ»Ñ Ð½Ð³(Ð)-HF, ÑÐ°Ð·ÑÐµÑÐµÐ½Ð¸Ðµ Ð£Ð) â Ð¾Ñ 237 ÑÑÑ â½; ÑÐ»Ð¾Ð¶Ð½ÑÐµ Ð¾Ð±ÑÐµÐºÑÑ â Ð´Ð¾ 400â500 ÑÑÑ â½ (ÐºÐµÐ¹ÑÑ Ð¼Ð¾Ð½ÑÐ°Ð¶Ð½Ð¸ÐºÐ¾Ð²: <a href="https://xn--80agenibdvfkjdv4m.xn--p1ai/zaryadnaya-stanciya-dlya-doma" rel="noopener nofollow">ÑÐ»ÐµÐºÑÑÐ¾Ð¿Ð°ÑÐºÐ¸Ð½Ð³.ÑÑ</a>; ÑÐ°Ð·Ð±Ð¾Ñ Ð¿ÑÐ¾ÑÐµÐ´ÑÑ â <a href="https://novostroyrf.ru/articles/tekhnologii/uvelichenie-moshchnosti-v-chastnom-dome-dlya-zaryadki-elektromobilya/" rel="noopener nofollow">novostroyrf</a>). Ð£ÑÐ»ÑÐ³Ð¸ â Ð² <a href="/services/">ÑÐ°Ð·Ð´ÐµÐ»Ðµ ÑÑÐ»ÑÐ³</a>.</p>' '<h2>ÐÑÐ°ÑÐ½ÑÐµ ÑÐ»Ð°Ð³Ð¸ Ð¼Ð¾Ð½ÑÐ°Ð¶Ð½Ð¸ÐºÐ¾Ð²</h2>' '<ol><li>Â«ÐÐ¾Ð´ ÐºÐ»ÑÑ Ð·Ð° 50 ÑÑÑÂ» â ÑÐ¾Ð½ÐºÐ¸Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ, Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ Ð·Ð°ÑÐ¸Ñ, Ð¼Ð¾Ð½ÑÐ°Ð¶ Ð½Ðµ Ð¿Ð¾ ÐÐ£Ð­: ÑÐ¾Ð»ÑÐºÐ¾ ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ¶Ðµ 30â77 ÑÑÑ â½.</li><li>ÐÑÐºÐ°Ð· Ð¾Ñ Ð£ÐÐ ÑÐ¸Ð¿Ð° B â Ð¿Ð¾Ð²Ð¾Ð´ ÑÐ¼ÐµÐ½Ð¸ÑÑ Ð¿Ð¾Ð´ÑÑÐ´ÑÐ¸ÐºÐ°.</li><li>Ð ÑÐ°ÑÑÐ½Ð¾Ð¼ Ð´Ð¾Ð¼Ðµ ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ Ð½Ðµ Ð½ÑÐ¶Ð½Ð¾; Ð² ÐÐ â ÑÐ°Ð·ÑÐµÑÐµÐ½Ð¸Ðµ Ð£Ð Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾.</li></ol>'),
+ 'stoimost-zaryadki': ('<h2>Ð­ÐºÐ¾Ð½Ð¾Ð¼Ð¸ÐºÐ° 2026: ÐµÑÑÑ Ð»Ð¸ ÑÐ¼ÑÑÐ» Ð½Ð° ÑÐ¸ÑÑÐ°Ñ</h2>' '<p>ÐÑÐ¾ÑÑÐ¾Ð²ÐµÑ Ñ ÑÐ°ÑÑÐ¾Ð´Ð¾Ð¼ 20 ÐºÐÑÂ·Ñ/100 ÐºÐ¼: Ð½Ð¾ÑÐ½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÐ¾Ð·ÐµÑÐºÐ° (~4 â½/ÐºÐÑÂ·Ñ) â Ð¾ÐºÐ¾Ð»Ð¾ 80 â½ Ð·Ð° 100 ÐºÐ¼; Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ (~15 â½/ÐºÐÑÂ·Ñ) â 300 â½; Ð±ÑÑÑÑÑÐ¹ ÑÐ°Ð± (~22 â½/ÐºÐÑÂ·Ñ) â 440 â½. ÐÐµÐ½Ð·Ð¸Ð½ ÐÐ-95 (~70 â½/Ð», 10 Ð»/100 ÐºÐ¼) â Ð¾ÐºÐ¾Ð»Ð¾ 700 â½. Ð¡ ÑÑÑÑÐ¾Ð¼ Ð½ÑÐ»ÐµÐ²Ð¾Ð³Ð¾ ÑÑÐ°Ð½ÑÐ¿Ð¾ÑÑÐ½Ð¾Ð³Ð¾ Ð½Ð°Ð»Ð¾Ð³Ð° Ð¸ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½ÑÑ Ð¿Ð°ÑÐºÐ¾Ð²Ð¾Ðº Ð² ÐÐ¾ÑÐºÐ²Ðµ Ð³Ð¾Ð´Ð¾Ð²Ð°Ñ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ Ð¼Ð¾Ð¶ÐµÑ Ð´Ð¾ÑÑÐ¸Ð³Ð°ÑÑ 200â300 ÑÑÑ â½ Ð¿ÑÐ¾ÑÐ¸Ð² Ð±ÐµÐ½Ð·Ð¸Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð°Ð½Ð°Ð»Ð¾Ð³Ð° (<a href="https://trends.rbc.ru/trends/innovation/cmrm/6a3a4f7a9a79471294c087f1" rel="noopener nofollow">Ð ÐÐ Ð¢ÑÐµÐ½Ð´Ñ, Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¾ 29.06.2026</a>). ÐÐ¾ÑÑÐ¸ÑÐ°Ð¹ÑÐµ Ð¿Ð¾Ð´ ÑÐ²Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ â <a href="/calculator/">ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ</a>.</p>')
 }
 
 def pain_article_page(sl, title, desc, pids, outdir):
     rel_html = ', '.join('<a href="/models/'+slug(m["brand"])+'-'+slug(m["model"])+'.html">'+html.escape(m["brand"]+" "+m["model"])+'</a>' for m in rel_models(RELATED.get(sl,[])))
-    blocks = ''.join('<div class="lcard"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Решение:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
+    blocks = ''.join('<div class="lcard"><span class="pain-id">'+i+'</span><h3>'+html.escape(PAINS[i]["pain"])+'</h3><div class="sol"><b>Ð ÐµÑÐµÐ½Ð¸Ðµ:</b> '+html.escape(PAINS[i]["sol"])+'</div><p class="src">'+src_html(PAINS[i])+'</p></div>' for i in pids)
     city_costs = ''
     if sl == 'stoimost-zaryadki':
         rows = [
-            ('Дома ночью (ночной тариф)', '3-4 ₽/кВт·ч', '48-64 ₽ за 100 км'),
-            ('Дома днём (городской тариф)', '6-9 ₽/кВт·ч', '96-144 ₽ за 100 км'),
-            ('Городская станция AC (7-22 кВт)', '10-20 ₽/кВт·ч', '160-320 ₽ за 100 км'),
-            ('Быстрая станция DC в городе', '15-25 ₽/кВт·ч', '240-400 ₽ за 100 км'),
-            ('Быстрая станция DC на трассе', '18-30 ₽/кВт·ч', '290-480 ₽ за 100 км'),
+            ('ÐÐ¾Ð¼Ð° Ð½Ð¾ÑÑÑ (Ð½Ð¾ÑÐ½Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ)', '3-4 â½/ÐºÐÑÂ·Ñ', '48-64 â½ Ð·Ð° 100 ÐºÐ¼'),
+            ('ÐÐ¾Ð¼Ð° Ð´Ð½ÑÐ¼ (Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ ÑÐ°ÑÐ¸Ñ)', '6-9 â½/ÐºÐÑÂ·Ñ', '96-144 â½ Ð·Ð° 100 ÐºÐ¼'),
+            ('ÐÐ¾ÑÐ¾Ð´ÑÐºÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ AC (7-22 ÐºÐÑ)', '10-20 â½/ÐºÐÑÂ·Ñ', '160-320 â½ Ð·Ð° 100 ÐºÐ¼'),
+            ('ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ DC Ð² Ð³Ð¾ÑÐ¾Ð´Ðµ', '15-25 â½/ÐºÐÑÂ·Ñ', '240-400 â½ Ð·Ð° 100 ÐºÐ¼'),
+            ('ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ DC Ð½Ð° ÑÑÐ°ÑÑÐµ', '18-30 â½/ÐºÐÑÂ·Ñ', '290-480 â½ Ð·Ð° 100 ÐºÐ¼'),
         ]
         trs = ''.join('<tr><td>'+a+'</td><td>'+b+'</td><td>'+c+'</td></tr>' for a,b,c in rows)
-        city_costs = ('<h2>Сколько стоит 100 км в деньгах: сцены зарядки</h2>'
-            + '<p class="note">Расчёт по среднему расходу 16 кВт·ч/100 км. Диапазоны по данным отраслевых операторов на конец 2026 года (АПОЭ: 80% медленных ЭЗС 10–20 ₽/кВт·ч, 85% DC 15–25 ₽; ночной тариф в Москве 3,8 ₽, дневной 8,7 ₽ — январь 2026). Точные цены своей сети смотрите в её приложении, тарифы электроэнергии — в квитанции энергосбыта.</p>'
-            + '<div class="tblwrap"><table><thead><tr><th>Сцена</th><th>Тариф</th><th>Стоимость 100 км</th></tr></thead><tbody>' + trs + '</tbody></table></div>'
-            + '<p><a class="btn lime" href="/calculator/">Посчитать под свою машину: калькулятор стоимости зарядки</a></p>'
-            + '<h2>Города: где зарядка дешевле</h2>'
-            + '<p>Меняется не столько тариф, сколько состав сетей. В Москве городская сеть «Энергия Москвы»: в карточках 2ГИС у неё указан тариф от 15 ₽/кВт·ч, исторически часть городских станций была бесплатной — актуальные условия всегда проверяйте в приложении оператора. В Санкт-Петербурге — свои городские и сетевые станции. В остальных регионах дешевле всего дома по ночному тарифу, дороже всего — быстрые станции на трассах. Список сетей и точек по городам — на <a href="/charging/">карте зарядных станций</a>.</p>'
-            + '<p class="note">Быстрая прикидка: заряд «до полного» = ёмкость батареи × тариф. Батарея 60 кВт·ч дома ночью — 150-210 ₽, на быстрой трассовой — 1500-1800 ₽. Вот почему владельцы с домашней зарядкой платят за «топливо» в 5-10 раз меньше.</p>')
-    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>Коротко:</b> '+html.escape(tl_short(pids))+'</div>'+city_costs+PAIN_INTRO.get(sl,'').replace('{BD}',BUILD_DATE)+INFOGRAPHICS.get(sl,'')+blocks+PAIN_EXTRA.get(sl,'')+PAIN_EXTRA2.get(sl,'')+'<h2>Связанные модели</h2><p class="note">Разъёмы и проблемы конкретных моделей: '+rel_html+'. Полный каталог — <a href="/">по ссылке</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">Подобрать комплект</a><a class="btn ghost" href="'+TG_CHANNEL+'">Канал «Запас хода»</a></div>'
+        city_costs = ('<h2>Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ 100 ÐºÐ¼ Ð² Ð´ÐµÐ½ÑÐ³Ð°Ñ: ÑÑÐµÐ½Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸</h2>'
+            + '<p class="note">Ð Ð°ÑÑÑÑ Ð¿Ð¾ ÑÑÐµÐ´Ð½ÐµÐ¼Ñ ÑÐ°ÑÑÐ¾Ð´Ñ 16 ÐºÐÑÂ·Ñ/100 ÐºÐ¼. ÐÐ¸Ð°Ð¿Ð°Ð·Ð¾Ð½Ñ Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ Ð¾ÑÑÐ°ÑÐ»ÐµÐ²ÑÑ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ¾Ð² Ð½Ð° ÐºÐ¾Ð½ÐµÑ 2026 Ð³Ð¾Ð´Ð° (ÐÐÐÐ­: 80% Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÑ Ð­ÐÐ¡ 10â20 â½/ÐºÐÑÂ·Ñ, 85% DC 15â25 â½; Ð½Ð¾ÑÐ½Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ Ð² ÐÐ¾ÑÐºÐ²Ðµ 3,8 â½, Ð´Ð½ÐµÐ²Ð½Ð¾Ð¹ 8,7 â½ â ÑÐ½Ð²Ð°ÑÑ 2026). Ð¢Ð¾ÑÐ½ÑÐµ ÑÐµÐ½Ñ ÑÐ²Ð¾ÐµÐ¹ ÑÐµÑÐ¸ ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð² ÐµÑ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸, ÑÐ°ÑÐ¸ÑÑ ÑÐ»ÐµÐºÑÑÐ¾ÑÐ½ÐµÑÐ³Ð¸Ð¸ â Ð² ÐºÐ²Ð¸ÑÐ°Ð½ÑÐ¸Ð¸ ÑÐ½ÐµÑÐ³Ð¾ÑÐ±ÑÑÐ°.</p>'
+            + '<div class="tblwrap"><table><thead><tr><th>Ð¡ÑÐµÐ½Ð°</th><th>Ð¢Ð°ÑÐ¸Ñ</th><th>Ð¡ÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ 100 ÐºÐ¼</th></tr></thead><tbody>' + trs + '</tbody></table></div>'
+            + '<p><a class="btn lime" href="/calculator/">ÐÐ¾ÑÑÐ¸ÑÐ°ÑÑ Ð¿Ð¾Ð´ ÑÐ²Ð¾Ñ Ð¼Ð°ÑÐ¸Ð½Ñ: ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÐ¸ Ð·Ð°ÑÑÐ´ÐºÐ¸</a></p>'
+            + '<h2>ÐÐ¾ÑÐ¾Ð´Ð°: Ð³Ð´Ðµ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´ÐµÑÐµÐ²Ð»Ðµ</h2>'
+            + '<p>ÐÐµÐ½ÑÐµÑÑÑ Ð½Ðµ ÑÑÐ¾Ð»ÑÐºÐ¾ ÑÐ°ÑÐ¸Ñ, ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÐ¾ÑÑÐ°Ð² ÑÐµÑÐµÐ¹. Ð ÐÐ¾ÑÐºÐ²Ðµ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ ÑÐµÑÑ Â«Ð­Ð½ÐµÑÐ³Ð¸Ñ ÐÐ¾ÑÐºÐ²ÑÂ»: Ð² ÐºÐ°ÑÑÐ¾ÑÐºÐ°Ñ 2ÐÐÐ¡ Ñ Ð½ÐµÑ ÑÐºÐ°Ð·Ð°Ð½ ÑÐ°ÑÐ¸Ñ Ð¾Ñ 15 â½/ÐºÐÑÂ·Ñ, Ð¸ÑÑÐ¾ÑÐ¸ÑÐµÑÐºÐ¸ ÑÐ°ÑÑÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð±ÑÐ»Ð° Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾Ð¹ â Ð°ÐºÑÑÐ°Ð»ÑÐ½ÑÐµ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð²ÑÐµÐ³Ð´Ð° Ð¿ÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ°. Ð Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³Ðµ â ÑÐ²Ð¾Ð¸ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ðµ Ð¸ ÑÐµÑÐµÐ²ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸. Ð Ð¾ÑÑÐ°Ð»ÑÐ½ÑÑ ÑÐµÐ³Ð¸Ð¾Ð½Ð°Ñ Ð´ÐµÑÐµÐ²Ð»Ðµ Ð²ÑÐµÐ³Ð¾ Ð´Ð¾Ð¼Ð° Ð¿Ð¾ Ð½Ð¾ÑÐ½Ð¾Ð¼Ñ ÑÐ°ÑÐ¸ÑÑ, Ð´Ð¾ÑÐ¾Ð¶Ðµ Ð²ÑÐµÐ³Ð¾ â Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð° ÑÑÐ°ÑÑÐ°Ñ. Ð¡Ð¿Ð¸ÑÐ¾Ðº ÑÐµÑÐµÐ¹ Ð¸ ÑÐ¾ÑÐµÐº Ð¿Ð¾ Ð³Ð¾ÑÐ¾Ð´Ð°Ð¼ â Ð½Ð° <a href="/charging/">ÐºÐ°ÑÑÐµ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹</a>.</p>'
+            + '<p class="note">ÐÑÑÑÑÐ°Ñ Ð¿ÑÐ¸ÐºÐ¸Ð´ÐºÐ°: Ð·Ð°ÑÑÐ´ Â«Ð´Ð¾ Ð¿Ð¾Ð»Ð½Ð¾Ð³Ð¾Â» = ÑÐ¼ÐºÐ¾ÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ã ÑÐ°ÑÐ¸Ñ. ÐÐ°ÑÐ°ÑÐµÑ 60 ÐºÐÑÂ·Ñ Ð´Ð¾Ð¼Ð° Ð½Ð¾ÑÑÑ â 150-210 â½, Ð½Ð° Ð±ÑÑÑÑÐ¾Ð¹ ÑÑÐ°ÑÑÐ¾Ð²Ð¾Ð¹ â 1500-1800 â½. ÐÐ¾Ñ Ð¿Ð¾ÑÐµÐ¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹ Ð¿Ð»Ð°ÑÑÑ Ð·Ð° Â«ÑÐ¾Ð¿Ð»Ð¸Ð²Ð¾Â» Ð² 5-10 ÑÐ°Ð· Ð¼ÐµÐ½ÑÑÐµ.</p>')
+    body = '<h1>'+title+'</h1><p class="lede">'+desc+'</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> '+html.escape(tl_short(pids))+'</div>'+city_costs+PAIN_INTRO.get(sl,'').replace('{BD}',BUILD_DATE)+INFOGRAPHICS.get(sl,'')+blocks+PAIN_EXTRA.get(sl,'')+PAIN_EXTRA2.get(sl,'')+'<h2>Ð¡Ð²ÑÐ·Ð°Ð½Ð½ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸</h2><p class="note">Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹: '+rel_html+'. ÐÐ¾Ð»Ð½ÑÐ¹ ÐºÐ°ÑÐ°Ð»Ð¾Ð³ â <a href="/">Ð¿Ð¾ ÑÑÑÐ»ÐºÐµ</a>.</p><div class="cta"><a class="btn lime" href="'+TG_BOT_APP+'">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</a><a class="btn ghost" href="'+TG_CHANNEL+'">ÐÐ°Ð½Ð°Ð» Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</a></div>'
     art_ld = '<script type="application/ld+json">' + json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": title,
-        "description": 'Практическое руководство: ' + desc,
+        "description": 'ÐÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¾Ðµ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾: ' + desc,
         "inLanguage": "ru",
         "dateModified": BUILD_DATE,
         "author": {"@type": "Organization", "name": SITE_NAME},
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld, toc=True)
+    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'ÐÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¾Ðµ ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ'),('',title)], extra_ld=art_ld, toc=True)
 
 def rel_models(rel_brands):
     out = []
     for b in rel_brands:
-        ms = [m for m in MODELS if m['brand'].strip()==b and m['freq']=='Массовый'] or [m for m in MODELS if m['brand'].strip()==b]
+        ms = [m for m in MODELS if m['brand'].strip()==b and m['freq']=='ÐÐ°ÑÑÐ¾Ð²ÑÐ¹'] or [m for m in MODELS if m['brand'].strip()==b]
         for m in ms[:1]: out.append(m)
     return out[:4]
 
 def about_page(outdir, news):
     n = len(news)
-    facts = [(str(len(MODELS)), 'моделей с разъёмами', 'и мощностью зарядки'),
-             ('88', 'проблем владельцев', 'и проверенные решения'),
-             ('1 911', 'зарядных станций', 'на карте'),
-             (str(n), 'новостей рынка', 'в ленте')]
+    facts = [(str(len(MODELS)), 'Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ñ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼Ð¸', 'Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸'),
+             ('88', 'Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ²', 'Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐµ ÑÐµÑÐµÐ½Ð¸Ñ'),
+             ('1 911', 'Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹', 'Ð½Ð° ÐºÐ°ÑÑÐµ'),
+             (str(n), 'Ð½Ð¾Ð²Ð¾ÑÑÐµÐ¹ ÑÑÐ½ÐºÐ°', 'Ð² Ð»ÐµÐ½ÑÐµ')]
     fact_cards = ''.join('<div class="flex-0 block w-full"><div class="relative flex flex-col min-w-0 rounded-lg break-words border bg-white border-gray-300 card-product"><div class="flex-auto p-4 text-center"><div class="text-2xl font-bold text-gray-900">'+f0+'</div><div class="text-sm text-gray-600 mt-1">'+f1+'</div><div class="text-xs text-gray-500">'+f2+'</div></div></div></div>' for f0,f1,f2 in facts)
-    write_page(os.path.join(outdir,'about.html'), 'О проекте «Запас хода»', 'Как устроен справочник владения электромобилем: источники, методика, кто делает.',
+    write_page(os.path.join(outdir,'about.html'), 'Ð Ð¿ÑÐ¾ÐµÐºÑÐµ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»', 'ÐÐ°Ðº ÑÑÑÑÐ¾ÐµÐ½ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼: Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸, Ð¼ÐµÑÐ¾Ð´Ð¸ÐºÐ°, ÐºÑÐ¾ Ð´ÐµÐ»Ð°ÐµÑ.',
         '<section class="lg:my-10 my-6"><div class="container">'
         '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
-        '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Справочник EV · с 2026 года</span>'
-        '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">О проекте «Запас хода»</h1>'
-        '<p class="text-sm text-gray-600" style="max-width:640px">Независимый справочник по практике владения электромобилем в России: разъёмы каждой модели, реальные проблемы владельцев и проверенные решения.</p>'
+        '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº EV Â· Ñ 2026 Ð³Ð¾Ð´Ð°</span>'
+        '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Ð Ð¿ÑÐ¾ÐµÐºÑÐµ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</h1>'
+        '<p class="text-sm text-gray-600" style="max-width:640px">ÐÐµÐ·Ð°Ð²Ð¸ÑÐ¸Ð¼ÑÐ¹ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð¿Ð¾ Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼ Ð² Ð Ð¾ÑÑÐ¸Ð¸: ÑÐ°Ð·ÑÑÐ¼Ñ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸, ÑÐµÐ°Ð»ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐµ ÑÐµÑÐµÐ½Ð¸Ñ.</p>'
         '</div>'
         '<div class="grid gap-4 grid-cols-2 md:grid-cols-4 my-8">' + fact_cards + '</div>'
         '<div class="max-w-3xl space-y-4 text-gray-700">'
-        '<p>База: ' + str(len(MODELS)) + ' моделей с типами подключения, реальные проблемы владельцев с форумов (Drive2, chinamobil, клубы брендов) и профильных сервисов. Каждое решение снабжено ссылкой на первоисточник. Карта зарядных станций — данные OpenStreetMap (ODbL).</p>'
-        '<p>Также у нас: Telegram-канал <a href="'+TG_CHANNEL+'">@zapashoda_ev</a> и мини-приложение с каталогом аксессуаров (<a href="'+TG_BOT_APP+'">открыть</a>). Новостей в ленте на момент сборки: '+str(n)+'.</p>'
-        '<p class="text-sm text-gray-500">Проект ведёт поставщик зарядных комплектов для китайских и европейских EV: подбор, доставка по РФ, консультация.</p>'
-        '<div class="flex flex-wrap gap-3"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подобрать комплект</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/compare/">Сравнить модели</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/assets/guide/zapashoda-guide-2026.pdf" download>⬇ PDF-гид</a></div>'
+        '<p>ÐÐ°Ð·Ð°: ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ñ ÑÐ¸Ð¿Ð°Ð¼Ð¸ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸Ñ, ÑÐµÐ°Ð»ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ñ ÑÐ¾ÑÑÐ¼Ð¾Ð² (Drive2, chinamobil, ÐºÐ»ÑÐ±Ñ Ð±ÑÐµÐ½Ð´Ð¾Ð²) Ð¸ Ð¿ÑÐ¾ÑÐ¸Ð»ÑÐ½ÑÑ ÑÐµÑÐ²Ð¸ÑÐ¾Ð². ÐÐ°Ð¶Ð´Ð¾Ðµ ÑÐµÑÐµÐ½Ð¸Ðµ ÑÐ½Ð°Ð±Ð¶ÐµÐ½Ð¾ ÑÑÑÐ»ÐºÐ¾Ð¹ Ð½Ð° Ð¿ÐµÑÐ²Ð¾Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº. ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ â Ð´Ð°Ð½Ð½ÑÐµ OpenStreetMap (ODbL).</p>'
+        '<p>Ð¢Ð°ÐºÐ¶Ðµ Ñ Ð½Ð°Ñ: Telegram-ÐºÐ°Ð½Ð°Ð» <a href="'+TG_CHANNEL+'">@zapashoda_ev</a> Ð¸ Ð¼Ð¸Ð½Ð¸-Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ñ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð¾Ð¼ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð² (<a href="'+TG_BOT_APP+'">Ð¾ÑÐºÑÑÑÑ</a>). ÐÐ¾Ð²Ð¾ÑÑÐµÐ¹ Ð² Ð»ÐµÐ½ÑÐµ Ð½Ð° Ð¼Ð¾Ð¼ÐµÐ½Ñ ÑÐ±Ð¾ÑÐºÐ¸: '+str(n)+'.</p>'
+        '<p class="text-sm text-gray-500">ÐÑÐ¾ÐµÐºÑ Ð²ÐµÐ´ÑÑ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸Ðº Ð·Ð°ÑÑÐ´Ð½ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ¾Ð² Ð´Ð»Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ Ð¸ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ñ EV: Ð¿Ð¾Ð´Ð±Ð¾Ñ, Ð´Ð¾ÑÑÐ°Ð²ÐºÐ° Ð¿Ð¾ Ð Ð¤, ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ñ.</p>'
+        '<div class="flex flex-wrap gap-3"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/compare/">Ð¡ÑÐ°Ð²Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸</a><a class="btn bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-lg px-4 py-2" href="/assets/guide/zapashoda-guide-2026.pdf" download>â¬ PDF-Ð³Ð¸Ð´</a></div>'
         '</div></div></section>', '/about.html')
 
 def vin_hub(outdir):
     pop_first = ['Zeekr','Li Auto','BYD','Voyah','Avatr','Tesla','VW','BMW','Kia','Hyundai','Nissan','Xiaomi','Geely','Hongqi','Evolute','Moskvich','Audi','Mercedes','Skoda','MG']
     brands = sorted(VIN_BRANDS, key=lambda b: pop_first.index(b) if b in pop_first else 999)
-    cards = ''.join('<a class="mcard" href="/vin/'+slug(b)+'.html"><b>VIN '+html.escape(b)+'</b><span>'+html.escape(VIN_BRANDS[b][0])+' · код года, табличка, проверка</span></a>' for b in brands)
-    body = ('<div class="hero"><div class="kicker">VIN-справочник</div><h1>VIN электромобиля: расшифровка и проверка</h1>'
-     '<p class="lede">17 символов, которые говорят о машине всё: код завода, модельный год, серийник. Для владельцев EV в России — с акцентом на параллельный импорт.</p></div>'
+    cards = ''.join('<a class="mcard" href="/vin/'+slug(b)+'.html"><b>VIN '+html.escape(b)+'</b><span>'+html.escape(VIN_BRANDS[b][0])+' Â· ÐºÐ¾Ð´ Ð³Ð¾Ð´Ð°, ÑÐ°Ð±Ð»Ð¸ÑÐºÐ°, Ð¿ÑÐ¾Ð²ÐµÑÐºÐ°</span></a>' for b in brands)
+    body = ('<div class="hero"><div class="kicker">VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº</div><h1>VIN ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ°</h1>'
+     '<p class="lede">17 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð², ÐºÐ¾ÑÐ¾ÑÑÐµ Ð³Ð¾Ð²Ð¾ÑÑÑ Ð¾ Ð¼Ð°ÑÐ¸Ð½Ðµ Ð²ÑÑ: ÐºÐ¾Ð´ Ð·Ð°Ð²Ð¾Ð´Ð°, Ð¼Ð¾Ð´ÐµÐ»ÑÐ½ÑÐ¹ Ð³Ð¾Ð´, ÑÐµÑÐ¸Ð¹Ð½Ð¸Ðº. ÐÐ»Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² EV Ð² Ð Ð¾ÑÑÐ¸Ð¸ â Ñ Ð°ÐºÑÐµÐ½ÑÐ¾Ð¼ Ð½Ð° Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½ÑÐ¹ Ð¸Ð¼Ð¿Ð¾ÑÑ.</p></div>'
      + VIN_STRUCT +
-     '<h2>VIN по брендам</h2><div class="grid2">' + cards + '</div>'
-     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">Подобрать комплект зарядки</a><a class="btn ghost" href="/news/">Новости</a></div>')
-    write_page(os.path.join(outdir,'vin','index.html'), 'VIN-справочник: расшифровка и проверка | Запас хода',
-        'Как расшифровать VIN электромобиля: структура, коды модельного года, где находится табличка, бесплатная проверка ГИБДД и ЭПТС/СБКТС для параллельного импорта.',
+     '<h2>VIN Ð¿Ð¾ Ð±ÑÐµÐ½Ð´Ð°Ð¼</h2><div class="grid2">' + cards + '</div>'
+     '<div class="cta"><a class="btn lime" href="' + TG_BOT_APP + '">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</a><a class="btn ghost" href="/news/">ÐÐ¾Ð²Ð¾ÑÑÐ¸</a></div>')
+    write_page(os.path.join(outdir,'vin','index.html'), 'VIN-ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº: ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÐ°Ðº ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²Ð°ÑÑ VIN ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: ÑÑÑÑÐºÑÑÑÐ°, ÐºÐ¾Ð´Ñ Ð¼Ð¾Ð´ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð³Ð¾Ð´Ð°, Ð³Ð´Ðµ Ð½Ð°ÑÐ¾Ð´Ð¸ÑÑÑ ÑÐ°Ð±Ð»Ð¸ÑÐºÐ°, Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð°Ñ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° ÐÐÐÐÐ Ð¸ Ð­ÐÐ¢Ð¡/Ð¡ÐÐÐ¢Ð¡ Ð´Ð»Ñ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ°.',
         body, '/vin/')
 
 def misc_pages(outdir):
@@ -2782,30 +2765,30 @@ def misc_pages(outdir):
                 "  }\n"
                 "});\n")
     with open(os.path.join(outdir,'manifest.json'),'w',encoding='utf-8') as f:
-        f.write('{"name":"Запас хода — гид по электромобилю","short_name":"Запас хода","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#2563EB","icons":[{"src":"/assets/brand/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/brand/icon-512.png","sizes":"512x512","type":"image/png"}]}')
+        f.write('{"name":"ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â Ð³Ð¸Ð´ Ð¿Ð¾ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ","short_name":"ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#2563EB","icons":[{"src":"/assets/brand/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/brand/icon-512.png","sizes":"512x512","type":"image/png"}]}')
 
-    body = '<h1>Страница не найдена</h1><p class="lede">Такой страницы нет — возможно, ссылка устарела.</p><div class="cta"><a class="btn lime" href="/">На главную</a><a class="btn ghost" href="/news/">Новости</a></div>'
-    write_page(os.path.join(outdir,'404.html'), '404 — страница не найдена | Запас хода', 'Страница не найдена.', body, '/404.html', noindex=True)
+    body = '<h1>Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°</h1><p class="lede">Ð¢Ð°ÐºÐ¾Ð¹ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð½ÐµÑ â Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾, ÑÑÑÐ»ÐºÐ° ÑÑÑÐ°ÑÐµÐ»Ð°.</p><div class="cta"><a class="btn lime" href="/">ÐÐ° Ð³Ð»Ð°Ð²Ð½ÑÑ</a><a class="btn ghost" href="/news/">ÐÐ¾Ð²Ð¾ÑÑÐ¸</a></div>'
+    write_page(os.path.join(outdir,'404.html'), '404 â ÑÑÑÐ°Ð½Ð¸ÑÐ° Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð° | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°.', body, '/404.html', noindex=True)
 
 
 CITY_FORMS = {
- 'Москва': ('в Москве', 'Москвы'),
- 'Санкт-Петербург': ('в Санкт-Петербурге', 'Санкт-Петербурга'),
- 'Нижний Новгород': ('в Нижнем Новгороде', 'Нижнего Новгорода'),
- 'Екатеринбург': ('в Екатеринбурге', 'Екатеринбурга'),
- 'Новосибирск': ('в Новосибирске', 'Новосибирска'),
- 'Казань': ('в Казани', 'Казани'),
- 'Краснодар': ('в Краснодаре', 'Краснодара'),
- 'Ростов-на-Дону': ('в Ростове-на-Дону', 'Ростова-на-Дону'),
- 'Сочи': ('в Сочи', 'Сочи'),
- 'Владивосток': ('во Владивостоке', 'Владивостока'),
- 'Симферополь': ('в Симферополе', 'Симферополя'),
- 'Минск': ('в Минске', 'Минска'),
- 'Алматы': ('в Алматы', 'Алматы'),
+ 'ÐÐ¾ÑÐºÐ²Ð°': ('Ð² ÐÐ¾ÑÐºÐ²Ðµ', 'ÐÐ¾ÑÐºÐ²Ñ'),
+ 'Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³': ('Ð² Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³Ðµ', 'Ð¡Ð°Ð½ÐºÑ-ÐÐµÑÐµÑÐ±ÑÑÐ³Ð°'),
+ 'ÐÐ¸Ð¶Ð½Ð¸Ð¹ ÐÐ¾Ð²Ð³Ð¾ÑÐ¾Ð´': ('Ð² ÐÐ¸Ð¶Ð½ÐµÐ¼ ÐÐ¾Ð²Ð³Ð¾ÑÐ¾Ð´Ðµ', 'ÐÐ¸Ð¶Ð½ÐµÐ³Ð¾ ÐÐ¾Ð²Ð³Ð¾ÑÐ¾Ð´Ð°'),
+ 'ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³': ('Ð² ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³Ðµ', 'ÐÐºÐ°ÑÐµÑÐ¸Ð½Ð±ÑÑÐ³Ð°'),
+ 'ÐÐ¾Ð²Ð¾ÑÐ¸Ð±Ð¸ÑÑÐº': ('Ð² ÐÐ¾Ð²Ð¾ÑÐ¸Ð±Ð¸ÑÑÐºÐµ', 'ÐÐ¾Ð²Ð¾ÑÐ¸Ð±Ð¸ÑÑÐºÐ°'),
+ 'ÐÐ°Ð·Ð°Ð½Ñ': ('Ð² ÐÐ°Ð·Ð°Ð½Ð¸', 'ÐÐ°Ð·Ð°Ð½Ð¸'),
+ 'ÐÑÐ°ÑÐ½Ð¾Ð´Ð°Ñ': ('Ð² ÐÑÐ°ÑÐ½Ð¾Ð´Ð°ÑÐµ', 'ÐÑÐ°ÑÐ½Ð¾Ð´Ð°ÑÐ°'),
+ 'Ð Ð¾ÑÑÐ¾Ð²-Ð½Ð°-ÐÐ¾Ð½Ñ': ('Ð² Ð Ð¾ÑÑÐ¾Ð²Ðµ-Ð½Ð°-ÐÐ¾Ð½Ñ', 'Ð Ð¾ÑÑÐ¾Ð²Ð°-Ð½Ð°-ÐÐ¾Ð½Ñ'),
+ 'Ð¡Ð¾ÑÐ¸': ('Ð² Ð¡Ð¾ÑÐ¸', 'Ð¡Ð¾ÑÐ¸'),
+ 'ÐÐ»Ð°Ð´Ð¸Ð²Ð¾ÑÑÐ¾Ðº': ('Ð²Ð¾ ÐÐ»Ð°Ð´Ð¸Ð²Ð¾ÑÑÐ¾ÐºÐµ', 'ÐÐ»Ð°Ð´Ð¸Ð²Ð¾ÑÑÐ¾ÐºÐ°'),
+ 'Ð¡Ð¸Ð¼ÑÐµÑÐ¾Ð¿Ð¾Ð»Ñ': ('Ð² Ð¡Ð¸Ð¼ÑÐµÑÐ¾Ð¿Ð¾Ð»Ðµ', 'Ð¡Ð¸Ð¼ÑÐµÑÐ¾Ð¿Ð¾Ð»Ñ'),
+ 'ÐÐ¸Ð½ÑÐº': ('Ð² ÐÐ¸Ð½ÑÐºÐµ', 'ÐÐ¸Ð½ÑÐºÐ°'),
+ 'ÐÐ»Ð¼Ð°ÑÑ': ('Ð² ÐÐ»Ð¼Ð°ÑÑ', 'ÐÐ»Ð¼Ð°ÑÑ'),
 }
 
 def city_charging_pages(outdir):
-    """Программатика: страница «зарядные станции в {город}» для каждого города карты."""
+    """ÐÑÐ¾Ð³ÑÐ°Ð¼Ð¼Ð°ÑÐ¸ÐºÐ°: ÑÑÑÐ°Ð½Ð¸ÑÐ° Â«Ð·Ð°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² {Ð³Ð¾ÑÐ¾Ð´}Â» Ð´Ð»Ñ ÐºÐ°Ð¶Ð´Ð¾Ð³Ð¾ Ð³Ð¾ÑÐ¾Ð´Ð° ÐºÐ°ÑÑÑ."""
     CITY_URLS.clear()
     try:
         _repo_root = os.path.dirname(os.path.abspath(__file__))
@@ -2821,7 +2804,7 @@ def city_charging_pages(outdir):
         n = len(hits)
         if n < 8:
             continue
-        prep, gen = CITY_FORMS.get(c, ('в ' + c, c))
+        prep, gen = CITY_FORMS.get(c, ('Ð² ' + c, c))
         nets = {}
         for s in hits:
             op = s.get('op') or 'OSM'
@@ -2839,43 +2822,43 @@ def city_charging_pages(outdir):
         rows_sock = ''.join('<li>'+html.escape(k)+': '+str(v)+'</li>' for k,v in sorted(sock.items(), key=lambda x:-x[1]))
         st_sorted = sorted(hits, key=lambda s: -(s.get('c') or 0))[:20]
         st_rows = ''.join(
-            '<tr><td>'+html.escape(s.get('n') or 'Зарядная станция')+'</td>'
-            '<td>'+html.escape(s.get('op') or '—')+'</td>'
-            '<td>'+html.escape((s.get('a') or '').split(',',1)[-1].strip() if s.get('a') else 'адрес не размечен')+'</td>'
-            '<td>'+(str(s.get('pw'))+' кВт' if s.get('pw') else '—')+'</td>'
+            '<tr><td>'+html.escape(s.get('n') or 'ÐÐ°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ')+'</td>'
+            '<td>'+html.escape(s.get('op') or 'â')+'</td>'
+            '<td>'+html.escape((s.get('a') or '').split(',',1)[-1].strip() if s.get('a') else 'Ð°Ð´ÑÐµÑ Ð½Ðµ ÑÐ°Ð·Ð¼ÐµÑÐµÐ½')+'</td>'
+            '<td>'+(str(s.get('pw'))+' ÐºÐÑ' if s.get('pw') else 'â')+'</td>'
             '<td>'+html.escape(', '.join(s.get('s') or []))+'</td></tr>'
             for s in st_sorted)
         city_links_all = ', '.join('<a href="/charging/'+slug(cc)+'.html">'+cc+'</a>' for cc,bb2 in CITIES if cc != c and os.path.exists(os.path.join(outdir,'charging',slug(cc)+'.html')))
         body = (
-            '<div class="hero"><div class="kicker">Карта станций</div><h1>Зарядные станции ' + prep + '</h1><p class="lede">' + str(n) + ' станций: сети, разъёмы и мощности — по данным OpenStreetMap.</p></div>'
+            '<div class="hero"><div class="kicker">ÐÐ°ÑÑÐ° ÑÑÐ°Ð½ÑÐ¸Ð¹</div><h1>ÐÐ°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ ' + prep + '</h1><p class="lede">' + str(n) + ' ÑÑÐ°Ð½ÑÐ¸Ð¹: ÑÐµÑÐ¸, ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ â Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ OpenStreetMap.</p></div>'
             '<div class="article">'
-            '<p class="note">По данным OpenStreetMap на ' + BUILD_DATE + ': <b>' + str(n) + '</b> зарядных станций в пределах ' + html.escape(gen) + '. '
-            + (str(dc) + ' из них — быстрые (от 50 кВт), ' if dc else '')
-            + str(sum(1 for s in hits if any('Type 2' in x for x in (s.get('s') or [])))) + ' поддерживают Type 2, ' + str(sum(1 for s in hits if any('GB/T' in x for x in (s.get('s') or [])))) + ' — GB/T.</p>'
-            '<p>Страница обновляется вместе с <a href="/charging/">общей картой зарядных станций</a> — там же фильтр по городу, мощности и разъёму. Ниже — списки станций по данным OSM: перед выездом проверяйте статус станции в приложении сети, адреса могут меняться.</p>'
-            '<h2>Сети и операторы</h2>'
-            '<div class="tblwrap"><table><thead><tr><th>Сеть</th><th>Станций</th></tr></thead><tbody>' + rows_nets + '</tbody></table></div>'
-            '<p>Списки сетей иногда неполные: часть станций в OSM не размечена оператором. Полный профиль сетей и цен — в гайде <a href="/pain/stoimost-zaryadki.html">сколько стоит зарядка</a>.</p>'
-            '<h2>Разъёмы</h2>'
+            '<p class="note">ÐÐ¾ Ð´Ð°Ð½Ð½ÑÐ¼ OpenStreetMap Ð½Ð° ' + BUILD_DATE + ': <b>' + str(n) + '</b> Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð¿ÑÐµÐ´ÐµÐ»Ð°Ñ ' + html.escape(gen) + '. '
+            + (str(dc) + ' Ð¸Ð· Ð½Ð¸Ñ â Ð±ÑÑÑÑÑÐµ (Ð¾Ñ 50 ÐºÐÑ), ' if dc else '')
+            + str(sum(1 for s in hits if any('Type 2' in x for x in (s.get('s') or [])))) + ' Ð¿Ð¾Ð´Ð´ÐµÑÐ¶Ð¸Ð²Ð°ÑÑ Type 2, ' + str(sum(1 for s in hits if any('GB/T' in x for x in (s.get('s') or [])))) + ' â GB/T.</p>'
+            '<p>Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÐµÑÑÑ Ð²Ð¼ÐµÑÑÐµ Ñ <a href="/charging/">Ð¾Ð±ÑÐµÐ¹ ÐºÐ°ÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹</a> â ÑÐ°Ð¼ Ð¶Ðµ ÑÐ¸Ð»ÑÑÑ Ð¿Ð¾ Ð³Ð¾ÑÐ¾Ð´Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ð¸ ÑÐ°Ð·ÑÑÐ¼Ñ. ÐÐ¸Ð¶Ðµ â ÑÐ¿Ð¸ÑÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ OSM: Ð¿ÐµÑÐµÐ´ Ð²ÑÐµÐ·Ð´Ð¾Ð¼ Ð¿ÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ ÑÑÐ°ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ ÑÐµÑÐ¸, Ð°Ð´ÑÐµÑÐ° Ð¼Ð¾Ð³ÑÑ Ð¼ÐµÐ½ÑÑÑÑÑ.</p>'
+            '<h2>Ð¡ÐµÑÐ¸ Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÑ</h2>'
+            '<div class="tblwrap"><table><thead><tr><th>Ð¡ÐµÑÑ</th><th>Ð¡ÑÐ°Ð½ÑÐ¸Ð¹</th></tr></thead><tbody>' + rows_nets + '</tbody></table></div>'
+            '<p>Ð¡Ð¿Ð¸ÑÐºÐ¸ ÑÐµÑÐµÐ¹ Ð¸Ð½Ð¾Ð³Ð´Ð° Ð½ÐµÐ¿Ð¾Ð»Ð½ÑÐµ: ÑÐ°ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² OSM Ð½Ðµ ÑÐ°Ð·Ð¼ÐµÑÐµÐ½Ð° Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼. ÐÐ¾Ð»Ð½ÑÐ¹ Ð¿ÑÐ¾ÑÐ¸Ð»Ñ ÑÐµÑÐµÐ¹ Ð¸ ÑÐµÐ½ â Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/pain/stoimost-zaryadki.html">ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</a>.</p>'
+            '<h2>Ð Ð°Ð·ÑÑÐ¼Ñ</h2>'
             '<ul>' + rows_sock + '</ul>'
-            '<p>Если машина с китайским разъёмом GB/T — смотрите адаптеры в <a href="/catalog/">каталоге</a>. Для европейских Type 2/CCS2 отдельный переходник обычно не нужен.</p>'
-            '<h2>Крупные станции ' + html.escape(gen) + '</h2>'
-            '<div class="tblwrap"><table><thead><tr><th>Станция</th><th>Сеть</th><th>Адрес</th><th>Мощность</th><th>Разъёмы</th></tr></thead><tbody>' + st_rows + '</tbody></table></div>'
-            '<h2>Как не встать у неработающей станции</h2>'
+            '<p>ÐÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¼ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼ GB/T â ÑÐ¼Ð¾ÑÑÐ¸ÑÐµ Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>. ÐÐ»Ñ ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ñ Type 2/CCS2 Ð¾ÑÐ´ÐµÐ»ÑÐ½ÑÐ¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð¾Ð±ÑÑÐ½Ð¾ Ð½Ðµ Ð½ÑÐ¶ÐµÐ½.</p>'
+            '<h2>ÐÑÑÐ¿Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ ' + html.escape(gen) + '</h2>'
+            '<div class="tblwrap"><table><thead><tr><th>Ð¡ÑÐ°Ð½ÑÐ¸Ñ</th><th>Ð¡ÐµÑÑ</th><th>ÐÐ´ÑÐµÑ</th><th>ÐÐ¾ÑÐ½Ð¾ÑÑÑ</th><th>Ð Ð°Ð·ÑÑÐ¼Ñ</th></tr></thead><tbody>' + st_rows + '</tbody></table></div>'
+            '<h2>ÐÐ°Ðº Ð½Ðµ Ð²ÑÑÐ°ÑÑ Ñ Ð½ÐµÑÐ°Ð±Ð¾ÑÐ°ÑÑÐµÐ¹ ÑÑÐ°Ð½ÑÐ¸Ð¸</h2>'
             '<ol>'
-            '<li>Проверьте статус в приложении сети до выезда — «работает» не всегда значит «работает».</li>'
-            '<li>Держите вторую станцию в маршруте: до 26% станций бывают неисправны при рабочем статусе.</li>'
-            '<li>Заглядывайте в гайд <a href="/pain/ne-zaryazhaetsya.html">«Не заряжается электромобиль»</a> и статью <a href="/blog/stanciya-ne-rabotaet.html">«Станция не работает: чья вина»</a>.</li>'
+            '<li>ÐÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÐ°ÑÑÑ Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸ ÑÐµÑÐ¸ Ð´Ð¾ Ð²ÑÐµÐ·Ð´Ð° â Â«ÑÐ°Ð±Ð¾ÑÐ°ÐµÑÂ» Ð½Ðµ Ð²ÑÐµÐ³Ð´Ð° Ð·Ð½Ð°ÑÐ¸Ñ Â«ÑÐ°Ð±Ð¾ÑÐ°ÐµÑÂ».</li>'
+            '<li>ÐÐµÑÐ¶Ð¸ÑÐµ Ð²ÑÐ¾ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð² Ð¼Ð°ÑÑÑÑÑÐµ: Ð´Ð¾ 26% ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð±ÑÐ²Ð°ÑÑ Ð½ÐµÐ¸ÑÐ¿ÑÐ°Ð²Ð½Ñ Ð¿ÑÐ¸ ÑÐ°Ð±Ð¾ÑÐµÐ¼ ÑÑÐ°ÑÑÑÐµ.</li>'
+            '<li>ÐÐ°Ð³Ð»ÑÐ´ÑÐ²Ð°Ð¹ÑÐµ Ð² Ð³Ð°Ð¹Ð´ <a href="/pain/ne-zaryazhaetsya.html">Â«ÐÐµ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÑÂ»</a> Ð¸ ÑÑÐ°ÑÑÑ <a href="/blog/stanciya-ne-rabotaet.html">Â«Ð¡ÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ: ÑÑÑ Ð²Ð¸Ð½Ð°Â»</a>.</li>'
             '</ol>'
-            '<p>Считаете стоимость поездки — калькулятор <a href="/calculator/">здесь</a>. Полный список станций по городам: ' + city_links_all + '.</p>'
+            '<p>Ð¡ÑÐ¸ÑÐ°ÐµÑÐµ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸ â ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ <a href="/calculator/">Ð·Ð´ÐµÑÑ</a>. ÐÐ¾Ð»Ð½ÑÐ¹ ÑÐ¿Ð¸ÑÐ¾Ðº ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¿Ð¾ Ð³Ð¾ÑÐ¾Ð´Ð°Ð¼: ' + city_links_all + '.</p>'
             '</div>')
         write_page(os.path.join(outdir,'charging',sl+'.html'),
-            'Зарядные станции ' + prep + ' — карта и сети | Запас хода',
-            clamp_desc(str(n) + ' зарядных станций ' + prep + ': сети и операторы, разъёмы Type 2/GB/T/CCS2, быстрые и медленные. Адреса, мощности и как не встать у неработающей станции.'),
+            'ÐÐ°ÑÑÐ´Ð½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ ' + prep + ' â ÐºÐ°ÑÑÐ° Ð¸ ÑÐµÑÐ¸ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+            clamp_desc(str(n) + ' Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ ' + prep + ': ÑÐµÑÐ¸ Ð¸ Ð¾Ð¿ÐµÑÐ°ÑÐ¾ÑÑ, ÑÐ°Ð·ÑÑÐ¼Ñ Type 2/GB/T/CCS2, Ð±ÑÑÑÑÑÐµ Ð¸ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÐµ. ÐÐ´ÑÐµÑÐ°, Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ð¸ ÐºÐ°Ðº Ð½Ðµ Ð²ÑÑÐ°ÑÑ Ñ Ð½ÐµÑÐ°Ð±Ð¾ÑÐ°ÑÑÐµÐ¹ ÑÑÐ°Ð½ÑÐ¸Ð¸.'),
             body, '/charging/' + sl + '.html',
-            crumbs=[('/charging/', 'Карта станций'), ('/charging/' + sl + '.html', c)])
+            crumbs=[('/charging/', 'ÐÐ°ÑÑÐ° ÑÑÐ°Ð½ÑÐ¸Ð¹'), ('/charging/' + sl + '.html', c)])
         CITY_URLS.append((c, '/charging/' + sl + '.html'))
-    print('город-страниц:', len(CITY_URLS))
+    print('Ð³Ð¾ÑÐ¾Ð´-ÑÑÑÐ°Ð½Ð¸Ñ:', len(CITY_URLS))
 
 def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls = [SITE_DOMAIN+'/', SITE_DOMAIN+'/models/', SITE_DOMAIN+'/forum/', SITE_DOMAIN+'/pains.html', SITE_DOMAIN+'/about.html', SITE_DOMAIN+'/news/',
@@ -2902,7 +2885,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     urls += [SITE_DOMAIN+'/'+s for s in vin_slugs]
     urls += [SITE_DOMAIN+'/'+tid+'.html' for tid,_,_,_ in _forum_seed()]
     lm = '<lastmod>' + BUILD_DATE + '</lastmod>'
-    # R-09: зимний приоритет — bridge/winter_seo.json (triggered=true, свежее 48 ч) поднимает зимние URL.
+    # R-09: Ð·Ð¸Ð¼Ð½Ð¸Ð¹ Ð¿ÑÐ¸Ð¾ÑÐ¸ÑÐµÑ â bridge/winter_seo.json (triggered=true, ÑÐ²ÐµÐ¶ÐµÐµ 48 Ñ) Ð¿Ð¾Ð´Ð½Ð¸Ð¼Ð°ÐµÑ Ð·Ð¸Ð¼Ð½Ð¸Ðµ URL.
     winter_boost = False
     try:
         if os.path.exists('bridge/winter_seo.json'):
@@ -2925,7 +2908,7 @@ def build_sitemap(slugs_model, news, vin_slugs, outdir='.'):
     return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(_url(u) for u in urls) + '</urlset>'
 
 
-# ================= /cost/: сколько стоит зарядить конкретную модель =================
+# ================= /cost/: ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ =================
 COST_MODELS = [
  ("zeekr-001-001-fr", "Zeekr 001", 100, 19, 31, "BEV"),
  ("li-auto-l6-l7-l8-l9-2022-2025", "Li Auto L7", 42.8, 20.4, 26, "EREV"),
@@ -2946,10 +2929,10 @@ WINTER = 1.35
 GAS_PRICE = 62.0
 GAS_CONS = 8.0
 def cost_page(outdir, write_page):
-    """Генеративные страницы «Сколько стоит зарядить [модель]» — под дробление запроса 5091/мес."""
+    """ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ð²Ð½ÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ Â«Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ [Ð¼Ð¾Ð´ÐµÐ»Ñ]Â» â Ð¿Ð¾Ð´ Ð´ÑÐ¾Ð±Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿ÑÐ¾ÑÐ° 5091/Ð¼ÐµÑ."""
     os.makedirs(os.path.join(outdir,'cost'), exist_ok=True)
     for mkey, name, cap, cons_l, cons_w, mtype in COST_MODELS:
-        def rub(x): return f"{round(x):,}".replace(",", " ") + " ₽"
+        def rub(x): return f"{round(x):,}".replace(",", " ") + " â½"
         home100_l = cons_l*(1+LOSS)*TARIFF_HOME
         home100_w = cons_w*(1+LOSS)*TARIFF_HOME
         dc100_l = cons_l*(1+LOSS)*TARIFF_DC
@@ -2961,46 +2944,46 @@ def cost_page(outdir, write_page):
         benz100 = GAS_CONS*GAS_PRICE
         full_home = cap*(1+LOSS)*TARIFF_HOME
         full_dc = cap*(1+LOSS)*TARIFF_DC
-        t = ("Сколько стоит зарядить " + name + ": расчёт на 100 км, месяц и зиму")
-        d = (f"Реальные суммы за зарядку {name} в 2026 году: дома от розетки и на станции, лето и зима, 100 км и месяц. Сравнение с бензином и калькулятор под свой тариф.")
+        t = ("Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð·Ð°ÑÑÐ´Ð¸ÑÑ " + name + ": ÑÐ°ÑÑÑÑ Ð½Ð° 100 ÐºÐ¼, Ð¼ÐµÑÑÑ Ð¸ Ð·Ð¸Ð¼Ñ")
+        d = (f"Ð ÐµÐ°Ð»ÑÐ½ÑÐµ ÑÑÐ¼Ð¼Ñ Ð·Ð° Ð·Ð°ÑÑÐ´ÐºÑ {name} Ð² 2026 Ð³Ð¾Ð´Ñ: Ð´Ð¾Ð¼Ð° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¸ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð»ÐµÑÐ¾ Ð¸ Ð·Ð¸Ð¼Ð°, 100 ÐºÐ¼ Ð¸ Ð¼ÐµÑÑÑ. Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ñ Ð±ÐµÐ½Ð·Ð¸Ð½Ð¾Ð¼ Ð¸ ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð¿Ð¾Ð´ ÑÐ²Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ.")
         body_parts = []
-        body_parts.append('<h2>Коротко: цифры для ' + name + '</h2>')
+        body_parts.append('<h2>ÐÐ¾ÑÐ¾ÑÐºÐ¾: ÑÐ¸ÑÑÑ Ð´Ð»Ñ ' + name + '</h2>')
         body_parts.append('<div class="tw">'
-            '<div class="tw-card"><b>Дома, на 100 км</b><span>' + rub(home100_l) + ' летом · ' + rub(home100_w) + ' зимой</span></div>'
-            '<div class="tw-card"><b>Станция DC, на 100 км</b><span>' + rub(dc100_l) + ' летом · ' + rub(dc100_w) + ' зимой</span></div>'
-            '<div class="tw-card"><b>Месяц: 1500 км дома</b><span>' + rub(month_home) + ' летом · ' + rub(month_home_w) + ' зимой</span></div>'
-            '<div class="tw-card"><b>Бензин для сравнения</b><span>' + rub(benz100) + ' на 100 км</span></div>'
+            '<div class="tw-card"><b>ÐÐ¾Ð¼Ð°, Ð½Ð° 100 ÐºÐ¼</b><span>' + rub(home100_l) + ' Ð»ÐµÑÐ¾Ð¼ Â· ' + rub(home100_w) + ' Ð·Ð¸Ð¼Ð¾Ð¹</span></div>'
+            '<div class="tw-card"><b>Ð¡ÑÐ°Ð½ÑÐ¸Ñ DC, Ð½Ð° 100 ÐºÐ¼</b><span>' + rub(dc100_l) + ' Ð»ÐµÑÐ¾Ð¼ Â· ' + rub(dc100_w) + ' Ð·Ð¸Ð¼Ð¾Ð¹</span></div>'
+            '<div class="tw-card"><b>ÐÐµÑÑÑ: 1500 ÐºÐ¼ Ð´Ð¾Ð¼Ð°</b><span>' + rub(month_home) + ' Ð»ÐµÑÐ¾Ð¼ Â· ' + rub(month_home_w) + ' Ð·Ð¸Ð¼Ð¾Ð¹</span></div>'
+            '<div class="tw-card"><b>ÐÐµÐ½Ð·Ð¸Ð½ Ð´Ð»Ñ ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ñ</b><span>' + rub(benz100) + ' Ð½Ð° 100 ÐºÐ¼</span></div>'
             '</div>')
-        body_parts.append('<p class="note">Взяв за основу тариф ' + str(TARIFF_HOME).replace(".", ",") + ' ₽/кВт·ч (усреднённый тариф по счётчику), станция DC — ' + str(round(TARIFF_DC)).replace(",", " ") + ' ₽/кВт·ч (среднее по сетям), потери при зарядке ~10%, зимний расход ×1,35. Ёмкость батареи и мощности — по спецификациям ' + name + '; реальный расход зависит от стиля, климата и шин.</p>')
-        body_parts.append('<h2>Полная зарядка ' + name + '</h2>')
-        body_parts.append('<p>Батарея ' + str(cap).replace(".", ",") + ' кВт·ч: дома — ' + rub(full_home) + ' за 100% (0 → 100%), на быстрой станции — ' + rub(full_dc) + '. На практике владельцы держат 20–80% — это ' + rub(cap*0.6*(1+LOSS)*TARIFF_HOME) + ' дома и ' + rub(cap*0.6*(1+LOSS)*TARIFF_DC) + ' на станции. Проверяйте стоимость именно по кВт·ч, а не по минуте: тарифы разных сетей различаются вдвое.</p>')
-        body_parts.append('<h2>Месяц владения: дома или станция</h2>')
+        body_parts.append('<p class="note">ÐÐ·ÑÐ² Ð·Ð° Ð¾ÑÐ½Ð¾Ð²Ñ ÑÐ°ÑÐ¸Ñ ' + str(TARIFF_HOME).replace(".", ",") + ' â½/ÐºÐÑÂ·Ñ (ÑÑÑÐµÐ´Ð½ÑÐ½Ð½ÑÐ¹ ÑÐ°ÑÐ¸Ñ Ð¿Ð¾ ÑÑÑÑÑÐ¸ÐºÑ), ÑÑÐ°Ð½ÑÐ¸Ñ DC â ' + str(round(TARIFF_DC)).replace(",", " ") + ' â½/ÐºÐÑÂ·Ñ (ÑÑÐµÐ´Ð½ÐµÐµ Ð¿Ð¾ ÑÐµÑÑÐ¼), Ð¿Ð¾ÑÐµÑÐ¸ Ð¿ÑÐ¸ Ð·Ð°ÑÑÐ´ÐºÐµ ~10%, Ð·Ð¸Ð¼Ð½Ð¸Ð¹ ÑÐ°ÑÑÐ¾Ð´ Ã1,35. ÐÐ¼ÐºÐ¾ÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ â Ð¿Ð¾ ÑÐ¿ÐµÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸ÑÐ¼ ' + name + '; ÑÐµÐ°Ð»ÑÐ½ÑÐ¹ ÑÐ°ÑÑÐ¾Ð´ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ ÑÑÐ¸Ð»Ñ, ÐºÐ»Ð¸Ð¼Ð°ÑÐ° Ð¸ ÑÐ¸Ð½.</p>')
+        body_parts.append('<h2>ÐÐ¾Ð»Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° ' + name + '</h2>')
+        body_parts.append('<p>ÐÐ°ÑÐ°ÑÐµÑ ' + str(cap).replace(".", ",") + ' ÐºÐÑÂ·Ñ: Ð´Ð¾Ð¼Ð° â ' + rub(full_home) + ' Ð·Ð° 100% (0 â 100%), Ð½Ð° Ð±ÑÑÑÑÐ¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ â ' + rub(full_dc) + '. ÐÐ° Ð¿ÑÐ°ÐºÑÐ¸ÐºÐµ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ Ð´ÐµÑÐ¶Ð°Ñ 20â80% â ÑÑÐ¾ ' + rub(cap*0.6*(1+LOSS)*TARIFF_HOME) + ' Ð´Ð¾Ð¼Ð° Ð¸ ' + rub(cap*0.6*(1+LOSS)*TARIFF_DC) + ' Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸. ÐÑÐ¾Ð²ÐµÑÑÐ¹ÑÐµ ÑÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ Ð¸Ð¼ÐµÐ½Ð½Ð¾ Ð¿Ð¾ ÐºÐÑÂ·Ñ, Ð° Ð½Ðµ Ð¿Ð¾ Ð¼Ð¸Ð½ÑÑÐµ: ÑÐ°ÑÐ¸ÑÑ ÑÐ°Ð·Ð½ÑÑ ÑÐµÑÐµÐ¹ ÑÐ°Ð·Ð»Ð¸ÑÐ°ÑÑÑÑ Ð²Ð´Ð²Ð¾Ðµ.</p>')
+        body_parts.append('<h2>ÐÐµÑÑÑ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ: Ð´Ð¾Ð¼Ð° Ð¸Ð»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ñ</h2>')
         body_parts.append('<ul>'
-            '<li><b>1500 км/мес, дома:</b> ' + rub(month_home) + ' летом, ' + rub(month_home_w) + ' зимой.</li>'
-            '<li><b>1500 км/мес, только станция DC:</b> ' + rub(month_dc) + ' летом, ' + rub(month_dc_w) + ' зимой.</li>'
-            '<li><b>Смешанный режим (70% дома / 30% станция):</b> примерно ' + rub(month_home*0.7 + month_dc*0.3) + ' летом и ' + rub(month_home_w*0.7 + month_dc_w*0.3) + ' зимой.</li>'
-            '<li><b>Год (1500 км/мес, смешанный):</b> порядка ' + rub((month_home*0.7 + month_dc*0.3)*12) + '.</li></ul>')
-        body_parts.append('<h2>Где траты растут</h2>'
+            '<li><b>1500 ÐºÐ¼/Ð¼ÐµÑ, Ð´Ð¾Ð¼Ð°:</b> ' + rub(month_home) + ' Ð»ÐµÑÐ¾Ð¼, ' + rub(month_home_w) + ' Ð·Ð¸Ð¼Ð¾Ð¹.</li>'
+            '<li><b>1500 ÐºÐ¼/Ð¼ÐµÑ, ÑÐ¾Ð»ÑÐºÐ¾ ÑÑÐ°Ð½ÑÐ¸Ñ DC:</b> ' + rub(month_dc) + ' Ð»ÐµÑÐ¾Ð¼, ' + rub(month_dc_w) + ' Ð·Ð¸Ð¼Ð¾Ð¹.</li>'
+            '<li><b>Ð¡Ð¼ÐµÑÐ°Ð½Ð½ÑÐ¹ ÑÐµÐ¶Ð¸Ð¼ (70% Ð´Ð¾Ð¼Ð° / 30% ÑÑÐ°Ð½ÑÐ¸Ñ):</b> Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ ' + rub(month_home*0.7 + month_dc*0.3) + ' Ð»ÐµÑÐ¾Ð¼ Ð¸ ' + rub(month_home_w*0.7 + month_dc_w*0.3) + ' Ð·Ð¸Ð¼Ð¾Ð¹.</li>'
+            '<li><b>ÐÐ¾Ð´ (1500 ÐºÐ¼/Ð¼ÐµÑ, ÑÐ¼ÐµÑÐ°Ð½Ð½ÑÐ¹):</b> Ð¿Ð¾ÑÑÐ´ÐºÐ° ' + rub((month_home*0.7 + month_dc*0.3)*12) + '.</li></ul>')
+        body_parts.append('<h2>ÐÐ´Ðµ ÑÑÐ°ÑÑ ÑÐ°ÑÑÑÑ</h2>'
             '<ol>'
-            '<li><b>Зима:</b> расход ' + name + ' растёт до ' + str(cons_w).replace(".", ",") + ' кВт·ч/100 км (подогрев салона и батареи, сопротивление шин). Оцифровано в <a href="/pain/zapas-hoda-zimoy.html">гайде о зимнем запасе хода</a>.</li>'
-            '<li><b>Частая быстрая зарядка:</b> тарифы DC в 4–5 раз выше домашнего; экономия — ночная зарядка дома (как её поставить: <a href="/pain/domashnie-stancii.html">гайд о домашних станциях</a>).</li>'
-            '<li><b>Потери:</b> 5–15% кВт·ч уходит в тепло и преобразование — <a href="/pain/poteri-pri-zaryadke.html">разбор потерь</a>.</li></ol>')
-        body_parts.append('<h2>Что докупить ' + name + '</h2>')
+            '<li><b>ÐÐ¸Ð¼Ð°:</b> ÑÐ°ÑÑÐ¾Ð´ ' + name + ' ÑÐ°ÑÑÑÑ Ð´Ð¾ ' + str(cons_w).replace(".", ",") + ' ÐºÐÑÂ·Ñ/100 ÐºÐ¼ (Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² ÑÐ°Ð»Ð¾Ð½Ð° Ð¸ Ð±Ð°ÑÐ°ÑÐµÐ¸, ÑÐ¾Ð¿ÑÐ¾ÑÐ¸Ð²Ð»ÐµÐ½Ð¸Ðµ ÑÐ¸Ð½). ÐÑÐ¸ÑÑÐ¾Ð²Ð°Ð½Ð¾ Ð² <a href="/pain/zapas-hoda-zimoy.html">Ð³Ð°Ð¹Ð´Ðµ Ð¾ Ð·Ð¸Ð¼Ð½ÐµÐ¼ Ð·Ð°Ð¿Ð°ÑÐµ ÑÐ¾Ð´Ð°</a>.</li>'
+            '<li><b>Ð§Ð°ÑÑÐ°Ñ Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°:</b> ÑÐ°ÑÐ¸ÑÑ DC Ð² 4â5 ÑÐ°Ð· Ð²ÑÑÐµ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ³Ð¾; ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ â Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð´Ð¾Ð¼Ð° (ÐºÐ°Ðº ÐµÑ Ð¿Ð¾ÑÑÐ°Ð²Ð¸ÑÑ: <a href="/pain/domashnie-stancii.html">Ð³Ð°Ð¹Ð´ Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ñ ÑÑÐ°Ð½ÑÐ¸ÑÑ</a>).</li>'
+            '<li><b>ÐÐ¾ÑÐµÑÐ¸:</b> 5â15% ÐºÐÑÂ·Ñ ÑÑÐ¾Ð´Ð¸Ñ Ð² ÑÐµÐ¿Ð»Ð¾ Ð¸ Ð¿ÑÐµÐ¾Ð±ÑÐ°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ â <a href="/pain/poteri-pri-zaryadke.html">ÑÐ°Ð·Ð±Ð¾Ñ Ð¿Ð¾ÑÐµÑÑ</a>.</li></ol>')
+        body_parts.append('<h2>Ð§ÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ ' + name + '</h2>')
         prod = catalog.catalog_html_for(mkey) if hasattr(catalog, 'catalog_html_for') else ''
-        body_parts.append('<p>Разъёмы, мощности и совместимость — на <a href="/models/' + mkey + '/">странице модели ' + name + '</a>. Что докупить (адаптеры, кабели, портативные зарядки) — в <a href="/catalog/">каталоге</a>; подбор за 30 секунд — <a href="/quiz/">квиз</a>.</p>')
+        body_parts.append('<p>Ð Ð°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ Ð¸ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ â Ð½Ð° <a href="/models/' + mkey + '/">ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ ' + name + '</a>. Ð§ÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ (Ð°Ð´Ð°Ð¿ÑÐµÑÑ, ÐºÐ°Ð±ÐµÐ»Ð¸, Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½ÑÐµ Ð·Ð°ÑÑÐ´ÐºÐ¸) â Ð² <a href="/catalog/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a>; Ð¿Ð¾Ð´Ð±Ð¾Ñ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´ â <a href="/quiz/">ÐºÐ²Ð¸Ð·</a>.</p>')
         if prod:
             body_parts.append(prod)
-        body_parts.append('<div class="cta"><a class="btn lime" href="/calculator/">Калькулятор под свой тариф</a><a class="btn ghost" href="/charging/">Карта станций рядом</a></div>')
+        body_parts.append('<div class="cta"><a class="btn lime" href="/calculator/">ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð¿Ð¾Ð´ ÑÐ²Ð¾Ð¹ ÑÐ°ÑÐ¸Ñ</a><a class="btn ghost" href="/charging/">ÐÐ°ÑÑÐ° ÑÑÐ°Ð½ÑÐ¸Ð¹ ÑÑÐ´Ð¾Ð¼</a></div>')
         body = "".join(body_parts)
         ld = '<script type="application/ld+json">' + services.art_ld(t, d, SITE_DOMAIN + '/cost/' + mkey + '.html') + '</script>'
-        write_page(os.path.join(outdir,'cost',mkey+'.html'), t + ' | Запас хода', d,
+        write_page(os.path.join(outdir,'cost',mkey+'.html'), t + ' | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', d,
             art_enhance(body, SITE_DOMAIN + '/cost/' + mkey + '.html', t, BUILD_DATE), '/cost/' + mkey + '.html',
-            og='/assets/og/default.png', crumbs=[('', 'Стоимость зарядки')], extra_ld=ld)
+            og='/assets/og/default.png', crumbs=[('', 'Ð¡ÑÐ¾Ð¸Ð¼Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸')], extra_ld=ld)
 
 
 def favicon_files(outdir):
     svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="16" width="50" height="34" rx="9" fill="none" stroke="#f5f5f7" stroke-width="5"/><rect x="54" y="26" width="7" height="14" rx="3" fill="#f5f5f7"/><path d="M33 18 L23 36 h8 l-5 12 15-17 h-8 z" fill="#f5f5f7"/></svg>'
-    manifest = json.dumps({'name':'Запас хода — гид по электромобилю','short_name':'Запас хода','icons':[{'src':'/icon-192.png','sizes':'192x192','type':'image/png'},{'src':'/assets/brand/icon-512.png','sizes':'512x512','type':'image/png'}],'theme_color':'#2563EB','background_color':'#ffffff','display':'standalone'}, ensure_ascii=False)
+    manifest = json.dumps({'name':'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â Ð³Ð¸Ð´ Ð¿Ð¾ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ','short_name':'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°','icons':[{'src':'/icon-192.png','sizes':'192x192','type':'image/png'},{'src':'/assets/brand/icon-512.png','sizes':'512x512','type':'image/png'}],'theme_color':'#2563EB','background_color':'#ffffff','display':'standalone'}, ensure_ascii=False)
     open(os.path.join(outdir,'site.webmanifest'),'w',encoding='utf-8').write(manifest)
     try:
         from PIL import Image, ImageDraw
@@ -3023,14 +3006,14 @@ def favicon_files(outdir):
 
 
 def quiz_page(outdir):
-    """Страница-квиз: марка → модель → разъёмы + что докупить + переход на страницу модели."""
+    """Ð¡ÑÑÐ°Ð½Ð¸ÑÐ°-ÐºÐ²Ð¸Ð·: Ð¼Ð°ÑÐºÐ° â Ð¼Ð¾Ð´ÐµÐ»Ñ â ÑÐ°Ð·ÑÑÐ¼Ñ + ÑÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ + Ð¿ÐµÑÐµÑÐ¾Ð´ Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸."""
     import catalog as _cat
     quiz_brands = {}
     for m in MODELS:
         quiz_brands.setdefault(m['brand'].strip(), []).append({
             'm': m['model'], 'slug': slug(m['brand']) + '-' + slug(m['model']),
             'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
-            'obc': m.get('obc') or 'уточнить', 'dcp': m.get('dcp') or '—', 'freq': m.get('freq', ''),
+            'obc': m.get('obc') or 'ÑÑÐ¾ÑÐ½Ð¸ÑÑ', 'dcp': m.get('dcp') or 'â', 'freq': m.get('freq', ''),
             'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])],
         })
     qdata = json.dumps({'brands': quiz_brands, 'order': sorted(quiz_brands, key=lambda b: -len(quiz_brands[b]))}, ensure_ascii=False, separators=(',', ':'))
@@ -3040,7 +3023,7 @@ def quiz_page(outdir):
       'function qFillBrand(){var bs=document.getElementById("q-brand");var os="";'
       'QD.order.forEach(function(b){os+=\'<option value="\'+b+\'">\'+b+\' (\'+QD.brands[b].length+\')</option>\'});bs.innerHTML=os;}'
       'function qFillModel(){var b=document.getElementById("q-brand").value;var ms=QD.brands[b];var os="";'
-      'ms.forEach(function(x,i){os+=\'<option value="\'+i+\'">\'+x.m+\' — \'+x.type+\'</option>\'});'
+      'ms.forEach(function(x,i){os+=\'<option value="\'+i+\'">\'+x.m+\' â \'+x.type+\'</option>\'});'
       'document.getElementById("q-model").innerHTML=os;}'
       'function qShow(){'
       'var b=document.getElementById("q-brand").value;'
@@ -3051,41 +3034,41 @@ def quiz_page(outdir):
       'var bd=QBD.filter(function(y){return y.line===line})[0];'
       'var ps=window.OF_PRODUCTS||[];var hts="";'
       'x.skus.slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
-      'if(p)hts+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});'
+      'if(p)hts+=\'<li><b>\'+p.name+\'</b> â \'+p.price.toLocaleString("ru-RU")+\' â½ Â· <a href="/catalog/\'+p.slug+\'.html">Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ</a></li>\';});'
       'var h=\'<div class="rounded-lg break-words border bg-white border-gray-300 card-product p-4"><h3 class="font-semibold text-gray-900">\'+b+\' \'+x.m+\'</h3>\''
-      '+\'<p class="text-sm text-gray-600">Тип: \'+x.type+\' · AC: \'+(x.ac||"—")+\' · DC: \'+(x.dc||"—")+\'</p>\''
-      '+\'<p>Что обычно докупают к этой модели:</p><ul>\'+hts+\'</ul>\''
-      '+(bd?(\'<p class="text-sm text-gray-600">📦 Готовый комплект: \'+bd.name+\' — \'+bd.price.toLocaleString("ru-RU")+\' ₽ (экономия \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' ₽)</p>\'):"")'
-      '+\'<p><a class="btn lime" href="\'+url+\'">Открыть подбор для \'+b+\' \'+x.m+\' →</a></p>\''
-      '+\'<p class="text-sm text-gray-500">На странице модели — полный SKU-блок, калькулятор зарядки и заявка.</p></div>\';'
+      '+\'<p class="text-sm text-gray-600">Ð¢Ð¸Ð¿: \'+x.type+\' Â· AC: \'+(x.ac||"â")+\' Â· DC: \'+(x.dc||"â")+\'</p>\''
+      '+\'<p>Ð§ÑÐ¾ Ð¾Ð±ÑÑÐ½Ð¾ Ð´Ð¾ÐºÑÐ¿Ð°ÑÑ Ðº ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸:</p><ul>\'+hts+\'</ul>\''
+      '+(bd?(\'<p class="text-sm text-gray-600">ð¦ ÐÐ¾ÑÐ¾Ð²ÑÐ¹ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ: \'+bd.name+\' â \'+bd.price.toLocaleString("ru-RU")+\' â½ (ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ñ \'+(bd.was-bd.price).toLocaleString("ru-RU")+\' â½)</p>\'):"")'
+      '+\'<p><a class="btn lime" href="\'+url+\'">ÐÑÐºÑÑÑÑ Ð¿Ð¾Ð´Ð±Ð¾Ñ Ð´Ð»Ñ \'+b+\' \'+x.m+\' â</a></p>\''
+      '+\'<p class="text-sm text-gray-500">ÐÐ° ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ â Ð¿Ð¾Ð»Ð½ÑÐ¹ SKU-Ð±Ð»Ð¾Ðº, ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸ Ð·Ð°ÑÐ²ÐºÐ°.</p></div>\';'
       'document.getElementById("q-out").innerHTML=h;'
       'try{window.OF_MODEL=b+" "+x.m;}catch(e){}'
       'document.getElementById("q-out").scrollIntoView({behavior:"smooth"});}'
       'document.addEventListener("DOMContentLoaded",function(){qFillBrand();qFillModel();});</script>')
-    form = _cat.order_form_html('Квиз: подберите модель выше')
+    form = _cat.order_form_html('ÐÐ²Ð¸Ð·: Ð¿Ð¾Ð´Ð±ÐµÑÐ¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ñ Ð²ÑÑÐµ')
     body = ('<section class="lg:my-10 my-6"><div class="quiz-wrap">'
       '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
-      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Подбор за 30 секунд</span>'
-      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Подбор комплекта зарядки под вашу модель</h1>'
-      '<p class="text-sm text-gray-600" style="max-width:640px">Выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), что докупить и где это есть в каталоге. Без звонков и анкет: результат сразу.</p>'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">ÐÐ¾Ð´Ð±Ð¾Ñ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´</span>'
+      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">ÐÐ¾Ð´Ð±Ð¾Ñ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¿Ð¾Ð´ Ð²Ð°ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ</h1>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">ÐÑÐ±ÐµÑÐ¸ÑÐµ Ð¼Ð°ÑÐºÑ Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ñ â Ð¿Ð¾ÐºÐ°Ð¶ÐµÐ¼ ÑÐ°Ð·ÑÑÐ¼Ñ (GB/T, Type 2, CCS2), ÑÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ Ð¸ Ð³Ð´Ðµ ÑÑÐ¾ ÐµÑÑÑ Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ. ÐÐµÐ· Ð·Ð²Ð¾Ð½ÐºÐ¾Ð² Ð¸ Ð°Ð½ÐºÐµÑ: ÑÐµÐ·ÑÐ»ÑÑÐ°Ñ ÑÑÐ°Ð·Ñ.</p>'
       '</div>'
       '<div class="rounded-lg break-words border bg-white border-gray-300" style="padding:24px 28px;margin-top:16px">'
       '<div class="of-grid">'
-      '<label class="text-sm text-gray-600">Марка <select id="q-brand" onchange="qFillModel()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
-      '<label class="text-sm text-gray-600">Модель <select id="q-model" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
-      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="qShow()">Показать подбор</button></div>'
+      '<label class="text-sm text-gray-600">ÐÐ°ÑÐºÐ° <select id="q-brand" onchange="qFillModel()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '<label class="text-sm text-gray-600">ÐÐ¾Ð´ÐµÐ»Ñ <select id="q-model" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="qShow()">ÐÐ¾ÐºÐ°Ð·Ð°ÑÑ Ð¿Ð¾Ð´Ð±Ð¾Ñ</button></div>'
       '<div id="q-out"></div></div></section>'
-      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все 145 моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
+      + '<div class="lcard" style="margin-top:14px"><h3>ÐÐ¸Ð´ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ â Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ (PDF)</h3><p>ÐÑÐµ 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸, 12 ÑÐ°ÑÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸, ÑÑÐ¸ Ð³Ð¾ÑÐ¾Ð²ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð¸ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð¸Ð· 20 Ð¿ÑÐ½ÐºÑÐ¾Ð².</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>â¬ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF-Ð³Ð¸Ð´</a></p></div>'
       + js + form)
-    desc = 'Подбор аксессуаров зарядки за 30 секунд: выберите марку и модель — покажем разъёмы (GB/T, Type 2, CCS2), готовый комплект и ссылки на каталог с ценами.'
+    desc = 'ÐÐ¾Ð´Ð±Ð¾Ñ Ð°ÐºÑÐµÑÑÑÐ°ÑÐ¾Ð² Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´: Ð²ÑÐ±ÐµÑÐ¸ÑÐµ Ð¼Ð°ÑÐºÑ Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ñ â Ð¿Ð¾ÐºÐ°Ð¶ÐµÐ¼ ÑÐ°Ð·ÑÑÐ¼Ñ (GB/T, Type 2, CCS2), Ð³Ð¾ÑÐ¾Ð²ÑÐ¹ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¸ ÑÑÑÐ»ÐºÐ¸ Ð½Ð° ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ñ ÑÐµÐ½Ð°Ð¼Ð¸.'
     write_page(os.path.join(outdir, 'quiz', 'index.html'),
-               'Подбор адаптеров и зарядки за 30 секунд | Запас хода', desc, body,
-               '/quiz/', crumbs=[('', 'Подбор')],
-               extra_ld='<script type="application/ld+json">' + services.art_ld('Подбор комплекта за 30 секунд', desc, '/quiz/') + '</script>')
+               'ÐÐ¾Ð´Ð±Ð¾Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð² Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', desc, body,
+               '/quiz/', crumbs=[('', 'ÐÐ¾Ð´Ð±Ð¾Ñ')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('ÐÐ¾Ð´Ð±Ð¾Ñ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´', desc, '/quiz/') + '</script>')
 
-# ====== СРАВНЕНИЕ МОДЕЛЕЙ /compare/ ======
+# ====== Ð¡Ð ÐÐÐÐÐÐÐ ÐÐÐÐÐÐÐ /compare/ ======
 def compare_page(outdir):
-    """Side-by-side сравнение двух моделей EV: разъёмы, мощность, ввоз, что докупить."""
+    """Side-by-side ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð´Ð²ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ, Ð²Ð²Ð¾Ð·, ÑÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ."""
     import catalog as _cat
     items = []
     for m in MODELS:
@@ -3093,7 +3076,7 @@ def compare_page(outdir):
             'slug': slug(m['brand']) + '-' + slug(m['model']),
             'name': m['brand'] + ' ' + m['model'],
             'type': m.get('type', ''), 'ac': m.get('ac', ''), 'dc': m.get('dc', ''),
-            'obc': m.get('obc') or 'уточнить', 'dcp': m.get('dcp') or '—',
+            'obc': m.get('obc') or 'ÑÑÐ¾ÑÐ½Ð¸ÑÑ', 'dcp': m.get('dcp') or 'â',
             'freq': m.get('freq', ''),
             'skus': [i['id'] for i in _cat.MODEL_SKU.get(m['brand'] + '|' + m['model'], [])],
             'note': (m.get('note') or '')[:200],
@@ -3108,49 +3091,49 @@ def compare_page(outdir):
       'function cGet(id){var i=parseInt(document.getElementById(id).value,10);return CI[i]||null;}'
       'function cRow(label,va,vb){return \'<tr><td class="px-6 py-3 font-semibold">\'+label+\'</td><td class="px-6 py-3">\'+va+\'</td><td class="px-6 py-3">\'+vb+\'</td></tr>\';}'
       'function cSkus(x){var ps=CP;var h="";(x.skus||[]).slice(0,4).forEach(function(id){var p=ps.filter(function(y){return y.id===id})[0];'
-      'if(p)h+=\'<li><b>\'+p.name+\'</b> — \'+p.price.toLocaleString("ru-RU")+\' ₽ · <a href="/catalog/\'+p.slug+\'.html">подробнее</a></li>\';});return h||\'<li>—</li>\';}'
+      'if(p)h+=\'<li><b>\'+p.name+\'</b> â \'+p.price.toLocaleString("ru-RU")+\' â½ Â· <a href="/catalog/\'+p.slug+\'.html">Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ</a></li>\';});return h||\'<li>â</li>\';}'
       'function cShow(){'
       'var a=cGet("c-a"), b=cGet("c-b");if(!a||!b)return;'
-      'function link(x){return \'<a class="text-green-600 font-semibold" href="/models/\'+x.slug+\'/">Страница модели →</a>\';}'
+      'function link(x){return \'<a class="text-green-600 font-semibold" href="/models/\'+x.slug+\'/">Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð¼Ð¾Ð´ÐµÐ»Ð¸ â</a>\';}'
       'var rows="";'
-      'rows+=cRow("Тип",a.type||"—",b.type||"—");'
-      'rows+=cRow("Разъём AC",a.ac||"—",b.ac||"—");'
-      'rows+=cRow("Разъём DC",a.dc||"—",b.dc||"—");'
-      'rows+=cRow("Бортовой зарядник (OBC)",a.obc,b.obc);'
-      'rows+=cRow("Мощность DC (пик)",a.dcp,b.dcp);'
-      'rows+=cRow("Частота ввоза в РФ",a.freq||"—",b.freq||"—");'
-      'rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">Что докупить</td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(a)+\'</ul></td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(b)+\'</ul></td></tr>\';'
-      'if(a.note||b.note)rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">Особенности</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(a.note||"—")+\'</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(b.note||"—")+\'</td></tr>\';'
+      'rows+=cRow("Ð¢Ð¸Ð¿",a.type||"â",b.type||"â");'
+      'rows+=cRow("Ð Ð°Ð·ÑÑÐ¼ AC",a.ac||"â",b.ac||"â");'
+      'rows+=cRow("Ð Ð°Ð·ÑÑÐ¼ DC",a.dc||"â",b.dc||"â");'
+      'rows+=cRow("ÐÐ¾ÑÑÐ¾Ð²Ð¾Ð¹ Ð·Ð°ÑÑÐ´Ð½Ð¸Ðº (OBC)",a.obc,b.obc);'
+      'rows+=cRow("ÐÐ¾ÑÐ½Ð¾ÑÑÑ DC (Ð¿Ð¸Ðº)",a.dcp,b.dcp);'
+      'rows+=cRow("Ð§Ð°ÑÑÐ¾ÑÐ° Ð²Ð²Ð¾Ð·Ð° Ð² Ð Ð¤",a.freq||"â",b.freq||"â");'
+      'rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">Ð§ÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ</td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(a)+\'</ul></td><td class="px-6 py-3 align-top"><ul class="list-disc pl-5 text-sm">\'+cSkus(b)+\'</ul></td></tr>\';'
+      'if(a.note||b.note)rows+=\'<tr><td class="px-6 py-3 font-semibold align-top">ÐÑÐ¾Ð±ÐµÐ½Ð½Ð¾ÑÑÐ¸</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(a.note||"â")+\'</td><td class="px-6 py-3 align-top text-sm text-gray-600">\'+(b.note||"â")+\'</td></tr>\';'
       'rows+=\'<tr><td></td><td class="px-6 py-3">\'+link(a)+\'</td><td class="px-6 py-3">\'+link(b)+\'</td></tr>\';'
-      'var h=\'<div class="border bg-white overflow-x-auto"><table class="text-left w-full"><tr><th class="px-6 py-3">Параметр</th><th class="px-6 py-3">\'+a.name+\'</th><th class="px-6 py-3">\'+b.name+\'</th></tr>\'+rows+\'</table></div>\';'
+      'var h=\'<div class="border bg-white overflow-x-auto"><table class="text-left w-full"><tr><th class="px-6 py-3">ÐÐ°ÑÐ°Ð¼ÐµÑÑ</th><th class="px-6 py-3">\'+a.name+\'</th><th class="px-6 py-3">\'+b.name+\'</th></tr>\'+rows+\'</table></div>\';'
       'document.getElementById("c-out").innerHTML=h;'
       'document.getElementById("c-out").scrollIntoView({behavior:"smooth"});}'
       'function cAuto(){var q=new URLSearchParams(location.search);var ia=CI.findIndex(function(x){return q.get("a")&&x.slug===q.get("a")});var ib=CI.findIndex(function(x){return q.get("b")&&x.slug===q.get("b")});if(ia>=0)document.getElementById("c-a").value=ia;if(ib>=0)document.getElementById("c-b").value=ib;if(ia>=0||ib>=0)cShow();}'
       'document.addEventListener("DOMContentLoaded",function(){cFill();var b=document.getElementById("c-b");if(b.options.length>3)b.value="3";cShow();cAuto();});</script>')
     body = ('<section class="lg:my-10 my-6"><div class="container">'
       '<div class="rounded-lg break-words bg-gray-100" style="padding:34px 40px">'
-      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">Инструмент · бесплатно</span>'
-      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Сравнение моделей EV: разъёмы и зарядка</h1>'
-      '<p class="text-sm text-gray-600" style="max-width:640px">Выберите две модели — покажем разъёмы, бортовой зарядник, мощность DC, частоту ввоза в РФ и что докупить к каждой. Данные из базы справочника: ' + str(len(MODELS)) + ' моделей.</p>'
+      '<span class="inline-block p-1 text-xs leading-none rounded-lg bg-green-600 text-white font-semibold">ÐÐ½ÑÑÑÑÐ¼ÐµÐ½Ñ Â· Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾</span>'
+      '<h1 class="text-2xl lg:text-4xl font-bold text-gray-900 my-3">Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV: ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ°</h1>'
+      '<p class="text-sm text-gray-600" style="max-width:640px">ÐÑÐ±ÐµÑÐ¸ÑÐµ Ð´Ð²Ðµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ â Ð¿Ð¾ÐºÐ°Ð¶ÐµÐ¼ ÑÐ°Ð·ÑÑÐ¼Ñ, Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¹ Ð·Ð°ÑÑÐ´Ð½Ð¸Ðº, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ DC, ÑÐ°ÑÑÐ¾ÑÑ Ð²Ð²Ð¾Ð·Ð° Ð² Ð Ð¤ Ð¸ ÑÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ Ðº ÐºÐ°Ð¶Ð´Ð¾Ð¹. ÐÐ°Ð½Ð½ÑÐµ Ð¸Ð· Ð±Ð°Ð·Ñ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸ÐºÐ°: ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹.</p>'
       '</div>'
       '<div class="rounded-lg break-words border bg-white border-gray-300" style="padding:24px 28px;margin-top:16px">'
       '<div class="of-grid">'
-      '<label class="text-sm text-gray-600">Модель A <select id="c-a" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
-      '<label class="text-sm text-gray-600">Модель B <select id="c-b" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
-      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="cShow()">Сравнить</button></div>'
+      '<label class="text-sm text-gray-600">ÐÐ¾Ð´ÐµÐ»Ñ A <select id="c-a" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '<label class="text-sm text-gray-600">ÐÐ¾Ð´ÐµÐ»Ñ B <select id="c-b" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select></label>'
+      '</div><button class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" onclick="cShow()">Ð¡ÑÐ°Ð²Ð½Ð¸ÑÑ</button></div>'
       '<div id="c-out" class="my-6"></div>'
-      + '<div class="lcard" style="margin-top:14px"><h3>Гид по зарядке — бесплатно (PDF)</h3><p>Все ' + str(len(MODELS)) + ' моделей: разъёмы, мощность зарядки, 12 частых проблем с решениями, три готовых комплекта и чек-лист покупки из 20 пунктов.</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>⬇ Скачать PDF-гид</a></p></div>'
+      + '<div class="lcard" style="margin-top:14px"><h3>ÐÐ¸Ð´ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ â Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ (PDF)</h3><p>ÐÑÐµ ' + str(len(MODELS)) + ' Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹: ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸, 12 ÑÐ°ÑÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼ Ñ ÑÐµÑÐµÐ½Ð¸ÑÐ¼Ð¸, ÑÑÐ¸ Ð³Ð¾ÑÐ¾Ð²ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð¸ ÑÐµÐº-Ð»Ð¸ÑÑ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð¸Ð· 20 Ð¿ÑÐ½ÐºÑÐ¾Ð².</p><p><a class="btn lime" href="' + GUIDE_PDF + '" download>â¬ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF-Ð³Ð¸Ð´</a></p></div>'
       + js + '</div></section>')
-    desc = 'Сравните две модели электромобилей: разъёмы AC/DC, бортовой зарядник, мощность быстрой зарядки, частота ввоза в РФ и что докупить. 138 моделей.'
+    desc = 'Ð¡ÑÐ°Ð²Ð½Ð¸ÑÐµ Ð´Ð²Ðµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹: ÑÐ°Ð·ÑÑÐ¼Ñ AC/DC, Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¹ Ð·Ð°ÑÑÐ´Ð½Ð¸Ðº, Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸, ÑÐ°ÑÑÐ¾ÑÐ° Ð²Ð²Ð¾Ð·Ð° Ð² Ð Ð¤ Ð¸ ÑÑÐ¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ. 138 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹.'
     write_page(os.path.join(outdir, 'compare', 'index.html'),
-               'Сравнение моделей EV: разъёмы и мощность | Запас хода', desc, body,
-               '/compare/', crumbs=[('', 'Сравнение')],
-               extra_ld='<script type="application/ld+json">' + services.art_ld('Сравнение моделей EV: разъёмы и зарядка', desc, '/compare/') + '</script>')
+               'Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV: ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', desc, body,
+               '/compare/', crumbs=[('', 'Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ')],
+               extra_ld='<script type="application/ld+json">' + services.art_ld('Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV: ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ°', desc, '/compare/') + '</script>')
 
 
 GAS_URL = 'https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec'
 
-# ====== УКАЗАТЕЛЬ МОДЕЛЕЙ /models/ ======
+# ====== Ð£ÐÐÐÐÐ¢ÐÐÐ¬ ÐÐÐÐÐÐÐ /models/ ======
 def models_index(outdir):
     groups = {}
     types = []
@@ -3165,10 +3148,10 @@ def models_index(outdir):
     for m in MODELS:
         cards.append('<a class="mcard mi" href="/models/' + slug(m['brand']) + '-' + slug(m['model']) + '.html"'
                      ' data-b="' + html.escape(m['brand']) + '" data-t="' + html.escape(m.get('type', '')) + '" data-p="' + classify(m) + '">'
-                     '<b>' + html.escape(m['brand'] + ' ' + m['model']) + '</b><span>' + m.get('years', '') + ' · ' + m.get('type', '') + ' · ' + classify(m) + '</span></a>')
-    body = ('<div class="hero"><div class="kicker">Справочник</div><h1>Все модели в базе</h1>'
-            '<p class="lede">Фильтруйте по марке, типу и разъёму. На странице каждой модели: разъёмы зарядки, типичные проблемы, подходящие аксессуары и калькулятор зарядки.</p></div>'
-            '<div class="fsec"><button class="fchip on" data-k="all" data-v="">Все</button>' + chips_b + chips_t + chips_p + '</div>'
+                     '<b>' + html.escape(m['brand'] + ' ' + m['model']) + '</b><span>' + m.get('years', '') + ' Â· ' + m.get('type', '') + ' Â· ' + classify(m) + '</span></a>')
+    body = ('<div class="hero"><div class="kicker">Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº</div><h1>ÐÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð² Ð±Ð°Ð·Ðµ</h1>'
+            '<p class="lede">Ð¤Ð¸Ð»ÑÑÑÑÐ¹ÑÐµ Ð¿Ð¾ Ð¼Ð°ÑÐºÐµ, ÑÐ¸Ð¿Ñ Ð¸ ÑÐ°Ð·ÑÑÐ¼Ñ. ÐÐ° ÑÑÑÐ°Ð½Ð¸ÑÐµ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸: ÑÐ°Ð·ÑÑÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸, ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ, Ð¿Ð¾Ð´ÑÐ¾Ð´ÑÑÐ¸Ðµ Ð°ÐºÑÐµÑÑÑÐ°ÑÑ Ð¸ ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸.</p></div>'
+            '<div class="fsec"><button class="fchip on" data-k="all" data-v="">ÐÑÐµ</button>' + chips_b + chips_t + chips_p + '</div>'
             '<div class="grid" id="mi-grid">' + ''.join(cards) + '</div>'
             '<script>(function(){var on={b:null,t:null,p:null};var grid=document.getElementById("mi-grid");'
             'var chips=[].slice.call(document.querySelectorAll(".fchip"));'
@@ -3181,26 +3164,26 @@ def models_index(outdir):
             'apply();});});apply();})();'
             'if(new URLSearchParams(location.search).get("brand")){var qb=new URLSearchParams(location.search).get("brand").toLowerCase();var b1=[].slice.call(document.querySelectorAll(".fchip[data-k=b]")).filter(function(x){return x.getAttribute("data-v").toLowerCase()===qb;})[0];if(b1)b1.click();}</script>')
     write_page(os.path.join(outdir, 'models', 'index.html'),
-               'Все модели в базе — разъёмы, проблемы, аксессуары — «Запас хода»',
-               'Полный указатель моделей в базе «Запас хода»: разъёмы зарядки (GB/T, Type 2/CCS2, CHAdeMO), типичные проблемы, подходящие аксессуары и калькулятор зарядки.',
-               body, '/models/', crumbs=[('/models/', 'Модели')])
+               'ÐÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð² Ð±Ð°Ð·Ðµ â ÑÐ°Ð·ÑÑÐ¼Ñ, Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ, Ð°ÐºÑÐµÑÑÑÐ°ÑÑ â Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»',
+               'ÐÐ¾Ð»Ð½ÑÐ¹ ÑÐºÐ°Ð·Ð°ÑÐµÐ»Ñ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð² Ð±Ð°Ð·Ðµ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»: ÑÐ°Ð·ÑÑÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ (GB/T, Type 2/CCS2, CHAdeMO), ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ, Ð¿Ð¾Ð´ÑÐ¾Ð´ÑÑÐ¸Ðµ Ð°ÐºÑÐµÑÑÑÐ°ÑÑ Ð¸ ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸.',
+               body, '/models/', crumbs=[('/models/', 'ÐÐ¾Ð´ÐµÐ»Ð¸')])
 
-# ====== СОБСТВЕННЫЙ ФОРУМ + SEED-ТЕМЫ ======
-FORUM_SECTIONS = [('general', 'Общие вопросы'), ('charging', 'Зарядка и станции'), ('accessories', 'Аксессуары'), ('problems', 'Проблемы и ремонт'), ('market', 'Продам / куплю')]
-SEC_BADGES = {'general': 'Общие вопросы', 'charging': 'Зарядка', 'accessories': 'Аксессуары', 'problems': 'Ремонт', 'market': 'Куплю / продам'}
+# ====== Ð¡ÐÐÐ¡Ð¢ÐÐÐÐÐ«Ð Ð¤ÐÐ Ð£Ð + SEED-Ð¢ÐÐÐ« ======
+FORUM_SECTIONS = [('general', 'ÐÐ±ÑÐ¸Ðµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ'), ('charging', 'ÐÐ°ÑÑÐ´ÐºÐ° Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸'), ('accessories', 'ÐÐºÑÐµÑÑÑÐ°ÑÑ'), ('problems', 'ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÐ¼Ð¾Ð½Ñ'), ('market', 'ÐÑÐ¾Ð´Ð°Ð¼ / ÐºÑÐ¿Ð»Ñ')]
+SEC_BADGES = {'general': 'ÐÐ±ÑÐ¸Ðµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ', 'charging': 'ÐÐ°ÑÑÐ´ÐºÐ°', 'accessories': 'ÐÐºÑÐµÑÑÑÐ°ÑÑ', 'problems': 'Ð ÐµÐ¼Ð¾Ð½Ñ', 'market': 'ÐÑÐ¿Ð»Ñ / Ð¿ÑÐ¾Ð´Ð°Ð¼'}
 
 def _forum_seed():
-    seeds = [('forum/welcome', 'Задайте первый вопрос — разберём бесплатно', 'general',
-              'Сообщество владельцев электромобилей и гибридов: вопросы о зарядке, аксессуарах и эксплуатации. Отвечают редакция и владельцы.')]
+    seeds = [('forum/welcome', 'ÐÐ°Ð´Ð°Ð¹ÑÐµ Ð¿ÐµÑÐ²ÑÐ¹ Ð²Ð¾Ð¿ÑÐ¾Ñ â ÑÐ°Ð·Ð±ÐµÑÑÐ¼ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾', 'general',
+              'Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð¸ Ð³Ð¸Ð±ÑÐ¸Ð´Ð¾Ð²: Ð²Ð¾Ð¿ÑÐ¾ÑÑ Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ, Ð°ÐºÑÐµÑÑÑÐ°ÑÐ°Ñ Ð¸ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸. ÐÑÐ²ÐµÑÐ°ÑÑ ÑÐµÐ´Ð°ÐºÑÐ¸Ñ Ð¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ.')]
     for sl, title, desc, pids in PAIN_ARTICLES:
-        seeds.append(('forum/pain-' + sl, title, 'problems', desc + ' — разбор кейса, решения и FAQ от редакции «Запас хода».'))
-    seeds.append(('forum/gbt-vs-type2', 'GB/T или Type 2: чем заряжать китайский электромобиль', 'charging',
-                  'Чем отличаются разъёмы GB/T и Type 2, какие переходники нужны и что использовать дома и на трассе.'))
+        seeds.append(('forum/pain-' + sl, title, 'problems', desc + ' â ÑÐ°Ð·Ð±Ð¾Ñ ÐºÐµÐ¹ÑÐ°, ÑÐµÑÐµÐ½Ð¸Ñ Ð¸ FAQ Ð¾Ñ ÑÐµÐ´Ð°ÐºÑÐ¸Ð¸ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â».'))
+    seeds.append(('forum/gbt-vs-type2', 'GB/T Ð¸Ð»Ð¸ Type 2: ÑÐµÐ¼ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ', 'charging',
+                  'Ð§ÐµÐ¼ Ð¾ÑÐ»Ð¸ÑÐ°ÑÑÑÑ ÑÐ°Ð·ÑÑÐ¼Ñ GB/T Ð¸ Type 2, ÐºÐ°ÐºÐ¸Ðµ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸ Ð½ÑÐ¶Ð½Ñ Ð¸ ÑÑÐ¾ Ð¸ÑÐ¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÑ Ð´Ð¾Ð¼Ð° Ð¸ Ð½Ð° ÑÑÐ°ÑÑÐµ.'))
     return seeds
 
 _FORUM_JS = """
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(String.fromCharCode(39),'&#39;');}
-var SECN={general:'Общие вопросы',charging:'Зарядка и станции',accessories:'Аксессуары',problems:'Проблемы и ремонт',market:'Продам / куплю'};
+var SECN={general:'ÐÐ±ÑÐ¸Ðµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ',charging:'ÐÐ°ÑÑÐ´ÐºÐ° Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸',accessories:'ÐÐºÑÐµÑÑÑÐ°ÑÑ',problems:'ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÐ¼Ð¾Ð½Ñ',market:'ÐÑÐ¾Ð´Ð°Ð¼ / ÐºÑÐ¿Ð»Ñ'};
 window.ffilter=function(el){
   var v=el.getAttribute('data-v');
   [].forEach.call(document.querySelectorAll('#f-chips .fchip'),function(c){c.classList.remove('on');});
@@ -3220,14 +3203,14 @@ document.getElementById('fm-cancel').addEventListener('click',function(){md.clas
 document.getElementById('fm-send').addEventListener('click',function(){
   var title=document.getElementById('fm-title').value.trim(),text=document.getElementById('fm-text').value.trim();
   var note=document.getElementById('fm-note');
-  if(title.length<8){note.textContent='Заголовок слишком короткий (минимум 8 символов).';return;}
-  if(text.length<5){note.textContent='Опишите вопрос подробнее.';return;}
-  var btn=document.getElementById('fm-send');btn.disabled=true;btn.textContent='Отправляем…';
+  if(title.length<8){note.textContent='ÐÐ°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº ÑÐ»Ð¸ÑÐºÐ¾Ð¼ ÐºÐ¾ÑÐ¾ÑÐºÐ¸Ð¹ (Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ 8 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð²).';return;}
+  if(text.length<5){note.textContent='ÐÐ¿Ð¸ÑÐ¸ÑÐµ Ð²Ð¾Ð¿ÑÐ¾Ñ Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ.';return;}
+  var btn=document.getElementById('fm-send');btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
   fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:'new',section:document.getElementById('fm-sec').value,title:title,name:document.getElementById('fm-name').value,tg:document.getElementById('fm-tg').value,text:text})})
-  .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='Отправить';
-  if(d&&d.ok){md.classList.remove('on');var lb=document.getElementById('f-live-list');if(lb)lb.insertAdjacentHTML('afterbegin','<p class="note">Тема «'+esc(title)+'» отправлена на проверку — появится после одобрения.</p>');}
-  else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}})
-  .catch(function(){btn.disabled=false;btn.textContent='Отправить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});});
+  .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';
+  if(d&&d.ok){md.classList.remove('on');var lb=document.getElementById('f-live-list');if(lb)lb.insertAdjacentHTML('afterbegin','<p class="note">Ð¢ÐµÐ¼Ð° Â«'+esc(title)+'Â» Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½Ð° Ð½Ð° Ð¿ÑÐ¾Ð²ÐµÑÐºÑ â Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¾Ð´Ð¾Ð±ÑÐµÐ½Ð¸Ñ.</p>');}
+  else{note.textContent='ÐÑÐ¸Ð±ÐºÐ°: '+((d&&d.error)||'Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ');}})
+  .catch(function(){btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';note.textContent='ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ, Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÐµÑÑ ÑÐ°Ð·.';});});
 var seed={};[].forEach.call(document.querySelectorAll('.fcard'),function(a){seed[a.getAttribute('href')]=1;});
 try{fetch(G+'?action=threads').then(function(r){return r.json();}).then(function(d){
   var box=document.getElementById('f-live-list');
@@ -3236,9 +3219,9 @@ try{fetch(G+'?action=threads').then(function(r){return r.json();}).then(function
     if(rows.length){
       box.innerHTML=rows.map(function(t){
         return '<a class="fcard frow" data-tid="'+esc(t.thread)+'" data-title="'+esc(t.title||'')+'">'
-          +'<span class="fb-top"><span class="fbadge">'+esc(SECN[t.section]||'Тема')+'</span></span>'
-          +'<span class="fc-name">'+esc(t.title||'Без названия')+'</span>'
-          +'<span class="fc-meta">'+new Date(t.ts).toLocaleDateString('ru-RU')+' · вопрос сообщества</span></a>';
+          +'<span class="fb-top"><span class="fbadge">'+esc(SECN[t.section]||'Ð¢ÐµÐ¼Ð°')+'</span></span>'
+          +'<span class="fc-name">'+esc(t.title||'ÐÐµÐ· Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ñ')+'</span>'
+          +'<span class="fc-meta">'+new Date(t.ts).toLocaleDateString('ru-RU')+' Â· Ð²Ð¾Ð¿ÑÐ¾Ñ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°</span></a>';
       }).join('');
       [].forEach.call(box.querySelectorAll('.frow'),function(el){
         el.addEventListener('click',function(ev){ev.preventDefault();viewThread(el.getAttribute('data-tid'),el.getAttribute('data-title'));});
@@ -3246,34 +3229,34 @@ try{fetch(G+'?action=threads').then(function(r){return r.json();}).then(function
       return;
     }
   }
-  box.innerHTML='<p class="note">Пока нет новых тем — создайте первую.</p>';
+  box.innerHTML='<p class="note">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð½Ð¾Ð²ÑÑ ÑÐµÐ¼ â ÑÐ¾Ð·Ð´Ð°Ð¹ÑÐµ Ð¿ÐµÑÐ²ÑÑ.</p>';
 }).catch(function(){});}catch(e){}
 function viewThread(tid,title){
   var v=document.getElementById('f-view');
-  v.innerHTML='<div class="lcard fview"><h3>'+esc(title||'Тема')+'</h3><div id="fv-list"><p class="note">Загружаем ответы…</p></div>'
-    +'<div class="fv-form"><input id="fv-name" maxlength="40" placeholder="Ваше имя">'
-    +'<input id="fv-tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
-    +'<textarea id="fv-text" maxlength="2000" placeholder="Ваш ответ…"></textarea>'
-    +'<div><button class="btn lime" id="fv-send">Ответить</button></div>'
-    +'<p id="fv-note" class="note">Ответ появится после проверки модератором.</p></div></div>';
+  v.innerHTML='<div class="lcard fview"><h3>'+esc(title||'Ð¢ÐµÐ¼Ð°')+'</h3><div id="fv-list"><p class="note">ÐÐ°Ð³ÑÑÐ¶Ð°ÐµÐ¼ Ð¾ÑÐ²ÐµÑÑâ¦</p></div>'
+    +'<div class="fv-form"><input id="fv-name" maxlength="40" placeholder="ÐÐ°ÑÐµ Ð¸Ð¼Ñ">'
+    +'<input id="fv-tg" maxlength="32" placeholder="Telegram @ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)">'
+    +'<textarea id="fv-text" maxlength="2000" placeholder="ÐÐ°Ñ Ð¾ÑÐ²ÐµÑâ¦"></textarea>'
+    +'<div><button class="btn lime" id="fv-send">ÐÑÐ²ÐµÑÐ¸ÑÑ</button></div>'
+    +'<p id="fv-note" class="note">ÐÑÐ²ÐµÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.</p></div></div>';
   v.scrollIntoView({behavior:'smooth'});
   var l=document.getElementById('fv-list');
   try{fetch(G+'?action=posts&thread='+encodeURIComponent(tid)).then(function(r){return r.json();}).then(function(d){
     if(d&&d.ok&&d.posts&&d.posts.length){
       l.innerHTML=d.posts.map(function(p){var dt='';try{dt=new Date(p.ts).toLocaleDateString('ru-RU');}catch(e){}
         return '<div class="fpost"><b>'+esc(p.name)+'</b>'+(dt?'<span class="fp-date">'+dt+'</span>':'')+'<p>'+esc(p.text)+'</p></div>';}).join('');
-    }else{l.innerHTML='<p class="note">Пока нет ответов — напишите первым.</p>';}
-  }).catch(function(){l.innerHTML='<p class="note">Пока нет ответов — напишите первым.</p>';});}catch(e){}
+    }else{l.innerHTML='<p class="note">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð¾ÑÐ²ÐµÑÐ¾Ð² â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð¿ÐµÑÐ²ÑÐ¼.</p>';}
+  }).catch(function(){l.innerHTML='<p class="note">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð¾ÑÐ²ÐµÑÐ¾Ð² â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð¿ÐµÑÐ²ÑÐ¼.</p>';});}catch(e){}
   document.getElementById('fv-send').addEventListener('click',function(){
     var btn=document.getElementById('fv-send'),note=document.getElementById('fv-note');
     var text=document.getElementById('fv-text').value.trim();
-    if(text.length<5){note.textContent='Опишите мысль подробнее (от 5 символов).';return;}
-    btn.disabled=true;btn.textContent='Отправляем…';
+    if(text.length<5){note.textContent='ÐÐ¿Ð¸ÑÐ¸ÑÐµ Ð¼ÑÑÐ»Ñ Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ (Ð¾Ñ 5 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð²).';return;}
+    btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
     fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:tid,name:document.getElementById('fv-name').value,tg:document.getElementById('fv-tg').value,text:text})})
-    .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='Ответить';
-    if(d&&d.ok){note.textContent='Спасибо! Ответ появится после проверки модератором.';document.getElementById('fv-text').value='';}
-    else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}})
-    .catch(function(){btn.disabled=false;btn.textContent='Ответить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});
+    .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='ÐÑÐ²ÐµÑÐ¸ÑÑ';
+    if(d&&d.ok){note.textContent='Ð¡Ð¿Ð°ÑÐ¸Ð±Ð¾! ÐÑÐ²ÐµÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.';document.getElementById('fv-text').value='';}
+    else{note.textContent='ÐÑÐ¸Ð±ÐºÐ°: '+((d&&d.error)||'Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ');}})
+    .catch(function(){btn.disabled=false;btn.textContent='ÐÑÐ²ÐµÑÐ¸ÑÑ';note.textContent='ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ, Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÐµÑÑ ÑÐ°Ð·.';});
   });
 }
 """
@@ -3290,22 +3273,22 @@ try{fetch(G+'?action=posts&thread='+encodeURIComponent(TID)).then(function(r){re
 document.getElementById('fv-send').addEventListener('click',function(){
   var btn=document.getElementById('fv-send'),note=document.getElementById('fv-note');
   var text=document.getElementById('fv-text').value.trim(),name=document.getElementById('fv-name').value.trim();
-  if(text.length<5){note.textContent='Опишите мысль подробнее (от 5 символов).';return;}
-  btn.disabled=true;btn.textContent='Отправляем…';
+  if(text.length<5){note.textContent='ÐÐ¿Ð¸ÑÐ¸ÑÐµ Ð¼ÑÑÐ»Ñ Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½ÐµÐµ (Ð¾Ñ 5 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð²).';return;}
+  btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
   fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:TID,section:'',name:name,tg:document.getElementById('fv-tg').value,text:text})})
-  .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='Отправить';
-  if(d&&d.ok){note.textContent='Спасибо! Ответ появится после проверки модератором.';document.getElementById('fv-text').value='';}
-  else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}})
-  .catch(function(){btn.disabled=false;btn.textContent='Отправить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});
+  .then(function(r){return r.json();}).then(function(d){btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';
+  if(d&&d.ok){note.textContent='Ð¡Ð¿Ð°ÑÐ¸Ð±Ð¾! ÐÑÐ²ÐµÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.';document.getElementById('fv-text').value='';}
+  else{note.textContent='ÐÑÐ¸Ð±ÐºÐ°: '+((d&&d.error)||'Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ');}})
+  .catch(function(){btn.disabled=false;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ';note.textContent='ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ, Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÐµÑÑ ÑÐ°Ð·.';});
 });
 """
 
 def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
     sl_page = tid[len('forum/'):] + '.html'
-    sec_name = SEC_BADGES.get(sec, 'Сообщество')
+    sec_name = SEC_BADGES.get(sec, 'Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾')
     glink = ''
     if guide:
-        glink = '<div class="ctas"><a class="btn lime" href="/pain/' + guide + '.html">Полный гайд по теме</a></div>'
+        glink = '<div class="ctas"><a class="btn lime" href="/pain/' + guide + '.html">ÐÐ¾Ð»Ð½ÑÐ¹ Ð³Ð°Ð¹Ð´ Ð¿Ð¾ ÑÐµÐ¼Ðµ</a></div>'
     similar = [s for s in _forum_seed() if s[0] != tid and (s[2] == sec or (sec == 'problems' and s[2] == 'charging'))][:3]
     if len(similar) < 3:
         for s in _forum_seed():
@@ -3315,38 +3298,38 @@ def _forum_thread_page(tid, title, sec, desc, outdir, guide=None):
                 break
     sim_cards = ''.join(
         '<a class="fcard" href="/forum/' + s[0][len('forum/'):] + '.html">'
-        '<span class="fb-top"><span class="fbadge">' + SEC_BADGES.get(s[2], 'Тема') + '</span></span>'
+        '<span class="fb-top"><span class="fbadge">' + SEC_BADGES.get(s[2], 'Ð¢ÐµÐ¼Ð°') + '</span></span>'
         '<span class="fc-name">' + html.escape(s[1]) + '</span>'
-        '<span class="fc-desc">' + html.escape(s[3][:120]) + ('…' if len(s[3]) > 120 else '') + '</span></a>'
+        '<span class="fc-desc">' + html.escape(s[3][:120]) + ('â¦' if len(s[3]) > 120 else '') + '</span></a>'
         for s in similar)
-    similar_html = ('<div class="fsimilar"><h2>Похожие темы</h2><div class="fgrid">' + sim_cards + '</div></div>') if sim_cards else ''
-    body = ('<div class="hero"><div class="kicker">Сообщество · ' + sec_name + '</div><h1>' + html.escape(title) + '</h1>'
+    similar_html = ('<div class="fsimilar"><h2>ÐÐ¾ÑÐ¾Ð¶Ð¸Ðµ ÑÐµÐ¼Ñ</h2><div class="fgrid">' + sim_cards + '</div></div>') if sim_cards else ''
+    body = ('<div class="hero"><div class="kicker">Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾ Â· ' + sec_name + '</div><h1>' + html.escape(title) + '</h1>'
             '<p class="lede">' + html.escape(desc) + '</p></div>' + glink
-            + '<div class="fanswers"><h2>Ответы сообщества</h2>'
-            + '<div id="fv-list" data-thread="' + html.escape(tid) + '"><p class="note">Пока нет ответов — напишите первым, отвечаем бесплатно.</p></div>'
-            + '<div class="fask"><h3>Ответить</h3>'
-            + '<input id="fv-name" maxlength="40" placeholder="Ваше имя">'
-            + '<input id="fv-tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
-            + '<textarea id="fv-text" maxlength="2000" placeholder="Ваш ответ или вопрос…"></textarea>'
-            + '<div><button class="btn lime" id="fv-send">Отправить</button></div>'
-            + '<p id="fv-note" class="note">Ответ появится после проверки модератором — обычно в течение дня.</p></div></div>'
+            + '<div class="fanswers"><h2>ÐÑÐ²ÐµÑÑ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°</h2>'
+            + '<div id="fv-list" data-thread="' + html.escape(tid) + '"><p class="note">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð¾ÑÐ²ÐµÑÐ¾Ð² â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð¿ÐµÑÐ²ÑÐ¼, Ð¾ÑÐ²ÐµÑÐ°ÐµÐ¼ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾.</p></div>'
+            + '<div class="fask"><h3>ÐÑÐ²ÐµÑÐ¸ÑÑ</h3>'
+            + '<input id="fv-name" maxlength="40" placeholder="ÐÐ°ÑÐµ Ð¸Ð¼Ñ">'
+            + '<input id="fv-tg" maxlength="32" placeholder="Telegram @ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)">'
+            + '<textarea id="fv-text" maxlength="2000" placeholder="ÐÐ°Ñ Ð¾ÑÐ²ÐµÑ Ð¸Ð»Ð¸ Ð²Ð¾Ð¿ÑÐ¾Ñâ¦"></textarea>'
+            + '<div><button class="btn lime" id="fv-send">ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ</button></div>'
+            + '<p id="fv-note" class="note">ÐÑÐ²ÐµÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼ â Ð¾Ð±ÑÑÐ½Ð¾ Ð² ÑÐµÑÐµÐ½Ð¸Ðµ Ð´Ð½Ñ.</p></div></div>'
             + similar_html
-            + '<p class="note" style="margin-top:26px"><a href="/forum/">← Все темы форума</a></p>'
+            + '<p class="note" style="margin-top:26px"><a href="/forum/">â ÐÑÐµ ÑÐµÐ¼Ñ ÑÐ¾ÑÑÐ¼Ð°</a></p>'
             + '<script>(function(){var G=\'' + GAS_URL + '\';var TID=\'' + html.escape(tid) + '\';' + _FORUM_JS_TEMPLATE_POSTS + '})();</script>')
     write_page(os.path.join(outdir, 'forum', sl_page),
-               TITLE_SHORT.get(title, title) + ' | Форум Запас хода',
-               desc[:152].rstrip() + ('…' if len(desc) > 152 else ''),
-               body, '/forum/' + sl_page, crumbs=[('/forum/', 'Сообщество')])
+               TITLE_SHORT.get(title, title) + ' | Ð¤Ð¾ÑÑÐ¼ ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+               desc[:152].rstrip() + ('â¦' if len(desc) > 152 else ''),
+               body, '/forum/' + sl_page, crumbs=[('/forum/', 'Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾')])
 
 def app_page(outdir):
-    """Telegram Mini App v6: /app/ — Конфигуратор для менеджеров ОД.
+    """Telegram Mini App v6: /app/ â ÐÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾Ñ Ð´Ð»Ñ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ¾Ð² ÐÐ.
 
-    Экран 1: выбор авто (сетка брендов и моделей, быстрый поиск; пин-бренды из site_config).
-    Экран 2: сценарий зарядки (Частный дом / Квартира (паркинг) / Только путешествия).
-    Экран 3: чек-лист — готовый комплект с ценами (названия/цены из site_config + каталог).
-    Атрибуция: manager_tg_id из Telegram initData или ?ref=; промокод -{DISC}%
-    на РРЦ клиента; заявка улетает в GAS (t=od_order). Условия отгрузки салону
-    — отдельная заявка t=b2b_price (запрос поставки). Оптовых цен в интерфейсе нет.
+    Ð­ÐºÑÐ°Ð½ 1: Ð²ÑÐ±Ð¾Ñ Ð°Ð²ÑÐ¾ (ÑÐµÑÐºÐ° Ð±ÑÐµÐ½Ð´Ð¾Ð² Ð¸ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, Ð±ÑÑÑÑÑÐ¹ Ð¿Ð¾Ð¸ÑÐº; Ð¿Ð¸Ð½-Ð±ÑÐµÐ½Ð´Ñ Ð¸Ð· site_config).
+    Ð­ÐºÑÐ°Ð½ 2: ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ (Ð§Ð°ÑÑÐ½ÑÐ¹ Ð´Ð¾Ð¼ / ÐÐ²Ð°ÑÑÐ¸ÑÐ° (Ð¿Ð°ÑÐºÐ¸Ð½Ð³) / Ð¢Ð¾Ð»ÑÐºÐ¾ Ð¿ÑÑÐµÑÐµÑÑÐ²Ð¸Ñ).
+    Ð­ÐºÑÐ°Ð½ 3: ÑÐµÐº-Ð»Ð¸ÑÑ â Ð³Ð¾ÑÐ¾Ð²ÑÐ¹ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ñ ÑÐµÐ½Ð°Ð¼Ð¸ (Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ñ/ÑÐµÐ½Ñ Ð¸Ð· site_config + ÐºÐ°ÑÐ°Ð»Ð¾Ð³).
+    ÐÑÑÐ¸Ð±ÑÑÐ¸Ñ: manager_tg_id Ð¸Ð· Telegram initData Ð¸Ð»Ð¸ ?ref=; Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ -{DISC}%
+    Ð½Ð° Ð Ð Ð¦ ÐºÐ»Ð¸ÐµÐ½ÑÐ°; Ð·Ð°ÑÐ²ÐºÐ° ÑÐ»ÐµÑÐ°ÐµÑ Ð² GAS (t=od_order). Ð£ÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ ÑÐ°Ð»Ð¾Ð½Ñ
+    â Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð°Ñ Ð·Ð°ÑÐ²ÐºÐ° t=b2b_price (Ð·Ð°Ð¿ÑÐ¾Ñ Ð¿Ð¾ÑÑÐ°Ð²ÐºÐ¸). ÐÐ¿ÑÐ¾Ð²ÑÑ ÑÐµÐ½ Ð² Ð¸Ð½ÑÐµÑÑÐµÐ¹ÑÐµ Ð½ÐµÑ.
     """
     import catalog as _cat
     cfg = SITE_CFG.get('configurator') if isinstance(SITE_CFG.get('configurator'), dict) else {}
@@ -3366,9 +3349,9 @@ def app_page(outdir):
                  'unc': [13, 16, 23, 24]},
     }
     DEFAULT_NOTES = {
-        'house': 'Для дома рекомендуем настенную станцию — ночная зарядка по минимальному тарифу. Остальное — по желанию клиента.',
-        'flat': 'В паркинге главное — портативная зарядка от розетки и адаптер для станций ЖК. Станцию можно докупить позже.',
-        'road': 'Для трасс главное — адаптеры под чужие разъёмы и запасной кабель. Портативка выручает на «мёртвых» станциях.',
+        'house': 'ÐÐ»Ñ Ð´Ð¾Ð¼Ð° ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´ÑÐµÐ¼ Ð½Ð°ÑÑÐµÐ½Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ â Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾ Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑÐ½Ð¾Ð¼Ñ ÑÐ°ÑÐ¸ÑÑ. ÐÑÑÐ°Ð»ÑÐ½Ð¾Ðµ â Ð¿Ð¾ Ð¶ÐµÐ»Ð°Ð½Ð¸Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ°.',
+        'flat': 'Ð Ð¿Ð°ÑÐºÐ¸Ð½Ð³Ðµ Ð³Ð»Ð°Ð²Ð½Ð¾Ðµ â Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¸ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð´Ð»Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ ÐÐ. Ð¡ÑÐ°Ð½ÑÐ¸Ñ Ð¼Ð¾Ð¶Ð½Ð¾ Ð´Ð¾ÐºÑÐ¿Ð¸ÑÑ Ð¿Ð¾Ð·Ð¶Ðµ.',
+        'road': 'ÐÐ»Ñ ÑÑÐ°ÑÑ Ð³Ð»Ð°Ð²Ð½Ð¾Ðµ â Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð¿Ð¾Ð´ ÑÑÐ¶Ð¸Ðµ ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð·Ð°Ð¿Ð°ÑÐ½Ð¾Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ. ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Ð²ÑÑÑÑÐ°ÐµÑ Ð½Ð° Â«Ð¼ÑÑÑÐ²ÑÑÂ» ÑÑÐ°Ð½ÑÐ¸ÑÑ.',
     }
     rules = {}
     for k, v in DEFAULT_RULES.items():
@@ -3397,14 +3380,14 @@ def app_page(outdir):
             ov = {}
         prod[p['id']] = {'n': str(ov.get('name') or p['name']),
                          'pr': int(ov.get('price') or p['price'] or 0),
-                         'e': p.get('emoji', '🔌')}
+                         'e': p.get('emoji', 'ð')}
     order = sorted(brands, key=lambda b: (-len(brands[b]), b))
     order = [b for b in pins if b in brands] + [b for b in order if b not in pins]
     scen = [{'k': s.get('key', ''), 'e': s.get('emoji', ''), 't': s.get('title', ''), 's': s.get('sub', '')}
             for s in (cfg.get('scenarios') or [
-                {'key': 'house', 'emoji': '🏠', 'title': 'Частный дом', 'sub': 'Своя розетка или стена — ночная зарядка, дёшево'},
-                {'key': 'flat', 'emoji': '🏢', 'title': 'Квартира (паркинг)', 'sub': 'Паркинг ЖК или уличная розетка'},
-                {'key': 'road', 'emoji': '🛣', 'title': 'Только путешествия', 'sub': 'Трассы и быстрые станции'}])]
+                {'key': 'house', 'emoji': 'ð ', 'title': 'Ð§Ð°ÑÑÐ½ÑÐ¹ Ð´Ð¾Ð¼', 'sub': 'Ð¡Ð²Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ° Ð¸Ð»Ð¸ ÑÑÐµÐ½Ð° â Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°, Ð´ÑÑÐµÐ²Ð¾'},
+                {'key': 'flat', 'emoji': 'ð¢', 'title': 'ÐÐ²Ð°ÑÑÐ¸ÑÐ° (Ð¿Ð°ÑÐºÐ¸Ð½Ð³)', 'sub': 'ÐÐ°ÑÐºÐ¸Ð½Ð³ ÐÐ Ð¸Ð»Ð¸ ÑÐ»Ð¸ÑÐ½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ°'},
+                {'key': 'road', 'emoji': 'ð£', 'title': 'Ð¢Ð¾Ð»ÑÐºÐ¾ Ð¿ÑÑÐµÑÐµÑÑÐ²Ð¸Ñ', 'sub': 'Ð¢ÑÐ°ÑÑÑ Ð¸ Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸'}])]
     payload = {'brands': brands, 'order': order, 'pins': pins, 'prods': prod, 'sc': scen,
                'rules': rules, 'notes': notes,
                'ref': {'disc': disc, 'cbMin': cbmin, 'cbMax': cbmax, 'prefix': promo_prefix}}
@@ -3424,25 +3407,25 @@ var MGR=(function(){var id=0,nm='';
  return{id:id||0,name:nm};})();
 var refLink=BASE+'/app/?ref='+(MGR.id||'');
 var toastT=null;function toast(s){var t=el('a-toast');if(!t)return;t.textContent=s;t.className='show';clearTimeout(toastT);toastT=setTimeout(function(){t.className='';},2200);}
-function copyTxt(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Скопировано: '+t);},function(){prompt('Скопируйте вручную:',t);});}else{prompt('Скопируйте вручную:',t);}}
+function copyTxt(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Ð¡ÐºÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°Ð½Ð¾: '+t);},function(){prompt('Ð¡ÐºÐ¾Ð¿Ð¸ÑÑÐ¹ÑÐµ Ð²ÑÑÑÐ½ÑÑ:',t);});}else{prompt('Ð¡ÐºÐ¾Ð¿Ð¸ÑÑÐ¹ÑÐµ Ð²ÑÑÑÐ½ÑÑ:',t);}}
 function tgo(u){if(tg&&tg.openTelegramLink)tg.openTelegramLink(u);else location.href=u;}
 var hist=[],curBrand='',curIdx=0,curModel='',curSkus=[],cart={},scKey='',PROMO='',LAST_TOTAL=0;
 var man={};
 function updBack(){if(!tg||!tg.BackButton)return;if(hist.length){tg.BackButton.show();}else{tg.BackButton.hide();}}
 if(tg&&tg.onEvent)tg.onEvent('backButtonClicked',function(){var f=hist.pop();if(f)f();});
 function pg(x){var a=(x.ac||'')+' '+(x.dc||'');if(a.indexOf('Type 1')>=0)return 't1';if(a.indexOf('NACS')>=0)return 'us';if(a.indexOf('GB/T')>=0)return 'gb';return 'eu';}
-function mgrChip(){if(MGR.id)return '<div class="a-mgr"><span>👤 '+esc(MGR.name)+' <i>ID '+MGR.id+'</i></span><button onclick="mLink()">🔗 Моя ссылка</button></div>';
- return '<div class="a-mgr warn"><span>⚠️ Менеджер не определён — заявка уйдёт без привязки к салону-партнёру.</span><button onclick="mHint()">Как открыть?</button></div>';}
-function mLink(){if(!MGR.id){toast('Сначала определите менеджера — откройте по личной ссылке.');return;}copyTxt(refLink);}
-function mHint(){alert('Личная ссылка менеджера: '+BASE+'/app/?ref=ВАШ_TELEGRAM_ID\n\nОткрывайте апп по ней (или через меню бота с startapp), и все заказы будут зафиксированы на вас.');}
+function mgrChip(){if(MGR.id)return '<div class="a-mgr"><span>ð¤ '+esc(MGR.name)+' <i>ID '+MGR.id+'</i></span><button onclick="mLink()">ð ÐÐ¾Ñ ÑÑÑÐ»ÐºÐ°</button></div>';
+ return '<div class="a-mgr warn"><span>â ï¸ ÐÐµÐ½ÐµÐ´Ð¶ÐµÑ Ð½Ðµ Ð¾Ð¿ÑÐµÐ´ÐµÐ»ÑÐ½ â Ð·Ð°ÑÐ²ÐºÐ° ÑÐ¹Ð´ÑÑ Ð±ÐµÐ· Ð¿ÑÐ¸Ð²ÑÐ·ÐºÐ¸ Ðº ÑÐ°Ð»Ð¾Ð½Ñ-Ð¿Ð°ÑÑÐ½ÑÑÑ.</span><button onclick="mHint()">ÐÐ°Ðº Ð¾ÑÐºÑÑÑÑ?</button></div>';}
+function mLink(){if(!MGR.id){toast('Ð¡Ð½Ð°ÑÐ°Ð»Ð° Ð¾Ð¿ÑÐµÐ´ÐµÐ»Ð¸ÑÐµ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ° â Ð¾ÑÐºÑÐ¾Ð¹ÑÐµ Ð¿Ð¾ Ð»Ð¸ÑÐ½Ð¾Ð¹ ÑÑÑÐ»ÐºÐµ.');return;}copyTxt(refLink);}
+function mHint(){alert('ÐÐ¸ÑÐ½Ð°Ñ ÑÑÑÐ»ÐºÐ° Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ°: '+BASE+'/app/?ref=ÐÐÐ¨_TELEGRAM_ID\n\nÐÑÐºÑÑÐ²Ð°Ð¹ÑÐµ Ð°Ð¿Ð¿ Ð¿Ð¾ Ð½ÐµÐ¹ (Ð¸Ð»Ð¸ ÑÐµÑÐµÐ· Ð¼ÐµÐ½Ñ Ð±Ð¾ÑÐ° Ñ startapp), Ð¸ Ð²ÑÐµ Ð·Ð°ÐºÐ°Ð·Ñ Ð±ÑÐ´ÑÑ Ð·Ð°ÑÐ¸ÐºÑÐ¸ÑÐ¾Ð²Ð°Ð½Ñ Ð½Ð° Ð²Ð°Ñ.');}
 function s1(){hist=[];cart={};curModel='';curBrand='';curIdx=0;curSkus=[];scKey='';PROMO='';man={};updBack();
- el('app').innerHTML='<div class="a-head">⚡ Конфигуратор · Запас хода<span class="a-ver">od v6</span></div>'
- +'<p class="a-sub">Подбор комплекта зарядки под модель за 30 секунд — сценарии, цены РРЦ, готовый список. Работает и для клиента в салоне, и для себя.</p>'
+ el('app').innerHTML='<div class="a-head">â¡ ÐÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾Ñ Â· ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°<span class="a-ver">od v6</span></div>'
+ +'<p class="a-sub">ÐÐ¾Ð´Ð±Ð¾Ñ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ° Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¿Ð¾Ð´ Ð¼Ð¾Ð´ÐµÐ»Ñ Ð·Ð° 30 ÑÐµÐºÑÐ½Ð´ â ÑÑÐµÐ½Ð°ÑÐ¸Ð¸, ÑÐµÐ½Ñ Ð Ð Ð¦, Ð³Ð¾ÑÐ¾Ð²ÑÐ¹ ÑÐ¿Ð¸ÑÐ¾Ðº. Ð Ð°Ð±Ð¾ÑÐ°ÐµÑ Ð¸ Ð´Ð»Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ° Ð² ÑÐ°Ð»Ð¾Ð½Ðµ, Ð¸ Ð´Ð»Ñ ÑÐµÐ±Ñ.</p>'
  +mgrChip()
- +'<div class="a-search"><input id="a-q" placeholder="Бренд или модель…" oninput="aFilter()"></div><div class="a-list" id="a-brands"></div>'
-      +'<button class="a-btn a-btn2" onclick="s5()">🏢 Я работаю в автосалоне — условия отгрузки</button>';
+ +'<div class="a-search"><input id="a-q" placeholder="ÐÑÐµÐ½Ð´ Ð¸Ð»Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ñâ¦" oninput="aFilter()"></div><div class="a-list" id="a-brands"></div>'
+      +'<button class="a-btn a-btn2" onclick="s5()">ð¢ Ð¯ ÑÐ°Ð±Ð¾ÑÐ°Ñ Ð² Ð°Ð²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ðµ â ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸</button>';
  renderBrands('');}
-function tile(b,pin){return '<button class="a-tile'+(pin?' a-p':'')+'" onclick="aPick('+qA(b)+')" tabindex="0"><span class="a-mono">'+esc(b.slice(0,2).toUpperCase())+'</span><span class="a-tb">'+esc(b)+'</span><span class="a-n">'+D.brands[b].length+' мод.</span></button>';}
+function tile(b,pin){return '<button class="a-tile'+(pin?' a-p':'')+'" onclick="aPick('+qA(b)+')" tabindex="0"><span class="a-mono">'+esc(b.slice(0,2).toUpperCase())+'</span><span class="a-tb">'+esc(b)+'</span><span class="a-n">'+D.brands[b].length+' Ð¼Ð¾Ð´.</span></button>';}
 function renderBrands(q){q=(q||'').trim().toLowerCase();var box=el('a-brands');if(!box)return;var os='';
  if(!q){D.pins.forEach(function(b){if(D.brands[b])os+=tile(b,true);});
   D.order.forEach(function(b){if(D.pins.indexOf(b)<0)os+=tile(b,false);});}
@@ -3450,33 +3433,33 @@ function renderBrands(q){q=(q||'').trim().toLowerCase();var box=el('a-brands');i
   D.order.forEach(function(b){var bm=b.toLowerCase().indexOf(q)>=0;
    if(bm){os+=tile(b,true);n++;}
    D.brands[b].forEach(function(x,i){if(x.m.toLowerCase().indexOf(q)>=0){os+='<button class="a-tile a-t2" onclick="aModel('+qA(b)+','+i+')" tabindex="0"><span class="a-tb">'+esc(x.m)+'</span><span class="a-n">'+esc(b)+'</span></button>';n++;}});});
-  if(!n)os='<p class="a-empty">Ничего не нашлось — попробуйте бренд или модель.</p>';}
+  if(!n)os='<p class="a-empty">ÐÐ¸ÑÐµÐ³Ð¾ Ð½Ðµ Ð½Ð°ÑÐ»Ð¾ÑÑ â Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð±ÑÐµÐ½Ð´ Ð¸Ð»Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ñ.</p>';}
  box.innerHTML=os;}
 function aFilter(){renderBrands(el('a-q').value.trim());}
 function aPick(b){curBrand=b;var os='';D.brands[b].forEach(function(x,i){
  os+='<button class="a-row" onclick="aModel('+qA(b)+','+i+')" tabindex="0"><span>'+esc(x.m)+'</span><span class="a-n">'+esc(x.type)+'</span></button>';});
- el('app').innerHTML='<button class="a-back" onclick="s1()">← Все марки</button><div class="a-head">'+esc(b)+'</div><div class="a-list">'+os+'</div>';
+ el('app').innerHTML='<button class="a-back" onclick="s1()">â ÐÑÐµ Ð¼Ð°ÑÐºÐ¸</button><div class="a-head">'+esc(b)+'</div><div class="a-list">'+os+'</div>';
  if(!hist.length)hist.push(s1);updBack();}
 function aModel(b,i,np){var x=D.brands[b][i];curBrand=b;curIdx=i;curModel=b+' '+x.m;
  curSkus=(x.sku||[]).filter(function(e){return !!D.prods[e.id];});
  man={};s2(0);if(!np)hist.push(s1);updBack();}
 function s2(np){var x=D.brands[curBrand][curIdx];cart={};scKey='';man={};
  if(!np){if(hist[hist.length-1]!==s1)hist.push(s1);}updBack();
- el('app').innerHTML='<button class="a-back" onclick="s1()">← Сменить модель</button>'
+ el('app').innerHTML='<button class="a-back" onclick="s1()">â Ð¡Ð¼ÐµÐ½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ</button>'
  +'<div class="a-head">'+esc(curModel)+'</div>'
- +'<div class="a-cards"><div class="a-card"><b>🔌 Порты клиента</b><span>AC: '+esc(x.ac||'—')+'</span><span>DC: '+esc(x.dc||'—')+'</span>'+(x.obc?'<span>OBC: '+esc(x.obc)+'</span>':'')+'</div></div>'
- +'<div class="a-qhead">Как клиент будет заряжаться?</div>'
+ +'<div class="a-cards"><div class="a-card"><b>ð ÐÐ¾ÑÑÑ ÐºÐ»Ð¸ÐµÐ½ÑÐ°</b><span>AC: '+esc(x.ac||'â')+'</span><span>DC: '+esc(x.dc||'â')+'</span>'+(x.obc?'<span>OBC: '+esc(x.obc)+'</span>':'')+'</div></div>'
+ +'<div class="a-qhead">ÐÐ°Ðº ÐºÐ»Ð¸ÐµÐ½Ñ Ð±ÑÐ´ÐµÑ Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ?</div>'
  +'<div class="a-scen">'+D.sc.map(function(s){return '<button class="a-scen-b" onclick="scPick('+qA(s.k)+')"><span class="a-scen-e">'+s.e+'</span><span class="a-scen-t"><b>'+esc(s.t)+'</b><span>'+esc(s.s)+'</span></span></button>';}).join('')+'</div>';}
 function scTitle(){for(var i=0;i<D.sc.length;i++)if(D.sc[i].k===scKey)return D.sc[i].t;return '';}
 function s3(np){var x=D.brands[curBrand][curIdx];if(!x){s1();return;}
  if(!np)hist.push(function(){s2(1);});updBack();
- el('app').innerHTML='<button class="a-back" onclick="s2(1)">← Сценарий</button>'
- +'<div class="a-head">🧰 Комплект</div>'
- +'<p class="a-sub">'+esc(curModel)+' · '+esc(scTitle())+'</p>'
+ el('app').innerHTML='<button class="a-back" onclick="s2(1)">â Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¹</button>'
+ +'<div class="a-head">ð§° ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</div>'
+ +'<p class="a-sub">'+esc(curModel)+' Â· '+esc(scTitle())+'</p>'
  +'<div class="a-list" id="a-kit"></div>'
  +'<p class="a-note">'+esc(D.notes[scKey]||'')+'</p>'
- +'<button class="a-btn" onclick="s4()">Оформить заказ для клиента</button>'
- +'<a class="a-link" href="'+BASE+'/models/'+(x.slug||'')+'/" target="_blank" rel="noopener">Полный разбор модели на сайте →</a>';
+ +'<button class="a-btn" onclick="s4()">ÐÑÐ¾ÑÐ¼Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð· Ð´Ð»Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ°</button>'
+ +'<a class="a-link" href="'+BASE+'/models/'+(x.slug||'')+'/" target="_blank" rel="noopener">ÐÐ¾Ð»Ð½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð½Ð° ÑÐ°Ð¹ÑÐµ â</a>';
  renderKit();}
 function kitItems(){var x=D.brands[curBrand][curIdx];var R=D.rules[scKey]||{},rec={};
  ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(id){if(D.prods[id])rec[id]=1;});
@@ -3488,17 +3471,17 @@ function kitItems(){var x=D.brands[curBrand][curIdx];var R=D.rules[scKey]||{},re
  return items;}
 function phrHtml(x,cnt){if(!cnt)return '';
  var fr=[
-  'Под вашу '+curModel+' всё совместимо: порт AC — '+(x.ac||'—')+', DC — '+(x.dc||'—')+'. Ничего докупать не придётся.',
-  'Это полный набор под сценарий «'+scTitle()+'»: '+cnt+' поз. — закроет зарядку за один визит в салон.',
-  'Цена '+fmt(LAST_TOTAL||0)+' ₽ — РРЦ: она же на официальном сайте, где бы вы ни сравнили — не переплатите.'];
+  'ÐÐ¾Ð´ Ð²Ð°ÑÑ '+curModel+' Ð²ÑÑ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾: Ð¿Ð¾ÑÑ AC â '+(x.ac||'â')+', DC â '+(x.dc||'â')+'. ÐÐ¸ÑÐµÐ³Ð¾ Ð´Ð¾ÐºÑÐ¿Ð°ÑÑ Ð½Ðµ Ð¿ÑÐ¸Ð´ÑÑÑÑ.',
+  'Ð­ÑÐ¾ Ð¿Ð¾Ð»Ð½ÑÐ¹ Ð½Ð°Ð±Ð¾Ñ Ð¿Ð¾Ð´ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Â«'+scTitle()+'Â»: '+cnt+' Ð¿Ð¾Ð·. â Ð·Ð°ÐºÑÐ¾ÐµÑ Ð·Ð°ÑÑÐ´ÐºÑ Ð·Ð° Ð¾Ð´Ð¸Ð½ Ð²Ð¸Ð·Ð¸Ñ Ð² ÑÐ°Ð»Ð¾Ð½.',
+  'Ð¦ÐµÐ½Ð° '+fmt(LAST_TOTAL||0)+' â½ â Ð Ð Ð¦: Ð¾Ð½Ð° Ð¶Ðµ Ð½Ð° Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ð¼ ÑÐ°Ð¹ÑÐµ, Ð³Ð´Ðµ Ð±Ñ Ð²Ñ Ð½Ð¸ ÑÑÐ°Ð²Ð½Ð¸Ð»Ð¸ â Ð½Ðµ Ð¿ÐµÑÐµÐ¿Ð»Ð°ÑÐ¸ÑÐµ.'];
  var obj=[
-  ['Это дорого…','Это разовая цена за годы зарядки. Смотрите не на цену, а на время: станция со штрафом за простой или поездка «вокруг да около» стоят дороже. И цена — РРЦ: нигде не переплатите.'],
-  ['У меня есть розетка…','От обычной розетки за ночь набирается примерно 90–120 км. Портативная на 7 кВт — втрое быстрее и не перегревает розетку. Для города с запасом.'],
-  ['Я заряжаю на ЭЗС…','Отлично — тогда в багажнике должен жить адаптер: не на каждой станции ваш разъём. Один адаптер — и «мёртвая» колонка перестаёт быть проблемой.']];
- return '<div class="a-phr-h">🛡 Если клиент сомневается</div>'
-  +obj.map(function(o){return '<div class="a-card a-phr"><span><b>'+esc(o[0])+'</b> — '+esc(o[1])+'</span><button onclick="copyTxt('+qA(o[0]+' — '+o[1])+')">📋</button></div>';}).join('')
-  +'<div class="a-phr-h">💬 Как сказать клиенту</div>'"
-  +fr.map(function(p){return '<div class="a-card a-phr"><span>'+esc(p)+'</span><button onclick="copyTxt('+qA(p)+')">📋</button></div>';}).join('');}
+  ['Ð­ÑÐ¾ Ð´Ð¾ÑÐ¾Ð³Ð¾â¦','Ð­ÑÐ¾ ÑÐ°Ð·Ð¾Ð²Ð°Ñ ÑÐµÐ½Ð° Ð·Ð° Ð³Ð¾Ð´Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸. Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ Ð½Ðµ Ð½Ð° ÑÐµÐ½Ñ, Ð° Ð½Ð° Ð²ÑÐµÐ¼Ñ: ÑÑÐ°Ð½ÑÐ¸Ñ ÑÐ¾ ÑÑÑÐ°ÑÐ¾Ð¼ Ð·Ð° Ð¿ÑÐ¾ÑÑÐ¾Ð¹ Ð¸Ð»Ð¸ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ° Â«Ð²Ð¾ÐºÑÑÐ³ Ð´Ð° Ð¾ÐºÐ¾Ð»Ð¾Â» ÑÑÐ¾ÑÑ Ð´Ð¾ÑÐ¾Ð¶Ðµ. Ð ÑÐµÐ½Ð° â Ð Ð Ð¦: Ð½Ð¸Ð³Ð´Ðµ Ð½Ðµ Ð¿ÐµÑÐµÐ¿Ð»Ð°ÑÐ¸ÑÐµ.'],
+  ['Ð£ Ð¼ÐµÐ½Ñ ÐµÑÑÑ ÑÐ¾Ð·ÐµÑÐºÐ°â¦','ÐÑ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð·Ð° Ð½Ð¾ÑÑ Ð½Ð°Ð±Ð¸ÑÐ°ÐµÑÑÑ Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ 90â120 ÐºÐ¼. ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð½Ð° 7 ÐºÐÑ â Ð²ÑÑÐ¾Ðµ Ð±ÑÑÑÑÐµÐµ Ð¸ Ð½Ðµ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ð°ÐµÑ ÑÐ¾Ð·ÐµÑÐºÑ. ÐÐ»Ñ Ð³Ð¾ÑÐ¾Ð´Ð° Ñ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼.'],
+  ['Ð¯ Ð·Ð°ÑÑÐ¶Ð°Ñ Ð½Ð° Ð­ÐÐ¡â¦','ÐÑÐ»Ð¸ÑÐ½Ð¾ â ÑÐ¾Ð³Ð´Ð° Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð¶Ð¸ÑÑ Ð°Ð´Ð°Ð¿ÑÐµÑ: Ð½Ðµ Ð½Ð° ÐºÐ°Ð¶Ð´Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð²Ð°Ñ ÑÐ°Ð·ÑÑÐ¼. ÐÐ´Ð¸Ð½ Ð°Ð´Ð°Ð¿ÑÐµÑ â Ð¸ Â«Ð¼ÑÑÑÐ²Ð°ÑÂ» ÐºÐ¾Ð»Ð¾Ð½ÐºÐ° Ð¿ÐµÑÐµÑÑÐ°ÑÑ Ð±ÑÑÑ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ð¾Ð¹.']];
+ return '<div class="a-phr-h">ð¡ ÐÑÐ»Ð¸ ÐºÐ»Ð¸ÐµÐ½Ñ ÑÐ¾Ð¼Ð½ÐµÐ²Ð°ÐµÑÑÑ</div>'
+  +obj.map(function(o){return '<div class="a-card a-phr"><span><b>'+esc(o[0])+'</b> â '+esc(o[1])+'</span><button onclick="copyTxt('+qA(o[0]+' â '+o[1])+')">ð</button></div>';}).join('')
+  +'<div class="a-phr-h">ð¬ ÐÐ°Ðº ÑÐºÐ°Ð·Ð°ÑÑ ÐºÐ»Ð¸ÐµÐ½ÑÑ</div>'"
+  +fr.map(function(p){return '<div class="a-card a-phr"><span>'+esc(p)+'</span><button onclick="copyTxt('+qA(p)+')">ð</button></div>';}).join('');}
 function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand][curIdx];
  var R=D.rules[scKey]||{},rec={};
  ((R[pg(x)]||[]).concat(R.all||[])).forEach(function(id){if(D.prods[id])rec[id]=1;});
@@ -3508,9 +3491,9 @@ function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand]
   var base=((e.b==='need')||rec[e.id])&&unc.indexOf(e.id)<0;
   var on=(man[e.id]!==undefined)?man[e.id]:base;
   if(on){cart[e.id]=1;t+=p.pr;}else delete cart[e.id];
-  os+='<div class="a-item" onclick="aToggle('+e.id+')"><span>'+(p.e||'🔌')+' '+esc(p.n)+(e.b==='need'?' <i class="a-bdg">обязательно</i>':(rec[e.id]?' <i class="a-bdg rec">по сценарию</i>':''))+'</span><span class="a-p2">'+fmt(p.pr)+' ₽</span><span class="a-ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span></div>';});
- if(!t)os+='<p class="a-empty">Рекомендаций для этой модели пока нет — нажмите «Оформить заказ» и напишите комментарий, подберём вручную.</p>';
- var cnt=Object.keys(cart).length;os+=phrHtml(x,cnt);os+='<div class="a-total">Итого: '+fmt(t)+' ₽</div>';
+  os+='<div class="a-item" onclick="aToggle('+e.id+')"><span>'+(p.e||'ð')+' '+esc(p.n)+(e.b==='need'?' <i class="a-bdg">Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾</i>':(rec[e.id]?' <i class="a-bdg rec">Ð¿Ð¾ ÑÑÐµÐ½Ð°ÑÐ¸Ñ</i>':''))+'</span><span class="a-p2">'+fmt(p.pr)+' â½</span><span class="a-ck'+(on?' on':'')+'">'+(on?'â':'')+'</span></div>';});
+ if(!t)os+='<p class="a-empty">Ð ÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°ÑÐ¸Ð¹ Ð´Ð»Ñ ÑÑÐ¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð¿Ð¾ÐºÐ° Ð½ÐµÑ â Ð½Ð°Ð¶Ð¼Ð¸ÑÐµ Â«ÐÑÐ¾ÑÐ¼Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð·Â» Ð¸ Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ ÐºÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹, Ð¿Ð¾Ð´Ð±ÐµÑÑÐ¼ Ð²ÑÑÑÐ½ÑÑ.</p>';
+ var cnt=Object.keys(cart).length;os+=phrHtml(x,cnt);os+='<div class="a-total">ÐÑÐ¾Ð³Ð¾: '+fmt(t)+' â½</div>';
  LAST_TOTAL=t;box.innerHTML=os;}
 function aToggle(id){var x=D.brands[curBrand][curIdx];if(!x||!D.prods[id])return;
  var R=D.rules[scKey]||{},rec={};
@@ -3521,24 +3504,24 @@ function aToggle(id){var x=D.brands[curBrand][curIdx];if(!x||!D.prods[id])return
  man[id]=!cur;renderKit();}
 function scPick(k){scKey=k;man={};s3(0);}
 function s4(){var t=LAST_TOTAL||0;var n=Object.keys(cart).length;
- el('app').innerHTML='<button class="a-back" onclick="s3(1)">← Комплект</button>'
- +'<div class="a-head">Данные клиента</div>'
- +'<p class="a-sub">'+esc(curModel)+' · '+esc(scTitle())+' · позиций: '+n+' · '+fmt(t)+' ₽</p>'
- +'<input id="a-name" placeholder="Имя клиента"><input id="a-phone" placeholder="Телефон клиента (+7 …)" oninput="aFmtP()"><input id="a-city" placeholder="Город / салон">'
- +'<textarea id="a-note" placeholder="Комментарий (необязательно)"></textarea>'
- +'<button class="a-btn" id="a-send" onclick="aSend()">Сгенерировать промокод и отправить</button>'
- +'<p class="a-note">Скидка клиенту — '+D.ref.disc+'% по промокоду при заказе у дилера. Условия отгрузки для вашего салона — по заявке.</p>';
+ el('app').innerHTML='<button class="a-back" onclick="s3(1)">â ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ</button>'
+ +'<div class="a-head">ÐÐ°Ð½Ð½ÑÐµ ÐºÐ»Ð¸ÐµÐ½ÑÐ°</div>'
+ +'<p class="a-sub">'+esc(curModel)+' Â· '+esc(scTitle())+' Â· Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¹: '+n+' Â· '+fmt(t)+' â½</p>'
+ +'<input id="a-name" placeholder="ÐÐ¼Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ°"><input id="a-phone" placeholder="Ð¢ÐµÐ»ÐµÑÐ¾Ð½ ÐºÐ»Ð¸ÐµÐ½ÑÐ° (+7 â¦)" oninput="aFmtP()"><input id="a-city" placeholder="ÐÐ¾ÑÐ¾Ð´ / ÑÐ°Ð»Ð¾Ð½">'
+ +'<textarea id="a-note" placeholder="ÐÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)"></textarea>'
+ +'<button class="a-btn" id="a-send" onclick="aSend()">Ð¡Ð³ÐµÐ½ÐµÑÐ¸ÑÐ¾Ð²Ð°ÑÑ Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ Ð¸ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ</button>'
+ +'<p class="a-note">Ð¡ÐºÐ¸Ð´ÐºÐ° ÐºÐ»Ð¸ÐµÐ½ÑÑ â '+D.ref.disc+'% Ð¿Ð¾ Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´Ñ Ð¿ÑÐ¸ Ð·Ð°ÐºÐ°Ð·Ðµ Ñ Ð´Ð¸Ð»ÐµÑÐ°. Ð£ÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ Ð´Ð»Ñ Ð²Ð°ÑÐµÐ³Ð¾ ÑÐ°Ð»Ð¾Ð½Ð° â Ð¿Ð¾ Ð·Ð°ÑÐ²ÐºÐµ.</p>';
  hist.push(function(){s3(1);});updBack();}
 function aFmtNum(d){var s='';if(d.length){s='+7 '+d.slice(0,3);if(d.length>3)s+=' '+d.slice(3,6);if(d.length>6)s+='-'+d.slice(6,8);if(d.length>8)s+='-'+d.slice(8,10);}return s;}
 function aFmtP(){var v=el('a-phone').value.replace(/\D/g,'');if(v&&v[0]==='8')v='7'+v.slice(1);if(v.length===10)v='7'+v;if(v.length>11)v=v.slice(0,11);var d=(v&&v[0]==='7')?v.slice(1):v;el('a-phone').value=aFmtNum(d);}
 function mkPromo(){var s='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<6;i++)r+=s.charAt(Math.floor(Math.random()*s.length));return (D.ref.prefix||'ZSH')+'-'+r;}
 function aSend(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0&&D.prods[id];});
- if(!ids.length){alert('Комплект пуст — вернитесь назад и отметьте позиции.');return;}
+ if(!ids.length){alert('ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿ÑÑÑ â Ð²ÐµÑÐ½Ð¸ÑÐµÑÑ Ð½Ð°Ð·Ð°Ð´ Ð¸ Ð¾ÑÐ¼ÐµÑÑÑÐµ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¸.');return;}
  var n=el('a-name').value.trim(),ph=el('a-phone').value.replace(/\D/g,''),c=el('a-city').value.trim();
  if(ph[0]==='8')ph='7'+ph.slice(1);if(ph.length===10)ph='7'+ph;
- if(n.length<2||ph.length!==11){alert('Укажите имя и телефон клиента в формате +7 XXX XXX-XX-XX.');return;}
+ if(n.length<2||ph.length!==11){alert('Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð¸Ð¼Ñ Ð¸ ÑÐµÐ»ÐµÑÐ¾Ð½ ÐºÐ»Ð¸ÐµÐ½ÑÐ° Ð² ÑÐ¾ÑÐ¼Ð°ÑÐµ +7 XXX XXX-XX-XX.');return;}
  ph=aFmtNum(ph.slice(1));
- var btn=el('a-send');btn.disabled=true;btn.textContent='Отправляем…';
+ var btn=el('a-send');btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
  var items=ids.map(function(id){return{id:Number(id),name:D.prods[id].n,qty:cart[id],price:D.prods[id].pr};});
  var total=items.reduce(function(s,i){return s+i.price*i.qty;},0);
  PROMO=mkPromo();
@@ -3547,38 +3530,38 @@ function aSend(){var ids=Object.keys(cart).filter(function(id){return cart[id]>0
  .then(function(){done(true);})
  .catch(function(){done(false);});}
 function done(ok){var total=LAST_TOTAL||0;var n=Object.keys(cart).length;
- el('app').innerHTML='<div class="a-head">✅ Промокод готов</div>'
- +'<div class="a-promo"><span class="a-promo-l">Промокод клиента</span><span class="a-promo-c">'+esc(PROMO)+'</span><span class="a-promo-d">Скидка '+D.ref.disc+'% при заказе у дилера</span></div>'
- +'<div class="a-cards"><div class="a-card"><b>💡 Что дальше</b><span>Покажите промокод клиенту — скидка '+D.ref.disc+'% при заказе у дилера.</span><span class="a-mut">Нужны условия отгрузки для салона? Запросите их отдельной кнопкой — обсудим лично.</span></div>'
- +'<div class="a-card"><b>🚗 Заказ</b><span>'+esc(curModel)+' · '+esc(scTitle())+'</span><span class="a-mut">Позиций: '+n+' · итог '+fmt(total)+' ₽'+(MGR.id?' · менеджер ID '+MGR.id:'')+'</span></div></div>'
- +(ok?'':'<p class="a-warn">Не удалось подтвердить отправку на сервер. Продублируйте заявку в @zapashoda_ev, чтобы бонус зафиксировался.</p>')
- +'<button class="a-btn" onclick="copyTxt('+qA(PROMO)+')">Скопировать промокод</button>'
- +'<a class="a-cta" onclick="sharePromo()">📤 Отправить код клиенту в Telegram</a>'
- +'<a class="a-cta" onclick="mLink()">🔗 Моя ссылка конфигуратора</a>'
-      +'<a class="a-cta" onclick="s5()">🏢 Запросить условия отгрузки для салона</a>'
- +'<button class="a-btn a-btn2" onclick="s1()">Новый подбор</button>';
+ el('app').innerHTML='<div class="a-head">â ÐÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ Ð³Ð¾ÑÐ¾Ð²</div>'
+ +'<div class="a-promo"><span class="a-promo-l">ÐÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ ÐºÐ»Ð¸ÐµÐ½ÑÐ°</span><span class="a-promo-c">'+esc(PROMO)+'</span><span class="a-promo-d">Ð¡ÐºÐ¸Ð´ÐºÐ° '+D.ref.disc+'% Ð¿ÑÐ¸ Ð·Ð°ÐºÐ°Ð·Ðµ Ñ Ð´Ð¸Ð»ÐµÑÐ°</span></div>'
+ +'<div class="a-cards"><div class="a-card"><b>ð¡ Ð§ÑÐ¾ Ð´Ð°Ð»ÑÑÐµ</b><span>ÐÐ¾ÐºÐ°Ð¶Ð¸ÑÐµ Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ ÐºÐ»Ð¸ÐµÐ½ÑÑ â ÑÐºÐ¸Ð´ÐºÐ° '+D.ref.disc+'% Ð¿ÑÐ¸ Ð·Ð°ÐºÐ°Ð·Ðµ Ñ Ð´Ð¸Ð»ÐµÑÐ°.</span><span class="a-mut">ÐÑÐ¶Ð½Ñ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ Ð´Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð°? ÐÐ°Ð¿ÑÐ¾ÑÐ¸ÑÐµ Ð¸Ñ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð¾Ð¹ ÐºÐ½Ð¾Ð¿ÐºÐ¾Ð¹ â Ð¾Ð±ÑÑÐ´Ð¸Ð¼ Ð»Ð¸ÑÐ½Ð¾.</span></div>'
+ +'<div class="a-card"><b>ð ÐÐ°ÐºÐ°Ð·</b><span>'+esc(curModel)+' Â· '+esc(scTitle())+'</span><span class="a-mut">ÐÐ¾Ð·Ð¸ÑÐ¸Ð¹: '+n+' Â· Ð¸ÑÐ¾Ð³ '+fmt(total)+' â½'+(MGR.id?' Â· Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ ID '+MGR.id:'')+'</span></div></div>'
+ +(ok?'':'<p class="a-warn">ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ´Ð¸ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²ÐºÑ Ð½Ð° ÑÐµÑÐ²ÐµÑ. ÐÑÐ¾Ð´ÑÐ±Ð»Ð¸ÑÑÐ¹ÑÐµ Ð·Ð°ÑÐ²ÐºÑ Ð² @zapashoda_ev, ÑÑÐ¾Ð±Ñ Ð±Ð¾Ð½ÑÑ Ð·Ð°ÑÐ¸ÐºÑÐ¸ÑÐ¾Ð²Ð°Ð»ÑÑ.</p>')
+ +'<button class="a-btn" onclick="copyTxt('+qA(PROMO)+')">Ð¡ÐºÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°ÑÑ Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´</button>'
+ +'<a class="a-cta" onclick="sharePromo()">ð¤ ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ ÐºÐ¾Ð´ ÐºÐ»Ð¸ÐµÐ½ÑÑ Ð² Telegram</a>'
+ +'<a class="a-cta" onclick="mLink()">ð ÐÐ¾Ñ ÑÑÑÐ»ÐºÐ° ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾ÑÐ°</a>'
+      +'<a class="a-cta" onclick="s5()">ð¢ ÐÐ°Ð¿ÑÐ¾ÑÐ¸ÑÑ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ Ð´Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð°</a>'
+ +'<button class="a-btn a-btn2" onclick="s1()">ÐÐ¾Ð²ÑÐ¹ Ð¿Ð¾Ð´Ð±Ð¾Ñ</button>';
  hist=[];updBack();}
-function sharePromo(){var txt='Ваш промокод на комплект зарядки для '+curModel+': '+PROMO+' — скидка '+D.ref.disc+'% у дилера. Подбор: '+BASE+'/app/';
+function sharePromo(){var txt='ÐÐ°Ñ Ð¿ÑÐ¾Ð¼Ð¾ÐºÐ¾Ð´ Ð½Ð° ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð´Ð»Ñ '+curModel+': '+PROMO+' â ÑÐºÐ¸Ð´ÐºÐ° '+D.ref.disc+'% Ñ Ð´Ð¸Ð»ÐµÑÐ°. ÐÐ¾Ð´Ð±Ð¾Ñ: '+BASE+'/app/';
  tgo('https://t.me/share/url?url='+encodeURIComponent(BASE+'/app/')+'&text='+encodeURIComponent(txt));}
 function s5(){hist.push(function(){s1();});updBack();
- el('app').innerHTML='<button class="a-back" onclick="s1()">← Назад</button>'
- +'<div class="a-head">🏢 Работа в автосалоне</div>'
- +'<p class="a-sub">Подключим ваш салон: условия отгрузки, инструменты продажи для менеджеров, квартальный бонус салону за объём. Оптовых цен на сайте нет — обсудим лично.</p>'
- +'<input id="a-b2-name" placeholder="Имя">'
- +'<input id="a-b2-comp" placeholder="Автосалон / компания">'
- +'<input id="a-b2-city" placeholder="Город">'
- +'<input id="a-b2-phone" placeholder="Телефон или Telegram (@ник или +7 …)" oninput="aFmtP2()">'
- +'<textarea id="a-b2-note" placeholder="Что интересно: адаптеры, портативные, станции…"></textarea>'
- +'<button class="a-btn" id="a-b2-send" onclick="s5Send()">Запросить условия отгрузки</button>'
- +'<p class="a-note">Отвечаем в течение рабочего дня. Заявка фиксируется в CRM с привязкой к салону.</p>';
+ el('app').innerHTML='<button class="a-back" onclick="s1()">â ÐÐ°Ð·Ð°Ð´</button>'
+ +'<div class="a-head">ð¢ Ð Ð°Ð±Ð¾ÑÐ° Ð² Ð°Ð²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ðµ</div>'
+ +'<p class="a-sub">ÐÐ¾Ð´ÐºÐ»ÑÑÐ¸Ð¼ Ð²Ð°Ñ ÑÐ°Ð»Ð¾Ð½: ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸, Ð¸Ð½ÑÑÑÑÐ¼ÐµÐ½ÑÑ Ð¿ÑÐ¾Ð´Ð°Ð¶Ð¸ Ð´Ð»Ñ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ¾Ð², ÐºÐ²Ð°ÑÑÐ°Ð»ÑÐ½ÑÐ¹ Ð±Ð¾Ð½ÑÑ ÑÐ°Ð»Ð¾Ð½Ñ Ð·Ð° Ð¾Ð±ÑÑÐ¼. ÐÐ¿ÑÐ¾Ð²ÑÑ ÑÐµÐ½ Ð½Ð° ÑÐ°Ð¹ÑÐµ Ð½ÐµÑ â Ð¾Ð±ÑÑÐ´Ð¸Ð¼ Ð»Ð¸ÑÐ½Ð¾.</p>'
+ +'<input id="a-b2-name" placeholder="ÐÐ¼Ñ">'
+ +'<input id="a-b2-comp" placeholder="ÐÐ²ÑÐ¾ÑÐ°Ð»Ð¾Ð½ / ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ">'
+ +'<input id="a-b2-city" placeholder="ÐÐ¾ÑÐ¾Ð´">'
+ +'<input id="a-b2-phone" placeholder="Ð¢ÐµÐ»ÐµÑÐ¾Ð½ Ð¸Ð»Ð¸ Telegram (@Ð½Ð¸Ðº Ð¸Ð»Ð¸ +7 â¦)" oninput="aFmtP2()">'
+ +'<textarea id="a-b2-note" placeholder="Ð§ÑÐ¾ Ð¸Ð½ÑÐµÑÐµÑÐ½Ð¾: Ð°Ð´Ð°Ð¿ÑÐµÑÑ, Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½ÑÐµ, ÑÑÐ°Ð½ÑÐ¸Ð¸â¦"></textarea>'
+ +'<button class="a-btn" id="a-b2-send" onclick="s5Send()">ÐÐ°Ð¿ÑÐ¾ÑÐ¸ÑÑ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸</button>'
+ +'<p class="a-note">ÐÑÐ²ÐµÑÐ°ÐµÐ¼ Ð² ÑÐµÑÐµÐ½Ð¸Ðµ ÑÐ°Ð±Ð¾ÑÐµÐ³Ð¾ Ð´Ð½Ñ. ÐÐ°ÑÐ²ÐºÐ° ÑÐ¸ÐºÑÐ¸ÑÑÐµÑÑÑ Ð² CRM Ñ Ð¿ÑÐ¸Ð²ÑÐ·ÐºÐ¾Ð¹ Ðº ÑÐ°Ð»Ð¾Ð½Ñ.</p>';
  hist.push(function(){s1();});updBack();}
 function aFmtP2(){var e2=el('a-b2-phone');var v=e2.value;if(v.indexOf('@')===0)return;var d=v.replace(/\\D/g,'');if(d&&d[0]==='8')d='7'+d.slice(1);if(d.length===10)d='7'+d;e2.value=(d.length===11)?aFmtNum(d.slice(1)):v;}
 function s5Send(){var n=el('a-b2-name').value.trim(),co=el('a-b2-comp').value.trim(),c=el('a-b2-city').value.trim(),ph=el('a-b2-phone').value.trim(),cm=el('a-b2-note').value.slice(0,400);
- if(n.length<2||co.length<2||ph.length<5){alert('Укажите имя, салон и контакт.');return;}
- var btn=el('a-b2-send');btn.disabled=true;btn.textContent='Отправляем…';
- var pay={t:'b2b_price',model:'B2B — запрос отгрузки из Mini App',items:[],total:0,name:co+' / '+n,phone:ph,city:c,comment:'Интерес: '+(cm||'—')+'. Источник: Mini App, менеджер ID '+(MGR.id||'—')+'.'};
+ if(n.length<2||co.length<2||ph.length<5){alert('Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð¸Ð¼Ñ, ÑÐ°Ð»Ð¾Ð½ Ð¸ ÐºÐ¾Ð½ÑÐ°ÐºÑ.');return;}
+ var btn=el('a-b2-send');btn.disabled=true;btn.textContent='ÐÑÐ¿ÑÐ°Ð²Ð»ÑÐµÐ¼â¦';
+ var pay={t:'b2b_price',model:'B2B â Ð·Ð°Ð¿ÑÐ¾Ñ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ Ð¸Ð· Mini App',items:[],total:0,name:co+' / '+n,phone:ph,city:c,comment:'ÐÐ½ÑÐµÑÐµÑ: '+(cm||'â')+'. ÐÑÑÐ¾ÑÐ½Ð¸Ðº: Mini App, Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ ID '+(MGR.id||'â')+'.'};
  fetch(G,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pay)}).then(function(){s5Done(true);}).catch(function(){s5Done(false);});}
-function s5Done(ok){el('app').innerHTML='<div class="a-head">✅ Заявка отправлена</div><p class="a-sub">Запрос условий отгрузки принят. Свяжемся в ближайшее рабочее время — обычно в тот же день.</p><button class="a-btn" onclick="s1()">К подбору зарядки</button>'+(ok?'':'<p class="a-warn">Не удалось подтвердить отправку — продублируйте в @zapashoda_ev.</p>');hist=[];updBack();}
+function s5Done(ok){el('app').innerHTML='<div class="a-head">â ÐÐ°ÑÐ²ÐºÐ° Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½Ð°</div><p class="a-sub">ÐÐ°Ð¿ÑÐ¾Ñ ÑÑÐ»Ð¾Ð²Ð¸Ð¹ Ð¾ÑÐ³ÑÑÐ·ÐºÐ¸ Ð¿ÑÐ¸Ð½ÑÑ. Ð¡Ð²ÑÐ¶ÐµÐ¼ÑÑ Ð² Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑÐµÐµ ÑÐ°Ð±Ð¾ÑÐµÐµ Ð²ÑÐµÐ¼Ñ â Ð¾Ð±ÑÑÐ½Ð¾ Ð² ÑÐ¾Ñ Ð¶Ðµ Ð´ÐµÐ½Ñ.</p><button class="a-btn" onclick="s1()">Ð Ð¿Ð¾Ð´Ð±Ð¾ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ¸</button>'+(ok?'':'<p class="a-warn">ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ´Ð¸ÑÑ Ð¾ÑÐ¿ÑÐ°Ð²ÐºÑ â Ð¿ÑÐ¾Ð´ÑÐ±Ð»Ð¸ÑÑÐ¹ÑÐµ Ð² @zapashoda_ev.</p>');hist=[];updBack();}
 s1();"""
     js = js_head + js_body
     css = ("<style>body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f5f6f8;color:#15202b}"
@@ -3626,10 +3609,10 @@ s1();"""
       '<script>(function(){if((window.Telegram&&window.Telegram.WebApp)||/Telegram/i.test(navigator.userAgent)||/tgWebAppData=/.test(location.href)){var d=document.documentElement;'
       "d.classList.add('tg-mode');var vm=d.querySelector('meta[name=viewport]');"
       "if(vm)vm.setAttribute('content','width=device-width,initial-scale=1,viewport-fit=cover');}})();</script>")
-    write_page(os.path.join(outdir, 'app', 'index.html'), 'Запас хода — конфигуратор зарядки',
-               'Конфигуратор зарядки «Запас хода»: 145 моделей, сценарии дом/квартира/путешествия, готовые комплекты с ценами РРЦ. Автосалонам — подбор для клиента и заявка на поставку.',
+    write_page(os.path.join(outdir, 'app', 'index.html'), 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸',
+               'ÐÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»: 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹, ÑÑÐµÐ½Ð°ÑÐ¸Ð¸ Ð´Ð¾Ð¼/ÐºÐ²Ð°ÑÑÐ¸ÑÐ°/Ð¿ÑÑÐµÑÐµÑÑÐ²Ð¸Ñ, Ð³Ð¾ÑÐ¾Ð²ÑÐµ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÑ Ñ ÑÐµÐ½Ð°Ð¼Ð¸ Ð Ð Ð¦. ÐÐ²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ð°Ð¼ â Ð¿Ð¾Ð´Ð±Ð¾Ñ Ð´Ð»Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ° Ð¸ Ð·Ð°ÑÐ²ÐºÐ° Ð½Ð° Ð¿Ð¾ÑÑÐ°Ð²ÐºÑ.',
                body, '/app/', extra_ld=tg_head)
-    print('mini-app: /app/ готов (конфигуратор od v6)')
+    print('mini-app: /app/ Ð³Ð¾ÑÐ¾Ð² (ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¾Ñ od v6)')
 
 
 def forum_build(outdir):
@@ -3641,38 +3624,38 @@ def forum_build(outdir):
     comm = ''
     for bslug, bname in hubs:
         cnt = brands_in_models.get(bslug.capitalize(), brands_in_models.get(bname, 0))
-        # модели могут быть записаны как 'Zeekr','Voyah','Geely','Toyota','Changan','Evolute' или 'BYD' и др.
+        # Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð¼Ð¾Ð³ÑÑ Ð±ÑÑÑ Ð·Ð°Ð¿Ð¸ÑÐ°Ð½Ñ ÐºÐ°Ðº 'Zeekr','Voyah','Geely','Toyota','Changan','Evolute' Ð¸Ð»Ð¸ 'BYD' Ð¸ Ð´Ñ.
         if not cnt:
             for bk, bv in brands_in_models.items():
                 if bk.lower().startswith(bslug[:3]):
                     cnt = bv; break
-        comm += ('<a class="fcomm" href="/brands/' + bslug + '.html"><span>' + bname + '</span><span class="n">' + str(cnt or '') + ' модел.</span></a>')
+        comm += ('<a class="fcomm" href="/brands/' + bslug + '.html"><span>' + bname + '</span><span class="n">' + str(cnt or '') + ' Ð¼Ð¾Ð´ÐµÐ».</span></a>')
     guides = [t for tid, t, sec, d in seeds if tid.startswith('forum/pain-')]
     sl_of = {t: tid for tid, t, sec, d in seeds}
     guides_html = ''
     for t in guides[:8]:
         tid = sl_of[t]
-        guides_html += ('<a class="fcomm" href="/' + tid + '.html"><span>' + html.escape(t[:44]) + ('…' if len(t) > 44 else '') + '</span></a>')
+        guides_html += ('<a class="fcomm" href="/' + tid + '.html"><span>' + html.escape(t[:44]) + ('â¦' if len(t) > 44 else '') + '</span></a>')
     cards = ''
     for tid, title, sec, desc in seeds:
         guide = tid.startswith('forum/pain-')
-        meta = 'Гайд редакции · отвечаем бесплатно' if guide else 'Отвечает редакция · бесплатно'
-        author = 'Редакция «Запас хода»' if guide else 'Вопрос сообщества'
+        meta = 'ÐÐ°Ð¹Ð´ ÑÐµÐ´Ð°ÐºÑÐ¸Ð¸ Â· Ð¾ÑÐ²ÐµÑÐ°ÐµÐ¼ Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾' if guide else 'ÐÑÐ²ÐµÑÐ°ÐµÑ ÑÐµÐ´Ð°ÐºÑÐ¸Ñ Â· Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾'
+        author = 'Ð ÐµÐ´Ð°ÐºÑÐ¸Ñ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»' if guide else 'ÐÐ¾Ð¿ÑÐ¾Ñ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°'
         cards += ('<a class="fcard2" data-sec="' + sec + '" href="/forum/' + tid[len('forum/'):] + '.html">'
-                  '<span class="fc2-b">' + SEC_BADGES.get(sec, 'Тема') + '</span>'
+                  '<span class="fc2-b">' + SEC_BADGES.get(sec, 'Ð¢ÐµÐ¼Ð°') + '</span>'
                   '<span class="fc2-t">' + html.escape(title) + '</span>'
-                  '<span class="fc2-d">' + html.escape(desc[:170]) + ('…' if len(desc) > 170 else '') + '</span>'
+                  '<span class="fc2-d">' + html.escape(desc[:170]) + ('â¦' if len(desc) > 170 else '') + '</span>'
                   '<span class="fc2-m"><span class="fc2-a">' + author + '</span><span class="fc2-tag">' + meta + '</span></span></a>')
-    chips = '<span class="fchip on" data-v="all" onclick="ffilter(this)">Все темы</span>'
+    chips = '<span class="fchip on" data-v="all" onclick="ffilter(this)">ÐÑÐµ ÑÐµÐ¼Ñ</span>'
     chips += ''.join('<span class="fchip" data-v="' + sec + '" onclick="ffilter(this)">' + name + '</span>' for sec, name in FORUM_SECTIONS)
-    modal_html = ('<div class="fmodal" id="f-modal"><div class="fbox"><h3>Новая тема</h3>'
-                  '<select id="fm-sec"><option value="general">Общие вопросы</option><option value="charging">Зарядка и станции</option><option value="accessories">Аксессуары</option><option value="problems">Проблемы и ремонт</option><option value="market">Продам / куплю</option></select>'
-                  '<input id="fm-title" maxlength="120" placeholder="Заголовок темы (от 8 символов)">'
-                  '<input id="fm-name" maxlength="40" placeholder="Ваше имя">'
-                  '<input id="fm-tg" maxlength="32" placeholder="Telegram @ (необязательно)">'
-                  '<textarea id="fm-text" maxlength="2000" placeholder="Опишите вопрос или ситуацию…"></textarea>'
-                  '<div class="fbtns"><button class="btn lime" id="fm-send">Отправить</button><button class="btn ghost" id="fm-cancel">Отмена</button></div>'
-                  '<p id="fm-note" class="note">Тема появится после проверки модератором — обычно в течение дня.</p></div></div>')
+    modal_html = ('<div class="fmodal" id="f-modal"><div class="fbox"><h3>ÐÐ¾Ð²Ð°Ñ ÑÐµÐ¼Ð°</h3>'
+                  '<select id="fm-sec"><option value="general">ÐÐ±ÑÐ¸Ðµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ</option><option value="charging">ÐÐ°ÑÑÐ´ÐºÐ° Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸</option><option value="accessories">ÐÐºÑÐµÑÑÑÐ°ÑÑ</option><option value="problems">ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÐ¼Ð¾Ð½Ñ</option><option value="market">ÐÑÐ¾Ð´Ð°Ð¼ / ÐºÑÐ¿Ð»Ñ</option></select>'
+                  '<input id="fm-title" maxlength="120" placeholder="ÐÐ°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº ÑÐµÐ¼Ñ (Ð¾Ñ 8 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð²)">'
+                  '<input id="fm-name" maxlength="40" placeholder="ÐÐ°ÑÐµ Ð¸Ð¼Ñ">'
+                  '<input id="fm-tg" maxlength="32" placeholder="Telegram @ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)">'
+                  '<textarea id="fm-text" maxlength="2000" placeholder="ÐÐ¿Ð¸ÑÐ¸ÑÐµ Ð²Ð¾Ð¿ÑÐ¾Ñ Ð¸Ð»Ð¸ ÑÐ¸ÑÑÐ°ÑÐ¸Ñâ¦"></textarea>'
+                  '<div class="fbtns"><button class="btn lime" id="fm-send">ÐÑÐ¿ÑÐ°Ð²Ð¸ÑÑ</button><button class="btn ghost" id="fm-cancel">ÐÑÐ¼ÐµÐ½Ð°</button></div>'
+                  '<p id="fm-note" class="note">Ð¢ÐµÐ¼Ð° Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼ â Ð¾Ð±ÑÑÐ½Ð¾ Ð² ÑÐµÑÐµÐ½Ð¸Ðµ Ð´Ð½Ñ.</p></div></div>')
     js = ('<script>(function(){var G=\'' + GAS_URL + '\';' + _FORUM_JS + '})();</script>')
     d2css = ('<style>'
              '.f-wrap{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start;margin-top:18px}'
@@ -3691,33 +3674,33 @@ def forum_build(outdir):
              '.fc2-a{font-weight:600;color:#3c5359}'
              '@media (max-width:880px){.f-wrap{grid-template-columns:1fr}.f-aside{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px}.faside-box{margin-bottom:0}}'
              '</style>')
-    body = ('<div class="hero"><div class="kicker">Сообщество</div><h1>Форум «Запас хода»</h1>'
-            '<p class="lede">Лента тем по зарядке, аксессуарам и эксплуатации. Отвечают редакция и владельцы — с модерацией, без рекламы.</p></div>'
-            '<div class="ctas"><button class="btn lime" id="f-new">Задать вопрос</button>'
-            '<a class="btn ghost" href="/quiz/">Подобрать комплект за 30 сек</a></div>'
+    body = ('<div class="hero"><div class="kicker">Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾</div><h1>Ð¤Ð¾ÑÑÐ¼ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</h1>'
+            '<p class="lede">ÐÐµÐ½ÑÐ° ÑÐµÐ¼ Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ, Ð°ÐºÑÐµÑÑÑÐ°ÑÐ°Ð¼ Ð¸ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸. ÐÑÐ²ÐµÑÐ°ÑÑ ÑÐµÐ´Ð°ÐºÑÐ¸Ñ Ð¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ â Ñ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¸ÐµÐ¹, Ð±ÐµÐ· ÑÐµÐºÐ»Ð°Ð¼Ñ.</p></div>'
+            '<div class="ctas"><button class="btn lime" id="f-new">ÐÐ°Ð´Ð°ÑÑ Ð²Ð¾Ð¿ÑÐ¾Ñ</button>'
+            '<a class="btn ghost" href="/quiz/">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð° 30 ÑÐµÐº</a></div>'
             + d2css
             + '<div class="f-wrap"><aside class="f-aside">'
-              '<div class="faside-box"><h3>Сообщества</h3>' + comm +
-              '<a class="fcomm" href="/models/"><span>Все модели</span><span class="n">145 →</span></a></div>'
-              '<div class="faside-box"><h3>Руководства</h3>' + guides_html + '</div>'
+              '<div class="faside-box"><h3>Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð°</h3>' + comm +
+              '<a class="fcomm" href="/models/"><span>ÐÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸</span><span class="n">145 â</span></a></div>'
+              '<div class="faside-box"><h3>Ð ÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð°</h3>' + guides_html + '</div>'
               '</aside><div class="f-main">'
               '<div class="fsec" id="f-chips">' + chips + '</div>'
               '<div class="fgrid" id="f-grid">' + cards + '</div>'
-              '<div class="fempty" id="f-empty" style="display:none">В этом разделе пока нет тем — создайте первую.</div>'
-              '<div id="f-live"><h2>Свежие темы сообщества</h2><div id="f-live-list"><p class="note">Пока нет новых тем — создайте первую.</p></div><div id="f-view"></div></div>'
-              '<div class="frules"><b>Правила</b><span>По делу и без рекламы.</span><span>Ссылки только по теме.</span><span>Сообщения публикуются после проверки модератором.</span></div>'
+              '<div class="fempty" id="f-empty" style="display:none">Ð ÑÑÐ¾Ð¼ ÑÐ°Ð·Ð´ÐµÐ»Ðµ Ð¿Ð¾ÐºÐ° Ð½ÐµÑ ÑÐµÐ¼ â ÑÐ¾Ð·Ð´Ð°Ð¹ÑÐµ Ð¿ÐµÑÐ²ÑÑ.</div>'
+              '<div id="f-live"><h2>Ð¡Ð²ÐµÐ¶Ð¸Ðµ ÑÐµÐ¼Ñ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð°</h2><div id="f-live-list"><p class="note">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð½Ð¾Ð²ÑÑ ÑÐµÐ¼ â ÑÐ¾Ð·Ð´Ð°Ð¹ÑÐµ Ð¿ÐµÑÐ²ÑÑ.</p></div><div id="f-view"></div></div>'
+              '<div class="frules"><b>ÐÑÐ°Ð²Ð¸Ð»Ð°</b><span>ÐÐ¾ Ð´ÐµÐ»Ñ Ð¸ Ð±ÐµÐ· ÑÐµÐºÐ»Ð°Ð¼Ñ.</span><span>Ð¡ÑÑÐ»ÐºÐ¸ ÑÐ¾Ð»ÑÐºÐ¾ Ð¿Ð¾ ÑÐµÐ¼Ðµ.</span><span>Ð¡Ð¾Ð¾Ð±ÑÐµÐ½Ð¸Ñ Ð¿ÑÐ±Ð»Ð¸ÐºÑÑÑÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼.</span></div>'
               '</div></div>'
               + modal_html + js)
     write_page(os.path.join(outdir, 'forum', 'index.html'),
-               'Форум сообщества — «Запас хода»',
-               'Форум владельцев электромобилей и гибридов: зарядка, станции, аксессуары, типичные проблемы и решения. Вопросы и ответы с модерацией.',
-               body, '/forum/', crumbs=[('/forum/', 'Сообщество')])
+               'Ð¤Ð¾ÑÑÐ¼ ÑÐ¾Ð¾Ð±ÑÐµÑÑÐ²Ð° â Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»',
+               'Ð¤Ð¾ÑÑÐ¼ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð¸ Ð³Ð¸Ð±ÑÐ¸Ð´Ð¾Ð²: Ð·Ð°ÑÑÐ´ÐºÐ°, ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð°ÐºÑÐµÑÑÑÐ°ÑÑ, ÑÐ¸Ð¿Ð¸ÑÐ½ÑÐµ Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ. ÐÐ¾Ð¿ÑÐ¾ÑÑ Ð¸ Ð¾ÑÐ²ÐµÑÑ Ñ Ð¼Ð¾Ð´ÐµÑÐ°ÑÐ¸ÐµÐ¹.',
+               body, '/forum/', crumbs=[('/forum/', 'Ð¡Ð¾Ð¾Ð±ÑÐµÑÑÐ²Ð¾')])
     for tid, title, sec, desc in seeds:
         guide = tid[len('forum/pain-'):] if tid.startswith('forum/pain-') else None
         _forum_thread_page(tid, title, sec, desc, outdir, guide=guide)
 
 UTIL_CSS = """
-/* --- utility layer: недостающие классы FreshCart (аудит 01.11) --- */
+/* --- utility layer: Ð½ÐµÐ´Ð¾ÑÑÐ°ÑÑÐ¸Ðµ ÐºÐ»Ð°ÑÑÑ FreshCart (Ð°ÑÐ´Ð¸Ñ 01.11) --- */
 .my-2{margin-top:.5rem;margin-bottom:.5rem}.my-3{margin-top:.75rem;margin-bottom:.75rem}.my-4{margin-top:1rem;margin-bottom:1rem}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.my-10{margin-top:2.5rem;margin-bottom:2.5rem}
 .mx-2{margin-left:.5rem;margin-right:.5rem}.mt-10{margin-top:2.5rem}.ml-auto{margin-left:auto}
 .pl-6{padding-left:1.5rem}.px-4{padding-left:1rem;padding-right:1rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}
@@ -3738,17 +3721,17 @@ UTIL_CSS = """
 @media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:w-1\/2{width:50%}.md\:w-2\/3{width:66.666%}.md\:w-auto{width:auto}.md\:w-full{width:100%}.md\:mt-0{margin-top:0}.md\:text-right{text-align:right}}
 @media(min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.lg\:gap-4{gap:1rem}.lg\:my-10{margin-top:2.5rem;margin-bottom:2.5rem}.lg\:my-14{margin-top:3.5rem;margin-bottom:3.5rem}.lg\:pl-10{padding-left:2.5rem}.lg\:text-4xl{font-size:2.25rem;line-height:2.6rem}.lg\:w-1\/2{width:50%}}
 @media(min-width:1280px){.xl\:grid{display:grid}.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
-/* --- восстановленные семантические классы (волна 2) --- */
+/* --- Ð²Ð¾ÑÑÑÐ°Ð½Ð¾Ð²Ð»ÐµÐ½Ð½ÑÐµ ÑÐµÐ¼Ð°Ð½ÑÐ¸ÑÐµÑÐºÐ¸Ðµ ÐºÐ»Ð°ÑÑÑ (Ð²Ð¾Ð»Ð½Ð° 2) --- */
 .pl-5{padding-left:1.25rem}.align-top{vertical-align:top}
 .hover\:duration-500{transition-duration:.5s}.hover\:transition{transition-property:all;transition-timing-function:ease}
-.art{position:relative;padding-left:20px}
-.art .art-progress{position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:6px;background:#e6f2e6;overflow:hidden}
+.art{position:relative}
+.art .art-progress{position:absolute;left:-14px;top:0;bottom:0;width:5px;border-radius:6px;background:#e6f2e6;overflow:hidden}
 .art .art-progress i{display:block;width:100%;background:linear-gradient(180deg,#2563EB,#03756c);height:100%}
 .lcard.docs{border-left:3px solid #f5b800;background:#fffdf5}
 .lcard.docs p.note{font-size:14px;color:#5c4a1a}
 .lcard.docs a{color:#0a7a2f;font-weight:600}
 
-/* --- восстановленные семантические классы --- */
+/* --- Ð²Ð¾ÑÑÑÐ°Ð½Ð¾Ð²Ð»ÐµÐ½Ð½ÑÐµ ÑÐµÐ¼Ð°Ð½ÑÐ¸ÑÐµÑÐºÐ¸Ðµ ÐºÐ»Ð°ÑÑÑ --- */
 .hero{padding:34px 0 10px}
 .hero .kicker{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0a7a2f;background:#eaf6df;padding:5px 12px;border-radius:999px;margin-bottom:12px}
 .hero h1{font-size:clamp(28px,4.4vw,42px);line-height:1.14;margin:0 0 12px;color:#12262b}
@@ -3761,55 +3744,55 @@ UTIL_CSS = """
 .table-responsive table{min-width:640px;width:100%;border-collapse:collapse}
 """
 EX_CSS = "\n/* --- \u043a\u0440\u043e\u0441\u0441\u0431\u0440\u0430\u0443\u0437\u0435\u0440\u043d\u043e\u0441\u0442\u044c, \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u044b, \u0444\u043e\u0440\u0443\u043c (v2) --- */\n:root{color-scheme:light}\ninput:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fff inset;-webkit-text-fill-color:#1d1d1f;transition:background-color 99999s ease-in-out 0s}\ninput,select,textarea{min-height:40px}\nbutton{white-space:nowrap}\nimg{max-width:100%;height:auto}\n.see-all{font-size:14px;font-weight:500;color:#0071e3;text-decoration:none;margin-left:8px}\n.comments{margin-top:48px;padding-top:24px;border-top:1px solid #e5e5e7}\n.comments h2{font-size:22px;margin:0 0 12px}\n.c-item,.fpost{padding:12px 0;border-bottom:1px solid #f0f0f2}\n.c-item b,.fpost b{font-size:14px}\n.c-date{font-size:12px;color:#86868b;margin-left:8px}\n.c-item p,.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}\n.c-empty{color:#86868b;font-size:14px}\n#c-form,.fv-form{display:grid;gap:10px;margin-top:14px}\n#c-form input,#c-form textarea,.fv-form input,.fv-form textarea{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;font-family:inherit;box-sizing:border-box}\n#c-form textarea,.fv-form textarea{min-height:90px;resize:vertical}\n#c-note,#fv-note,#fm-note{font-size:12px;color:#86868b}\n.fsec{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}\n.fchip{padding:6px 14px;border:1px solid #d2d2d7;border-radius:999px;background:#fff;cursor:pointer;font-size:14px;font-family:inherit}\n.fchip.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}\n.fthread{display:block;padding:14px 16px;border:1px solid #e5e5e7;border-radius:14px;margin-bottom:10px;text-decoration:none;color:inherit;cursor:pointer}\n.fthread b{display:block}\n.fthread span{font-size:13px;color:#86868b}\n.fmodal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}\n.fmodal.on{display:flex}\n.fmodal .fbox{background:#fff;border-radius:20px;padding:20px;max-width:480px;width:92%;max-height:86vh;overflow:auto}\n.fmodal h3{margin:0 0 12px}\n.fmodal input,.fmodal textarea,.fmodal select{width:100%;padding:10px 12px;border:1px solid #d2d2d7;border-radius:12px;font-size:15px;margin-bottom:10px;box-sizing:border-box;font-family:inherit}\n@media (max-width:380px){.ctas .btn{display:block;width:100%;margin:6px 0;text-align:center}}\n"
-EX_CSS = EX_CSS + "\n/* --- каталог Ozon-паттерн (v3) --- */\n.pc-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 2px;font-size:14px;color:#86868b;flex-wrap:wrap}\n.pc-sort select{padding:6px 10px;border:1px solid #d2d2d7;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;color:#1d1d1f}\n.pc-media{height:120px;background:#f5f5f7;font-size:52px;position:relative}\n.pc-name{margin:10px 12px 6px;font-size:15px;font-weight:600;min-height:38px;display:block}\n.pc-spec-line{display:flex;flex-wrap:wrap;gap:6px;margin:0 12px 10px}\n.pc-spec-line span{font-size:12.5px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}\n.pc-price{font-size:19px;font-weight:700}\n.pc-btn{background:var(--lime);color:var(--lime-ink);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13.5px;cursor:pointer;white-space:nowrap}\n.pc-card .pc-link{font-size:13px;color:#86868b;text-decoration:none}\n.pc-model-banner{display:flex;align-items:center;gap:10px;background:#fff7d6;border:1px solid #f0e2a0;border-radius:12px;padding:10px 14px;margin:10px 0 0;font-size:14.5px}\n.pc-model-banner button{margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:15px;color:#86868b;padding:4px;font-family:inherit}\n.fchip{display:inline-block;text-decoration:none}"
-EX_CSS = EX_CSS + "\n/* --- форум v4 (карточки) --- */\n.fbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 4px;font-size:14px;color:var(--muted);flex-wrap:wrap}\n.fbar b{color:var(--ink)}\n.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 8px}\n.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease}\n.fcard:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}\n.fb-top{display:flex;align-items:center;gap:8px}\n.fbadge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#f5f5f7;color:#5f5f66;white-space:nowrap}\n.fb-guide{background:#e8f2ff;color:#0071e3}\n.fc-name{font-size:15.5px;font-weight:600;line-height:1.35}\n.fc-desc{font-size:13.5px;color:var(--muted);line-height:1.45}\n.fc-meta{font-size:12.5px;color:#86868b;margin-top:auto}\n.fempty{color:var(--muted);font-size:14px;padding:16px 0}\n.frow{cursor:pointer}\n.fpost{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:0 0 10px}\n.fpost b{font-size:14px}\n.fp-date{font-size:12px;color:#86868b;margin-left:8px}\n.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}\n.fanswers{margin-top:26px}\n.fask{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-top:16px;display:grid;gap:10px}\n.fask h3{margin:0}\n.fsimilar{margin-top:44px}\n.frules{display:grid;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:22px 0 8px;font-size:14.5px;color:#5f5f66}\n.frules b{color:var(--ink);margin-bottom:4px}\n.fview{margin-top:14px}\n.fview h3{font-size:19px;margin:0 0 10px}\n.fbtns{display:flex;gap:10px;flex-wrap:wrap}\n.fmodal .fbox select{appearance:auto}\n@media (max-width:640px){.fgrid{grid-template-columns:1fr}}"
-EX_CSS = EX_CSS + "\n/* --- каталог Ozon v2: карточки и страница товара --- */\n.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,216px),1fr));gap:12px;margin:14px 0 10px}\n.pc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;position:relative;transition:box-shadow .15s ease}\n.pc-card:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.pc-card .pc-media{display:flex;align-items:center;justify-content:center;height:170px;background:#fff;padding:14px 10px;position:relative}\n.pc-media svg{width:76%;height:76%}\n.pc-hit{position:absolute;top:10px;left:10px;background:#005bff;color:#fff;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-tag{position:absolute;top:10px;right:10px;background:#fff7d6;color:#8a6d00;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}\n.pc-name{font-size:14px;font-weight:500;line-height:1.32;min-height:37px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);text-decoration:none}\n.pc-price{font-size:20px;font-weight:700;letter-spacing:-.02em}\n.pc-was{color:#86868b;font-weight:400;font-size:14px}\n.pc-spec-line{display:flex;flex-wrap:wrap;gap:5px}\n.pc-spec-line span{font-size:12px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}\n.pc-desc{font-size:13.5px;color:var(--muted);line-height:1.45;margin:0}\n.pc-btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:8px;background:var(--lime);color:#fff;font-weight:500;font-size:14px;cursor:pointer;width:100%;white-space:nowrap}\n.pc-btn:hover{opacity:.9}\n.pc-seller{font-size:12px;color:#86868b}\n.pz-hero{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;margin-top:18px}\n.pz-gallery{background:#fff;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:34px 24px;min-height:340px}\n.pz-gallery svg{width:100%;max-width:400px;height:auto}\n.pz-buy{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:76px}\n.pz-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\n.pz-badges .pc-hit,.pz-badges .pc-tag{position:static}\n.pz-buy h1{font-size:22px;line-height:1.3;margin:0;letter-spacing:-.02em}\n.pz-price{font-size:30px;font-weight:700;letter-spacing:-.03em}\n.pz-btn{height:48px;border-radius:12px;font-size:16px}\n.pz-delivery{font-size:13.5px;color:#5f5f66;background:#f5f5f7;border-radius:12px;padding:12px 14px;line-height:1.45}\n.pz-perks{display:grid;gap:7px;font-size:14px;color:#1d1d1f}\n.pz-perks span::before{content:'✓ ';color:var(--lime);font-weight:700}\n.pz-perks span:first-child::before{content:'🚚 '}\n.pz-perks b{color:#1d1d1f}\n.pz-ok::before{content:'✓ '}\n.pz-ask{font-size:14px;color:var(--lime);text-decoration:none}\n.pz-sec{margin-top:34px}\n.spec-table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}\n.spec-table td{padding:9px 14px;border-bottom:1px solid #f0f0f2;vertical-align:top}\n.spec-table tr:last-child td{border-bottom:none}\n.spec-table td:first-child{color:#86868b;width:42%}\n.pz-fits{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}\n@media (max-width:900px){.pz-hero{grid-template-columns:1fr}.pz-buy{position:static}.pz-gallery{min-height:280px}}\n@media (max-width:520px){.pc-grid{grid-template-columns:repeat(2,1fr);gap:8px}.pc-media{height:120px;padding:8px}.pc-spec-line{display:none}.pc-name{font-size:13px;min-height:34px}.pc-price{font-size:17px}}\n"
-EX_CSS = EX_CSS + "\n/* --- фото товаров в Ozon-карточках --- */\n.pc-media img{width:100%;height:100%;object-fit:contain}\n.pz-gallery img{width:100%;max-width:440px;height:auto}\n.pz-gallery{padding:20px}\n"
-EX_CSS = EX_CSS + "\n/* --- палитра GCC (marine/acid), фаза 1 --- */\n:root{--marine:#003a40;--acid:#c8ea95}\nh1,h2,h3{color:var(--marine)}\n.brand span{color:var(--marine)}\n.shop-hero{background:linear-gradient(180deg,#f4faef,#fff);border:1px solid var(--line);border-radius:20px;padding:26px}\n.pz-ask{color:var(--marine)}\n.fchip{border:1px solid var(--line);color:var(--marine);background:#f7fbf5}\n.fchip:hover{background:#eaf5df}\n"
-EX_CSS = EX_CSS + "\n/* --- главная в стиле GCC: инструменты, трендовые модели, бренды --- */\n.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,246px),1fr));gap:12px;margin:14px 0 8px}\n.tool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;text-decoration:none;transition:box-shadow .15s ease}\n.tool:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.tool svg{flex:none;width:40px;height:40px;border-radius:11px;background:var(--marine);padding:9px;box-sizing:border-box}\n.tool-body{display:flex;flex-direction:column;gap:4px}\n.tool b{display:block;color:var(--marine);font-size:15.5px;letter-spacing:-.01em}\n.tool-body>span{font-size:13.5px;color:#5f5f66;line-height:1.4}\n.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr));gap:14px;margin:14px 0 8px}\n.mcard2{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s ease}\n.mcard2:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.mcard2-media{aspect-ratio:16/9;overflow:hidden;background:#f5f5f7}\n.mcard2-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}\n.mcard2:hover .mcard2-media img{transform:scale(1.03)}\n.mcard2-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}\n.mcard2-body>b{color:var(--marine);font-size:16px;letter-spacing:-.015em}\n.mcard2-specs{display:flex;flex-wrap:wrap;gap:5px}\n.mcard2-specs span{font-size:12px;background:#f5f5f7;border-radius:6px;padding:3px 8px;color:#5f5f66}\n.mcard2-link{font-size:13.5px;color:var(--marine);font-weight:600;margin-top:auto}\n.brand-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}\n.brand-strip a{font-size:13.5px;padding:8px 13px;border:1px solid var(--line);border-radius:12px;color:var(--marine);background:#fff;text-decoration:none;font-weight:500}\n.brand-strip a:hover{background:#f4faef}\n.brand-strip a span{color:#86868b;font-size:12px;margin-left:4px}\n@media (max-width:520px){.tools-grid{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}.tool svg{width:34px;height:34px;padding:7px}}\n"
+EX_CSS = EX_CSS + "\n/* --- ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ozon-Ð¿Ð°ÑÑÐµÑÐ½ (v3) --- */\n.pc-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 2px;font-size:14px;color:#86868b;flex-wrap:wrap}\n.pc-sort select{padding:6px 10px;border:1px solid #d2d2d7;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;color:#1d1d1f}\n.pc-media{height:120px;background:#f5f5f7;font-size:52px;position:relative}\n.pc-name{margin:10px 12px 6px;font-size:15px;font-weight:600;min-height:38px;display:block}\n.pc-spec-line{display:flex;flex-wrap:wrap;gap:6px;margin:0 12px 10px}\n.pc-spec-line span{font-size:12.5px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}\n.pc-price{font-size:19px;font-weight:700}\n.pc-btn{background:var(--lime);color:var(--lime-ink);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13.5px;cursor:pointer;white-space:nowrap}\n.pc-card .pc-link{font-size:13px;color:#86868b;text-decoration:none}\n.pc-model-banner{display:flex;align-items:center;gap:10px;background:#fff7d6;border:1px solid #f0e2a0;border-radius:12px;padding:10px 14px;margin:10px 0 0;font-size:14.5px}\n.pc-model-banner button{margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:15px;color:#86868b;padding:4px;font-family:inherit}\n.fchip{display:inline-block;text-decoration:none}"
+EX_CSS = EX_CSS + "\n/* --- ÑÐ¾ÑÑÐ¼ v4 (ÐºÐ°ÑÑÐ¾ÑÐºÐ¸) --- */\n.fbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 4px;font-size:14px;color:var(--muted);flex-wrap:wrap}\n.fbar b{color:var(--ink)}\n.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 8px}\n.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease}\n.fcard:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.08)}\n.fb-top{display:flex;align-items:center;gap:8px}\n.fbadge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#f5f5f7;color:#5f5f66;white-space:nowrap}\n.fb-guide{background:#e8f2ff;color:#0071e3}\n.fc-name{font-size:15.5px;font-weight:600;line-height:1.35}\n.fc-desc{font-size:13.5px;color:var(--muted);line-height:1.45}\n.fc-meta{font-size:12.5px;color:#86868b;margin-top:auto}\n.fempty{color:var(--muted);font-size:14px;padding:16px 0}\n.frow{cursor:pointer}\n.fpost{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:0 0 10px}\n.fpost b{font-size:14px}\n.fp-date{font-size:12px;color:#86868b;margin-left:8px}\n.fpost p{margin:6px 0 0;font-size:15px;white-space:pre-wrap;word-wrap:break-word}\n.fanswers{margin-top:26px}\n.fask{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-top:16px;display:grid;gap:10px}\n.fask h3{margin:0}\n.fsimilar{margin-top:44px}\n.frules{display:grid;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:22px 0 8px;font-size:14.5px;color:#5f5f66}\n.frules b{color:var(--ink);margin-bottom:4px}\n.fview{margin-top:14px}\n.fview h3{font-size:19px;margin:0 0 10px}\n.fbtns{display:flex;gap:10px;flex-wrap:wrap}\n.fmodal .fbox select{appearance:auto}\n@media (max-width:640px){.fgrid{grid-template-columns:1fr}}"
+EX_CSS = EX_CSS + "\n/* --- ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ozon v2: ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð¸ ÑÑÑÐ°Ð½Ð¸ÑÐ° ÑÐ¾Ð²Ð°ÑÐ° --- */\n.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,216px),1fr));gap:12px;margin:14px 0 10px}\n.pc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;position:relative;transition:box-shadow .15s ease}\n.pc-card:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.pc-card .pc-media{display:flex;align-items:center;justify-content:center;height:170px;background:#fff;padding:14px 10px;position:relative}\n.pc-media svg{width:76%;height:76%}\n.pc-hit{position:absolute;top:10px;left:10px;background:#005bff;color:#fff;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-tag{position:absolute;top:10px;right:10px;background:#fff7d6;color:#8a6d00;font-size:11.5px;font-weight:600;padding:4px 8px;border-radius:6px;z-index:2}\n.pc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}\n.pc-name{font-size:14px;font-weight:500;line-height:1.32;min-height:37px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);text-decoration:none}\n.pc-price{font-size:20px;font-weight:700;letter-spacing:-.02em}\n.pc-was{color:#86868b;font-weight:400;font-size:14px}\n.pc-spec-line{display:flex;flex-wrap:wrap;gap:5px}\n.pc-spec-line span{font-size:12px;color:#5f5f66;background:#f5f5f7;border-radius:6px;padding:3px 8px}\n.pc-desc{font-size:13.5px;color:var(--muted);line-height:1.45;margin:0}\n.pc-btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:8px;background:var(--lime);color:#fff;font-weight:500;font-size:14px;cursor:pointer;width:100%;white-space:nowrap}\n.pc-btn:hover{opacity:.9}\n.pc-seller{font-size:12px;color:#86868b}\n.pz-hero{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;margin-top:18px}\n.pz-gallery{background:#fff;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:34px 24px;min-height:340px}\n.pz-gallery svg{width:100%;max-width:400px;height:auto}\n.pz-buy{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:76px}\n.pz-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\n.pz-badges .pc-hit,.pz-badges .pc-tag{position:static}\n.pz-buy h1{font-size:22px;line-height:1.3;margin:0;letter-spacing:-.02em}\n.pz-price{font-size:30px;font-weight:700;letter-spacing:-.03em}\n.pz-btn{height:48px;border-radius:12px;font-size:16px}\n.pz-delivery{font-size:13.5px;color:#5f5f66;background:#f5f5f7;border-radius:12px;padding:12px 14px;line-height:1.45}\n.pz-perks{display:grid;gap:7px;font-size:14px;color:#1d1d1f}\n.pz-perks span::before{content:'â ';color:var(--lime);font-weight:700}\n.pz-perks span:first-child::before{content:'ð '}\n.pz-perks b{color:#1d1d1f}\n.pz-ok::before{content:'â '}\n.pz-ask{font-size:14px;color:var(--lime);text-decoration:none}\n.pz-sec{margin-top:34px}\n.spec-table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}\n.spec-table td{padding:9px 14px;border-bottom:1px solid #f0f0f2;vertical-align:top}\n.spec-table tr:last-child td{border-bottom:none}\n.spec-table td:first-child{color:#86868b;width:42%}\n.pz-fits{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}\n@media (max-width:900px){.pz-hero{grid-template-columns:1fr}.pz-buy{position:static}.pz-gallery{min-height:280px}}\n@media (max-width:520px){.pc-grid{grid-template-columns:repeat(2,1fr);gap:8px}.pc-media{height:120px;padding:8px}.pc-spec-line{display:none}.pc-name{font-size:13px;min-height:34px}.pc-price{font-size:17px}}\n"
+EX_CSS = EX_CSS + "\n/* --- ÑÐ¾ÑÐ¾ ÑÐ¾Ð²Ð°ÑÐ¾Ð² Ð² Ozon-ÐºÐ°ÑÑÐ¾ÑÐºÐ°Ñ --- */\n.pc-media img{width:100%;height:100%;object-fit:contain}\n.pz-gallery img{width:100%;max-width:440px;height:auto}\n.pz-gallery{padding:20px}\n"
+EX_CSS = EX_CSS + "\n/* --- Ð¿Ð°Ð»Ð¸ÑÑÐ° GCC (marine/acid), ÑÐ°Ð·Ð° 1 --- */\n:root{--marine:#003a40;--acid:#c8ea95}\nh1,h2,h3{color:var(--marine)}\n.brand span{color:var(--marine)}\n.shop-hero{background:linear-gradient(180deg,#f4faef,#fff);border:1px solid var(--line);border-radius:20px;padding:26px}\n.pz-ask{color:var(--marine)}\n.fchip{border:1px solid var(--line);color:var(--marine);background:#f7fbf5}\n.fchip:hover{background:#eaf5df}\n"
+EX_CSS = EX_CSS + "\n/* --- Ð³Ð»Ð°Ð²Ð½Ð°Ñ Ð² ÑÑÐ¸Ð»Ðµ GCC: Ð¸Ð½ÑÑÑÑÐ¼ÐµÐ½ÑÑ, ÑÑÐµÐ½Ð´Ð¾Ð²ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸, Ð±ÑÐµÐ½Ð´Ñ --- */\n.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,246px),1fr));gap:12px;margin:14px 0 8px}\n.tool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;text-decoration:none;transition:box-shadow .15s ease}\n.tool:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.tool svg{flex:none;width:40px;height:40px;border-radius:11px;background:var(--marine);padding:9px;box-sizing:border-box}\n.tool-body{display:flex;flex-direction:column;gap:4px}\n.tool b{display:block;color:var(--marine);font-size:15.5px;letter-spacing:-.01em}\n.tool-body>span{font-size:13.5px;color:#5f5f66;line-height:1.4}\n.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr));gap:14px;margin:14px 0 8px}\n.mcard2{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s ease}\n.mcard2:hover{box-shadow:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10)}\n.mcard2-media{aspect-ratio:16/9;overflow:hidden;background:#f5f5f7}\n.mcard2-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}\n.mcard2:hover .mcard2-media img{transform:scale(1.03)}\n.mcard2-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}\n.mcard2-body>b{color:var(--marine);font-size:16px;letter-spacing:-.015em}\n.mcard2-specs{display:flex;flex-wrap:wrap;gap:5px}\n.mcard2-specs span{font-size:12px;background:#f5f5f7;border-radius:6px;padding:3px 8px;color:#5f5f66}\n.mcard2-link{font-size:13.5px;color:var(--marine);font-weight:600;margin-top:auto}\n.brand-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}\n.brand-strip a{font-size:13.5px;padding:8px 13px;border:1px solid var(--line);border-radius:12px;color:var(--marine);background:#fff;text-decoration:none;font-weight:500}\n.brand-strip a:hover{background:#f4faef}\n.brand-strip a span{color:#86868b;font-size:12px;margin-left:4px}\n@media (max-width:520px){.tools-grid{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}.tool svg{width:34px;height:34px;padding:7px}}\n"
 
 
 CITY_URLS = []
 
 EXTRA_GRID_CSS = r"""
-/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ СЕТКИ v2 (02.11: Apple/Tesla-минимализм) ==== */
-/* 1. Глобальный сброс и шрифты (поля глобально НЕ обнуляем — типографика статей не тронута) */
+/* ==== ÐÐ ÐÐÐÐ£Ð-ÐÐ«Ð ÐÐÐÐÐÐÐÐÐ Ð¡ÐÐ¢ÐÐ v2 (02.11: Apple/Tesla-Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»Ð¸Ð·Ð¼) ==== */
+/* 1. ÐÐ»Ð¾Ð±Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ±ÑÐ¾Ñ Ð¸ ÑÑÐ¸ÑÑÑ (Ð¿Ð¾Ð»Ñ Ð³Ð»Ð¾Ð±Ð°Ð»ÑÐ½Ð¾ ÐÐ Ð¾Ð±Ð½ÑÐ»ÑÐµÐ¼ â ÑÐ¸Ð¿Ð¾Ð³ÑÐ°ÑÐ¸ÐºÐ° ÑÑÐ°ÑÐµÐ¹ Ð½Ðµ ÑÑÐ¾Ð½ÑÑÐ°) */
 * { box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
 body { background-color:#F8FAFC; color:#0F172A; -webkit-font-smoothing:antialiased; }
 
-/* 2. Ровная сетка каталога: 4 колонки, воздух 28px, центрирование */
+/* 2. Ð Ð¾Ð²Ð½Ð°Ñ ÑÐµÑÐºÐ° ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°: 4 ÐºÐ¾Ð»Ð¾Ð½ÐºÐ¸, Ð²Ð¾Ð·Ð´ÑÑ 28px, ÑÐµÐ½ÑÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ */
 .products-grid, .kits-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:28px !important; padding:48px 0 !important; max-width:1200px; margin:0 auto; }
 
-/* 3. Карточка: flex-колонка, все карточки в ряду СТРОГО одной высоты */
+/* 3. ÐÐ°ÑÑÐ¾ÑÐºÐ°: flex-ÐºÐ¾Ð»Ð¾Ð½ÐºÐ°, Ð²ÑÐµ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð² ÑÑÐ´Ñ Ð¡Ð¢Ð ÐÐÐ Ð¾Ð´Ð½Ð¾Ð¹ Ð²ÑÑÐ¾ÑÑ */
 .product-card, .kit-card, .card-product { background:#FFFFFF !important; border:1px solid #E2E8F0 !important; border-radius:20px !important; padding:28px !important; display:flex !important; flex-direction:column !important; height:100% !important; box-shadow:0 1px 3px rgba(0,0,0,.02) !important; position:relative; transition:transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1) !important; }
 .product-card:hover, .kit-card:hover, .card-product:hover { transform:translateY(-6px) !important; box-shadow:0 20px 25px -5px rgba(15,23,42,.08), 0 10px 10px -5px rgba(15,23,42,.04) !important; border-color:#CBD5E1 !important; }
 .card-product > .flex-auto { padding:0 !important; }
 
-/* Зона фото: единые 150px + 24px воздуха снизу (img и svg — чтобы SVG-заглушки не ломали ритм) */
+/* ÐÐ¾Ð½Ð° ÑÐ¾ÑÐ¾: ÐµÐ´Ð¸Ð½ÑÐµ 150px + 24px Ð²Ð¾Ð·Ð´ÑÑÐ° ÑÐ½Ð¸Ð·Ñ (img Ð¸ svg â ÑÑÐ¾Ð±Ñ SVG-Ð·Ð°Ð³Ð»ÑÑÐºÐ¸ Ð½Ðµ Ð»Ð¾Ð¼Ð°Ð»Ð¸ ÑÐ¸ÑÐ¼) */
 .card-product .justify-center { height:150px !important; align-items:center; overflow:hidden; margin:0 0 24px 0 !important; }
 .card-product .justify-center img, .card-product .justify-center svg { width:100% !important; height:150px !important; max-height:150px !important; aspect-ratio:auto !important; object-fit:contain !important; margin:0 !important; border-radius:12px; background:#f6f7f9; }
 
-/* Заголовок: ровно 2 строки = 44px (16px x 1.375 — хвосты букв не срезаются) */
+/* ÐÐ°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº: ÑÐ¾Ð²Ð½Ð¾ 2 ÑÑÑÐ¾ÐºÐ¸ = 44px (16px x 1.375 â ÑÐ²Ð¾ÑÑÑ Ð±ÑÐºÐ² Ð½Ðµ ÑÑÐµÐ·Ð°ÑÑÑÑ) */
 .product-card h3, .kit-card h3, .card-product h3 { font-size:16px !important; font-weight:600 !important; line-height:1.375 !important; color:#0F172A !important; margin:0 0 16px 0 !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; min-height:44px !important; max-height:44px !important; }
-/* Единая высота строки со спецификацией */
+/* ÐÐ´Ð¸Ð½Ð°Ñ Ð²ÑÑÐ¾ÑÐ° ÑÑÑÐ¾ÐºÐ¸ ÑÐ¾ ÑÐ¿ÐµÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸ÐµÐ¹ */
 .card-product .flex.flex-col > small:nth-of-type(1) { display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; min-height:38px; line-height:1.4; }
 
-/* Цена: крупнее и вниз (span inline — межстрочный зазор даёт gap нижней сетки) */
+/* Ð¦ÐµÐ½Ð°: ÐºÑÑÐ¿Ð½ÐµÐµ Ð¸ Ð²Ð½Ð¸Ð· (span inline â Ð¼ÐµÐ¶ÑÑÑÐ¾ÑÐ½ÑÐ¹ Ð·Ð°Ð·Ð¾Ñ Ð´Ð°ÑÑ gap Ð½Ð¸Ð¶Ð½ÐµÐ¹ ÑÐµÑÐºÐ¸) */
 .product-price, .card-product .justify-between .font-semibold, .pc-price { font-size:22px !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-.02em; }
 
-/* Кнопка "В заявку": на всю ширину, мягкая тень */
+/* ÐÐ½Ð¾Ð¿ÐºÐ° "Ð Ð·Ð°ÑÐ²ÐºÑ": Ð½Ð° Ð²ÑÑ ÑÐ¸ÑÐ¸Ð½Ñ, Ð¼ÑÐ³ÐºÐ°Ñ ÑÐµÐ½Ñ */
 .product-card .btn-submit, .kit-card .btn-submit, .product-card button, .kit-card button, .card-product .sku-add { margin-top:auto !important; width:100% !important; padding:14px 20px !important; background:#2563EB !important; color:#FFFFFF !important; border:none !important; border-radius:12px !important; font-weight:600 !important; font-size:15px !important; cursor:pointer !important; transition:background .2s ease !important; box-shadow:0 4px 6px -1px rgba(37,99,235,.2) !important; }
 .product-card .btn-submit:hover, .kit-card .btn-submit:hover, .card-product .sku-add:hover { background:#1D4ED8 !important; box-shadow:0 4px 12px rgba(37,99,235,.3) !important; }
 
-/* Нижний блок: цена НАД кнопкой, обе прижаты к нижнему краю */
+/* ÐÐ¸Ð¶Ð½Ð¸Ð¹ Ð±Ð»Ð¾Ðº: ÑÐµÐ½Ð° ÐÐÐ ÐºÐ½Ð¾Ð¿ÐºÐ¾Ð¹, Ð¾Ð±Ðµ Ð¿ÑÐ¸Ð¶Ð°ÑÑ Ðº Ð½Ð¸Ð¶Ð½ÐµÐ¼Ñ ÐºÑÐ°Ñ */
 .card-product .justify-between { display:grid !important; grid-template-columns:1fr !important; gap:20px; margin-top:auto !important; padding-top:16px; align-items:stretch; }
 .card-product .justify-between > div { display:block; }
 .card-product .justify-between .sku-add { justify-content:center; }
 
-/* Ровные карточки моделей и брендов */
+/* Ð Ð¾Ð²Ð½ÑÐµ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð¸ Ð±ÑÐµÐ½Ð´Ð¾Ð² */
 .grid .mcard { height:100%; }
 
-/* 4. Адаптивность */
+/* 4. ÐÐ´Ð°Ð¿ÑÐ¸Ð²Ð½Ð¾ÑÑÑ */
 @media (max-width:1024px) {
   .products-grid, .kits-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:16px !important; padding:32px 0 !important; }
 }
@@ -3824,21 +3807,21 @@ body { background-color:#F8FAFC; color:#0F172A; -webkit-font-smoothing:antialias
 }
 """
 EXTRA_AIR_CSS = r"""
-/* ==== ВОЗДУХ И ПРЕМИУМ-КОНТРАСТ v3 (02.11, финальный слой) ==== */
-/* 1. Дорогой воздух между секциями. Соседние вертикальные margins схлопываются —
-      зазор = max(нижний, верхний), поэтому 80px внизу дают ровно 80px просвет. */
+/* ==== ÐÐÐÐÐ£Ð¥ Ð ÐÐ ÐÐÐÐ£Ð-ÐÐÐÐ¢Ð ÐÐ¡Ð¢ v3 (02.11, ÑÐ¸Ð½Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ»Ð¾Ð¹) ==== */
+/* 1. ÐÐ¾ÑÐ¾Ð³Ð¾Ð¹ Ð²Ð¾Ð·Ð´ÑÑ Ð¼ÐµÐ¶Ð´Ñ ÑÐµÐºÑÐ¸ÑÐ¼Ð¸. Ð¡Ð¾ÑÐµÐ´Ð½Ð¸Ðµ Ð²ÐµÑÑÐ¸ÐºÐ°Ð»ÑÐ½ÑÐµ margins ÑÑÐ»Ð¾Ð¿ÑÐ²Ð°ÑÑÑÑ â
+      Ð·Ð°Ð·Ð¾Ñ = max(Ð½Ð¸Ð¶Ð½Ð¸Ð¹, Ð²ÐµÑÑÐ½Ð¸Ð¹), Ð¿Ð¾ÑÑÐ¾Ð¼Ñ 80px Ð²Ð½Ð¸Ð·Ñ Ð´Ð°ÑÑ ÑÐ¾Ð²Ð½Ð¾ 80px Ð¿ÑÐ¾ÑÐ²ÐµÑ. */
 main section { margin-bottom:80px !important; }
 main section.my-8, main section.lg\:my-14, main section.my-10, main section.lg\:my-10,
 main section.my-6, main section.mt-4, main section.mt-6, main section.mt-10,
 main section.comments { margin-bottom:80px !important; }
-/* сетке каталога своя вертикаль больше не нужна — воздух теперь дают секции */
+/* ÑÐµÑÐºÐµ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° ÑÐ²Ð¾Ñ Ð²ÐµÑÑÐ¸ÐºÐ°Ð»Ñ Ð±Ð¾Ð»ÑÑÐµ Ð½Ðµ Ð½ÑÐ¶Ð½Ð° â Ð²Ð¾Ð·Ð´ÑÑ ÑÐµÐ¿ÐµÑÑ Ð´Ð°ÑÑ ÑÐµÐºÑÐ¸Ð¸ */
 .products-grid { padding:24px 0 !important; }
 
-/* 2. Главный лид-магнит: кнопка квиза на hero (пульс отключён — статичная дорогая тень) */
+/* 2. ÐÐ»Ð°Ð²Ð½ÑÐ¹ Ð»Ð¸Ð´-Ð¼Ð°Ð³Ð½Ð¸Ñ: ÐºÐ½Ð¾Ð¿ÐºÐ° ÐºÐ²Ð¸Ð·Ð° Ð½Ð° hero (Ð¿ÑÐ»ÑÑ Ð¾ÑÐºÐ»ÑÑÑÐ½ â ÑÑÐ°ÑÐ¸ÑÐ½Ð°Ñ Ð´Ð¾ÑÐ¾Ð³Ð°Ñ ÑÐµÐ½Ñ) */
 .btn-quiz, .pulse-cta { background:#2563EB !important; color:#FFFFFF !important; font-size:18px !important; font-weight:700 !important; padding:16px 32px !important; border-radius:12px !important; box-shadow:0 10px 15px -3px rgba(37,99,235,.3) !important; transition:all .2s ease !important; display:inline-block; text-decoration:none; animation:none !important; }
 .btn-quiz:hover, .pulse-cta:hover { background:#1D4ED8 !important; transform:translateY(-2px); }
 
-/* 3. Мобильная шапка: убираем тёмный тайтл-бар, компактнее бренд и CTA, меню = drawer */
+/* 3. ÐÐ¾Ð±Ð¸Ð»ÑÐ½Ð°Ñ ÑÐ°Ð¿ÐºÐ°: ÑÐ±Ð¸ÑÐ°ÐµÐ¼ ÑÑÐ¼Ð½ÑÐ¹ ÑÐ°Ð¹ÑÐ»-Ð±Ð°Ñ, ÐºÐ¾Ð¼Ð¿Ð°ÐºÑÐ½ÐµÐµ Ð±ÑÐµÐ½Ð´ Ð¸ CTA, Ð¼ÐµÐ½Ñ = drawer */
 @media (max-width:768px) {
   .zs-topbar { display:none !important; }
   .zs-nav { padding:10px 0; }
@@ -3853,16 +3836,16 @@ main section.comments { margin-bottom:80px !important; }
 }
 """
 EXTRA_FIX_CSS = r"""
-/* ==== ГОРЯЧИЙ ФИКС ГОРИЗОНТАЛЬНОГО ОВЕРФЛОУ НА МОБИЛЬНЫХ (02.11) ==== */
-/* 3. Карточки сжимаются под колонку, а не распирают её */
+/* ==== ÐÐÐ Ð¯Ð§ÐÐ Ð¤ÐÐÐ¡ ÐÐÐ ÐÐÐÐÐ¢ÐÐÐ¬ÐÐÐÐ ÐÐÐÐ Ð¤ÐÐÐ£ ÐÐ ÐÐÐÐÐÐ¬ÐÐ«Ð¥ (02.11) ==== */
+/* 3. ÐÐ°ÑÑÐ¾ÑÐºÐ¸ ÑÐ¶Ð¸Ð¼Ð°ÑÑÑÑ Ð¿Ð¾Ð´ ÐºÐ¾Ð»Ð¾Ð½ÐºÑ, Ð° Ð½Ðµ ÑÐ°ÑÐ¿Ð¸ÑÐ°ÑÑ ÐµÑ */
 .card-product, .mcard2, .mcard, .tool, .pc-card, .fcard, .blogcard { min-width:0; max-width:100%; }
 
-/* 4. Страховка: страница не скроллится по горизонтали (clip не рвёт sticky-шапку) */
+/* 4. Ð¡ÑÑÐ°ÑÐ¾Ð²ÐºÐ°: ÑÑÑÐ°Ð½Ð¸ÑÐ° Ð½Ðµ ÑÐºÑÐ¾Ð»Ð»Ð¸ÑÑÑ Ð¿Ð¾ Ð³Ð¾ÑÐ¸Ð·Ð¾Ð½ÑÐ°Ð»Ð¸ (clip Ð½Ðµ ÑÐ²ÑÑ sticky-ÑÐ°Ð¿ÐºÑ) */
 body { overflow-x:clip; }
 main { min-width:0; max-width:100%; }
 img, svg { max-width:100%; }
 
-/* 5. Очень узкие экраны: CTA и шапка компактнее */
+/* 5. ÐÑÐµÐ½Ñ ÑÐ·ÐºÐ¸Ðµ ÑÐºÑÐ°Ð½Ñ: CTA Ð¸ ÑÐ°Ð¿ÐºÐ° ÐºÐ¾Ð¼Ð¿Ð°ÐºÑÐ½ÐµÐµ */
 @media (max-width:380px) {
   .pulse-cta, .btn-quiz { padding:14px 16px !important; font-size:16px !important; }
   .zs-nav .container { gap:8px; }
@@ -3870,10 +3853,10 @@ img, svg { max-width:100%; }
 }
 """
 EXTRA_STICKY_CSS = r"""
-/* ==== ЛИПКИЙ CTA-БАР + ТЁМНЫЙ ФУТЕР (02.11) ==== */
+/* ==== ÐÐÐÐÐÐ CTA-ÐÐÐ  + Ð¢ÐÐÐÐ«Ð Ð¤Ð£Ð¢ÐÐ  (02.11) ==== */
 .zs-stbar { display:none; }
 
-/* тёмный премиум-футер */
+/* ÑÑÐ¼Ð½ÑÐ¹ Ð¿ÑÐµÐ¼Ð¸ÑÐ¼-ÑÑÑÐµÑ */
 footer { background:#0F172A !important; border-top:1px solid #1E293B; color:#94A3B8 !important; margin-top:80px !important; padding:64px 0 40px !important; }
 footer h6 { color:#E2E8F0 !important; }
 footer li a, footer .fdesc p, footer .fbot > div { color:#94A3B8 !important; }
@@ -3883,7 +3866,7 @@ footer .fbot { border-top:1px solid rgba(255,255,255,.08) !important; }
 footer .fbot .fsoc a { background:transparent !important; border-color:rgba(255,255,255,.14) !important; color:#CBD5E1 !important; }
 footer .fbot .fsoc a:hover { color:#FFFFFF !important; border-color:rgba(255,255,255,.32) !important; }
 
-/* липкий мобильный CTA-бар */
+/* Ð»Ð¸Ð¿ÐºÐ¸Ð¹ Ð¼Ð¾Ð±Ð¸Ð»ÑÐ½ÑÐ¹ CTA-Ð±Ð°Ñ */
 @media (max-width:768px) {
   .zs-stbar { display:block; position:fixed; left:0; right:0; bottom:0; z-index:70; background:rgba(255,255,255,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-top:1px solid #E2E8F0; padding:10px 12px calc(10px + env(safe-area-inset-bottom)); }
   .zs-stbar .wrap { max-width:560px; margin:0 auto; display:flex; gap:10px; align-items:center; }
@@ -3897,8 +3880,8 @@ footer .fbot .fsoc a:hover { color:#FFFFFF !important; border-color:rgba(255,255
 html.tg-mode .zs-stbar { display:none !important; }
 """
 EXTRA_V4_CSS = r"""
-/* ==== ПРЕМИУМ-ВЫРАВНИВАНИЕ И ИНТЕРАКТИВНОСТЬ v4 (03.11) ==== */
-/* 1. Жёсткое выравнивание высоты: все карточки — flex-колонки, CTA прижаты к низу */
+/* ==== ÐÐ ÐÐÐÐ£Ð-ÐÐ«Ð ÐÐÐÐÐÐÐÐÐ Ð ÐÐÐ¢ÐÐ ÐÐÐ¢ÐÐÐÐÐ¡Ð¢Ð¬ v4 (03.11) ==== */
+/* 1. ÐÑÑÑÐºÐ¾Ðµ Ð²ÑÑÐ°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ð²ÑÑÐ¾ÑÑ: Ð²ÑÐµ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ â flex-ÐºÐ¾Ð»Ð¾Ð½ÐºÐ¸, CTA Ð¿ÑÐ¸Ð¶Ð°ÑÑ Ðº Ð½Ð¸Ð·Ñ */
 .card-product { display:flex; flex-direction:column; height:100%; }
 .card-product > .flex-auto { display:flex; flex-direction:column; flex:1 1 auto; }
 .card-product .flex.flex-col { flex:1 1 auto; }
@@ -3907,16 +3890,16 @@ EXTRA_V4_CSS = r"""
 .grid > div > a { display:block; height:100%; }
 .pain-card > a > div { display:flex; flex-direction:column; height:100%; }
 .pain-card .go { margin-top:auto; padding-top:12px; font-size:14px; font-weight:700; color:#2563EB; }
-/* по классике из ТЗ: старая цена и плашка «Выгода» */
+/* Ð¿Ð¾ ÐºÐ»Ð°ÑÑÐ¸ÐºÐµ Ð¸Ð· Ð¢Ð: ÑÑÐ°ÑÐ°Ñ ÑÐµÐ½Ð° Ð¸ Ð¿Ð»Ð°ÑÐºÐ° Â«ÐÑÐ³Ð¾Ð´Ð°Â» */
 .old-price { text-decoration:line-through; color:#94A3B8; font-size:.9em; margin-left:8px; }
 .save-badge { border-radius:20px; font-size:12px; font-weight:600; padding:5px 10px; letter-spacing:.02em; }
 
-/* 2. Ограничение текста: описания сжимаются в 2 строки с троеточием */
+/* 2. ÐÐ³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ ÑÐµÐºÑÑÐ°: Ð¾Ð¿Ð¸ÑÐ°Ð½Ð¸Ñ ÑÐ¶Ð¸Ð¼Ð°ÑÑÑÑ Ð² 2 ÑÑÑÐ¾ÐºÐ¸ Ñ ÑÑÐ¾ÐµÑÐ¾ÑÐ¸ÐµÐ¼ */
 .blogcard p, .pain-card p, .mcard > span:not(.mgo) {
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
 
-/* 3. Премиальный hover — только для устройств с настоящим курсором */
+/* 3. ÐÑÐµÐ¼Ð¸Ð°Ð»ÑÐ½ÑÐ¹ hover â ÑÐ¾Ð»ÑÐºÐ¾ Ð´Ð»Ñ ÑÑÑÑÐ¾Ð¹ÑÑÐ² Ñ Ð½Ð°ÑÑÐ¾ÑÑÐ¸Ð¼ ÐºÑÑÑÐ¾ÑÐ¾Ð¼ */
 .mcard-photo { transition:transform .25s ease; }
 @media (hover:hover) and (pointer:fine) {
   .card-product, .mcard, .mcard2, .blogcard, .tool, .pc-card, .pain-card > a > div {
@@ -3930,12 +3913,12 @@ EXTRA_V4_CSS = r"""
   .mcard:hover .mcard-photo { transform:scale(1.02); }
 }
 
-/* 5. Off-canvas drawer виден только на мобиле: на десктопе скрыт (без раздувания scrollWidth) */
+/* 5. Off-canvas drawer Ð²Ð¸Ð´ÐµÐ½ ÑÐ¾Ð»ÑÐºÐ¾ Ð½Ð° Ð¼Ð¾Ð±Ð¸Ð»Ðµ: Ð½Ð° Ð´ÐµÑÐºÑÐ¾Ð¿Ðµ ÑÐºÑÑÑ (Ð±ÐµÐ· ÑÐ°Ð·Ð´ÑÐ²Ð°Ð½Ð¸Ñ scrollWidth) */
 @media (min-width:1024px) { .zs-off { display:none !important; } }
 """
 
 
-# ===== CSS виджета-калькулятора (ЭТАП 1 портала) =====
+# ===== CSS Ð²Ð¸Ð´Ð¶ÐµÑÐ°-ÐºÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾ÑÐ° (Ð­Ð¢ÐÐ 1 Ð¿Ð¾ÑÑÐ°Ð»Ð°) =====
 EXTRA_CALC_CSS = r"""
 .zc-wrap { padding: 10px 0 6px; }
 .zc { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; padding: 28px 30px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
@@ -3970,10 +3953,10 @@ EXTRA_CALC_CSS = r"""
 }
 @media (max-width: 640px) {
   .zc-table { display: block; overflow-x: auto; }
-  /* grid-элементы не должны держать min-content ширину и вылезать за вьюпорт */
+  /* grid-ÑÐ»ÐµÐ¼ÐµÐ½ÑÑ Ð½Ðµ Ð´Ð¾Ð»Ð¶Ð½Ñ Ð´ÐµÑÐ¶Ð°ÑÑ min-content ÑÐ¸ÑÐ¸Ð½Ñ Ð¸ Ð²ÑÐ»ÐµÐ·Ð°ÑÑ Ð·Ð° Ð²ÑÑÐ¿Ð¾ÑÑ */
   .grid > * { min-width: 0; }
 }
-/* hotfix: fixed-элемент .zs-off с right:-320px раздувает scrollWidth на мобиле; смещаем его влево (отрицательный left не создаёт скролл-оверсфлоу) */
+/* hotfix: fixed-ÑÐ»ÐµÐ¼ÐµÐ½Ñ .zs-off Ñ right:-320px ÑÐ°Ð·Ð´ÑÐ²Ð°ÐµÑ scrollWidth Ð½Ð° Ð¼Ð¾Ð±Ð¸Ð»Ðµ; ÑÐ¼ÐµÑÐ°ÐµÐ¼ ÐµÐ³Ð¾ Ð²Ð»ÐµÐ²Ð¾ (Ð¾ÑÑÐ¸ÑÐ°ÑÐµÐ»ÑÐ½ÑÐ¹ left Ð½Ðµ ÑÐ¾Ð·Ð´Ð°ÑÑ ÑÐºÑÐ¾Ð»Ð»-Ð¾Ð²ÐµÑÑÑÐ»Ð¾Ñ) */
 @media (max-width: 1023px) {
   .zs-off { right: auto; left: -320px; transition: left .25s ease; }
   .zs-off.open { left: 0; }
@@ -3982,27 +3965,27 @@ EXTRA_CALC_CSS = r"""
 
 
 
-# ===== ЭТАП 2 ПОРТАЛА: МАТРИЦА СОВМЕСТИМОСТИ /matrix/ =====
-# Колонки — топ-20 моделей по спросу (запись в базе → короткая подпись колонки)
+# ===== Ð­Ð¢ÐÐ 2 ÐÐÐ Ð¢ÐÐÐ: ÐÐÐ¢Ð ÐÐ¦Ð Ð¡ÐÐÐÐÐ¡Ð¢ÐÐÐÐ¡Ð¢Ð /matrix/ =====
+# ÐÐ¾Ð»Ð¾Ð½ÐºÐ¸ â ÑÐ¾Ð¿-20 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ Ð¿Ð¾ ÑÐ¿ÑÐ¾ÑÑ (Ð·Ð°Ð¿Ð¸ÑÑ Ð² Ð±Ð°Ð·Ðµ â ÐºÐ¾ÑÐ¾ÑÐºÐ°Ñ Ð¿Ð¾Ð´Ð¿Ð¸ÑÑ ÐºÐ¾Ð»Ð¾Ð½ÐºÐ¸)
 MATRIX_MODELS = [
   ('Zeekr', '001 / 001 FR', 'Zeekr 001'),
   ('Zeekr', '007 / 007GT', 'Zeekr 007'),
   ('Zeekr', '7X / X / MIX', 'Zeekr 7X / X'),
   ('Zeekr', '009 / 009 Grand', 'Zeekr 009'),
-  ('Li Auto', 'L6 / L7 / L8 / L9 (2022–2025)', 'Li Auto L6–L9'),
-  ('Voyah', 'Free EV (ранние официальные RU)', 'Voyah Free EV'),
+  ('Li Auto', 'L6 / L7 / L8 / L9 (2022â2025)', 'Li Auto L6âL9'),
+  ('Voyah', 'Free EV (ÑÐ°Ð½Ð½Ð¸Ðµ Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½ÑÐµ RU)', 'Voyah Free EV'),
   ('Voyah', 'Dream / Dreamer (PHEV)', 'Voyah Dreamer'),
-  ('Avatr', '11 / 12 (официально RU)', 'Avatr 11 / 12'),
+  ('Avatr', '11 / 12 (Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾ RU)', 'Avatr 11 / 12'),
   ('Xiaomi', 'SU7 / SU7 Ultra', 'Xiaomi SU7'),
   ('BYD', 'Song Plus EV', 'BYD Song Plus EV'),
   ('BYD', 'Seal', 'BYD Seal'),
   ('BYD', 'Han EV / Song L', 'BYD Han EV'),
   ('BYD', 'Yuan Plus / Atto 3 / Yuan Up / Pro', 'BYD Yuan Plus'),
   ('Tesla', 'Model 3 / Y (EU)', 'Tesla 3/Y (EU)'),
-  ('Tesla', 'Model 3 / Y / S / X (US)', 'Tesla (US сборки)'),
+  ('Tesla', 'Model 3 / Y / S / X (US)', 'Tesla (US ÑÐ±Ð¾ÑÐºÐ¸)'),
   ('Hongqi', 'E-QM5', 'Hongqi E-QM5'),
   ('Geely', 'Geometry C / A', 'Geely Geometry C'),
-  ('Deepal', 'S07 (RU официальная)', 'Deepal S07'),
+  ('Deepal', 'S07 (RU Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð°Ñ)', 'Deepal S07'),
   ('Leapmotor', 'C10 / C11 / C01 / B10 / A05', 'Leapmotor C10/C11'),
   ('Onvo (NIO)', 'L60', 'Onvo (NIO) L60'),
 ]
@@ -4015,11 +3998,11 @@ def _sku_url(i):
 
 def _sku_name(i):
     p = catalog.PIDX.get(i) if hasattr(catalog, 'PIDX') else None
-    return p.get('name') if p else 'товар каталога'
+    return p.get('name') if p else 'ÑÐ¾Ð²Ð°Ñ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°'
 
 def _cell(status, hint, links):
     cls = {'ok': 'm-ok', 'ad': 'm-ad', 'warn': 'm-warn', 'no': 'm-no'}[status]
-    label = {'ok': 'Прямо', 'ad': 'Через адаптер', 'warn': 'Уточнить', 'no': 'Не работает'}[status]
+    label = {'ok': 'ÐÑÑÐ¼Ð¾', 'ad': 'Ð§ÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ', 'warn': 'Ð£ÑÐ¾ÑÐ½Ð¸ÑÑ', 'no': 'ÐÐµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ'}[status]
     if status == 'ok':
         return '<td class="mcell ' + cls + '" title="' + html.escape(hint) + '"><span class="mchip">' + label + '</span></td>'
     if status == 'no':
@@ -4028,7 +4011,7 @@ def _cell(status, hint, links):
     if links:
         lk = ' <a href="' + links[0][1] + '">' + html.escape(links[0][0]) + '</a>'
         if len(links) > 1:
-            lk += ' <span class="malt">или</span> <a href="' + links[1][1] + '">' + html.escape(links[1][0]) + '</a>'
+            lk += ' <span class="malt">Ð¸Ð»Ð¸</span> <a href="' + links[1][1] + '">' + html.escape(links[1][0]) + '</a>'
     return ('<td class="mcell ' + cls + '" title="' + html.escape(hint) + '"><span class="mchip">' + label + '</span><span class="mnote">' + html.escape(hint) + lk + '</span></td>')
 
 def matrix_cell_for(m, row):
@@ -4037,97 +4020,97 @@ def matrix_cell_for(m, row):
     def has(t, s): return t.lower() in s.lower()
     A = _sku_url
     if row == 't2ac':
-        if has('type 2', ac): return _cell('ok', 'Машина с Type 2 — заряжается от Type 2-станций напрямую', [])
-        if has('gb/t', ac): return _cell('ad', 'Нужен адаптер или кабель Type 2→GB/T', [
-            ('Адаптер Type 2→GB/T (премиум)', A(1)), ('Кабель Type 2–GB/T', A(3))])
-        if has('type 1', ac): return _cell('ad', 'Нужен адаптер Type 1→Type 2', [('Адаптер Type 1→Type 2', A(25))])
-        if has('nacs', ac): return _cell('ad', 'Нужен адаптер NACS→Type 2', [('Адаптер NACS→Type 2', A(7))])
-        return _cell('no', 'Разъём AC не определён — проверьте страницу модели', [])
+        if has('type 2', ac): return _cell('ok', 'ÐÐ°ÑÐ¸Ð½Ð° Ñ Type 2 â Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¾Ñ Type 2-ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ', [])
+        if has('gb/t', ac): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Type 2âGB/T', [
+            ('ÐÐ´Ð°Ð¿ÑÐµÑ Type 2âGB/T (Ð¿ÑÐµÐ¼Ð¸ÑÐ¼)', A(1)), ('ÐÐ°Ð±ÐµÐ»Ñ Type 2âGB/T', A(3))])
+        if has('type 1', ac): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Type 1âType 2', [('ÐÐ´Ð°Ð¿ÑÐµÑ Type 1âType 2', A(25))])
+        if has('nacs', ac): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ NACSâType 2', [('ÐÐ´Ð°Ð¿ÑÐµÑ NACSâType 2', A(7))])
+        return _cell('no', 'Ð Ð°Ð·ÑÑÐ¼ AC Ð½Ðµ Ð¾Ð¿ÑÐµÐ´ÐµÐ»ÑÐ½ â Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸', [])
     if row == 'ccs2dc':
-        if has('ccs2', dc): return _cell('ok', 'Машина с CCS2 — быстрая зарядка на CCS2-станциях напрямую', [])
-        if has('gb/t', dc): return _cell('ad', 'Нужен DC-адаптер CCS2→GB/T (250–300 А)', [('DC-адаптер CCS2→GB/T', A(6))])
-        if has('nacs', dc): return _cell('ad', 'Нужен адаптер NACS→CCS2', [('Адаптер NACS→CCS2/Type 2', A(7))])
-        if has('ccs1', dc): return _cell('no', 'CCS1-станции в РФ ограничены, типового переходника нет', [])
-        if has('chademo', dc): return _cell('no', 'Быстрая зарядка — только CHAdeMO', [])
-        return _cell('no', 'Быстрого DC-порта нет', [])
+        if has('ccs2', dc): return _cell('ok', 'ÐÐ°ÑÐ¸Ð½Ð° Ñ CCS2 â Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° CCS2-ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ', [])
+        if has('gb/t', dc): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2âGB/T (250â300 Ð)', [('DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2âGB/T', A(6))])
+        if has('nacs', dc): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ NACSâCCS2', [('ÐÐ´Ð°Ð¿ÑÐµÑ NACSâCCS2/Type 2', A(7))])
+        if has('ccs1', dc): return _cell('no', 'CCS1-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð Ð¤ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ñ, ÑÐ¸Ð¿Ð¾Ð²Ð¾Ð³Ð¾ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ° Ð½ÐµÑ', [])
+        if has('chademo', dc): return _cell('no', 'ÐÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° â ÑÐ¾Ð»ÑÐºÐ¾ CHAdeMO', [])
+        return _cell('no', 'ÐÑÑÑÑÐ¾Ð³Ð¾ DC-Ð¿Ð¾ÑÑÐ° Ð½ÐµÑ', [])
     if row == 'gbtac':
-        if has('gb/t', ac): return _cell('ok', 'Китайский порт — GB/T-станции напрямую', [])
-        if has('type 2', ac): return _cell('ad', 'Нужен обратный адаптер GB/T→Type 2', [('Адаптер GB/T→Type 2 (обратный)', A(2))])
-        if has('type 1', ac): return _cell('warn', 'Цепочка из двух переходников ненадёжна — проще домашняя станция Type 2', [('Станция Type 2, 7 кВт', A(23))])
-        if has('nacs', ac): return _cell('warn', 'Supercharger в РФ не работает; для дома — своя станция Type 2', [('Станция Type 2, 7 кВт', A(23))])
-        return _cell('no', 'Разъём AC не определён — проверьте страницу модели', [])
+        if has('gb/t', ac): return _cell('ok', 'ÐÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹ Ð¿Ð¾ÑÑ â GB/T-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ', [])
+        if has('type 2', ac): return _cell('ad', 'ÐÑÐ¶ÐµÐ½ Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ GB/TâType 2', [('ÐÐ´Ð°Ð¿ÑÐµÑ GB/TâType 2 (Ð¾Ð±ÑÐ°ÑÐ½ÑÐ¹)', A(2))])
+        if has('type 1', ac): return _cell('warn', 'Ð¦ÐµÐ¿Ð¾ÑÐºÐ° Ð¸Ð· Ð´Ð²ÑÑ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð² Ð½ÐµÐ½Ð°Ð´ÑÐ¶Ð½Ð° â Ð¿ÑÐ¾ÑÐµ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Type 2', [('Ð¡ÑÐ°Ð½ÑÐ¸Ñ Type 2, 7 ÐºÐÑ', A(23))])
+        if has('nacs', ac): return _cell('warn', 'Supercharger Ð² Ð Ð¤ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ; Ð´Ð»Ñ Ð´Ð¾Ð¼Ð° â ÑÐ²Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Type 2', [('Ð¡ÑÐ°Ð½ÑÐ¸Ñ Type 2, 7 ÐºÐÑ', A(23))])
+        return _cell('no', 'Ð Ð°Ð·ÑÑÐ¼ AC Ð½Ðµ Ð¾Ð¿ÑÐµÐ´ÐµÐ»ÑÐ½ â Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸', [])
     if row == 'gbtdc':
-        if has('gb/t', dc): return _cell('ok', 'Быстрая зарядка на GB/T DC-станциях напрямую', [])
-        if has('ccs2', dc): return _cell('warn', 'Обратный DC-переходник GB/T→CCS2 — уточняйте в Telegram', [])
-        if has('nacs', dc): return _cell('no', 'Supercharger в РФ не работает', [])
-        if has('ccs1', dc): return _cell('no', 'Нет типового переходника', [])
-        return _cell('no', 'Нет быстрого DC-порта', [])
+        if has('gb/t', dc): return _cell('ok', 'ÐÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° GB/T DC-ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ', [])
+        if has('ccs2', dc): return _cell('warn', 'ÐÐ±ÑÐ°ÑÐ½ÑÐ¹ DC-Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº GB/TâCCS2 â ÑÑÐ¾ÑÐ½ÑÐ¹ÑÐµ Ð² Telegram', [])
+        if has('nacs', dc): return _cell('no', 'Supercharger Ð² Ð Ð¤ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ', [])
+        if has('ccs1', dc): return _cell('no', 'ÐÐµÑ ÑÐ¸Ð¿Ð¾Ð²Ð¾Ð³Ð¾ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ°', [])
+        return _cell('no', 'ÐÐµÑ Ð±ÑÑÑÑÐ¾Ð³Ð¾ DC-Ð¿Ð¾ÑÑÐ°', [])
     if row == 'chademo':
-        if has('chademo', dc): return _cell('ok', 'Быстрая зарядка на CHAdeMO-станциях напрямую', [])
-        return _cell('no', 'CHAdeMO не поддерживается', [])
+        if has('chademo', dc): return _cell('ok', 'ÐÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° CHAdeMO-ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ', [])
+        return _cell('no', 'CHAdeMO Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶Ð¸Ð²Ð°ÐµÑÑÑ', [])
     # 220V
-    if has('gb/t', ac): return _cell('ad', 'Портативная зарядка GB/T от бытовой розетки', [
-        ('Портативка GB/T 3,5 кВт', A(10)), ('Портативка GB/T 7 кВт', A(5))])
-    if has('type 2', ac): return _cell('ad', 'Портативная зарядка Type 2 от бытовой розетки', [
-        ('Портативка Type 2 3,5 кВт', A(20)), ('Портативка Type 2 7 кВт', A(19))])
-    if has('type 1', ac): return _cell('ad', 'Портативка Type 2 + адаптер Type 1→Type 2', [
-        ('Портативка Type 2 3,5 кВт', A(20)), ('Адаптер Type 1→Type 2', A(25))])
-    if has('nacs', ac): return _cell('ad', 'Портативка Type 2 + адаптер NACS→Type 2', [
-        ('Портативка Type 2 3,5 кВт', A(20)), ('Адаптер NACS→Type 2', A(7))])
-    return _cell('no', 'Разъём не определён — проверьте страницу модели', [])
+    if has('gb/t', ac): return _cell('ad', 'ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° GB/T Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸', [
+        ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° GB/T 3,5 ÐºÐÑ', A(10)), ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° GB/T 7 ÐºÐÑ', A(5))])
+    if has('type 2', ac): return _cell('ad', 'ÐÐ¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Type 2 Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸', [
+        ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 3,5 ÐºÐÑ', A(20)), ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 7 ÐºÐÑ', A(19))])
+    if has('type 1', ac): return _cell('ad', 'ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 + Ð°Ð´Ð°Ð¿ÑÐµÑ Type 1âType 2', [
+        ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 3,5 ÐºÐÑ', A(20)), ('ÐÐ´Ð°Ð¿ÑÐµÑ Type 1âType 2', A(25))])
+    if has('nacs', ac): return _cell('ad', 'ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 + Ð°Ð´Ð°Ð¿ÑÐµÑ NACSâType 2', [
+        ('ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° Type 2 3,5 ÐºÐÑ', A(20)), ('ÐÐ´Ð°Ð¿ÑÐµÑ NACSâType 2', A(7))])
+    return _cell('no', 'Ð Ð°Ð·ÑÑÐ¼ Ð½Ðµ Ð¾Ð¿ÑÐµÐ´ÐµÐ»ÑÐ½ â Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸', [])
 
 MATRIX_ROWS = [
-  ('t2ac', 'Type 2 AC · 7–22 кВт', 'Медленная/городская зарядка: сеть Type 2, домашние станции и столбы у ТЦ'),
-  ('ccs2dc', 'CCS2 DC · быстрая', 'Быстрая зарядка на трассе: сети без CHAdeMO, европейский стандарт'),
-  ('gbtac', 'GB/T AC · китайский', 'Китайские станции переменного тока, GB/T-зарядки у дилеров'),
-  ('gbtdc', 'GB/T DC · быстрая CN', 'Быстрая зарядка китайских станций (не путать с AC)'),
-  ('chademo', 'CHAdeMO DC', 'Стандарт японских машин, сети с CHAdeMO-пистолетами'),
-  ('220v', 'Розетка 220 В', 'Аварийный сценарий: портативная зарядка от бытовой розетки'),
+  ('t2ac', 'Type 2 AC Â· 7â22 ÐºÐÑ', 'ÐÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ/Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°: ÑÐµÑÑ Type 2, Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸ ÑÑÐ¾Ð»Ð±Ñ Ñ Ð¢Ð¦'),
+  ('ccs2dc', 'CCS2 DC Â· Ð±ÑÑÑÑÐ°Ñ', 'ÐÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° ÑÑÐ°ÑÑÐµ: ÑÐµÑÐ¸ Ð±ÐµÐ· CHAdeMO, ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ð´Ð°ÑÑ'),
+  ('gbtac', 'GB/T AC Â· ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¹', 'ÐÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ðµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑÐ¾ÐºÐ°, GB/T-Ð·Ð°ÑÑÐ´ÐºÐ¸ Ñ Ð´Ð¸Ð»ÐµÑÐ¾Ð²'),
+  ('gbtdc', 'GB/T DC Â· Ð±ÑÑÑÑÐ°Ñ CN', 'ÐÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ (Ð½Ðµ Ð¿ÑÑÐ°ÑÑ Ñ AC)'),
+  ('chademo', 'CHAdeMO DC', 'Ð¡ÑÐ°Ð½Ð´Ð°ÑÑ ÑÐ¿Ð¾Ð½ÑÐºÐ¸Ñ Ð¼Ð°ÑÐ¸Ð½, ÑÐµÑÐ¸ Ñ CHAdeMO-Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÐ°Ð¼Ð¸'),
+  ('220v', 'Ð Ð¾Ð·ÐµÑÐºÐ° 220 Ð', 'ÐÐ²Ð°ÑÐ¸Ð¹Ð½ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹: Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ Ð±ÑÑÐ¾Ð²Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸'),
 ]
 
 def matrix_build(outdir):
-    # связка колонок с записями базы
+    # ÑÐ²ÑÐ·ÐºÐ° ÐºÐ¾Ð»Ð¾Ð½Ð¾Ðº Ñ Ð·Ð°Ð¿Ð¸ÑÑÐ¼Ð¸ Ð±Ð°Ð·Ñ
     cols = []
     for brand, model, label in MATRIX_MODELS:
         entry = next((m for m in MODELS if m.get('brand') == brand and m.get('model') == model), None)
         cols.append((entry, label))
-    thead = '<tr><th class="mrowh">Разъём станции</th>' + ''.join(
-        '<th class="mcolh"><a href="/models/' + slug(c[0]['brand']) + '-' + slug(c[0]['model']) + '/" title="Страница модели">' + html.escape(c[1]) + '</a></th>' for c in cols) + '</tr>'
+    thead = '<tr><th class="mrowh">Ð Ð°Ð·ÑÑÐ¼ ÑÑÐ°Ð½ÑÐ¸Ð¸</th>' + ''.join(
+        '<th class="mcolh"><a href="/models/' + slug(c[0]['brand']) + '-' + slug(c[0]['model']) + '/" title="Ð¡ÑÑÐ°Ð½Ð¸ÑÐ° Ð¼Ð¾Ð´ÐµÐ»Ð¸">' + html.escape(c[1]) + '</a></th>' for c in cols) + '</tr>'
     body_rows = ''
     for key, rname, rdesc in MATRIX_ROWS:
         cells = ''.join(matrix_cell_for(c[0], key) for c in cols)
         body_rows += ('<tr><th class="mrowh" title="' + html.escape(rdesc) + '">' + html.escape(rname) + '<span class="mrdesc">' + html.escape(rdesc) + '</span></th>' + cells + '</tr>')
     table = ('<div class="mx-wrap"><table class="mx-table">' + '<thead>' + thead + '</thead><tbody>' + body_rows + '</tbody></table></div>')
     legend = ('<div class="mx-legend">'
-      '<span><i class="lg lg-ok"></i>Прямо — разъём совпадает</span>'
-      '<span><i class="lg lg-ad"></i>Через адаптер/кабель из каталога</span>'
-      '<span><i class="lg lg-warn"></i>Особый случай — читайте подсказку</span>'
-      '<span><i class="lg lg-no"></i>Не поддерживается</span></div>')
-    faq = ('<h2>Как пользоваться матрицей</h2>'
-      '<p>Найдите свою модель в колонке, пройдитесь по строкам: где стоит «Прямо» — заряжаетесь без переходников; «Через адаптер» — переход в каталог по ссылке подсказки; «Не работает» — этот сценарий не закрывается переходником (и это честный ответ, а не маркетинг).</p>'
-      '<h2>Частые вопросы</h2>'
+      '<span><i class="lg lg-ok"></i>ÐÑÑÐ¼Ð¾ â ÑÐ°Ð·ÑÑÐ¼ ÑÐ¾Ð²Ð¿Ð°Ð´Ð°ÐµÑ</span>'
+      '<span><i class="lg lg-ad"></i>Ð§ÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ/ÐºÐ°Ð±ÐµÐ»Ñ Ð¸Ð· ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°</span>'
+      '<span><i class="lg lg-warn"></i>ÐÑÐ¾Ð±ÑÐ¹ ÑÐ»ÑÑÐ°Ð¹ â ÑÐ¸ÑÐ°Ð¹ÑÐµ Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÑ</span>'
+      '<span><i class="lg lg-no"></i>ÐÐµ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶Ð¸Ð²Ð°ÐµÑÑÑ</span></div>')
+    faq = ('<h2>ÐÐ°Ðº Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÑÑÑ Ð¼Ð°ÑÑÐ¸ÑÐµÐ¹</h2>'
+      '<p>ÐÐ°Ð¹Ð´Ð¸ÑÐµ ÑÐ²Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ Ð² ÐºÐ¾Ð»Ð¾Ð½ÐºÐµ, Ð¿ÑÐ¾Ð¹Ð´Ð¸ÑÐµÑÑ Ð¿Ð¾ ÑÑÑÐ¾ÐºÐ°Ð¼: Ð³Ð´Ðµ ÑÑÐ¾Ð¸Ñ Â«ÐÑÑÐ¼Ð¾Â» â Ð·Ð°ÑÑÐ¶Ð°ÐµÑÐµÑÑ Ð±ÐµÐ· Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð²; Â«Ð§ÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÂ» â Ð¿ÐµÑÐµÑÐ¾Ð´ Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³ Ð¿Ð¾ ÑÑÑÐ»ÐºÐµ Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ¸; Â«ÐÐµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑÂ» â ÑÑÐ¾Ñ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð½Ðµ Ð·Ð°ÐºÑÑÐ²Ð°ÐµÑÑÑ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð¼ (Ð¸ ÑÑÐ¾ ÑÐµÑÑÐ½ÑÐ¹ Ð¾ÑÐ²ÐµÑ, Ð° Ð½Ðµ Ð¼Ð°ÑÐºÐµÑÐ¸Ð½Ð³).</p>'
+      '<h2>Ð§Ð°ÑÑÑÐµ Ð²Ð¾Ð¿ÑÐ¾ÑÑ</h2>'
       '<ul>'
-      '<li><b>Zeekr 001 — какой разъём?</b> GB/T AC + GB/T DC: от Type 2-станций — адаптер или кабель Type 2→GB/T, от CCS2-трассы — DC-адаптер CCS2→GB/T.</li>'
-      '<li><b>Li Auto — что с розеткой?</b> Li Auto заряжается от GB/T-розетки портативкой GB/T 3,5/7 кВт; аккуратно с разрядными сценариями — см. <a href="/catalog/perekhodnik-gbt-220v.html">переходник-удлинитель GB/T→220 В</a>.</li>'
-      '<li><b>Tesla (US) — можно ли от GB/T?</b> Нет: Supercharger в РФ не работает, а двойной переходник GB/T→NACS мы не рекомендуем. Домашний сценарий — своя станция Type 2.</li>'
-      '<li><b>А если модели нет в колонках?</b> Откройте её страницу в <a href="/models/">каталоге моделей</a> — на каждой странице модели свои решения по разъёмам.</li>'
+      '<li><b>Zeekr 001 â ÐºÐ°ÐºÐ¾Ð¹ ÑÐ°Ð·ÑÑÐ¼?</b> GB/T AC + GB/T DC: Ð¾Ñ Type 2-ÑÑÐ°Ð½ÑÐ¸Ð¹ â Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Type 2âGB/T, Ð¾Ñ CCS2-ÑÑÐ°ÑÑÑ â DC-Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2âGB/T.</li>'
+      '<li><b>Li Auto â ÑÑÐ¾ Ñ ÑÐ¾Ð·ÐµÑÐºÐ¾Ð¹?</b> Li Auto Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¾Ñ GB/T-ÑÐ¾Ð·ÐµÑÐºÐ¸ Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ¾Ð¹ GB/T 3,5/7 ÐºÐÑ; Ð°ÐºÐºÑÑÐ°ÑÐ½Ð¾ Ñ ÑÐ°Ð·ÑÑÐ´Ð½ÑÐ¼Ð¸ ÑÑÐµÐ½Ð°ÑÐ¸ÑÐ¼Ð¸ â ÑÐ¼. <a href="/catalog/perekhodnik-gbt-220v.html">Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº-ÑÐ´Ð»Ð¸Ð½Ð¸ÑÐµÐ»Ñ GB/Tâ220 Ð</a>.</li>'
+      '<li><b>Tesla (US) â Ð¼Ð¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð¾Ñ GB/T?</b> ÐÐµÑ: Supercharger Ð² Ð Ð¤ Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ, Ð° Ð´Ð²Ð¾Ð¹Ð½Ð¾Ð¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº GB/TâNACS Ð¼Ñ Ð½Ðµ ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´ÑÐµÐ¼. ÐÐ¾Ð¼Ð°ÑÐ½Ð¸Ð¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ â ÑÐ²Ð¾Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Type 2.</li>'
+      '<li><b>Ð ÐµÑÐ»Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð½ÐµÑ Ð² ÐºÐ¾Ð»Ð¾Ð½ÐºÐ°Ñ?</b> ÐÑÐºÑÐ¾Ð¹ÑÐµ ÐµÑ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð² <a href="/models/">ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹</a> â Ð½Ð° ÐºÐ°Ð¶Ð´Ð¾Ð¹ ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ ÑÐ²Ð¾Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ Ð¿Ð¾ ÑÐ°Ð·ÑÑÐ¼Ð°Ð¼.</li>'
       '</ul>'
-      '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
-      '<a class="btn ghost" href="/catalog/">Каталог оборудования</a></div>')
+      '<div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a>'
+      '<a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a></div>')
     body = ('<div class="container">'
-      '<div class="hero"><div class="kicker">Матрица совместимости</div>'
-      '<h1>Какой переходник нужен вашему электромобилю: разъёмы и станции в одной таблице</h1>'
-      '<p class="lede">Топ-20 моделей EV в России × типы зарядных станций: где машина заряжается напрямую, где нужен адаптер или кабель из каталога, а где переходника не существует. Клик по колонке — страница модели, наведение — подсказка.</p>'
+      '<div class="hero"><div class="kicker">ÐÐ°ÑÑÐ¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸</div>'
+      '<h1>ÐÐ°ÐºÐ¾Ð¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð½ÑÐ¶ÐµÐ½ Ð²Ð°ÑÐµÐ¼Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ: ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð² Ð¾Ð´Ð½Ð¾Ð¹ ÑÐ°Ð±Ð»Ð¸ÑÐµ</h1>'
+      '<p class="lede">Ð¢Ð¾Ð¿-20 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV Ð² Ð Ð¾ÑÑÐ¸Ð¸ Ã ÑÐ¸Ð¿Ñ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹: Ð³Ð´Ðµ Ð¼Ð°ÑÐ¸Ð½Ð° Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ, Ð³Ð´Ðµ Ð½ÑÐ¶ÐµÐ½ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸Ð»Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Ð¸Ð· ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°, Ð° Ð³Ð´Ðµ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ° Ð½Ðµ ÑÑÑÐµÑÑÐ²ÑÐµÑ. ÐÐ»Ð¸Ðº Ð¿Ð¾ ÐºÐ¾Ð»Ð¾Ð½ÐºÐµ â ÑÑÑÐ°Ð½Ð¸ÑÐ° Ð¼Ð¾Ð´ÐµÐ»Ð¸, Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ðµ â Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ°.</p>'
       '</div>'
-      + legend + table + '<div class="mx-note">Полная база — 145 моделей EV: на странице каждой модели — её разъёмы, решения и совместимое оборудование.</div>'
+      + legend + table + '<div class="mx-note">ÐÐ¾Ð»Ð½Ð°Ñ Ð±Ð°Ð·Ð° â 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV: Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐµ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ â ÐµÑ ÑÐ°Ð·ÑÑÐ¼Ñ, ÑÐµÑÐµÐ½Ð¸Ñ Ð¸ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾Ðµ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ.</div>'
       + faq + '</div>')
     write_page(os.path.join(outdir, 'matrix', 'index.html'),
-      'Матрица совместимости EV: разъёмы и переходники для 20 популярных моделей — «Запас хода»',
-      'Таблица совместимости: Type 2, CCS2, GB/T AC/DC, CHAdeMO и розетка 220 В для Zeekr, Li Auto, Voyah, Tesla, BYD, Xiaomi, Avatr. Какой адаптер нужен вашей машине.',
-      body, '/matrix/', crumbs=[('/', 'Главная'), ('/matrix/', 'Матрица совместимости')])
+      'ÐÐ°ÑÑÐ¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ EV: ÑÐ°Ð·ÑÑÐ¼Ñ Ð¸ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸ Ð´Ð»Ñ 20 Ð¿Ð¾Ð¿ÑÐ»ÑÑÐ½ÑÑ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ â Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»',
+      'Ð¢Ð°Ð±Ð»Ð¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸: Type 2, CCS2, GB/T AC/DC, CHAdeMO Ð¸ ÑÐ¾Ð·ÐµÑÐºÐ° 220 Ð Ð´Ð»Ñ Zeekr, Li Auto, Voyah, Tesla, BYD, Xiaomi, Avatr. ÐÐ°ÐºÐ¾Ð¹ Ð°Ð´Ð°Ð¿ÑÐµÑ Ð½ÑÐ¶ÐµÐ½ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ðµ.',
+      body, '/matrix/', crumbs=[('/', 'ÐÐ»Ð°Ð²Ð½Ð°Ñ'), ('/matrix/', 'ÐÐ°ÑÑÐ¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸')])
 
 
-# ===== CSS матрицы совместимости (ЭТАП 2) =====
+# ===== CSS Ð¼Ð°ÑÑÐ¸ÑÑ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ (Ð­Ð¢ÐÐ 2) =====
 EXTRA_MATRIX_CSS = r"""
 .mx-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; box-shadow: 0 6px 20px rgba(15,23,42,.05); background: #fff; }
 .mx-table { border-collapse: separate; border-spacing: 0; min-width: 1080px; width: 100%; font-size: .85rem; }
@@ -4165,23 +4148,23 @@ EXTRA_MATRIX_CSS = r"""
   .mnote { font-size: .68rem; }
 }
 """
-B2B_ART1_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B · регламент для салона</div><h1>Регламент выдачи китайских электромобилей в автосалоне: чек-лист для РОПа</h1><p class="lede">Машину купили, документы есть — и в первый же вечер клиент не может зарядиться на ближайшей станции. Разбираем стандарт выдачи BEV и EREV, который убирает негатив и повышает средний чек.</p><div class="tldr"><b>Коротко:</b> выдача «китайца» без адаптера и краткого инструктажа — самая частая причина негатива в первые сутки. Стандарт — 8 пунктов проверки перед передачей ключей, 3 фразы для клиента и комплект зарядки в багажнике. Это не расходы, а комплектация: адаптер и переноска увеличивают чек и снижают возвраты.</div><div class="gbox"><b>Правило салона.</b> Клиент уезжает на автомобиле, который он умеет заряжать сегодня вечером. Всё остальное — маркетинг.</div><h2>Почему страдает именно выдача</h2><p>Продажа китайского EV/PHEV отличается от продажи «европейца» одним пунктом: разъёмы. GB/T встречается на всех массовых китайских марках (Zeekr, Li Auto, Voyah, BYD, Changan, Geely и другие), а большинство публичных станций в России — Type 2 и CCS2. Если менеджер не проговорил это при сделке, клиент узнаёт о несовместимости на ЭЗС — с телефоном в руках и недовольным голосом. Негатив доезжает и до дилера, и до бренда: отзыв в 2ГИС и заезженный сценарий «мне ничего не сказали».</p><h2>Чек-лист выдачи: 8 пунктов перед ключами</h2><ul><li><b>1. Разъёмы.</b> Откройте лючок вместе с клиентом: AC (медленный) и DC (быстрый). Для GB/T-машин это два китайских порта; для машин параллельного импорта из Европы — Type 2/CCS2. Сверка со страницей модели — одна минута.</li><li><b>2. SOC перед выдачей.</b> Стоянка машины в салоне — на 40–80%. Полный заряд на витрине не нужен: берегите ресурс батареи и время подготовки. На выдаче — зарядите до 80%, чтобы клиент не искал станцию вечером того же дня.</li><li><b>3. Комплект зарядки в багажнике.</b> Адаптер Type 2 → GB/T — если машина GB/T; кабель или переноска — по сценарию клиента (дом, гараж, дача). Клиент, который уезжает без комплекта, вернётся с претензией — или с жалобой в сети.</li><li><b>4. Инструктаж по домашней зарядке.</b> Пять минут: как подключить переноску, сколько занимает ночная зарядка от обычной розетки, когда пора звать электрика. Ссылка на наш гайд о домашних станциях — пусть клиент читает сам.</li><li><b>5. Приложение и аккаунты.</b> Китайские бренды требуют регистрации в фирменном приложении; часть функций (предпрогрев, расписание зарядки) живёт именно там. Снимите машину с чужого аккаунта и привяжите к новому владельцу.</li><li><b>6. «Китайское время».</b> У части машин после русификации расписание зарядки продолжает жить по часам КНР — проговорите это, иначе клиент поставит ночную зарядку «на три ночи» и удивится.</li><li><b>7. Первая зарядка в зале.</b> Идеально — показать процесс на станции 2-в-1 в дилерском центре: десять минут демонстрации стоят десятков благодарностей.</li><li><b>8. Карточка-памятка.</b> Брендированный лист А4: два фото разъёмов, адрес ближайшей ЭЗС с GB/T-адаптером, номер поддержки и QR-код на страницу модели. Клиент теряет слова, но не теряет листок.</li></ul><h2>Три фразы для менеджера</h2><ul><li>«Ваша машина заряжается от китайского разъёма GB/T — вот адаптер, он в багажнике: вставляете в любую городскую станцию Type 2».</li><li>«Дома вы заряжаетесь от обычной розетки — медленно, но к утру батарея полная. Захотите быстрее — поставим станцию за один день».</li><li>«На трассе ищите быстрые станции — машина принимает до N кВт, ссылку на карту я вам отправил».</li></ul><h2>Считаем маржу, а не «затраты»</h2><p>Адаптер Type 2 → GB/T — это комплект поставки, а не «доп». Средний чек растёт на тысячу-две, клиент уезжает заряженным, а сценарий «машину купил — зарядить не могу» исчезает. Дилерская модель «Запас Хода»: оптовые цены на адаптеры и кабели, пилотная партия под зал, брендированные материалы — бесплатно в партнёрстве. Расчёт под ваш салон — на странице для дилеров.</p><div class="cta"><a class="btn lime" href="/b2b/">Оптовый прайс для салона</a><a class="btn ghost" href="/catalog/adapter-type2-gbt-premium.html">Адаптер Type 2 → GB/T в каталоге</a><a class="btn ghost" href="/blog/800v-zaryadka-ev-rossiya.html">Зарядка 800 В: ограничения станций</a></div></div></div>'''
+B2B_ART1_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B Â· ÑÐµÐ³Ð»Ð°Ð¼ÐµÐ½Ñ Ð´Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð°</div><h1>Ð ÐµÐ³Ð»Ð°Ð¼ÐµÐ½Ñ Ð²ÑÐ´Ð°ÑÐ¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð² Ð°Ð²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ðµ: ÑÐµÐº-Ð»Ð¸ÑÑ Ð´Ð»Ñ Ð ÐÐÐ°</h1><p class="lede">ÐÐ°ÑÐ¸Ð½Ñ ÐºÑÐ¿Ð¸Ð»Ð¸, Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ ÐµÑÑÑ â Ð¸ Ð² Ð¿ÐµÑÐ²ÑÐ¹ Ð¶Ðµ Ð²ÐµÑÐµÑ ÐºÐ»Ð¸ÐµÐ½Ñ Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ Ð·Ð°ÑÑÐ´Ð¸ÑÑÑÑ Ð½Ð° Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑÐµÐ¹ ÑÑÐ°Ð½ÑÐ¸Ð¸. Ð Ð°Ð·Ð±Ð¸ÑÐ°ÐµÐ¼ ÑÑÐ°Ð½Ð´Ð°ÑÑ Ð²ÑÐ´Ð°ÑÐ¸ BEV Ð¸ EREV, ÐºÐ¾ÑÐ¾ÑÑÐ¹ ÑÐ±Ð¸ÑÐ°ÐµÑ Ð½ÐµÐ³Ð°ÑÐ¸Ð² Ð¸ Ð¿Ð¾Ð²ÑÑÐ°ÐµÑ ÑÑÐµÐ´Ð½Ð¸Ð¹ ÑÐµÐº.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> Ð²ÑÐ´Ð°ÑÐ° Â«ÐºÐ¸ÑÐ°Ð¹ÑÐ°Â» Ð±ÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑÐ° Ð¸ ÐºÑÐ°ÑÐºÐ¾Ð³Ð¾ Ð¸Ð½ÑÑÑÑÐºÑÐ°Ð¶Ð° â ÑÐ°Ð¼Ð°Ñ ÑÐ°ÑÑÐ°Ñ Ð¿ÑÐ¸ÑÐ¸Ð½Ð° Ð½ÐµÐ³Ð°ÑÐ¸Ð²Ð° Ð² Ð¿ÐµÑÐ²ÑÐµ ÑÑÑÐºÐ¸. Ð¡ÑÐ°Ð½Ð´Ð°ÑÑ â 8 Ð¿ÑÐ½ÐºÑÐ¾Ð² Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¸ Ð¿ÐµÑÐµÐ´ Ð¿ÐµÑÐµÐ´Ð°ÑÐµÐ¹ ÐºÐ»ÑÑÐµÐ¹, 3 ÑÑÐ°Ð·Ñ Ð´Ð»Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ° Ð¸ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ. Ð­ÑÐ¾ Ð½Ðµ ÑÐ°ÑÑÐ¾Ð´Ñ, Ð° ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ñ: Ð°Ð´Ð°Ð¿ÑÐµÑ Ð¸ Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÐ° ÑÐ²ÐµÐ»Ð¸ÑÐ¸Ð²Ð°ÑÑ ÑÐµÐº Ð¸ ÑÐ½Ð¸Ð¶Ð°ÑÑ Ð²Ð¾Ð·Ð²ÑÐ°ÑÑ.</div><div class="gbox"><b>ÐÑÐ°Ð²Ð¸Ð»Ð¾ ÑÐ°Ð»Ð¾Ð½Ð°.</b> ÐÐ»Ð¸ÐµÐ½Ñ ÑÐµÐ·Ð¶Ð°ÐµÑ Ð½Ð° Ð°Ð²ÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ðµ, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð¾Ð½ ÑÐ¼ÐµÐµÑ Ð·Ð°ÑÑÐ¶Ð°ÑÑ ÑÐµÐ³Ð¾Ð´Ð½Ñ Ð²ÐµÑÐµÑÐ¾Ð¼. ÐÑÑ Ð¾ÑÑÐ°Ð»ÑÐ½Ð¾Ðµ â Ð¼Ð°ÑÐºÐµÑÐ¸Ð½Ð³.</div><h2>ÐÐ¾ÑÐµÐ¼Ñ ÑÑÑÐ°Ð´Ð°ÐµÑ Ð¸Ð¼ÐµÐ½Ð½Ð¾ Ð²ÑÐ´Ð°ÑÐ°</h2><p>ÐÑÐ¾Ð´Ð°Ð¶Ð° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð³Ð¾ EV/PHEV Ð¾ÑÐ»Ð¸ÑÐ°ÐµÑÑÑ Ð¾Ñ Ð¿ÑÐ¾Ð´Ð°Ð¶Ð¸ Â«ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐ°Â» Ð¾Ð´Ð½Ð¸Ð¼ Ð¿ÑÐ½ÐºÑÐ¾Ð¼: ÑÐ°Ð·ÑÑÐ¼Ñ. GB/T Ð²ÑÑÑÐµÑÐ°ÐµÑÑÑ Ð½Ð° Ð²ÑÐµÑ Ð¼Ð°ÑÑÐ¾Ð²ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ Ð¼Ð°ÑÐºÐ°Ñ (Zeekr, Li Auto, Voyah, BYD, Changan, Geely Ð¸ Ð´ÑÑÐ³Ð¸Ðµ), Ð° Ð±Ð¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð¾ Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð Ð¾ÑÑÐ¸Ð¸ â Type 2 Ð¸ CCS2. ÐÑÐ»Ð¸ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ Ð½Ðµ Ð¿ÑÐ¾Ð³Ð¾Ð²Ð¾ÑÐ¸Ð» ÑÑÐ¾ Ð¿ÑÐ¸ ÑÐ´ÐµÐ»ÐºÐµ, ÐºÐ»Ð¸ÐµÐ½Ñ ÑÐ·Ð½Ð°ÑÑ Ð¾ Ð½ÐµÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ Ð½Ð° Ð­ÐÐ¡ â Ñ ÑÐµÐ»ÐµÑÐ¾Ð½Ð¾Ð¼ Ð² ÑÑÐºÐ°Ñ Ð¸ Ð½ÐµÐ´Ð¾Ð²Ð¾Ð»ÑÐ½ÑÐ¼ Ð³Ð¾Ð»Ð¾ÑÐ¾Ð¼. ÐÐµÐ³Ð°ÑÐ¸Ð² Ð´Ð¾ÐµÐ·Ð¶Ð°ÐµÑ Ð¸ Ð´Ð¾ Ð´Ð¸Ð»ÐµÑÐ°, Ð¸ Ð´Ð¾ Ð±ÑÐµÐ½Ð´Ð°: Ð¾ÑÐ·ÑÐ² Ð² 2ÐÐÐ¡ Ð¸ Ð·Ð°ÐµÐ·Ð¶ÐµÐ½Ð½ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Â«Ð¼Ð½Ðµ Ð½Ð¸ÑÐµÐ³Ð¾ Ð½Ðµ ÑÐºÐ°Ð·Ð°Ð»Ð¸Â».</p><h2>Ð§ÐµÐº-Ð»Ð¸ÑÑ Ð²ÑÐ´Ð°ÑÐ¸: 8 Ð¿ÑÐ½ÐºÑÐ¾Ð² Ð¿ÐµÑÐµÐ´ ÐºÐ»ÑÑÐ°Ð¼Ð¸</h2><ul><li><b>1. Ð Ð°Ð·ÑÑÐ¼Ñ.</b> ÐÑÐºÑÐ¾Ð¹ÑÐµ Ð»ÑÑÐ¾Ðº Ð²Ð¼ÐµÑÑÐµ Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ¾Ð¼: AC (Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÐ¹) Ð¸ DC (Ð±ÑÑÑÑÑÐ¹). ÐÐ»Ñ GB/T-Ð¼Ð°ÑÐ¸Ð½ ÑÑÐ¾ Ð´Ð²Ð° ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ Ð¿Ð¾ÑÑÐ°; Ð´Ð»Ñ Ð¼Ð°ÑÐ¸Ð½ Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¸Ð¼Ð¿Ð¾ÑÑÐ° Ð¸Ð· ÐÐ²ÑÐ¾Ð¿Ñ â Type 2/CCS2. Ð¡Ð²ÐµÑÐºÐ° ÑÐ¾ ÑÑÑÐ°Ð½Ð¸ÑÐµÐ¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ â Ð¾Ð´Ð½Ð° Ð¼Ð¸Ð½ÑÑÐ°.</li><li><b>2. SOC Ð¿ÐµÑÐµÐ´ Ð²ÑÐ´Ð°ÑÐµÐ¹.</b> Ð¡ÑÐ¾ÑÐ½ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ñ Ð² ÑÐ°Ð»Ð¾Ð½Ðµ â Ð½Ð° 40â80%. ÐÐ¾Ð»Ð½ÑÐ¹ Ð·Ð°ÑÑÐ´ Ð½Ð° Ð²Ð¸ÑÑÐ¸Ð½Ðµ Ð½Ðµ Ð½ÑÐ¶ÐµÐ½: Ð±ÐµÑÐµÐ³Ð¸ÑÐµ ÑÐµÑÑÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¸ Ð²ÑÐµÐ¼Ñ Ð¿Ð¾Ð´Ð³Ð¾ÑÐ¾Ð²ÐºÐ¸. ÐÐ° Ð²ÑÐ´Ð°ÑÐµ â Ð·Ð°ÑÑÐ´Ð¸ÑÐµ Ð´Ð¾ 80%, ÑÑÐ¾Ð±Ñ ÐºÐ»Ð¸ÐµÐ½Ñ Ð½Ðµ Ð¸ÑÐºÐ°Ð» ÑÑÐ°Ð½ÑÐ¸Ñ Ð²ÐµÑÐµÑÐ¾Ð¼ ÑÐ¾Ð³Ð¾ Ð¶Ðµ Ð´Ð½Ñ.</li><li><b>3. ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ.</b> ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 â GB/T â ÐµÑÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð° GB/T; ÐºÐ°Ð±ÐµÐ»Ñ Ð¸Ð»Ð¸ Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÐ° â Ð¿Ð¾ ÑÑÐµÐ½Ð°ÑÐ¸Ñ ÐºÐ»Ð¸ÐµÐ½ÑÐ° (Ð´Ð¾Ð¼, Ð³Ð°ÑÐ°Ð¶, Ð´Ð°ÑÐ°). ÐÐ»Ð¸ÐµÐ½Ñ, ÐºÐ¾ÑÐ¾ÑÑÐ¹ ÑÐµÐ·Ð¶Ð°ÐµÑ Ð±ÐµÐ· ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°, Ð²ÐµÑÐ½ÑÑÑÑ Ñ Ð¿ÑÐµÑÐµÐ½Ð·Ð¸ÐµÐ¹ â Ð¸Ð»Ð¸ Ñ Ð¶Ð°Ð»Ð¾Ð±Ð¾Ð¹ Ð² ÑÐµÑÐ¸.</li><li><b>4. ÐÐ½ÑÑÑÑÐºÑÐ°Ð¶ Ð¿Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐµ.</b> ÐÑÑÑ Ð¼Ð¸Ð½ÑÑ: ÐºÐ°Ðº Ð¿Ð¾Ð´ÐºÐ»ÑÑÐ¸ÑÑ Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÑ, ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð·Ð°Ð½Ð¸Ð¼Ð°ÐµÑ Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¾Ñ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸, ÐºÐ¾Ð³Ð´Ð° Ð¿Ð¾ÑÐ° Ð·Ð²Ð°ÑÑ ÑÐ»ÐµÐºÑÑÐ¸ÐºÐ°. Ð¡ÑÑÐ»ÐºÐ° Ð½Ð° Ð½Ð°Ñ Ð³Ð°Ð¹Ð´ Ð¾ Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ñ ÑÑÐ°Ð½ÑÐ¸ÑÑ â Ð¿ÑÑÑÑ ÐºÐ»Ð¸ÐµÐ½Ñ ÑÐ¸ÑÐ°ÐµÑ ÑÐ°Ð¼.</li><li><b>5. ÐÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð¸ Ð°ÐºÐºÐ°ÑÐ½ÑÑ.</b> ÐÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ðµ Ð±ÑÐµÐ½Ð´Ñ ÑÑÐµÐ±ÑÑÑ ÑÐµÐ³Ð¸ÑÑÑÐ°ÑÐ¸Ð¸ Ð² ÑÐ¸ÑÐ¼ÐµÐ½Ð½Ð¾Ð¼ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸; ÑÐ°ÑÑÑ ÑÑÐ½ÐºÑÐ¸Ð¹ (Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ², ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸) Ð¶Ð¸Ð²ÑÑ Ð¸Ð¼ÐµÐ½Ð½Ð¾ ÑÐ°Ð¼. Ð¡Ð½Ð¸Ð¼Ð¸ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ñ Ñ ÑÑÐ¶Ð¾Ð³Ð¾ Ð°ÐºÐºÐ°ÑÐ½ÑÐ° Ð¸ Ð¿ÑÐ¸Ð²ÑÐ¶Ð¸ÑÐµ Ðº Ð½Ð¾Ð²Ð¾Ð¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÑ.</li><li><b>6. Â«ÐÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ðµ Ð²ÑÐµÐ¼ÑÂ».</b> Ð£ ÑÐ°ÑÑÐ¸ Ð¼Ð°ÑÐ¸Ð½ Ð¿Ð¾ÑÐ»Ðµ ÑÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ð¸ ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¿ÑÐ¾Ð´Ð¾Ð»Ð¶Ð°ÐµÑ Ð¶Ð¸ÑÑ Ð¿Ð¾ ÑÐ°ÑÐ°Ð¼ ÐÐÐ  â Ð¿ÑÐ¾Ð³Ð¾Ð²Ð¾ÑÐ¸ÑÐµ ÑÑÐ¾, Ð¸Ð½Ð°ÑÐµ ÐºÐ»Ð¸ÐµÐ½Ñ Ð¿Ð¾ÑÑÐ°Ð²Ð¸Ñ Ð½Ð¾ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ Â«Ð½Ð° ÑÑÐ¸ Ð½Ð¾ÑÐ¸Â» Ð¸ ÑÐ´Ð¸Ð²Ð¸ÑÑÑ.</li><li><b>7. ÐÐµÑÐ²Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° Ð² Ð·Ð°Ð»Ðµ.</b> ÐÐ´ÐµÐ°Ð»ÑÐ½Ð¾ â Ð¿Ð¾ÐºÐ°Ð·Ð°ÑÑ Ð¿ÑÐ¾ÑÐµÑÑ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸ 2-Ð²-1 Ð² Ð´Ð¸Ð»ÐµÑÑÐºÐ¾Ð¼ ÑÐµÐ½ÑÑÐµ: Ð´ÐµÑÑÑÑ Ð¼Ð¸Ð½ÑÑ Ð´ÐµÐ¼Ð¾Ð½ÑÑÑÐ°ÑÐ¸Ð¸ ÑÑÐ¾ÑÑ Ð´ÐµÑÑÑÐºÐ¾Ð² Ð±Ð»Ð°Ð³Ð¾Ð´Ð°ÑÐ½Ð¾ÑÑÐµÐ¹.</li><li><b>8. ÐÐ°ÑÑÐ¾ÑÐºÐ°-Ð¿Ð°Ð¼ÑÑÐºÐ°.</b> ÐÑÐµÐ½Ð´Ð¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐ¹ Ð»Ð¸ÑÑ Ð4: Ð´Ð²Ð° ÑÐ¾ÑÐ¾ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð², Ð°Ð´ÑÐµÑ Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑÐµÐ¹ Ð­ÐÐ¡ Ñ GB/T-Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð¼, Ð½Ð¾Ð¼ÐµÑ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÐ¸ Ð¸ QR-ÐºÐ¾Ð´ Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ð¸. ÐÐ»Ð¸ÐµÐ½Ñ ÑÐµÑÑÐµÑ ÑÐ»Ð¾Ð²Ð°, Ð½Ð¾ Ð½Ðµ ÑÐµÑÑÐµÑ Ð»Ð¸ÑÑÐ¾Ðº.</li></ul><h2>Ð¢ÑÐ¸ ÑÑÐ°Ð·Ñ Ð´Ð»Ñ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ°</h2><ul><li>Â«ÐÐ°ÑÐ° Ð¼Ð°ÑÐ¸Ð½Ð° Ð·Ð°ÑÑÐ¶Ð°ÐµÑÑÑ Ð¾Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¾Ð³Ð¾ ÑÐ°Ð·ÑÑÐ¼Ð° GB/T â Ð²Ð¾Ñ Ð°Ð´Ð°Ð¿ÑÐµÑ, Ð¾Ð½ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ: Ð²ÑÑÐ°Ð²Ð»ÑÐµÑÐµ Ð² Ð»ÑÐ±ÑÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Type 2Â».</li><li>Â«ÐÐ¾Ð¼Ð° Ð²Ñ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÐµÑÑ Ð¾Ñ Ð¾Ð±ÑÑÐ½Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ â Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾, Ð½Ð¾ Ðº ÑÑÑÑ Ð±Ð°ÑÐ°ÑÐµÑ Ð¿Ð¾Ð»Ð½Ð°Ñ. ÐÐ°ÑÐ¾ÑÐ¸ÑÐµ Ð±ÑÑÑÑÐµÐµ â Ð¿Ð¾ÑÑÐ°Ð²Ð¸Ð¼ ÑÑÐ°Ð½ÑÐ¸Ñ Ð·Ð° Ð¾Ð´Ð¸Ð½ Ð´ÐµÐ½ÑÂ».</li><li>Â«ÐÐ° ÑÑÐ°ÑÑÐµ Ð¸ÑÐ¸ÑÐµ Ð±ÑÑÑÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð´Ð¾ N ÐºÐÑ, ÑÑÑÐ»ÐºÑ Ð½Ð° ÐºÐ°ÑÑÑ Ñ Ð²Ð°Ð¼ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸Ð»Â».</li></ul><h2>Ð¡ÑÐ¸ÑÐ°ÐµÐ¼ Ð¼Ð°ÑÐ¶Ñ, Ð° Ð½Ðµ Â«Ð·Ð°ÑÑÐ°ÑÑÂ»</h2><p>ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 â GB/T â ÑÑÐ¾ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾ÑÑÐ°Ð²ÐºÐ¸, Ð° Ð½Ðµ Â«Ð´Ð¾Ð¿Â». Ð¡ÑÐµÐ´Ð½Ð¸Ð¹ ÑÐµÐº ÑÐ°ÑÑÑÑ Ð½Ð° ÑÑÑÑÑÑ-Ð´Ð²Ðµ, ÐºÐ»Ð¸ÐµÐ½Ñ ÑÐµÐ·Ð¶Ð°ÐµÑ Ð·Ð°ÑÑÐ¶ÐµÐ½Ð½ÑÐ¼, Ð° ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Â«Ð¼Ð°ÑÐ¸Ð½Ñ ÐºÑÐ¿Ð¸Ð» â Ð·Ð°ÑÑÐ´Ð¸ÑÑ Ð½Ðµ Ð¼Ð¾Ð³ÑÂ» Ð¸ÑÑÐµÐ·Ð°ÐµÑ. ÐÐ¸Ð»ÐµÑÑÐºÐ°Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ Â«ÐÐ°Ð¿Ð°Ñ Ð¥Ð¾Ð´Ð°Â»: Ð¾Ð¿ÑÐ¾Ð²ÑÐµ ÑÐµÐ½Ñ Ð½Ð° Ð°Ð´Ð°Ð¿ÑÐµÑÑ Ð¸ ÐºÐ°Ð±ÐµÐ»Ð¸, Ð¿Ð¸Ð»Ð¾ÑÐ½Ð°Ñ Ð¿Ð°ÑÑÐ¸Ñ Ð¿Ð¾Ð´ Ð·Ð°Ð», Ð±ÑÐµÐ½Ð´Ð¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐµ Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ñ â Ð±ÐµÑÐ¿Ð»Ð°ÑÐ½Ð¾ Ð² Ð¿Ð°ÑÑÐ½ÑÑÑÑÐ²Ðµ. Ð Ð°ÑÑÑÑ Ð¿Ð¾Ð´ Ð²Ð°Ñ ÑÐ°Ð»Ð¾Ð½ â Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð´Ð»Ñ Ð´Ð¸Ð»ÐµÑÐ¾Ð².</p><div class="cta"><a class="btn lime" href="/b2b/">ÐÐ¿ÑÐ¾Ð²ÑÐ¹ Ð¿ÑÐ°Ð¹Ñ Ð´Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð°</a><a class="btn ghost" href="/catalog/adapter-type2-gbt-premium.html">ÐÐ´Ð°Ð¿ÑÐµÑ Type 2 â GB/T Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ</a><a class="btn ghost" href="/blog/800v-zaryadka-ev-rossiya.html">ÐÐ°ÑÑÐ´ÐºÐ° 800 Ð: Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹</a></div></div></div>'''
 
-B2B_ART2_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B · техника</div><h1>Зарядка EV с архитектурой 800 В в России: Zeekr 007, SU7 и станции 400 В</h1><p class="lede">Платформы 800 В — новые Zeekr, Xiaomi SU7, Avatr 12 — обещают 300–500 кВт. На российских станциях цифры скромнее. Разбираем, почему, что это значит для адаптеров и как не продать клиенту лишнее.</p><div class="tldr"><b>Коротко:</b> мощность сессии упирается в минимум напряжения из пары «станция — машина». Станция 400 В физически не выдаёт полную мощность 800-вольтовой машине: скорость падает в разы. Пассивный переходник не «разблокирует» станцию — он просто проводит ток, и его запас по току обязан покрывать сессию. Контроль handshake всегда делают станция и машина.</div><h2>Кто реально на 800 В</h2><p>Платформа 800 В (по-настоящему 700–900 В) у новых китайских платформ: Zeekr 007 и 009, Zeekr 001 FR, Xiaomi SU7 в версиях Max/Pro, Avatr 11/12 (750 В). Важно: внутри одной модели версии различаются — Xiaomi SU7 Standard построен на 400 В, как и часть комплектаций Zeekr 001. Прежде чем обещать клиенту «сверхбыструю зарядку», сверьте конфигурацию конкретной машины — на странице модели или по VIN.</p><h2>Что происходит на станции 400 В</h2><p>Мощность сессии — произведение напряжения и тока. Если станция ограничена 400–500 В, а батарея машины хочет 700–800, машина либо снижает ток (мощность падает пропорционально), либо агрегирует секции батареи последовательно/параллельно, либо поднимает напряжение внутренним DC/DC-бустером — это зависит от платформы. Практика на российских ЭЗС: 800-вольтовые машины на 400-вольтовых станциях обычно дают 60–120 кВт вместо паспортных 200–500. Это нормальное поведение, а не поломка — так и объясняйте клиенту.</p><h2>Что это значит для адаптеров</h2><p>Адаптер — проводник, а не переключатель режимов. Пассивный переходник не управляет сессией: handshake, лимиты и тариф всегда согласуют станция и машина. Задача адаптера — пропустить ток сессии без перегрева: здесь решают сечение жил, качество контактов и корпус. На 800-вольтовых платформах при той же мощности рабочий ток ниже (ток = мощность/напряжение), но на 400-вольтовых станциях машина вытягивает максимум тока — поэтому цепь греется сильнее. Правила работы с адаптером:</p><ul><li>Смотрите предельный ток адаптера в карточке товара: для DC-сценариев — запас от заявленного максимального тока машины.</li><li>Контролируйте нагрев коннектора в первые минуты сессии: тёплый — норма, «держать палец невозможно» — стоп.</li><li>При регулярной быстрой зарядке через адаптер следите за состоянием контактов и замка — как и за любым разъёмом.</li><li>Запрос «адаптер, который включит 500 кВт на моей станции» — задача для станций и машин, а не для переходника. Обещать это клиенту нельзя.</li></ul><div class="gbox"><b>Говорим с дилерами честно.</b> Мы не обещаем клиенту «волшебный адаптер 500 кВт». Мы обещаем адаптер с честным токовым пределом, проверенный при отгрузке, и консультацию по его модели машины. Это ровно то, что защищает порт автомобиля и репутацию салона.</div><h2>Что продаёт дилер вместе с машиной 800 В</h2><p>Адаптер CCS2 → GB/T DC — для трасс; кабель Type 2 → GB/T — для города; домашняя станция — если клиент заряжает машину по ночам. Комплект из трёх позиций — стандартный сценарий владения китайским EV. Прайс и условия опта — на B2B-странице, технические детали — в гайде об адаптерах и на матрице совместимости.</p><div class="cta"><a class="btn lime" href="/b2b/">Оптовый прайс</a><a class="btn ghost" href="/catalog/adapter-ccs2-gbt-dc.html">Адаптер CCS2 → GB/T DC</a><a class="btn ghost" href="/blog/zeekr-001-gbt-diff.html">Порты GB/T AC/DC на Zeekr 001</a></div></div></div>'''
+B2B_ART2_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B Â· ÑÐµÑÐ½Ð¸ÐºÐ°</div><h1>ÐÐ°ÑÑÐ´ÐºÐ° EV Ñ Ð°ÑÑÐ¸ÑÐµÐºÑÑÑÐ¾Ð¹ 800 Ð Ð² Ð Ð¾ÑÑÐ¸Ð¸: Zeekr 007, SU7 Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸ 400 Ð</h1><p class="lede">ÐÐ»Ð°ÑÑÐ¾ÑÐ¼Ñ 800 Ð â Ð½Ð¾Ð²ÑÐµ Zeekr, Xiaomi SU7, Avatr 12 â Ð¾Ð±ÐµÑÐ°ÑÑ 300â500 ÐºÐÑ. ÐÐ° ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸ÑÑ ÑÐ¸ÑÑÑ ÑÐºÑÐ¾Ð¼Ð½ÐµÐµ. Ð Ð°Ð·Ð±Ð¸ÑÐ°ÐµÐ¼, Ð¿Ð¾ÑÐµÐ¼Ñ, ÑÑÐ¾ ÑÑÐ¾ Ð·Ð½Ð°ÑÐ¸Ñ Ð´Ð»Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð² Ð¸ ÐºÐ°Ðº Ð½Ðµ Ð¿ÑÐ¾Ð´Ð°ÑÑ ÐºÐ»Ð¸ÐµÐ½ÑÑ Ð»Ð¸ÑÐ½ÐµÐµ.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ ÑÐµÑÑÐ¸Ð¸ ÑÐ¿Ð¸ÑÐ°ÐµÑÑÑ Ð² Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ñ Ð¸Ð· Ð¿Ð°ÑÑ Â«ÑÑÐ°Ð½ÑÐ¸Ñ â Ð¼Ð°ÑÐ¸Ð½Ð°Â». Ð¡ÑÐ°Ð½ÑÐ¸Ñ 400 Ð ÑÐ¸Ð·Ð¸ÑÐµÑÐºÐ¸ Ð½Ðµ Ð²ÑÐ´Ð°ÑÑ Ð¿Ð¾Ð»Ð½ÑÑ Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²Ð¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ðµ: ÑÐºÐ¾ÑÐ¾ÑÑÑ Ð¿Ð°Ð´Ð°ÐµÑ Ð² ÑÐ°Ð·Ñ. ÐÐ°ÑÑÐ¸Ð²Ð½ÑÐ¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð½Ðµ Â«ÑÐ°Ð·Ð±Ð»Ð¾ÐºÐ¸ÑÑÐµÑÂ» ÑÑÐ°Ð½ÑÐ¸Ñ â Ð¾Ð½ Ð¿ÑÐ¾ÑÑÐ¾ Ð¿ÑÐ¾Ð²Ð¾Ð´Ð¸Ñ ÑÐ¾Ðº, Ð¸ ÐµÐ³Ð¾ Ð·Ð°Ð¿Ð°Ñ Ð¿Ð¾ ÑÐ¾ÐºÑ Ð¾Ð±ÑÐ·Ð°Ð½ Ð¿Ð¾ÐºÑÑÐ²Ð°ÑÑ ÑÐµÑÑÐ¸Ñ. ÐÐ¾Ð½ÑÑÐ¾Ð»Ñ handshake Ð²ÑÐµÐ³Ð´Ð° Ð´ÐµÐ»Ð°ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð°.</div><h2>ÐÑÐ¾ ÑÐµÐ°Ð»ÑÐ½Ð¾ Ð½Ð° 800 Ð</h2><p>ÐÐ»Ð°ÑÑÐ¾ÑÐ¼Ð° 800 Ð (Ð¿Ð¾-Ð½Ð°ÑÑÐ¾ÑÑÐµÐ¼Ñ 700â900 Ð) Ñ Ð½Ð¾Ð²ÑÑ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼: Zeekr 007 Ð¸ 009, Zeekr 001 FR, Xiaomi SU7 Ð² Ð²ÐµÑÑÐ¸ÑÑ Max/Pro, Avatr 11/12 (750 Ð). ÐÐ°Ð¶Ð½Ð¾: Ð²Ð½ÑÑÑÐ¸ Ð¾Ð´Ð½Ð¾Ð¹ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð²ÐµÑÑÐ¸Ð¸ ÑÐ°Ð·Ð»Ð¸ÑÐ°ÑÑÑÑ â Xiaomi SU7 Standard Ð¿Ð¾ÑÑÑÐ¾ÐµÐ½ Ð½Ð° 400 Ð, ÐºÐ°Ðº Ð¸ ÑÐ°ÑÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¹ Zeekr 001. ÐÑÐµÐ¶Ð´Ðµ ÑÐµÐ¼ Ð¾Ð±ÐµÑÐ°ÑÑ ÐºÐ»Ð¸ÐµÐ½ÑÑ Â«ÑÐ²ÐµÑÑÐ±ÑÑÑÑÑÑ Ð·Ð°ÑÑÐ´ÐºÑÂ», ÑÐ²ÐµÑÑÑÐµ ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¸Ñ ÐºÐ¾Ð½ÐºÑÐµÑÐ½Ð¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ñ â Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð¸Ð»Ð¸ Ð¿Ð¾ VIN.</p><h2>Ð§ÑÐ¾ Ð¿ÑÐ¾Ð¸ÑÑÐ¾Ð´Ð¸Ñ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸ 400 Ð</h2><p>ÐÐ¾ÑÐ½Ð¾ÑÑÑ ÑÐµÑÑÐ¸Ð¸ â Ð¿ÑÐ¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½Ð¸Ðµ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ñ Ð¸ ÑÐ¾ÐºÐ°. ÐÑÐ»Ð¸ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð° 400â500 Ð, Ð° Ð±Ð°ÑÐ°ÑÐµÑ Ð¼Ð°ÑÐ¸Ð½Ñ ÑÐ¾ÑÐµÑ 700â800, Ð¼Ð°ÑÐ¸Ð½Ð° Ð»Ð¸Ð±Ð¾ ÑÐ½Ð¸Ð¶Ð°ÐµÑ ÑÐ¾Ðº (Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ Ð¿Ð°Ð´Ð°ÐµÑ Ð¿ÑÐ¾Ð¿Ð¾ÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð¾), Ð»Ð¸Ð±Ð¾ Ð°Ð³ÑÐµÐ³Ð¸ÑÑÐµÑ ÑÐµÐºÑÐ¸Ð¸ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°ÑÐµÐ»ÑÐ½Ð¾/Ð¿Ð°ÑÐ°Ð»Ð»ÐµÐ»ÑÐ½Ð¾, Ð»Ð¸Ð±Ð¾ Ð¿Ð¾Ð´Ð½Ð¸Ð¼Ð°ÐµÑ Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ðµ Ð²Ð½ÑÑÑÐµÐ½Ð½Ð¸Ð¼ DC/DC-Ð±ÑÑÑÐµÑÐ¾Ð¼ â ÑÑÐ¾ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ñ. ÐÑÐ°ÐºÑÐ¸ÐºÐ° Ð½Ð° ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ñ Ð­ÐÐ¡: 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ñ Ð½Ð° 400-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð¾Ð±ÑÑÐ½Ð¾ Ð´Ð°ÑÑ 60â120 ÐºÐÑ Ð²Ð¼ÐµÑÑÐ¾ Ð¿Ð°ÑÐ¿Ð¾ÑÑÐ½ÑÑ 200â500. Ð­ÑÐ¾ Ð½Ð¾ÑÐ¼Ð°Ð»ÑÐ½Ð¾Ðµ Ð¿Ð¾Ð²ÐµÐ´ÐµÐ½Ð¸Ðµ, Ð° Ð½Ðµ Ð¿Ð¾Ð»Ð¾Ð¼ÐºÐ° â ÑÐ°Ðº Ð¸ Ð¾Ð±ÑÑÑÐ½ÑÐ¹ÑÐµ ÐºÐ»Ð¸ÐµÐ½ÑÑ.</p><h2>Ð§ÑÐ¾ ÑÑÐ¾ Ð·Ð½Ð°ÑÐ¸Ñ Ð´Ð»Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð²</h2><p>ÐÐ´Ð°Ð¿ÑÐµÑ â Ð¿ÑÐ¾Ð²Ð¾Ð´Ð½Ð¸Ðº, Ð° Ð½Ðµ Ð¿ÐµÑÐµÐºÐ»ÑÑÐ°ÑÐµÐ»Ñ ÑÐµÐ¶Ð¸Ð¼Ð¾Ð². ÐÐ°ÑÑÐ¸Ð²Ð½ÑÐ¹ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸Ðº Ð½Ðµ ÑÐ¿ÑÐ°Ð²Ð»ÑÐµÑ ÑÐµÑÑÐ¸ÐµÐ¹: handshake, Ð»Ð¸Ð¼Ð¸ÑÑ Ð¸ ÑÐ°ÑÐ¸Ñ Ð²ÑÐµÐ³Ð´Ð° ÑÐ¾Ð³Ð»Ð°ÑÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð°. ÐÐ°Ð´Ð°ÑÐ° Ð°Ð´Ð°Ð¿ÑÐµÑÐ° â Ð¿ÑÐ¾Ð¿ÑÑÑÐ¸ÑÑ ÑÐ¾Ðº ÑÐµÑÑÐ¸Ð¸ Ð±ÐµÐ· Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ð°: Ð·Ð´ÐµÑÑ ÑÐµÑÐ°ÑÑ ÑÐµÑÐµÐ½Ð¸Ðµ Ð¶Ð¸Ð», ÐºÐ°ÑÐµÑÑÐ²Ð¾ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ¾Ð² Ð¸ ÐºÐ¾ÑÐ¿ÑÑ. ÐÐ° 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÑ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ð°Ñ Ð¿ÑÐ¸ ÑÐ¾Ð¹ Ð¶Ðµ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸ ÑÐ°Ð±Ð¾ÑÐ¸Ð¹ ÑÐ¾Ðº Ð½Ð¸Ð¶Ðµ (ÑÐ¾Ðº = Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ/Ð½Ð°Ð¿ÑÑÐ¶ÐµÐ½Ð¸Ðµ), Ð½Ð¾ Ð½Ð° 400-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÑ ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð¼Ð°ÑÐ¸Ð½Ð° Ð²ÑÑÑÐ³Ð¸Ð²Ð°ÐµÑ Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ ÑÐ¾ÐºÐ° â Ð¿Ð¾ÑÑÐ¾Ð¼Ñ ÑÐµÐ¿Ñ Ð³ÑÐµÐµÑÑÑ ÑÐ¸Ð»ÑÐ½ÐµÐµ. ÐÑÐ°Ð²Ð¸Ð»Ð° ÑÐ°Ð±Ð¾ÑÑ Ñ Ð°Ð´Ð°Ð¿ÑÐµÑÐ¾Ð¼:</p><ul><li>Ð¡Ð¼Ð¾ÑÑÐ¸ÑÐµ Ð¿ÑÐµÐ´ÐµÐ»ÑÐ½ÑÐ¹ ÑÐ¾Ðº Ð°Ð´Ð°Ð¿ÑÐµÑÐ° Ð² ÐºÐ°ÑÑÐ¾ÑÐºÐµ ÑÐ¾Ð²Ð°ÑÐ°: Ð´Ð»Ñ DC-ÑÑÐµÐ½Ð°ÑÐ¸ÐµÐ² â Ð·Ð°Ð¿Ð°Ñ Ð¾Ñ Ð·Ð°ÑÐ²Ð»ÐµÐ½Ð½Ð¾Ð³Ð¾ Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½Ð¾Ð³Ð¾ ÑÐ¾ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ñ.</li><li>ÐÐ¾Ð½ÑÑÐ¾Ð»Ð¸ÑÑÐ¹ÑÐµ Ð½Ð°Ð³ÑÐµÐ² ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ° Ð² Ð¿ÐµÑÐ²ÑÐµ Ð¼Ð¸Ð½ÑÑÑ ÑÐµÑÑÐ¸Ð¸: ÑÑÐ¿Ð»ÑÐ¹ â Ð½Ð¾ÑÐ¼Ð°, Â«Ð´ÐµÑÐ¶Ð°ÑÑ Ð¿Ð°Ð»ÐµÑ Ð½ÐµÐ²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾Â» â ÑÑÐ¾Ð¿.</li><li>ÐÑÐ¸ ÑÐµÐ³ÑÐ»ÑÑÐ½Ð¾Ð¹ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐµ ÑÐµÑÐµÐ· Ð°Ð´Ð°Ð¿ÑÐµÑ ÑÐ»ÐµÐ´Ð¸ÑÐµ Ð·Ð° ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸ÐµÐ¼ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ¾Ð² Ð¸ Ð·Ð°Ð¼ÐºÐ° â ÐºÐ°Ðº Ð¸ Ð·Ð° Ð»ÑÐ±ÑÐ¼ ÑÐ°Ð·ÑÑÐ¼Ð¾Ð¼.</li><li>ÐÐ°Ð¿ÑÐ¾Ñ Â«Ð°Ð´Ð°Ð¿ÑÐµÑ, ÐºÐ¾ÑÐ¾ÑÑÐ¹ Ð²ÐºÐ»ÑÑÐ¸Ñ 500 ÐºÐÑ Ð½Ð° Ð¼Ð¾ÐµÐ¹ ÑÑÐ°Ð½ÑÐ¸Ð¸Â» â Ð·Ð°Ð´Ð°ÑÐ° Ð´Ð»Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸ Ð¼Ð°ÑÐ¸Ð½, Ð° Ð½Ðµ Ð´Ð»Ñ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ°. ÐÐ±ÐµÑÐ°ÑÑ ÑÑÐ¾ ÐºÐ»Ð¸ÐµÐ½ÑÑ Ð½ÐµÐ»ÑÐ·Ñ.</li></ul><div class="gbox"><b>ÐÐ¾Ð²Ð¾ÑÐ¸Ð¼ Ñ Ð´Ð¸Ð»ÐµÑÐ°Ð¼Ð¸ ÑÐµÑÑÐ½Ð¾.</b> ÐÑ Ð½Ðµ Ð¾Ð±ÐµÑÐ°ÐµÐ¼ ÐºÐ»Ð¸ÐµÐ½ÑÑ Â«Ð²Ð¾Ð»ÑÐµÐ±Ð½ÑÐ¹ Ð°Ð´Ð°Ð¿ÑÐµÑ 500 ÐºÐÑÂ». ÐÑ Ð¾Ð±ÐµÑÐ°ÐµÐ¼ Ð°Ð´Ð°Ð¿ÑÐµÑ Ñ ÑÐµÑÑÐ½ÑÐ¼ ÑÐ¾ÐºÐ¾Ð²ÑÐ¼ Ð¿ÑÐµÐ´ÐµÐ»Ð¾Ð¼, Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐ¹ Ð¿ÑÐ¸ Ð¾ÑÐ³ÑÑÐ·ÐºÐµ, Ð¸ ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ñ Ð¿Ð¾ ÐµÐ³Ð¾ Ð¼Ð¾Ð´ÐµÐ»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ñ. Ð­ÑÐ¾ ÑÐ¾Ð²Ð½Ð¾ ÑÐ¾, ÑÑÐ¾ Ð·Ð°ÑÐ¸ÑÐ°ÐµÑ Ð¿Ð¾ÑÑ Ð°Ð²ÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¸ ÑÐµÐ¿ÑÑÐ°ÑÐ¸Ñ ÑÐ°Ð»Ð¾Ð½Ð°.</div><h2>Ð§ÑÐ¾ Ð¿ÑÐ¾Ð´Ð°ÑÑ Ð´Ð¸Ð»ÐµÑ Ð²Ð¼ÐµÑÑÐµ Ñ Ð¼Ð°ÑÐ¸Ð½Ð¾Ð¹ 800 Ð</h2><p>ÐÐ´Ð°Ð¿ÑÐµÑ CCS2 â GB/T DC â Ð´Ð»Ñ ÑÑÐ°ÑÑ; ÐºÐ°Ð±ÐµÐ»Ñ Type 2 â GB/T â Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´Ð°; Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ â ÐµÑÐ»Ð¸ ÐºÐ»Ð¸ÐµÐ½Ñ Ð·Ð°ÑÑÐ¶Ð°ÐµÑ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¿Ð¾ Ð½Ð¾ÑÐ°Ð¼. ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¸Ð· ÑÑÑÑ Ð¿Ð¾Ð·Ð¸ÑÐ¸Ð¹ â ÑÑÐ°Ð½Ð´Ð°ÑÑÐ½ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ð¼ EV. ÐÑÐ°Ð¹Ñ Ð¸ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¾Ð¿ÑÐ° â Ð½Ð° B2B-ÑÑÑÐ°Ð½Ð¸ÑÐµ, ÑÐµÑÐ½Ð¸ÑÐµÑÐºÐ¸Ðµ Ð´ÐµÑÐ°Ð»Ð¸ â Ð² Ð³Ð°Ð¹Ð´Ðµ Ð¾Ð± Ð°Ð´Ð°Ð¿ÑÐµÑÐ°Ñ Ð¸ Ð½Ð° Ð¼Ð°ÑÑÐ¸ÑÐµ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸.</p><div class="cta"><a class="btn lime" href="/b2b/">ÐÐ¿ÑÐ¾Ð²ÑÐ¹ Ð¿ÑÐ°Ð¹Ñ</a><a class="btn ghost" href="/catalog/adapter-ccs2-gbt-dc.html">ÐÐ´Ð°Ð¿ÑÐµÑ CCS2 â GB/T DC</a><a class="btn ghost" href="/blog/zeekr-001-gbt-diff.html">ÐÐ¾ÑÑÑ GB/T AC/DC Ð½Ð° Zeekr 001</a></div></div></div>'''
 
-B2B_ART3_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B · гибриды EREV</div><h1>Li Auto L6/L7/L8/L9: почему гибриду нужна домашняя зарядка, а не городская быстрая</h1><p class="lede">Владелец Li Auto приезжает на быструю станцию и удивляется: «я же гибрид с генератором, зачем мне стоять». Сценарий владения EREV — про ночную зарядку дома. Разбираем математику и продаём дилеру правильный набор.</p><div class="tldr"><b>Коротко:</b> у Li Auto бортовое зарядное — 7 кВт (одна фаза), батарея порядка 40 кВт·ч. Ночная домашняя зарядка полностью закрывает городской сценарий; быстрая станция для EREV даёт немного — 15–25 минут на «городскую» ёмкость, а поминутная плата съедает выгоду. Сценарий «дом ночью + трасса на бензине» — это и есть дизайн машины.</div><h2>Математика владельца Li Auto</h2><p>Расход электричества Li Auto в электротяге — порядка 18–22 кВт·ч на 100 км. Городской день в 30–50 км — это 7–11 кВт·ч. Домашняя станция 7 кВт закрывает такой объём за час-полтора; обычная розетка — за ночь. Быстрая станция DC (у Li Auto — до ~90 кВт) при «городской» ёмкости физически не даёт большого выигрыша по времени против домашнего сценария: вы всё равно заряжаете небольшой объём, а стоите на станции дольше, чем BEV с большой батареей, — и платите за удержание коннектора, если тариф поминутный.</p><h2>Почему «как у соседа с EV» не работает</h2><p>Владелец чистого электромобиля на DC-станции заряжает 60–80 кВт·ч за 25–40 минут и уезжает с запасом на 300 км. Владелец EREV доливает 15–20 кВт·ч и едет по городу день, а на трассе у него ещё и бензин. Ставка «заряжаться как BEV» оборачивается очередями за неубедительные киловатты. Правильная стратегия: город — на электричестве из домашней розетки, дальние маршруты — на генераторе с редкими DC-дозаправками.</p><h2>Прогрев батареи перед быстрой зарядкой</h2><p>Если всё же едете на DC зимой — активируйте предпрогрев: цель в штатной навигации или Battery Preheating в приложении. Холодная батарея принимает 15–20 кВт вместо заявленных — полный разбор в нашем гайде о предпрогреве Li Auto. Домашний сценарий от этого не зависит: станция 7 кВт работает с батареей любой температуры.</p><h2>Что закупает дилер под владельцев Li Auto</h2><ul><li><b>Станция GB/T 7 кВт</b> — базовый сценарий: ночная зарядка, готова за один день монтажа.</li><li><b>Станция 2-в-1 (Type 2 + GB/T)</b> — если в семье вторая машина на европейском разъёме: одна станция на два стандарта.</li><li><b>Портативка GB/T 3,5–7 кВт</b> — дача, гараж без линии, страховка в багажнике.</li><li><b>Кабель Type 2 → GB/T</b> — для городских станций, где на выходе «европейский» кабель.</li></ul><div class="gbox"><b>Роль салона.</b> Пакет «домашняя зарядка» для гибридов — это продажа не «ещё одного устройства», а сценария: клиент платит один раз и перестаёт стоять на станциях по вечерам. Средний чек растёт на 20–60 тыс ₽, уходит главный страх новичка «а что если негде зарядиться». Расчёт под ваш салон — на B2B-странице.</div><h2>Скрипт для менеджера</h2><p>«Вы купили машину с генератором — город вы проезжаете на электричестве. Поставим вам домашнюю станцию 7 кВт: каждый вечер втыкаете вилку, каждое утро — полный «электрический» бак. На дальние маршруты едете как на обычной машине: бензин у вас всегда с собой». Одна эта реплика продаёт комплект лучше любого прайса.</p><div class="cta"><a class="btn lime" href="/quiz/">Подобрать комплект под Li Auto</a><a class="btn ghost" href="/catalog/nastennaya-stanciya-gbt-7kw.html">Станция GB/T 7 кВт</a><a class="btn ghost" href="/blog/li-l7-battery-heat.html">Предпрогрев батареи Li Auto</a></div></div></div>'''
+B2B_ART3_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B Â· Ð³Ð¸Ð±ÑÐ¸Ð´Ñ EREV</div><h1>Li Auto L6/L7/L8/L9: Ð¿Ð¾ÑÐµÐ¼Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ñ Ð½ÑÐ¶Ð½Ð° Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°, Ð° Ð½Ðµ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ Ð±ÑÑÑÑÐ°Ñ</h1><p class="lede">ÐÐ»Ð°Ð´ÐµÐ»ÐµÑ Li Auto Ð¿ÑÐ¸ÐµÐ·Ð¶Ð°ÐµÑ Ð½Ð° Ð±ÑÑÑÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¸ ÑÐ´Ð¸Ð²Ð»ÑÐµÑÑÑ: Â«Ñ Ð¶Ðµ Ð³Ð¸Ð±ÑÐ¸Ð´ Ñ Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼, Ð·Ð°ÑÐµÐ¼ Ð¼Ð½Ðµ ÑÑÐ¾ÑÑÑÂ». Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ EREV â Ð¿ÑÐ¾ Ð½Ð¾ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÑ Ð´Ð¾Ð¼Ð°. Ð Ð°Ð·Ð±Ð¸ÑÐ°ÐµÐ¼ Ð¼Ð°ÑÐµÐ¼Ð°ÑÐ¸ÐºÑ Ð¸ Ð¿ÑÐ¾Ð´Ð°ÑÐ¼ Ð´Ð¸Ð»ÐµÑÑ Ð¿ÑÐ°Ð²Ð¸Ð»ÑÐ½ÑÐ¹ Ð½Ð°Ð±Ð¾Ñ.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> Ñ Li Auto Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ â 7 ÐºÐÑ (Ð¾Ð´Ð½Ð° ÑÐ°Ð·Ð°), Ð±Ð°ÑÐ°ÑÐµÑ Ð¿Ð¾ÑÑÐ´ÐºÐ° 40 ÐºÐÑÂ·Ñ. ÐÐ¾ÑÐ½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð¿Ð¾Ð»Ð½Ð¾ÑÑÑÑ Ð·Ð°ÐºÑÑÐ²Ð°ÐµÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹; Ð±ÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð´Ð»Ñ EREV Ð´Ð°ÑÑ Ð½ÐµÐ¼Ð½Ð¾Ð³Ð¾ â 15â25 Ð¼Ð¸Ð½ÑÑ Ð½Ð° Â«Ð³Ð¾ÑÐ¾Ð´ÑÐºÑÑÂ» ÑÐ¼ÐºÐ¾ÑÑÑ, Ð° Ð¿Ð¾Ð¼Ð¸Ð½ÑÑÐ½Ð°Ñ Ð¿Ð»Ð°ÑÐ° ÑÑÐµÐ´Ð°ÐµÑ Ð²ÑÐ³Ð¾Ð´Ñ. Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¹ Â«Ð´Ð¾Ð¼ Ð½Ð¾ÑÑÑ + ÑÑÐ°ÑÑÐ° Ð½Ð° Ð±ÐµÐ½Ð·Ð¸Ð½ÐµÂ» â ÑÑÐ¾ Ð¸ ÐµÑÑÑ Ð´Ð¸Ð·Ð°Ð¹Ð½ Ð¼Ð°ÑÐ¸Ð½Ñ.</div><h2>ÐÐ°ÑÐµÐ¼Ð°ÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ° Li Auto</h2><p>Ð Ð°ÑÑÐ¾Ð´ ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ð° Li Auto Ð² ÑÐ»ÐµÐºÑÑÐ¾ÑÑÐ³Ðµ â Ð¿Ð¾ÑÑÐ´ÐºÐ° 18â22 ÐºÐÑÂ·Ñ Ð½Ð° 100 ÐºÐ¼. ÐÐ¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ Ð´ÐµÐ½Ñ Ð² 30â50 ÐºÐ¼ â ÑÑÐ¾ 7â11 ÐºÐÑÂ·Ñ. ÐÐ¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ Ð·Ð°ÐºÑÑÐ²Ð°ÐµÑ ÑÐ°ÐºÐ¾Ð¹ Ð¾Ð±ÑÑÐ¼ Ð·Ð° ÑÐ°Ñ-Ð¿Ð¾Ð»ÑÐ¾ÑÐ°; Ð¾Ð±ÑÑÐ½Ð°Ñ ÑÐ¾Ð·ÐµÑÐºÐ° â Ð·Ð° Ð½Ð¾ÑÑ. ÐÑÑÑÑÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ DC (Ñ Li Auto â Ð´Ð¾ ~90 ÐºÐÑ) Ð¿ÑÐ¸ Â«Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹Â» ÑÐ¼ÐºÐ¾ÑÑÐ¸ ÑÐ¸Ð·Ð¸ÑÐµÑÐºÐ¸ Ð½Ðµ Ð´Ð°ÑÑ Ð±Ð¾Ð»ÑÑÐ¾Ð³Ð¾ Ð²ÑÐ¸Ð³ÑÑÑÐ° Ð¿Ð¾ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð¿ÑÐ¾ÑÐ¸Ð² Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ³Ð¾ ÑÑÐµÐ½Ð°ÑÐ¸Ñ: Ð²Ñ Ð²ÑÑ ÑÐ°Ð²Ð½Ð¾ Ð·Ð°ÑÑÐ¶Ð°ÐµÑÐµ Ð½ÐµÐ±Ð¾Ð»ÑÑÐ¾Ð¹ Ð¾Ð±ÑÑÐ¼, Ð° ÑÑÐ¾Ð¸ÑÐµ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð´Ð¾Ð»ÑÑÐµ, ÑÐµÐ¼ BEV Ñ Ð±Ð¾Ð»ÑÑÐ¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐµÐ¹, â Ð¸ Ð¿Ð»Ð°ÑÐ¸ÑÐµ Ð·Ð° ÑÐ´ÐµÑÐ¶Ð°Ð½Ð¸Ðµ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ°, ÐµÑÐ»Ð¸ ÑÐ°ÑÐ¸Ñ Ð¿Ð¾Ð¼Ð¸Ð½ÑÑÐ½ÑÐ¹.</p><h2>ÐÐ¾ÑÐµÐ¼Ñ Â«ÐºÐ°Ðº Ñ ÑÐ¾ÑÐµÐ´Ð° Ñ EVÂ» Ð½Ðµ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ</h2><p>ÐÐ»Ð°Ð´ÐµÐ»ÐµÑ ÑÐ¸ÑÑÐ¾Ð³Ð¾ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð½Ð° DC-ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð·Ð°ÑÑÐ¶Ð°ÐµÑ 60â80 ÐºÐÑÂ·Ñ Ð·Ð° 25â40 Ð¼Ð¸Ð½ÑÑ Ð¸ ÑÐµÐ·Ð¶Ð°ÐµÑ Ñ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼ Ð½Ð° 300 ÐºÐ¼. ÐÐ»Ð°Ð´ÐµÐ»ÐµÑ EREV Ð´Ð¾Ð»Ð¸Ð²Ð°ÐµÑ 15â20 ÐºÐÑÂ·Ñ Ð¸ ÐµÐ´ÐµÑ Ð¿Ð¾ Ð³Ð¾ÑÐ¾Ð´Ñ Ð´ÐµÐ½Ñ, Ð° Ð½Ð° ÑÑÐ°ÑÑÐµ Ñ Ð½ÐµÐ³Ð¾ ÐµÑÑ Ð¸ Ð±ÐµÐ½Ð·Ð¸Ð½. Ð¡ÑÐ°Ð²ÐºÐ° Â«Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ ÐºÐ°Ðº BEVÂ» Ð¾Ð±Ð¾ÑÐ°ÑÐ¸Ð²Ð°ÐµÑÑÑ Ð¾ÑÐµÑÐµÐ´ÑÐ¼Ð¸ Ð·Ð° Ð½ÐµÑÐ±ÐµÐ´Ð¸ÑÐµÐ»ÑÐ½ÑÐµ ÐºÐ¸Ð»Ð¾Ð²Ð°ÑÑÑ. ÐÑÐ°Ð²Ð¸Ð»ÑÐ½Ð°Ñ ÑÑÑÐ°ÑÐµÐ³Ð¸Ñ: Ð³Ð¾ÑÐ¾Ð´ â Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ðµ Ð¸Ð· Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ ÑÐ¾Ð·ÐµÑÐºÐ¸, Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¼Ð°ÑÑÑÑÑÑ â Ð½Ð° Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾ÑÐµ Ñ ÑÐµÐ´ÐºÐ¸Ð¼Ð¸ DC-Ð´Ð¾Ð·Ð°Ð¿ÑÐ°Ð²ÐºÐ°Ð¼Ð¸.</p><h2>ÐÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹</h2><p>ÐÑÐ»Ð¸ Ð²ÑÑ Ð¶Ðµ ÐµÐ´ÐµÑÐµ Ð½Ð° DC Ð·Ð¸Ð¼Ð¾Ð¹ â Ð°ÐºÑÐ¸Ð²Ð¸ÑÑÐ¹ÑÐµ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ²: ÑÐµÐ»Ñ Ð² ÑÑÐ°ÑÐ½Ð¾Ð¹ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ð¸ Ð¸Ð»Ð¸ Battery Preheating Ð² Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸. Ð¥Ð¾Ð»Ð¾Ð´Ð½Ð°Ñ Ð±Ð°ÑÐ°ÑÐµÑ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ 15â20 ÐºÐÑ Ð²Ð¼ÐµÑÑÐ¾ Ð·Ð°ÑÐ²Ð»ÐµÐ½Ð½ÑÑ â Ð¿Ð¾Ð»Ð½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ Ð² Ð½Ð°ÑÐµÐ¼ Ð³Ð°Ð¹Ð´Ðµ Ð¾ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ²Ðµ Li Auto. ÐÐ¾Ð¼Ð°ÑÐ½Ð¸Ð¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð¾Ñ ÑÑÐ¾Ð³Ð¾ Ð½Ðµ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ: ÑÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ñ Ð±Ð°ÑÐ°ÑÐµÐµÐ¹ Ð»ÑÐ±Ð¾Ð¹ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ.</p><h2>Ð§ÑÐ¾ Ð·Ð°ÐºÑÐ¿Ð°ÐµÑ Ð´Ð¸Ð»ÐµÑ Ð¿Ð¾Ð´ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Li Auto</h2><ul><li><b>Ð¡ÑÐ°Ð½ÑÐ¸Ñ GB/T 7 ÐºÐÑ</b> â Ð±Ð°Ð·Ð¾Ð²ÑÐ¹ ÑÑÐµÐ½Ð°ÑÐ¸Ð¹: Ð½Ð¾ÑÐ½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°, Ð³Ð¾ÑÐ¾Ð²Ð° Ð·Ð° Ð¾Ð´Ð¸Ð½ Ð´ÐµÐ½Ñ Ð¼Ð¾Ð½ÑÐ°Ð¶Ð°.</li><li><b>Ð¡ÑÐ°Ð½ÑÐ¸Ñ 2-Ð²-1 (Type 2 + GB/T)</b> â ÐµÑÐ»Ð¸ Ð² ÑÐµÐ¼ÑÐµ Ð²ÑÐ¾ÑÐ°Ñ Ð¼Ð°ÑÐ¸Ð½Ð° Ð½Ð° ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¾Ð¼ ÑÐ°Ð·ÑÑÐ¼Ðµ: Ð¾Ð´Ð½Ð° ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ð° Ð´Ð²Ð° ÑÑÐ°Ð½Ð´Ð°ÑÑÐ°.</li><li><b>ÐÐ¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ° GB/T 3,5â7 ÐºÐÑ</b> â Ð´Ð°ÑÐ°, Ð³Ð°ÑÐ°Ð¶ Ð±ÐµÐ· Ð»Ð¸Ð½Ð¸Ð¸, ÑÑÑÐ°ÑÐ¾Ð²ÐºÐ° Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ.</li><li><b>ÐÐ°Ð±ÐµÐ»Ñ Type 2 â GB/T</b> â Ð´Ð»Ñ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹, Ð³Ð´Ðµ Ð½Ð° Ð²ÑÑÐ¾Ð´Ðµ Â«ÐµÐ²ÑÐ¾Ð¿ÐµÐ¹ÑÐºÐ¸Ð¹Â» ÐºÐ°Ð±ÐµÐ»Ñ.</li></ul><div class="gbox"><b>Ð Ð¾Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð°.</b> ÐÐ°ÐºÐµÑ Â«Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°Â» Ð´Ð»Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ð¾Ð² â ÑÑÐ¾ Ð¿ÑÐ¾Ð´Ð°Ð¶Ð° Ð½Ðµ Â«ÐµÑÑ Ð¾Ð´Ð½Ð¾Ð³Ð¾ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð°Â», Ð° ÑÑÐµÐ½Ð°ÑÐ¸Ñ: ÐºÐ»Ð¸ÐµÐ½Ñ Ð¿Ð»Ð°ÑÐ¸Ñ Ð¾Ð´Ð¸Ð½ ÑÐ°Ð· Ð¸ Ð¿ÐµÑÐµÑÑÐ°ÑÑ ÑÑÐ¾ÑÑÑ Ð½Ð° ÑÑÐ°Ð½ÑÐ¸ÑÑ Ð¿Ð¾ Ð²ÐµÑÐµÑÐ°Ð¼. Ð¡ÑÐµÐ´Ð½Ð¸Ð¹ ÑÐµÐº ÑÐ°ÑÑÑÑ Ð½Ð° 20â60 ÑÑÑ â½, ÑÑÐ¾Ð´Ð¸Ñ Ð³Ð»Ð°Ð²Ð½ÑÐ¹ ÑÑÑÐ°Ñ Ð½Ð¾Ð²Ð¸ÑÐºÐ° Â«Ð° ÑÑÐ¾ ÐµÑÐ»Ð¸ Ð½ÐµÐ³Ð´Ðµ Ð·Ð°ÑÑÐ´Ð¸ÑÑÑÑÂ». Ð Ð°ÑÑÑÑ Ð¿Ð¾Ð´ Ð²Ð°Ñ ÑÐ°Ð»Ð¾Ð½ â Ð½Ð° B2B-ÑÑÑÐ°Ð½Ð¸ÑÐµ.</div><h2>Ð¡ÐºÑÐ¸Ð¿Ñ Ð´Ð»Ñ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑÐ°</h2><p>Â«ÐÑ ÐºÑÐ¿Ð¸Ð»Ð¸ Ð¼Ð°ÑÐ¸Ð½Ñ Ñ Ð³ÐµÐ½ÐµÑÐ°ÑÐ¾ÑÐ¾Ð¼ â Ð³Ð¾ÑÐ¾Ð´ Ð²Ñ Ð¿ÑÐ¾ÐµÐ·Ð¶Ð°ÐµÑÐµ Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÑÐ²Ðµ. ÐÐ¾ÑÑÐ°Ð²Ð¸Ð¼ Ð²Ð°Ð¼ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ 7 ÐºÐÑ: ÐºÐ°Ð¶Ð´ÑÐ¹ Ð²ÐµÑÐµÑ Ð²ÑÑÐºÐ°ÐµÑÐµ Ð²Ð¸Ð»ÐºÑ, ÐºÐ°Ð¶Ð´Ð¾Ðµ ÑÑÑÐ¾ â Ð¿Ð¾Ð»Ð½ÑÐ¹ Â«ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÐºÐ¸Ð¹Â» Ð±Ð°Ðº. ÐÐ° Ð´Ð°Ð»ÑÐ½Ð¸Ðµ Ð¼Ð°ÑÑÑÑÑÑ ÐµÐ´ÐµÑÐµ ÐºÐ°Ðº Ð½Ð° Ð¾Ð±ÑÑÐ½Ð¾Ð¹ Ð¼Ð°ÑÐ¸Ð½Ðµ: Ð±ÐµÐ½Ð·Ð¸Ð½ Ñ Ð²Ð°Ñ Ð²ÑÐµÐ³Ð´Ð° Ñ ÑÐ¾Ð±Ð¾Ð¹Â». ÐÐ´Ð½Ð° ÑÑÐ° ÑÐµÐ¿Ð»Ð¸ÐºÐ° Ð¿ÑÐ¾Ð´Ð°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð»ÑÑÑÐµ Ð»ÑÐ±Ð¾Ð³Ð¾ Ð¿ÑÐ°Ð¹ÑÐ°.</p><div class="cta"><a class="btn lime" href="/quiz/">ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Li Auto</a><a class="btn ghost" href="/catalog/nastennaya-stanciya-gbt-7kw.html">Ð¡ÑÐ°Ð½ÑÐ¸Ñ GB/T 7 ÐºÐÑ</a><a class="btn ghost" href="/blog/li-l7-battery-heat.html">ÐÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Li Auto</a></div></div></div>'''
 
-B2B_ART4_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B · документы</div><h1>Сертификация зарядных станций в РФ в 2026: ЕАЭС, ГОСТ и ответственность при установке</h1><p class="lede">Дилеры боятся продавать станции из-за «сгорит — кто отвечает». Разбираем, какие документы обязаны быть у поставщика, что проверяет покупатель и как снизить риски при монтаже — без юристов на этой странице.</p><div class="tldr"><b>Коротко:</b> станция обязана пройти обязательное подтверждение соответствия по техрегламентам ЕАЭС: низковольтное оборудование, электромагнитная совместимость и ограничения опасных веществ — знак ЕАС на корпусе. Монтаж делается по правилам электроустановок: выделенная линия, автомат, УЗО. Пожарные требования — в основном к кабелям и способу прокладки. Ответственность распределяется договором между поставщиком, монтажником и заказчиком — и снижается добросовестной проверкой документов.</div><h2>Что обязательно по закону</h2><p>Электрозарядная станция — это низковольтное электрооборудование, и на территорию ЕАЭС она попадает под обязательное подтверждение соответствия:</p><ul><li><b>ТР ТС 004/2011</b> «О безопасности низковольтного оборудования» — электрическая безопасность.</li><li><b>ТР ТС 020/2011</b> «Электромагнитная совместимость технических средств» — станция не должна «шуметь» в сеть и не бояться помех.</li><li><b>ТР ЕАЭС 037/2016</b> — ограничение применения опасных веществ (свинец, ртуть и пр.).</li></ul><p>По совокупности это обычно декларация или сертификат соответствия с правом нанесения знака ЕАС. Что запросить у поставщика перед оптовой партией: сертификат или декларацию ЕАЭС на конкретную модель (а не «на бренд вообще»), паспорт изделия, руководство на русском, гарантийные условия и маркировку на корпусе. Если поставщик отвечает «документы вышлем позже» — это красный флаг, и не только для B2B.</p><h2>Добровольные ориентиры качества</h2><p>Серия ГОСТ Р МЭК 61851 описывает системы зарядки электромобилей: режимы, защиты, протоколы обмена между машиной и станцией. Сертификация по ним добровольная, но соответствие — хороший признак: это тот стандарт, по которому работают серьёзные производители. Не путайте «добровольный ГОСТ» с обязательными техрегламентами: первых не обязан иметь никто, вторых не может не иметь ни одна легальная партия.</p><h2>Монтаж и пожарная часть</h2><p>Большинство рисков живут не в корпусе станции, а в монтаже:</p><ul><li><b>Линия.</b> Выделенный кабель от щитка, отдельный автомат. Сечение — под ток станции с запасом (для 7 кВт обычно 3×2,5–3×4 мм², решение за электриком).</li><li><b>Защита.</b> УЗО или дифавтомат типа A — наша базовая рекомендация для бытовых и офисных установок.</li><li><b>Кабели и прокладка.</b> Для трасс в помещениях — кабели с пониженным дымо- и газовыделением (индексы нг(А)-LS и аналогичные по ГОСТ 31996); уличные станции — корпус не ниже IP54 и защита от механического удара.</li><li><b>МКД и бизнес-объекты.</b> В многоквартирном доме — согласование с управляющей организацией и выделение мощности; на коммерческих объектах — проект и приёмка по правилам электроустановок.</li></ul><div class="gbox"><b>Как распределяется ответственность.</b> Поставщик отвечает за соответствие оборудования заявленным характеристикам и документам; монтажник — за качество установки; эксплуатант (владелец, УК, бизнес) — за обслуживание и состояние линии. Чёткий договор с зонами ответственности плюс входной контроль партии — это и есть защита от сценариев «сгорело оборудование», а не волшебный сертификат сам по себе.</div><h2>Честные оговорки</h2><p>Эта статья — практический ориентир, а не юридическая консультация: перечни обязательных требований и формы подтверждения соответствия периодически меняются, а конкретная конфигурация зависит от объекта. Перед крупной оптовой партией проверьте документы на конкретную модель, а если ставите станции под ключ — привлеките проектную организацию. Наша роль в этом контуре — поставлять оборудование с полным пакетом документов и помогать с монтажной схемой; за проект и приёмку отвечает профильный специалист.</p><div class="cta"><a class="btn lime" href="/b2b/">Оптовые поставки с документами</a><a class="btn ghost" href="/services/ustanovka-stancii.html">Установка станции под ключ</a><a class="btn ghost" href="/services/tehobsluzhivanie.html">ТО станций</a></div></div></div>'''
+B2B_ART4_BODY = '''<div class="container"><div class="hero"><div class="kicker">B2B Â· Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ</div><h1>Ð¡ÐµÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ñ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð Ð¤ Ð² 2026: ÐÐÐ­Ð¡, ÐÐÐ¡Ð¢ Ð¸ Ð¾ÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾ÑÑÑ Ð¿ÑÐ¸ ÑÑÑÐ°Ð½Ð¾Ð²ÐºÐµ</h1><p class="lede">ÐÐ¸Ð»ÐµÑÑ Ð±Ð¾ÑÑÑÑ Ð¿ÑÐ¾Ð´Ð°Ð²Ð°ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¸Ð·-Ð·Ð° Â«ÑÐ³Ð¾ÑÐ¸Ñ â ÐºÑÐ¾ Ð¾ÑÐ²ÐµÑÐ°ÐµÑÂ». Ð Ð°Ð·Ð±Ð¸ÑÐ°ÐµÐ¼, ÐºÐ°ÐºÐ¸Ðµ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ Ð¾Ð±ÑÐ·Ð°Ð½Ñ Ð±ÑÑÑ Ñ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸ÐºÐ°, ÑÑÐ¾ Ð¿ÑÐ¾Ð²ÐµÑÑÐµÑ Ð¿Ð¾ÐºÑÐ¿Ð°ÑÐµÐ»Ñ Ð¸ ÐºÐ°Ðº ÑÐ½Ð¸Ð·Ð¸ÑÑ ÑÐ¸ÑÐºÐ¸ Ð¿ÑÐ¸ Ð¼Ð¾Ð½ÑÐ°Ð¶Ðµ â Ð±ÐµÐ· ÑÑÐ¸ÑÑÐ¾Ð² Ð½Ð° ÑÑÐ¾Ð¹ ÑÑÑÐ°Ð½Ð¸ÑÐµ.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> ÑÑÐ°Ð½ÑÐ¸Ñ Ð¾Ð±ÑÐ·Ð°Ð½Ð° Ð¿ÑÐ¾Ð¹ÑÐ¸ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾Ðµ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ð¸Ðµ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ñ Ð¿Ð¾ ÑÐµÑÑÐµÐ³Ð»Ð°Ð¼ÐµÐ½ÑÐ°Ð¼ ÐÐÐ­Ð¡: Ð½Ð¸Ð·ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½Ð¾Ðµ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ, ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð°Ð³Ð½Ð¸ÑÐ½Ð°Ñ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ Ð¸ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ñ Ð¾Ð¿Ð°ÑÐ½ÑÑ Ð²ÐµÑÐµÑÑÐ² â Ð·Ð½Ð°Ðº ÐÐÐ¡ Ð½Ð° ÐºÐ¾ÑÐ¿ÑÑÐµ. ÐÐ¾Ð½ÑÐ°Ð¶ Ð´ÐµÐ»Ð°ÐµÑÑÑ Ð¿Ð¾ Ð¿ÑÐ°Ð²Ð¸Ð»Ð°Ð¼ ÑÐ»ÐµÐºÑÑÐ¾ÑÑÑÐ°Ð½Ð¾Ð²Ð¾Ðº: Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ, Ð°Ð²ÑÐ¾Ð¼Ð°Ñ, Ð£ÐÐ. ÐÐ¾Ð¶Ð°ÑÐ½ÑÐµ ÑÑÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ñ â Ð² Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð¼ Ðº ÐºÐ°Ð±ÐµÐ»ÑÐ¼ Ð¸ ÑÐ¿Ð¾ÑÐ¾Ð±Ñ Ð¿ÑÐ¾ÐºÐ»Ð°Ð´ÐºÐ¸. ÐÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾ÑÑÑ ÑÐ°ÑÐ¿ÑÐµÐ´ÐµÐ»ÑÐµÑÑÑ Ð´Ð¾Ð³Ð¾Ð²Ð¾ÑÐ¾Ð¼ Ð¼ÐµÐ¶Ð´Ñ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸ÐºÐ¾Ð¼, Ð¼Ð¾Ð½ÑÐ°Ð¶Ð½Ð¸ÐºÐ¾Ð¼ Ð¸ Ð·Ð°ÐºÐ°Ð·ÑÐ¸ÐºÐ¾Ð¼ â Ð¸ ÑÐ½Ð¸Ð¶Ð°ÐµÑÑÑ Ð´Ð¾Ð±ÑÐ¾ÑÐ¾Ð²ÐµÑÑÐ½Ð¾Ð¹ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ¾Ð¹ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ¾Ð².</div><h2>Ð§ÑÐ¾ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾ Ð¿Ð¾ Ð·Ð°ÐºÐ¾Ð½Ñ</h2><p>Ð­Ð»ÐµÐºÑÑÐ¾Ð·Ð°ÑÑÐ´Ð½Ð°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ â ÑÑÐ¾ Ð½Ð¸Ð·ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½Ð¾Ðµ ÑÐ»ÐµÐºÑÑÐ¾Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ, Ð¸ Ð½Ð° ÑÐµÑÑÐ¸ÑÐ¾ÑÐ¸Ñ ÐÐÐ­Ð¡ Ð¾Ð½Ð° Ð¿Ð¾Ð¿Ð°Ð´Ð°ÐµÑ Ð¿Ð¾Ð´ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾Ðµ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ð¸Ðµ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ñ:</p><ul><li><b>Ð¢Ð  Ð¢Ð¡ 004/2011</b> Â«Ð Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÐ¸ Ð½Ð¸Ð·ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½Ð¾Ð³Ð¾ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸ÑÂ» â ÑÐ»ÐµÐºÑÑÐ¸ÑÐµÑÐºÐ°Ñ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑÑ.</li><li><b>Ð¢Ð  Ð¢Ð¡ 020/2011</b> Â«Ð­Ð»ÐµÐºÑÑÐ¾Ð¼Ð°Ð³Ð½Ð¸ÑÐ½Ð°Ñ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ ÑÐµÑÐ½Ð¸ÑÐµÑÐºÐ¸Ñ ÑÑÐµÐ´ÑÑÐ²Â» â ÑÑÐ°Ð½ÑÐ¸Ñ Ð½Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð° Â«ÑÑÐ¼ÐµÑÑÂ» Ð² ÑÐµÑÑ Ð¸ Ð½Ðµ Ð±Ð¾ÑÑÑÑÑ Ð¿Ð¾Ð¼ÐµÑ.</li><li><b>Ð¢Ð  ÐÐÐ­Ð¡ 037/2016</b> â Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸Ðµ Ð¿ÑÐ¸Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ Ð¾Ð¿Ð°ÑÐ½ÑÑ Ð²ÐµÑÐµÑÑÐ² (ÑÐ²Ð¸Ð½ÐµÑ, ÑÑÑÑÑ Ð¸ Ð¿Ñ.).</li></ul><p>ÐÐ¾ ÑÐ¾Ð²Ð¾ÐºÑÐ¿Ð½Ð¾ÑÑÐ¸ ÑÑÐ¾ Ð¾Ð±ÑÑÐ½Ð¾ Ð´ÐµÐºÐ»Ð°ÑÐ°ÑÐ¸Ñ Ð¸Ð»Ð¸ ÑÐµÑÑÐ¸ÑÐ¸ÐºÐ°Ñ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ñ Ñ Ð¿ÑÐ°Ð²Ð¾Ð¼ Ð½Ð°Ð½ÐµÑÐµÐ½Ð¸Ñ Ð·Ð½Ð°ÐºÐ° ÐÐÐ¡. Ð§ÑÐ¾ Ð·Ð°Ð¿ÑÐ¾ÑÐ¸ÑÑ Ñ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸ÐºÐ° Ð¿ÐµÑÐµÐ´ Ð¾Ð¿ÑÐ¾Ð²Ð¾Ð¹ Ð¿Ð°ÑÑÐ¸ÐµÐ¹: ÑÐµÑÑÐ¸ÑÐ¸ÐºÐ°Ñ Ð¸Ð»Ð¸ Ð´ÐµÐºÐ»Ð°ÑÐ°ÑÐ¸Ñ ÐÐÐ­Ð¡ Ð½Ð° ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ (Ð° Ð½Ðµ Â«Ð½Ð° Ð±ÑÐµÐ½Ð´ Ð²Ð¾Ð¾Ð±ÑÐµÂ»), Ð¿Ð°ÑÐ¿Ð¾ÑÑ Ð¸Ð·Ð´ÐµÐ»Ð¸Ñ, ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²Ð¾ Ð½Ð° ÑÑÑÑÐºÐ¾Ð¼, Ð³Ð°ÑÐ°Ð½ÑÐ¸Ð¹Ð½ÑÐµ ÑÑÐ»Ð¾Ð²Ð¸Ñ Ð¸ Ð¼Ð°ÑÐºÐ¸ÑÐ¾Ð²ÐºÑ Ð½Ð° ÐºÐ¾ÑÐ¿ÑÑÐµ. ÐÑÐ»Ð¸ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸Ðº Ð¾ÑÐ²ÐµÑÐ°ÐµÑ Â«Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ Ð²ÑÑÐ»ÐµÐ¼ Ð¿Ð¾Ð·Ð¶ÐµÂ» â ÑÑÐ¾ ÐºÑÐ°ÑÐ½ÑÐ¹ ÑÐ»Ð°Ð³, Ð¸ Ð½Ðµ ÑÐ¾Ð»ÑÐºÐ¾ Ð´Ð»Ñ B2B.</p><h2>ÐÐ¾Ð±ÑÐ¾Ð²Ð¾Ð»ÑÐ½ÑÐµ Ð¾ÑÐ¸ÐµÐ½ÑÐ¸ÑÑ ÐºÐ°ÑÐµÑÑÐ²Ð°</h2><p>Ð¡ÐµÑÐ¸Ñ ÐÐÐ¡Ð¢ Ð  ÐÐ­Ð 61851 Ð¾Ð¿Ð¸ÑÑÐ²Ð°ÐµÑ ÑÐ¸ÑÑÐµÐ¼Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹: ÑÐµÐ¶Ð¸Ð¼Ñ, Ð·Ð°ÑÐ¸ÑÑ, Ð¿ÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ñ Ð¾Ð±Ð¼ÐµÐ½Ð° Ð¼ÐµÐ¶Ð´Ñ Ð¼Ð°ÑÐ¸Ð½Ð¾Ð¹ Ð¸ ÑÑÐ°Ð½ÑÐ¸ÐµÐ¹. Ð¡ÐµÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ñ Ð¿Ð¾ Ð½Ð¸Ð¼ Ð´Ð¾Ð±ÑÐ¾Ð²Ð¾Ð»ÑÐ½Ð°Ñ, Ð½Ð¾ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ðµ â ÑÐ¾ÑÐ¾ÑÐ¸Ð¹ Ð¿ÑÐ¸Ð·Ð½Ð°Ðº: ÑÑÐ¾ ÑÐ¾Ñ ÑÑÐ°Ð½Ð´Ð°ÑÑ, Ð¿Ð¾ ÐºÐ¾ÑÐ¾ÑÐ¾Ð¼Ñ ÑÐ°Ð±Ð¾ÑÐ°ÑÑ ÑÐµÑÑÑÐ·Ð½ÑÐµ Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»Ð¸. ÐÐµ Ð¿ÑÑÐ°Ð¹ÑÐµ Â«Ð´Ð¾Ð±ÑÐ¾Ð²Ð¾Ð»ÑÐ½ÑÐ¹ ÐÐÐ¡Ð¢Â» Ñ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½ÑÐ¼Ð¸ ÑÐµÑÑÐµÐ³Ð»Ð°Ð¼ÐµÐ½ÑÐ°Ð¼Ð¸: Ð¿ÐµÑÐ²ÑÑ Ð½Ðµ Ð¾Ð±ÑÐ·Ð°Ð½ Ð¸Ð¼ÐµÑÑ Ð½Ð¸ÐºÑÐ¾, Ð²ÑÐ¾ÑÑÑ Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ Ð½Ðµ Ð¸Ð¼ÐµÑÑ Ð½Ð¸ Ð¾Ð´Ð½Ð° Ð»ÐµÐ³Ð°Ð»ÑÐ½Ð°Ñ Ð¿Ð°ÑÑÐ¸Ñ.</p><h2>ÐÐ¾Ð½ÑÐ°Ð¶ Ð¸ Ð¿Ð¾Ð¶Ð°ÑÐ½Ð°Ñ ÑÐ°ÑÑÑ</h2><p>ÐÐ¾Ð»ÑÑÐ¸Ð½ÑÑÐ²Ð¾ ÑÐ¸ÑÐºÐ¾Ð² Ð¶Ð¸Ð²ÑÑ Ð½Ðµ Ð² ÐºÐ¾ÑÐ¿ÑÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸, Ð° Ð² Ð¼Ð¾Ð½ÑÐ°Ð¶Ðµ:</p><ul><li><b>ÐÐ¸Ð½Ð¸Ñ.</b> ÐÑÐ´ÐµÐ»ÐµÐ½Ð½ÑÐ¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð¾Ñ ÑÐ¸ÑÐºÐ°, Ð¾ÑÐ´ÐµÐ»ÑÐ½ÑÐ¹ Ð°Ð²ÑÐ¾Ð¼Ð°Ñ. Ð¡ÐµÑÐµÐ½Ð¸Ðµ â Ð¿Ð¾Ð´ ÑÐ¾Ðº ÑÑÐ°Ð½ÑÐ¸Ð¸ Ñ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼ (Ð´Ð»Ñ 7 ÐºÐÑ Ð¾Ð±ÑÑÐ½Ð¾ 3Ã2,5â3Ã4 Ð¼Ð¼Â², ÑÐµÑÐµÐ½Ð¸Ðµ Ð·Ð° ÑÐ»ÐµÐºÑÑÐ¸ÐºÐ¾Ð¼).</li><li><b>ÐÐ°ÑÐ¸ÑÐ°.</b> Ð£ÐÐ Ð¸Ð»Ð¸ Ð´Ð¸ÑÐ°Ð²ÑÐ¾Ð¼Ð°Ñ ÑÐ¸Ð¿Ð° A â Ð½Ð°ÑÐ° Ð±Ð°Ð·Ð¾Ð²Ð°Ñ ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°ÑÐ¸Ñ Ð´Ð»Ñ Ð±ÑÑÐ¾Ð²ÑÑ Ð¸ Ð¾ÑÐ¸ÑÐ½ÑÑ ÑÑÑÐ°Ð½Ð¾Ð²Ð¾Ðº.</li><li><b>ÐÐ°Ð±ÐµÐ»Ð¸ Ð¸ Ð¿ÑÐ¾ÐºÐ»Ð°Ð´ÐºÐ°.</b> ÐÐ»Ñ ÑÑÐ°ÑÑ Ð² Ð¿Ð¾Ð¼ÐµÑÐµÐ½Ð¸ÑÑ â ÐºÐ°Ð±ÐµÐ»Ð¸ Ñ Ð¿Ð¾Ð½Ð¸Ð¶ÐµÐ½Ð½ÑÐ¼ Ð´ÑÐ¼Ð¾- Ð¸ Ð³Ð°Ð·Ð¾Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð¸ÐµÐ¼ (Ð¸Ð½Ð´ÐµÐºÑÑ Ð½Ð³(Ð)-LS Ð¸ Ð°Ð½Ð°Ð»Ð¾Ð³Ð¸ÑÐ½ÑÐµ Ð¿Ð¾ ÐÐÐ¡Ð¢ 31996); ÑÐ»Ð¸ÑÐ½ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ â ÐºÐ¾ÑÐ¿ÑÑ Ð½Ðµ Ð½Ð¸Ð¶Ðµ IP54 Ð¸ Ð·Ð°ÑÐ¸ÑÐ° Ð¾Ñ Ð¼ÐµÑÐ°Ð½Ð¸ÑÐµÑÐºÐ¾Ð³Ð¾ ÑÐ´Ð°ÑÐ°.</li><li><b>ÐÐÐ Ð¸ Ð±Ð¸Ð·Ð½ÐµÑ-Ð¾Ð±ÑÐµÐºÑÑ.</b> Ð Ð¼Ð½Ð¾Ð³Ð¾ÐºÐ²Ð°ÑÑÐ¸ÑÐ½Ð¾Ð¼ Ð´Ð¾Ð¼Ðµ â ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ð¸Ðµ Ñ ÑÐ¿ÑÐ°Ð²Ð»ÑÑÑÐµÐ¹ Ð¾ÑÐ³Ð°Ð½Ð¸Ð·Ð°ÑÐ¸ÐµÐ¹ Ð¸ Ð²ÑÐ´ÐµÐ»ÐµÐ½Ð¸Ðµ Ð¼Ð¾ÑÐ½Ð¾ÑÑÐ¸; Ð½Ð° ÐºÐ¾Ð¼Ð¼ÐµÑÑÐµÑÐºÐ¸Ñ Ð¾Ð±ÑÐµÐºÑÐ°Ñ â Ð¿ÑÐ¾ÐµÐºÑ Ð¸ Ð¿ÑÐ¸ÑÐ¼ÐºÐ° Ð¿Ð¾ Ð¿ÑÐ°Ð²Ð¸Ð»Ð°Ð¼ ÑÐ»ÐµÐºÑÑÐ¾ÑÑÑÐ°Ð½Ð¾Ð²Ð¾Ðº.</li></ul><div class="gbox"><b>ÐÐ°Ðº ÑÐ°ÑÐ¿ÑÐµÐ´ÐµÐ»ÑÐµÑÑÑ Ð¾ÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾ÑÑÑ.</b> ÐÐ¾ÑÑÐ°Ð²ÑÐ¸Ðº Ð¾ÑÐ²ÐµÑÐ°ÐµÑ Ð·Ð° ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ðµ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ Ð·Ð°ÑÐ²Ð»ÐµÐ½Ð½ÑÐ¼ ÑÐ°ÑÐ°ÐºÑÐµÑÐ¸ÑÑÐ¸ÐºÐ°Ð¼ Ð¸ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ð¼; Ð¼Ð¾Ð½ÑÐ°Ð¶Ð½Ð¸Ðº â Ð·Ð° ÐºÐ°ÑÐµÑÑÐ²Ð¾ ÑÑÑÐ°Ð½Ð¾Ð²ÐºÐ¸; ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°Ð½Ñ (Ð²Ð»Ð°Ð´ÐµÐ»ÐµÑ, Ð£Ð, Ð±Ð¸Ð·Ð½ÐµÑ) â Ð·Ð° Ð¾Ð±ÑÐ»ÑÐ¶Ð¸Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÑÐ¾ÑÑÐ¾ÑÐ½Ð¸Ðµ Ð»Ð¸Ð½Ð¸Ð¸. Ð§ÑÑÐºÐ¸Ð¹ Ð´Ð¾Ð³Ð¾Ð²Ð¾Ñ Ñ Ð·Ð¾Ð½Ð°Ð¼Ð¸ Ð¾ÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾ÑÑÐ¸ Ð¿Ð»ÑÑ Ð²ÑÐ¾Ð´Ð½Ð¾Ð¹ ÐºÐ¾Ð½ÑÑÐ¾Ð»Ñ Ð¿Ð°ÑÑÐ¸Ð¸ â ÑÑÐ¾ Ð¸ ÐµÑÑÑ Ð·Ð°ÑÐ¸ÑÐ° Ð¾Ñ ÑÑÐµÐ½Ð°ÑÐ¸ÐµÐ² Â«ÑÐ³Ð¾ÑÐµÐ»Ð¾ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸ÐµÂ», Ð° Ð½Ðµ Ð²Ð¾Ð»ÑÐµÐ±Ð½ÑÐ¹ ÑÐµÑÑÐ¸ÑÐ¸ÐºÐ°Ñ ÑÐ°Ð¼ Ð¿Ð¾ ÑÐµÐ±Ðµ.</div><h2>Ð§ÐµÑÑÐ½ÑÐµ Ð¾Ð³Ð¾Ð²Ð¾ÑÐºÐ¸</h2><p>Ð­ÑÐ° ÑÑÐ°ÑÑÑ â Ð¿ÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ð¹ Ð¾ÑÐ¸ÐµÐ½ÑÐ¸Ñ, Ð° Ð½Ðµ ÑÑÐ¸Ð´Ð¸ÑÐµÑÐºÐ°Ñ ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ñ: Ð¿ÐµÑÐµÑÐ½Ð¸ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½ÑÑ ÑÑÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ð¹ Ð¸ ÑÐ¾ÑÐ¼Ñ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ð¸Ñ ÑÐ¾Ð¾ÑÐ²ÐµÑÑÑÐ²Ð¸Ñ Ð¿ÐµÑÐ¸Ð¾Ð´Ð¸ÑÐµÑÐºÐ¸ Ð¼ÐµÐ½ÑÑÑÑÑ, Ð° ÐºÐ¾Ð½ÐºÑÐµÑÐ½Ð°Ñ ÐºÐ¾Ð½ÑÐ¸Ð³ÑÑÐ°ÑÐ¸Ñ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ Ð¾Ñ Ð¾Ð±ÑÐµÐºÑÐ°. ÐÐµÑÐµÐ´ ÐºÑÑÐ¿Ð½Ð¾Ð¹ Ð¾Ð¿ÑÐ¾Ð²Ð¾Ð¹ Ð¿Ð°ÑÑÐ¸ÐµÐ¹ Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ Ð½Ð° ÐºÐ¾Ð½ÐºÑÐµÑÐ½ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ, Ð° ÐµÑÐ»Ð¸ ÑÑÐ°Ð²Ð¸ÑÐµ ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¿Ð¾Ð´ ÐºÐ»ÑÑ â Ð¿ÑÐ¸Ð²Ð»ÐµÐºÐ¸ÑÐµ Ð¿ÑÐ¾ÐµÐºÑÐ½ÑÑ Ð¾ÑÐ³Ð°Ð½Ð¸Ð·Ð°ÑÐ¸Ñ. ÐÐ°ÑÐ° ÑÐ¾Ð»Ñ Ð² ÑÑÐ¾Ð¼ ÐºÐ¾Ð½ÑÑÑÐµ â Ð¿Ð¾ÑÑÐ°Ð²Ð»ÑÑÑ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ Ñ Ð¿Ð¾Ð»Ð½ÑÐ¼ Ð¿Ð°ÐºÐµÑÐ¾Ð¼ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ¾Ð² Ð¸ Ð¿Ð¾Ð¼Ð¾Ð³Ð°ÑÑ Ñ Ð¼Ð¾Ð½ÑÐ°Ð¶Ð½Ð¾Ð¹ ÑÑÐµÐ¼Ð¾Ð¹; Ð·Ð° Ð¿ÑÐ¾ÐµÐºÑ Ð¸ Ð¿ÑÐ¸ÑÐ¼ÐºÑ Ð¾ÑÐ²ÐµÑÐ°ÐµÑ Ð¿ÑÐ¾ÑÐ¸Ð»ÑÐ½ÑÐ¹ ÑÐ¿ÐµÑÐ¸Ð°Ð»Ð¸ÑÑ.</p><div class="cta"><a class="btn lime" href="/b2b/">ÐÐ¿ÑÐ¾Ð²ÑÐµ Ð¿Ð¾ÑÑÐ°Ð²ÐºÐ¸ Ñ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÐ°Ð¼Ð¸</a><a class="btn ghost" href="/services/ustanovka-stancii.html">Ð£ÑÑÐ°Ð½Ð¾Ð²ÐºÐ° ÑÑÐ°Ð½ÑÐ¸Ð¸ Ð¿Ð¾Ð´ ÐºÐ»ÑÑ</a><a class="btn ghost" href="/services/tehobsluzhivanie.html">Ð¢Ð ÑÑÐ°Ð½ÑÐ¸Ð¹</a></div></div></div>'''
 
-# ===== СТАТЬЯ 3: Workersbee vs Auxus (03.11.2026) =====
-WORKERSBEE_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · сравнение</div><h1>Битва брендов: Workersbee против Auxus — какой зарядный кабель выдержит русскую зиму?</h1><p class="lede">При выборе зарядного кабеля Type 2 → GB/T или портативной «переноски» покупатель неизбежно сталкивается с двумя гигантами рынка: Workersbee и Auxus. Когда температура падает до −25 °C, разница в материалах изоляции может превратить один кабель в послушный гибкий провод, а второй — в дубовый кусок пластика. Сравниваем без цензуры.</p><div class="tldr"><b>Коротко:</b> Workersbee — «боевой» кабель: TPU-изоляция держит гибкость при −30 °C, посеребрённые контакты и влагозащита IP67 — для частых поездок по трассам и уличных ЭЗС. Auxus — «умный» домашний: TPE-эластомер, эргономичные корпуса пистолетов и встроенные датчики температуры в вилке, отключающие зарядку при перегреве — идеален для гаража и дачи по сбалансированной цене.</div><h2>1. Изоляция кабеля: ТПУ (TPU) против ТЭП (TPE)</h2><p>Главный враг кабеля в РФ — это мороз.</p><ul><li><b>Workersbee:</b> использует высококачественный термопластичный полиуретан (TPU). Этот материал дороже, но обладает феноменальной износостойкостью: при −30 °C кабель Workersbee сохраняет до 80% своей гибкости. Он не дубеет и легко сматывается в кольцо.</li><li><b>Auxus:</b> в ряде линеек применяет термопластичный эластомер (TPE). Он чуть мягче при комнатной температуре, но при сильных заморозках твердеет быстрее полиуретана. Если вы ищете бюджетное решение для закрытого тёплого паркинга — Auxus идеален.</li></ul><h2>2. Контакты и пистолеты: посеребрение против никелирования</h2><p>Качество коннектора определяет, не сгорит ли порт вашей машины от перегрева при длительной сессии в 32 ампера.</p><ul><li><b>Workersbee:</b> компоненты покрыты плотным слоем серебра. Это минимизирует сопротивление и исключает перегрев. Их пистолеты имеют класс влагозащиты IP67 даже в момент зарядки.</li><li><b>Auxus:</b> делает отличные, крепкие корпуса пистолетов с эргономичным хватом. Кабели Auxus снабжены встроенными датчиками температуры в вилке — если розетка у вас на даче начнёт плавиться, зарядка моментально отключится.</li></ul><h2>Вердикт «Запас хода»</h2><ul><li>Выбирайте Workersbee, если вам нужен неубиваемый «боевой» кабель для частых поездок по трассам, публичных ЭЗС и жёсткой зимней эксплуатации на улице.</li><li>Выбирайте Auxus, если ищете умное домашнее устройство с отличными защитными датчиками для гаража или дачи по сбалансированной цене.</li></ul><p>Оба варианта у нас в каталоге: кабель <a href="/catalog/kabel-type2-gbt-5m-22kw.html">Type 2 → GB/T, 5 м, 22 кВт</a> и <a href="/catalog/kabel-type2-gbt-7m-22kw.html">7 м</a>, для дачи — портативки <a href="/catalog/portativnaya-zaryadka-gbt-7kw.html">7 кВт</a> и <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">3,5 кВт</a>. Зимой любой кабель дубеет меньше, если его прогрели — см. гайд <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+# ===== Ð¡Ð¢ÐÐ¢Ð¬Ð¯ 3: Workersbee vs Auxus (03.11.2026) =====
+WORKERSBEE_BODY = '<div class="container"><div class="hero"><div class="kicker">ÐÐ»Ð¾Ð³ Â· ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ</div><h1>ÐÐ¸ÑÐ²Ð° Ð±ÑÐµÐ½Ð´Ð¾Ð²: Workersbee Ð¿ÑÐ¾ÑÐ¸Ð² Auxus â ÐºÐ°ÐºÐ¾Ð¹ Ð·Ð°ÑÑÐ´Ð½ÑÐ¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð²ÑÐ´ÐµÑÐ¶Ð¸Ñ ÑÑÑÑÐºÑÑ Ð·Ð¸Ð¼Ñ?</h1><p class="lede">ÐÑÐ¸ Ð²ÑÐ±Ð¾ÑÐµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð³Ð¾ ÐºÐ°Ð±ÐµÐ»Ñ Type 2 â GB/T Ð¸Ð»Ð¸ Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð¾Ð¹ Â«Ð¿ÐµÑÐµÐ½Ð¾ÑÐºÐ¸Â» Ð¿Ð¾ÐºÑÐ¿Ð°ÑÐµÐ»Ñ Ð½ÐµÐ¸Ð·Ð±ÐµÐ¶Ð½Ð¾ ÑÑÐ°Ð»ÐºÐ¸Ð²Ð°ÐµÑÑÑ Ñ Ð´Ð²ÑÐ¼Ñ Ð³Ð¸Ð³Ð°Ð½ÑÐ°Ð¼Ð¸ ÑÑÐ½ÐºÐ°: Workersbee Ð¸ Auxus. ÐÐ¾Ð³Ð´Ð° ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ° Ð¿Ð°Ð´Ð°ÐµÑ Ð´Ð¾ â25 Â°C, ÑÐ°Ð·Ð½Ð¸ÑÐ° Ð² Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ð°Ñ Ð¸Ð·Ð¾Ð»ÑÑÐ¸Ð¸ Ð¼Ð¾Ð¶ÐµÑ Ð¿ÑÐµÐ²ÑÐ°ÑÐ¸ÑÑ Ð¾Ð´Ð¸Ð½ ÐºÐ°Ð±ÐµÐ»Ñ Ð² Ð¿Ð¾ÑÐ»ÑÑÐ½ÑÐ¹ Ð³Ð¸Ð±ÐºÐ¸Ð¹ Ð¿ÑÐ¾Ð²Ð¾Ð´, Ð° Ð²ÑÐ¾ÑÐ¾Ð¹ â Ð² Ð´ÑÐ±Ð¾Ð²ÑÐ¹ ÐºÑÑÐ¾Ðº Ð¿Ð»Ð°ÑÑÐ¸ÐºÐ°. Ð¡ÑÐ°Ð²Ð½Ð¸Ð²Ð°ÐµÐ¼ Ð±ÐµÐ· ÑÐµÐ½Ð·ÑÑÑ.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> Workersbee â Â«Ð±Ð¾ÐµÐ²Ð¾Ð¹Â» ÐºÐ°Ð±ÐµÐ»Ñ: TPU-Ð¸Ð·Ð¾Ð»ÑÑÐ¸Ñ Ð´ÐµÑÐ¶Ð¸Ñ Ð³Ð¸Ð±ÐºÐ¾ÑÑÑ Ð¿ÑÐ¸ â30 Â°C, Ð¿Ð¾ÑÐµÑÐµÐ±ÑÑÐ½Ð½ÑÐµ ÐºÐ¾Ð½ÑÐ°ÐºÑÑ Ð¸ Ð²Ð»Ð°Ð³Ð¾Ð·Ð°ÑÐ¸ÑÐ° IP67 â Ð´Ð»Ñ ÑÐ°ÑÑÑÑ Ð¿Ð¾ÐµÐ·Ð´Ð¾Ðº Ð¿Ð¾ ÑÑÐ°ÑÑÐ°Ð¼ Ð¸ ÑÐ»Ð¸ÑÐ½ÑÑ Ð­ÐÐ¡. Auxus â Â«ÑÐ¼Ð½ÑÐ¹Â» Ð´Ð¾Ð¼Ð°ÑÐ½Ð¸Ð¹: TPE-ÑÐ»Ð°ÑÑÐ¾Ð¼ÐµÑ, ÑÑÐ³Ð¾Ð½Ð¾Ð¼Ð¸ÑÐ½ÑÐµ ÐºÐ¾ÑÐ¿ÑÑÐ° Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÐ¾Ð² Ð¸ Ð²ÑÑÑÐ¾ÐµÐ½Ð½ÑÐµ Ð´Ð°ÑÑÐ¸ÐºÐ¸ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð² Ð²Ð¸Ð»ÐºÐµ, Ð¾ÑÐºÐ»ÑÑÐ°ÑÑÐ¸Ðµ Ð·Ð°ÑÑÐ´ÐºÑ Ð¿ÑÐ¸ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ðµ â Ð¸Ð´ÐµÐ°Ð»ÐµÐ½ Ð´Ð»Ñ Ð³Ð°ÑÐ°Ð¶Ð° Ð¸ Ð´Ð°ÑÐ¸ Ð¿Ð¾ ÑÐ±Ð°Ð»Ð°Ð½ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½Ð¾Ð¹ ÑÐµÐ½Ðµ.</div><h2>1. ÐÐ·Ð¾Ð»ÑÑÐ¸Ñ ÐºÐ°Ð±ÐµÐ»Ñ: Ð¢ÐÐ£ (TPU) Ð¿ÑÐ¾ÑÐ¸Ð² Ð¢Ð­Ð (TPE)</h2><p>ÐÐ»Ð°Ð²Ð½ÑÐ¹ Ð²ÑÐ°Ð³ ÐºÐ°Ð±ÐµÐ»Ñ Ð² Ð Ð¤ â ÑÑÐ¾ Ð¼Ð¾ÑÐ¾Ð·.</p><ul><li><b>Workersbee:</b> Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐµÑ Ð²ÑÑÐ¾ÐºÐ¾ÐºÐ°ÑÐµÑÑÐ²ÐµÐ½Ð½ÑÐ¹ ÑÐµÑÐ¼Ð¾Ð¿Ð»Ð°ÑÑÐ¸ÑÐ½ÑÐ¹ Ð¿Ð¾Ð»Ð¸ÑÑÐµÑÐ°Ð½ (TPU). Ð­ÑÐ¾Ñ Ð¼Ð°ÑÐµÑÐ¸Ð°Ð» Ð´Ð¾ÑÐ¾Ð¶Ðµ, Ð½Ð¾ Ð¾Ð±Ð»Ð°Ð´Ð°ÐµÑ ÑÐµÐ½Ð¾Ð¼ÐµÐ½Ð°Ð»ÑÐ½Ð¾Ð¹ Ð¸Ð·Ð½Ð¾ÑÐ¾ÑÑÐ¾Ð¹ÐºÐ¾ÑÑÑÑ: Ð¿ÑÐ¸ â30 Â°C ÐºÐ°Ð±ÐµÐ»Ñ Workersbee ÑÐ¾ÑÑÐ°Ð½ÑÐµÑ Ð´Ð¾ 80% ÑÐ²Ð¾ÐµÐ¹ Ð³Ð¸Ð±ÐºÐ¾ÑÑÐ¸. ÐÐ½ Ð½Ðµ Ð´ÑÐ±ÐµÐµÑ Ð¸ Ð»ÐµÐ³ÐºÐ¾ ÑÐ¼Ð°ÑÑÐ²Ð°ÐµÑÑÑ Ð² ÐºÐ¾Ð»ÑÑÐ¾.</li><li><b>Auxus:</b> Ð² ÑÑÐ´Ðµ Ð»Ð¸Ð½ÐµÐµÐº Ð¿ÑÐ¸Ð¼ÐµÐ½ÑÐµÑ ÑÐµÑÐ¼Ð¾Ð¿Ð»Ð°ÑÑÐ¸ÑÐ½ÑÐ¹ ÑÐ»Ð°ÑÑÐ¾Ð¼ÐµÑ (TPE). ÐÐ½ ÑÑÑÑ Ð¼ÑÐ³ÑÐµ Ð¿ÑÐ¸ ÐºÐ¾Ð¼Ð½Ð°ÑÐ½Ð¾Ð¹ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐµ, Ð½Ð¾ Ð¿ÑÐ¸ ÑÐ¸Ð»ÑÐ½ÑÑ Ð·Ð°Ð¼Ð¾ÑÐ¾Ð·ÐºÐ°Ñ ÑÐ²ÐµÑÐ´ÐµÐµÑ Ð±ÑÑÑÑÐµÐµ Ð¿Ð¾Ð»Ð¸ÑÑÐµÑÐ°Ð½Ð°. ÐÑÐ»Ð¸ Ð²Ñ Ð¸ÑÐµÑÐµ Ð±ÑÐ´Ð¶ÐµÑÐ½Ð¾Ðµ ÑÐµÑÐµÐ½Ð¸Ðµ Ð´Ð»Ñ Ð·Ð°ÐºÑÑÑÐ¾Ð³Ð¾ ÑÑÐ¿Ð»Ð¾Ð³Ð¾ Ð¿Ð°ÑÐºÐ¸Ð½Ð³Ð° â Auxus Ð¸Ð´ÐµÐ°Ð»ÐµÐ½.</li></ul><h2>2. ÐÐ¾Ð½ÑÐ°ÐºÑÑ Ð¸ Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÑ: Ð¿Ð¾ÑÐµÑÐµÐ±ÑÐµÐ½Ð¸Ðµ Ð¿ÑÐ¾ÑÐ¸Ð² Ð½Ð¸ÐºÐµÐ»Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ñ</h2><p>ÐÐ°ÑÐµÑÑÐ²Ð¾ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ° Ð¾Ð¿ÑÐµÐ´ÐµÐ»ÑÐµÑ, Ð½Ðµ ÑÐ³Ð¾ÑÐ¸Ñ Ð»Ð¸ Ð¿Ð¾ÑÑ Ð²Ð°ÑÐµÐ¹ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¾Ñ Ð¿ÐµÑÐµÐ³ÑÐµÐ²Ð° Ð¿ÑÐ¸ Ð´Ð»Ð¸ÑÐµÐ»ÑÐ½Ð¾Ð¹ ÑÐµÑÑÐ¸Ð¸ Ð² 32 Ð°Ð¼Ð¿ÐµÑÐ°.</p><ul><li><b>Workersbee:</b> ÐºÐ¾Ð¼Ð¿Ð¾Ð½ÐµÐ½ÑÑ Ð¿Ð¾ÐºÑÑÑÑ Ð¿Ð»Ð¾ÑÐ½ÑÐ¼ ÑÐ»Ð¾ÐµÐ¼ ÑÐµÑÐµÐ±ÑÐ°. Ð­ÑÐ¾ Ð¼Ð¸Ð½Ð¸Ð¼Ð¸Ð·Ð¸ÑÑÐµÑ ÑÐ¾Ð¿ÑÐ¾ÑÐ¸Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¸ Ð¸ÑÐºÐ»ÑÑÐ°ÐµÑ Ð¿ÐµÑÐµÐ³ÑÐµÐ². ÐÑ Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÑ Ð¸Ð¼ÐµÑÑ ÐºÐ»Ð°ÑÑ Ð²Ð»Ð°Ð³Ð¾Ð·Ð°ÑÐ¸ÑÑ IP67 Ð´Ð°Ð¶Ðµ Ð² Ð¼Ð¾Ð¼ÐµÐ½Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸.</li><li><b>Auxus:</b> Ð´ÐµÐ»Ð°ÐµÑ Ð¾ÑÐ»Ð¸ÑÐ½ÑÐµ, ÐºÑÐµÐ¿ÐºÐ¸Ðµ ÐºÐ¾ÑÐ¿ÑÑÐ° Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑÐ¾Ð² Ñ ÑÑÐ³Ð¾Ð½Ð¾Ð¼Ð¸ÑÐ½ÑÐ¼ ÑÐ²Ð°ÑÐ¾Ð¼. ÐÐ°Ð±ÐµÐ»Ð¸ Auxus ÑÐ½Ð°Ð±Ð¶ÐµÐ½Ñ Ð²ÑÑÑÐ¾ÐµÐ½Ð½ÑÐ¼Ð¸ Ð´Ð°ÑÑÐ¸ÐºÐ°Ð¼Ð¸ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð² Ð²Ð¸Ð»ÐºÐµ â ÐµÑÐ»Ð¸ ÑÐ¾Ð·ÐµÑÐºÐ° Ñ Ð²Ð°Ñ Ð½Ð° Ð´Ð°ÑÐµ Ð½Ð°ÑÐ½ÑÑ Ð¿Ð»Ð°Ð²Ð¸ÑÑÑÑ, Ð·Ð°ÑÑÐ´ÐºÐ° Ð¼Ð¾Ð¼ÐµÐ½ÑÐ°Ð»ÑÐ½Ð¾ Ð¾ÑÐºÐ»ÑÑÐ¸ÑÑÑ.</li></ul><h2>ÐÐµÑÐ´Ð¸ÐºÑ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</h2><ul><li>ÐÑÐ±Ð¸ÑÐ°Ð¹ÑÐµ Workersbee, ÐµÑÐ»Ð¸ Ð²Ð°Ð¼ Ð½ÑÐ¶ÐµÐ½ Ð½ÐµÑÐ±Ð¸Ð²Ð°ÐµÐ¼ÑÐ¹ Â«Ð±Ð¾ÐµÐ²Ð¾Ð¹Â» ÐºÐ°Ð±ÐµÐ»Ñ Ð´Ð»Ñ ÑÐ°ÑÑÑÑ Ð¿Ð¾ÐµÐ·Ð´Ð¾Ðº Ð¿Ð¾ ÑÑÐ°ÑÑÐ°Ð¼, Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ Ð­ÐÐ¡ Ð¸ Ð¶ÑÑÑÐºÐ¾Ð¹ Ð·Ð¸Ð¼Ð½ÐµÐ¹ ÑÐºÑÐ¿Ð»ÑÐ°ÑÐ°ÑÐ¸Ð¸ Ð½Ð° ÑÐ»Ð¸ÑÐµ.</li><li>ÐÑÐ±Ð¸ÑÐ°Ð¹ÑÐµ Auxus, ÐµÑÐ»Ð¸ Ð¸ÑÐµÑÐµ ÑÐ¼Ð½Ð¾Ðµ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐµ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾ Ñ Ð¾ÑÐ»Ð¸ÑÐ½ÑÐ¼Ð¸ Ð·Ð°ÑÐ¸ÑÐ½ÑÐ¼Ð¸ Ð´Ð°ÑÑÐ¸ÐºÐ°Ð¼Ð¸ Ð´Ð»Ñ Ð³Ð°ÑÐ°Ð¶Ð° Ð¸Ð»Ð¸ Ð´Ð°ÑÐ¸ Ð¿Ð¾ ÑÐ±Ð°Ð»Ð°Ð½ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½Ð¾Ð¹ ÑÐµÐ½Ðµ.</li></ul><p>ÐÐ±Ð° Ð²Ð°ÑÐ¸Ð°Ð½ÑÐ° Ñ Ð½Ð°Ñ Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ðµ: ÐºÐ°Ð±ÐµÐ»Ñ <a href="/catalog/kabel-type2-gbt-5m-22kw.html">Type 2 â GB/T, 5 Ð¼, 22 ÐºÐÑ</a> Ð¸ <a href="/catalog/kabel-type2-gbt-7m-22kw.html">7 Ð¼</a>, Ð´Ð»Ñ Ð´Ð°ÑÐ¸ â Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÐ¸ <a href="/catalog/portativnaya-zaryadka-gbt-7kw.html">7 ÐºÐÑ</a> Ð¸ <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">3,5 ÐºÐÑ</a>. ÐÐ¸Ð¼Ð¾Ð¹ Ð»ÑÐ±Ð¾Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð´ÑÐ±ÐµÐµÑ Ð¼ÐµÐ½ÑÑÐµ, ÐµÑÐ»Ð¸ ÐµÐ³Ð¾ Ð¿ÑÐ¾Ð³ÑÐµÐ»Ð¸ â ÑÐ¼. Ð³Ð°Ð¹Ð´ <a href="/blog/zimnyaya-zaryadka-medlennee.html">Ð·Ð¸Ð¼Ð½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a><a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a><a class="btn ghost" href="/blog/">ÐÑÐµ ÑÑÐ°ÑÑÐ¸ Ð±Ð»Ð¾Ð³Ð°</a></div></div></div>'
 
-# ===== ГОТОВЫЕ СТАТЬИ БЛОГА (03.11.2026, текст владельца) =====
-ZEEKR_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · разбор</div><h1>Чем отличаются порты GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026)?</h1><p class="lede">Вы купили новый Zeekr 001, открываете зарядный лючок — и видите два внешне похожих разъёма. Разберём их один раз и навсегда.</p><div class="tldr"><b>Коротко:</b> GB/T AC — круглый порт с 7 контактами (заднее левое крыло): переменный ток, максимум 7 кВт через встроенный OBC — дом, паркинг, офис. GB/T DC — крупный порт с 5 массивными контактами (заднее правое крыло): ток идёт прямо в батарею, на публичных ЭЗС стабильно 60–120 кВт.</div><h2>Порт GB/T AC: переменный ток, медленная зарядка</h2><p>Круглый разъём с 7 контактами (пинами). На рестайлинге Zeekr 001 он расположен на заднем левом крыле. Это ваш основной порт для зарядки дома, в паркинге или у офиса. Он принимает переменный ток от настенных станций или портативных «зарядок-переносок» из розетки 220 В. Встроенное зарядное устройство (OBC) рестайлинга принимает максимум 7 кВт (1 фаза, 32 А).</p><h2>Порт GB/T DC: постоянный ток, быстрая зарядка</h2><p>Крупный разъём с 5 массивными контактами на заднем правом крыле. Нужен для ультрабыстрых городских и трассовых зарядных станций (хабы Россети, Яндекс.Заправки и т. д.). Ток идёт напрямую в батарею, минуя внутреннее зарядное устройство машины. На российских публичных ЭЗС вы будете стабильно видеть от 60 до 120 кВт в зависимости от загрузки станции.</p><h2>Что купить в багажник</h2><ul><li>Для медленных городских станций (где на выходе розетка Type 2) — <a href="/catalog/kabel-type2-gbt-5m-22kw.html">зарядный кабель Type 2 → GB/T</a> из нашего каталога.</li><li>Для быстрой зарядки на трассах (где висит кабель CCS2) — <a href="/catalog/adapter-ccs2-gbt-dc.html">адаптер CCS2 → GB/T DC</a>.</li></ul><p>Ошибка при подключении кабеля в «не тот» порт в лучшем случае прервёт сессию, а в худшем — выбьет ошибку инвертора, поэтому порт лучше сверять заранее. Какой порт у какой комплектации — есть на странице <a href="/models/zeekr-001-001-fr/">Zeekr 001 / 001 FR</a>.</p><p>Зимой обе зарядки идут медленнее и требуют прогрева — подробности в гайде <a href="/blog/zimnyaya-zaryadka-medlennee.html">зимняя зарядка</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
-LI_BODY = '<div class="container"><div class="hero"><div class="kicker">Блог · лайфхак</div><h1>Как активировать скрытый предпрогрев батареи на Li Auto L7/L8/L9 перед быстрой зарядкой?</h1><p class="lede">Приезжаешь на быструю станцию зимой, вставляешь пистолет — а машина вместо 60–90 кВт берёт 15–20. Причина и два рабочих решения — в разборе.</p><div class="tldr"><b>Коротко:</b> ледяная батарея отказывается принимать большой ток: оптимальная температура для приёма быстрой зарядки — около +25 °C. Способ 1 — цель в штатной навигации (подогрев запустится за 20–30 минут до станции). Способ 2 — Battery Preheating из приложения Li Auto. Самый экономный вариант — прогрев на ночной зарядке от розетки.</div><h2>Способ № 1: активация через штатную навигацию (самый надёжный)</h2><p>В Li Auto встроен алгоритм автоматического подогрева, но он жёстко привязан к бортовой навигационной системе. В штатной навигационной карте на центральном дисплее вбейте адрес быстрой зарядной станции (ЭЗС), к которой вы едете. Бортовой компьютер поймёт цель поездки и за 20–30 минут до подъезда автоматически запустит мощный высоковольтный подогрев аккумулятора. Вы приедете с «горячей» батареей и сразу заберёте максимальный ток.</p><h2>Способ № 2: запуск через приложение Li Auto</h2><p>За 30 минут до выезда откройте официальное приложение Li Auto на смартфоне. Включите климат-контроль салона и активируйте функцию Battery Preheating (подогрев батареи). Дайте машине постоять включённой хотя бы 25–30 минут.</p><h2>Лайфхак для максимальной экономии</h2><p>Чтобы не тратить драгоценные проценты батареи на её же прогрев в пути, делайте это во время домашней ночной зарядки. Наш <a href="/catalog/">«Антикризисный набор для подключаемых гибридов (PHEV)»</a> позволяет безопасно держать машину подключённой к сети 220 В всю ночь. Вы начнёте движение с тёплой батареей, тёплым салоном и полным запасом хода.</p><p>Почему зимой зарядка вообще медленнее — с цифрами и приёмами прогрева: <a href="/blog/zimnyaya-zaryadka-medlennee.html">разбор зимней зарядки</a>. Порты и сценарии зарядки Li Auto — на странице <a href="/models/li-auto-l6-l7-l8-l9-2022-2025/">Li Auto L6/L7/L8/L9</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a><a class="btn ghost" href="/catalog/">Каталог оборудования</a><a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+# ===== ÐÐÐ¢ÐÐÐ«Ð Ð¡Ð¢ÐÐ¢Ð¬Ð ÐÐÐÐÐ (03.11.2026, ÑÐµÐºÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ°) =====
+ZEEKR_BODY = '<div class="container"><div class="hero"><div class="kicker">ÐÐ»Ð¾Ð³ Â· ÑÐ°Ð·Ð±Ð¾Ñ</div><h1>Ð§ÐµÐ¼ Ð¾ÑÐ»Ð¸ÑÐ°ÑÑÑÑ Ð¿Ð¾ÑÑÑ GB/T AC Ð¸ DC Ð½Ð° ÑÐµÑÑÐ°Ð¹Ð»Ð¸Ð½Ð³Ðµ Zeekr 001 (2024â2026)?</h1><p class="lede">ÐÑ ÐºÑÐ¿Ð¸Ð»Ð¸ Ð½Ð¾Ð²ÑÐ¹ Zeekr 001, Ð¾ÑÐºÑÑÐ²Ð°ÐµÑÐµ Ð·Ð°ÑÑÐ´Ð½ÑÐ¹ Ð»ÑÑÐ¾Ðº â Ð¸ Ð²Ð¸Ð´Ð¸ÑÐµ Ð´Ð²Ð° Ð²Ð½ÐµÑÐ½Ðµ Ð¿Ð¾ÑÐ¾Ð¶Ð¸Ñ ÑÐ°Ð·ÑÑÐ¼Ð°. Ð Ð°Ð·Ð±ÐµÑÑÐ¼ Ð¸Ñ Ð¾Ð´Ð¸Ð½ ÑÐ°Ð· Ð¸ Ð½Ð°Ð²ÑÐµÐ³Ð´Ð°.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> GB/T AC â ÐºÑÑÐ³Ð»ÑÐ¹ Ð¿Ð¾ÑÑ Ñ 7 ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ð¼Ð¸ (Ð·Ð°Ð´Ð½ÐµÐµ Ð»ÐµÐ²Ð¾Ðµ ÐºÑÑÐ»Ð¾): Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½ÑÐ¹ ÑÐ¾Ðº, Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ 7 ÐºÐÑ ÑÐµÑÐµÐ· Ð²ÑÑÑÐ¾ÐµÐ½Ð½ÑÐ¹ OBC â Ð´Ð¾Ð¼, Ð¿Ð°ÑÐºÐ¸Ð½Ð³, Ð¾ÑÐ¸Ñ. GB/T DC â ÐºÑÑÐ¿Ð½ÑÐ¹ Ð¿Ð¾ÑÑ Ñ 5 Ð¼Ð°ÑÑÐ¸Ð²Ð½ÑÐ¼Ð¸ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ð¼Ð¸ (Ð·Ð°Ð´Ð½ÐµÐµ Ð¿ÑÐ°Ð²Ð¾Ðµ ÐºÑÑÐ»Ð¾): ÑÐ¾Ðº Ð¸Ð´ÑÑ Ð¿ÑÑÐ¼Ð¾ Ð² Ð±Ð°ÑÐ°ÑÐµÑ, Ð½Ð° Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ Ð­ÐÐ¡ ÑÑÐ°Ð±Ð¸Ð»ÑÐ½Ð¾ 60â120 ÐºÐÑ.</div><h2>ÐÐ¾ÑÑ GB/T AC: Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½ÑÐ¹ ÑÐ¾Ðº, Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</h2><p>ÐÑÑÐ³Ð»ÑÐ¹ ÑÐ°Ð·ÑÑÐ¼ Ñ 7 ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ð¼Ð¸ (Ð¿Ð¸Ð½Ð°Ð¼Ð¸). ÐÐ° ÑÐµÑÑÐ°Ð¹Ð»Ð¸Ð½Ð³Ðµ Zeekr 001 Ð¾Ð½ ÑÐ°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½ Ð½Ð° Ð·Ð°Ð´Ð½ÐµÐ¼ Ð»ÐµÐ²Ð¾Ð¼ ÐºÑÑÐ»Ðµ. Ð­ÑÐ¾ Ð²Ð°Ñ Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ð¿Ð¾ÑÑ Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð´Ð¾Ð¼Ð°, Ð² Ð¿Ð°ÑÐºÐ¸Ð½Ð³Ðµ Ð¸Ð»Ð¸ Ñ Ð¾ÑÐ¸ÑÐ°. ÐÐ½ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð¿ÐµÑÐµÐ¼ÐµÐ½Ð½ÑÐ¹ ÑÐ¾Ðº Ð¾Ñ Ð½Ð°ÑÑÐµÐ½Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸Ð»Ð¸ Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½ÑÑ Â«Ð·Ð°ÑÑÐ´Ð¾Ðº-Ð¿ÐµÑÐµÐ½Ð¾ÑÐ¾ÐºÂ» Ð¸Ð· ÑÐ¾Ð·ÐµÑÐºÐ¸ 220 Ð. ÐÑÑÑÐ¾ÐµÐ½Ð½Ð¾Ðµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾ (OBC) ÑÐµÑÑÐ°Ð¹Ð»Ð¸Ð½Ð³Ð° Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÐµÑ Ð¼Ð°ÐºÑÐ¸Ð¼ÑÐ¼ 7 ÐºÐÑ (1 ÑÐ°Ð·Ð°, 32 Ð).</p><h2>ÐÐ¾ÑÑ GB/T DC: Ð¿Ð¾ÑÑÐ¾ÑÐ½Ð½ÑÐ¹ ÑÐ¾Ðº, Ð±ÑÑÑÑÐ°Ñ Ð·Ð°ÑÑÐ´ÐºÐ°</h2><p>ÐÑÑÐ¿Ð½ÑÐ¹ ÑÐ°Ð·ÑÑÐ¼ Ñ 5 Ð¼Ð°ÑÑÐ¸Ð²Ð½ÑÐ¼Ð¸ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ°Ð¼Ð¸ Ð½Ð° Ð·Ð°Ð´Ð½ÐµÐ¼ Ð¿ÑÐ°Ð²Ð¾Ð¼ ÐºÑÑÐ»Ðµ. ÐÑÐ¶ÐµÐ½ Ð´Ð»Ñ ÑÐ»ÑÑÑÐ°Ð±ÑÑÑÑÑÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ Ð¸ ÑÑÐ°ÑÑÐ¾Ð²ÑÑ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ (ÑÐ°Ð±Ñ Ð Ð¾ÑÑÐµÑÐ¸, Ð¯Ð½Ð´ÐµÐºÑ.ÐÐ°Ð¿ÑÐ°Ð²ÐºÐ¸ Ð¸ Ñ. Ð´.). Ð¢Ð¾Ðº Ð¸Ð´ÑÑ Ð½Ð°Ð¿ÑÑÐ¼ÑÑ Ð² Ð±Ð°ÑÐ°ÑÐµÑ, Ð¼Ð¸Ð½ÑÑ Ð²Ð½ÑÑÑÐµÐ½Ð½ÐµÐµ Ð·Ð°ÑÑÐ´Ð½Ð¾Ðµ ÑÑÑÑÐ¾Ð¹ÑÑÐ²Ð¾ Ð¼Ð°ÑÐ¸Ð½Ñ. ÐÐ° ÑÐ¾ÑÑÐ¸Ð¹ÑÐºÐ¸Ñ Ð¿ÑÐ±Ð»Ð¸ÑÐ½ÑÑ Ð­ÐÐ¡ Ð²Ñ Ð±ÑÐ´ÐµÑÐµ ÑÑÐ°Ð±Ð¸Ð»ÑÐ½Ð¾ Ð²Ð¸Ð´ÐµÑÑ Ð¾Ñ 60 Ð´Ð¾ 120 ÐºÐÑ Ð² Ð·Ð°Ð²Ð¸ÑÐ¸Ð¼Ð¾ÑÑÐ¸ Ð¾Ñ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸ ÑÑÐ°Ð½ÑÐ¸Ð¸.</p><h2>Ð§ÑÐ¾ ÐºÑÐ¿Ð¸ÑÑ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸Ðº</h2><ul><li>ÐÐ»Ñ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÑÑ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¸Ñ ÑÑÐ°Ð½ÑÐ¸Ð¹ (Ð³Ð´Ðµ Ð½Ð° Ð²ÑÑÐ¾Ð´Ðµ ÑÐ¾Ð·ÐµÑÐºÐ° Type 2) â <a href="/catalog/kabel-type2-gbt-5m-22kw.html">Ð·Ð°ÑÑÐ´Ð½ÑÐ¹ ÐºÐ°Ð±ÐµÐ»Ñ Type 2 â GB/T</a> Ð¸Ð· Ð½Ð°ÑÐµÐ³Ð¾ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°.</li><li>ÐÐ»Ñ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð½Ð° ÑÑÐ°ÑÑÐ°Ñ (Ð³Ð´Ðµ Ð²Ð¸ÑÐ¸Ñ ÐºÐ°Ð±ÐµÐ»Ñ CCS2) â <a href="/catalog/adapter-ccs2-gbt-dc.html">Ð°Ð´Ð°Ð¿ÑÐµÑ CCS2 â GB/T DC</a>.</li></ul><p>ÐÑÐ¸Ð±ÐºÐ° Ð¿ÑÐ¸ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð¸Ð¸ ÐºÐ°Ð±ÐµÐ»Ñ Ð² Â«Ð½Ðµ ÑÐ¾ÑÂ» Ð¿Ð¾ÑÑ Ð² Ð»ÑÑÑÐµÐ¼ ÑÐ»ÑÑÐ°Ðµ Ð¿ÑÐµÑÐ²ÑÑ ÑÐµÑÑÐ¸Ñ, Ð° Ð² ÑÑÐ´ÑÐµÐ¼ â Ð²ÑÐ±ÑÐµÑ Ð¾ÑÐ¸Ð±ÐºÑ Ð¸Ð½Ð²ÐµÑÑÐ¾ÑÐ°, Ð¿Ð¾ÑÑÐ¾Ð¼Ñ Ð¿Ð¾ÑÑ Ð»ÑÑÑÐµ ÑÐ²ÐµÑÑÑÑ Ð·Ð°ÑÐ°Ð½ÐµÐµ. ÐÐ°ÐºÐ¾Ð¹ Ð¿Ð¾ÑÑ Ñ ÐºÐ°ÐºÐ¾Ð¹ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑÐ°ÑÐ¸Ð¸ â ÐµÑÑÑ Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐµ <a href="/models/zeekr-001-001-fr/">Zeekr 001 / 001 FR</a>.</p><p>ÐÐ¸Ð¼Ð¾Ð¹ Ð¾Ð±Ðµ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð¸Ð´ÑÑ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµ Ð¸ ÑÑÐµÐ±ÑÑÑ Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð° â Ð¿Ð¾Ð´ÑÐ¾Ð±Ð½Ð¾ÑÑÐ¸ Ð² Ð³Ð°Ð¹Ð´Ðµ <a href="/blog/zimnyaya-zaryadka-medlennee.html">Ð·Ð¸Ð¼Ð½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a><a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a><a class="btn ghost" href="/blog/">ÐÑÐµ ÑÑÐ°ÑÑÐ¸ Ð±Ð»Ð¾Ð³Ð°</a></div></div></div>'
+LI_BODY = '<div class="container"><div class="hero"><div class="kicker">ÐÐ»Ð¾Ð³ Â· Ð»Ð°Ð¹ÑÑÐ°Ðº</div><h1>ÐÐ°Ðº Ð°ÐºÑÐ¸Ð²Ð¸ÑÐ¾Ð²Ð°ÑÑ ÑÐºÑÑÑÑÐ¹ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð½Ð° Li Auto L7/L8/L9 Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹?</h1><p class="lede">ÐÑÐ¸ÐµÐ·Ð¶Ð°ÐµÑÑ Ð½Ð° Ð±ÑÑÑÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ñ Ð·Ð¸Ð¼Ð¾Ð¹, Ð²ÑÑÐ°Ð²Ð»ÑÐµÑÑ Ð¿Ð¸ÑÑÐ¾Ð»ÐµÑ â Ð° Ð¼Ð°ÑÐ¸Ð½Ð° Ð²Ð¼ÐµÑÑÐ¾ 60â90 ÐºÐÑ Ð±ÐµÑÑÑ 15â20. ÐÑÐ¸ÑÐ¸Ð½Ð° Ð¸ Ð´Ð²Ð° ÑÐ°Ð±Ð¾ÑÐ¸Ñ ÑÐµÑÐµÐ½Ð¸Ñ â Ð² ÑÐ°Ð·Ð±Ð¾ÑÐµ.</p><div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> Ð»ÐµÐ´ÑÐ½Ð°Ñ Ð±Ð°ÑÐ°ÑÐµÑ Ð¾ÑÐºÐ°Ð·ÑÐ²Ð°ÐµÑÑÑ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÑÑ Ð±Ð¾Ð»ÑÑÐ¾Ð¹ ÑÐ¾Ðº: Ð¾Ð¿ÑÐ¸Ð¼Ð°Ð»ÑÐ½Ð°Ñ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ° Ð´Ð»Ñ Ð¿ÑÐ¸ÑÐ¼Ð° Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ â Ð¾ÐºÐ¾Ð»Ð¾ +25 Â°C. Ð¡Ð¿Ð¾ÑÐ¾Ð± 1 â ÑÐµÐ»Ñ Ð² ÑÑÐ°ÑÐ½Ð¾Ð¹ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ð¸ (Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð·Ð°Ð¿ÑÑÑÐ¸ÑÑÑ Ð·Ð° 20â30 Ð¼Ð¸Ð½ÑÑ Ð´Ð¾ ÑÑÐ°Ð½ÑÐ¸Ð¸). Ð¡Ð¿Ð¾ÑÐ¾Ð± 2 â Battery Preheating Ð¸Ð· Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Li Auto. Ð¡Ð°Ð¼ÑÐ¹ ÑÐºÐ¾Ð½Ð¾Ð¼Ð½ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ â Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð½Ð° Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐµ Ð¾Ñ ÑÐ¾Ð·ÐµÑÐºÐ¸.</div><h2>Ð¡Ð¿Ð¾ÑÐ¾Ð± â 1: Ð°ÐºÑÐ¸Ð²Ð°ÑÐ¸Ñ ÑÐµÑÐµÐ· ÑÑÐ°ÑÐ½ÑÑ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ñ (ÑÐ°Ð¼ÑÐ¹ Ð½Ð°Ð´ÑÐ¶Ð½ÑÐ¹)</h2><p>Ð Li Auto Ð²ÑÑÑÐ¾ÐµÐ½ Ð°Ð»Ð³Ð¾ÑÐ¸ÑÐ¼ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¾Ð³Ð¾ Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ²Ð°, Ð½Ð¾ Ð¾Ð½ Ð¶ÑÑÑÐºÐ¾ Ð¿ÑÐ¸Ð²ÑÐ·Ð°Ð½ Ðº Ð±Ð¾ÑÑÐ¾Ð²Ð¾Ð¹ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ð¾Ð½Ð½Ð¾Ð¹ ÑÐ¸ÑÑÐµÐ¼Ðµ. Ð ÑÑÐ°ÑÐ½Ð¾Ð¹ Ð½Ð°Ð²Ð¸Ð³Ð°ÑÐ¸Ð¾Ð½Ð½Ð¾Ð¹ ÐºÐ°ÑÑÐµ Ð½Ð° ÑÐµÐ½ÑÑÐ°Ð»ÑÐ½Ð¾Ð¼ Ð´Ð¸ÑÐ¿Ð»ÐµÐµ Ð²Ð±ÐµÐ¹ÑÐµ Ð°Ð´ÑÐµÑ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ (Ð­ÐÐ¡), Ðº ÐºÐ¾ÑÐ¾ÑÐ¾Ð¹ Ð²Ñ ÐµÐ´ÐµÑÐµ. ÐÐ¾ÑÑÐ¾Ð²Ð¾Ð¹ ÐºÐ¾Ð¼Ð¿ÑÑÑÐµÑ Ð¿Ð¾Ð¹Ð¼ÑÑ ÑÐµÐ»Ñ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸ Ð¸ Ð·Ð° 20â30 Ð¼Ð¸Ð½ÑÑ Ð´Ð¾ Ð¿Ð¾Ð´ÑÐµÐ·Ð´Ð° Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸ Ð·Ð°Ð¿ÑÑÑÐ¸Ñ Ð¼Ð¾ÑÐ½ÑÐ¹ Ð²ÑÑÐ¾ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½ÑÐ¹ Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð°ÐºÐºÑÐ¼ÑÐ»ÑÑÐ¾ÑÐ°. ÐÑ Ð¿ÑÐ¸ÐµÐ´ÐµÑÐµ Ñ Â«Ð³Ð¾ÑÑÑÐµÐ¹Â» Ð±Ð°ÑÐ°ÑÐµÐµÐ¹ Ð¸ ÑÑÐ°Ð·Ñ Ð·Ð°Ð±ÐµÑÑÑÐµ Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ¾Ðº.</p><h2>Ð¡Ð¿Ð¾ÑÐ¾Ð± â 2: Ð·Ð°Ð¿ÑÑÐº ÑÐµÑÐµÐ· Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Li Auto</h2><p>ÐÐ° 30 Ð¼Ð¸Ð½ÑÑ Ð´Ð¾ Ð²ÑÐµÐ·Ð´Ð° Ð¾ÑÐºÑÐ¾Ð¹ÑÐµ Ð¾ÑÐ¸ÑÐ¸Ð°Ð»ÑÐ½Ð¾Ðµ Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Li Auto Ð½Ð° ÑÐ¼Ð°ÑÑÑÐ¾Ð½Ðµ. ÐÐºÐ»ÑÑÐ¸ÑÐµ ÐºÐ»Ð¸Ð¼Ð°Ñ-ÐºÐ¾Ð½ÑÑÐ¾Ð»Ñ ÑÐ°Ð»Ð¾Ð½Ð° Ð¸ Ð°ÐºÑÐ¸Ð²Ð¸ÑÑÐ¹ÑÐµ ÑÑÐ½ÐºÑÐ¸Ñ Battery Preheating (Ð¿Ð¾Ð´Ð¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸). ÐÐ°Ð¹ÑÐµ Ð¼Ð°ÑÐ¸Ð½Ðµ Ð¿Ð¾ÑÑÐ¾ÑÑÑ Ð²ÐºÐ»ÑÑÑÐ½Ð½Ð¾Ð¹ ÑÐ¾ÑÑ Ð±Ñ 25â30 Ð¼Ð¸Ð½ÑÑ.</p><h2>ÐÐ°Ð¹ÑÑÐ°Ðº Ð´Ð»Ñ Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½Ð¾Ð¹ ÑÐºÐ¾Ð½Ð¾Ð¼Ð¸Ð¸</h2><p>Ð§ÑÐ¾Ð±Ñ Ð½Ðµ ÑÑÐ°ÑÐ¸ÑÑ Ð´ÑÐ°Ð³Ð¾ÑÐµÐ½Ð½ÑÐµ Ð¿ÑÐ¾ÑÐµÐ½ÑÑ Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð½Ð° ÐµÑ Ð¶Ðµ Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð² Ð¿ÑÑÐ¸, Ð´ÐµÐ»Ð°Ð¹ÑÐµ ÑÑÐ¾ Ð²Ð¾ Ð²ÑÐµÐ¼Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÐµÐ¹ Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸. ÐÐ°Ñ <a href="/catalog/">Â«ÐÐ½ÑÐ¸ÐºÑÐ¸Ð·Ð¸ÑÐ½ÑÐ¹ Ð½Ð°Ð±Ð¾Ñ Ð´Ð»Ñ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐ°ÐµÐ¼ÑÑ Ð³Ð¸Ð±ÑÐ¸Ð´Ð¾Ð² (PHEV)Â»</a> Ð¿Ð¾Ð·Ð²Ð¾Ð»ÑÐµÑ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ Ð´ÐµÑÐ¶Ð°ÑÑ Ð¼Ð°ÑÐ¸Ð½Ñ Ð¿Ð¾Ð´ÐºÐ»ÑÑÑÐ½Ð½Ð¾Ð¹ Ðº ÑÐµÑÐ¸ 220 Ð Ð²ÑÑ Ð½Ð¾ÑÑ. ÐÑ Ð½Ð°ÑÐ½ÑÑÐµ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ñ ÑÑÐ¿Ð»Ð¾Ð¹ Ð±Ð°ÑÐ°ÑÐµÐµÐ¹, ÑÑÐ¿Ð»ÑÐ¼ ÑÐ°Ð»Ð¾Ð½Ð¾Ð¼ Ð¸ Ð¿Ð¾Ð»Ð½ÑÐ¼ Ð·Ð°Ð¿Ð°ÑÐ¾Ð¼ ÑÐ¾Ð´Ð°.</p><p>ÐÐ¾ÑÐµÐ¼Ñ Ð·Ð¸Ð¼Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ° Ð²Ð¾Ð¾Ð±ÑÐµ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½ÐµÐµ â Ñ ÑÐ¸ÑÑÐ°Ð¼Ð¸ Ð¸ Ð¿ÑÐ¸ÑÐ¼Ð°Ð¼Ð¸ Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð°: <a href="/blog/zimnyaya-zaryadka-medlennee.html">ÑÐ°Ð·Ð±Ð¾Ñ Ð·Ð¸Ð¼Ð½ÐµÐ¹ Ð·Ð°ÑÑÐ´ÐºÐ¸</a>. ÐÐ¾ÑÑÑ Ð¸ ÑÑÐµÐ½Ð°ÑÐ¸Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ¸ Li Auto â Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÐµ <a href="/models/li-auto-l6-l7-l8-l9-2022-2025/">Li Auto L6/L7/L8/L9</a>.</p><div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a><a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a><a class="btn ghost" href="/blog/">ÐÑÐµ ÑÑÐ°ÑÑÐ¸ Ð±Ð»Ð¾Ð³Ð°</a></div></div></div>'
 
 
-# ===== CSS коммерческого блока на карте (ЭТАП 3) =====
+# ===== CSS ÐºÐ¾Ð¼Ð¼ÐµÑÑÐµÑÐºÐ¾Ð³Ð¾ Ð±Ð»Ð¾ÐºÐ° Ð½Ð° ÐºÐ°ÑÑÐµ (Ð­Ð¢ÐÐ 3) =====
 EXTRA_MAP_CSS = r"""
 .zs-mpromo { margin-top: 8px; padding: 8px 10px; border: 1px solid #a7f3d0; background: #ecfdf5; border-radius: 10px; font-size: .82rem; line-height: 1.4; color: #064e3b; }
 .zs-mpromo b { display: block; margin-bottom: 3px; }
@@ -4208,7 +4191,7 @@ def load_products():
         return {}
 
 
-# ===== ЭТАП 6 ПОРТАЛА: ЦИФРОВЫЕ ТОВАРЫ /shop/digital/ (эквайринг Т-Касса) =====
+# ===== Ð­Ð¢ÐÐ 6 ÐÐÐ Ð¢ÐÐÐ: Ð¦ÐÐ¤Ð ÐÐÐ«Ð Ð¢ÐÐÐÐ Ð« /shop/digital/ (ÑÐºÐ²Ð°Ð¹ÑÐ¸Ð½Ð³ Ð¢-ÐÐ°ÑÑÐ°) =====
 SHOP_TERMINAL_KEY = str(SITE_CFG.get('tinkoff_terminal_key') or '')
 SHOP_TEST_MODE = bool(SITE_CFG.get('tinkoff_is_test_mode'))
 SHOP_PRICE = int(SITE_CFG.get('digital_guide_price') or 490)
@@ -4216,19 +4199,19 @@ SHOP_LIVE = bool(SITE_CFG.get('digital_payments_live'))
 SHOP_GAS_URL = str(SITE_CFG.get('gas_pay_url') or '')
 
 SHOP_PRODUCT = {
-  'title': 'Интерактивный авто-гид 2026/2027: Трасса М-4 Дон на электромобиле без боли',
-  'desc': ('Всё, что нужно знать перед поездкой М-4 «Дон» на электромобиле: где заряжаться, где ставить на ночёвку, '
-           'какие участки проезжать на запасе, сколько стоит время. Составлен по опыту владельцев и актуальной инфраструктуре.'),
+  'title': 'ÐÐ½ÑÐµÑÐ°ÐºÑÐ¸Ð²Ð½ÑÐ¹ Ð°Ð²ÑÐ¾-Ð³Ð¸Ð´ 2026/2027: Ð¢ÑÐ°ÑÑÐ° Ð-4 ÐÐ¾Ð½ Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ðµ Ð±ÐµÐ· Ð±Ð¾Ð»Ð¸',
+  'desc': ('ÐÑÑ, ÑÑÐ¾ Ð½ÑÐ¶Ð½Ð¾ Ð·Ð½Ð°ÑÑ Ð¿ÐµÑÐµÐ´ Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¾Ð¹ Ð-4 Â«ÐÐ¾Ð½Â» Ð½Ð° ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ðµ: Ð³Ð´Ðµ Ð·Ð°ÑÑÐ¶Ð°ÑÑÑÑ, Ð³Ð´Ðµ ÑÑÐ°Ð²Ð¸ÑÑ Ð½Ð° Ð½Ð¾ÑÑÐ²ÐºÑ, '
+           'ÐºÐ°ÐºÐ¸Ðµ ÑÑÐ°ÑÑÐºÐ¸ Ð¿ÑÐ¾ÐµÐ·Ð¶Ð°ÑÑ Ð½Ð° Ð·Ð°Ð¿Ð°ÑÐµ, ÑÐºÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾Ð¸Ñ Ð²ÑÐµÐ¼Ñ. Ð¡Ð¾ÑÑÐ°Ð²Ð»ÐµÐ½ Ð¿Ð¾ Ð¾Ð¿ÑÑÑ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ² Ð¸ Ð°ÐºÑÑÐ°Ð»ÑÐ½Ð¾Ð¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐµ.'),
   'includes': [
-    'Карта маршрута с точками ЭЗС и наилучшим временем заезда',
-    'Честный расчёт времени и бюджета поездки по тарифам',
-    'Гостиницы и кемпинги с розеткой для ночного заряда',
-    'Сценарии «А разрядился посреди трассы» — что делать',
+    'ÐÐ°ÑÑÐ° Ð¼Ð°ÑÑÑÑÑÐ° Ñ ÑÐ¾ÑÐºÐ°Ð¼Ð¸ Ð­ÐÐ¡ Ð¸ Ð½Ð°Ð¸Ð»ÑÑÑÐ¸Ð¼ Ð²ÑÐµÐ¼ÐµÐ½ÐµÐ¼ Ð·Ð°ÐµÐ·Ð´Ð°',
+    'Ð§ÐµÑÑÐ½ÑÐ¹ ÑÐ°ÑÑÑÑ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð¸ Ð±ÑÐ´Ð¶ÐµÑÐ° Ð¿Ð¾ÐµÐ·Ð´ÐºÐ¸ Ð¿Ð¾ ÑÐ°ÑÐ¸ÑÐ°Ð¼',
+    'ÐÐ¾ÑÑÐ¸Ð½Ð¸ÑÑ Ð¸ ÐºÐµÐ¼Ð¿Ð¸Ð½Ð³Ð¸ Ñ ÑÐ¾Ð·ÐµÑÐºÐ¾Ð¹ Ð´Ð»Ñ Ð½Ð¾ÑÐ½Ð¾Ð³Ð¾ Ð·Ð°ÑÑÐ´Ð°',
+    'Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¸ Â«Ð ÑÐ°Ð·ÑÑÐ´Ð¸Ð»ÑÑ Ð¿Ð¾ÑÑÐµÐ´Ð¸ ÑÑÐ°ÑÑÑÂ» â ÑÑÐ¾ Ð´ÐµÐ»Ð°ÑÑ',
   ],
 }
 
 
-# ===== CSS карточек СТО-партнёров (Этап 5) =====
+# ===== CSS ÐºÐ°ÑÑÐ¾ÑÐµÐº Ð¡Ð¢Ð-Ð¿Ð°ÑÑÐ½ÑÑÐ¾Ð² (Ð­ÑÐ°Ð¿ 5) =====
 EXTRA_STO_CSS = r"""
 .sto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 18px 0 10px; }
 .sto-card { position: relative; background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 16px; padding: 18px; box-shadow: 0 8px 24px rgba(15,23,42,.05); min-width: 0; }
@@ -4244,18 +4227,18 @@ EXTRA_STO_CSS = r"""
 @media (max-width: 640px) { .sto-grid { grid-template-columns: 1fr; } }
 """
 
-# ---------- AI_BRIDGE.json (мост между ИИ-ассистентами) ----------
+# ---------- AI_BRIDGE.json (Ð¼Ð¾ÑÑ Ð¼ÐµÐ¶Ð´Ñ ÐÐ-Ð°ÑÑÐ¸ÑÑÐµÐ½ÑÐ°Ð¼Ð¸) ----------
 DEFAULT_OPEN_BUGS = [
-  "b2b_page: блоки «Модель партнёрства (1. ЛИДЫ)», «Что получает партнёр» и note про 20–30 лидов/мес ещё описывают старую лидогенерацию — не согласованы с новым lede (опт + Mini App)",
-  "tinkoff: терминал на DEMO-ключе (test) — для боевых платежей заменить на production-ключ и переключить live",
-  "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
-  "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем"
+  "b2b_page: Ð±Ð»Ð¾ÐºÐ¸ Â«ÐÐ¾Ð´ÐµÐ»Ñ Ð¿Ð°ÑÑÐ½ÑÑÑÑÐ²Ð° (1. ÐÐÐÐ«)Â», Â«Ð§ÑÐ¾ Ð¿Ð¾Ð»ÑÑÐ°ÐµÑ Ð¿Ð°ÑÑÐ½ÑÑÂ» Ð¸ note Ð¿ÑÐ¾ 20â30 Ð»Ð¸Ð´Ð¾Ð²/Ð¼ÐµÑ ÐµÑÑ Ð¾Ð¿Ð¸ÑÑÐ²Ð°ÑÑ ÑÑÐ°ÑÑÑ Ð»Ð¸Ð´Ð¾Ð³ÐµÐ½ÐµÑÐ°ÑÐ¸Ñ â Ð½Ðµ ÑÐ¾Ð³Ð»Ð°ÑÐ¾Ð²Ð°Ð½Ñ Ñ Ð½Ð¾Ð²ÑÐ¼ lede (Ð¾Ð¿Ñ + Mini App)",
+  "tinkoff: ÑÐµÑÐ¼Ð¸Ð½Ð°Ð» Ð½Ð° DEMO-ÐºÐ»ÑÑÐµ (test) â Ð´Ð»Ñ Ð±Ð¾ÐµÐ²ÑÑ Ð¿Ð»Ð°ÑÐµÐ¶ÐµÐ¹ Ð·Ð°Ð¼ÐµÐ½Ð¸ÑÑ Ð½Ð° production-ÐºÐ»ÑÑ Ð¸ Ð¿ÐµÑÐµÐºÐ»ÑÑÐ¸ÑÑ live",
+  "service_partners: ÑÐµÐºÑÐ¸Ñ Â«ÐÐ²ÑÐ¾ÑÐµÑÐ²Ð¸ÑÑ-Ð¿Ð°ÑÑÐ½ÑÑÑÂ» Ð½Ð° /services/ Ð¿ÑÑÑÐ°Ñ â Ð½ÑÐ¶Ð½Ñ ÑÐµÐ°Ð»ÑÐ½ÑÐµ ÐºÐ°ÑÑÐ¾ÑÐºÐ¸ Ð¡Ð¢Ð Ð² data/site_config.json",
+  "webmaster/gsc: Ð¾ÑÐ¿ÑÐ°Ð²ÐºÐ° sitemap Ð¸ Ð¸Ð½Ð´ÐµÐºÑÐ°ÑÐ¸Ñ Ð½Ðµ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ¼"
 ]
-DEFAULT_NEXT_STEP = "решение владельца по чистке лид-блоков на /b2b/ + реальные данные СТО (service_partners) + production-ключ Tinkoff"
+DEFAULT_NEXT_STEP = "ÑÐµÑÐµÐ½Ð¸Ðµ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐ° Ð¿Ð¾ ÑÐ¸ÑÑÐºÐµ Ð»Ð¸Ð´-Ð±Ð»Ð¾ÐºÐ¾Ð² Ð½Ð° /b2b/ + ÑÐµÐ°Ð»ÑÐ½ÑÐµ Ð´Ð°Ð½Ð½ÑÐµ Ð¡Ð¢Ð (service_partners) + production-ÐºÐ»ÑÑ Tinkoff"
 
 def write_ai_bridge(outdir, repo_root):
-    """Перезаписывает AI_BRIDGE.json при каждой сборке:
-    outdir/AI_BRIDGE.json (прод: /AI_BRIDGE.json) + снапшот в корень репозитория."""
+    """ÐÐµÑÐµÐ·Ð°Ð¿Ð¸ÑÑÐ²Ð°ÐµÑ AI_BRIDGE.json Ð¿ÑÐ¸ ÐºÐ°Ð¶Ð´Ð¾Ð¹ ÑÐ±Ð¾ÑÐºÐµ:
+    outdir/AI_BRIDGE.json (Ð¿ÑÐ¾Ð´: /AI_BRIDGE.json) + ÑÐ½Ð°Ð¿ÑÐ¾Ñ Ð² ÐºÐ¾ÑÐµÐ½Ñ ÑÐµÐ¿Ð¾Ð·Ð¸ÑÐ¾ÑÐ¸Ñ."""
     from datetime import datetime, timezone
     sha = str(os.environ.get('GITHUB_SHA') or '')
     if not sha:
@@ -4312,14 +4295,14 @@ def main():
         dst = os.path.join(outdir,'assets','leaflet')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(lf, dst)
-    # фото товаров каталога (assets/sku)
-    # PDF-гид (лид-магнит)
+    # ÑÐ¾ÑÐ¾ ÑÐ¾Ð²Ð°ÑÐ¾Ð² ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð° (assets/sku)
+    # PDF-Ð³Ð¸Ð´ (Ð»Ð¸Ð´-Ð¼Ð°Ð³Ð½Ð¸Ñ)
     gdir = os.path.join(repo_root,'assets','guide')
     if os.path.isdir(gdir):
         gdst = os.path.join(outdir,'assets','guide')
         if os.path.isdir(gdst): shutil.rmtree(gdst)
         shutil.copytree(gdir, gdst)
-    # иллюстрации статей (assets/img/blog)
+    # Ð¸Ð»Ð»ÑÑÑÑÐ°ÑÐ¸Ð¸ ÑÑÐ°ÑÐµÐ¹ (assets/img/blog)
     idir = os.path.join(repo_root,'assets','img')
     if os.path.isdir(idir):
         idst = os.path.join(outdir,'assets','img')
@@ -4330,14 +4313,14 @@ def main():
         dst = os.path.join(outdir,'assets','sku')
         if os.path.isdir(dst): shutil.rmtree(dst)
         shutil.copytree(sku_dir, dst)
-    # бренд: иконки PWA + favicon
+    # Ð±ÑÐµÐ½Ð´: Ð¸ÐºÐ¾Ð½ÐºÐ¸ PWA + favicon
     br_dir = os.path.join(repo_root,'assets','brand')
     if os.path.isdir(br_dir):
         shutil.copytree(br_dir, os.path.join(outdir,'assets','brand'), dirs_exist_ok=True)
     fav = os.path.join(repo_root,'favicon.ico')
     if os.path.exists(fav):
         shutil.copy(fav, os.path.join(outdir,'favicon.ico'))
-    # инфографики статей (assets/infographic)
+    # Ð¸Ð½ÑÐ¾Ð³ÑÐ°ÑÐ¸ÐºÐ¸ ÑÑÐ°ÑÐµÐ¹ (assets/infographic)
     inf_dir = os.path.join(repo_root,'assets','infographic')
     if os.path.isdir(inf_dir):
         idst = os.path.join(outdir,'assets','infographic')
@@ -4361,14 +4344,14 @@ def main():
         fdst = os.path.join(outdir,'assets','fc-theme.css')
         os.makedirs(os.path.dirname(fdst), exist_ok=True)
         shutil.copy(fcc, fdst)
-    # self-hosted шрифты Inter
+    # self-hosted ÑÑÐ¸ÑÑÑ Inter
     fdir = os.path.join(repo_root,'assets','fonts')
     if os.path.isdir(fdir):
         fdst2 = os.path.join(outdir,'assets','fonts')
         if os.path.isdir(fdst2): shutil.rmtree(fdst2)
         shutil.copytree(fdir, fdst2)
 
-    # админка (неиндексируемая)
+    # Ð°Ð´Ð¼Ð¸Ð½ÐºÐ° (Ð½ÐµÐ¸Ð½Ð´ÐµÐºÑÐ¸ÑÑÐµÐ¼Ð°Ñ)
     adir = os.path.join(repo_root,'admin')
     if os.path.isdir(adir):
         adst = os.path.join(outdir,'admin')
@@ -4383,7 +4366,7 @@ def main():
                 open(ap,'w',encoding='utf-8').write(_h)
     news = load_news(data_dir)
     news_map = load_news_map(data_dir)
-    print('Новостей в базе:', len(news))
+    print('ÐÐ¾Ð²Ð¾ÑÑÐµÐ¹ Ð² Ð±Ð°Ð·Ðµ:', len(news))
     home_page(outdir, news)
     pains_index(outdir)
     slugs = [model_page(m, outdir) for m in MODELS]
@@ -4400,7 +4383,7 @@ def main():
     vin_hub(outdir)
     map_page(outdir)
     city_charging_pages(outdir)
-    # stations.json: готовый статический файл (обновляется отдельно из OSM)
+    # stations.json: Ð³Ð¾ÑÐ¾Ð²ÑÐ¹ ÑÑÐ°ÑÐ¸ÑÐµÑÐºÐ¸Ð¹ ÑÐ°Ð¹Ð» (Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÐµÑÑÑ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð¾ Ð¸Ð· OSM)
     st_src = os.path.join(repo_root,'static','charging','stations.json')
     dst_json = os.path.join(outdir,'charging','stations.json')
     os.makedirs(os.path.dirname(dst_json), exist_ok=True)
@@ -4416,147 +4399,123 @@ def main():
                 if (round(ms['lat'],4), round(ms['lon'],4)) not in have:
                     st_data['stations'].append(ms); have.add((round(ms['lat'],4), round(ms['lon'],4)))
             json.dump(st_data, open(dst_json,'w',encoding='utf-8'), ensure_ascii=False)
-            print('manual stations: добавлено', len(manual))
-        print('stations.json:', len(st_data.get('stations', [])), 'станций')
+            print('manual stations: Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¾', len(manual))
+        print('stations.json:', len(st_data.get('stations', [])), 'ÑÑÐ°Ð½ÑÐ¸Ð¹')
     else:
         json.dump({'updated': BUILD_DATE, 'stations': []}, open(dst_json,'w',encoding='utf-8'), ensure_ascii=False)
-        print('stations.json: пустой (нет static/charging/stations.json)')
+        print('stations.json: Ð¿ÑÑÑÐ¾Ð¹ (Ð½ÐµÑ static/charging/stations.json)')
     idx = []
     for m in MODELS:
-        idx.append({'t': m['brand']+' '+m['model'], 'd': 'Разъёмы: '+str(m.get('ac') or '—')+' / '+str(m.get('dc') or '—')+' · '+m['type']+' · '+m['market'], 'u': '/models/'+slug(m['brand'])+'-'+slug(m['model'])+'/'})
+        idx.append({'t': m['brand']+' '+m['model'], 'd': 'Ð Ð°Ð·ÑÑÐ¼Ñ: '+str(m.get('ac') or 'â')+' / '+str(m.get('dc') or 'â')+' Â· '+m['type']+' Â· '+m['market'], 'u': '/models/'+slug(m['brand'])+'-'+slug(m['model'])+'/'})
     for sl,title,desc,_ in PAIN_ARTICLES:
         idx.append({'t': title, 'd': desc, 'u': '/pain/'+sl+'.html'})
     for it in news:
         idx.append({'t': it['title'], 'd': it.get('teaser') or '', 'u': news_slug_page(it)})
     for brand in VIN_BRANDS:
-        idx.append({'t': 'VIN '+brand, 'd': 'Расшифровка VIN, код года, проверка истории ('+VIN_BRANDS[brand][0]+')', 'u': '/vin/'+slug(brand)+'.html'})
-    for t,u,d in [('/', 'Запас хода', 'Справочник по зарядке EV в России'), ('/matrix/','Матрица совместимости','Разъёмы и переходники для 20 моделей'), ('/charging/','Карта зарядных станций','ЗУ по данным OSM'), ('/pains.html','Проблемы и решения','12 руководств')]:
+        idx.append({'t': 'VIN '+brand, 'd': 'Ð Ð°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° VIN, ÐºÐ¾Ð´ Ð³Ð¾Ð´Ð°, Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸ ('+VIN_BRANDS[brand][0]+')', 'u': '/vin/'+slug(brand)+'.html'})
+    for t,u,d in [('/', 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'Ð¡Ð¿ÑÐ°Ð²Ð¾ÑÐ½Ð¸Ðº Ð¿Ð¾ Ð·Ð°ÑÑÐ´ÐºÐµ EV Ð² Ð Ð¾ÑÑÐ¸Ð¸'), ('/matrix/','ÐÐ°ÑÑÐ¸ÑÐ° ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸','Ð Ð°Ð·ÑÑÐ¼Ñ Ð¸ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¸ Ð´Ð»Ñ 20 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹'), ('/charging/','ÐÐ°ÑÑÐ° Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹','ÐÐ£ Ð¿Ð¾ Ð´Ð°Ð½Ð½ÑÐ¼ OSM'), ('/pains.html','ÐÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ','12 ÑÑÐºÐ¾Ð²Ð¾Ð´ÑÑÐ²')]:
         idx.append({'t': t, 'd': d, 'u': u})
     search_page(outdir, idx)
     llms_files(outdir, news)
     about_page(outdir, news)
     misc_pages(outdir)
     matrix_build(outdir)
-    # флагманская статья блога «Зима близко» (полный текст, индексируется)
-    W_BODY = ('<div class="container"><div class="hero"><div class="kicker">Блог · Флагман</div>'
-      '<h1>' + html.escape('Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?') + '</h1>'
-      '<p class="lede">С наступлением холодов в авточатах начинается паника: запас хода тает на глазах. Давайте разберем чистую физику процессов без маркетинговых сказок производителей.</p>'
-      '<h2>1. Куда исчезает запас хода по паспорту (CLTC)?</h2>'
-      '<p>Паспортный запас хода измеряется при идеальных +22 °C. При падении температуры до −20 °C реальная ёмкость литий-ионных и литий-железо-фосфатных (LFP) батарей падает на 30–45%.</p>'
-      '<p>Главные потребители энергии зимой:</p>'
+    # ÑÐ»Ð°Ð³Ð¼Ð°Ð½ÑÐºÐ°Ñ ÑÑÐ°ÑÑÑ Ð±Ð»Ð¾Ð³Ð° Â«ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾Â» (Ð¿Ð¾Ð»Ð½ÑÐ¹ ÑÐµÐºÑÑ, Ð¸Ð½Ð´ÐµÐºÑÐ¸ÑÑÐµÑÑÑ)
+    W_BODY = ('<div class="container"><div class="hero"><div class="kicker">ÐÐ»Ð¾Ð³ Â· Ð¤Ð»Ð°Ð³Ð¼Ð°Ð½</div>'
+      '<h1>' + html.escape('ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾: Ð½Ð° ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð¿ÑÐ¾ÑÐµÐ½ÑÐ¾Ð² Ð¼Ð¾ÑÐ¾Ð· ÑÐµÐ°Ð»ÑÐ½Ð¾ Â«ÑÐµÐ¶ÐµÑÂ» Ð±Ð°ÑÐ°ÑÐµÑ Zeekr, Li Auto Ð¸ Voyah Ð² Ð Ð¾ÑÑÐ¸Ð¸?') + '</h1>'
+      '<p class="lede">Ð¡ Ð½Ð°ÑÑÑÐ¿Ð»ÐµÐ½Ð¸ÐµÐ¼ ÑÐ¾Ð»Ð¾Ð´Ð¾Ð² Ð² Ð°Ð²ÑÐ¾ÑÐ°ÑÐ°Ñ Ð½Ð°ÑÐ¸Ð½Ð°ÐµÑÑÑ Ð¿Ð°Ð½Ð¸ÐºÐ°: Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° ÑÐ°ÐµÑ Ð½Ð° Ð³Ð»Ð°Ð·Ð°Ñ. ÐÐ°Ð²Ð°Ð¹ÑÐµ ÑÐ°Ð·Ð±ÐµÑÐµÐ¼ ÑÐ¸ÑÑÑÑ ÑÐ¸Ð·Ð¸ÐºÑ Ð¿ÑÐ¾ÑÐµÑÑÐ¾Ð² Ð±ÐµÐ· Ð¼Ð°ÑÐºÐµÑÐ¸Ð½Ð³Ð¾Ð²ÑÑ ÑÐºÐ°Ð·Ð¾Ðº Ð¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸ÑÐµÐ»ÐµÐ¹.</p>'
+      '<h2>1. ÐÑÐ´Ð° Ð¸ÑÑÐµÐ·Ð°ÐµÑ Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° Ð¿Ð¾ Ð¿Ð°ÑÐ¿Ð¾ÑÑÑ (CLTC)?</h2>'
+      '<p>ÐÐ°ÑÐ¿Ð¾ÑÑÐ½ÑÐ¹ Ð·Ð°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° Ð¸Ð·Ð¼ÐµÑÑÐµÑÑÑ Ð¿ÑÐ¸ Ð¸Ð´ÐµÐ°Ð»ÑÐ½ÑÑ +22 Â°C. ÐÑÐ¸ Ð¿Ð°Ð´ÐµÐ½Ð¸Ð¸ ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ Ð´Ð¾ â20 Â°C ÑÐµÐ°Ð»ÑÐ½Ð°Ñ ÑÐ¼ÐºÐ¾ÑÑÑ Ð»Ð¸ÑÐ¸Ð¹-Ð¸Ð¾Ð½Ð½ÑÑ Ð¸ Ð»Ð¸ÑÐ¸Ð¹-Ð¶ÐµÐ»ÐµÐ·Ð¾-ÑÐ¾ÑÑÐ°ÑÐ½ÑÑ (LFP) Ð±Ð°ÑÐ°ÑÐµÐ¹ Ð¿Ð°Ð´Ð°ÐµÑ Ð½Ð° 30â45%.</p>'
+      '<p>ÐÐ»Ð°Ð²Ð½ÑÐµ Ð¿Ð¾ÑÑÐµÐ±Ð¸ÑÐµÐ»Ð¸ ÑÐ½ÐµÑÐ³Ð¸Ð¸ Ð·Ð¸Ð¼Ð¾Ð¹:</p>'
       '<ul>'
-      '<li><b>Прогрев батареи:</b> до 30% уходит на работу термоменеджмента, чтобы батарея могла отдавать и принимать ток.</li>'
-      '<li><b>Отопление салона:</b> высоковольтный фен (PTC) или тепловой насос забирают от 3 до 6 кВт стабильно.</li>'
-      '<li><b>Дорожные условия:</b> каша под колёсами и плотный холодный воздух увеличивают сопротивление.</li>'
+      '<li><b>ÐÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸:</b> Ð´Ð¾ 30% ÑÑÐ¾Ð´Ð¸Ñ Ð½Ð° ÑÐ°Ð±Ð¾ÑÑ ÑÐµÑÐ¼Ð¾Ð¼ÐµÐ½ÐµÐ´Ð¶Ð¼ÐµÐ½ÑÐ°, ÑÑÐ¾Ð±Ñ Ð±Ð°ÑÐ°ÑÐµÑ Ð¼Ð¾Ð³Ð»Ð° Ð¾ÑÐ´Ð°Ð²Ð°ÑÑ Ð¸ Ð¿ÑÐ¸Ð½Ð¸Ð¼Ð°ÑÑ ÑÐ¾Ðº.</li>'
+      '<li><b>ÐÑÐ¾Ð¿Ð»ÐµÐ½Ð¸Ðµ ÑÐ°Ð»Ð¾Ð½Ð°:</b> Ð²ÑÑÐ¾ÐºÐ¾Ð²Ð¾Ð»ÑÑÐ½ÑÐ¹ ÑÐµÐ½ (PTC) Ð¸Ð»Ð¸ ÑÐµÐ¿Ð»Ð¾Ð²Ð¾Ð¹ Ð½Ð°ÑÐ¾Ñ Ð·Ð°Ð±Ð¸ÑÐ°ÑÑ Ð¾Ñ 3 Ð´Ð¾ 6 ÐºÐÑ ÑÑÐ°Ð±Ð¸Ð»ÑÐ½Ð¾.</li>'
+      '<li><b>ÐÐ¾ÑÐ¾Ð¶Ð½ÑÐµ ÑÑÐ»Ð¾Ð²Ð¸Ñ:</b> ÐºÐ°ÑÐ° Ð¿Ð¾Ð´ ÐºÐ¾Ð»ÑÑÐ°Ð¼Ð¸ Ð¸ Ð¿Ð»Ð¾ÑÐ½ÑÐ¹ ÑÐ¾Ð»Ð¾Ð´Ð½ÑÐ¹ Ð²Ð¾Ð·Ð´ÑÑ ÑÐ²ÐµÐ»Ð¸ÑÐ¸Ð²Ð°ÑÑ ÑÐ¾Ð¿ÑÐ¾ÑÐ¸Ð²Ð»ÐµÐ½Ð¸Ðµ.</li>'
       '</ul>'
-      '<h2>2. Три золотых правила выживания для электромобиля в России</h2>'
-      '<p>Чтобы не остаться с недвижимостью посреди трассы, выучите три правила:</p>'
+      '<h2>2. Ð¢ÑÐ¸ Ð·Ð¾Ð»Ð¾ÑÑÑ Ð¿ÑÐ°Ð²Ð¸Ð»Ð° Ð²ÑÐ¶Ð¸Ð²Ð°Ð½Ð¸Ñ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð² Ð Ð¾ÑÑÐ¸Ð¸</h2>'
+      '<p>Ð§ÑÐ¾Ð±Ñ Ð½Ðµ Ð¾ÑÑÐ°ÑÑÑÑ Ñ Ð½ÐµÐ´Ð²Ð¸Ð¶Ð¸Ð¼Ð¾ÑÑÑÑ Ð¿Ð¾ÑÑÐµÐ´Ð¸ ÑÑÐ°ÑÑÑ, Ð²ÑÑÑÐ¸ÑÐµ ÑÑÐ¸ Ð¿ÑÐ°Ð²Ð¸Ð»Ð°:</p>'
       '<ol>'
-      '<li><b>Включайте предпрогрев от сети.</b> Прогревайте батарею и салон через приложение, пока машина подключена к зарядной станции — это сохранит до 20% запаса хода в пути.</li>'
-      '<li><b>Берегите зарядные порты.</b> При резких переходах через ноль замки блокировки коннекторов замерзают. Всегда держите в багажнике <a href="/catalog/smazka-silikonom-zima.html">силиконовую смазку</a>.</li>'
-      '<li><b>Имейте при себе аварийную портативку.</b> Если городская станция отключилась от мороза, возможность медленно зарядиться от любой розетки 220 В спасет вашу поездку — например, <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">портативная зарядка GB/T 3,5 кВт</a>.</li>'
+      '<li><b>ÐÐºÐ»ÑÑÐ°Ð¹ÑÐµ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð¾Ñ ÑÐµÑÐ¸.</b> ÐÑÐ¾Ð³ÑÐµÐ²Ð°Ð¹ÑÐµ Ð±Ð°ÑÐ°ÑÐµÑ Ð¸ ÑÐ°Ð»Ð¾Ð½ ÑÐµÑÐµÐ· Ð¿ÑÐ¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ, Ð¿Ð¾ÐºÐ° Ð¼Ð°ÑÐ¸Ð½Ð° Ð¿Ð¾Ð´ÐºÐ»ÑÑÐµÐ½Ð° Ðº Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ ÑÑÐ°Ð½ÑÐ¸Ð¸ â ÑÑÐ¾ ÑÐ¾ÑÑÐ°Ð½Ð¸Ñ Ð´Ð¾ 20% Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¾Ð´Ð° Ð² Ð¿ÑÑÐ¸.</li>'
+      '<li><b>ÐÐµÑÐµÐ³Ð¸ÑÐµ Ð·Ð°ÑÑÐ´Ð½ÑÐµ Ð¿Ð¾ÑÑÑ.</b> ÐÑÐ¸ ÑÐµÐ·ÐºÐ¸Ñ Ð¿ÐµÑÐµÑÐ¾Ð´Ð°Ñ ÑÐµÑÐµÐ· Ð½Ð¾Ð»Ñ Ð·Ð°Ð¼ÐºÐ¸ Ð±Ð»Ð¾ÐºÐ¸ÑÐ¾Ð²ÐºÐ¸ ÐºÐ¾Ð½Ð½ÐµÐºÑÐ¾ÑÐ¾Ð² Ð·Ð°Ð¼ÐµÑÐ·Ð°ÑÑ. ÐÑÐµÐ³Ð´Ð° Ð´ÐµÑÐ¶Ð¸ÑÐµ Ð² Ð±Ð°Ð³Ð°Ð¶Ð½Ð¸ÐºÐµ <a href="/catalog/smazka-silikonom-zima.html">ÑÐ¸Ð»Ð¸ÐºÐ¾Ð½Ð¾Ð²ÑÑ ÑÐ¼Ð°Ð·ÐºÑ</a>.</li>'
+      '<li><b>ÐÐ¼ÐµÐ¹ÑÐµ Ð¿ÑÐ¸ ÑÐµÐ±Ðµ Ð°Ð²Ð°ÑÐ¸Ð¹Ð½ÑÑ Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²ÐºÑ.</b> ÐÑÐ»Ð¸ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ°Ñ ÑÑÐ°Ð½ÑÐ¸Ñ Ð¾ÑÐºÐ»ÑÑÐ¸Ð»Ð°ÑÑ Ð¾Ñ Ð¼Ð¾ÑÐ¾Ð·Ð°, Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑÑ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾ Ð·Ð°ÑÑÐ´Ð¸ÑÑÑÑ Ð¾Ñ Ð»ÑÐ±Ð¾Ð¹ ÑÐ¾Ð·ÐµÑÐºÐ¸ 220 Ð ÑÐ¿Ð°ÑÐµÑ Ð²Ð°ÑÑ Ð¿Ð¾ÐµÐ·Ð´ÐºÑ â Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ, <a href="/catalog/portativnaya-zaryadka-gbt-3-5kw.html">Ð¿Ð¾ÑÑÐ°ÑÐ¸Ð²Ð½Ð°Ñ Ð·Ð°ÑÑÐ´ÐºÐ° GB/T 3,5 ÐºÐÑ</a>.</li>'
       '</ol>'
-      '<h2>Что купить к зиме</h2>'
-      '<p>Для гарантированной зарядки в любые морозы используйте проверенные решения из нашего каталога: <a href="/catalog/">Пакет «Максимальный ход»</a> для китайских электромобилей или <a href="/catalog/">Антикризисный набор 220 В</a> для гибридов, защищающий вашу домашнюю проводку.</p>'
-      '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
-      '<a class="btn ghost" href="/pains.html">Гайды: проблемы и решения</a></div></div></div>')
+      '<h2>Ð§ÑÐ¾ ÐºÑÐ¿Ð¸ÑÑ Ðº Ð·Ð¸Ð¼Ðµ</h2>'
+      '<p>ÐÐ»Ñ Ð³Ð°ÑÐ°Ð½ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½Ð¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¸ Ð² Ð»ÑÐ±ÑÐµ Ð¼Ð¾ÑÐ¾Ð·Ñ Ð¸ÑÐ¿Ð¾Ð»ÑÐ·ÑÐ¹ÑÐµ Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐµ ÑÐµÑÐµÐ½Ð¸Ñ Ð¸Ð· Ð½Ð°ÑÐµÐ³Ð¾ ÐºÐ°ÑÐ°Ð»Ð¾Ð³Ð°: <a href="/catalog/">ÐÐ°ÐºÐµÑ Â«ÐÐ°ÐºÑÐ¸Ð¼Ð°Ð»ÑÐ½ÑÐ¹ ÑÐ¾Ð´Â»</a> Ð´Ð»Ñ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹ Ð¸Ð»Ð¸ <a href="/catalog/">ÐÐ½ÑÐ¸ÐºÑÐ¸Ð·Ð¸ÑÐ½ÑÐ¹ Ð½Ð°Ð±Ð¾Ñ 220 Ð</a> Ð´Ð»Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ð¾Ð², Ð·Ð°ÑÐ¸ÑÐ°ÑÑÐ¸Ð¹ Ð²Ð°ÑÑ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð¿ÑÐ¾Ð²Ð¾Ð´ÐºÑ.</p>'
+      '<div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a>'
+      '<a class="btn ghost" href="/pains.html">ÐÐ°Ð¹Ð´Ñ: Ð¿ÑÐ¾Ð±Ð»ÐµÐ¼Ñ Ð¸ ÑÐµÑÐµÐ½Ð¸Ñ</a></div></div></div>')
     write_page(os.path.join(outdir,'blog','winter-ev-2026.html'),
-        'Зима близко: на сколько процентов мороз «режет» батарею Zeekr, Li Auto и Voyah | Запас хода',
-        'Честный разбор: физика мороза, деградация CLTC-запаса хода и 3 правила выживания для электромобиля при −20 °C.',
+        'ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾: Ð½Ð° ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð¿ÑÐ¾ÑÐµÐ½ÑÐ¾Ð² Ð¼Ð¾ÑÐ¾Ð· Â«ÑÐµÐ¶ÐµÑÂ» Ð±Ð°ÑÐ°ÑÐµÑ Zeekr, Li Auto Ð¸ Voyah | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'Ð§ÐµÑÑÐ½ÑÐ¹ ÑÐ°Ð·Ð±Ð¾Ñ: ÑÐ¸Ð·Ð¸ÐºÐ° Ð¼Ð¾ÑÐ¾Ð·Ð°, Ð´ÐµÐ³ÑÐ°Ð´Ð°ÑÐ¸Ñ CLTC-Ð·Ð°Ð¿Ð°ÑÐ° ÑÐ¾Ð´Ð° Ð¸ 3 Ð¿ÑÐ°Ð²Ð¸Ð»Ð° Ð²ÑÐ¶Ð¸Ð²Ð°Ð½Ð¸Ñ Ð´Ð»Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»Ñ Ð¿ÑÐ¸ â20 Â°C.',
         W_BODY, '/blog/winter-ev-2026.html', og='/assets/og/b-winter-ev-2026.png',
-        crumbs=[('/blog/','Блог'),('','Зима близко: мороз и батарея EV')])
+        crumbs=[('/blog/','ÐÐ»Ð¾Ð³'),('','ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾: Ð¼Ð¾ÑÐ¾Ð· Ð¸ Ð±Ð°ÑÐ°ÑÐµÑ EV')])
 
-    # SEO-заглушки новых статей (тексты добавит владелец), noindex
+    # SEO-Ð·Ð°Ð³Ð»ÑÑÐºÐ¸ Ð½Ð¾Ð²ÑÑ ÑÑÐ°ÑÐµÐ¹ (ÑÐµÐºÑÑÑ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÐµÑ), noindex
     SEO_STUBS = [
       ('/blog/b2b-reglament-vydachi-ev.html',
-       'Регламент выдачи китайских EV в автосалоне: чек-лист для РОПа',
-       'Готовый стандарт предпродажной подготовки и выдачи BEV/EREV: проверка разъёмов, SOC, комплект зарядки, инструктаж и скрипт передачи машины клиенту.'),
+       'Ð ÐµÐ³Ð»Ð°Ð¼ÐµÐ½Ñ Ð²ÑÐ´Ð°ÑÐ¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð² Ð°Ð²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ðµ: ÑÐµÐº-Ð»Ð¸ÑÑ Ð´Ð»Ñ Ð ÐÐÐ°',
+       'ÐÐ¾ÑÐ¾Ð²ÑÐ¹ ÑÑÐ°Ð½Ð´Ð°ÑÑ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð´Ð°Ð¶Ð½Ð¾Ð¹ Ð¿Ð¾Ð´Ð³Ð¾ÑÐ¾Ð²ÐºÐ¸ Ð¸ Ð²ÑÐ´Ð°ÑÐ¸ BEV/EREV: Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° ÑÐ°Ð·ÑÑÐ¼Ð¾Ð², SOC, ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð·Ð°ÑÑÐ´ÐºÐ¸, Ð¸Ð½ÑÑÑÑÐºÑÐ°Ð¶ Ð¸ ÑÐºÑÐ¸Ð¿Ñ Ð¿ÐµÑÐµÐ´Ð°ÑÐ¸ Ð¼Ð°ÑÐ¸Ð½Ñ ÐºÐ»Ð¸ÐµÐ½ÑÑ.'),
       ('/blog/800v-zaryadka-ev-rossiya.html',
-       'Зарядка EV 800 В в России: Zeekr 007, SU7 и станции 400 В',
-       'Что происходит с 800-вольтовыми машинами (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) на станциях 400 В: мощность, ток адаптера и handshake-сессия.'),
+       'ÐÐ°ÑÑÐ´ÐºÐ° EV 800 Ð Ð² Ð Ð¾ÑÑÐ¸Ð¸: Zeekr 007, SU7 Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸ 400 Ð',
+       'Ð§ÑÐ¾ Ð¿ÑÐ¾Ð¸ÑÑÐ¾Ð´Ð¸Ñ Ñ 800-Ð²Ð¾Ð»ÑÑÐ¾Ð²ÑÐ¼Ð¸ Ð¼Ð°ÑÐ¸Ð½Ð°Ð¼Ð¸ (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) Ð½Ð° ÑÑÐ°Ð½ÑÐ¸ÑÑ 400 Ð: Ð¼Ð¾ÑÐ½Ð¾ÑÑÑ, ÑÐ¾Ðº Ð°Ð´Ð°Ð¿ÑÐµÑÐ° Ð¸ handshake-ÑÐµÑÑÐ¸Ñ.'),
       ('/blog/erekv-domashnyaya-zaryadka.html',
-       'Li Auto L6–L9: почему гибриду нужна домашняя зарядка',
-       'Сценарий владения EREV: ночная домашняя зарядка вместо городской быстрой, математика батареи 40–52 кВтч и правильный набор для дилера.'),
+       'Li Auto L6âL9: Ð¿Ð¾ÑÐµÐ¼Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ñ Ð½ÑÐ¶Ð½Ð° Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°',
+       'Ð¡ÑÐµÐ½Ð°ÑÐ¸Ð¹ Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ EREV: Ð½Ð¾ÑÐ½Ð°Ñ Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ° Ð²Ð¼ÐµÑÑÐ¾ Ð³Ð¾ÑÐ¾Ð´ÑÐºÐ¾Ð¹ Ð±ÑÑÑÑÐ¾Ð¹, Ð¼Ð°ÑÐµÐ¼Ð°ÑÐ¸ÐºÐ° Ð±Ð°ÑÐ°ÑÐµÐ¸ 40â52 ÐºÐÑÑ Ð¸ Ð¿ÑÐ°Ð²Ð¸Ð»ÑÐ½ÑÐ¹ Ð½Ð°Ð±Ð¾Ñ Ð´Ð»Ñ Ð´Ð¸Ð»ÐµÑÐ°.'),
       ('/blog/sertifikaciya-ezs-rf-2026.html',
-       'Сертификация зарядных станций в РФ 2026: ЕАЭС и ГОСТ',
-       'Какие документы обязательны у поставщика ЭЗС (ТР ТС 004/020, ЕАЭС 037), знак ЕАС, требования к монтажу и распределение ответственности.'),
+       'Ð¡ÐµÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ñ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð Ð¤ 2026: ÐÐÐ­Ð¡ Ð¸ ÐÐÐ¡Ð¢',
+       'ÐÐ°ÐºÐ¸Ðµ Ð´Ð¾ÐºÑÐ¼ÐµÐ½ÑÑ Ð¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ñ Ñ Ð¿Ð¾ÑÑÐ°Ð²ÑÐ¸ÐºÐ° Ð­ÐÐ¡ (Ð¢Ð  Ð¢Ð¡ 004/020, ÐÐÐ­Ð¡ 037), Ð·Ð½Ð°Ðº ÐÐÐ¡, ÑÑÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ñ Ðº Ð¼Ð¾Ð½ÑÐ°Ð¶Ñ Ð¸ ÑÐ°ÑÐ¿ÑÐµÐ´ÐµÐ»ÐµÐ½Ð¸Ðµ Ð¾ÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾ÑÑÐ¸.'),
       ('/blog/li-l7-battery-heat.html',
-       'Как активировать скрытый предпрогрев батареи на Li Auto L7 перед быстрой зарядкой',
-       'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.'),
+       'ÐÐ°Ðº Ð°ÐºÑÐ¸Ð²Ð¸ÑÐ¾Ð²Ð°ÑÑ ÑÐºÑÑÑÑÐ¹ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Ð½Ð° Li Auto L7 Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹',
+       'Ð¡ÐºÑÑÑÐ°Ñ ÑÑÐ½ÐºÑÐ¸Ñ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð° Ð±Ð°ÑÐ°ÑÐµÐ¸ Li Auto L7: ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹ Ð·Ð¸Ð¼Ð¾Ð¹ Ð¸ ÑÐºÐ¾Ð»ÑÐºÐ¾ ÐºÐÑÑ ÑÑÐ¾ ÑÐ¾ÑÑÐ°Ð½ÑÐµÑ.'),
       ('/blog/zeekr-001-gbt-diff.html',
-       'Различия портов GB/T AC и DC на рестайлинге Zeekr 001 (2024–2026): как не сжечь инвертор',
-       'Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.'),
+       'Ð Ð°Ð·Ð»Ð¸ÑÐ¸Ñ Ð¿Ð¾ÑÑÐ¾Ð² GB/T AC Ð¸ DC Ð½Ð° ÑÐµÑÑÐ°Ð¹Ð»Ð¸Ð½Ð³Ðµ Zeekr 001 (2024â2026): ÐºÐ°Ðº Ð½Ðµ ÑÐ¶ÐµÑÑ Ð¸Ð½Ð²ÐµÑÑÐ¾Ñ',
+       'ÐÐ¾ÑÑÑ GB/T AC Ð¸ DC Ð½Ð° Zeekr 001 2024â2026: ÑÐ°Ð·Ð»Ð¸ÑÐ¸Ñ, ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð², ÑÐ¸Ð¿Ð¾Ð²ÑÐµ Ð¾ÑÐ¸Ð±ÐºÐ¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ².'),
       ('/blog/workersbee-vs-auxus.html',
-       'Битва брендов: Workersbee против Auxus — какой кабель переживет русскую зиму?',
-       'Сравнение кабелей Workersbee и Auxus для зарядки EV зимой: материалы, температурные тесты, надёжность замков и цена.'),
+       'ÐÐ¸ÑÐ²Ð° Ð±ÑÐµÐ½Ð´Ð¾Ð²: Workersbee Ð¿ÑÐ¾ÑÐ¸Ð² Auxus â ÐºÐ°ÐºÐ¾Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð¿ÐµÑÐµÐ¶Ð¸Ð²ÐµÑ ÑÑÑÑÐºÑÑ Ð·Ð¸Ð¼Ñ?',
+       'Ð¡ÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ ÐºÐ°Ð±ÐµÐ»ÐµÐ¹ Workersbee Ð¸ Auxus Ð´Ð»Ñ Ð·Ð°ÑÑÐ´ÐºÐ¸ EV Ð·Ð¸Ð¼Ð¾Ð¹: Ð¼Ð°ÑÐµÑÐ¸Ð°Ð»Ñ, ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÐ½ÑÐµ ÑÐµÑÑÑ, Ð½Ð°Ð´ÑÐ¶Ð½Ð¾ÑÑÑ Ð·Ð°Ð¼ÐºÐ¾Ð² Ð¸ ÑÐµÐ½Ð°.'),
     ]
     BLOG_READY = {
       '/blog/zeekr-001-gbt-diff.html': {
-        'title': 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки',
-        'desc': 'Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.',
+        'title': 'ÐÐ¾ÑÑÑ GB/T AC Ð¸ DC Ð½Ð° Zeekr 001: ÑÐ°Ð·Ð»Ð¸ÑÐ¸Ñ Ð¸ Ð¾ÑÐ¸Ð±ÐºÐ¸',
+        'desc': 'ÐÐ¾ÑÑÑ GB/T AC Ð¸ DC Ð½Ð° Zeekr 001 2024â2026: ÑÐ°Ð·Ð»Ð¸ÑÐ¸Ñ, ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð¸ Ð¿ÐµÑÐµÑÐ¾Ð´Ð½Ð¸ÐºÐ¾Ð², ÑÐ¸Ð¿Ð¾Ð²ÑÐµ Ð¾ÑÐ¸Ð±ÐºÐ¸ Ð²Ð»Ð°Ð´ÐµÐ»ÑÑÐµÐ².',
         'og': '/assets/og/b-zeekr-001-gbt-diff.png',
         'body': ZEEKR_BODY,
       },
       '/blog/li-l7-battery-heat.html': {
-        'title': 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой',
-        'desc': 'Скрытая функция предпрогрева батареи Li Auto L7: как включить перед быстрой зарядкой зимой и сколько кВтч это сохраняет.',
+        'title': 'ÐÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Li Auto L7 Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹',
+        'desc': 'Ð¡ÐºÑÑÑÐ°Ñ ÑÑÐ½ÐºÑÐ¸Ñ Ð¿ÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ²Ð° Ð±Ð°ÑÐ°ÑÐµÐ¸ Li Auto L7: ÐºÐ°Ðº Ð²ÐºÐ»ÑÑÐ¸ÑÑ Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹ Ð·Ð¸Ð¼Ð¾Ð¹ Ð¸ ÑÐºÐ¾Ð»ÑÐºÐ¾ ÐºÐÑÑ ÑÑÐ¾ ÑÐ¾ÑÑÐ°Ð½ÑÐµÑ.',
         'og': '/assets/og/b-li-l7-battery-heat.png',
         'body': LI_BODY,
       },
       '/blog/workersbee-vs-auxus.html': {
-        'title': 'Workersbee против Auxus: какой кабель выдержит русскую зиму',
-        'desc': 'Честное сравнение зарядных кабелей Workersbee и Auxus: TPU против TPE на морозе, посеребрённые контакты против датчиков температуры, вердикт для трассы и для дачи.',
+        'title': 'Workersbee Ð¿ÑÐ¾ÑÐ¸Ð² Auxus: ÐºÐ°ÐºÐ¾Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð²ÑÐ´ÐµÑÐ¶Ð¸Ñ ÑÑÑÑÐºÑÑ Ð·Ð¸Ð¼Ñ',
+        'desc': 'Ð§ÐµÑÑÐ½Ð¾Ðµ ÑÑÐ°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÐºÐ°Ð±ÐµÐ»ÐµÐ¹ Workersbee Ð¸ Auxus: TPU Ð¿ÑÐ¾ÑÐ¸Ð² TPE Ð½Ð° Ð¼Ð¾ÑÐ¾Ð·Ðµ, Ð¿Ð¾ÑÐµÑÐµÐ±ÑÑÐ½Ð½ÑÐµ ÐºÐ¾Ð½ÑÐ°ÐºÑÑ Ð¿ÑÐ¾ÑÐ¸Ð² Ð´Ð°ÑÑÐ¸ÐºÐ¾Ð² ÑÐµÐ¼Ð¿ÐµÑÐ°ÑÑÑÑ, Ð²ÐµÑÐ´Ð¸ÐºÑ Ð´Ð»Ñ ÑÑÐ°ÑÑÑ Ð¸ Ð´Ð»Ñ Ð´Ð°ÑÐ¸.',
         'og': '/assets/og/b-workersbee-vs-auxus.png',
         'body': WORKERSBEE_BODY,
-      },
-      '/blog/b2b-reglament-vydachi-ev.html': {
-        'title': 'Регламент выдачи китайских EV в автосалоне: чек-лист для РОПа',
-        'desc': 'Готовый стандарт предпродажной подготовки и выдачи BEV/EREV: проверка разъёмов, SOC, комплект зарядки, инструктаж и скрипт передачи машины клиенту.',
-        'og': '/assets/og/b-b2b-reglament-vydachi-ev.png',
-        'body': B2B_ART1_BODY,
-      },
-      '/blog/800v-zaryadka-ev-rossiya.html': {
-        'title': 'Зарядка EV 800 В в России: Zeekr 007, SU7 и станции 400 В',
-        'desc': 'Что происходит с 800-вольтовыми машинами (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) на станциях 400 В: мощность, ток адаптера и handshake-сессия.',
-        'og': '/assets/og/b-800v-zaryadka-ev-rossiya.png',
-        'body': B2B_ART2_BODY,
-      },
-      '/blog/erekv-domashnyaya-zaryadka.html': {
-        'title': 'Li Auto L6–L9: почему гибриду нужна домашняя зарядка',
-        'desc': 'Сценарий владения EREV: ночная домашняя зарядка вместо городской быстрой, математика батареи 40–52 кВтч и правильный набор для дилера.',
-        'og': '/assets/og/b-erekv-domashnyaya-zaryadka.png',
-        'body': B2B_ART3_BODY,
-      },
-      '/blog/sertifikaciya-ezs-rf-2026.html': {
-        'title': 'Сертификация зарядных станций в РФ 2026: ЕАЭС и ГОСТ',
-        'desc': 'Какие документы обязательны у поставщика ЭЗС (ТР ТС 004/020, ЕАЭС 037), знак ЕАС, требования к монтажу и распределение ответственности.',
-        'og': '/assets/og/b-sertifikaciya-ezs-rf-2026.png',
-        'body': B2B_ART4_BODY,
       },
     }
     for _u, _t, _d in SEO_STUBS:
         if _u in BLOG_READY:
             _r = BLOG_READY[_u]
             _p = _u[1:].rsplit('/', 1)
-            write_page(os.path.join(outdir, _p[0], _p[1]), _r['title'] + ' | Запас хода',
+            write_page(os.path.join(outdir, _p[0], _p[1]), _r['title'] + ' | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
                        _r['desc'], _r['body'], _u, og=_r['og'],
-                       crumbs=[('/blog/', 'Блог'), ('', _r['title'].split(':')[0])])
+                       crumbs=[('/blog/', 'ÐÐ»Ð¾Ð³'), ('', _r['title'].split(':')[0])])
             continue
-        _body = ('<div class="container"><div class="hero"><div class="kicker">Блог · готовится</div>'
+        _body = ('<div class="container"><div class="hero"><div class="kicker">ÐÐ»Ð¾Ð³ Â· Ð³Ð¾ÑÐ¾Ð²Ð¸ÑÑÑ</div>'
           '<h1>' + html.escape(_t) + '</h1>'
           '<p class="lede">' + html.escape(_d) + '</p>'
-          '<div class="tldr"><b>Коротко:</b> статья готовится — добавим в неё разбор по нашей базе совместимости 145 моделей EV.</div>'
-          '<div class="cta"><a class="btn lime" href="/quiz/">⚡️ Подобрать комплект под мою модель</a>'
-          '<a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
-          '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>')
+          '<div class="tldr"><b>ÐÐ¾ÑÐ¾ÑÐºÐ¾:</b> ÑÑÐ°ÑÑÑ Ð³Ð¾ÑÐ¾Ð²Ð¸ÑÑÑ â Ð´Ð¾Ð±Ð°Ð²Ð¸Ð¼ Ð² Ð½ÐµÑ ÑÐ°Ð·Ð±Ð¾Ñ Ð¿Ð¾ Ð½Ð°ÑÐµÐ¹ Ð±Ð°Ð·Ðµ ÑÐ¾Ð²Ð¼ÐµÑÑÐ¸Ð¼Ð¾ÑÑÐ¸ 145 Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ EV.</div>'
+          '<div class="cta"><a class="btn lime" href="/quiz/">â¡ï¸ ÐÐ¾Ð´Ð¾Ð±ÑÐ°ÑÑ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ð¾Ð´ Ð¼Ð¾Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</a>'
+          '<a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a>'
+          '<a class="btn ghost" href="/blog/">ÐÑÐµ ÑÑÐ°ÑÑÐ¸ Ð±Ð»Ð¾Ð³Ð°</a></div></div></div>')
         _p = _u[1:].rsplit('/', 1)
         write_page(os.path.join(outdir, _p[0], _p[1]),
-            _t + ' | Запас хода', _d, _body, _u, noindex=True)
+            _t + ' | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', _d, _body, _u, noindex=True)
 
-    # ==== SHOP: цифровые гайды (Т-Касса / интернет-эквайринг Т-Банка) ====
+    # ==== SHOP: ÑÐ¸ÑÑÐ¾Ð²ÑÐµ Ð³Ð°Ð¹Ð´Ñ (Ð¢-ÐÐ°ÑÑÐ° / Ð¸Ð½ÑÐµÑÐ½ÐµÑ-ÑÐºÐ²Ð°Ð¹ÑÐ¸Ð½Ð³ Ð¢-ÐÐ°Ð½ÐºÐ°) ====
     _shop = load_site_config().get('shop') or {}
     _price = int(_shop.get('digital_guide_price', 490))
-    _gtitle = _shop.get('guide_title', 'Гайд М-4 «Дон»')
+    _gtitle = _shop.get('guide_title', 'ÐÐ°Ð¹Ð´ Ð-4 Â«ÐÐ¾Ð½Â»')
     _gdesc = _shop.get('guide_desc', '')
     _uses = int(_shop.get('shop_token_max_uses', 3))
     _ttl = int(_shop.get('shop_token_ttl_hours', 24))
@@ -4572,24 +4531,24 @@ def main():
         _inputs = ''
         _btn = ''
         if _plive:
-            _inputs = ('<label class="lbl" for="em-' + _psl + '">Email для доставки</label>'
+            _inputs = ('<label class="lbl" for="em-' + _psl + '">Email Ð´Ð»Ñ Ð´Ð¾ÑÑÐ°Ð²ÐºÐ¸</label>'
               '<input id="em-' + _psl + '" class="buy-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">'
-              '<label class="lbl" for="ph-' + _psl + '">Телефон (попадёт в водяной знак PDF)</label>'
+              '<label class="lbl" for="ph-' + _psl + '">Ð¢ÐµÐ»ÐµÑÐ¾Ð½ (Ð¿Ð¾Ð¿Ð°Ð´ÑÑ Ð² Ð²Ð¾Ð´ÑÐ½Ð¾Ð¹ Ð·Ð½Ð°Ðº PDF)</label>'
               '<input id="ph-' + _psl + '" class="buy-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 XXX XXX-XX-XX">')
-            _btn = '<button class="btn lime buy-btn" type="button" data-product="' + _psl + '">Купить за ' + str(_pp) + ' ₽</button>'
+            _btn = '<button class="btn lime buy-btn" type="button" data-product="' + _psl + '">ÐÑÐ¿Ð¸ÑÑ Ð·Ð° ' + str(_pp) + ' â½</button>'
         else:
-            _btn = '<span class="soon-badge">Скоро в продаже — ' + str(_pp) + ' ₽</span>'
-        _prodcards.append('<div class="prodcard"><h3>' + _pt + '</h3><p>' + _pd + '</p><div class="price">' + str(_pp) + ' ₽</div>' + _inputs + _btn + '</div>')
+            _btn = '<span class="soon-badge">Ð¡ÐºÐ¾ÑÐ¾ Ð² Ð¿ÑÐ¾Ð´Ð°Ð¶Ðµ â ' + str(_pp) + ' â½</span>'
+        _prodcards.append('<div class="prodcard"><h3>' + _pt + '</h3><p>' + _pd + '</p><div class="price">' + str(_pp) + ' â½</div>' + _inputs + _btn + '</div>')
     _minprice = min([int(p.get('price', _price) or _price) for p in _plist])
-    _buy_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · цифровые товары</div>'
-      '<h1>Цифровые гайды «Запас хода»</h1>'
-      '<p class="lede">Практические PDF-гайды по зарядной инфраструктуре: трасса М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядка на парковке ЖК. Пишем по проверенным фактам — без фейковых обещаний.</p>'
-      '<div class="tldr"><b>Как проходит покупка:</b> вводите email и телефон → платёж на защищённой странице Т-Кассы (карта или СБП) → ссылка на скачивание PDF (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний) появится здесь же и придёт письмом. Прямой ссылки на файл не существует, а на страницы PDF наносится персональный водяной знак с вашими email и телефоном — защита от слива в чаты.</div>'
+    _buy_body = ('<div class="container"><div class="hero"><div class="kicker">ÐÐ°Ð³Ð°Ð·Ð¸Ð½ Â· ÑÐ¸ÑÑÐ¾Ð²ÑÐµ ÑÐ¾Ð²Ð°ÑÑ</div>'
+      '<h1>Ð¦Ð¸ÑÑÐ¾Ð²ÑÐµ Ð³Ð°Ð¹Ð´Ñ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â»</h1>'
+      '<p class="lede">ÐÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ðµ PDF-Ð³Ð°Ð¹Ð´Ñ Ð¿Ð¾ Ð·Ð°ÑÑÐ´Ð½Ð¾Ð¹ Ð¸Ð½ÑÑÐ°ÑÑÑÑÐºÑÑÑÐµ: ÑÑÐ°ÑÑÐ° Ð-4 Â«ÐÐ¾Ð½Â», Ð-11 Â«ÐÐµÐ²Ð°Â», Ð-12 Â«ÐÐ¾ÑÑÐ¾ÐºÂ» Ð¸ Ð·Ð°ÑÑÐ´ÐºÐ° Ð½Ð° Ð¿Ð°ÑÐºÐ¾Ð²ÐºÐµ ÐÐ. ÐÐ¸ÑÐµÐ¼ Ð¿Ð¾ Ð¿ÑÐ¾Ð²ÐµÑÐµÐ½Ð½ÑÐ¼ ÑÐ°ÐºÑÐ°Ð¼ â Ð±ÐµÐ· ÑÐµÐ¹ÐºÐ¾Ð²ÑÑ Ð¾Ð±ÐµÑÐ°Ð½Ð¸Ð¹.</p>'
+      '<div class="tldr"><b>ÐÐ°Ðº Ð¿ÑÐ¾ÑÐ¾Ð´Ð¸Ñ Ð¿Ð¾ÐºÑÐ¿ÐºÐ°:</b> Ð²Ð²Ð¾Ð´Ð¸ÑÐµ email Ð¸ ÑÐµÐ»ÐµÑÐ¾Ð½ â Ð¿Ð»Ð°ÑÑÐ¶ Ð½Ð° Ð·Ð°ÑÐ¸ÑÑÐ½Ð½Ð¾Ð¹ ÑÑÑÐ°Ð½Ð¸ÑÐµ Ð¢-ÐÐ°ÑÑÑ (ÐºÐ°ÑÑÐ° Ð¸Ð»Ð¸ Ð¡ÐÐ) â ÑÑÑÐ»ÐºÐ° Ð½Ð° ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ PDF (Ð´ÐµÐ¹ÑÑÐ²ÑÐµÑ ' + str(_ttl) + ' Ñ, Ð´Ð¾ ' + str(_uses) + ' ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹) Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ Ð·Ð´ÐµÑÑ Ð¶Ðµ Ð¸ Ð¿ÑÐ¸Ð´ÑÑ Ð¿Ð¸ÑÑÐ¼Ð¾Ð¼. ÐÑÑÐ¼Ð¾Ð¹ ÑÑÑÐ»ÐºÐ¸ Ð½Ð° ÑÐ°Ð¹Ð» Ð½Ðµ ÑÑÑÐµÑÑÐ²ÑÐµÑ, Ð° Ð½Ð° ÑÑÑÐ°Ð½Ð¸ÑÑ PDF Ð½Ð°Ð½Ð¾ÑÐ¸ÑÑÑ Ð¿ÐµÑÑÐ¾Ð½Ð°Ð»ÑÐ½ÑÐ¹ Ð²Ð¾Ð´ÑÐ½Ð¾Ð¹ Ð·Ð½Ð°Ðº Ñ Ð²Ð°ÑÐ¸Ð¼Ð¸ email Ð¸ ÑÐµÐ»ÐµÑÐ¾Ð½Ð¾Ð¼ â Ð·Ð°ÑÐ¸ÑÐ° Ð¾Ñ ÑÐ»Ð¸Ð²Ð° Ð² ÑÐ°ÑÑ.</div>'
       '<div class="prodcards">' + ''.join(_prodcards) + '</div>'
       '<div id="buy-msg" role="status" style="font-size:14px;min-height:20px;color:#9fb3aa"></div>'
-      '<p class="fineprint" style="color:#8aa096;font-size:13px">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка действует ' + str(_ttl) + ' ч и до ' + str(_uses) + ' скачиваний; повторная выдача — по запросу в поддержку.</p>'
-      '<div class="cta"><a class="btn ghost" href="/catalog/">Каталог оборудования</a>'
-      '<a class="btn ghost" href="/blog/">Все статьи блога</a></div></div></div>'
+      '<p class="fineprint" style="color:#8aa096;font-size:13px">ÐÐ¿Ð»Ð°ÑÐ° ÑÐµÑÐµÐ· Ð¢-ÐÐ°ÑÑÑ (Ð¸Ð½ÑÐµÑÐ½ÐµÑ-ÑÐºÐ²Ð°Ð¹ÑÐ¸Ð½Ð³ Ð¢-ÐÐ°Ð½ÐºÐ°). Ð§ÐµÐº Ð¿Ð¾ 54-Ð¤Ð ÑÐ¾ÑÐ¼Ð¸ÑÑÐµÑÑÑ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸. Ð¡ÑÑÐ»ÐºÐ° Ð´ÐµÐ¹ÑÑÐ²ÑÐµÑ ' + str(_ttl) + ' Ñ Ð¸ Ð´Ð¾ ' + str(_uses) + ' ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹; Ð¿Ð¾Ð²ÑÐ¾ÑÐ½Ð°Ñ Ð²ÑÐ´Ð°ÑÐ° â Ð¿Ð¾ Ð·Ð°Ð¿ÑÐ¾ÑÑ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ.</p>'
+      '<div class="cta"><a class="btn ghost" href="/catalog/">ÐÐ°ÑÐ°Ð»Ð¾Ð³ Ð¾Ð±Ð¾ÑÑÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ</a>'
+      '<a class="btn ghost" href="/blog/">ÐÑÐµ ÑÑÐ°ÑÑÐ¸ Ð±Ð»Ð¾Ð³Ð°</a></div></div></div>'
       '<script>'
       '(function(){'
       'var gas="' + GAS_URL + '",msg=document.getElementById("buy-msg");'
@@ -4600,24 +4559,24 @@ def main():
       'var card=btn.closest(".prodcard");'
       'var emEl=card.querySelector(".buy-email");var em=((emEl||{}).value||"").trim();'
       'var phn=card.querySelector(".buy-phone");var ph=norm((phn||{}).value||"");'
-      'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(em)){say("Введите корректный email — на него придёт дубль ссылки.");return;}'
-      'if(!ph){say("Введите телефон в формате +7 XXX XXX-XX-XX — он нужен для водяного знака.");return;}'
-      'btn.disabled=true;say("Создаём платёж…");'
+      'if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$/.test(em)){say("ÐÐ²ÐµÐ´Ð¸ÑÐµ ÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ email â Ð½Ð° Ð½ÐµÐ³Ð¾ Ð¿ÑÐ¸Ð´ÑÑ Ð´ÑÐ±Ð»Ñ ÑÑÑÐ»ÐºÐ¸.");return;}'
+      'if(!ph){say("ÐÐ²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ»ÐµÑÐ¾Ð½ Ð² ÑÐ¾ÑÐ¼Ð°ÑÐµ +7 XXX XXX-XX-XX â Ð¾Ð½ Ð½ÑÐ¶ÐµÐ½ Ð´Ð»Ñ Ð²Ð¾Ð´ÑÐ½Ð¾Ð³Ð¾ Ð·Ð½Ð°ÐºÐ°.");return;}'
+      'btn.disabled=true;say("Ð¡Ð¾Ð·Ð´Ð°ÑÐ¼ Ð¿Ð»Ð°ÑÑÐ¶â¦");'
       'fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:em,phone:ph,product:btn.getAttribute("data-product")})})'
       '.then(function(r){return r.json();})'
-      '.then(function(j){if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}else{btn.disabled=false;say("Платёж не создан"+(j&&j.error?(" — "+j.error):"")+". Попробуйте позже или напишите в поддержку.");}})'
-      '.catch(function(){btn.disabled=false;say("Ошибка сети — попробуйте ещё раз.");});'
+      '.then(function(j){if(j&&j.ok&&j.paymentUrl){say("ÐÐµÑÐµÐ½Ð°Ð¿ÑÐ°Ð²Ð»ÑÐµÐ¼ Ð½Ð° Ð·Ð°ÑÐ¸ÑÑÐ½Ð½ÑÑ Ð¾Ð¿Ð»Ð°ÑÑâ¦");window.location.href=j.paymentUrl;}else{btn.disabled=false;say("ÐÐ»Ð°ÑÑÐ¶ Ð½Ðµ ÑÐ¾Ð·Ð´Ð°Ð½"+(j&&j.error?(" â "+j.error):"")+". ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ Ð¸Ð»Ð¸ Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ.");}})'
+      '.catch(function(){btn.disabled=false;say("ÐÑÐ¸Ð±ÐºÐ° ÑÐµÑÐ¸ â Ð¿Ð¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ ÐµÑÑ ÑÐ°Ð·.");});'
       '});});'
       '})();</script>'
     )
     write_page(os.path.join(outdir, 'shop', 'digital', 'index.html'),
-        'Цифровые гайды «Запас хода» (PDF) — купить за ' + str(_minprice) + ' ₽ | Запас хода',
-        'Практические PDF-гайды: трассы М-4 «Дон», М-11, М-12, зарядка в ЖК. Оплата картой или СБП через Т-Кассу, персональная одноразовая ссылка на скачивание.',
-        _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'Магазин')], noindex=(not SHOP_LIVE))
-    _succ_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · оплата</div>'
-      '<h1 id="succ-title">Проверяем оплату…</h1>'
-      '<div id="succ-box" class="tldr"><p>Минуту…</p></div>'
-      '<div class="cta"><a class="btn ghost" href="/shop/digital/">Вернуться к гайду</a></div></div></div>'
+        'Ð¦Ð¸ÑÑÐ¾Ð²ÑÐµ Ð³Ð°Ð¹Ð´Ñ Â«ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°Â» (PDF) â ÐºÑÐ¿Ð¸ÑÑ Ð·Ð° ' + str(_minprice) + ' â½ | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°',
+        'ÐÑÐ°ÐºÑÐ¸ÑÐµÑÐºÐ¸Ðµ PDF-Ð³Ð°Ð¹Ð´Ñ: ÑÑÐ°ÑÑÑ Ð-4 Â«ÐÐ¾Ð½Â», Ð-11, Ð-12, Ð·Ð°ÑÑÐ´ÐºÐ° Ð² ÐÐ. ÐÐ¿Ð»Ð°ÑÐ° ÐºÐ°ÑÑÐ¾Ð¹ Ð¸Ð»Ð¸ Ð¡ÐÐ ÑÐµÑÐµÐ· Ð¢-ÐÐ°ÑÑÑ, Ð¿ÐµÑÑÐ¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð¾Ð´Ð½Ð¾ÑÐ°Ð·Ð¾Ð²Ð°Ñ ÑÑÑÐ»ÐºÐ° Ð½Ð° ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ.',
+        _buy_body, '/shop/digital/', og='/assets/og/shop-digital.png', crumbs=[('', 'ÐÐ°Ð³Ð°Ð·Ð¸Ð½')], noindex=(not SHOP_LIVE))
+    _succ_body = ('<div class="container"><div class="hero"><div class="kicker">ÐÐ°Ð³Ð°Ð·Ð¸Ð½ Â· Ð¾Ð¿Ð»Ð°ÑÐ°</div>'
+      '<h1 id="succ-title">ÐÑÐ¾Ð²ÐµÑÑÐµÐ¼ Ð¾Ð¿Ð»Ð°ÑÑâ¦</h1>'
+      '<div id="succ-box" class="tldr"><p>ÐÐ¸Ð½ÑÑÑâ¦</p></div>'
+      '<div class="cta"><a class="btn ghost" href="/shop/digital/">ÐÐµÑÐ½ÑÑÑÑÑ Ðº Ð³Ð°Ð¹Ð´Ñ</a></div></div></div>'
       '<script>'
       '(function(){'
       'var gas="' + GAS_URL + '";'
@@ -4626,68 +4585,67 @@ def main():
       'var title=document.getElementById("succ-title"),box=document.getElementById("succ-box");'
       'function h1(t){title.textContent=t;}'
       'function bh(h){box.innerHTML=h;}'
-      'if(fail){h1("Оплата не прошла");bh("<p>Платёж не был завершён или отменён. Можно <a href=\'/shop/digital/\'>повторить попытку</a>.</p>");return;}'
-      'if(!oid){h1("Нет данных заказа");bh("<p>Откройте эту страницу по ссылке из письма или сразу после оплаты.</p>");return;}'
+      'if(fail){h1("ÐÐ¿Ð»Ð°ÑÐ° Ð½Ðµ Ð¿ÑÐ¾ÑÐ»Ð°");bh("<p>ÐÐ»Ð°ÑÑÐ¶ Ð½Ðµ Ð±ÑÐ» Ð·Ð°Ð²ÐµÑÑÑÐ½ Ð¸Ð»Ð¸ Ð¾ÑÐ¼ÐµÐ½ÑÐ½. ÐÐ¾Ð¶Ð½Ð¾ <a href=\'/shop/digital/\'>Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÑ Ð¿Ð¾Ð¿ÑÑÐºÑ</a>.</p>");return;}'
+      'if(!oid){h1("ÐÐµÑ Ð´Ð°Ð½Ð½ÑÑ Ð·Ð°ÐºÐ°Ð·Ð°");bh("<p>ÐÑÐºÑÐ¾Ð¹ÑÐµ ÑÑÑ ÑÑÑÐ°Ð½Ð¸ÑÑ Ð¿Ð¾ ÑÑÑÐ»ÐºÐµ Ð¸Ð· Ð¿Ð¸ÑÑÐ¼Ð° Ð¸Ð»Ð¸ ÑÑÐ°Ð·Ñ Ð¿Ð¾ÑÐ»Ðµ Ð¾Ð¿Ð»Ð°ÑÑ.</p>");return;}'
       'var tries=0;'
       'function poll(){'
       'tries++;'
       'fetch(gas+"?shop_status="+encodeURIComponent(oid)).then(function(r){return r.json();}).then(function(j){'
       'if(j&&j.status==="paid"){'
-      'h1("Оплата прошла — гайд ваш 🎉");'
-      'if(j.download_status==="limit-reached"){bh("<p><b>Лимит скачиваний исчерпан (' + str(_uses) + ').</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
-      'else if(j.download_status==="expired"){bh("<p><b>Срок действия ссылки истёк (' + str(_ttl) + ' ч).</b> PDF отправлен на ваш email при оплате. Нужна повторная выдача — напишите нам.</p>");}'
-      'else if(j.token){bh("<p>Ссылка на скачивание (действует ' + str(_ttl) + ' ч, до ' + str(_uses) + ' скачиваний):</p><p><a class=\'btn lime\' href=\'/shop/digital/download.html?token="+j.token+"\' style=\'display:inline-block;margin:8px 0\'>⬇️ Скачать PDF</a></p><p>Дубль отправлен на email, указанный при оплате.</p>");}'
-      'else{bh("<p>Токен не найден — напишите в поддержку, номер заказа: "+oid+".</p>");}}'
+      'h1("ÐÐ¿Ð»Ð°ÑÐ° Ð¿ÑÐ¾ÑÐ»Ð° â Ð³Ð°Ð¹Ð´ Ð²Ð°Ñ ð");'
+      'if(j.download_status==="limit-reached"){bh("<p><b>ÐÐ¸Ð¼Ð¸Ñ ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹ Ð¸ÑÑÐµÑÐ¿Ð°Ð½ (' + str(_uses) + ').</b> PDF Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½ Ð½Ð° Ð²Ð°Ñ email Ð¿ÑÐ¸ Ð¾Ð¿Ð»Ð°ÑÐµ. ÐÑÐ¶Ð½Ð° Ð¿Ð¾Ð²ÑÐ¾ÑÐ½Ð°Ñ Ð²ÑÐ´Ð°ÑÐ° â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð½Ð°Ð¼.</p>");}'
+      'else if(j.download_status==="expired"){bh("<p><b>Ð¡ÑÐ¾Ðº Ð´ÐµÐ¹ÑÑÐ²Ð¸Ñ ÑÑÑÐ»ÐºÐ¸ Ð¸ÑÑÑÐº (' + str(_ttl) + ' Ñ).</b> PDF Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½ Ð½Ð° Ð²Ð°Ñ email Ð¿ÑÐ¸ Ð¾Ð¿Ð»Ð°ÑÐµ. ÐÑÐ¶Ð½Ð° Ð¿Ð¾Ð²ÑÐ¾ÑÐ½Ð°Ñ Ð²ÑÐ´Ð°ÑÐ° â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð½Ð°Ð¼.</p>");}'
+      'else if(j.token){bh("<p>Ð¡ÑÑÐ»ÐºÐ° Ð½Ð° ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ (Ð´ÐµÐ¹ÑÑÐ²ÑÐµÑ ' + str(_ttl) + ' Ñ, Ð´Ð¾ ' + str(_uses) + ' ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹):</p><p><a class=\'btn lime\' href=\'/shop/digital/download.html?token="+j.token+"\' style=\'display:inline-block;margin:8px 0\'>â¬ï¸ Ð¡ÐºÐ°ÑÐ°ÑÑ PDF</a></p><p>ÐÑÐ±Ð»Ñ Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½ Ð½Ð° email, ÑÐºÐ°Ð·Ð°Ð½Ð½ÑÐ¹ Ð¿ÑÐ¸ Ð¾Ð¿Ð»Ð°ÑÐµ.</p>");}'
+      'else{bh("<p>Ð¢Ð¾ÐºÐµÐ½ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ â Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ, Ð½Ð¾Ð¼ÐµÑ Ð·Ð°ÐºÐ°Ð·Ð°: "+oid+".</p>");}}'
       'else if(j&&j.status&&j.status!=="unknown"){'
-      'if(tries<12){setTimeout(poll,4000);}else{h1("Оплата в обработке");bh("<p>Уведомление от банка обычно приходит за 1–2 минуты. Обновите страницу через пару минут — или проверьте email, ссылка придёт и туда.</p><p>Номер заказа: <b>"+oid+"</b></p>");}}'
-      'else{bh("<p>Заказ не найден. Номер: "+oid+". Напишите в поддержку.</p>");}'
-      '}).catch(function(){if(tries<12){setTimeout(poll,4000);}else{bh("<p>Ошибка сети при проверке статуса. Номер заказа: "+oid+".</p>");}});}'
+      'if(tries<12){setTimeout(poll,4000);}else{h1("ÐÐ¿Ð»Ð°ÑÐ° Ð² Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐºÐµ");bh("<p>Ð£Ð²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ Ð±Ð°Ð½ÐºÐ° Ð¾Ð±ÑÑÐ½Ð¾ Ð¿ÑÐ¸ÑÐ¾Ð´Ð¸Ñ Ð·Ð° 1â2 Ð¼Ð¸Ð½ÑÑÑ. ÐÐ±Ð½Ð¾Ð²Ð¸ÑÐµ ÑÑÑÐ°Ð½Ð¸ÑÑ ÑÐµÑÐµÐ· Ð¿Ð°ÑÑ Ð¼Ð¸Ð½ÑÑ â Ð¸Ð»Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÑÑÐµ email, ÑÑÑÐ»ÐºÐ° Ð¿ÑÐ¸Ð´ÑÑ Ð¸ ÑÑÐ´Ð°.</p><p>ÐÐ¾Ð¼ÐµÑ Ð·Ð°ÐºÐ°Ð·Ð°: <b>"+oid+"</b></p>");}}'
+      'else{bh("<p>ÐÐ°ÐºÐ°Ð· Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½. ÐÐ¾Ð¼ÐµÑ: "+oid+". ÐÐ°Ð¿Ð¸ÑÐ¸ÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ.</p>");}'
+      '}).catch(function(){if(tries<12){setTimeout(poll,4000);}else{bh("<p>ÐÑÐ¸Ð±ÐºÐ° ÑÐµÑÐ¸ Ð¿ÑÐ¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐµ ÑÑÐ°ÑÑÑÐ°. ÐÐ¾Ð¼ÐµÑ Ð·Ð°ÐºÐ°Ð·Ð°: "+oid+".</p>");}});}'
       'poll();})();</script>'
     )
     write_page(os.path.join(outdir, 'shop', 'digital', 'success.html'),
-        'Оплата | Запас хода', 'Статус оплаты и выдача цифрового гайда.',
+        'ÐÐ¿Ð»Ð°ÑÐ° | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'Ð¡ÑÐ°ÑÑÑ Ð¾Ð¿Ð»Ð°ÑÑ Ð¸ Ð²ÑÐ´Ð°ÑÐ° ÑÐ¸ÑÑÐ¾Ð²Ð¾Ð³Ð¾ Ð³Ð°Ð¹Ð´Ð°.',
         _succ_body, '/shop/digital/success.html', noindex=True)
-    _dl_body = ('<div class="container"><div class="hero"><div class="kicker">Магазин · скачивание</div>'
-      '<h1>Подготовка файла…</h1>'
-      '<p class="lede">Если вас не перенаправило автоматически — включите JavaScript или напишите в поддержку: выдача защищена токеном.</p>'
+    _dl_body = ('<div class="container"><div class="hero"><div class="kicker">ÐÐ°Ð³Ð°Ð·Ð¸Ð½ Â· ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ</div>'
+      '<h1>ÐÐ¾Ð´Ð³Ð¾ÑÐ¾Ð²ÐºÐ° ÑÐ°Ð¹Ð»Ð°â¦</h1>'
+      '<p class="lede">ÐÑÐ»Ð¸ Ð²Ð°Ñ Ð½Ðµ Ð¿ÐµÑÐµÐ½Ð°Ð¿ÑÐ°Ð²Ð¸Ð»Ð¾ Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸ â Ð²ÐºÐ»ÑÑÐ¸ÑÐµ JavaScript Ð¸Ð»Ð¸ Ð½Ð°Ð¿Ð¸ÑÐ¸ÑÐµ Ð² Ð¿Ð¾Ð´Ð´ÐµÑÐ¶ÐºÑ: Ð²ÑÐ´Ð°ÑÐ° Ð·Ð°ÑÐ¸ÑÐµÐ½Ð° ÑÐ¾ÐºÐµÐ½Ð¾Ð¼.</p>'
       '<script>'
       '(function(){'
       'var gas="' + GAS_URL + '";'
       'var t=new URLSearchParams(location.search).get("token")||"";'
       'if(t){window.location.href=gas+"?t="+encodeURIComponent(t);}'
-      '})();</script>'
-      '</div></div>')
+      '})();</script>')
     write_page(os.path.join(outdir, 'shop', 'digital', 'download.html'),
-        'Скачивание гайда | Запас хода', 'Выдача гайда по токену с ограничением времени и числа скачиваний.',
+        'Ð¡ÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ðµ Ð³Ð°Ð¹Ð´Ð° | ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð°', 'ÐÑÐ´Ð°ÑÐ° Ð³Ð°Ð¹Ð´Ð° Ð¿Ð¾ ÑÐ¾ÐºÐµÐ½Ñ Ñ Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½Ð¸ÐµÐ¼ Ð²ÑÐµÐ¼ÐµÐ½Ð¸ Ð¸ ÑÐ¸ÑÐ»Ð° ÑÐºÐ°ÑÐ¸Ð²Ð°Ð½Ð¸Ð¹.',
         _dl_body, '/shop/digital/download.html', noindex=True)
 
-    # OG-карточки: новости + бренды VIN + дефолт
-    jobs = [('/assets/og/default.png', 'Запас хода — практика владения электромобилем в России')]
+    # OG-ÐºÐ°ÑÑÐ¾ÑÐºÐ¸: Ð½Ð¾Ð²Ð¾ÑÑÐ¸ + Ð±ÑÐµÐ½Ð´Ñ VIN + Ð´ÐµÑÐ¾Ð»Ñ
+    jobs = [('/assets/og/default.png', 'ÐÐ°Ð¿Ð°Ñ ÑÐ¾Ð´Ð° â Ð¿ÑÐ°ÐºÑÐ¸ÐºÐ° Ð²Ð»Ð°Ð´ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐºÑÑÐ¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¼ Ð² Ð Ð¾ÑÑÐ¸Ð¸')]
     for it in news:
         jobs.append(('/assets/og/n-'+it['date']+'-'+it['slug']+'.png', it['title']))
     for brand in VIN_BRANDS:
-        jobs.append(('/assets/og/vin-'+slug(brand)+'.png', 'VIN '+brand+': расшифровка и проверка истории'))
+        jobs.append(('/assets/og/vin-'+slug(brand)+'.png', 'VIN '+brand+': ÑÐ°ÑÑÐ¸ÑÑÐ¾Ð²ÐºÐ° Ð¸ Ð¿ÑÐ¾Ð²ÐµÑÐºÐ° Ð¸ÑÑÐ¾ÑÐ¸Ð¸'))
     for sl,title,_,_ in PAIN_ARTICLES:
         jobs.append(('/assets/og/p-'+sl+'.png', title))
     for sl3,t3,d3 in services.BLOG_ARTICLES:
         jobs.append(('/assets/og/b-'+sl3+'.png', t3))
-    jobs.append(('/assets/og/b-winter-ev-2026.png', 'Зима близко: на сколько процентов мороз реально «режет» батарею Zeekr, Li Auto и Voyah в России?'))
-    jobs.append(('/assets/og/b-zeekr-001-gbt-diff.png', 'Порты GB/T AC и DC на Zeekr 001: различия и ошибки'))
-    jobs.append(('/assets/og/shop-digital.png', 'Гайд М-4 «Дон»: цифровой путеводитель'))
-    jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'Предпрогрев батареи Li Auto L7 перед быстрой зарядкой'))
-    jobs.append(('/assets/og/b-workersbee-vs-auxus.png', 'Workersbee против Auxus: какой кабель выдержит русскую зиму'))
-    jobs.append(('/assets/og/b-b2b-reglament-vydachi-ev.png', 'Регламент выдачи китайских EV в автосалоне'))
-    jobs.append(('/assets/og/b-800v-zaryadka-ev-rossiya.png', 'Зарядка EV 800 В: Zeekr 007, SU7 и станции 400 В'))
-    jobs.append(('/assets/og/b-erekv-domashnyaya-zaryadka.png', 'Li Auto: почему гибриду нужна домашняя зарядка'))
-    jobs.append(('/assets/og/b-sertifikaciya-ezs-rf-2026.png', 'Сертификация зарядных станций в РФ 2026'))
+    jobs.append(('/assets/og/b-winter-ev-2026.png', 'ÐÐ¸Ð¼Ð° Ð±Ð»Ð¸Ð·ÐºÐ¾: Ð½Ð° ÑÐºÐ¾Ð»ÑÐºÐ¾ Ð¿ÑÐ¾ÑÐµÐ½ÑÐ¾Ð² Ð¼Ð¾ÑÐ¾Ð· ÑÐµÐ°Ð»ÑÐ½Ð¾ Â«ÑÐµÐ¶ÐµÑÂ» Ð±Ð°ÑÐ°ÑÐµÑ Zeekr, Li Auto Ð¸ Voyah Ð² Ð Ð¾ÑÑÐ¸Ð¸?'))
+    jobs.append(('/assets/og/b-zeekr-001-gbt-diff.png', 'ÐÐ¾ÑÑÑ GB/T AC Ð¸ DC Ð½Ð° Zeekr 001: ÑÐ°Ð·Ð»Ð¸ÑÐ¸Ñ Ð¸ Ð¾ÑÐ¸Ð±ÐºÐ¸'))
+    jobs.append(('/assets/og/shop-digital.png', 'ÐÐ°Ð¹Ð´ Ð-4 Â«ÐÐ¾Ð½Â»: ÑÐ¸ÑÑÐ¾Ð²Ð¾Ð¹ Ð¿ÑÑÐµÐ²Ð¾Ð´Ð¸ÑÐµÐ»Ñ'))
+    jobs.append(('/assets/og/b-li-l7-battery-heat.png', 'ÐÑÐµÐ´Ð¿ÑÐ¾Ð³ÑÐµÐ² Ð±Ð°ÑÐ°ÑÐµÐ¸ Li Auto L7 Ð¿ÐµÑÐµÐ´ Ð±ÑÑÑÑÐ¾Ð¹ Ð·Ð°ÑÑÐ´ÐºÐ¾Ð¹'))
+    jobs.append(('/assets/og/b-workersbee-vs-auxus.png', 'Workersbee Ð¿ÑÐ¾ÑÐ¸Ð² Auxus: ÐºÐ°ÐºÐ¾Ð¹ ÐºÐ°Ð±ÐµÐ»Ñ Ð²ÑÐ´ÐµÑÐ¶Ð¸Ñ ÑÑÑÑÐºÑÑ Ð·Ð¸Ð¼Ñ'))
+    jobs.append(('/assets/og/b-b2b-reglament-vydachi-ev.png', 'Ð ÐµÐ³Ð»Ð°Ð¼ÐµÐ½Ñ Ð²ÑÐ´Ð°ÑÐ¸ ÐºÐ¸ÑÐ°Ð¹ÑÐºÐ¸Ñ EV Ð² Ð°Ð²ÑÐ¾ÑÐ°Ð»Ð¾Ð½Ðµ'))
+    jobs.append(('/assets/og/b-800v-zaryadka-ev-rossiya.png', 'ÐÐ°ÑÑÐ´ÐºÐ° EV 800 Ð: Zeekr 007, SU7 Ð¸ ÑÑÐ°Ð½ÑÐ¸Ð¸ 400 Ð'))
+    jobs.append(('/assets/og/b-erekv-domashnyaya-zaryadka.png', 'Li Auto: Ð¿Ð¾ÑÐµÐ¼Ñ Ð³Ð¸Ð±ÑÐ¸Ð´Ñ Ð½ÑÐ¶Ð½Ð° Ð´Ð¾Ð¼Ð°ÑÐ½ÑÑ Ð·Ð°ÑÑÐ´ÐºÐ°'))
+    jobs.append(('/assets/og/b-sertifikaciya-ezs-rf-2026.png', 'Ð¡ÐµÑÑÐ¸ÑÐ¸ÐºÐ°ÑÐ¸Ñ Ð·Ð°ÑÑÐ´Ð½ÑÑ ÑÑÐ°Ð½ÑÐ¸Ð¹ Ð² Ð Ð¤ 2026'))
     try:
         import services as _svc_extra
         jobs += [('/assets/og/b-%s.png' % sl, t) for sl, t in getattr(_svc_extra, 'EXTRA_BLOG_META', [])]
     except Exception as _e:
         print('blog_extra OG:', _e)
     og_gen(outdir, jobs)
-    og_model_cards(outdir)  # богатые OG-плашки «Проверь свою машину» вместо упрощённых
-    # реальные фото-OG карточек товаров (репозиторий ogsrc/*.png -> _site/assets/og/)
+    og_model_cards(outdir)  # Ð±Ð¾Ð³Ð°ÑÑÐµ OG-Ð¿Ð»Ð°ÑÐºÐ¸ Â«ÐÑÐ¾Ð²ÐµÑÑ ÑÐ²Ð¾Ñ Ð¼Ð°ÑÐ¸Ð½ÑÂ» Ð²Ð¼ÐµÑÑÐ¾ ÑÐ¿ÑÐ¾ÑÑÐ½Ð½ÑÑ
+    # ÑÐµÐ°Ð»ÑÐ½ÑÐµ ÑÐ¾ÑÐ¾-OG ÐºÐ°ÑÑÐ¾ÑÐµÐº ÑÐ¾Ð²Ð°ÑÐ¾Ð² (ÑÐµÐ¿Ð¾Ð·Ð¸ÑÐ¾ÑÐ¸Ð¹ ogsrc/*.png -> _site/assets/og/)
     og_src_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ogsrc')
     if os.path.isdir(og_src_dir):
         og_out = os.path.join(outdir, 'assets', 'og')
@@ -4709,7 +4667,7 @@ def main():
     services.routes_build(outdir, write_page)
     services.shorts_build(outdir, write_page)
     services.telemetry_build(outdir, write_page)
-    # PDF-пакет для дилеров (static/b2b -> /b2b/)
+    # PDF-Ð¿Ð°ÐºÐµÑ Ð´Ð»Ñ Ð´Ð¸Ð»ÐµÑÐ¾Ð² (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
         os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
@@ -4719,7 +4677,7 @@ def main():
         shutil.copytree(shorts_src, os.path.join(outdir,'assets','shorts'), dirs_exist_ok=True)
     if os.path.isdir(os.path.join(repo_root,'static','products')):
         shutil.copytree(os.path.join(repo_root,'static','products'), os.path.join(outdir,'products'), dirs_exist_ok=True)
-    # PDF-пакет для дилеров (static/b2b -> /b2b/)
+    # PDF-Ð¿Ð°ÐºÐµÑ Ð´Ð»Ñ Ð´Ð¸Ð»ÐµÑÐ¾Ð² (static/b2b -> /b2b/)
     bpdf = os.path.join(repo_root,'static','b2b','paket-dileram.pdf')
     if os.path.isfile(bpdf):
         os.makedirs(os.path.join(outdir,'b2b'), exist_ok=True)
@@ -4734,7 +4692,7 @@ def main():
     with open(os.path.join(outdir,'sitemap.xml'),'w',encoding='utf-8') as f: f.write(build_sitemap(slugs, news, vin_slugs, outdir))
     write_ai_bridge(outdir, repo_root)
     total = sum(len(fs) for _,_,fs in os.walk(outdir))
-    print('Готово: моделей', len(slugs), '| новостей', len(news), '| VIN-страниц', len(vin_slugs), '| файлов в _site:', total)
+    print('ÐÐ¾ÑÐ¾Ð²Ð¾: Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹', len(slugs), '| Ð½Ð¾Ð²Ð¾ÑÑÐµÐ¹', len(news), '| VIN-ÑÑÑÐ°Ð½Ð¸Ñ', len(vin_slugs), '| ÑÐ°Ð¹Ð»Ð¾Ð² Ð² _site:', total)
 
 if __name__ == '__main__':
     main()
