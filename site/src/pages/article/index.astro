@@ -1,0 +1,30 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+const modules = import.meta.glob('../../data/articles/**/*.json', { eager: true, import: 'default' });
+const articles = Object.entries(modules).map(([path, a]) => {
+  const seg = path.split('/articles/')[1].split('/');
+  return { ...(a as any), section: seg[0] };
+});
+articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+const slabels: Record<string, string> = { blog: 'Блог', pain: 'Проблемы', safety: 'Безопасность' };
+---
+<ZhLayout title="Статьи — Запас хода" description={`Разборы о зарядке EV: ${articles.length} статей о разъёмах, станциях, зиме и деньгах. Прямой ответ — в первом абзаце.`}>
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Статьи</div>
+      <h1>Статьи</h1>
+      <p class="lead">{articles.length} разборов: разъёмы, станции, зима, деньги. Прямой ответ — в первом абзаце.</p>
+      <div class="bgrid" style="margin-top:36px">
+        {articles.map((a) => (
+          <a class="bcard" href={`/article/${a.slug}/`}>
+            <span class="tag">{slabels[a.section] || a.section}</span>
+            {a.category && <span class="tag">{a.category}</span>}
+            <h3>{a.title}</h3>
+            {a.desc && <p>{String(a.desc).slice(0, 120)}…</p>}
+            {a.date && <p style="font-size:12px">📅 {a.date}{a.read_min ? ` · ${a.read_min} мин` : ''}</p>}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</ZhLayout>
