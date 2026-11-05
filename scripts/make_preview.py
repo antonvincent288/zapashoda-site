@@ -11,7 +11,7 @@ PAGES = [
     ("home",      "/",                       "Главная"),
     ("shop",      "/shop/digital/",          "Товары"),
     ("catalog",   "/catalog/",               "Каталог"),
-    ("catalog_item", "/catalog/adapter-type2-gbt-premium/", "Товар: адаптер"),
+    ("catalog_item", "/catalog/adapter-type2-gbt-premium.html", "Товар: адаптер"),
     ("quiz",      "/quiz/",                  "Подбор"),
     ("models",    "/models/",                "Модели"),
     ("model",     "/models/zeekr-001-001-fr/", "Модель"),
