@@ -21,6 +21,7 @@ PAGES = [
     ("safety",       "/safety/",                                "Безопасность"),
     ("b2b",          "/b2b/",                                   "B2B"),
     ("about",        "/about/",                                 "О проекте"),
+    ("tools",      "/tools/",                                 "Инструменты"),
     ("services",     "/services/",                              "Услуги"),
     ("service",      "/services/ustanovka-stancii.html",        "Услуга: установка"),
     ("cost_item",    "/cost/avatr-11-12-ofitsialno-ru.html",    "Расчёт владения"),
