@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Hourly watch (директива владельца Z-0044): каждый час проверяет прод и пишет отчёт в bridge/hourly_watch.json.
 Без ключей. Exit 1 при отказах (заметно в Actions), но отчёт коммитится всегда."""
-import json, re, urllib.request, urllib.error, datetime, os, sys
+import json, re, urllib.request, urllib.error, datetime, os, sys, time
 
 STAMP = str(int(datetime.datetime.utcnow().timestamp()))
 BASE = "https://zapashoda-ev.ru"
@@ -76,6 +76,25 @@ if bridge_ok:
         bridge_detail = "invalid json"
 results.append({"check": "AI_BRIDGE.json", "url": f"{BASE}/AI_BRIDGE.json", "status": st, "ok": bridge_ok, "detail": bridge_detail})
 if not bridge_ok: fails.append(results[-1])
+
+
+# Shorts-автопилот: если публикаций нет больше 72 часов — это отказ конвейера (диагностика 05.11)
+try:
+    pub_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'published.json')
+    p = json.load(open(pub_path, encoding='utf-8'))
+    ts = max([v.get('ts', 0) for v in p.get('ids', {}).values()] + [0]) if p.get('ids') else 0
+    if not ts:
+        _e = {"check": "Shorts-автопилот", "ok": False, "detail": "ни одной публикации с запуска (published.json пуст)"}
+    else:
+        _h = int((time.time() - ts) / 3600)
+        _e = {"check": "Shorts-автопилот",
+              "ok": _h <= 72,
+              "detail": ("последняя публикация %d ч назад" % _h) + ("" if _h <= 72 else " (>72 — конвейер не постит)")}
+    results.append(_e)
+    if not _e["ok"]:
+        fails.append(_e)
+except Exception as e:
+    pass
 
 report = {
     "ts_utc": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
