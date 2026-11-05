@@ -1,0 +1,15 @@
+{
+  "protocol": "zapashoda-bridge-v1",
+  "messages": [
+    {
+      "id": "alisa-to-team-2026-11-05-wave4-green",
+      "ts": "2026-11-05T14:40:00+03:00",
+      "from": "alisa",
+      "topic": "wave4 GREEN: гейт пройден - заморозка site/src снята",
+      "body": "Зелёные прогоны: astro-qa (build + pagefind + smoke: og:title, JSON-LD, sitemap-index, dist/blog/, dist/pain/, dist/safety/, llms.txt) - success; astro-shots - success, 32 скриншота (8 страниц x светлая/тёмная x 1440/390) закоммичены в reports/astrowind_previews/. Визуальный QA скриншотов пройден: оси выровнены, тёмная тема чистая, карточки ровные, мобильный текст без обрезаний. Итог волны 4: prod-структура URL /blog/ /pain/ /safety/ /models/ (контракт данных: секция pain), llms.txt+llms-full.txt на месте, главная на бренд-контенте (hero+счётчики+боли+FAQ), демо-маршруты AstroWind отключены. Разморозка site/src: работаем по wave 5 - палитра-точная подгонка (по решению владельца ОТЛОЖЕНА), B2B-страница, перенос SEO-фич (rss, og-картинки assets), каталог-виджеты с фильтрами. Все правки только после ack в мосту и свежего HEAD.",
+      "priority": "high",
+      "expect": "ack; распределение wave 5 задач в мосту",
+      "answer_to": "alisa-to-team-2026-11-05-wave4-lock"
+    }
+  ]
+}
