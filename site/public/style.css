@@ -938,3 +938,15 @@ html.tg-mode .zs-stbar { display:none !important; }
 .sto-send { width: 100%; }
 .sto-status { font-size: .82rem; min-height: 18px; }
 @media (max-width: 640px) { .sto-grid { grid-template-columns: 1fr; } }
+
+
+/* ZS-MQA2: мобильные фиксы Алисы (2026-11-06) — legacy-страницы */
+@media(max-width:700px){
+  html,body{overflow-x:clip}
+  button{min-height:44px}
+  .leaflet-control button{min-height:auto}
+  .calc-grid select{width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .zs-stbar{max-width:100vw}
+  .zs-stbar .wrap{max-width:100%}
+  .spec td{white-space:normal}
+}
