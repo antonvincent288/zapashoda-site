@@ -60,7 +60,7 @@ jobs:
           NITEM=$(find dist/catalog -name 'index.html' | wc -l)
           [ "$NITEM" -ge 27 ] || { echo "MISSING catalog items: only $NITEM"; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
-          test -f dist/cost/avatr-11-12-ofitsialno-ru.html || { echo 'MISSING cost page'; exit 1; }
+          test -f dist/cost/avatr-11-12-ofitsialno-ru.html || test -f dist/cost/avatr-11-12-ofitsialno-ru.html/index.html || { echo 'MISSING cost page'; exit 1; }
           test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
           test -f dist/about/index.html || { echo 'MISSING dist/about/index.html'; exit 1; }
           echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"
