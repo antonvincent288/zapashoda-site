@@ -50,5 +50,10 @@ jobs:
           test -f dist/assets/og/m-aito-m5-m7.png || { echo 'MISSING og model image'; exit 1; }
           grep -q FAQPage dist/pain/12v-akb/index.html || { echo 'MISSING FAQPage JSON-LD on pain article'; exit 1; }
           grep -q "comments" dist/blog/gbt-stancii-2026/index.html || echo 'note: legacy comments removed from blog detail'
-          echo "SMOKE OK (catalog + articles generated + FAQPage)"
+          test -f dist/shop/digital/index.html || { echo 'MISSING dist/shop/digital/index.html'; exit 1; }
+          test -f dist/charging/index.html || { echo 'MISSING dist/charging/index.html'; exit 1; }
+          test -f dist/charging/stations.json || { echo 'MISSING stations.json'; exit 1; }
+          test -f dist/assets/leaflet/leaflet.js || { echo 'MISSING leaflet.js'; exit 1; }
+          grep -q "Зарядные станции рядом" dist/charging/index.html || { echo 'MISSING charging H1'; exit 1; }
+          echo "SMOKE OK (catalog + articles + FAQPage + shop + map)" 
         working-directory: site
