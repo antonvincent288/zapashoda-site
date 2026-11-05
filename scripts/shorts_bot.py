@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.5 (все таймауты <=90s) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.6 (пулы 15 inv + 8 piped, кэш рабочих инстансов) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -28,6 +28,26 @@ INV_INSTANCES = [
     'https://inv.nadeko.net',
     'https://yt.chocolatemoo53.com',
     'https://invidious.f5.si',
+    'https://invidious.privacyredirect.com',
+    'https://iv.ggtyler.dev',
+    'https://invidious.materialio.us',
+    'https://iv.melmac.space',
+    'https://invidious.dhusch.de',
+    'https://inv.vern.cc',
+    'https://invidious.fdn.fr',
+    'https://iv.duti.dev',
+    'https://yt.artemislena.eu',
+    'https://invidious.drgns.space',
+]
+PIPED = [
+    'https://pipedapi.kavin.rocks',
+    'https://pipedapi.adminforge.de',
+    'https://api.piped.private.coffee',
+    'https://pipedapi.leptons.xyz',
+    'https://pipedapi.reallyaweso.me',
+    'https://pipedapi.phoenixthrush.com',
+    'https://pipedapi.owo.si',
+    'https://pipedapi.moomoo.fi',
 ]
 TOPICS = [
     'электромобиль зарядка',
@@ -252,14 +272,6 @@ def ytdlp_download(url, dst):
             print('  [dl tail]', (r.stderr or '').strip()[-300:].replace('\n', ' | '))
     return cobalt_download(url, dst)
 
-PIPED = [
-    'https://pipedapi.kavin.rocks',
-    'https://pipedapi.adminforge.de',
-    'https://api.piped.private.coffee',
-    'https://pipedapi.leptons.xyz',
-    'https://pipedapi.drgns.space',
-]
-
 def qnum(q):
     digits = ''.join(ch for ch in str(q or '') if ch.isdigit())
     return int(digits) if digits else 0
@@ -273,9 +285,11 @@ def _dl(url, dst):
     print('  [dl] bad size', len(data))
     return None
 
-def inv_direct_download(c, dst):
+def inv_direct_download(c, dst, pub):
     """Прямые googlevideo-URL из Invidious (formatStreams/adaptiveFormats) — без прокси инстанса."""
-    for base in INV_INSTANCES[:2]:
+    cache = pub.get('ok_inv')
+    bases = ([cache] if cache else []) + [b for b in INV_INSTANCES if b != cache]
+    for base in bases[:6]:
         try:
             v = get_json(base + '/api/v1/videos/%s?fields=formatStreams,adaptiveFormats' % c['videoId'], timeout=12)
         except Exception:
@@ -295,15 +309,19 @@ def inv_direct_download(c, dst):
                 try:
                     if _dl(u, dst):
                         print('  [inv direct] OK via', base)
+                        pub['ok_inv'] = base
+                        save_pub(pub)
                         return dst
                 except Exception as e:
                     print('  [inv direct fail]', type(e).__name__, str(e)[:70])
     return None
 
-def piped_download(vid, dst):
-    for base in PIPED:
+def piped_download(vid, dst, pub):
+    cache = pub.get('ok_piped')
+    bases = ([cache] if cache else []) + [b for b in PIPED if b != cache]
+    for base in bases[:6]:
         try:
-            s = get_json(base + '/streams/' + vid, timeout=20)
+            s = get_json(base + '/streams/' + vid, timeout=15)
         except Exception as e:
             print('  [piped fail] %s: %s' % (base, type(e).__name__))
             continue
@@ -316,6 +334,8 @@ def piped_download(vid, dst):
             try:
                 if _dl(v['url'], dst):
                     print('  [piped] OK via', base)
+                    pub['ok_piped'] = base
+                    save_pub(pub)
                     return dst
             except Exception as e:
                 print('  [piped dl fail]', type(e).__name__, str(e)[:70])
@@ -332,6 +352,8 @@ def piped_download(vid, dst):
                                    capture_output=True, timeout=120)
                 if r.returncode == 0 and os.path.exists(dst) and os.path.getsize(dst) > 100000 and os.path.getsize(dst) <= MAX_BYTES:
                     print('  [piped mux] OK via', base)
+                    pub['ok_piped'] = base
+                    save_pub(pub)
                     return dst
                 print('  [piped mux fail] rc=%d' % r.returncode)
             except Exception as e:
@@ -442,8 +464,8 @@ def process(c, pub, now):
     if pub.get('last_topic') == c['topic']:
         return False, 'same topic as last'
     clip = None
-    for attempt in (lambda: inv_direct_download(c, '/tmp/clip.mp4'),
-                    lambda: piped_download(c['videoId'], '/tmp/clip.mp4'),
+    for attempt in (lambda: inv_direct_download(c, '/tmp/clip.mp4', pub),
+                    lambda: piped_download(c['videoId'], '/tmp/clip.mp4', pub),
                     lambda: inv_download(c, '/tmp/clip.mp4') if (c.get('stream_url') or c['_src'] != 'inv') else None,
                     lambda: ytdlp_download(c['url'], '/tmp/clip')):
         try:
