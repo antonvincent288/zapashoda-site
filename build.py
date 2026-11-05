@@ -4333,7 +4333,21 @@ def main():
     with open(os.path.join(outdir,'assets','logo.svg'),'w',encoding='utf-8') as f: f.write(LOGO)
 
     CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS + EXTRA_STO_CSS
-    with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
+    
+CSS += """
+
+/* ZS-MQA2: мобильные фиксы Алисы (2026-11-06) */
+@media(max-width:700px){
+  html,body{overflow-x:clip}
+  button{min-height:44px}
+  .leaflet-control button{min-height:auto}
+  .calc-grid select{width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .zs-stbar{max-width:100vw}
+  .zs-stbar .wrap{max-width:100%}
+  .spec td{white-space:normal}
+}
+"""
+with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
     lf = os.path.join(repo_root,'static','leaflet')
