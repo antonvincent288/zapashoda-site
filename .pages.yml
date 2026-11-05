@@ -1,0 +1,40 @@
+# Pages CMS - конфигурация коллекций «Запас хода»
+# Владелец: pagescms.org -> войти через GitHub -> подключить репозиторий antonvincent288/zapashoda-site
+# Пока прод на main: в интерфейсе выбрать ветку astrowind-migration, чтобы правки шли туда.
+media: site/public/images/uploads
+content:
+  - name: blog
+    label: Статьи блога
+    path: site/src/content/blog
+    type: collection
+    view:
+      fields: [title, publishDate, draft]
+      primary: title
+      sort: { key: publishDate, order: desc }
+    fields:
+      - { name: title, label: Заголовок, type: string, required: true }
+      - { name: excerpt, label: Краткое описание (lede), type: text }
+      - { name: publishDate, label: Дата, type: date, default: today }
+      - { name: category, label: Категория, type: string }
+      - { name: draft, label: Черновик, type: boolean, default: false }
+      - { name: body, label: Текст статьи, type: rich-text, required: true }
+  - name: models
+    label: Каталог моделей
+    path: site/data/models
+    type: collection
+    view:
+      fields: [brand, model, years]
+      primary: model
+      sort: { key: brand, order: asc }
+    fields:
+      - { name: slug, label: Slug (URL), type: string, required: true }
+      - { name: brand, label: Марка, type: string, required: true }
+      - { name: model, label: Модель, type: string, required: true }
+      - { name: years, label: Годы, type: string }
+      - { name: type, label: Тип (BEV/REEV), type: string }
+      - { name: ac, label: AC-разъём, type: string }
+      - { name: dc, label: DC-разъём, type: string }
+      - { name: obc, label: Бортовой заряд, type: string }
+      - { name: dcp, label: Пиковый DC, type: string }
+      - { name: solution, label: Решение для РФ, type: text }
+      - { name: frequency, label: Частота запроса, type: string }
