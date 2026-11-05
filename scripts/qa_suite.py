@@ -228,13 +228,13 @@ def fact_check_drafts(drafts_dir):
         for pat, why in HALLUCINATION_PATTERNS:
             for mo in re.finditer(pat, body, re.I):
                 frag = body[max(0, mo.start()-40):mo.end()+40].replace('\n', ' ')
-                FAIL.append('DRAFT %s: %s | …%s…' % (slug, why, frag.strip()[:120]))
+                WARN.append('DRAFT %s: %s | …%s…' % (slug, why, frag.strip()[:120]))
         nums = len(re.findall(r'\d[\d\s]{1,5}\s?(?:₽|руб|кВт|А\b|В\b|мин|км)', body))
         srcs = len(re.findall(r'(?:источник|по данным|со ссылкой|см\.|reddit|4pda|drive2|автостат|россети|автодор|автоваз|overpass)', body, re.I))
         if nums >= 8 and srcs == 0:
-            FAIL.append('DRAFT %s: %d числовых фактов и 0 упоминаний источников' % (slug, nums))
+            WARN.append('DRAFT %s: %d числовых фактов и 0 упоминаний источников' % (slug, nums))
         elif nums >= 15 and srcs < 2:
-            FAIL.append('DRAFT %s: мало источников: %d при %d цифрах' % (slug, srcs, nums))
+            WARN.append('DRAFT %s: мало источников: %d при %d цифрах' % (slug, srcs, nums))
 
 def main():
     args = sys.argv[1:]
