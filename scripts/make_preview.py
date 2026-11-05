@@ -145,6 +145,17 @@ for root, _, files in os.walk(DIST):
                 font_face += f"@font-face{{font-family:'Inter';src:url({du}) format('woff2');font-weight:100 900;font-display:swap;}}"
 
 pv_ui = """
+.pv-bar{position:fixed;top:0;left:0;right:0;z-index:99999;background:#1d1d1f;color:#D4AF37;font:500 11px/24px system-ui;text-align:center;letter-spacing:.04em}
+.pv-nav{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:rgba(29,29,31,.92);backdrop-filter:blur(8px);display:flex;gap:6px;overflow-x:auto;padding:7px 10px;scrollbar-width:none}
+.pv-nav::-webkit-scrollbar{display:none}
+.pv-nav button{flex:0 0 auto;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.85);border-radius:999px;padding:4px 10px;font:500 12px system-ui;cursor:pointer;white-space:nowrap}
+.pv-nav button.on{background:#D4AF37;color:#1d1d1f;border-color:#D4AF37;font-weight:700}
+.pv-toggle{position:fixed;right:10px;top:32px;z-index:99999;background:#fff;border:1px solid #e5e7eb;border-radius:999px;padding:4px 10px;font:600 12px system-ui;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+body.pv{padding:24px 0 52px}
+.pv-page{display:none!important}
+.pv-page.pv-on{display:block!important}
+html.dark .pv-toggle{background:#1d1d1f;color:#f5f5f7;border-color:#333}
+"""
 .pv-bar{position:fixed;top:0;left:0;right:0;z-index:99999;background:repeating-linear-gradient(45deg,#b45309,#b45309 10px,#92400e 10px,#92400e 20px);color:#fff;font:600 12px/28px system-ui;text-align:center;letter-spacing:.08em}
 .pv-nav{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:var(--ink);display:flex;gap:8px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
 .pv-nav::-webkit-scrollbar{display:none}
