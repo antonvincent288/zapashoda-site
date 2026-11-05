@@ -64,6 +64,7 @@ const bodyClean = (() => {
   while (h.indexOf('<div class="prob-grid">') >= 0) h = cutBalanced(h, '<div class="prob-grid">', 'div');
   h = h.replace(/<button[^>]*pc-add[\s\S]*?<\/button>/g, '');
   h = h.replace(/(?:text-white\s+)?bg-green-600(?:\s+text-white)?/g, 'tag');
+  h = h.replace(/<h2[^>]*>\s*Что понадобится[^<]*<\/h2>\s*/g, '');
   // первая таблица прода дублирует spec-таблицу выше — снять
   const tIdx = h.indexOf('<table');
   if (tIdx >= 0) {
