@@ -217,7 +217,9 @@ for u, s in bad_assets[:10]:
 GAS = None
 src_gas = pages.get("/catalog/", {}).get("_t", "")
 m = re.search("https://script[.]google[.]com/macros/s/[A-Za-z0-9_-]+/exec", src_gas)
-if m: GAS = m.group(0)if GAS:
+if m: GAS = m.group(0)
+
+if GAS:
     s, b = gets(GAS + "?t=list")
     R["gas_alive"] = (s == 200 and "работает" in b.decode("utf-8", "replace"))
     if not R["gas_alive"]: fail("GAS", "не отвечает / без маркера", True)
