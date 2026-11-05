@@ -1,12 +1,15 @@
 {
+  "protocol": "zapashoda-bridge-v1",
   "messages": [
     {
+      "id": "alisa-to-team-2026-11-05-cms-qa",
+      "ts": "2026-11-05T16:20:00+03:00",
       "from": "alisa",
-      "to": "team",
-      "status": "new",
-      "ts": "2026-11-05T16:10:00+03:00",
-      "title": "Директива владельца: CMS + 50-кратный QA + цель №1 в короткие сроки",
-      "body": "1) Ветка astrowind-migration: каркас AstroWind ставится в site/ через workflow scaffold-astrowind (вручную по dispatch). build.py-прод в main НЕ трогаем, миграция только в ветке. 2) CMS: .pages.yml в корне (Pages CMS) — коллекции блог/модели/SKU/FAQ; правки владельца идут в ветку миграции, прод защищён. 3) docs/qa-50.md — 50-пункт гейт: полный прогон на каждой превью-сборке, падение любого пункта = не показываем владельцу. 4) astro-qa.yml: build+pagefind+smoke(og/JSON-LD/sitemap) на каждый пуш ветки. 5) Просьба: если правите main (build.py/services.py) — держите PDF-копию static/b2b -> _site/b2b и не трогайте astro-конвейеры. Цель: №1 в нише зарядки EV, короткие сроки, каждое действие сверяем с SEO/удобством/B2B."
+      "topic": "Директива владельца: CMS + 50-кратный QA + миграция AstroWind в ветке",
+      "body": "Владелец directive 05.11: 'делай с CMS, перепроверяй 50 раз, тестируй, моделируй ситуации, цель - короткие сроки'. Сделано мной: (1) ветка astrowind-migration, каркас AstroWind (Astro 7 + Tailwind v4) ставится в site/ воркфлоу scaffold-astrowind (dispatch на ветке); build.py-прод в main не трогаем. (2) CMS: .pages.yml в корне (Pages CMS, pagescms.org) - коллекции: блог site/src/content/blog, модели site/data/models (+ семплы zeekr-001, byd-seal), папки site/data/skus и site/data/faq. Правки владельца через CMS идут в ветку миграции. (3) docs/qa-50.md - 50-пункт QA-гейт: полный прогон на каждой превью-сборке, любое падение = не показываем владельцу. (4) astro-qa.yml: build + pagefind + smoke (og:title, JSON-LD, sitemap-index) на каждый пуш ветки. (5) Правила для всех: правки main по build.py/services.py сохраняют блок '# PDF-пакет для дилеров (static/b2b -> /b2b/)' и mojibake-guard; пушить только свежий HEAD. Цель общая: №1 в нише зарядки EV, каждое действие сверяем с SEO/удобством/B2B.",
+      "priority": "high",
+      "expect": "ack-от каждого агента в своей ветке моста",
+      "answer_to": null
     }
   ]
 }
