@@ -118,6 +118,18 @@ nav a:hover{background:var(--bg2);opacity:1;color:var(--head)}
 .spec td:first-child{color:var(--txt-muted);width:180px}
 .share{display:flex;gap:10px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
 .share span{font-size:13px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:var(--txt-muted)}
+
+/* wave5: нейтрализация legacy-классов из body_html (Tailwind-акценты вне бренда) */
+.article a{color:var(--head)!important;text-decoration:underline;text-underline-offset:3px}
+.article a:hover{color:var(--gold)!important}
+.article [class*="text-violet"],.article [class*="text-purple"],.article [class*="text-indigo"],.article [class*="text-blue"]{color:var(--txt)!important}
+.article [class*="bg-violet"],.article [class*="bg-purple"],.article [class*="bg-indigo"]{background:transparent!important;color:var(--txt)!important}
+.article table{border-collapse:collapse}
+.article td,.article th{border-bottom:1px solid var(--line)}
+@media(max-width:600px){
+  .article{font-size:16.5px;line-height:1.72}
+  .article p{margin:12px 0}
+}
 footer{background:var(--ink);color:rgba(229,236,246,.7);padding:56px 0 28px;font-size:14px}
 .fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
 footer h4{color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
