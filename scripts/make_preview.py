@@ -60,14 +60,20 @@ def strip_external_js(html):
     return html
 
 def inline_leaflet(html):
-    for m in set(re.findall(r'<link[^>]+href="(/assets/leaflet/[^"]+\.css)"', html)):
-        d = read_local(m)
-        if d: css_all.append(d.decode("utf-8", "replace"))
-        html = re.sub(r'<link[^>]+href="' + re.escape(m) + r'"[^>]*>', "", html)
-    for m in set(re.findall(r'<script[^>]*src="(/assets/leaflet/[^"]+\.js)"[^>]*>\s*</script>', html)):
-        d = read_local(m)
-        if d: page_scripts.append(d.decode("utf-8", "replace"))
-        html = re.sub(r'<script[^>]*src="' + re.escape(m) + r'"[^>]*>\s*</script>', "", html)
+    def repl_link(m):
+        url = m.group(1)
+        d = read_local(url)
+        if d:
+            css_all.append(d.decode("utf-8", "replace"))
+        return ""
+    html = re.sub(r'<link[^>]+href="(/assets/leaflet/[^"]+\.css)"[^>]*>', repl_link, html)
+    def repl_js(m):
+        url = m.group(1)
+        d = read_local(url)
+        if d:
+            return "<script>" + d.decode("utf-8", "replace") + "</script>"
+        return ""
+    html = re.sub(r'<script[^>]*src="(/assets/leaflet/[^"]+\.js)"[^>]*>\s*</script>', repl_js, html)
     return html
 
 def rewrite(html):
@@ -103,10 +109,12 @@ for name, path, label in PAGES:
     html = inline_leaflet(html)
     if name == "charging":
         st = read_local("/charging/stations.json")
-        if st:
-            page_scripts.append("window.__STATIONS_JSON = " + st.decode("utf-8", "replace") + ";")
+        stub = "<script>window.__STATIONS_JSON = " + st.decode("utf-8", "replace") + ";</script>" if st else ""
         html = re.sub(r'fetch\((["\'])/charging/stations\.json\1\)',
                       'Promise.resolve(new Response(JSON.stringify(window.__STATIONS_JSON)))', html)
+        idx = html.find("<script")
+        if stub and idx != -1:
+            html = html[:idx] + stub + html[idx:]
     b = html.split("<body", 1)[1].split(">", 1)[1].rsplit("</body>", 1)[0]
     parts = re.split(r'(<script[\s\S]*?</script>|<style[\s\S]*?</style>)', b)
     for i, part in enumerate(parts):
