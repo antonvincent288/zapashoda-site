@@ -239,8 +239,8 @@ def tg_send(text):
     token = os.environ.get("TG_TOKEN", "")
     if not token:
         s, t = fetch_text(BASE + "/")
-        m = re.search(r'ZS_LEAD_CFG=\{[^}]*"token":"([^"]+)"', t)
-        token = m.group(1) if m else ""
+        m = re.search("ZS_LEAD_CFG=[^{]*[{][^}]*token:([^,}]+)", t)
+        token = m.group(1).strip(Q) if m else ""
     if not token:
         return "no-token"
     data = json.dumps({"chat_id": CHAT_ID, "text": text, "disable_web_page_preview": True}).encode()
