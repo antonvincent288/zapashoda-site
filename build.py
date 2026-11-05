@@ -3526,7 +3526,7 @@ function phrHtml(x,cnt){if(!cnt)return '';
   ['Я заряжаю на ЭЗС…','Отлично — тогда в багажнике должен жить адаптер: не на каждой станции ваш разъём. Один адаптер — и «мёртвая» колонка перестаёт быть проблемой.']];
  return '<div class="a-phr-h">🛡 Если клиент сомневается</div>'
   +obj.map(function(o){return '<div class="a-card a-phr"><span><b>'+esc(o[0])+'</b> — '+esc(o[1])+'</span><button onclick="copyTxt('+qA(o[0]+' — '+o[1])+')">📋</button></div>';}).join('')
-  +'<div class="a-phr-h">💬 Как сказать клиенту</div>'"
+  +'<div class="a-phr-h">💬 Как сказать клиенту</div>'
   +fr.map(function(p){return '<div class="a-card a-phr"><span>'+esc(p)+'</span><button onclick="copyTxt('+qA(p)+')">📋</button></div>';}).join('');}
 function renderKit(){var box=el('a-kit');if(!box)return;var x=D.brands[curBrand][curIdx];
  var R=D.rules[scKey]||{},rec={};
