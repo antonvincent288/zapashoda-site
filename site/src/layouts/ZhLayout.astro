@@ -1,6 +1,7 @@
 ---
 interface Props { title?: string; description?: string; og?: string; jsonld?: object }
 const { title = "Запас хода — зарядка EV в России", description = "Подбор зарядки, разъёмов и адаптеров для электромобилей в России", og, jsonld } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://zapashoda-ev.ru').href;
 ---
 <!doctype html>
 <html lang="ru" class="2xl:text-[20px]">
@@ -11,7 +12,9 @@ const { title = "Запас хода — зарядка EV в России", des
 <meta name="description" content={description} />
 <meta name="robots" content="index, follow" />
 {og && <meta property="og:image" content={og} />}
+<link rel="canonical" href={canonical} />
 <meta property="og:title" content={title} />
+<meta property="og:type" content="website" />
 <meta property="og:description" content={description} />
 {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
 </head>
