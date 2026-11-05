@@ -312,6 +312,9 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .art-meta .dot{opacity:.5}
 .art-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 @media(min-width:1020px){.art-grid{grid-template-columns:216px minmax(0,1fr);gap:34px}}
+.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}
+.art-grid.art-nogrid .art-body{margin:0 auto}
+@media(min-width:1020px){.art-grid.art-nogrid{grid-template-columns:minmax(0,1fr)!important}}
 .art-toc{display:none}
 @media(min-width:1020px){.art-toc{display:block;position:sticky;top:72px;align-self:start;font-size:13.5px;max-height:calc(100vh - 100px);overflow:auto}}
 .art-toc .t{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 8px;font-weight:600}
@@ -328,7 +331,7 @@ footer .fbot{flex-direction:column;align-items:flex-start}
 .art-tocmob[open] summary::after{content:'▴'}
 .art-tocmob ol{margin:10px 0 2px;padding-left:20px;line-height:1.6}
 .art-tocmob a{color:var(--muted);text-decoration:none}
-.art-body{max-width:980px;margin:0 auto}
+.art-body{max-width:780px}
 .art-body p{margin:0 0 14px;line-height:1.66;font-size:16.5px}
 .art-body h2{font-size:clamp(21px,2.8vw,26px);margin:38px 0 12px;letter-spacing:-.015em;scroll-margin-top:90px}
 .art-body h3{font-size:17.5px;margin:26px 0 8px}
@@ -709,8 +712,8 @@ h1,h2,h3{color:var(--marine)}
 /* --- восстановленные семантические классы (волна 2) --- */
 .pl-5{padding-left:1.25rem}.align-top{vertical-align:top}
 .hover\:duration-500{transition-duration:.5s}.hover\:transition{transition-property:all;transition-timing-function:ease}
-.art{position:relative;padding-left:20px}
-.art .art-progress{position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:6px;background:#e6f2e6;overflow:hidden}
+.art{position:relative}
+.art .art-progress{position:absolute;left:-14px;top:0;bottom:0;width:5px;border-radius:6px;background:#e6f2e6;overflow:hidden}
 .art .art-progress i{display:block;width:100%;background:linear-gradient(180deg,#2563EB,#03756c);height:100%}
 .lcard.docs{border-left:3px solid #f5b800;background:#fffdf5}
 .lcard.docs p.note{font-size:14px;color:#5c4a1a}
