@@ -19,6 +19,14 @@ jobs:
         working-directory: site
       - run: npm run build
         working-directory: site
+      - name: Install playwright
+        run: |
+          python3 -m pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Start local server
+        run: |
+          (cd site/dist && python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 3
       - name: Take screenshots
         run: python3 scripts/take_shots.py
 
