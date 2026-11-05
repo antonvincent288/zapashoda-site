@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.1: YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.2 (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -12,11 +12,11 @@ TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '')
 YT_API_KEY = os.environ.get('YT_API_KEY', '')
 CHANNEL_ID = '-1002316192115'
 REPORT_CHAT = '108142888'
-MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '1000'))
+MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '500'))
 MAX_DUR = int(os.environ.get('MAX_DUR', '185'))
 MAX_BYTES = 48 * 1024 * 1024
 FULL_CHECK_LIMIT = 12
-NOTICE_THROTTLE = 24 * 3600
+NOTICE_THROTTLE = 72 * 3600
 HERE = os.path.dirname(os.path.abspath(__file__))
 PUBLISHED = os.path.join(HERE, 'published.json')
 CC = 'Creative Commons Attribution license (reuse allowed)'
@@ -39,6 +39,10 @@ TOPICS = [
     'electric car winter',
     'ev charging tips',
     'типы разъемов зарядки',
+    'ev charging',
+    'tesla charging',
+    'electric vehicle charging',
+    'электромобиль зарядка дома',
 ]
 
 def dynamic_instances():
@@ -247,9 +251,9 @@ def ytdlp_download(url, dst):
 def api_search(topic):
     if not YT_API_KEY:
         return []
-    since = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() - 30*86400))
+    since = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() - 180*86400))
     try:
-        s = get_json('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&type=video'
+        s = get_json('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&type=video'
                      '&order=viewCount&relevanceLanguage=ru&videoLicense=creativeCommon'
                      '&publishedAfter=%s&q=%s&key=%s' % (since, urllib.parse.quote(topic), YT_API_KEY), timeout=30)
     except urllib.error.HTTPError as e:
@@ -400,8 +404,12 @@ def main():
     candidates.sort(key=lambda x: -x['views'])
     print('candidates total:', len(candidates))
     posted, reason = False, ''
+    rejects = {}
     for c in candidates[:FULL_CHECK_LIMIT]:
         posted, reason = process(c, pub, now)
+        if not posted:
+            rejects[c['videoId']] = reason
+            print('  reject %s (%s): %s' % (c['videoId'], c['_src'], reason))
         if posted:
             break
     if posted:
