@@ -1,0 +1,28 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+const shop = (await import('../../data/shop.json')).default;
+const products = shop.products || [];
+const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, description: p.desc, offers: { '@type': 'Offer', price: String(p.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } } })) };
+---
+<ZhLayout title="Цифровые гиды о зарядке — Запас хода" description="Практические гиды по зарядке EV: трассы М-4, М-11, М-12, парковка ЖК. PDF с маршрутом, станциями и ценами простоя." jsonld={ld}>
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Товары</div>
+      <h1>Цифровые гиды по зарядке</h1>
+      <p class="lead">Практические PDF-руководства: маршрут, станции, тарифы и цена простоя на километр. Один раз прочитал — не переплачиваешь всё лето.</p>
+      <div class="cards" style="margin-top:36px">
+        {products.map((p) => (
+          <div class="card">
+            <h3>{p.title}</h3>
+            <p>{p.desc}</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+              <b style="font-size:22px">{p.price} ₽</b>
+              <a class="btn btn-gold" style="text-decoration:none;font-size:14px;padding:10px 18px" href="https://zapashoda-ev.ru/shop/digital/" rel="nofollow">Купить за {p.price} ₽</a>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="lead" style="margin-top:28px;font-size:14px">Оплата проходит через рабочий чекаут на проде (того же, что и сейчас) — в статической сборке корзина будет подключена в следующем шаге, без потери покупок.</p>
+    </div>
+  </section>
+</ZhLayout>
