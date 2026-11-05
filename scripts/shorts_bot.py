@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.3 (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.4 (budget 12min, dl timeout 90s) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -16,6 +16,7 @@ MIN_VIEWS = int(os.environ.get('MIN_VIEWS', '500'))
 MAX_DUR = int(os.environ.get('MAX_DUR', '185'))
 MAX_BYTES = 48 * 1024 * 1024
 FULL_CHECK_LIMIT = 12
+RUN_BUDGET = 12 * 60
 NOTICE_THROTTLE = 72 * 3600
 HERE = os.path.dirname(os.path.abspath(__file__))
 PUBLISHED = os.path.join(HERE, 'published.json')
@@ -265,7 +266,7 @@ def qnum(q):
 
 def _dl(url, dst):
     req_ = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    data = urllib.request.urlopen(req_, timeout=300).read()
+    data = urllib.request.urlopen(req_, timeout=90).read()
     if 100000 < len(data) <= MAX_BYTES:
         open(dst, 'wb').write(data)
         return dst
@@ -274,9 +275,9 @@ def _dl(url, dst):
 
 def inv_direct_download(c, dst):
     """Прямые googlevideo-URL из Invidious (formatStreams/adaptiveFormats) — без прокси инстанса."""
-    for base in INV_INSTANCES:
+    for base in INV_INSTANCES[:2]:
         try:
-            v = get_json(base + '/api/v1/videos/%s?fields=formatStreams,adaptiveFormats' % c['videoId'], timeout=15)
+            v = get_json(base + '/api/v1/videos/%s?fields=formatStreams,adaptiveFormats' % c['videoId'], timeout=12)
         except Exception:
             continue
         urls = []
@@ -325,10 +326,10 @@ def piped_download(vid, dst):
             au.sort(key=lambda a: -qnum(a.get('quality')))
             vurl, aurl = vo[0]['url'], au[0]['url']
             try:
-                open('/tmp/pv.mp4', 'wb').write(urllib.request.urlopen(urllib.request.Request(vurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=300).read())
-                open('/tmp/pa.m4a', 'wb').write(urllib.request.urlopen(urllib.request.Request(aurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=120).read())
+                open('/tmp/pv.mp4', 'wb').write(urllib.request.urlopen(urllib.request.Request(vurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=120).read())
+                open('/tmp/pa.m4a', 'wb').write(urllib.request.urlopen(urllib.request.Request(aurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=60).read())
                 r = subprocess.run(['ffmpeg', '-y', '-i', '/tmp/pv.mp4', '-i', '/tmp/pa.m4a', '-c', 'copy', dst],
-                                   capture_output=True, timeout=180)
+                                   capture_output=True, timeout=120)
                 if r.returncode == 0 and os.path.exists(dst) and os.path.getsize(dst) > 100000 and os.path.getsize(dst) <= MAX_BYTES:
                     print('  [piped mux] OK via', base)
                     return dst
@@ -502,7 +503,11 @@ def main():
     print('candidates total:', len(candidates))
     posted, reason = False, ''
     rejects = {}
+    deadline = time.time() + RUN_BUDGET
     for c in candidates[:FULL_CHECK_LIMIT]:
+        if time.time() > deadline:
+            print('  [budget] 12 мин истекли, кандидатов осталось:', len(candidates))
+            break
         posted, reason = process(c, pub, now)
         if not posted:
             rejects[c['videoId']] = reason
