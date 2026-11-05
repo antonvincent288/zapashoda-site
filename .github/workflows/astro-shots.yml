@@ -38,7 +38,8 @@ jobs:
           if git status --porcelain | grep -q .; then
             git commit -m "shots: превью-скриншоты wave 4 (prod-структура)"
             git pull --rebase origin astrowind-migration
-            git push origin astrowind-migration
+            git pull --rebase origin astrowind-migration && git push origin astrowind-migration \
+              || { git pull --rebase origin astrowind-migration && git push origin astrowind-migration; }
           else
             echo "no changes"
           fi
