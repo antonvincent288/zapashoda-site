@@ -37,7 +37,7 @@ while ((rm = rowRe.exec(body))) {
   const v = strip(rm[2]);
   if (!k || !v) continue;
   if (/AC/i.test(k) && /медлен/i.test(k)) spec.ac = v;
-  else if (/DC/i.test(k) && /быстр/i.test(k)) spec.dc = v;
+  else if (/DC/i.test(k) && /быстр/i.test(k)) { if (!/dmin|&quot;|"/.test(v)) spec.dc = v; }
   else if (/Борт/i.test(k) || /OBC/i.test(k)) spec.obc = v;
   else if (/Мощность DC/i.test(k)) spec.dcpow = v;
   else if (/Рынок/i.test(k)) spec.market = v;
@@ -54,7 +54,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       <div class="meta">
         <span>⚡ {m.port || '—'}</span>
         {spec.obc && <span>🏠 {spec.obc}</span>}
-        {spec.dcpow && <span>🚗 DC {spec.dcpow}</span>}
+        {spec.dcpow && <span>🚗 DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
         <span>Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
