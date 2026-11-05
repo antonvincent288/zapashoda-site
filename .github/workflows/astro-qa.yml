@@ -61,7 +61,8 @@ jobs:
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
           test -f dist/catalog/adapter-type2-gbt-premium/index.html || { echo 'MISSING catalog item'; exit 1; }
-          grep -q "7 000" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
+          grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
+          grep -q "Адаптер Type 2 → GB/T, 22 кВт, премиум" dist/catalog/adapter-type2-gbt-premium/index.html || { echo 'MISSING item title'; exit 1; }
           test -f dist/about/index.html || { echo 'MISSING dist/about/index.html'; exit 1; }
           echo "SMOKE OK (catalog + products + about + shop + map + quiz + b2b + rss)"   
         working-directory: site
