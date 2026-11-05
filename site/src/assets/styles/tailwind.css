@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Сканировать классы в данных (тела моделей/услуг из прода): иначе утилиты не генерятся и прод-контент рендерится голым */
+@source '../../data/**/*.{json}';
+
 @plugin "@tailwindcss/typography";
 
 /* shadcn/ui-compatible tokens derived from the --aw-* variables. */
