@@ -46,6 +46,9 @@ if not urls:
 
 def st_check(u):
     s, _ = gets(u)
+    if s != 200:
+        time.sleep(1.5)
+        s, _ = gets(u)
     return u, s
 if urls:
     with ThreadPoolExecutor(12) as ex:
@@ -177,6 +180,9 @@ targets = sorted(set(BASE + h.rstrip("/") for h in hrefs))
 R["link_targets"] = len(targets)
 def link_check(u):
     s, _ = gets(u)
+    if s != 200:
+        time.sleep(1.5)
+        s, _ = gets(u)
     return u, s
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(link_check, targets))
@@ -195,6 +201,9 @@ for p, info in pages.items():
 R["assets_count"] = len(assets)
 def asset_check(u):
     s, _ = gets(BASE + u)
+    if s != 200:
+        time.sleep(1.5)
+        s, _ = gets(BASE + u)
     return u, s
 with ThreadPoolExecutor(10) as ex:
     res = list(ex.map(asset_check, sorted(assets)))
@@ -252,11 +261,11 @@ if FAIL:
     for f_ in FAIL[:15]:
         lines.append(("• [КРИТ] " if f_["crit"] else "• ") + f_["where"] + " — " + f_["what"])
     if len(FAIL) > 15: lines.append("… ещё " + str(len(FAIL) - 15))
-    tg_send("\n".join(lines))
+    print("TG status:", tg_send("\n".join(lines)))
     print("SENT_FAIL")
 else:
     lines.append("")
     lines.append("Всё чисто. Следующий патруль через 2 часа.")
-    tg_send("\n".join(lines))
+    print("TG status:", tg_send("\n".join(lines)))
     print("SENT_OK")
 print(json.dumps(R, ensure_ascii=False)[:1500])
