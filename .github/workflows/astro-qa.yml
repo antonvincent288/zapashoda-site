@@ -60,6 +60,7 @@ jobs:
           test -f dist/b2b/paket-dileram.pdf || { echo 'MISSING paket-dileram.pdf'; exit 1; }
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
+          echo '--- dist/catalog:'; ls dist/catalog | head -40; echo '--- services:'; ls dist/services 2>/dev/null | head -15; echo '--- cost:'; ls dist/cost 2>/dev/null | head -5; echo '--- news:'; ls dist/news 2>/dev/null | head -12
           CITEM=dist/catalog/adapter-type2-gbt-premium.html
           [ -f "$CITEM" ] || CITEM=dist/catalog/adapter-type2-gbt-premium/index.html
           [ -f "$CITEM" ] || { echo 'MISSING catalog item (both paths)'; exit 1; }
