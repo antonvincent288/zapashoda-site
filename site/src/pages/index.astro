@@ -19,6 +19,11 @@ const faq = [
   { q: 'Сколько реально идёт быстрая зарядка зимой?', a: 'При минусах полная сессия быстрой зарядки идёт в 1,5–2 раза дольше — планируйте запасные станции. Разбор с цифрами — в статье «Зимняя зарядка».' },
   { q: 'Вы продаёте адаптеры или только консультируете?', a: 'Подбираем и поставляем: адаптеры, кабели, держатели. Для дилеров — партнёрский пакет на странице B2B.' },
 ];
+const shortLine = (s) => {
+  const t = String(s || '');
+  const p = t.split('. ')[0];
+  return (p.length <= 120 ? p + '.' : t.slice(0, 96).trim() + '…');
+};
 const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' };
 ---
@@ -52,20 +57,23 @@ const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name:
       <p class="lead" style="margin-bottom:36px">Каждый блок — не маркетинг, а разбор реального кейса из «Проблем».</p>
       <div class="cards">
         {pains.map((c) => (
-          <a class="card" href={c.href}><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p><span style="color:#D4AF37;font-size:14px;font-weight:700">{c.label} →</span></a>
+          <a class="card" href={c.href}><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></a>
         ))}
       </div>
     </div>
   </section>
   <section class="sec">
     <div class="wrap">
-      <h2>Свежие разборы</h2>
+      <h2>Блог · свежие разборы</h2>
+      <p class="lead" style="margin-bottom:32px">Прямой ответ в первом абзаце — потому что вам нужен ответ, а не SEO-вода.</p>
       <div class="bgrid">
         {latest.map((a) => (
           <a class="bcard" href={`/blog/${a.slug}`}>
-            <span class="tag">{a.category || 'Блог'}</span>
-            <h3>{a.title}</h3>
-            <p>{String(a.desc || '').slice(0, 140)}…</p>
+            <div class="th"><span>{a.category || 'Блог'}</span></div>
+            <div class="in">
+              <h3>{a.title}</h3>
+              <p>{shortLine(a.desc)}</p>
+            </div>
           </a>
         ))}
       </div>
