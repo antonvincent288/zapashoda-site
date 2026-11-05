@@ -1,0 +1,25 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+const modules = import.meta.glob('../../data/articles/blog/*.json', {{ eager: true, import: 'default' }});
+const articles = Object.values(modules) as any[];
+articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+---
+<ZhLayout title="Блог — Запас хода" description={`Разборы секции «Блог» о зарядке EV в России: {articles.length} материалов.`}>
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Блог</div>
+      <h1>Блог</h1>
+      <p class="lead">{articles.length} материалов. Прямой ответ — в первом абзаце.</p>
+      <div class="bgrid" style="margin-top:36px">
+        {articles.map((a) => (
+          <a class="bcard" href={`/blog/${a.slug}/`}>
+            {a.category && <span class="tag">{a.category}</span>}
+            <h3>{a.title}</h3>
+            {a.desc && <p>{String(a.desc).slice(0, 130)}…</p>}
+            {a.date && <p style="font-size:12px">📅 {a.date}{a.read_min ? ` · ${a.read_min} мин` : ''}</p>}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</ZhLayout>
