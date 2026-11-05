@@ -187,7 +187,7 @@ def check_ai_seo(outdir, all_files):
             if not f.endswith('.html') or not pred(f): continue
             n += 1
             s = load(os.path.join(outdir, f))
-            if 'class="tldr"' in s or 'Коротко:' in s or 'Прямой ответ:' in s: tl += 1
+            if 'class="tldr"' in s or 'Коротко:' in s or 'Прямой ответ:' in s or 'Короткий ответ' in s or '<h2>Коротко</h2>' in s: tl += 1
             if 'FAQPage' in s: fa += 1
         if n:
             WARN.append('AEO %s: прямой ответ/«Коротко» %d%%, FAQPage %d%% (из %d)'
