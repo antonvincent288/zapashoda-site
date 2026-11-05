@@ -156,17 +156,6 @@ body.pv{padding:24px 0 52px}
 .pv-page.pv-on{display:block!important}
 html.dark .pv-toggle{background:#1d1d1f;color:#f5f5f7;border-color:#333}
 """
-.pv-bar{position:fixed;top:0;left:0;right:0;z-index:99999;background:repeating-linear-gradient(45deg,#b45309,#b45309 10px,#92400e 10px,#92400e 20px);color:#fff;font:600 12px/28px system-ui;text-align:center;letter-spacing:.08em}
-.pv-nav{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:var(--ink);display:flex;gap:8px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
-.pv-nav::-webkit-scrollbar{display:none}
-.pv-nav button{flex:0 0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:7px 14px;font:500 13px system-ui;cursor:pointer;white-space:nowrap}
-.pv-nav button.on{background:var(--gold);color:#1d1d1f;border-color:var(--gold);font-weight:700}
-.pv-toggle{position:fixed;right:12px;top:40px;z-index:99999;background:#fff;border:1px solid #e5e7eb;border-radius:999px;padding:6px 12px;font:600 13px system-ui;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-body.pv{padding:28px 0 64px}
-.pv-page{display:none!important}
-.pv-page.pv-on{display:block!important}
-html.dark .pv-toggle{background:#1d1d1f;color:#f5f5f7;border-color:#333}
-"""
 
 merged_css = "\n".join(css_all) + font_face + pv_ui
 out = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
