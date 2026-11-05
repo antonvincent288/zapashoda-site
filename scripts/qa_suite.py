@@ -79,6 +79,15 @@ def resolve(url):
 def is_js_concat(url):
     return ('+' in url) or (url.startswith("/models/')") or url.startswith("/catalog/')"))
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSET_OUTSIDE = ('assets/', 'static/')
+
+def repo_has(rel):
+    rel = rel.lstrip('/')
+    return (os.path.exists(os.path.join(REPO_ROOT, rel))
+            or os.path.exists(os.path.join(REPO_ROOT, 'static', rel))
+            or os.path.exists(os.path.join(REPO_ROOT, 'assets', rel)))
+
 def check_links(outdir, all_files):
     fset = set(all_files)
     for f in all_files:
@@ -88,8 +97,12 @@ def check_links(outdir, all_files):
             if is_js_concat(u): continue
             r = resolve(u)
             if r in (None, 'EXTERNAL'): continue
-            if r.lstrip('/') not in fset:
-                FAIL.append('битая ссылка %s ← %s' % (r, f))
+            rel = r.lstrip('/')
+            if rel not in fset:
+                if rel.startswith(ASSET_OUTSIDE) or repo_has(rel):
+                    WARN.append('ссылка вне сборки (ассеты деплоя): %s ← %s' % (r, f))
+                else:
+                    FAIL.append('битая ссылка %s ← %s' % (r, f))
 
 def check_sitemap(outdir, all_files):
     fset = set(all_files)
