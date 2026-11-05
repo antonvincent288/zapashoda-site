@@ -42,7 +42,8 @@ jobs:
           test -f dist/models/zeekr-001-001-fr/index.html || { echo 'MISSING model detail'; exit 1; }
           test -f dist/blog/index.html || { echo 'MISSING dist/blog/index.html'; exit 1; }
           test -f dist/blog/gbt-stancii-2026/index.html || { echo 'MISSING blog detail'; exit 1; }
-          test -f dist/pain/index.html || { echo 'MISSING dist/pain/index.html'; exit 1; }
+          test -f dist/problems/index.html || { echo 'MISSING dist/problems/index.html'; exit 1; }
+          test -f dist/problems/12v-akb/index.html || { echo 'MISSING problems detail'; exit 1; }
           test -f dist/safety/index.html || { echo 'MISSING dist/safety/index.html'; exit 1; }
           test -f dist/llms.txt || { echo 'MISSING llms.txt'; exit 1; }
           test -f dist/assets/og/b-gbt-stancii-2026.png || { echo 'MISSING og article image'; exit 1; }
