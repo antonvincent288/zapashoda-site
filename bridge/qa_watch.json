@@ -1,0 +1,90 @@
+{
+ "sitemap_count": 375,
+ "sitemap_ok": 374,
+ "sitemap_bad": [
+  [
+   "https://zapashoda-ev.ru/pain/lyuchok.html",
+   503
+  ]
+ ],
+ "key_pages": {
+  "/": 200,
+  "/models/": 200,
+  "/catalog/": 200,
+  "/app/": 200,
+  "/blog/": 200,
+  "/safety/": 200,
+  "/b2b/": 200,
+  "/shop/digital/": 200,
+  "/calculator/": 200,
+  "/quiz/": 200,
+  "/vin/": 200,
+  "/compare/": 200,
+  "/matrix/": 200,
+  "/news/": 200,
+  "/forum/": 200,
+  "/charging/": 200,
+  "/routes/": 200,
+  "/search.html": 200,
+  "/pains.html": 200,
+  "/about.html": 200,
+  "/ev-services.html": 200,
+  "/services/": 200,
+  "/shorts/": 200,
+  "/telemetry/": 200
+ },
+ "models_cards": 145,
+ "app_scripts": 9,
+ "app_brands": 78,
+ "app_models": 145,
+ "app_prods": 26,
+ "app_zeekr_models": 5,
+ "app_sku_missing": 0,
+ "catalog_products": 26,
+ "link_targets": 232,
+ "links_ok": 231,
+ "links_bad": [
+  [
+   "https://zapashoda-ev.ru/models/honda-m-nv-ens1-enp1.html",
+   503
+  ]
+ ],
+ "assets_count": 47,
+ "assets_ok": 47,
+ "assets_bad": [],
+ "checked_at_msk": "05.11 23:21",
+ "failures": [
+  {
+   "where": "sitemap: /pain/lyuchok.html",
+   "what": "HTTP 503",
+   "crit": true
+  },
+  {
+   "where": "/",
+   "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
+   "crit": true
+  },
+  {
+   "where": "/search.html",
+   "what": "страница поиска игнорирует ?q= (известный баг)",
+   "crit": false
+  },
+  {
+   "where": "/pain/",
+   "what": "лента проблем: HTTP 404",
+   "crit": false
+  },
+  {
+   "where": "link /models/honda-m-nv-ens1-enp1.html",
+   "what": "HTTP 503",
+   "crit": false
+  },
+  {
+   "where": "GAS",
+   "what": "не найден в разметке",
+   "crit": true
+  }
+ ],
+ "failures_count": 6,
+ "crit_count": 3
+}
