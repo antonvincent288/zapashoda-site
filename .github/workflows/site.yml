@@ -16,9 +16,6 @@ on:
       - ".github/workflows/site.yml"
       - "site/src/**"
       - "site/public/**"
-    paths-ignore:
-      - "site/previews/**"
-      - "site/dist/**"
   workflow_dispatch:
 
 permissions:
