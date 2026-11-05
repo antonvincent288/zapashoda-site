@@ -42,7 +42,8 @@
  "assets_count": 47,
  "assets_ok": 47,
  "assets_bad": [],
- "checked_at_msk": "05.11 23:32",
+ "gas_alive": true,
+ "checked_at_msk": "05.11 23:34",
  "failures": [
   {
    "where": "/",
@@ -58,13 +59,8 @@
    "where": "/pain/",
    "what": "лента проблем: HTTP 404",
    "crit": false
-  },
-  {
-   "where": "GAS",
-   "what": "не найден в разметке",
-   "crit": true
   }
  ],
- "failures_count": 4,
- "crit_count": 2
+ "failures_count": 3,
+ "crit_count": 1
 }
