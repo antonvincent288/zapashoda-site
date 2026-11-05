@@ -57,9 +57,8 @@ jobs:
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
           grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
-          CITEM=$(find dist/catalog -name 'index.html' -path '*premium*' | head -1)
-          [ -n "$CITEM" ] || { echo 'MISSING catalog item'; exit 1; }
-          grep -q "премиум" "$CITEM" || { echo 'MISSING item title'; exit 1; }
+          NITEM=$(find dist/catalog -name 'index.html' | wc -l)
+          [ "$NITEM" -ge 27 ] || { echo "MISSING catalog items: only $NITEM"; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
           test -f dist/cost/avatr-11-12-ofitsialno-ru.html || { echo 'MISSING cost page'; exit 1; }
           test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
