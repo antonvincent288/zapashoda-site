@@ -252,6 +252,10 @@ footer a:hover{color:var(--gold)}
   .menu-btn{display:flex}
 }
 @media(max-width:600px){
+  .article table,.spec,.cmp{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .article table td,.spec td,.cmp td{min-width:120px}
+  .article table tr,.spec tr,.cmp tr{display:table-row}
+  .article table th,.article table td,.spec th,.cmp th{white-space:nowrap}
   .cards,.bgrid,.mgrid,.plans,.tiles{grid-template-columns:1fr}
   .stats{grid-template-columns:1fr 1fr;gap:28px 12px}
   .hero{padding:72px 0 64px}
