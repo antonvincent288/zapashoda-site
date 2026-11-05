@@ -108,7 +108,11 @@ for name, path, label in PAGES:
         html = re.sub(r'fetch\((["\'])/charging/stations\.json\1\)',
                       'Promise.resolve(new Response(JSON.stringify(window.__STATIONS_JSON)))', html)
     b = html.split("<body", 1)[1].split(">", 1)[1].rsplit("</body>", 1)[0]
-    b = rewrite(b)
+    parts = re.split(r'(<script[\s\S]*?</script>|<style[\s\S]*?</style>)', b)
+    for i, part in enumerate(parts):
+        if not part.startswith(("<script", "<style")):
+            parts[i] = rewrite(part)
+    b = "".join(parts)
     body_html.append(f'<section class="pv-page" id="pv_{name}" data-label="{label}" style="display:none">{b}</section>')
 
 font_face = ""
@@ -141,7 +145,7 @@ out = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name=
 <button class="pv-toggle" onclick="document.documentElement.classList.toggle('dark')">🌙 Тема</button>
 <nav class="pv-nav" id="pv-nav"></nav>
 {''.join(body_html)}
-<script>{'<\/script><script>'.join(page_scripts)}</script>
+{''.join('<script>' + s + '</script>' for s in page_scripts)}
 <script>
 (function(){{
   var nav = document.getElementById('pv-nav');
