@@ -42,10 +42,10 @@ while ((rm = rowRe.exec(body))) {
   else if (/Мощность DC/i.test(k)) spec.dcpow = v;
   else if (/Рынок/i.test(k)) spec.market = v;
 }
-const cutBalanced = (html, startTag) => {
-  const i = html.indexOf(startTag);
+const cutBalanced = (html, marker, tag) => {
+  const i = html.indexOf(marker);
   if (i < 0) return html;
-  const rx = new RegExp('<' + startTag.slice(1, 6) + '|' + '</' + startTag.slice(1, 6) + '>', 'g');
+  const rx = new RegExp('<' + tag + '[\\s>]|</' + tag + '>', 'g');
   rx.lastIndex = i;
   let d = 0, mm;
   while ((mm = rx.exec(html))) {
@@ -57,10 +57,10 @@ const cutBalanced = (html, startTag) => {
 const bodyClean = (() => {
   let h = String(m.body_html || '');
   h = h.replace(/^<main[^>]*>/, '').replace(/<\/main>\s*$/, '');
-  h = cutBalanced(h, '<nav ');
-  h = cutBalanced(h, '<div class="mhero">');
-  h = cutBalanced(h, '<div class="pc-cartbar');
-  h = cutBalanced(h, '<div class="cta">');
+  h = cutBalanced(h, '<nav ', 'nav');
+  h = cutBalanced(h, '<div class="mhero">', 'div');
+  h = cutBalanced(h, '<div class="pc-cartbar', 'div');
+  h = cutBalanced(h, '<div class="cta">', 'div');
   // первая таблица прода дублирует spec-таблицу выше — снять
   const tIdx = h.indexOf('<table');
   if (tIdx >= 0) {
