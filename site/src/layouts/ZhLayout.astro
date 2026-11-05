@@ -149,6 +149,18 @@ h1{font-size:clamp(34px,4.6vw,58px);line-height:1.12;letter-spacing:-.02em}
 .article td{padding:10px 14px;vertical-align:top}
 .article ul li,.article ol li{margin-bottom:8px}
 .article a[target=_blank]::after{content:" ↗";font-size:.85em;color:var(--txt-muted)}
+
+/* wave9 QA-fix: FAQ-индикаторы, таблицы, выравнивание цен */
+.faqbox summary::after{content:"▾";float:right;color:var(--txt-muted);font-size:14px;transition:.15s}
+.faqbox details[open] summary::after{content:"▴"}
+.faqbox details[open] summary{padding-bottom:14px}
+.card table{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.card table th{background:var(--card)}
+.mcard{display:flex;flex-direction:column}
+.mcard .sol{margin-top:auto;padding-top:12px}
+.mcard img{display:block}
+#cat-chips .chip{cursor:pointer}
+#city-chips .chip,#cat-chips .chip{user-select:none}
 footer{background:var(--ink);color:rgba(229,236,246,.7);padding:56px 0 28px;font-size:14px}
 .fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
 footer h4{color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
