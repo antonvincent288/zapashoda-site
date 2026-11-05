@@ -38,8 +38,22 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
       ))}
     </nav>
     <button class="icon-btn" id="themebtn" title="Тёмная тема">🌙</button>
+    <button class="menu-btn" id="menubtn" title="Меню" aria-label="Меню" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<nav class="mnav" id="mnav" aria-label="Мобильное меню">
+  <a href="/">Главная</a>
+  <a href="/models/">Модели</a>
+  <a href="/blog/">Блог</a>
+  <a href="/pain/">Проблемы</a>
+  <a href="/safety/">Безопасность</a>
+  <a href="/tools/">Инструменты</a>
+  <a href="/shop/digital/">Товары</a>
+  <a href="/charging/">Карта ЗУ</a>
+  <a href="/b2b/">Дилерам (B2B)</a>
+</nav>
 <main><slot /></main>
 <footer>
   <div class="wrap">
@@ -53,7 +67,23 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
   </div>
 </footer>
 <script>
-  document.getElementById('themebtn').addEventListener('click', function(e){
+  var menubtn = document.getElementById('menubtn'), mnav = document.getElementById('mnav');
+if (menubtn && mnav) {
+  menubtn.addEventListener('click', function(){
+    var open = mnav.classList.toggle('open');
+    menubtn.classList.toggle('on', open);
+    menubtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mnav.addEventListener('click', function(e){
+    if (e.target.closest('a')) { mnav.classList.remove('open'); menubtn.classList.remove('on'); }
+  });
+  document.addEventListener('click', function(e){
+    if (!mnav.classList.contains('open')) return;
+    if (e.target.closest('#mnav') || e.target.closest('#menubtn')) return;
+    mnav.classList.remove('open'); menubtn.classList.remove('on');
+  });
+}
+document.getElementById('themebtn').addEventListener('click', function(e){
     document.documentElement.classList.toggle('dark');
     e.target.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
   });
@@ -200,12 +230,26 @@ footer a:hover{color:var(--gold)}
 .copy{border-top:1px solid rgba(229,236,246,.14);padding-top:20px;font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 #cat-chips .chip{cursor:pointer}
 #city-chips .chip,#cat-chips .chip{user-select:none}
+.menu-btn{display:none;flex-direction:column;justify-content:center;gap:4px;width:40px;height:38px;
+  padding:0 10px;border:1px solid var(--line);background:var(--bg);border-radius:9px;cursor:pointer}
+.menu-btn span{display:block;height:2px;width:100%;background:var(--txt);border-radius:2px;transition:.18s}
+.menu-btn.on span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-btn.on span:nth-child(2){opacity:0}
+.menu-btn.on span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mnav{display:none;position:fixed;top:64px;left:0;right:0;z-index:60;background:var(--bg);
+  border-bottom:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.12);padding:6px 16px 14px}
+.mnav a{display:block;padding:12px 8px;font-size:15.5px;font-weight:600;color:var(--txt);
+  text-decoration:none;border-bottom:1px solid var(--line)}
+.mnav a:last-child{border-bottom:0}
+.mnav a.on{color:var(--gold);font-weight:700}
 @media(max-width:900px){
+
   .cards,.bgrid,.mgrid,.plans,.tiles{grid-template-columns:1fr 1fr}
   .fgrid{grid-template-columns:1fr 1fr}
   .artgrid{grid-template-columns:1fr;gap:24px}
   .toc{display:none}
   nav{display:none}
+  .menu-btn{display:flex}
 }
 @media(max-width:600px){
   .cards,.bgrid,.mgrid,.plans,.tiles{grid-template-columns:1fr}
