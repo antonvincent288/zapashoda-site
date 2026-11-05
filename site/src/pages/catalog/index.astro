@@ -1,6 +1,6 @@
 ---
-import ZhLayout from '../layouts/ZhLayout.astro';
-import sku from '../data/sku.json';
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import sku from '../../data/sku.json';
 const items = (sku.items || []);
 const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: items.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, offers: { '@type': 'Offer', price: String(p.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } } })) };
 ---
