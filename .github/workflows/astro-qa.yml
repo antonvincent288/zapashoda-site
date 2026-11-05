@@ -81,3 +81,10 @@ jobs:
           else
             echo "no changes"
           fi
+      - name: Upload dist artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-preview
+          path: site/dist
+          retention-days: 14
