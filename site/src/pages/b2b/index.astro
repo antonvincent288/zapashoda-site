@@ -1,6 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import c from '../data/b2b_content.json';
+import c from '../../data/b2b_content.json';
 const rrc = c.rrc || [];
 const faq = c.faq || [];
 const faqLd = faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
