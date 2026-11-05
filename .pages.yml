@@ -21,6 +21,7 @@ content:
       - { name: body_html, label: Текст статьи (HTML), type: text }
       - { name: extra_html, label: Доп. блоки (HTML), type: text }
       - { name: headings, label: Оглавление (TOC), type: text }
+      - { name: faq, label: FAQ для AEO (JSON: [{q,a}]), type: text }
   - name: pain
     label: Проблемы (разборы)
     path: site/src/data/articles/pain
@@ -34,6 +35,7 @@ content:
       - { name: og, label: OG-картинка (путь), type: string }
       - { name: body_html, label: Текст (HTML), type: text }
       - { name: headings, label: Оглавление (TOC), type: text }
+      - { name: faq, label: FAQ для AEO (JSON: [{q,a}]), type: text }
   - name: safety
     label: Безопасность
     path: site/src/data/articles/safety
@@ -47,6 +49,7 @@ content:
       - { name: og, label: OG-картинка (путь), type: string }
       - { name: body_html, label: Текст (HTML), type: text }
       - { name: headings, label: Оглавление (TOC), type: text }
+      - { name: faq, label: FAQ для AEO (JSON: [{q,a}]), type: text }
   - name: models
     label: Каталог моделей
     path: site/src/data/models
