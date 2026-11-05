@@ -1,29 +1,15 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import fs from 'node:fs';
-const stations = JSON.parse(fs.readFileSync(new URL('../../public/charging/stations.json', import.meta.url), 'utf-8'));
-const all = Array.isArray(stations.stations) ? stations.stations : [];
-const total = all.length;
-const cityCount = {};
-all.forEach((s) => {
-  const city = String(s.a || '').split(',')[0].trim() || 'Без адреса';
-  cityCount[city] = (cityCount[city] || 0) + 1;
-});
-const cities = Object.entries(cityCount).sort((x, y) => y[1] - x[1]).slice(0, 12);
-const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта ' + total + ' зарядных станций России. Поиск по городу.' };
+const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта зарядных станций России: поиск по городу, коннекторы и мощность.' };
 ---
-<ZhLayout title="Карта зарядных станций — Запас хода" description={`Карта ${total} зарядных станций России: поиск по городу, коннекторы и мощность.`} jsonld={ld}>
+<ZhLayout title="Карта зарядных станций — Запас хода" description="Карта 2073 зарядных станций России: поиск по городу, коннекторы и мощность." jsonld={ld}>
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
       <h1>Зарядные станции рядом</h1>
-      <p class="lead">{total} станций (обновлено {stations.updated}). Синие — быстрые DC, зелёные — AC.</p>
+      <p class="lead"><span id="stn-count">2073</span> станций (<span id="stn-upd">2026-11-01</span>). Синие — быстрые DC, зелёные — AC.</p>
       <div id="map" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:28px;border:1px solid var(--line)"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
-        {cities.map(([c, n]) => (
-          <button class="chip" type="button" data-city={c}>{c} ({n})</button>
-        ))}
-      </div>
+      <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
     </div>
   </section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
@@ -31,32 +17,46 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   <link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css" />
   <script is:inline src="/assets/leaflet/leaflet.js"></script>
   <script is:inline src="/assets/leaflet/leaflet.markercluster.js"></script>
-  <script define:vars={{ cities: cities.map(([c]) => c) }}>
+  <script is:inline>
     (function () {
       var map, cluster;
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).then(function (data) {
         var st = data.stations || [];
-        map = L.map('map').setView([55.75, 37.62], 5);
-        L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4', { maxZoom: 18 }).addTo(map);
-        cluster = L.markerClusterGroup();
+        document.getElementById('stn-count').textContent = st.length;
+        document.getElementById('stn-upd').textContent = data.updated || '';
+        var cityCount = {}, cityPts = {};
         st.forEach(function (s) {
-          if (typeof s.lat !== 'number' || typeof s.lon !== 'number') return;
-          var conn = (s.s || []).join(' ');
-          var pw = Number(s.pw) || 0;
-          var dc = /CCS|CHAdeMO|GB\/T DC/i.test(conn) || pw >= 50;
-          var m = L.circleMarker([s.lat, s.lon], { radius: 5, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
-          m.bindPopup('<b>' + (s.n || 'Станция') + '</b><br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : ''));
-          cluster.addLayer(m);
+          var c = String(s.a || '').split(',')[0].trim() || 'Без адреса';
+          cityCount[c] = (cityCount[c] || 0) + 1;
+          (cityPts[c] = cityPts[c] || []).push([s.lat, s.lon]);
         });
-        map.addLayer(cluster);
-        var cityByKey = {};
-        st.forEach(function (s) { var c = String(s.a || '').split(',')[0].trim() || 'Без адреса'; (cityByKey[c] = cityByKey[c] || []).push([s.lat, s.lon]); });
-        document.querySelectorAll('.chip[data-city]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var pts = cityByKey[btn.getAttribute('data-city')] || [];
+        var chips = Object.entries(cityCount).sort(function (x, y) { return y[1] - x[1]; }).slice(0, 12);
+        var box = document.getElementById('city-chips');
+        chips.forEach(function (pair) {
+          var b = document.createElement('button');
+          b.className = 'chip';
+          b.textContent = pair[0] + ' (' + pair[1] + ')';
+          b.addEventListener('click', function () {
+            var pts = cityPts[pair[0]] || [];
             if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 12 });
           });
+          box.appendChild(b);
         });
+        if (!map) {
+          map = L.map('map').setView([55.75, 37.62], 5);
+          L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4', { maxZoom: 18 }).addTo(map);
+          cluster = L.markerClusterGroup();
+          st.forEach(function (s) {
+            if (typeof s.lat !== 'number' || typeof s.lon !== 'number') return;
+            var conn = (s.s || []).join(' ');
+            var pw = Number(s.pw) || 0;
+            var dc = /CCS|CHAdeMO|GB\/T DC/i.test(conn) || pw >= 50;
+            var m = L.circleMarker([s.lat, s.lon], { radius: 5, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
+            m.bindPopup('<b>' + (s.n || 'Станция') + '</b><br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : ''));
+            cluster.addLayer(m);
+          });
+          map.addLayer(cluster);
+        }
       });
     })();
   </script>
