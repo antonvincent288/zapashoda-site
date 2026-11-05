@@ -1,0 +1,25 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const models = Object.values(modules) as any[];
+models.sort((a, b) => String(a.brand || '').localeCompare(String(b.brand || '')) || String(a.name || '').localeCompare(String(b.name || '')));
+---
+<ZhLayout title="Каталог моделей — Запас хода" description={`Каталог ${models.length} моделей: разъёмы, мощность борта, решения и совместимость с российской инфраструктурой зарядки.`}>
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Каталог моделей</div>
+      <h1>Каталог моделей</h1>
+      <p class="lead">{models.length} моделей: разъёмы, мощность борта, решения и совместимость с российской инфраструктурой.</p>
+      <div class="mgrid" style="margin-top:36px">
+        {models.map((m) => (
+          <a class="mcard" href={`/models/${m.slug}/`}>
+            <b>{m.brand} {m.name || ''}</b>
+            {m.years && <span class="tag">{m.type || ''} · {m.years}</span>}
+            {m.port && <div class="ports">{m.port}</div>}
+            {m.desc && <div class="sol"><b>О модели</b>{String(m.desc).slice(0, 110)}…</div>}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</ZhLayout>
