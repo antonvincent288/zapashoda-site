@@ -1614,6 +1614,20 @@ MODEL_EXTRA = {
   '<p>Редкий случай «китайца» с европейскими разъёмами: Type 2/CCS2, OBC 11 кВт (3 фазы), быстрая зарядка до 240 кВт. Российская инфраструктура Type 2/CCS2 работает напрямую — адаптеры не нужны, а трёхфазная домашняя станция раскрывает OBC полностью. Это делает Avatr одним из самых «бесшовных» китайских EV для России. Домашняя станция — <a href="/pain/domashnie-stancii.html">гайд</a>, быстрые станции — <a href="/pain/zaryadka-na-trasse.html">карта и планирование</a>. Проверено на данных базы: {BD}.</p>'),
 }
 
+
+def AEO_DIRECT(m, pname):
+    """Детерминированный «Прямой ответ» для ИИ-поисковиков: только факты из базы модели."""
+    def e(v): return html.escape(str(v)) if v else '—'
+    parts = ['<div class="tldr" style="margin:12px 0 0"><b>Прямой ответ:</b> ' + html.escape(pname)
+             + ' (годы: ' + e(m.get('years')) + ', рынок вывоза: ' + e(m.get('market')) + ') — разъёмы: AC '
+             + e(m.get('ac')) + ', DC ' + e(m.get('dc')) + '.']
+    if m.get('obc'): parts.append(' Бортовое зарядное: ' + e(m['obc']) + '.')
+    if m.get('dcp'): parts.append(' Быстрая зарядка: ' + e(m['dcp']) + '.')
+    if m.get('sol'): parts.append(' Что докупить: ' + e(m['sol']))
+    parts.append('</div>')
+    return ''.join(parts)
+
+
 def model_page(m, outdir):
     grp = classify(m); ids = pains_for(m)
     pname = m['brand'] + ' ' + m['model']
@@ -1707,6 +1721,7 @@ def model_page(m, outdir):
       + '<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-4 focus:ring-green-300" href="/quiz/">Подобрать комплект</a>'
       + '<a class="btn bg-white text-gray-800 border-gray-300 hover:bg-gray-700 hover:border-gray-700 hover:text-white" href="/calculator/">Калькулятор зарядки</a></div>'
       + '</div><div>' + photo_html + '</div></div>')
+    parts.append(AEO_DIRECT(m, pname))
     parts.append('<h2 class="text-lg text-gray-900 mt-8">Разъёмы и мощность зарядки</h2><div class="rounded-lg break-words border bg-white border-gray-300 overflow-x-auto my-4"><table class="text-left w-full">' + rows + '</table></div>')
     parts.append(port_visual(m))
     if chg_table: parts.append(chg_table)
@@ -2052,7 +2067,7 @@ def llms_files(outdir, news):
       ('VIN-справочник', '/vin/', 'Структура VIN, коды года, проверка истории для EV в РФ'),
       ('О проекте', '/about.html', 'Методика и источники справочника'),
     ]
-    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: ' + str(len(MODELS)) + ' моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-10-30). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
+    txt = '# ' + SITE_NAME + '\n\n> Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: ' + str(len(MODELS)) + ' моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.\n>\n> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: ' + BUILD_DATE + '). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).\n> Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app\n> Канал с новостями: https://t.me/zapashoda_ev\n> Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt\n> Контакты: через Telegram-бот или канал (быстрый ответ).\n\n'
     txt += '## Разделы\n\n'
     for t,u,d in canon: txt += '- [' + t + '](' + SITE_DOMAIN + u + '): ' + d + '\n'
     txt += '\n## Популярные модели\n\n'
@@ -2071,6 +2086,10 @@ def llms_files(outdir, news):
     if news:
         txt += '\n## Свежие новости\n\n'
         for it in news[:20]: txt += '- [' + it['title'] + '](' + SITE_DOMAIN + news_slug_page(it) + '): ' + (it.get('teaser') or '') + '\n'
+    txt += '\n## Экспертные статьи блога\n\n'
+    _blog_slugs = [s for s, _, _ in services.BLOG_ARTICLES] + ['zeekr-001-gbt-diff', 'li-l7-battery-heat', 'workersbee-vs-auxus', 'b2b-reglament-vydachi-ev', '800v-zaryadka-ev-rossiya', 'erekv-domashnyaya-zaryadka', 'sertifikaciya-ezs-rf-2026']
+    for _bs in _blog_slugs:
+        txt += '- [' + _bs.replace('-', ' ') + '](' + SITE_DOMAIN + '/blog/' + _bs + '.html)\n'
     with open(os.path.join(outdir,'llms.txt'),'w',encoding='utf-8') as f: f.write(txt)
 
     full = txt + '\n\n# ПОЛНЫЙ ТЕКСТ РУКОВОДСТВ\n\n'
@@ -4490,6 +4509,30 @@ def main():
         'og': '/assets/og/b-workersbee-vs-auxus.png',
         'body': WORKERSBEE_BODY,
       },
+      '/blog/b2b-reglament-vydachi-ev.html': {
+        'title': 'Регламент выдачи китайских EV в автосалоне: чек-лист для РОПа',
+        'desc': 'Готовый стандарт предпродажной подготовки и выдачи BEV/EREV: проверка разъёмов, SOC, комплект зарядки, инструктаж и скрипт передачи машины клиенту.',
+        'og': '/assets/og/b-b2b-reglament-vydachi-ev.png',
+        'body': B2B_ART1_BODY,
+      },
+      '/blog/800v-zaryadka-ev-rossiya.html': {
+        'title': 'Зарядка EV 800 В в России: Zeekr 007, SU7 и станции 400 В',
+        'desc': 'Что происходит с 800-вольтовыми машинами (Zeekr 007, 001 FR, Xiaomi SU7, Avatr 12) на станциях 400 В: мощность, ток адаптера и handshake-сессия.',
+        'og': '/assets/og/b-800v-zaryadka-ev-rossiya.png',
+        'body': B2B_ART2_BODY,
+      },
+      '/blog/erekv-domashnyaya-zaryadka.html': {
+        'title': 'Li Auto L6–L9: почему гибриду нужна домашняя зарядка',
+        'desc': 'Сценарий владения EREV: ночная домашняя зарядка вместо городской быстрой, математика батареи 40–52 кВтч и правильный набор для дилера.',
+        'og': '/assets/og/b-erekv-domashnyaya-zaryadka.png',
+        'body': B2B_ART3_BODY,
+      },
+      '/blog/sertifikaciya-ezs-rf-2026.html': {
+        'title': 'Сертификация зарядных станций в РФ 2026: ЕАЭС и ГОСТ',
+        'desc': 'Какие документы обязательны у поставщика ЭЗС (ТР ТС 004/020, ЕАЭС 037), знак ЕАС, требования к монтажу и распределение ответственности.',
+        'og': '/assets/og/b-sertifikaciya-ezs-rf-2026.png',
+        'body': B2B_ART4_BODY,
+      },
     }
     for _u, _t, _d in SEO_STUBS:
         if _u in BLOG_READY:
@@ -4612,7 +4655,8 @@ def main():
       'var gas="' + GAS_URL + '";'
       'var t=new URLSearchParams(location.search).get("token")||"";'
       'if(t){window.location.href=gas+"?t="+encodeURIComponent(t);}'
-      '})();</script>')
+      '})();</script>'
+      '</div></div>')
     write_page(os.path.join(outdir, 'shop', 'digital', 'download.html'),
         'Скачивание гайда | Запас хода', 'Выдача гайда по токену с ограничением времени и числа скачиваний.',
         _dl_body, '/shop/digital/download.html', noindex=True)

@@ -41,6 +41,10 @@ jobs:
         run: python scripts/weather_trigger.py
       - name: Build site
         run: python build.py _site
+      - name: QA suite (fail gate)
+        run: python scripts/qa_suite.py _site --drafts bridge/drafts/guides
+      - name: Visual QA
+        run: python scripts/visual_qa.py _site
       - name: B2B QR booklets (если seed есть)
         run: pip install -q qrcode reportlab && python scripts/b2b_qr_booklets.py
 
