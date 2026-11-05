@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Шортс-автопилот v2.4 (budget 12min, dl timeout 90s) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
+# Шортс-автопилот v2.5 (все таймауты <=90s) (download: invidious first) (api 180d/25, MIN_VIEWS 500, notice 72h): YouTube Creative Commons -> Telegram
 # 05.11: фикс нулевых прогонов. Причины: (1) все Invidious-инстансы массово мертвы (401/SSL),
 # (2) проверка лицензии yt.lemnoslife.com отключена (таймаут) — кандидаты падали на "license unknown",
 # (3) yt-dlp-поиск не содержал шортс-вариаций запросов и фильтр <=61s отсекал почти всё.
@@ -178,7 +178,7 @@ def ytdlp_search(topic):
 
 def full_meta(url):
     for extra in ([], EXTRACTOR_FALLBACK):
-        r = ytdlp(['--dump-json', '--no-playlist', '--no-warnings'] + extra + [url], timeout=150)
+        r = ytdlp(['--dump-json', '--no-playlist', '--no-warnings'] + extra + [url], timeout=90)
         try:
             return json.loads((r.stdout or '').strip().splitlines()[-1])
         except Exception:
@@ -225,7 +225,7 @@ def cobalt_download(url, dst):
             status = r.get('status')
             dl = r.get('url')
             if status in ('redirect', 'tunnel', 'stream') and dl:
-                raw = urllib.request.urlopen(urllib.request.Request(dl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=300).read()
+                raw = urllib.request.urlopen(urllib.request.Request(dl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=90).read()
                 if len(raw) > 100000 and len(raw) <= MAX_BYTES:
                     open(dst, 'wb').write(raw)
                     print('  [cobalt] OK via', base, len(raw))
@@ -239,7 +239,7 @@ def cobalt_download(url, dst):
 def ytdlp_download(url, dst):
     for extra in (POT_ARGS, [], EXTRACTOR_FALLBACK):
         r = ytdlp(['-f', 'best[ext=mp4]/best', '--no-playlist', '--no-warnings',
-                   '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=300)
+                   '--max-filesize', '60M', '-o', dst] + extra + [url], timeout=90)
         files = glob.glob(dst + '.*')
         if files and r.returncode == 0:
             f = files[0]
