@@ -2715,7 +2715,25 @@ def pain_article_page(sl, title, desc, pids, outdir):
         "publisher": {"@type": "Organization", "name": SITE_NAME},
         "mainEntityOfPage": SITE_DOMAIN + '/pain/' + sl + '.html'
     }, ensure_ascii=False) + '</script>'
-    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld, toc=True)
+    qa_pairs = []
+    for i in pids[:6]:
+        q = str(PAINS[i].get('pain') or '').strip()
+        a = str(PAINS[i].get('sol') or '').strip()
+        if q and a:
+            qa_pairs.append((q, a))
+    if not qa_pairs:
+        qa_pairs = [(title, desc)]
+    faq_extra = ''
+    if qa_pairs:
+        faq_extra = '<script type="application/ld+json">' + json.dumps({
+            "@context": "https://schema.org", "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": q.replace('<', '\u003c').replace('>', '\u003e'),
+                 "acceptedAnswer": {"@type": "Answer", "text": a.replace('<', '\u003c').replace('>', '\u003e')}}
+                for q, a in qa_pairs
+            ]
+        }, ensure_ascii=False) + '</script>'
+    write_page(os.path.join(outdir,'pain', sl+'.html'), TITLE_SHORT.get(title, title)+' | Запас хода', 'Практическое руководство: '+desc, art_enhance(body, SITE_DOMAIN+'/pain/'+sl+'.html', title, BUILD_DATE), '/pain/'+sl+'.html', og='/assets/og/p-'+sl+'.png', crumbs=[('/pains.html','Проблемы'),('',title)], extra_ld=art_ld + faq_extra, toc=True)
 
 def rel_models(rel_brands):
     out = []
@@ -2760,6 +2778,14 @@ def vin_hub(outdir):
         body, '/vin/')
 
 def misc_pages(outdir):
+    # IndexNow: файл-подтверждение владения ключом (имя файла = сам ключ)
+    try:
+        _ik = str(DATA.get('config',{}).get('indexnow_key') or SITE_CFG.get('indexnow_key') or '')
+    except Exception:
+        _ik = ''
+    if _ik:
+        with open(os.path.join(outdir, _ik + '.txt'), 'w', encoding='utf-8') as f:
+            f.write(_ik)
     with open(os.path.join(outdir,'robots.txt'),'w',encoding='utf-8') as f:
         ai_bots = ['GPTBot','OAI-SearchBot','ChatGPT-User','ClaudeBot','PerplexityBot','Perplexity-User','Google-Extended','Applebot','Applebot-Extended','CCBot','meta-externalagent','Bytespider','Amazonbot','YandexGPT','AliceBot']
         lines = ['User-agent: *', 'Allow: /', 'Disallow: /admin/']
