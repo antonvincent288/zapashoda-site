@@ -5,7 +5,7 @@ export function getStaticPaths() {
   return catalog.products.filter((p) => p.slug !== 'catalog').map((p) => ({ params: { slug: p.slug }, props: { p } }));
 }
 const { p } = Astro.props;
-const related = all.filter((x) => x.slug !== p.slug && x.cat && x.cat === p.cat).slice(0, 3);
+const related = catalog.products.filter((x) => x.slug !== p.slug && x.cat && x.cat === p.cat).slice(0, 3);
 const faqLd = p.faq && p.faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: p.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
 const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: p.title, description: p.desc || '', image: p.og ? ('https://zapashoda-ev.ru' + p.og) : undefined, offers: { '@type': 'Offer', price: String(p.price || 0), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } };
 ---
