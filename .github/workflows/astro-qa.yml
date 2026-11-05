@@ -45,5 +45,7 @@ jobs:
           test -f dist/pain/index.html || { echo 'MISSING dist/pain/index.html'; exit 1; }
           test -f dist/safety/index.html || { echo 'MISSING dist/safety/index.html'; exit 1; }
           test -f dist/llms.txt || { echo 'MISSING llms.txt'; exit 1; }
+          test -f dist/assets/og/b-gbt-stancii-2026.png || { echo 'MISSING og article image'; exit 1; }
+          test -f dist/assets/og/m-aito-m5-m7.png || { echo 'MISSING og model image'; exit 1; }
           echo "SMOKE OK (catalog + articles generated)"
         working-directory: site
