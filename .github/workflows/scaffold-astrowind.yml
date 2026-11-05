@@ -19,7 +19,8 @@ jobs:
         with:
           node-version: 22
       - name: Create Astro project (AstroWind template) into site/
-        run: npm_config_yes=true npx --yes create-astro@latest site -- --template arthelokyo/astrowind --yes --no-git --install
+        run: |
+          npm create astro@latest -- site --template arthelokyo/astrowind --yes --no-git --install
       - name: Prepare data dirs and samples
         run: |
           mkdir -p site/data/models site/data/skus site/data/faq
@@ -29,7 +30,10 @@ jobs:
         run: |
           git config user.name "alisa-robot"
           git config user.email "bot@zapashoda-ev.ru"
-          if git diff --quiet; then echo "nothing to commit"; exit 0; fi
           git add -A
-          git commit -m "AstroWind scaffold в site/ (Astro 7 + Tailwind v4) + data-папки и семплы"
-          git push origin astrowind-migration
+          if git status --porcelain | grep -q .; then
+            git commit -m "AstroWind scaffold в site/ (Astro 7 + Tailwind v4) + data-папки и семплы"
+            git push origin astrowind-migration
+          else
+            echo "nothing to commit"
+          fi
