@@ -1,0 +1,69 @@
+{
+  "ts_utc": "2026-11-05T09:50:27Z",
+  "ok": true,
+  "checks_total": 10,
+  "fails": [],
+  "results": [
+    {
+      "check": "Главная",
+      "url": "https://zapashoda-ev.ru/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "B2B дилерам",
+      "url": "https://zapashoda-ev.ru/b2b/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "Каталог",
+      "url": "https://zapashoda-ev.ru/catalog/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "Mini App",
+      "url": "https://zapashoda-ev.ru/app/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "Карта станций",
+      "url": "https://zapashoda-ev.ru/charging/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "Модельная страница (AEO)",
+      "url": "https://zapashoda-ev.ru/models/",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "sitemap.xml",
+      "url": "https://zapashoda-ev.ru/sitemap.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "robots.txt",
+      "url": "https://zapashoda-ev.ru/robots.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "llms.txt",
+      "url": "https://zapashoda-ev.ru/llms.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "check": "AI_BRIDGE.json",
+      "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
+      "status": 200,
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
