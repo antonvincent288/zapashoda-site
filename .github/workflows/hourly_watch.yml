@@ -1,0 +1,40 @@
+name: hourly watch
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hourly-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prod smoke + SEO/AEO checks
+        id: watch
+        run: python scripts/hourly_watch.py
+        continue-on-error: true
+      - name: Commit report to bridge
+        run: |
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "zapashoda-hourly-watch"
+          git add bridge/hourly_watch.json
+          git diff --cached --quiet || (git commit -m "watch: hourly report [skip ci]" && git push)
+      - name: Verdict
+        run: |
+          if [ "${{ steps.watch.outcome }}" = "failure" ]; then
+            echo "::warning::Hourly watch: есть отказы — см. bridge/hourly_watch.json"
+            exit 1
+          fi
+          echo "hourly watch: OK"
