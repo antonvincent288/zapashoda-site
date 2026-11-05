@@ -1,0 +1,38 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+---
+<ZhLayout title="Инструменты — карта станций, калькулятор зарядки, VIN-справочник — Запас хода" description="Три рабочих инструмента: карта 2073 зарядных станций РФ, калькулятор стоимости зарядки, VIN-справочник по разъёмам.">
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Инструменты</div>
+      <h1>Инструменты</h1>
+      <p class="lead">Три рабочих инструмента — карта, калькулятор и VIN-справочник работают и на проде, и здесь.</p>
+      <div class="tiles" style="margin-top:36px">
+        <a class="tile" href="/charging/">
+          <h3>🗺️ Карта станций</h3>
+          <div class="mock">📍</div>
+          <p>2073 станции: фильтры по мощности, коннектору, ночёвке.</p>
+        </a>
+        <a class="tile" href="/quiz/">
+          <h3>🧮 Калькулятор зарядки</h3>
+          <div class="mock">⚡</div>
+          <p>Стоимость сценария: тариф, время, цена простоя. «Подбор за 30 сек» — главный CTA сайта.</p>
+        </a>
+        <a class="tile" href="https://zapashoda-ev.ru/vin/" rel="nofollow">
+          <h3>🔑 VIN-справочник</h3>
+          <div class="mock">🔑</div>
+          <p>Определение модели и разъёма по VIN: база брендов и регионов — уже работает на проде.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta">
+        <h2>Не нашли свой разъём в каталоге?</h2>
+        <p>Проверьте модель по разъёмам и мощности борта — подбор занимает 30 секунд.</p>
+        <a class="btn btn-gold" href="/quiz/" style="text-decoration:none">Подобрать за 30 сек</a>
+      </div>
+    </div>
+  </section>
+</ZhLayout>
