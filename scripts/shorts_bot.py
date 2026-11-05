@@ -251,6 +251,92 @@ def ytdlp_download(url, dst):
             print('  [dl tail]', (r.stderr or '').strip()[-300:].replace('\n', ' | '))
     return cobalt_download(url, dst)
 
+PIPED = [
+    'https://pipedapi.kavin.rocks',
+    'https://pipedapi.adminforge.de',
+    'https://api.piped.private.coffee',
+    'https://pipedapi.leptons.xyz',
+    'https://pipedapi.drgns.space',
+]
+
+def qnum(q):
+    digits = ''.join(ch for ch in str(q or '') if ch.isdigit())
+    return int(digits) if digits else 0
+
+def _dl(url, dst):
+    req_ = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    data = urllib.request.urlopen(req_, timeout=300).read()
+    if 100000 < len(data) <= MAX_BYTES:
+        open(dst, 'wb').write(data)
+        return dst
+    print('  [dl] bad size', len(data))
+    return None
+
+def inv_direct_download(c, dst):
+    """Прямые googlevideo-URL из Invidious (formatStreams/adaptiveFormats) — без прокси инстанса."""
+    for base in INV_INSTANCES:
+        try:
+            v = get_json(base + '/api/v1/videos/%s?fields=formatStreams,adaptiveFormats' % c['videoId'], timeout=15)
+        except Exception:
+            continue
+        urls = []
+        for f in (v.get('formatStreams') or []) + (v.get('adaptiveFormats') or []):
+            u = f.get('url') or ''
+            if 'googlevideo.com' not in u:
+                continue
+            mime = (f.get('container') or '') + (f.get('mimeType') or '') + u
+            if 'mp4' not in mime:
+                continue
+            urls.append((0 if 'itag=18' in u else (1 if 'itag=22' in u else 2), u))
+        if urls:
+            urls.sort(key=lambda t: t[0])
+            for _, u in urls[:4]:
+                try:
+                    if _dl(u, dst):
+                        print('  [inv direct] OK via', base)
+                        return dst
+                except Exception as e:
+                    print('  [inv direct fail]', type(e).__name__, str(e)[:70])
+    return None
+
+def piped_download(vid, dst):
+    for base in PIPED:
+        try:
+            s = get_json(base + '/streams/' + vid, timeout=20)
+        except Exception as e:
+            print('  [piped fail] %s: %s' % (base, type(e).__name__))
+            continue
+        if not s.get('title'):
+            continue
+        vs = [v for v in (s.get('videoStreams') or []) if v.get('url')]
+        mux = [v for v in vs if not v.get('videoOnly') and 'MPEG_4' in (v.get('format') or '')]
+        mux.sort(key=lambda v: -qnum(v.get('quality')))
+        for v in mux[:2]:
+            try:
+                if _dl(v['url'], dst):
+                    print('  [piped] OK via', base)
+                    return dst
+            except Exception as e:
+                print('  [piped dl fail]', type(e).__name__, str(e)[:70])
+        vo = [v for v in vs if v.get('videoOnly') and 'MPEG_4' in (v.get('format') or '')]
+        au = [a for a in (s.get('audioStreams') or []) if a.get('url') and 'M4A' in (a.get('format') or '')]
+        if vo and au:
+            vo.sort(key=lambda v: -qnum(v.get('quality')))
+            au.sort(key=lambda a: -qnum(a.get('quality')))
+            vurl, aurl = vo[0]['url'], au[0]['url']
+            try:
+                open('/tmp/pv.mp4', 'wb').write(urllib.request.urlopen(urllib.request.Request(vurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=300).read())
+                open('/tmp/pa.m4a', 'wb').write(urllib.request.urlopen(urllib.request.Request(aurl, headers={'User-Agent': 'Mozilla/5.0'}), timeout=120).read())
+                r = subprocess.run(['ffmpeg', '-y', '-i', '/tmp/pv.mp4', '-i', '/tmp/pa.m4a', '-c', 'copy', dst],
+                                   capture_output=True, timeout=180)
+                if r.returncode == 0 and os.path.exists(dst) and os.path.getsize(dst) > 100000 and os.path.getsize(dst) <= MAX_BYTES:
+                    print('  [piped mux] OK via', base)
+                    return dst
+                print('  [piped mux fail] rc=%d' % r.returncode)
+            except Exception as e:
+                print('  [piped mux fail]', type(e).__name__, str(e)[:70])
+    return None
+
 # ---------- источник 3: YouTube API ----------
 def api_search(topic):
     if not YT_API_KEY:
@@ -355,12 +441,16 @@ def process(c, pub, now):
     if pub.get('last_topic') == c['topic']:
         return False, 'same topic as last'
     clip = None
-    if c.get('stream_url'):
-        clip = inv_download(c, '/tmp/clip.mp4')
-    if not clip:
-        clip = inv_download(c, '/tmp/clip.mp4') if c['_src'] != 'inv' else None
-    if not clip:
-        clip = ytdlp_download(c['url'], '/tmp/clip')
+    for attempt in (lambda: inv_direct_download(c, '/tmp/clip.mp4'),
+                    lambda: piped_download(c['videoId'], '/tmp/clip.mp4'),
+                    lambda: inv_download(c, '/tmp/clip.mp4') if (c.get('stream_url') or c['_src'] != 'inv') else None,
+                    lambda: ytdlp_download(c['url'], '/tmp/clip')):
+        try:
+            clip = attempt()
+        except Exception as e:
+            print('  [dl attempt fail]', type(e).__name__, str(e)[:80])
+        if clip:
+            break
     if not clip:
         return False, 'download failed'
     caption = ('🎬 ' + short(c.get('title'), 80) + '\n\n'
