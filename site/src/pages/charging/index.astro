@@ -29,8 +29,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
   <link rel="stylesheet" href="/assets/leaflet/MarkerCluster.css" />
   <link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css" />
-  <script src="/assets/leaflet/leaflet.js"></script>
-  <script src="/assets/leaflet/leaflet.markercluster.js"></script>
+  <script is:inline src="/assets/leaflet/leaflet.js"></script>
+  <script is:inline src="/assets/leaflet/leaflet.markercluster.js"></script>
   <script define:vars={{ cities: cities.map(([c]) => c) }}>
     (function () {
       var map, cluster;
