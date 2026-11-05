@@ -1,0 +1,59 @@
+name: Astro screenshots (astrowind-migration)
+on:
+  push:
+    branches: [astrowind-migration]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: npm run build
+        working-directory: site
+      - name: Serve dist and take screenshots
+        run: |
+          python3 -m pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+          (cd site/dist && python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 3
+          python3 - <<'PYEOF'
+          import json, urllib.request
+          pages = json.load(open("shots_pages.json"))
+          from playwright.sync_api import sync_playwright
+          import os
+          os.makedirs("reports/astrowind_previews", exist_ok=True)
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              for item in pages:
+                  for theme in ["light", "dark"]:
+                      for w in [1440, 390]:
+                          page = browser.new_page(viewport={"width": w, "height": 900})
+                          page.goto("http://localhost:8080" + item["path"], wait_until="networkidle", timeout=30000)
+                          if theme == "dark":
+                              page.evaluate("document.documentElement.classList.add('dark')")
+                          page.wait_for_timeout(600)
+                          name = item["name"] + "_" + theme + "_" + str(w) + ".png"
+                          page.screenshot(path="reports/astrowind_previews/" + name, full_page=True)
+                          page.close()
+              browser.close()
+          PYEOF
+      - name: Commit screenshots
+        run: |
+          git config user.name "alisa-robot"
+          git config user.email "bot@zapashoda-ev.ru"
+          git add -A reports/astrowind_previews
+          if git status --porcelain | grep -q .; then
+            git commit -m "shots: превью-скриншоты wave 4 (prod-структура)"
+            git push origin astrowind-migration
+          else
+            echo "no changes"
+          fi
