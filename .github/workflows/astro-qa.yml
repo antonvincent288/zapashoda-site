@@ -1,0 +1,42 @@
+name: Astro QA (astrowind-migration)
+on:
+  push:
+    branches: [astrowind-migration]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: pre
+        run: |
+          if [ -f site/package.json ]; then echo "scaffold=yes" >> "$GITHUB_OUTPUT"; else echo "scaffold=no" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-node@v4
+        if: steps.pre.outputs.scaffold == 'yes'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install deps
+        if: steps.pre.outputs.scaffold == 'yes'
+        run: npm ci
+        working-directory: site
+      - name: Build
+        if: steps.pre.outputs.scaffold == 'yes'
+        run: npm run build
+        working-directory: site
+      - name: Pagefind index
+        if: steps.pre.outputs.scaffold == 'yes'
+        run: npx --yes pagefind --site dist
+        working-directory: site
+      - name: Smoke checks (og, JSON-LD, sitemap)
+        if: steps.pre.outputs.scaffold == 'yes'
+        run: |
+          test -f dist/index.html
+          test -f dist/sitemap-index.xml
+          grep -rl 'property="og:title"' dist --include='*.html' | head -1
+          grep -rl 'application/ld+json' dist --include='*.html' | head -1
+          echo "SMOKE OK"
+        working-directory: site
