@@ -1,0 +1,44 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import catalog from '../../data/catalog.json';
+const products = (catalog.products || []).filter((p) => p.slug !== 'catalog');
+const cats = Array.from(new Set(products.map((p) => p.cat || 'Прочее'))).sort((a, b) => a.localeCompare(b, 'ru'));
+const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, offers: { '@type': 'Offer', price: String(p.price || 0), priceCurrency: 'RUB' } } })) };
+---
+<ZhLayout title="Каталог аксессуаров для зарядки — Запас хода" description="Адаптеры Type 2 → GB/T, кабели, портативные зарядки, настенные станции. Цены, совместимость и подбор под вашу модель." jsonld={ld}>
+  <section class="sec">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / Каталог</div>
+      <h1>Каталог аксессуаров для зарядки</h1>
+      <p class="lead">{products.length} позиций: адаптеры, кабели, зарядки, станции и аксессуары. Совместимость — по карточкам моделей.</p>
+      <div id="cat-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
+        <button class="chip" type="button" data-cat="all" style="background:var(--gold);color:#1d1d1f;border-color:var(--gold)">Все ({products.length})</button>
+        {cats.map((c) => (
+          <button class="chip" type="button" data-cat={c}>{c} ({products.filter((p) => (p.cat || 'Прочее') === c).length})</button>
+        ))}
+      </div>
+      <div class="mgrid" style="margin-top:32px">
+        {products.map((p) => (
+          <a class="mcard" data-cat={p.cat || 'Прочее'} href={`/catalog/${p.slug}/`}>
+            {p.img && <img src={p.img} alt={p.title} loading="lazy" decoding="async" style="width:100%;height:170px;object-fit:contain;background:#fff;border-radius:12px 12px 0 0;padding:8px" />}
+            <b>{p.title}</b>
+            {(p.spec || p.cat) && <span class="tag">{[p.cat, p.spec].filter(Boolean).join(' · ')}</span>}
+            <div class="sol" style="margin-top:auto"><b style="font-size:18px">{p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : 'по запросу'}</b></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <script define:vars={{ cats }}>
+    document.querySelectorAll('#cat-chips .chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var c = btn.getAttribute('data-cat');
+        document.querySelectorAll('#cat-chips .chip').forEach(function (b) { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; });
+        btn.style.background = 'var(--gold)'; btn.style.color = '#1d1d1f'; btn.style.borderColor = 'var(--gold)';
+        document.querySelectorAll('.mcard[data-cat]').forEach(function (card) {
+          card.style.display = (c === 'all' || card.getAttribute('data-cat') === c) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</ZhLayout>
