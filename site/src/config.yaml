@@ -1,6 +1,6 @@
 site:
-  name: AstroWind
-  site: 'https://astrowind.vercel.app'
+  name: Запас хода
+  site: 'https://zapashoda-ev.ru'
   base: '/'
   trailingSlash: false
 
@@ -28,12 +28,12 @@ metadata:
     cardType: summary_large_image
 
 i18n:
-  language: en
+  language: ru
   textDirection: ltr
 
 apps:
   blog:
-    isEnabled: true
+    isEnabled: false
     postsPerPage: 8
 
     post:
