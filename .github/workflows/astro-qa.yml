@@ -61,12 +61,13 @@ jobs:
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
           echo '--- dist/catalog:'; ls dist/catalog | head -40; echo '--- services:'; ls dist/services 2>/dev/null | head -15; echo '--- cost:'; ls dist/cost 2>/dev/null | head -5; echo '--- news:'; ls dist/news 2>/dev/null | head -12
-          CITEM=$(find dist/catalog -maxdepth 2 -name 'adapter-type2-gbt-premium*' 2>/dev/null | head -1)
-          echo "CITEM=[$CITEM]"
+          CITEM=$(find dist/catalog -path '*adapter-type2-gbt-premium*' -name 'index.html' 2>/dev/null | head -1)
+          [ -n "$CITEM" ] || CITEM=$(find dist/catalog -maxdepth 1 -name 'adapter-type2-gbt-premium.html' -type f 2>/dev/null | head -1)
           [ -n "$CITEM" ] || { echo 'MISSING catalog item (find empty)'; ls -1 dist/catalog; exit 1; }
           grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
           grep -q "Адаптер Type 2 → GB/T, 22 кВт, премиум" "$CITEM" || { echo 'MISSING item title'; exit 1; }
-          test -f dist/catalog/adapter-ccs2-gbt-dc.html -o -f dist/catalog/adapter-ccs2-gbt-dc/index.html || { echo 'MISSING ccs2 item'; exit 1; }
+          CC=$(find dist/catalog -path '*adapter-ccs2-gbt-dc*' -name 'index.html' 2>/dev/null | head -1)
+          [ -n "$CC" ] || { echo 'MISSING ccs2 item'; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
           test -f dist/cost/avatr-11-12-ofitsialno-ru.html || { echo 'MISSING cost page'; exit 1; }
           test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
