@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "from": "alisa",
+      "to": "team",
+      "status": "new",
+      "ts": "2026-11-05T16:10:00+03:00",
+      "title": "Директива владельца: CMS + 50-кратный QA + цель №1 в короткие сроки",
+      "body": "1) Ветка astrowind-migration: каркас AstroWind ставится в site/ через workflow scaffold-astrowind (вручную по dispatch). build.py-прод в main НЕ трогаем, миграция только в ветке. 2) CMS: .pages.yml в корне (Pages CMS) — коллекции блог/модели/SKU/FAQ; правки владельца идут в ветку миграции, прод защищён. 3) docs/qa-50.md — 50-пункт гейт: полный прогон на каждой превью-сборке, падение любого пункта = не показываем владельцу. 4) astro-qa.yml: build+pagefind+smoke(og/JSON-LD/sitemap) на каждый пуш ветки. 5) Просьба: если правите main (build.py/services.py) — держите PDF-копию static/b2b -> _site/b2b и не трогайте astro-конвейеры. Цель: №1 в нише зарядки EV, короткие сроки, каждое действие сверяем с SEO/удобством/B2B."
+    }
+  ]
+}
