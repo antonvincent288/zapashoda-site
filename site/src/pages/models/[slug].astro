@@ -13,21 +13,67 @@ export async function getStaticPaths() {
   });
 }
 const { m } = Astro.props;
+const SOLUTIONS: Record<string, string> = {
+  'GB/T': 'Адаптер Type 2 → GB/T (SKU 1 premium / SKU 8 базовый) или кабель',
+  'EU': 'Штатные станции Type 2/CCS2 РФ — без адаптера',
+  'Type1/CCS1': 'Адаптер Type 1 → Type 2; CCS1-станции редки',
+  'JP/CHAdeMO': 'CHAdeMO-станции; адаптер по запросу',
+};
+const solutionFor = (port: string) => {
+  if (port && port.includes('GB/T')) return SOLUTIONS['GB/T'];
+  if (port && port.includes('Type1')) return SOLUTIONS['Type1/CCS1'];
+  if (port && port.includes('CHAdeMO')) return SOLUTIONS['JP/CHAdeMO'];
+  if (port && port.includes('EU')) return SOLUTIONS['EU'];
+  return 'Уточните разъём по VIN — подберём комплект';
+};
+// парсинг таблицы спецификации из prod-контента
+const body = String(m.body_html || '');
+const spec: Record<string, string> = {};
+const rowRe = /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
+const strip = (s: string) => String(s || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+let rm: RegExpExecArray | null;
+while ((rm = rowRe.exec(body))) {
+  const k = strip(rm[1]);
+  const v = strip(rm[2]);
+  if (!k || !v) continue;
+  if (/AC/i.test(k) && /медлен/i.test(k)) spec.ac = v;
+  else if (/DC/i.test(k) && /быстр/i.test(k)) spec.dc = v;
+  else if (/Борт/i.test(k) || /OBC/i.test(k)) spec.obc = v;
+  else if (/Мощность DC/i.test(k)) spec.dcpow = v;
+  else if (/Рынок/i.test(k)) spec.market = v;
+}
+const yearsShort = String(m.years || '').split(' · ')[0];
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: m.title, description: m.desc };
 ---
 <ZhLayout title={`${m.title} — Запас хода`} description={m.desc} og={m.og} jsonld={jsonld}>
   <section class="sec">
     <div class="wrap" style="max-width:980px">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
-      {m.years && <div class="badge">{m.type || 'EV'} · {m.years}</div>}
-      <h1>{m.title}</h1>
+      <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
+      <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
       <div class="meta">
-        {m.port && <span>⚡ {m.port}</span>}
-        {m.brand && <span>🚗 {m.brand}</span>}
-        {m.years && <span>📅 {m.years}</span>}
+        <span>⚡ {m.port || '—'}</span>
+        {spec.obc && <span>🏠 {spec.obc}</span>}
+        {spec.dcpow && <span>🚗 DC {spec.dcpow}</span>}
+        <span>Обновлено: ноябрь 2026</span>
       </div>
-      {m.desc && <p class="lead">{m.desc}</p>}
-      <div class="article" set:html={m.body_html} />
+      {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
+      <table class="spec" style="margin:28px 0">
+        {spec.ac && <tr><td>AC (переменный ток)</td><td>{spec.ac}</td></tr>}
+        {spec.dc && <tr><td>DC (быстрая зарядка)</td><td>{spec.dc}</td></tr>}
+        {spec.obc && <tr><td>Бортовой заряд</td><td>{spec.obc}</td></tr>}
+        {spec.dcpow && <tr><td>Мощность DC</td><td>{spec.dcpow}</td></tr>}
+        {spec.market && <tr><td>Рынок вывоза</td><td>{spec.market}</td></tr>}
+        <tr><td>Решение для РФ</td><td>{solutionFor(m.port)}</td></tr>
+      </table>
+      <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <h3 style="margin:0">Комплект под {m.name || m.title}</h3>
+          <p style="font-size:13.5px;color:var(--txt-muted)">Адаптер + держатель + смазка контактов</p>
+        </div>
+        <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
+      </div>
+      <div class="article" style="margin-top:48px" set:html={m.body_html} />
     </div>
   </section>
 </ZhLayout>
