@@ -33,7 +33,9 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
           MIN_VIEWS: '500'
-        run: python scripts/shorts_bot.py
+        run: |
+          sudo apt-get -y install ffmpeg || true
+          python scripts/shorts_bot.py
       - name: Ingest shorts from architect (R-06)
         run: |
           sudo apt-get -y install ffmpeg || true
