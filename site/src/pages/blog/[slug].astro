@@ -20,7 +20,7 @@ const extra = String(a.extra_html || '')
   .replace(/<script[\s\S]*?<\/script>/gi, '');
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.desc, datePublished: a.date, dateModified: a.date, author: { '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' }, articleSection: 'Блог' };
 ---
-<ZhLayout title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}>
+<ZhLayout publishedTime={a.date} modifiedTime={a.date} title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}>
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/blog/">Блог</a> / {a.title}</div>

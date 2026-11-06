@@ -1,8 +1,8 @@
 ---
 import '~/assets/styles/tailwind.css';
 
-interface Props { title?: string; description?: string; og?: string; jsonld?: object; noindex?: boolean; canonical?: string }
-const { title = "Запас хода — зарядка EV в России", description = "Подбор зарядки, разъёмов и адаптеров для электромобилей в России", og, jsonld, noindex, canonical: canonicalOverride } = Astro.props;
+interface Props { title?: string; description?: string; og?: string; jsonld?: object; noindex?: boolean; canonical?: string; publishedTime?: string; modifiedTime?: string }
+const { title = "Запас хода — зарядка EV в России", description = "Подбор зарядки, разъёмов и адаптеров для электромобилей в России", og, jsonld, noindex, canonical: canonicalOverride, publishedTime, modifiedTime } = Astro.props;
 const canonical = canonicalOverride || new URL(Astro.url.pathname, Astro.site ?? 'https://zapashoda-ev.ru').href;
 const path = Astro.url.pathname.replace(/\/$/, "");
 const navGroups = [
@@ -36,6 +36,9 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 <meta property="og:title" content={title} />
 <meta property="og:type" content="website" />
 <meta property="og:description" content={description} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+<meta name="author" content="Запас хода" />
 {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
 <script is:inline>
 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
