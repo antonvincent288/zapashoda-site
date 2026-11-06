@@ -251,8 +251,9 @@ footer a:hover{color:var(--gold)}
 .menu-btn.on span:nth-child(2){opacity:0}
 .menu-btn.on span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 .mnav{display:none;position:fixed;top:64px;left:0;right:0;z-index:60;background:var(--bg);
-  border-bottom:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.12);padding:6px 16px 14px}
-.mnav a{display:block;padding:12px 8px;font-size:15.5px;font-weight:600;color:var(--txt);
+  border-bottom:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.12);padding:6px 16px 14px;
+  max-height:calc(100vh - 64px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.mnav a{display:block;padding:10px 8px;font-size:15.5px;font-weight:600;color:var(--txt);
   text-decoration:none;border-bottom:1px solid var(--line)}
 .mnav a:last-child{border-bottom:0}
 .mnav a.on{color:var(--gold);font-weight:700}
