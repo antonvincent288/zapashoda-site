@@ -44,7 +44,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         });
         if (!map) {
           map = L.map('map').setView([55.75, 37.62], 5);
-          L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4', { maxZoom: 18 }).addTo(map);
+          var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(map);});
           cluster = L.markerClusterGroup();
           st.forEach(function (s) {
             if (typeof s.lat !== 'number' || typeof s.lon !== 'number') return;
