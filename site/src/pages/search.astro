@@ -1,0 +1,41 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+---
+<ZhLayout title="Поиск по zapashoda-ev.ru" description="Поиск по статьям, моделям и разборам: зарядка, адаптеры, станции, проблемы и решения." canonical="/search/">
+  <main>
+    <section class="sec-main"><div class="wrap" style="max-width:820px">
+      <h1 style="font-size:clamp(28px,2vw + 20px,38px);letter-spacing:-.02em">Поиск</h1>
+      <p style="color:var(--txt-muted)">По 380+ страницам: статьи, разборы, 145 моделей, каталог.</p>
+      <input id="pf-q" type="search" placeholder="Например: адаптер GB/T, Zeekr, не заряжается…" aria-label="Поиск по сайту" style="width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--txt);font-size:16px;margin-top:12px" />
+      <div id="pf-out" style="margin-top:18px"></div>
+    </div></section>
+  </main>
+  <style is:global>
+    .pf-item{display:block;padding:14px 16px;border-radius:12px;margin-bottom:10px;background:var(--bg2);text-decoration:none}
+    .pf-item:hover{background:var(--card)}
+    .pf-t{font-weight:700;color:var(--head);margin-bottom:4px}
+    .pf-x{font-size:14px;color:var(--txt-muted);line-height:1.5}
+    .pf-x mark{background:rgba(1,97,239,.18);color:var(--txt);border-radius:4px;padding:0 3px}
+    .pf-empty{color:var(--txt-muted)}
+  </style>
+  <script>
+    const pfInput=document.getElementById('pf-q'), pfOut=document.getElementById('pf-out');
+    let pfLib=null, pfDeb=null;
+    async function pfRun(q){
+      try{
+        if(!pfLib) pfLib=await import('/pagefind/pagefind.js');
+        const res=await pfLib.search(q);
+        const items=res.results.slice(0,12);
+        pfOut.innerHTML=items.length?'':'<p class="pf-empty">Ничего не нашлось. Попробуйте другое слово — например, «адаптер» или модель авто.</p>';
+        for(const r of items){
+          const d=await r.data();
+          const el=document.createElement('a');
+          el.href=d.url; el.className='pf-item';
+          el.innerHTML='<div class="pf-t">'+(d.meta && d.meta.title ? d.meta.title : d.url)+'</div><div class="pf-x">'+(d.excerpt||'')+'</div>';
+          pfOut.appendChild(el);
+        }
+      }catch(e){pfOut.innerHTML='<p class="pf-empty">Поиск временно недоступен. Обновите страницу.</p>';}
+    }
+    pfInput.addEventListener('input',()=>{clearTimeout(pfDeb);pfDeb=setTimeout(()=>{const q=pfInput.value.trim();pfOut.innerHTML='';if(q.length>=2)pfRun(q);},300);});
+  </script>
+</ZhLayout>
