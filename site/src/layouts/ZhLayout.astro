@@ -6,10 +6,16 @@ const { title = "Запас хода — зарядка EV в России", des
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://zapashoda-ev.ru').href;
 const path = Astro.url.pathname.replace(/\/$/, "");
 const nav = [
-  ["/", "Главная"],
   ["/models/", "Модели"],
   ["/blog/", "Блог"],
   ["/pain/", "Проблемы"],
+  ["/quiz/", "Подбор"],
+  ["/charging/", "Карта ЗУ"],
+  ["/calculator/", "Калькулятор"],
+  ["/shop/digital/", "Товары"],
+  ["/services/", "Услуги"],
+  ["/b2b/", "Дилерам"],
+  ["/forum/", "Форум"],
   ["/safety/", "Безопасность"],
 ];
 const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/, "") || path.startsWith(href.replace(/\/$/, "") + "/");
