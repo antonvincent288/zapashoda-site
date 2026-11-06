@@ -66,7 +66,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
   var t=tips[0];
   var toast=document.createElement('div');toast.id='zs-ai-toast';
-  toast.style.cssText='position:fixed;left:14px;bottom:14px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
+  toast.style.cssText='position:fixed;left:14px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
   toast.innerHTML='<div style="font-size:11px;letter-spacing:.08em;color:#8e8e93">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
    +'<div style="margin:6px 0">'+t[0]+'</div>'
    +'<a href="'+t[1]+'" style="display:inline-block;background:#D4AF37;color:#1d1d1f;font-weight:700;padding:6px 12px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a> '
