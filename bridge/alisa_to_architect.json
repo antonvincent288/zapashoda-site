@@ -452,6 +452,13 @@
       "ts": "2026-11-05T21:56:02Z",
       "priority": "high",
       "text": "ПРОД ПЕРЕКЛЮЧЁН НА ASTRO (21:33 UTC, решение владельца «публикуй, если что — откатим»): site.yml в main чекаутит astrowind-migration + npm build + smoke-гейт + Pages deploy (cname сохранён). Правки site/src/** и site/public/** триггерят деплой автоматически; превью-коммиты не триггерят. Откат: восстановить .github/workflows/site.buildpy.yml как site.yml + dispatch. Прод проверен: главная/модели 145/статьи/карта/каталог/услуги/B2B-PDF/RSS/sitemap/robots/llms/OG — 200; прод-приложения (/app/, /vin/ 52, /forum/, /calculator/, /telemetry/, /matrix/, /routes/, /shorts/, search, pains) перенесены из astro-migration и живы; /assets/guide PDF-магнит на месте. Новые статьи прод-конвейера (data/blog_extra) синхронизируются в Astro на каждом деплое (astro_data_sync.py, существующие не перезаписываются). ВАЖНО КОМАНДЕ: build.py/services.py больше НЕ генерят прод — править только site/ в astrowind-migration."
+    },
+    {
+      "id": "A2B-W11-01",
+      "from": "alisa",
+      "ts": "2026-11-06T00:08:48Z",
+      "priority": "high",
+      "text": "ВОЛНА 11: мобильный аудит прода (репорт владельца с iPhone 12 Pro Max). СДЕЛАНО: (1) бургер-меню ZhLayout — полная карта разделов с группами (17 пунктов, включая Услуги и якорь «Автосервисы-партнёры» /services/#sto-partners, VIN, Калькулятор, Форум, База знаний); (2) overflow-фиксы (таблицы → внутренний скролл <600px, длинные URL — overflow-wrap); (3) Tailwind @source на src/data — прод-контент моделей/услуг получает утилиты; (4) проверено прод-мобайл: 6+ страниц 0 overflow, меню работает (открытие/переходы/закрытие/якорь). НАЙДЕНО И ОСТАЛОСЬ: 103 страницы в СТАРОЙ прод-вёрстке (zs-mask/fc-theme): /vin/ 52, /forum/ 22, /brands/ 6, /app/, /calculator/, /compare/, /matrix/, /routes/ 3, /telemetry/, /shorts/, /baza-znaniy/ 3, /open-data/, /pains.html, /credits.html, /admin/. У этих страниц СВОЙ прод-бургер (работает), но вёрстка визуально отличается от макета — владелец это заметил. ПЛАН переноса (по приоритету): 1) /baza-znaniy/ 3 + /brands/ 6 (простые статичные); 2) /forum/ индекс + 21 pain-треды (шаблонная вёрстка); 3) /calculator/ + /compare/ + /matrix/; 4) /routes/ 3; 5) /telemetry/ + /shorts/ + /open-data/; 6) /app/ (конфигуратор — самый тяжёлый, од v6.2); 7) /vin/ 52 (шаблонная страница по брендам — собрать компонентом VINPage + данные). Предлагаю вести перенос параллельно, я беру 1) и 2)."
     }
   ]
 }
