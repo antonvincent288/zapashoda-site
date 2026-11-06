@@ -1,9 +1,34 @@
-export async function GET() {
-  const all = Object.values(import.meta.glob('../data/articles/blog/*.json', { eager: true, import: 'default' }));
-  all.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+const articles = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' }));
+export async function GET(context) {
   const SITE = 'https://zapashoda-ev.ru';
+  const items = articles
+    .filter((a) => a && a.slug && a.title)
+    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+    .slice(0, 60);
   const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const items = all.slice(0, 30).map((a) => '    <item><title>' + esc(a.title) + '</title><link>' + SITE + '/blog/' + a.slug + '/</link><guid isPermaLink="true">' + SITE + '/blog/' + a.slug + '/</guid><pubDate>' + new Date(String(a.date || '2026-01-01')).toUTCString() + '</pubDate><description>' + esc(a.desc) + '</description></item>').join(' ');
-  const xml = '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Запас хода — блог</title><link>' + SITE + '/blog/</link><description>Практика зарядки EV в России</description><language>ru</language>' + items + '</channel></rss>';
-  return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
+  const xml = items.map((a) => {
+    const link = a.url || (SITE + '/blog/' + a.slug);
+    const p = String(a.desc || '');
+    return [
+      '<item>',
+      '<title>' + esc(a.title) + '</title>',
+      '<link>' + esc(link) + '</link>',
+      '<guid isPermaLink="true">' + esc(link) + '</guid>',
+      '<description>' + esc(p.slice(0, 500)) + '</description>',
+      a.date ? '<pubDate>' + new Date(a.date + 'T12:00:00Z').toUTCString() + '</pubDate>' : '',
+      '</item>',
+    ].filter(Boolean).join('');
+  }).join('');
+  const feed = '<?xml version="1.0" encoding="UTF-8"?>'
+    + '<rss version="2.0"><channel>'
+    + '<title>Запас хода — практика зарядки EV в России</title>'
+    + '<link>' + SITE + '</link>'
+    + '<description>Подбор зарядки и адаптеров для электромобилей, карта станций, разборы проблем</description>'
+    + '<language>ru-RU</language>'
+    + xml
+    + '</channel></rss>';
+  return {
+    body: feed,
+    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+  };
 }

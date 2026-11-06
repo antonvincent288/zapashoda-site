@@ -47,3 +47,13 @@ Content decay risk HIGH (temporal-упоминания «до конца 2026»)
 ## Правило
 Каждый пункт = измеримый результат (счёт аудита, Lighthouse, чек-лист рубрики). После каждой волны — повторный
 GEO-аудит и прогон geometry-правила #15 по всем контейнерам.
+
+## Вторая разведка GitHub (26 запросов, 51 репо) — дополнения 06.11
+- RelayStack/astro-seo-toolkit (zero-dep: llms.txt/JSON-LD/IndexNow/sitemap) — паттерн для CI-валидации SEO-артефактов.
+- casoon/astro-sitemap — sitemap с hreflang + RSS на этапе сборки; наш RSS сделан руками (endpoint rss.xml.js) — регенерируется при каждом деплое.
+- RafidMuhymin/astro-imagetools (432★) — оптимизация изображений; применять при появлении фото-контента.
+- starwind-ui (760★) — доступные Tailwind-компоненты для Astro; референс для чек-листа a11y.
+- StJudeWasHere/seonaut (860★) — краулер-аудит SEO (битые ссылки, меты) — кандидат на периодический прогон по 400+ URL.
+- martrapp/astro-vtbot (365★) — View Transitions для плавной навигации между статьями — P2.
+- ReunMedia/astro-og-images — генерация уникальных OG-картинок на билде — P2 для CTR в соцсетях.
+- ihuzaifashoukat/llmoptimizer — регенерация llms.txt (у нас статичный — сверять с изменениями каталога).

@@ -8,11 +8,11 @@ const { model } = Astro.props;
   <div id="of-items" style="margin-top:14px"><div style="color:var(--txt-muted);font-size:14px">Корзина пуста — выберите позиции из каталога выше.</div></div>
   <form>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
-      <input required name="name" autocomplete="name" placeholder="Имя" class="of-inp" />
-      <input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram" class="of-inp" />
+      <input required name="name" autocomplete="name" placeholder="Имя" aria-label="Имя" class="of-inp" />
+      <input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram" aria-label="Телефон или Telegram" class="of-inp" />
     </div>
-    <input name="city" placeholder="Город (доставка через салон-дилера)" class="of-inp" style="margin-top:12px" />
-    <textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке" class="of-inp" style="margin-top:12px"></textarea>
+    <input name="city" placeholder="Город (доставка через салон-дилера)" aria-label="Город" class="of-inp" style="margin-top:12px" />
+    <textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке" aria-label="Комментарий" class="of-inp" style="margin-top:12px"></textarea>
     <button class="btn btn-gold of-send" type="submit" style="width:100%;margin-top:14px">Отправить заявку</button>
   </form>
   <div id="of-status" style="margin-top:10px"></div>
