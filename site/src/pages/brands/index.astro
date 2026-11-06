@@ -1,0 +1,21 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import brands from '../../data/legacy/brands.json';
+const items = brands.map((b) => ({ slug: b.slug, title: b.title, desc: b.desc }));
+const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Бренды электромобилей в России', description: 'Разъёмы, зарядка и проблемы по брендам: Zeekr, Geely, Voyah, Changan, Evolute, Toyota' };
+---
+<ZhLayout title="Бренды электромобилей: разъёмы, зарядка, проблемы - Запас хода" description="Бренды электромобилей в России: какой разъём у каждой марки, как заряжать, типовые проблемы владельцев. Zeekr, Geely, Voyah, Changan, Evolute, Toyota." jsonld={jsonld}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / Бренды</div>
+    <h1 style="font-size:clamp(28px,3.4vw,40px)">Бренды электромобилей: разъёмы, зарядка, проблемы</h1>
+    <p class="lede">Шесть брендов с разборами: какой разъём у машин, как заряжать дома и на трассе, какие проблемы чаще всего беспокоят владельцев.</p>
+    <div class="grid">
+      {items.map((b) => (
+        <a class="card" href={`/brands/${b.slug}.html`}>
+          <div class="card-title">{b.title}</div>
+          <p class="muted">{b.desc}</p>
+        </a>
+      ))}
+    </div>
+  </div></section>
+</ZhLayout>
