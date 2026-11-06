@@ -46,15 +46,27 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
   </div>
 </header>
 <nav class="mnav" id="mnav" aria-label="Мобильное меню">
+  <div class="mnav-group">Разделы</div>
   <a href="/">Главная</a>
   <a href="/models/">Модели</a>
   <a href="/blog/">Блог</a>
   <a href="/pain/">Проблемы</a>
   <a href="/safety/">Безопасность</a>
-  <a href="/tools/">Инструменты</a>
-  <a href="/shop/digital/">Товары</a>
+  <div class="mnav-group">Инструменты</div>
+  <a href="/quiz/">Подбор за 30 сек</a>
   <a href="/charging/">Карта ЗУ</a>
+  <a href="/calculator/">Калькулятор зарядки</a>
+  <a href="/vin/">VIN-справочник</a>
+  <div class="mnav-group">Сервис</div>
+  <a href="/shop/digital/">Товары</a>
+  <a href="/services/">Услуги</a>
+  <a href="/services/#sto-partners">Автосервисы-партнёры</a>
+  <div class="mnav-group">Компания</div>
   <a href="/b2b/">Дилерам (B2B)</a>
+  <a href="/forum/">Форум</a>
+  <a href="/baza-znaniy/">База знаний</a>
+  <a href="/news/">Новости</a>
+  <a href="/about/">О проекте</a>
 </nav>
 <main><slot /></main>
 <footer>
@@ -244,6 +256,7 @@ footer a:hover{color:var(--gold)}
   text-decoration:none;border-bottom:1px solid var(--line)}
 .mnav a:last-child{border-bottom:0}
 .mnav a.on{color:var(--gold);font-weight:700}
+.mnav-group{padding:12px 8px 4px;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-muted);border-bottom:0}
 @media(max-width:900px){
 
   .cards,.bgrid,.mgrid,.plans,.tiles{grid-template-columns:1fr 1fr}
