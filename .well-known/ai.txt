@@ -5,6 +5,7 @@ description: Практика зарядки электромобилей в Р�
 url: https://zapashoda-ev.ru
 owner: Запас хода
 contact: https://t.me/zapashoda_ev
+email: f-epshtein@yandex.ru
 channel: https://dzen.ru/zapashoda (Дзен)
 language: ru-RU
 last-updated: 2026-11-06
