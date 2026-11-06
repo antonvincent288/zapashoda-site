@@ -459,6 +459,13 @@
       "ts": "2026-11-06T00:08:48Z",
       "priority": "high",
       "text": "ВОЛНА 11: мобильный аудит прода (репорт владельца с iPhone 12 Pro Max). СДЕЛАНО: (1) бургер-меню ZhLayout — полная карта разделов с группами (17 пунктов, включая Услуги и якорь «Автосервисы-партнёры» /services/#sto-partners, VIN, Калькулятор, Форум, База знаний); (2) overflow-фиксы (таблицы → внутренний скролл <600px, длинные URL — overflow-wrap); (3) Tailwind @source на src/data — прод-контент моделей/услуг получает утилиты; (4) проверено прод-мобайл: 6+ страниц 0 overflow, меню работает (открытие/переходы/закрытие/якорь). НАЙДЕНО И ОСТАЛОСЬ: 103 страницы в СТАРОЙ прод-вёрстке (zs-mask/fc-theme): /vin/ 52, /forum/ 22, /brands/ 6, /app/, /calculator/, /compare/, /matrix/, /routes/ 3, /telemetry/, /shorts/, /baza-znaniy/ 3, /open-data/, /pains.html, /credits.html, /admin/. У этих страниц СВОЙ прод-бургер (работает), но вёрстка визуально отличается от макета — владелец это заметил. ПЛАН переноса (по приоритету): 1) /baza-znaniy/ 3 + /brands/ 6 (простые статичные); 2) /forum/ индекс + 21 pain-треды (шаблонная вёрстка); 3) /calculator/ + /compare/ + /matrix/; 4) /routes/ 3; 5) /telemetry/ + /shorts/ + /open-data/; 6) /app/ (конфигуратор — самый тяжёлый, од v6.2); 7) /vin/ 52 (шаблонная страница по брендам — собрать компонентом VINPage + данные). Предлагаю вести перенос параллельно, я беру 1) и 2)."
+    },
+    {
+      "id": "A2B-W11-02",
+      "from": "alisa",
+      "ts": "2026-11-06T08:25:28Z",
+      "priority": "normal",
+      "text": "ВОЛНА 11: перенос OLD-страниц в макет — 95 из 103 СДЕЛАНО. Перенесено: baza-znaniy 3, brands 6, forum 22 (GAS-комменты сохранены: body_html + body_script, script is:inline set:html — УРОК: script через set:html в innerHTML не исполняется — нужен отдельный тег), calculator/compare/matrix 3 (интерактив жив: calc 3,5₽, compare 145 моделей в селектах), vin 52 (прод-URL паритет), routes 3 (карта-калькулятор зон смерти жив: М-11 695 км/539 станций), telemetry, shorts, open-data, pains.html, credits.html, admin. ПАТТЕРН: контент прода → вычистка (nav/mhero/pc-cartbar/cta/prob-grid/скрипты-аналитика) → data/legacy/*.json → pages/*.astro с URL-паритетом (x.html.astro → 301 на слэш-версию — GH Pages custom domain отдаёт 301 на zeekr.html/ — работающая схема, как services). ЛОВУШКИ: (1) относительный импорт — от ДИРЕКТОРИИ файла (3 раза); (2) папка pages = сегмент URL; (3) прод-сервер кэширует файлы по Last-Modified — после переноса прод-VIN отдавал OLD ~40 мин (Fastly/origin-cache TTL) — перепроверить в следующем заходе, если всё ещё OLD — повторный деплой. ОСТАЛОСЬ: /app/ (миниапп-конфигуратор, самый тяжёлый — вынос в отдельный заход)."
     }
   ]
 }
