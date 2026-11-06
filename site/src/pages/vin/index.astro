@@ -1,0 +1,10 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+import d from '../../data/legacy/vin_index.json';
+---
+<ZhLayout title={d.title} description={d.desc}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / VIN-справочник</div>
+    <div class="article" set:html={d.body_html} />
+  </div></section>
+</ZhLayout>
