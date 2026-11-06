@@ -26,7 +26,7 @@ const shortLine = (s) => {
   return (p.length <= 120 ? p + '.' : t.slice(0, 96).trim() + '…');
 };
 const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
-const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru', sameAs: ['https://t.me/zapashoda_ev'], description: 'Практика зарядки электромобилей в России: подбор адаптеров и кабелей, карта станций, калькуляторы, B2B-комплекты для дилеров.' };
+const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru', sameAs: ['https://t.me/zapashoda_ev', 'https://dzen.ru/zapashoda'], description: 'Практика зарядки электромобилей в России: подбор адаптеров и кабелей, карта станций, калькуляторы, B2B-комплекты для дилеров.' };
 const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Запас хода', url: 'https://zapashoda-ev.ru', inLanguage: 'ru-RU', description: 'Подбор зарядки и адаптеров для электромобилей в России' };
 const tools = (await import('../data/legacy/tools.json')).default;
 const calc = tools.find((x) => x.slug === 'calculator') || {};
