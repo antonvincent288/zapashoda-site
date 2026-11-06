@@ -1,6 +1,6 @@
 {
- "sitemap_count": 222,
- "sitemap_ok": 222,
+ "sitemap_count": 221,
+ "sitemap_ok": 221,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -29,37 +29,15 @@
   "/telemetry/": 200
  },
  "models_cards": 145,
- "app_scripts": 9,
+ "app_scripts": 1,
  "catalog_products": 0,
- "link_targets": 212,
- "links_ok": 209,
- "links_bad": [
-  [
-   "https://zapashoda-ev.ru/favicon.ico",
-   404
-  ],
-  [
-   "https://zapashoda-ev.ru/feed.xml",
-   404
-  ],
-  [
-   "https://zapashoda-ev.ru/site.webmanifest",
-   404
-  ]
- ],
- "assets_count": 37,
- "assets_ok": 35,
- "assets_bad": [
-  [
-   "/favicon.ico",
-   404
-  ],
-  [
-   "/site.webmanifest",
-   404
-  ]
- ],
- "checked_at_msk": "06.11 12:18",
+ "link_targets": 194,
+ "links_ok": 194,
+ "links_bad": [],
+ "assets_count": 24,
+ "assets_ok": 24,
+ "assets_bad": [],
+ "checked_at_msk": "06.11 16:31",
  "failures": [
   {
    "where": "page /search.html",
@@ -87,36 +65,11 @@
    "crit": true
   },
   {
-   "where": "link /favicon.ico",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
-   "where": "link /feed.xml",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
-   "where": "link /site.webmanifest",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
-   "where": "asset /favicon.ico",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
-   "where": "asset /site.webmanifest",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
    "where": "GAS",
    "what": "не найден в разметке",
    "crit": true
   }
  ],
- "failures_count": 11,
+ "failures_count": 6,
  "crit_count": 4
 }
