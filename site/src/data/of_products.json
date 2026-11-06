@@ -1,0 +1,184 @@
+[
+  {
+    "id": 1,
+    "name": "Адаптер Type 2 → GB/T, 22 кВт, премиум",
+    "price": 7000,
+    "emoji": "🔌",
+    "slug": "adapter-type2-gbt-premium"
+  },
+  {
+    "id": 2,
+    "name": "Адаптер GB/T → Type 2 (обратный), 22 кВт",
+    "price": 6500,
+    "emoji": "🔌",
+    "slug": "adapter-gbt-type2-reverse"
+  },
+  {
+    "id": 3,
+    "name": "Кабель Type 2–GB/T, 5 м, 22 кВт, TPU",
+    "price": 13000,
+    "emoji": "🧵",
+    "slug": "kabel-type2-gbt-5m-22kw"
+  },
+  {
+    "id": 4,
+    "name": "Кабель Type 2–GB/T, 7 м, 22 кВт",
+    "price": 16000,
+    "emoji": "🧵",
+    "slug": "kabel-type2-gbt-7m-22kw"
+  },
+  {
+    "id": 5,
+    "name": "Портативная зарядка GB/T, 7 кВт, 32 А",
+    "price": 16000,
+    "emoji": "🔋",
+    "slug": "portativnaya-zaryadka-gbt-7kw"
+  },
+  {
+    "id": 6,
+    "name": "Адаптер CCS2 → GB/T DC, 250–300 А",
+    "price": 95000,
+    "emoji": "⚡",
+    "slug": "adapter-ccs2-gbt-dc"
+  },
+  {
+    "id": 7,
+    "name": "Адаптер Tesla NACS → CCS2 / Type 2",
+    "price": 15000,
+    "emoji": "🔌",
+    "slug": "adapter-nacs-ccs2-type2"
+  },
+  {
+    "id": 8,
+    "name": "Адаптер Type 2 → GB/T, 22 кВт, базовый",
+    "price": 4500,
+    "emoji": "🔌",
+    "slug": "adapter-type2-gbt-base"
+  },
+  {
+    "id": 9,
+    "name": "Кабель Type 2–GB/T, 5 м, 7 кВт, 1 фаза",
+    "price": 9000,
+    "emoji": "🧵",
+    "slug": "kabel-type2-gbt-5m-7kw"
+  },
+  {
+    "id": 10,
+    "name": "Портативная зарядка GB/T, 3,5 кВт, 16 А",
+    "price": 9500,
+    "emoji": "🔋",
+    "slug": "portativnaya-zaryadka-gbt-3-5kw"
+  },
+  {
+    "id": 11,
+    "name": "Кабель разряда V2L GB/T, 16 А, 3,5 кВт",
+    "price": 2500,
+    "emoji": "🔋",
+    "slug": "kabel-razryada-v2l-gbt"
+  },
+  {
+    "id": 12,
+    "name": "Держатель / органайзер кабеля GB/T",
+    "price": 1500,
+    "emoji": "🪝",
+    "slug": "derzhatel-organayzer-kabelya"
+  },
+  {
+    "id": 13,
+    "name": "Настенная станция GB/T, 7 кВт",
+    "price": 39000,
+    "emoji": "🏠",
+    "slug": "nastennaya-stanciya-gbt-7kw"
+  },
+  {
+    "id": 14,
+    "name": "Удлинитель GB/T → GB/T, 5 м, 32 А",
+    "price": 8900,
+    "emoji": "🔗",
+    "slug": "udlinitel-gbt-gbt-5m"
+  },
+  {
+    "id": 15,
+    "name": "Кабель Type 2–GB/T, 10 м, 32 А, 3 фазы",
+    "price": 19900,
+    "emoji": "🧵",
+    "slug": "kabel-type2-gbt-10m-32a"
+  },
+  {
+    "id": 16,
+    "name": "Станция 2-в-1: Type 2 + GB/T, 22 кВт",
+    "price": 44000,
+    "emoji": "🏠",
+    "slug": "stanciya-2v1-type2-gbt"
+  },
+  {
+    "id": 17,
+    "name": "Смазка силиконовая (зимний kit)",
+    "price": 690,
+    "emoji": "🧴",
+    "slug": "smazka-silikonom-zima"
+  },
+  {
+    "id": 18,
+    "name": "Переходник-удлинитель GB/T → 220 В",
+    "price": 6500,
+    "emoji": "🔗",
+    "slug": "perekhodnik-gbt-220v"
+  },
+  {
+    "id": 19,
+    "name": "Портативная зарядка Type 2, 7 кВт, 32 А",
+    "price": 12500,
+    "emoji": "🔋",
+    "slug": "portativnaya-zaryadka-type2-7kw"
+  },
+  {
+    "id": 20,
+    "name": "Портативная зарядка Type 2, 3,5 кВт, 16 А",
+    "price": 7500,
+    "emoji": "🔋",
+    "slug": "portativnaya-zaryadka-type2-3-5kw"
+  },
+  {
+    "id": 21,
+    "name": "Кабель Type 2 — Type 2, 5 м, 22 кВт",
+    "price": 13500,
+    "emoji": "🧵",
+    "slug": "kabel-type2-type2-5m-22kw"
+  },
+  {
+    "id": 22,
+    "name": "Кабель Type 2 — Type 2, 7 м, 32 А",
+    "price": 15500,
+    "emoji": "🧵",
+    "slug": "kabel-type2-type2-7m-32a"
+  },
+  {
+    "id": 23,
+    "name": "Настенная станция Type 2, 7 кВт",
+    "price": 24500,
+    "emoji": "🏠",
+    "slug": "nastennaya-stanciya-type2-7kw"
+  },
+  {
+    "id": 24,
+    "name": "Настенная станция Type 2, 22 кВт",
+    "price": 34500,
+    "emoji": "🏠",
+    "slug": "nastennaya-stanciya-type2-22kw"
+  },
+  {
+    "id": 25,
+    "name": "Адаптер Type 1 → Type 2",
+    "price": 8500,
+    "emoji": "🔌",
+    "slug": "adapter-type1-type2"
+  },
+  {
+    "id": 26,
+    "name": "Удлинитель Type 2 — Type 2, 5 м, 32 А",
+    "price": 9900,
+    "emoji": "🔗",
+    "slug": "udlinitel-type2-type2-5m"
+  }
+]

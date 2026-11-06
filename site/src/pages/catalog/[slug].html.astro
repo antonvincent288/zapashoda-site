@@ -1,10 +1,19 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import src from '../../data/sku.json';
-const d = src.items.find((i) => i.slug === 'nastennaya-stanciya-type2-7kw');
+import OrderForm from '../../components/OrderForm.astro';
+export async function getStaticPaths() {
+  const src = (await import('../../data/sku.json')).default;
+  const ofp = (await import('../../data/of_products.json')).default;
+  const map = {};
+  (ofp || []).forEach((p) => { map[p.slug] = p; });
+  return (src.items || []).map((d) => ({ params: { slug: d.slug }, props: { d, of: map[d.slug] } }));
+}
+const { d, of } = Astro.props;
+const ofpAll = (await import('../../data/of_products.json')).default;
 const fit = (d.fit || []).filter((f) => typeof f === 'object');
 const faqLd = d.faq && d.faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
 const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.title, description: d.desc, image: d.image ? 'https://zapashoda-ev.ru' + d.image : undefined, offers: { '@type': 'Offer', price: String(d.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } };
+const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS=' + JSON.stringify(ofpAll) + ';';
 ---
 <ZhLayout title={d.title + ' — заказать | Запас хода'} description={d.desc} jsonld={[prodLd, faqLd].filter(Boolean)}>
   <section class="sec">
@@ -13,9 +22,10 @@ const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.t
       <h1>{d.title}</h1>
       {d.image && <img src={d.image} alt={d.title} loading="lazy" style="width:100%;max-width:460px;border-radius:16px;margin:6px 0 8px" />}
       <p class="lead">{d.lead}</p>
-      <div style="display:flex;align-items:center;gap:18px;margin-top:26px">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:26px">
         <b style="font-size:28px;white-space:nowrap">{d.price} ₽</b>
-        <a class="btn btn-gold" style="text-decoration:none" href={'https://zapashoda-ev.ru' + d.url} rel="nofollow">Заказать</a>
+        <button class="btn btn-gold" type="button" onclick={`ofAdd(${of ? of.id : 0},this)`}>В заявку</button>
+        <a class="btn btn-ghost" style="text-decoration:none" href="/catalog/#order-form">Оформить заявку →</a>
       </div>
       {d.spec.length > 0 && (
         <>
@@ -53,6 +63,8 @@ const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.t
       <div style="margin-top:40px">
         <a class="btn btn-ghost" style="text-decoration:none" href="/quiz/">Подобрать под свою модель →</a>
       </div>
+      <OrderForm model={d.title} />
     </div>
   </section>
+  <script is:inline set:html={ofScript} />
 </ZhLayout>

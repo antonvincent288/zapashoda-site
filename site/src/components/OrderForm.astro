@@ -1,0 +1,31 @@
+---
+const { model } = Astro.props;
+---
+<section id="order-form" style="margin-top:56px;background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:32px">
+  <h2 style="margin-bottom:6px">Оформить заявку</h2>
+  <p style="color:var(--txt-muted);font-size:14.5px;max-width:640px">Заявка уходит партнёру-дилеру в вашем городе: он свяжется с вами и передаст комплект на согласованной встрече. Оплата — при получении, заявка ни к чему не обязывает.</p>
+  <p style="color:var(--txt-muted);font-size:14px;margin-top:6px">Срочный вопрос? Напишите в Telegram <a href="https://t.me/zapashoda_ev_bot" style="color:var(--gold);font-weight:600">@zapashoda_ev_bot</a> — отвечаем в рабочее время.</p>
+  <div id="of-items" style="margin-top:14px"><div style="color:var(--txt-muted);font-size:14px">Корзина пуста — выберите позиции из каталога выше.</div></div>
+  <form>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+      <input required name="name" autocomplete="name" placeholder="Имя" class="of-inp" />
+      <input required name="phone" type="tel" autocomplete="tel" placeholder="Телефон или Telegram" class="of-inp" />
+    </div>
+    <input name="city" placeholder="Город (доставка через салон-дилера)" class="of-inp" style="margin-top:12px" />
+    <textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке" class="of-inp" style="margin-top:12px"></textarea>
+    <button class="btn btn-gold of-send" type="submit" style="width:100%;margin-top:14px">Отправить заявку</button>
+  </form>
+  <div id="of-status" style="margin-top:10px"></div>
+</section>
+<div class="pc-bar" id="pc-bar" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--ink);color:#f5f5f7;box-shadow:0 -4px 20px rgba(0,0,0,.25)">
+  <div style="max-width:1152px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px">
+    <span id="pc-bar-txt" style="font-size:14px;font-weight:700">В заявке: 0 поз.</span>
+    <a class="btn btn-gold pc-go" href="#order-form" style="margin-left:auto;font-size:14px;padding:10px 18px;text-decoration:none">Оформить заявку</a>
+  </div>
+</div>
+<style is:inline>
+.of-inp{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--txt);font-size:15px;font-family:inherit}
+.of-send{border:0;font-family:inherit;cursor:pointer}
+#order-form form{display:block}
+@media(max-width:640px){#order-form{padding:24px}#order-form form div{grid-template-columns:1fr}}
+</style>

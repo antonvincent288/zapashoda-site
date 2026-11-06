@@ -2,27 +2,72 @@
 import ZhLayout from '../../layouts/ZhLayout.astro';
 const shop = (await import('../../data/shop.json')).default;
 const products = shop.products || [];
-const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, description: p.desc, offers: { '@type': 'Offer', price: String(p.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } } })) };
+const ld = { '@context':'https://schema.org','@type':'ItemList', itemListElement: products.map((p,i)=>({'@type':'ListItem',position:i+1,item:{'@type':'Product',name:p.title,description:p.desc,offers:{'@type':'Offer',price:String(p.price),priceCurrency:'RUB',availability:p.live?'https://schema.org/InStock':'https://schema.org/PreOrder'}}})) };
 ---
-<ZhLayout title="Цифровые гиды о зарядке — Запас хода" description="Практические гиды по зарядке EV: трассы М-4, М-11, М-12, парковка ЖК. PDF с маршрутом, станциями и ценами простоя." jsonld={ld}>
+<ZhLayout title="Цифровые гайды «Запас хода» (PDF) — купить за 990 ₽ | Запас хода" description="Практические PDF-гайды: трассы М-4 «Дон», М-11, М-12, зарядка в ЖК. Оплата картой или СБП через Т-Кассу, персональная одноразовая ссылка на скачивание." og="/assets/og/shop-digital.png" jsonld={ld}>
   <section class="sec">
-    <div class="wrap">
+    <div class="wrap" style="max-width:920px">
       <div class="crumbs"><a href="/">Главная</a> / Товары</div>
-      <h1>Цифровые гиды по зарядке</h1>
-      <p class="lead">Практические PDF-руководства: маршрут, станции, тарифы и цена простоя на километр. Один раз прочитал — не переплачиваешь всё лето.</p>
+      <div class="badge">Магазин · цифровые товары</div>
+      <h1>Цифровые гайды «Запас хода»</h1>
+      <p class="lead">Практические PDF-гайды по зарядной инфраструктуре: трасса М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядка на парковке ЖК. Пишем по проверенным фактам — без фейковых обещаний.</p>
+      <div class="tldr-box"><b>Как проходит покупка:</b> вводите email и телефон → платёж на защищённой странице Т-Кассы (карта или СБП) → ссылка на скачивание PDF (действует 24 ч, до 3 скачиваний) появится здесь же и придёт письмом. Прямой ссылки на файл не существует, а на страницы PDF наносится персональный водяной знак с вашими email и телефоном — защита от слива в чаты.</div>
       <div class="cards" style="margin-top:36px">
         {products.map((p) => (
-          <div class="card">
+          <div class="card prodcard">
             <h3>{p.title}</h3>
             <p>{p.desc}</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
-              <b style="font-size:22px">{p.price} ₽</b>
-              <a class="btn btn-gold" style="text-decoration:none;font-size:14px;padding:10px 18px" href="https://zapashoda-ev.ru/shop/digital/" rel="nofollow">Купить за {p.price} ₽</a>
-            </div>
+            <div class="price" style="font-size:26px;margin-top:10px">{p.price} ₽</div>
+            {p.live ? (
+              <>
+                <label class="lbl" for={`em-${p.id}`}>Email для доставки</label>
+                <input id={`em-${p.id}`} class="buy-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" />
+                <label class="lbl" for={`ph-${p.id}`}>Телефон (попадёт в водяной знак PDF)</label>
+                <input id={`ph-${p.id}`} class="buy-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 XXX XXX-XX-XX" />
+                <button class="btn btn-gold buy-btn" type="button" data-product={p.id} style="width:100%;margin-top:16px">Купить за {p.price} ₽</button>
+              </>
+            ) : (
+              <span class="soon-badge">Скоро в продаже — {p.price} ₽</span>
+            )}
           </div>
         ))}
       </div>
-      <p class="lead" style="margin-top:28px;font-size:14px">Оплата проходит через рабочий чекаут на проде (того же, что и сейчас) — в статической сборке корзина будет подключена в следующем шаге, без потери покупок.</p>
+      <div id="buy-msg" role="status" style="font-size:14px;min-height:20px;color:var(--txt-muted);margin-top:8px"></div>
+      <p class="fineprint">Оплата через Т-Кассу (интернет-эквайринг Т-Банка). Чек по 54-ФЗ формируется автоматически. Ссылка действует 24 ч и до 3 скачиваний; повторная выдача — по запросу в поддержку.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
+        <a class="btn btn-ghost" style="text-decoration:none" href="/catalog/">Каталог оборудования</a>
+        <a class="btn btn-ghost" style="text-decoration:none" href="/blog/">Все статьи блога</a>
+      </div>
     </div>
   </section>
+  <style is:inline>
+    .lbl{display:block;font-size:13px;font-weight:600;color:var(--txt-muted);margin:14px 0 6px}
+    .buy-input{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--txt);font-size:15px}
+    .buy-btn{border:0;font-family:inherit;cursor:pointer}
+    .soon-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--txt-muted)}
+    .fineprint{color:var(--txt-muted);font-size:13px;margin-top:22px}
+    .tldr-box{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px 20px;font-size:14.5px;color:var(--txt-muted);margin-top:20px}
+    .tldr-box b{color:var(--head)}
+  </style>
+  <script is:inline>
+  (function(){
+    var gas="https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec",msg=document.getElementById("buy-msg");
+    function say(t){msg.textContent=t;}
+    function norm(s){var d=(s||"").replace(/[^0-9]/g,"");if(d.length===11&&(d[0]==="7"||d[0]==="8"))return "+7"+d.slice(1);if(d.length===10)return "+7"+d;return "";}
+    Array.prototype.forEach.call(document.querySelectorAll(".buy-btn[data-product]"),function(btn){
+      btn.addEventListener("click",function(){
+        var card=btn.closest(".prodcard");
+        var emEl=card.querySelector(".buy-input[type=email]");var em=((emEl||{}).value||"").trim();
+        var phn=card.querySelector(".buy-input[type=tel]");var ph=norm((phn||{}).value||"");
+        if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){say("Введите корректный email — на него придёт дубль ссылки.");return;}
+        if(!ph){say("Введите телефон в формате +7 XXX XXX-XX-XX — он нужен для водяного знака.");return;}
+        btn.disabled=true;say("Создаём платёж…");
+        fetch(gas,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:"shop_init",email:em,phone:ph,product:btn.getAttribute("data-product")})})
+        .then(function(r){return r.json();})
+        .then(function(j){if(j&&j.ok&&j.paymentUrl){say("Перенаправляем на защищённую оплату…");window.location.href=j.paymentUrl;}else{btn.disabled=false;say("Платёж не создан"+(j&&j.error?(" — "+j.error):"")+". Попробуйте позже или напишите в поддержку.");}})
+        .catch(function(){btn.disabled=false;say("Ошибка сети — попробуйте ещё раз.");});
+      });
+    });
+  })();
+  </script>
 </ZhLayout>

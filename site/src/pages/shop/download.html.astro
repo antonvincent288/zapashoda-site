@@ -1,0 +1,19 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+---
+<ZhLayout title="Скачивание гайда | Запас хода" description="Выдача гайда по токену с ограничением времени и числа скачиваний." noindex>
+  <section class="sec">
+    <div class="wrap" style="max-width:760px">
+      <div class="crumbs"><a href="/">Главная</a> / <a href="/shop/digital/">Товары</a> / Скачивание</div>
+      <h1>Подготовка файла…</h1>
+      <p class="lead">Если вас не перенаправило автоматически — включите JavaScript или напишите в поддержку: выдача защищена токеном.</p>
+    </div>
+  </section>
+  <script is:inline>
+  (function(){
+    var gas="https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec";
+    var t=new URLSearchParams(location.search).get("token")||"";
+    if(t){window.location.href=gas+"?t="+encodeURIComponent(t);}
+  })();
+  </script>
+</ZhLayout>
