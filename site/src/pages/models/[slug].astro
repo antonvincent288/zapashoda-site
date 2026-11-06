@@ -105,7 +105,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         </div>
         <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
       </div>
+      {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
     </div>
-        {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
-      </section>
+  </section>
 </ZhLayout>
