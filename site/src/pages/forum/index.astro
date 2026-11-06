@@ -1,0 +1,11 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+import d from '../../data/legacy/forum_index.json';
+---
+<ZhLayout title={d.title} description={d.desc}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / Форум</div>
+    <div class="article" set:html={d.body_html} />
+    {d.body_script && <script is:inline set:html={d.body_script} />}
+  </div></section>
+</ZhLayout>
