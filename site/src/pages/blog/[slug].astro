@@ -18,7 +18,7 @@ const extra = String(a.extra_html || '')
   .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
   .replace(/<form[\s\S]*?<\/form>/gi, '')
   .replace(/<script[\s\S]*?<\/script>/gi, '');
-const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.desc, datePublished: a.date, articleSection: 'Блог' };
+const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.desc, datePublished: a.date, dateModified: a.date, author: { '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' }, articleSection: 'Блог' };
 ---
 <ZhLayout title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}>
   <section class="sec">
