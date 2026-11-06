@@ -1,13 +1,1 @@
-{
- "section": "blog",
- "slug": "zeekr-001-gbt-diff",
- "title": "Порты GB/T AC и DC на Zeekr 001: различия и ошибки",
- "desc": "Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.",
- "category": "Гайд",
- "read_min": 0,
- "date": "2026-11-04",
- "og": "/assets/og/b-zeekr-001-gbt-diff.png",
- "body_html": "",
- "extra_html": "",
- "headings": []
-}
+{"section": "blog", "slug": "zeekr-001-gbt-diff", "title": "Порты GB/T AC и DC на Zeekr 001: различия и ошибки", "desc": "Порты GB/T AC и DC на Zeekr 001 2024–2026: различия, совместимость станций и переходников, типовые ошибки владельцев.", "category": "Гайд", "read_min": 0, "date": "2026-11-04", "og": "/assets/og/b-zeekr-001-gbt-diff.png", "body_html": "<h2 id=\"s1\">Коротко</h2><p>У Zeekr 001 два порта GB/T: AC для медленной зарядки и DC для быстрой. Различия между ними, совместимость станций и переходников и типовые ошибки владельцев — в статье.</p>", "extra_html": "", "headings": []}
