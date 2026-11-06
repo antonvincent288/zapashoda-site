@@ -1,6 +1,6 @@
 ---
-import ZhLayout from '../../layouts/ZhLayout.astro';
-import src from '../../data/legacy/misc.json';
+import ZhLayout from '../layouts/ZhLayout.astro';
+import src from '../data/legacy/misc.json';
 const d = src.find((x) => x.slug === 'credits');
 ---
 <ZhLayout title={d.title} description={d.desc}>
