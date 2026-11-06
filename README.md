@@ -1,5 +1,8 @@
 # Запас хода — сайт (zapashoda-site)
 
+[![sentinel](https://github.com/antonvincent288/zapashoda-site/actions/workflows/sentinel.yml/badge.svg)](https://github.com/antonvincent288/zapashoda-site/actions/workflows/sentinel.yml) [![scout](https://github.com/antonvincent288/zapashoda-site/actions/workflows/scout.yml/badge.svg)](https://github.com/antonvincent288/zapashoda-site/actions/workflows/scout.yml) [![autopilot](https://github.com/antonvincent288/zapashoda-site/actions/workflows/alisa_autopilot.yml/badge.svg)](https://github.com/antonvincent288/zapashoda-site/actions/workflows/alisa_autopilot.yml)
+
+
 SEO-сайт «Запас хода»: 137 страниц моделей, 12 руководств, каталог новостей со своей страницей у каждой статьи, VIN-справочник, карта зарядных станций (OSM), llms.txt, OG-карточки, RSS.
 
 Всё бесплатно: GitHub Pages (хостинг) + GitHub Actions (сбор новостей и деплой). Домен: **zapashoda-ev.ru** (reg.ru), хостинг не нужен.
