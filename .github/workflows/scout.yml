@@ -76,7 +76,10 @@ jobs:
           for q in QUERIES_GH: gh_search(q); time.sleep(3)
           for q in QUERIES_HN: hn_search(q); time.sleep(1)
           for q in QUERIES_NPM: npm_search(q); time.sleep(1)
-          print("new findings:", len(new))
+          from datetime import datetime as _dt
+from datetime import timezone as _tz
+D = _dt.now(_tz.utc).strftime("%Y-%m-%d")
+print("new findings:", len(new))
           os.makedirs("intel", exist_ok=True)
           head_ = open("intel/scout_digest.md", encoding="utf-8").read() if os.path.exists("intel/scout_digest.md") else "# Разведчик — сводки\n\nФормат: новые находки по темам проекта. Дубли — intel/seen.json.\n\n"
           sec = ["## " + D, ""]
