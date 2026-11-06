@@ -28,7 +28,7 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 <meta name="theme-color" content="#0f0f10" />
 <title>{title}</title>
 <meta name="description" content={description} />
-<meta name="robots" content="index, follow" />
+<meta name="robots" content={path.startsWith("/admin") ? "noindex, nofollow" : "index, follow"} />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.json" />
