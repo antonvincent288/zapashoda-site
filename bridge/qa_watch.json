@@ -29,19 +29,25 @@
   "/telemetry/": 200
  },
  "models_cards": 145,
- "app_scripts": 1,
+ "app_scripts": 4,
  "catalog_products": 0,
  "link_targets": 198,
  "links_ok": 198,
  "links_bad": [],
- "assets_count": 27,
- "assets_ok": 27,
+ "assets_count": 29,
+ "assets_ok": 29,
  "assets_bad": [],
- "checked_at_msk": "06.11 20:15",
+ "gas_alive": true,
+ "checked_at_msk": "06.11 22:20",
  "failures": [
   {
    "where": "page /search.html",
    "what": "HTTP 404",
+   "crit": true
+  },
+  {
+   "where": "/",
+   "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
    "crit": true
   },
   {
@@ -62,11 +68,6 @@
   {
    "where": "/catalog/",
    "what": "товаров в OF_PRODUCTS: 0",
-   "crit": true
-  },
-  {
-   "where": "GAS",
-   "what": "не найден в разметке",
    "crit": true
   }
  ],
