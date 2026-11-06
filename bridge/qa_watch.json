@@ -1,6 +1,6 @@
 {
- "sitemap_count": 317,
- "sitemap_ok": 317,
+ "sitemap_count": 308,
+ "sitemap_ok": 308,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -31,8 +31,8 @@
  "models_cards": 145,
  "app_scripts": 9,
  "catalog_products": 0,
- "link_targets": 210,
- "links_ok": 207,
+ "link_targets": 212,
+ "links_ok": 209,
  "links_bad": [
   [
    "https://zapashoda-ev.ru/favicon.ico",
@@ -59,7 +59,7 @@
    404
   ]
  ],
- "checked_at_msk": "06.11 02:06",
+ "checked_at_msk": "06.11 04:37",
  "failures": [
   {
    "where": "page /search.html",
