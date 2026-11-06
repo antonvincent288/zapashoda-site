@@ -23,7 +23,7 @@ import ZhLayout from '../layouts/ZhLayout.astro';
     let pfLib=null, pfDeb=null;
     async function pfRun(q){
       try{
-        if(!pfLib) pfLib=await import('/pagefind/pagefind.js');
+        const pfUrl='/pagefind/pagefind.js'; if(!pfLib) pfLib=await import(/* @vite-ignore */ pfUrl);
         const res=await pfLib.search(q);
         const items=res.results.slice(0,12);
         pfOut.innerHTML=items.length?'':'<p class="pf-empty">Ничего не нашлось. Попробуйте другое слово — например, «адаптер» или модель авто.</p>';
