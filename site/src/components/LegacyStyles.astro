@@ -34,4 +34,34 @@
 .mx-legend{margin:10px 0}
 .malt{background:var(--bg2)}
 .lcard select,.lcard input[type=text],.lcard input[type=number],.lcard input[type=tel],.lcard input[type=email]{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--txt);font-size:14.5px;font-family:inherit;max-width:100%}
+
+/* --- Каталог карточек (блок «Что докупить» на страницах моделей) 06.11 --- */
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:14px;margin:14px 0 10px}
+.card-product{display:flex;flex-direction:column;height:100%;background:var(--card);padding:18px;border:1px solid var(--line);border-radius:16px;min-width:0;transition:box-shadow .2s ease,transform .2s ease}
+.card-product:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-3px)}
+.card-product>.flex-auto{flex:1 1 auto;display:flex;flex-direction:column;padding:0}
+.card-product .justify-center{height:150px;align-items:center;overflow:hidden;margin:0 0 14px;background:#f6f7f9;border-radius:12px}
+.card-product .justify-center img,.card-product .justify-center svg{width:100% !important;height:150px !important;max-height:150px !important;aspect-ratio:auto !important;object-fit:contain !important;margin:0 !important;border-radius:0;background:transparent}
+.card-product h3{font-size:16px;font-weight:600;line-height:1.35;margin:0 0 6px;color:var(--head);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-product .flex.flex-col{flex:1 1 auto;gap:6px}
+.card-product .flex.flex-col>small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;line-height:1.4;color:var(--txt-muted);font-size:13.5px}
+.card-product .justify-between{margin-top:auto;padding-top:12px;align-items:flex-end;flex-wrap:wrap;gap:6px 10px}
+.card-product .justify-between .font-semibold{font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--head)}
+.card-product button,.card-product .sku-add{margin-top:auto;width:100%;min-height:44px;border-radius:10px;background:var(--gold);color:#fff;border:0;font-weight:600;cursor:pointer;font-family:inherit;font-size:15px}
+.card-product button:hover,.card-product .sku-add:hover{opacity:.92}
+.pc-card .pc-media{display:flex;align-items:center;justify-content:center;height:170px;background:#fff;padding:14px 10px;position:relative}
+.pc-card .pc-media svg{width:76%;height:76%}
+.pc-name{font-size:14px;font-weight:500;line-height:1.32;color:var(--ink);text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-price{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.pc-spec-line span{font-size:12px;color:var(--txt-muted);background:var(--bg2);border-radius:6px;padding:3px 8px}
+.pc-btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:8px;background:var(--gold);color:#fff;font-weight:600;font-size:14px;cursor:pointer;width:100%;white-space:nowrap;border:0}
+/* --- Калькулятор, встроенный на страницах моделей --- */
+.calc-grid{display:grid;gap:14px;grid-template-columns:.9fr 1.1fr}
+@media(max-width:640px){.calc-grid{grid-template-columns:1fr}}
+.calc-grid .cin,.calc-grid .cout{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.calc-grid label{display:block;font-size:13px;color:var(--txt-muted);margin:0 0 4px;font-weight:600}
+.calc-grid input[type=number],.calc-grid select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:var(--bg);color:var(--txt);font-family:inherit}
+.calc-grid .cout .big{font-size:26px;font-weight:800;color:var(--head)}
+.cout table{width:100%;border-collapse:collapse;font-size:14px}
+.cout table td{padding:7px 6px;border-bottom:1px dashed var(--line)}
 </style>

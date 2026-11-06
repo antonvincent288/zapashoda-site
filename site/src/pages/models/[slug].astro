@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import LegacyStyles from '../../components/LegacyStyles.astro';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -78,6 +79,7 @@ const yearsShort = String(m.years || '').split(' · ')[0];
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: m.title, description: m.desc };
 ---
 <ZhLayout title={`${m.title} — Запас хода`} description={m.desc} og={m.og} jsonld={jsonld}>
+  <LegacyStyles />
   <section class="sec">
     <div class="wrap" style="max-width:980px">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
