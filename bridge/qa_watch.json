@@ -37,7 +37,7 @@
  "assets_count": 27,
  "assets_ok": 27,
  "assets_bad": [],
- "checked_at_msk": "06.11 18:08",
+ "checked_at_msk": "06.11 20:15",
  "failures": [
   {
    "where": "page /search.html",
