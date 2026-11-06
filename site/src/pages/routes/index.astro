@@ -1,0 +1,17 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import src from '../../data/legacy/routing.json';
+const d = src.find((x) => x.slug === 'index');
+---
+<ZhLayout title={d.title} description={d.desc}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / Маршруты</div>
+<link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
+<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.css" />
+<link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css" />
+<script is:inline src="/assets/leaflet/leaflet.js"></script>
+<script is:inline src="/assets/leaflet/leaflet.markercluster.js"></script>
+    <div class="article" set:html={d.body_html} />
+    {d.body_script && <script is:inline set:html={d.body_script} />}
+  </div></section>
+</ZhLayout>
