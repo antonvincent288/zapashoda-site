@@ -27,8 +27,5 @@ export async function GET(context) {
     + '<language>ru-RU</language>'
     + xml
     + '</channel></rss>';
-  return {
-    body: feed,
-    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
-  };
+  return new Response(feed, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
 }
