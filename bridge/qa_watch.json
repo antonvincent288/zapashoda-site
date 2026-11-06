@@ -31,13 +31,13 @@
  "models_cards": 145,
  "app_scripts": 1,
  "catalog_products": 0,
- "link_targets": 194,
- "links_ok": 194,
+ "link_targets": 198,
+ "links_ok": 198,
  "links_bad": [],
- "assets_count": 24,
- "assets_ok": 24,
+ "assets_count": 27,
+ "assets_ok": 27,
  "assets_bad": [],
- "checked_at_msk": "06.11 16:31",
+ "checked_at_msk": "06.11 18:08",
  "failures": [
   {
    "where": "page /search.html",
