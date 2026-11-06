@@ -5,8 +5,10 @@ export async function getStaticPaths() {
   return src.map((x) => ({ params: { slug: x.slug }, props: { d: x } }));
 }
 const { d } = Astro.props;
+const painSlug = d.slug.startsWith('pain-') ? d.slug.replace(/^pain-/, '') : null;
+const cano = painSlug ? 'https://zapashoda-ev.ru/pain/' + painSlug + '/' : undefined;
 ---
-<ZhLayout title={d.title} description={d.desc}>
+<ZhLayout title={d.title} description={d.desc} canonical={cano}>
   <section class="sec"><div class="wrap">
     <div class="crumbs"><a href="/">Главная</a> / <a href="/forum/">Форум</a> / {d.title}</div>
     <div class="article" set:html={d.body_html} />

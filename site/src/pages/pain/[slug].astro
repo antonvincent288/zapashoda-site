@@ -51,7 +51,12 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             </div>
           )}
           {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) })} />}
-<div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
+<div class="b2b-note">
+            <b>Вы дилер или СТО?</b>
+            <p>Каждый такой кейс у вашего клиента — репутационный риск и лишняя работа сервиса. Укомплектуйте выдачу EV адаптерами и комплектами «Запас хода» — и закройте вопрос зарядки ещё на этапе передачи машины клиенту.</p>
+            <a class="btn btn-ghost" style="text-decoration:none" href="/b2b/">Дилерам: запросить условия</a>
+          </div>
+          <div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
         </article>
       </div>
     </div>

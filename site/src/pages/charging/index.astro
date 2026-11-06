@@ -10,6 +10,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       <p class="lead"><span id="stn-count">2073</span> станций (<span id="stn-upd">2026-11-01</span>). Синие — быстрые DC, зелёные — AC.</p>
       <div id="map" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:28px;border:1px solid var(--line)"></div>
       <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
+      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:12px">Нажмите на точку на карте — откроется адрес станции, коннекторы и мощность. Синие точки — быстрые DC, зелёные — AC.</p>
     </div>
   </section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
@@ -51,7 +52,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var conn = (s.s || []).join(' ');
             var pw = Number(s.pw) || 0;
             var dc = /CCS|CHAdeMO|GB\/T DC/i.test(conn) || pw >= 50;
-            var m = L.circleMarker([s.lat, s.lon], { radius: 5, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
+            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
             m.bindPopup('<b>' + (s.n || 'Станция') + '</b><br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : ''));
             cluster.addLayer(m);
           });

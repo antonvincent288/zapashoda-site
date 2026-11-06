@@ -1,0 +1,37 @@
+---
+---
+<style is:global>
+.lcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:14px 0}
+.lcard h3{margin-top:0}
+.of-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.of-grid{grid-template-columns:1fr}}
+.of-grid .full{grid-column:1/-1}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.kv b{white-space:nowrap}
+.note{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--txt-muted);margin:10px 0}
+.gbox{border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;background:var(--card)}
+.btn.lime{background:var(--gold);color:#fff;border:0}
+.lstat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.lstat>div{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.mx-wrap{overflow-x:auto;margin:14px 0}
+.mx-table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+.mx-table th,.mx-table td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:middle}
+.mx-table th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-muted)}
+.mrowh td{font-weight:700;color:var(--head)}
+.mcolh{font-weight:700;font-size:13px}
+.mcell.m-ok{color:#0d7e0f;font-weight:700}
+.mcell.m-warn{color:#b45309;font-weight:700}
+.mcell.m-no{color:#b91c1c;font-weight:700}
+.mcell.m-ad{color:var(--txt-muted)}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--txt-muted);margin-right:14px}
+.lg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.lg-ok i{background:#16a34a}
+.lg-warn i{background:#f59e0b}
+.lg-no i{background:#ef4444}
+.lg-ad i{background:#94a3b8}
+.mchip{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--txt-muted);margin:1px}
+.mnote,.mx-note,.mrdesc{font-size:13px;color:var(--txt-muted)}
+.mx-legend{margin:10px 0}
+.malt{background:var(--bg2)}
+.lcard select,.lcard input[type=text],.lcard input[type=number],.lcard input[type=tel],.lcard input[type=email]{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--txt);font-size:14.5px;font-family:inherit;max-width:100%}
+</style>
