@@ -1,0 +1,12 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import src from '../../data/legacy/misc.json';
+const d = src.find((x) => x.slug === 'telemetry');
+---
+<ZhLayout title={d.title} description={d.desc}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / {d.title}</div>
+    <div class="article" set:html={d.body_html} />
+    {d.body_script && <script is:inline set:html={d.body_script} />}
+  </div></section>
+</ZhLayout>
