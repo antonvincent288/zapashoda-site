@@ -108,7 +108,7 @@ jobs:
                      "orphans": orphans, "pages": len(pages), "ld_types": ld_types},
                     open("intel/sentinel_last.json", "w", encoding="utf-8"), ensure_ascii=False)
           print("VERDICT:", verdict)
-          if not ok: raise SystemExit(1)
+          print("report written")
           PYEOF
 
       - name: Commit report
@@ -118,3 +118,7 @@ jobs:
           git add intel/
           git commit -m "bot: daily report [skip ci]" || echo "no changes"
           git push
+
+      - name: Badge (red if broken)
+        run: |-
+          python3 -c "import json,sys; d=json.load(open('intel/sentinel_last.json')); print('VERDICT:', d['ok']); sys.exit(0 if d['ok'] else 2)"
