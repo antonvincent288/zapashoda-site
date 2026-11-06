@@ -5,7 +5,7 @@
 для улучшения сайта — дизайн, вёрстка, SEO и т.д.».
 
 ## Замер до правок (прод, 06.11)
-GEO-SCORE: **72/100 GOOD** (bands: 68–85). Диагностика: RAG chunk readiness 53/100, Trust stack D (10/25),
+GEO-SCORE: **72/100 GOOD** → после волны 1 (AEO-эндпоинты+схемы) **76/100** → после волны 2 (RSS+labels+faq.json keys) **77/100**. Формы 12/12 labeled (100/100), RSS ✅, ai.txt ✅, faq.json ✅ 6 шт. Perplexity 40→50, Google AI 66→76, Trust D→C. (bands: 68–85). Диагностика: RAG chunk readiness 53/100, Trust stack D (10/25),
 Content decay risk HIGH (temporal-упоминания «до конца 2026»), Perplexity 40/100, Google AI 66/100, ChatGPT 73/100.
 Полный отчёт: geoready.dev/report/audit?url=https://zapashoda-ev.ru (регенерировать после волн).
 
@@ -57,3 +57,9 @@ GEO-аудит и прогон geometry-правила #15 по всем кон�
 - martrapp/astro-vtbot (365★) — View Transitions для плавной навигации между статьями — P2.
 - ReunMedia/astro-og-images — генерация уникальных OG-картинок на билде — P2 для CTR в соцсетях.
 - ihuzaifashoukat/llmoptimizer — регенерация llms.txt (у нас статичный — сверять с изменениями каталога).
+
+## Замер прогресса GEO (06.11, после волн 1-2)
+- 77/100. До 85+ остались: chunk readiness 53→80+ (перепаковка статей в вопросы-чанки 100–150 слов),
+  dateModified машиночитаемые даты, contactPoint в Organization (нужен реальный e-mail/тел от владельца),
+  sameAs на KG (Wikipedia/Wikidata — есть ли у бренда профиль?), aria-live/roles в формах.
+- Периодика: повторять `geo audit` после каждой волны (инструмент: pip install geo-optimizer-skill).
