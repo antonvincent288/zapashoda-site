@@ -1,6 +1,6 @@
 ---
-import ZhLayout from '../layouts/ZhLayout.astro';
-import src from '../data/legacy/app.json';
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import src from '../../data/legacy/app.json';
 const d = src.find((x) => x.slug === 'app');
 ---
 <ZhLayout title={d.title} description={d.desc}>
