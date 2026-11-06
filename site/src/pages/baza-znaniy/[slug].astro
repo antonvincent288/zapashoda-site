@@ -1,0 +1,14 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import src from '../../data/legacy/baza.json';
+export async function getStaticPaths() {
+  return src.filter((x) => x.slug !== 'index').map((x) => ({ params: { slug: x.slug }, props: { d: x } }));
+}
+const { d } = Astro.props;
+---
+<ZhLayout title={d.title} description={d.desc}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / <a href="/baza-znaniy/">База знаний</a> / {d.title}</div>
+    <div class="article" set:html={d.body_html} />
+  </div></section>
+</ZhLayout>
