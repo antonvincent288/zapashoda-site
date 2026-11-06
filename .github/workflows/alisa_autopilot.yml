@@ -36,13 +36,13 @@ jobs:
         run: |
           pip install -q geo-optimizer-skill
           timeout 300 geo audit --url https://zapashoda-ev.ru > /tmp/geo.txt || true
-          SCORE=$(grep -oP '\s*\K[0-9]+(?=/100)' /tmp/geo.txt | head -1 || echo 0)
+          SCORE=$(grep -A3 'FINAL GEO SCORE' /tmp/geo.txt | grep -oP '[0-9]+(?=/100)' | head -1 || echo 0)
           echo "SCORE=$SCORE"
 
       - name: Append history
         run: |
-          SCORE=$(grep -oP '\s*\K[0-9]+(?=/100)' /tmp/geo.txt | head -1 || echo 0)
-          TRUST=$(grep -oP 'Trust level: \w+' /tmp/geo.txt | head -1 || echo "n/a")
+          SCORE=$(grep -A3 'FINAL GEO SCORE' /tmp/geo.txt | grep -oP '[0-9]+(?=/100)' | head -1 || echo 0)
+          TRUST=$(grep -oP 'Trust level: \w+' /tmp/geo.txt | head -1 | sed 's/Trust level: //' || echo "n/a")
           D=$(date -u +"%Y-%m-%d %H:%M UTC")
           printf '| %s | %s | %s |\n' "$D" "$SCORE" "$TRUST" >> docs/geo_history.md
 
