@@ -24,68 +24,67 @@ jobs:
 
       - name: Dig GitHub + HN + npm (dedup into intel/)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          run: python3 - <<'PYEOF'
-            import json, os, urllib.request, urllib.parse, time
-            from datetime import datetime, timezone
-            GH=os.environ.get("GH_TOKEN","")
-            D=datetime.now(timezone.utc).strftime("%Y-%m-%d")
-            seen=set()
-            if os.path.exists("intel/seen.json"):
-                seen=set(json.load(open("intel/seen.json")))
-            new=[]
-            def add(kind, name, stars, desc, url):
-                key=url or kind+":"+name
-                if key in seen: return
-                seen.add(key); new.append({"kind":kind,"name":name,"stars":stars,"desc":desc,"url":url})
-            def gh_search(q):
-                if not GH: return
-                u="https://api.github.com/search/repositories?q=%s&sort=stars&per_page=6"%urllib.parse.quote(q)
-                r=urllib.request.Request(u, headers={"Authorization":"Bearer "+GH,"Accept":"application/vnd.github+json","User-Agent":"scout-bot"})
-                for a in range(3):
-                    try:
-                        d=json.loads(urllib.request.urlopen(r, timeout=20).read())
-                        for i in d.get("items",[]):
-                            add("github", i["full_name"], i["stargazers_count"], (i.get("description") or "")[:120], i["html_url"])
-                        return
-                    except Exception as e:
-                        time.sleep(10)
-            def hn_search(q):
-                u="https://hn.algolia.com/api/v1/search?query=%s&tags=story&hitsPerPage=5"%urllib.parse.quote(q)
-                try:
-                    d=json.loads(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"scout-bot"}), timeout=20).read())
-                    for i in d.get("hits",[]):
-                        add("hn", (i.get("title") or "")[:90], i.get("points",0), "", i.get("url") or ("https://news.ycombinator.com/item?id="+str(i.get("objectID"))))
-                except Exception: pass
-            def npm_search(q):
-                u="https://registry.npmjs.org/-/v1/search?text=%s&size=5"%urllib.parse.quote(q)
-                try:
-                    d=json.loads(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"scout-bot"}), timeout=20).read())
-                    for o in d.get("objects",[]):
-                        p=o.get("package",{})
-                        add("npm", p.get("name",""), 0, (p.get("description") or "")[:120], "https://www.npmjs.com/package/"+p.get("name",""))
-                except Exception: pass
-            QUERIES_GH=["astro seo", "llms.txt", "generative engine optimization", "programmatic seo",
-              "telegram mini app", "json-ld schema generator", "internal links seo", "ev charging api",
-              "sitemap crawler audit", "structured data validator"]
-            QUERIES_HN=["llms.txt", "ai search optimization", "seo ai overviews", "static site seo", "GEO AEO search"]
-            QUERIES_NPM=["astro seo", "llms", "schema org", "pagefind", "sitemap generator"]
-            for q in QUERIES_GH: gh_search(q); time.sleep(3)
-            for q in QUERIES_HN: hn_search(q); time.sleep(1)
-            for q in QUERIES_NPM: npm_search(q); time.sleep(1)
-            print("new findings:", len(new))
-            import os as _os
-            _os.makedirs("intel", exist_ok=True)
-            # сводка: только свежий раздел, файл растёт
-            head_ = open("intel/scout_digest.md", encoding="utf-8").read() if os.path.exists("intel/scout_digest.md") else "# Разведчик — сводки\n\nФормат: новые находки по темам проекта. Сверка дублей — intel/seen.json.\n\n"
-            sec=["## %s"%D, ""]
-            if not new: sec.append("_Новых находок нет — все уже в базе._")
-            for f in new:
-                s=(" ★%d"%f["stars"]) if f["stars"] else ""
-                sec.append("- [%s](%s)%s — %s"%(f["name"], f["url"], s, f["desc"]))
-            sec.append("")
-            open("intel/scout_digest.md","w",encoding="utf-8").write(head_+"\n".join(sec))
-            json.dump(sorted(seen), open("intel/seen.json","w"))
+        run: |
+                      import json, os, urllib.request, urllib.parse, time
+                      from datetime import datetime, timezone
+                      GH=os.environ.get("GH_TOKEN","")
+                      D=datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                      seen=set()
+                      if os.path.exists("intel/seen.json"):
+                          seen=set(json.load(open("intel/seen.json")))
+                      new=[]
+                      def add(kind, name, stars, desc, url):
+                          key=url or kind+":"+name
+                          if key in seen: return
+                          seen.add(key); new.append({"kind":kind,"name":name,"stars":stars,"desc":desc,"url":url})
+                      def gh_search(q):
+                          if not GH: return
+                          u="https://api.github.com/search/repositories?q=%s&sort=stars&per_page=6"%urllib.parse.quote(q)
+                          r=urllib.request.Request(u, headers={"Authorization":"Bearer "+GH,"Accept":"application/vnd.github+json","User-Agent":"scout-bot"})
+                          for a in range(3):
+                              try:
+                                  d=json.loads(urllib.request.urlopen(r, timeout=20).read())
+                                  for i in d.get("items",[]):
+                                      add("github", i["full_name"], i["stargazers_count"], (i.get("description") or "")[:120], i["html_url"])
+                                  return
+                              except Exception as e:
+                                  time.sleep(10)
+                      def hn_search(q):
+                          u="https://hn.algolia.com/api/v1/search?query=%s&tags=story&hitsPerPage=5"%urllib.parse.quote(q)
+                          try:
+                              d=json.loads(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"scout-bot"}), timeout=20).read())
+                              for i in d.get("hits",[]):
+                                  add("hn", (i.get("title") or "")[:90], i.get("points",0), "", i.get("url") or ("https://news.ycombinator.com/item?id="+str(i.get("objectID"))))
+                          except Exception: pass
+                      def npm_search(q):
+                          u="https://registry.npmjs.org/-/v1/search?text=%s&size=5"%urllib.parse.quote(q)
+                          try:
+                              d=json.loads(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"scout-bot"}), timeout=20).read())
+                              for o in d.get("objects",[]):
+                                  p=o.get("package",{})
+                                  add("npm", p.get("name",""), 0, (p.get("description") or "")[:120], "https://www.npmjs.com/package/"+p.get("name",""))
+                          except Exception: pass
+                      QUERIES_GH=["astro seo", "llms.txt", "generative engine optimization", "programmatic seo",
+                        "telegram mini app", "json-ld schema generator", "internal links seo", "ev charging api",
+                        "sitemap crawler audit", "structured data validator"]
+                      QUERIES_HN=["llms.txt", "ai search optimization", "seo ai overviews", "static site seo", "GEO AEO search"]
+                      QUERIES_NPM=["astro seo", "llms", "schema org", "pagefind", "sitemap generator"]
+                      for q in QUERIES_GH: gh_search(q); time.sleep(3)
+                      for q in QUERIES_HN: hn_search(q); time.sleep(1)
+                      for q in QUERIES_NPM: npm_search(q); time.sleep(1)
+                      print("new findings:", len(new))
+                      import os as _os
+                      _os.makedirs("intel", exist_ok=True)
+                      # сводка: только свежий раздел, файл растёт
+                      head_ = open("intel/scout_digest.md", encoding="utf-8").read() if os.path.exists("intel/scout_digest.md") else "# Разведчик — сводки\n\nФормат: новые находки по темам проекта. Сверка дублей — intel/seen.json.\n\n"
+                      sec=["## %s"%D, ""]
+                      if not new: sec.append("_Новых находок нет — все уже в базе._")
+                      for f in new:
+                          s=(" ★%d"%f["stars"]) if f["stars"] else ""
+                          sec.append("- [%s](%s)%s — %s"%(f["name"], f["url"], s, f["desc"]))
+                      sec.append("")
+                      open("intel/scout_digest.md","w",encoding="utf-8").write(head_+"\n".join(sec))
+                      json.dump(sorted(seen), open("intel/seen.json","w"))
           PYEOF
 
       - name: Commit digest
