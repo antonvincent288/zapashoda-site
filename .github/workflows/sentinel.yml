@@ -1,0 +1,114 @@
+name: sentinel (site guard, daily)
+
+on:
+  schedule:
+    - cron: '30 4 * * *'  # 07:30 MSK
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sentinel
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Full live audit (links, orphans, sitemap, JSON-LD)
+        run: python3 - <<'PYEOF'
+import json, re, urllib.request, xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
+UA={"User-Agent":"Mozilla/5.0 (site-sentinel; zapashoda-ev.ru)"}
+BASE="https://zapashoda-ev.ru"
+def get(u, t=25):
+    try:
+        r=urllib.request.Request(u, headers=UA)
+        return urllib.request.urlopen(r, timeout=t).read().decode("utf-8", errors="replace"), r.status
+    except urllib.error.HTTPError as e:
+        return "", e.code
+    except Exception:
+        return "", 0
+# sitemap
+sm_urls=[]
+for cand in ["/sitemap-index.xml","/sitemap.xml"]:
+    body, code = get(BASE+cand)
+    if code==200 and body:
+        for m in re.finditer(r"https://zapashoda-ev\.ru/[^<]+", body):
+            sm_urls.append(m.group(0))
+        if cand=="/sitemap-index.xml":
+            for sub in re.findall(r"https://zapashoda-ev\.ru/[^<]+\.xml", body):
+                if sub.endswith("sitemap.xml"): continue
+                b2,_=get(sub)
+                sm_urls+=re.findall(r"https://zapashoda-ev\.ru/[^<]+", b2)
+sm_urls=[u for u in set(sm_urls) if not u.endswith(".xml")]
+pages=set(u.rstrip("/")+"/" for u in sm_urls)
+print("pages in sitemap:", len(pages))
+results={}
+def fetch(u):
+    body, code = get(u)
+    return u, code, body
+with ThreadPoolExecutor(max_workers=12) as ex:
+    for u, code, body in ex.map(fetch, sorted(pages)):
+        results[u]=(code, body)
+bad=[u for u,(c,b) in results.items() if c!=200]
+print("non-200:", len(bad))
+# link graph
+inb={}
+ld_errors=[]; ld_types={}
+ext_links=0; total_links=0
+for u,(c,b) in results.items():
+    if c!=200 or not b: continue
+    for lk in re.findall(r'href="([^"#?]+)"', b):
+        if lk.startswith("/"): lk2=BASE+lk
+        elif lk.startswith("http") and "zapashoda-ev.ru" in lk: lk2=lk
+        else:
+            if lk.startswith("http"): ext_links+=1
+            continue
+        lk2=lk2.rstrip("/")+"/"
+        total_links+=1
+        if lk2 in pages and lk2!=u: inb.setdefault(lk2,0); inb[lk2]+=1
+    for m in re.finditer(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', b, re.S):
+        try:
+            d=json.loads(m.group(1))
+            t=d.get("@type","?") if isinstance(d,dict) else "?"
+            ld_types[t]=ld_types.get(t,0)+1
+        except Exception as e:
+            ld_errors.append((u, str(e)[:80]))
+orphans=sorted(u for u in pages if u not in inb and results.get(u,(0,""))[0]==200)
+print("orphans:", len(orphans), "| ld errors:", len(ld_errors), "| ld types:", ld_types)
+from datetime import datetime, timezone
+D=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+ok = (len(bad)==0 and len(ld_errors)==0)
+verdict = "OK ✅" if ok else "BROKEN ❌"
+lines=["# Сторож — живой сайт", "", f"Прогон: {D} | Вердикт: {verdict}", "",
+ f"- Страниц в sitemap: {len(pages)}", f"- Небо-200: {len(bad)}", f"- Внутренних ссылок всего: {total_links}",
+ f"- Сирот (0 входящих): {len(orphans)}", f"- Ошибок JSON-LD: {len(ld_errors)}",
+ f"- Типы схем: {', '.join(f'{k}:{v}' for k,v in sorted(ld_types.items()))}", ""]
+if bad:
+    lines.append("## Не-200 страницы"); lines+= [f"- {u}" for u in bad[:30]]+[""]
+if ld_errors:
+    lines.append("## Ошибки JSON-LD"); lines+= [f"- {u}: {e}" for u,e in ld_errors[:20]]+[""]
+if orphans:
+    lines.append("## Сироты (нет входящих ссылок)"); lines+= [f"- {u}" for u in orphans[:40]]+[""]
+open("intel/sentinel_report.md","w",encoding="utf-8").write("\n".join(lines))
+json.dump({"date":D,"ok":ok,"bad":bad,"ld_errors":[list(x) for x in ld_errors],"orphans":orphans,"pages":len(pages),"ld_types":ld_types},
+          open("intel/sentinel_last.json","w",encoding="utf-8"), ensure_ascii=False)
+print("VERDICT:", verdict)
+if not ok: raise SystemExit(1)
+PYEOF
+
+      - name: Commit report
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "sentinel@zapashoda-ev.ru"
+          git add intel/
+          git commit -m "sentinel: daily audit [skip ci]" || echo "no changes"
+          git push
