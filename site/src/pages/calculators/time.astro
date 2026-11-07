@@ -3,29 +3,38 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../components/LegacyStyles.astro';
 ---
 
-<ZhLayout title="Сколько заряжать по времени — калькулятор «Запас хода»" description="Простой калькулятор времени зарядки: выберите машину, откуда заряжаете и насколько разряжена батарея — покажем часы и минуты, когда батарея будет готова. Без ввода цифр.">
+<ZhLayout title="Сколько заряжать по времени — калькулятор «Запас хода»" description="Простой калькулятор времени зарядки: выберите машину, откуда заряжаете и насколько разряжена батарея — покажем часы, минуты и когда батарея будет готова. Три нажатия кнопок.">
   <section class="sec"><div class="wrap">
     <LegacyStyles />
     <div class="crumbs"><a href="/">Главная</a> / <a href="/calculators/">Калькуляторы</a> / Время зарядки</div>
 
     <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:16.5px;margin:18px 0 10px}
-      .wz-q:first-child{margin-top:0}
-      .wz-q .qnum{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:999px;background:#0161EF;color:#fff;font-size:13px;margin-right:8px}
-      .wz-q small{display:block;font-weight:400;color:var(--txt-muted);font-size:13px;margin-top:2px;margin-left:34px}
-      .wz-chips{display:flex;flex-wrap:wrap;gap:10px}
-      .wz-chip{padding:12px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--txt);font-size:15.5px;font-weight:600;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;user-select:none;transition:all .15s;font-family:inherit}
-      .wz-chip.on{background:#0161EF;border-color:#0161EF;color:#fff}
-      .wz-chip:hover:not(.on){border-color:#0161EF;color:#0161EF}
-      .wz-out{margin-top:20px;border:1.5px solid var(--line);border-radius:14px;padding:18px;background:var(--bg)}
-      .wz-big{font-size:clamp(34px,6.5vw,46px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
-      .wz-big small{font-size:15px;font-weight:600;color:var(--txt-muted)}
-      .wz-rows{margin-top:12px;display:grid;gap:8px;font-size:15px}
-      .wz-rows b{font-variant-numeric:tabular-nums}
-      .wz-ready{margin-top:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15.5px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);color:#15803d}
-      .wz-note{color:var(--txt-muted);font-size:12.5px;margin-top:14px;line-height:1.5}
-      details.pro{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
+      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
+      .wz-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+      .wz-bar .dot{width:10px;height:10px;border-radius:99px;background:var(--line)}
+      .wz-bar .dot.on{background:#0161EF;width:26px}
+      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
+      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
+      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn .e{font-size:30px;line-height:1}
+      .wz-btn .t{font-size:15.5px;font-weight:700}
+      .wz-btn .h{font-size:12px;font-weight:500;color:var(--txt-muted)}
+      .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
+      .wz-btn:hover{border-color:#0161EF}
+      .wz-back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:none;border:none;color:var(--txt-muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:10px 0;min-height:44px}
+      .wz-res{text-align:center;padding-top:6px}
+      .wz-big{font-size:clamp(44px,9vw,64px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
+      .wz-big small{font-size:16px;font-weight:700;color:var(--txt-muted);display:block;margin-top:4px}
+      .wz-ready{margin-top:14px;padding:14px;border-radius:14px;font-weight:700;font-size:16px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);color:#15803d}
+      .wz-mid{font-size:20px;font-weight:800;margin-top:12px}
+      .wz-mid small{font-size:13.5px;color:var(--txt-muted);font-weight:600}
+      .wz-cta{display:block;margin-top:18px;background:#0161EF;color:#fff;font-weight:800;border-radius:14px;padding:16px;min-height:56px;text-decoration:none;font-size:17px}
+      .wz-restart{display:inline-block;margin-top:12px;color:#0161EF;font-weight:700;font-size:14.5px;text-decoration:none;min-height:44px;padding:10px}
+      details.wz-note{margin-top:18px;border-top:1px solid var(--line);padding-top:12px;text-align:left}
+      details.wz-note summary{color:var(--txt-muted);font-size:13px;cursor:pointer}
+      details.wz-note p{color:var(--txt-muted);font-size:13px;line-height:1.55;margin:10px 0 0}
+      details.pro{margin-top:26px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
       details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
       details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
       .t-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:16px}
@@ -41,36 +50,53 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
       .t-res .sub{color:var(--txt-muted);font-size:14.5px;margin-top:8px}
       .t-res .grid{display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;font-size:14px}
       .t-res .grid b{font-variant-numeric:tabular-nums}
-      @media(max-width:600px){.t-card{padding:18px}}
       .t-faq{margin-top:36px}
       .t-faq details{border-bottom:1px solid var(--line);padding:12px 0}
       .t-faq summary{font-weight:700;cursor:pointer;font-size:16.5px}
       .t-faq p{margin-top:8px}
+      @media(max-width:600px){.t-card{padding:18px}}
     </style>
 
     <h1>Сколько заряжать по времени</h1>
-    <p class="lead">Выберите машину, откуда заряжаете и насколько разряжена батарея — покажем часы, минуты и когда батарея будет готова. Время посчитаем с учётом потерь, вручную ничего вводить не надо.</p>
+    <p class="lede">Три вопроса — и вы узнаете, когда батарея будет готова. Цифры набирать не нужно.</p>
 
     <div class="wz" id="wzt">
-      <div class="wz-q"><span class="qnum">1</span>Ваша машина <small>не нашли свою — оставьте «Другая»</small></div>
-      <div class="wz-chips" id="wzt-models"></div>
-      <div class="wz-q"><span class="qnum">2</span>Откуда заряжаете</div>
-      <div class="wz-chips" id="wzt-kw"></div>
-      <div class="wz-q"><span class="qnum">3</span>Насколько разряжена батарея <small>цель — 80%: дальше зарядка идёт медленно, до 100% добивают на ночёвке</small></div>
-      <div class="wz-chips" id="wzt-lvl"></div>
-      <div class="wz-out" id="wzt-out">
-        <div class="wz-big"><span id="wzt-time">~7 ч</span> <small id="wzt-lbl">зарядки</small></div>
-        <div class="wz-ready" id="wzt-ready">Подключили сейчас — будет готово к 03:00</div>
-        <div class="wz-rows">
-          <span>Энергия до цели: <b id="wzt-kwh">—</b> кВт·ч</span>
-          <span id="wzt-tip">—</span>
+      <div class="wz-bar"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+      <div id="wzt-s1">
+        <div class="wz-q">Ваша машина?</div>
+        <div class="wz-hint">Выберите марку — дальше сами посчитаем</div>
+        <div class="wz-grid" id="wzt-m1"></div>
+      </div>
+      <div id="wzt-s2" hidden>
+        <div class="wz-q">Откуда заряжаете?</div>
+        <div class="wz-hint">Не знаете — берите «Розетка дома»</div>
+        <div class="wz-grid" id="wzt-m2"></div>
+        <button class="wz-back" type="button" data-back="1">← Назад</button>
+      </div>
+      <div id="wzt-s3" hidden>
+        <div class="wz-q">Насколько пустая батарея?</div>
+        <div class="wz-hint">Не знаете — берите «Почти пустая»</div>
+        <div class="wz-grid" id="wzt-m3"></div>
+        <button class="wz-back" type="button" data-back="2">← Назад</button>
+      </div>
+      <div id="wzt-s4" hidden>
+        <div class="wz-res">
+          <div class="wz-big" id="wzt-r1">~7 ч</div>
+          <div class="wz-mid" id="wzt-r2">—</div>
+          <div class="wz-ready" id="wzt-r3">—</div>
+          <div class="wz-mid" style="font-size:16px"><span id="wzt-r4">—</span> <small>нужно налить в батарею</small></div>
+          <a class="wz-cta" href="/quiz/" onclick="window.ym&&ym('113935123','reachGoal','time_wizard_cta')">Подобрать зарядку под себя →</a>
+          <a class="wz-restart" href="#" id="wzt-restart">← Начать заново</a>
+          <details class="wz-note"><summary>Откуда эти цифры?</summary>
+            <p>Время = сколько нужно энергии ÷ мощность зарядки. Ёмкость берём типовую по марке. Обычная розетка даёт 3,3 кВт, настенная зарядка — 7 кВт, трёхфазная — 11 кВт, быстрая станция — 60 кВт. Дальше 80% батарея заряжается медленно — поэтому до 100% добивают на ночёвке. Реальное время может отличаться: зимой батарея холодная и заряжается дольше.</p>
+          </details>
         </div>
-        <div class="wz-note">Время — ориентир: на быстрой станции реальное время обычно на 10–20% дольше, а последние 20% батарея добирает медленно.</div>
+        <button class="wz-back" type="button" data-back="3">← Назад</button>
       </div>
     </div>
 
     <details class="pro" id="pro-time">
-      <summary>Точная настройка <span class="hint">ввести проценты и мощность вручную</span></summary>
+      <summary>Считать точнее, по своим цифрам <span class="hint">ввести ёмкость, мощность и проценты вручную</span></summary>
       <div class="t-card">
         <div class="t-row">
           <div class="t-field">
@@ -118,7 +144,7 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
       </div>
     </details>
 
-    <div class="t-faq" style="margin-top:36px">
+    <div class="t-faq">
       <h2 style="margin-bottom:6px">Частые вопросы о времени зарядки</h2>
       <details open><summary>Почему последние 20% заряжаются так долго?</summary><p>После ~80% бортовой заряд снижает ток, чтобы не перегревать батарею и продлить её ресурс. Это нормально: планируйте быструю сессию «до 80%», а 100% добирайте на ночёвке.</p></details>
       <details><summary>Сколько даёт обычная розетка в квартире?</summary><p>Классическая розетка 16А на 230В — до 3.3 кВт, то есть 25–35 км запаса за час для большинства моделей. Полная зарядка 60 кВт·ч «с нуля» — около 20 часов. Именно поэтому ночной сценарий — базовый.</p></details>
@@ -135,74 +161,75 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
         if(mm===60){hh++;mm=0}
         return hh>0 ? (hh+' ч'+(mm>0?' '+mm+' мин':'')) : (mm+' мин');
       }
-      function tip(h){
-        if(h<0.8) return 'Короткая пауза: кофе и телефон зарядятся раньше, чем батарея.';
-        if(h<2) return 'Спокойно: за время прогулки по ТЦ батарея наберёт ход.';
-        if(h<5) return 'Рабочий день или вечер в кино — и батарея готова.';
-        if(h<11) return 'Поставили на ночь — утром батарея будет готова.';
-        return 'Это норм для розетки: заряжайте каждую ночь, к утру будет полная.';
+      // ——— ШАГИ 1–3 ———
+      var M=[
+        {n:'Zeekr',cap:100},
+        {n:'Li Auto',cap:43},
+        {n:'BYD',cap:70},
+        {n:'Voyah',cap:88},
+        {n:'Avatr',cap:116},
+        {n:'Tesla',cap:60},
+        {n:'Другая машина',cap:60,e:'❓'}
+      ];
+      var P=[
+        {n:'Розетка дома',h:'обычная, 3,3 кВт',v:3.3,e:'🔌'},
+        {n:'Зарядка во дворе',h:'стена, 7 кВт',v:7,e:'🔋'},
+        {n:'Мощная зарядка',h:'11 кВт',v:11,e:'⚡'},
+        {n:'Быстрая станция',h:'60 кВт',v:60,e:'🚀'},
+        {n:'Супербыстрая',h:'120 кВт',v:120,e:'🚀🚀'}
+      ];
+      var L=[
+        {n:'Почти пустая',h:'10% → 80%',a:10,b:80,e:'🪫'},
+        {n:'Половина',h:'40% → 80%',a:40,b:80,e:'🔋'},
+        {n:'Немного осталось',h:'60% → 80%',a:60,b:80,e:'🔋'},
+        {n:'Добить до 100%',h:'50% → 100%',a:50,b:100,e:'💯'}
+      ];
+      var st={m:6,p:0,l:0};
+      function dots(n){
+        var ds=el('wzt').querySelectorAll('.dot');
+        Array.prototype.forEach.call(ds,function(d,i){d.classList.toggle('on',i<n)});
       }
-      // ——— ВИЗАРД ВРЕМЕНИ ———
-      var MODELS=[
-        {n:'Zeekr 001 / 001 FR',cap:100},
-        {n:'Zeekr 007 / 007GT',cap:100},
-        {n:'Zeekr 7X / X',cap:93},
-        {n:'Zeekr 009',cap:116},
-        {n:'Li Auto L6–L9',cap:43},
-        {n:'Voyah Free',cap:88},
-        {n:'Voyah Dream',cap:108},
-        {n:'BYD Atto 3 / Yuan Plus',cap:60},
-        {n:'BYD Seal',cap:82},
-        {n:'BYD Song Plus',cap:80},
-        {n:'Avatr 11 / 12',cap:116},
-        {n:'Deepal S07',cap:79},
-        {n:'Geely Geometry C',cap:70},
-        {n:'MG4',cap:61},
-        {n:'Xpeng P7',cap:86},
-        {n:'Tesla Model 3 / Y',cap:60},
-        {n:'Другая машина',cap:60}
-      ];
-      var KW=[
-        {n:'🔌 Обычная розетка — 3,3 кВт',v:3.3},
-        {n:'🔋 Настенная зарядка — 7 кВт',v:7},
-        {n:'⚡ Трёхфазная — 11 кВт',v:11},
-        {n:'🚀 Быстрая станция — 60 кВт',v:60},
-        {n:'🚀🚀 Очень быстрая — 120 кВт',v:120}
-      ];
-      var LVL=[
-        {n:'Почти пустая (10% → 80%)',a:10,b:80},
-        {n:'Осталось половина (40% → 80%)',a:40,b:80},
-        {n:'Осталось много (60% → 80%)',a:60,b:80},
-        {n:'Добить до 100%',a:50,b:100}
-      ];
-      var st={mi:16,kw:1,lvl:0};
-      function chips(boxId,list,key){
+      function show(step){
+        [1,2,3,4].forEach(function(i){el('wzt-s'+i).hidden=(i!==step)});
+        dots(step);
+      }
+      function make(boxId,list,key,e){
         var box=el(boxId);box.innerHTML='';
-        list.forEach(function(o,i){
-          var b=document.createElement('button');b.type='button';b.className='wz-chip';b.textContent=o.n;
-          b.addEventListener('click',function(){st[key]=i;upd();});
+        list.forEach(function(o){
+          var b=document.createElement('button');b.type='button';b.className='wz-btn';
+          b.innerHTML='<span class="e">'+(o.e||e)+'</span><span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
+          b.addEventListener('click',function(){
+            st[key]=list.indexOf(o);
+            if(key==='m'){show(2)}
+            else if(key==='p'){show(3)}
+            else{res();show(4)}
+          });
           box.appendChild(b);
         });
       }
-      function upd(){
-        var m=MODELS[st.mi],p=KW[st.kw].v,lv=LVL[st.lvl];
+      function res(){
+        var m=M[st.m],p=P[st.p].v,lv=L[st.l];
         var eff=p>22?0.95:0.9;
         var e=(lv.b-lv.a)/100*m.cap;
         var h=e/(p*eff);
-        el('wzt-time').textContent='~'+fmtTime(h);
-        el('wzt-lbl').textContent='зарядки на '+KW[st.kw].n.replace(/^\S+\s/,'').toLowerCase();
+        el('wzt-r1').textContent='~'+fmtTime(h);
+        el('wzt-r2').textContent='зарядки на «'+P[st.p].n+'»';
         var ready=new Date(Date.now()+h*3600*1000);
-        var hh=String(ready.getHours()).padStart(2,'0'),mm2=String(ready.getMinutes()).padStart(2,'0');
-        el('wzt-ready').textContent='Подключили сейчас — будет готово к '+hh+':'+mm2;
-        el('wzt-kwh').textContent=Math.round(e/eff);
-        el('wzt-tip').textContent=tip(h);
-        [['wzt-models',MODELS,'mi'],['wzt-kw',KW,'kw'],['wzt-lvl',LVL,'lvl']].forEach(function(t){
-          Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===st[t[2]])});
-        });
-        // синхронизировать точный блок
-        var cap=el('tc-cap');if(cap){cap.value=m.cap;el('tc-kw').value=p;el('tc-from').value=lv.a;el('tc-to').value=lv.b;tcalc();}
+        var hh=String(ready.getHours()).padStart(2,'0'),mm=String(ready.getMinutes()).padStart(2,'0');
+        el('wzt-r3').textContent='Включите сейчас — готово к '+hh+':'+mm;
+        el('wzt-r4').textContent=Math.round(e/eff)+' кВт·ч';
+        var pc=el('tc-cap');if(pc){pc.value=m.cap;el('tc-kw').value=p;el('tc-from').value=lv.a;el('tc-to').value=lv.b;tcalc();}
       }
-      // ——— ТОЧНЫЙ БЛОК (оригинальная механика) ———
+      make('wzt-m1',M,'m','🚗');
+      make('wzt-m2',P,'p','🔌');
+      make('wzt-m3',L,'l','🔋');
+      Array.prototype.forEach.call(el('wzt').querySelectorAll('.wz-back'),function(b){
+        b.addEventListener('click',function(){show(parseInt(b.getAttribute('data-back'),10))});
+      });
+      el('wzt-restart').addEventListener('click',function(ev){ev.preventDefault();show(1)});
+      show(1);
+
+      // ——— ТОЧНЫЙ БЛОК ———
       function bindChips(id,input,attr){
         var box=el(id); if(!box) return;
         box.addEventListener('click', function(e){
@@ -227,10 +254,6 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
       [ 'tc-cap','tc-kw','tc-from','tc-to' ].forEach(function(id){var x=el(id); if(x){x.addEventListener('input',tcalc);x.addEventListener('change',tcalc);}});
       bindChips('tc-cap-chips', el('tc-cap'), 'data-cap');
       bindChips('tc-kw-chips', el('tc-kw'), 'data-kw');
-      chips('wzt-models',MODELS,'mi');
-      chips('wzt-kw',KW,'kw');
-      chips('wzt-lvl',LVL,'lvl');
-      upd();
       tcalc();
     })();
     </script>
