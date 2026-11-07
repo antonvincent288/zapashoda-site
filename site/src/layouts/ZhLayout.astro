@@ -541,6 +541,24 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .mfilter{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 @media(max-width:700px){.bgrid.as-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 18px;gap:14px}
 .bgrid.as-slider>*{flex:0 0 74%;scroll-snap-align:start}}
+
+/* === HERO SLIDER: асимметрия + гайд 3 шага (native, без Swiper) === */
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,0.85fr);gap:44px;align-items:center}
+.hero-slider{position:relative;border-radius:22px;border:1px solid rgba(229,236,246,.16);background:rgba(255,255,255,.045);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:26px 26px 20px;min-height:316px;box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.hslide{display:none;flex-direction:column;gap:10px}
+.hslide.on{display:flex;animation:hsFade .5s ease}
+@keyframes hsFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hnum{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#22c55e}
+.hslide svg{width:100%;max-width:200px;height:auto;margin:8px auto 4px}
+.hslide b{font-size:19px;color:#fff;line-height:1.35}
+.hslide span{font-size:14px;color:rgba(229,236,246,.72)}
+.hdots{display:flex;gap:8px;margin-top:16px;justify-content:center}
+.hdots button{width:26px;height:5px;border-radius:999px;border:none;background:rgba(229,236,246,.25);cursor:pointer;transition:background .2s,width .2s;min-height:0;padding:0}
+.hdots button.on{background:#22c55e;width:40px}
+@media(max-width:960px){.hero .wrap{display:block}.hero-slider{margin-top:28px;min-height:0}}
+/* свечение CTA */
+.btn-gold{box-shadow:0 4px 18px rgba(1,97,239,.28),0 0 0 rgba(212,175,55,0);transition:transform .2s,box-shadow .25s}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(212,175,55,.4)}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
@@ -623,8 +641,9 @@ document.addEventListener('DOMContentLoaded',function(){try{
       io.unobserve(e.target);
       var el=e.target, target=parseInt(el.getAttribute('data-count'),10)||0;
       var t0=null;
-      function step(ts){ if(!t0) t0=ts; var p=Math.min((ts-t0)/900,1); p=1-Math.pow(1-p,3);
-        el.textContent=String(Math.round(target*p)); if(p<1) requestAnimationFrame(step); }
+      var orig=el.textContent;
+        function step(ts){ if(!t0) t0=ts; var p=Math.min((ts-t0)/900,1); p=1-Math.pow(1-p,3);
+        el.textContent=String(Math.round(target*p)); if(p<1) requestAnimationFrame(step); else el.textContent=orig; }
       requestAnimationFrame(step);
     });
   },{threshold:.4});
@@ -657,6 +676,22 @@ document.addEventListener('DOMContentLoaded',function(){try{
       c.style.display = (brand==='Все'||c.getAttribute('data-brand')===brand) ? '' : 'none';
     });
   });
+}catch(e){}})();
+
+/* === HERO SLIDER: 3 шага, авто смена + точки === */
+(function(){try{
+  var box=document.getElementById('hslide'); if(!box) return;
+  var slides=box.querySelectorAll('.hslide'), dots=box.querySelectorAll('.hdots button'), i=0, timer=null;
+  function show(n){ i=(n+slides.length)%slides.length;
+    slides.forEach(function(s,j){s.classList.toggle('on', j===i)});
+    dots.forEach(function(d,j){d.classList.toggle('on', j===i)});
+  }
+  function play(){ if(timer) clearInterval(timer); timer=setInterval(function(){show(i+1)},4200); }
+  box.addEventListener('mouseenter',function(){if(timer) clearInterval(timer)});
+  box.addEventListener('mouseleave',play);
+  dots.forEach(function(d,j){d.addEventListener('click',function(){show(j);play()})});
+  box.addEventListener('touchstart',function(){if(timer) clearInterval(timer)},{passive:true});
+  play();
 }catch(e){}})();
 </script>
 
