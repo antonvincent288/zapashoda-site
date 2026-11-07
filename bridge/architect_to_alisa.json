@@ -1106,6 +1106,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "M-0924",
+      "ts": "2026-11-07T09:24:23+03:00",
+      "from": "gas-monitor",
+      "topic": "GAS статус (v11-only)",
+      "body": "GAS отвечает, но это v11 (нет selftest-эндпоинта) — вставить дельту v12 (reports/gas_v12_shop_products_audit.js).",
+      "priority": "normal",
+      "expect": "none",
+      "answer_to": null
     }
   ]
 }
