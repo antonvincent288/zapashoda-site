@@ -14,77 +14,86 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
     <div class="crumbs"><a href="/">Главная</a> / Матрица совместимости</div>
 
     <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:16.5px;margin:18px 0 10px}
-      .wz-q:first-child{margin-top:0}
-      .wz-q small{display:block;font-weight:400;color:var(--txt-muted);font-size:13px;margin-top:2px}
-      .wz-chips{display:flex;flex-wrap:wrap;gap:10px}
-      .wz-chip{padding:12px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--txt);font-size:15.5px;font-weight:600;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;user-select:none;transition:all .15s;font-family:inherit}
-      .wz-chip.on{background:#0161EF;border-color:#0161EF;color:#fff}
-      .wz-chip:hover:not(.on){border-color:#0161EF;color:#0161EF}
-      .mx-out{margin-top:20px}
-      .mx-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-      .mx-card h3{margin:0 0 12px;font-size:19px}
-      .mx-line{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.45}
-      .mx-line:first-child{border-top:none}
-      .mx-st{flex:0 0 auto;font-size:12.5px;font-weight:700;border-radius:999px;padding:5px 11px;white-space:nowrap;margin-top:1px}
+      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
+      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
+      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
+      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:64px;display:flex;align-items:center;justify-content:center;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn:hover{border-color:#0161EF}
+      .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
+      .mx-out{margin-top:18px}
+      .mx-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+      .mx-card h3{margin:0 0 12px;font-size:20px}
+      .mx-line{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-size:16px;line-height:1.45}
+      .mx-line:first-of-type{border-top:none}
+      .mx-st{flex:0 0 auto;font-size:13px;font-weight:800;border-radius:999px;padding:6px 12px;white-space:nowrap;margin-top:1px}
       .mx-st.ok{background:rgba(34,197,94,.14);color:#15803d}
       .mx-st.ad{background:rgba(1,97,239,.12);color:#0161EF}
       .mx-st.warn{background:rgba(212,175,55,.16);color:#8a6d1a}
       .mx-st.no{background:rgba(239,68,68,.1);color:#b91c1c}
       .mx-line a{color:#0161EF;text-decoration:none}
       .mx-line a:hover{text-decoration:underline}
-      .mx-buy{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.45);font-size:15px}
+      .mx-buy{margin-top:14px;padding:14px;border-radius:14px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.45);font-size:15.5px}
+      .mx-buy b{font-size:16px}
       .mx-buy a{color:#8a6d1a;font-weight:700}
-      details.pro{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
+      details.pro{margin-top:26px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
       details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
       details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
     </style>
 
     <h1>Какой переходник нужен вашему электромобилю</h1>
-    <p class="lede">Нажмите вашу модель — покажем простым языком: где машина заряжается напрямую, где нужен адаптер и что докупить. Внизу — полная таблица по 20 моделям.</p>
+    <p class="lede">Нажмите вашу машину — и сразу увидите: где заряжается напрямую, где нужен адаптер и что докупить. Никаких таблиц, пока сами не захотите.</p>
 
     <div class="wz" id="wzm">
       <div class="wz-q">Ваша машина</div>
-      <div class="wz-chips" id="wzm-models"></div>
+      <div class="wz-hint">Нет вашей в списке — «Другая машина» покажет всю таблицу</div>
+      <div class="wz-grid" id="wzm-models"></div>
       <div class="mx-out" id="wzm-out" style="display:none"></div>
     </div>
 
     <details class="pro" id="pro-matrix">
-      <summary>Полная таблица: 20 моделей × 6 типов станций <span class="hint">для продвинутых — со ссылками на страницы моделей</span></summary>
+      <summary>Полная таблица: 20 моделей × 6 типов станций <span class="hint">клик по колонке — страница модели</span></summary>
       <div class="article" set:html={body} />
     </details>
 
     <script is:inline>
     (function(){
       var table=null;
-      var NAMES={
-        'Type 2 AC':'🏠 Дома и городские станции (Type 2)',
-        'CCS2 DC':'🚀 Быстрые станции (CCS2)',
-        'GB/T AC':'🇨🇳 Китайские AC-станции (GB/T)',
-        'GB/T DC':'🇨🇳 Китайские быстрые (GB/T DC)',
-        'CHAdeMO':'🇯🇵 Старые японские (CHAdeMO)',
-        'Розетка 220 В':'🔌 Обычная розетка 220 В'
+      var ROWMAP={
+        'Type 2 AC':'🏠 Дома и в городе',
+        'CCS2 DC':'🚀 Быстрые станции (трасса)',
+        'Розетка 220 В':'🔌 Обычная розетка'
       };
-      var LBL={ok:'Прямо',ad:'Через адаптер',warn:'Особый случай',no:'Не подходит'};
-      function shortName(name){ return NAMES[name] || name; }
+      var LBL={ok:'✅ Прямо',ad:'🔌 Через адаптер',warn:'⚠️ Особый случай',no:'⛔ Не подходит'};
+      var POP=['/models/zeekr-001-001-fr','/models/zeekr-007-007gt','/models/zeekr-7x-x-mix','/models/li-auto-l6-l7-l8-l9-2022-2025','/models/voyah-free-evr-gibrid','/models/avatr-11-12-ofitsialno-ru','/models/byd-song-plus-ev','/models/byd-seal','/models/deepal-s07-ru-ofitsialnaya','/models/geely-geometry-c-a'];
       function build(){
         var box=document.getElementById('wzm-models');
         table=document.querySelector('#pro-matrix table');
-        if(!table || !box || box.children.length) return;
+        if(!table||!box||box.children.length) return;
         var ths=table.querySelectorAll('thead th');
         var first=null;
         ths.forEach(function(th,i){
           if(i===0) return;
           var a=th.querySelector('a');
           if(!a) return;
+          var slug=(a.getAttribute('href')||'').replace('/models/','').replace(/\/$/,'');
+          var popular=POP.indexOf((a.getAttribute('href')||'').replace(/\/$/,''))>=0;
+          if(!popular) return;
           var b=document.createElement('button');
-          b.type='button';b.className='wz-chip';b.textContent=a.textContent.trim();
-          b.dataset.ci=i; b.dataset.slug=(a.getAttribute('href')||'').replace('/models/','').replace(/\/$/,'');
+          b.type='button';b.className='wz-btn';b.textContent=a.textContent.trim();
+          b.dataset.ci=i; b.dataset.slug=slug;
           b.addEventListener('click',function(){show(i,b)});
           box.appendChild(b);
           if(first===null) first=b;
         });
+        var oth=document.createElement('button');
+        oth.type='button';oth.className='wz-btn';oth.textContent='🔍 Другая машина';
+        oth.addEventListener('click',function(){
+          var det=document.getElementById('pro-matrix');
+          if(det) det.open=true;
+          det.scrollIntoView({behavior:'smooth'});
+        });
+        box.appendChild(oth);
         if(first) show(parseInt(first.dataset.ci,10),first);
       }
       function show(ci,btn){
@@ -101,28 +110,28 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
           var td=r.querySelector('td:nth-child('+ci+')');
           if(!th||!td) return;
           var label=th.textContent.replace(/·.*$/,'').trim();
+          var human=ROWMAP[label];
+          if(!human) return;
           var cls=td.className.indexOf('m-ok')>=0?'ok':(td.className.indexOf('m-ad')>=0?'ad':(td.className.indexOf('m-warn')>=0?'warn':'no'));
           var title=td.getAttribute('title')||'';
           var links=Array.prototype.map.call(td.querySelectorAll('a'),function(a){return '<a href="'+a.getAttribute('href')+'">'+a.textContent.trim()+'</a>'});
-          var extras='';
-          if(links.length) extras=' → '+links.join(' или ');
-          html+='<div class="mx-line"><span class="mx-st '+cls+'">'+LBL[cls]+'</span><span><b>'+shortName(label)+'</b> — '+(title||'')+(extras)+'</span></div>';
-          if(cls==='ad'||cls==='warn'){
-            links.forEach(function(l){if(buy.indexOf(l)<0) buy.push(l)});
-          }
+          var extras=(links.length)?' → '+links.join(' или '):'';
+          html+='<div class="mx-line"><span class="mx-st '+cls+'">'+LBL[cls]+'</span><span><b>'+human+'</b><br>'+title+(extras)+'</span></div>';
+          if(cls==='ad'||cls==='warn'){links.forEach(function(l){if(buy.indexOf(l)<0) buy.push(l)})}
         });
         if(buy.length){
-          html+='<div class="mx-buy">💡 Что докупить: '+buy.join(' · ')+'</div>';
+          html+='<div class="mx-buy"><b>Что докупить:</b> '+buy.join(' · ')+'</div>';
         }
         var slug=btn.dataset.slug;
-        if(slug) html+='<p style="margin:12px 0 0"><a href="/models/'+slug+'/" style="color:#0161EF">Страница модели '+name+' →</a></p>';
+        if(slug) html+='<p style="margin:12px 0 0"><a href="/models/'+slug+'/" style="color:#0161EF">Страница модели →</a></p>';
         html+='</div>';
         out.innerHTML=html;
+        out.scrollIntoView({behavior:'smooth',block:'nearest'});
       }
       function wait(tries){
         if(!table) table=document.querySelector('#pro-matrix table');
-        if(table){ build(); }
-        else if(tries<25){ setTimeout(function(){wait(tries+1)},80); }
+        if(table){build();}
+        else if(tries<25){setTimeout(function(){wait(tries+1)},80);}
       }
       if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){wait(0)})}else{wait(0)}
     })();
