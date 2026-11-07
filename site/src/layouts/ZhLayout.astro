@@ -6,9 +6,9 @@ const { title = "Запас хода — зарядка EV в России", des
 const canonical = canonicalOverride || new URL(Astro.url.pathname, Astro.site ?? 'https://zapashoda-ev.ru').href;
 const path = Astro.url.pathname.replace(/\/$/, "");
 const navGroups = [
-  { g: null, items: [["/models/", "Модели"], ["/blog/", "Блог"], ["/pain/", "Проблемы"], ["/forum/", "Форум"], ["/safety/", "Безопасность"]] },
-  { g: "Инструменты", items: [["/quiz/", "Подбор"], ["/charging/", "Карта ЗУ"], ["/calculator/", "Калькулятор"], ["/search/", "Поиск"]] },
-  { g: null, items: [["/shop/digital/", "Товары"], ["/services/", "Услуги"]] },
+  { g: null, items: [["/models/", "Модели"], ["/catalog/", "Каталог"], ["/charging/", "Карта ЗУ"], ["/shop/digital/", "Гайды"]] },
+  { g: "Инструменты", items: [["/quiz/", "Всё о твоей машине"], ["/calculator/", "Калькуляторы"], ["/vin/", "VIN-справочник"], ["/search/", "Поиск"]] },
+  { g: null, items: [["/blog/", "Блог"], ["/pain/", "Проблемы"], ["/forum/", "Форум"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
 ];
 const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/, "") || path.startsWith(href.replace(/\/$/, "") + "/");
 ---
@@ -68,14 +68,14 @@ window.YM_ID=113935123;
       </span>
       <a href="/catalog/" class={isOn("/catalog/") ? "on" : ""}>Каталог</a>
       <a href="/charging/" class={isOn("/charging/") ? "on" : ""}>Карта ЗУ</a>
-      <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
+      <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Гайды</a>
       <span class="nav-more" tabindex="0" role="button" aria-label="Ещё разделы">Ещё <span aria-hidden="true">▾</span>
         <span class="dd">
           <a href="/pain/" class={isOn("/pain/") ? "on" : ""}>Проблемы</a>
           <a href="/forum/" class={isOn("/forum/") ? "on" : ""}>Форум</a>
           <a href="/safety/" class={isOn("/safety/") ? "on" : ""}>Безопасность</a>
           <a href="/search/" class={isOn("/search/") ? "on" : ""}>Поиск</a>
-          <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Товары</a>
+          <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
           <a href="/services/" class={isOn("/services/") ? "on" : ""}>Услуги</a>
         </span>
       </span>
@@ -94,12 +94,12 @@ window.YM_ID=113935123;
   <a href="/pain/">Проблемы</a>
   <a href="/safety/">Безопасность</a>
   <div class="mnav-group">Инструменты</div>
-  <a href="/quiz/">Подбор за 30 сек</a>
+  <a href="/quiz/">Всё о твоей машине</a>
   <a href="/charging/">Карта ЗУ</a>
   <a href="/calculator/">Калькуляторы</a>
   <a href="/vin/">VIN-справочник</a>
   <div class="mnav-group">Сервис</div>
-  <a href="/shop/digital/">Товары</a>
+  <a href="/shop/digital/">Гайды</a>
   <a href="/services/">Услуги</a>
   <a href="/services/#sto-partners">Автосервисы-партнёры</a>
   <div class="mnav-group">Компания</div>
@@ -114,7 +114,7 @@ window.YM_ID=113935123;
   <div class="wrap">
     <div class="fgrid">
       <div><a class="logo" style="color:#fff" href="/"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></b><span>Запас хода</span></a><p style="margin-top:14px;font-size:13.5px">Практика зарядки EV в России: разъёмы, адаптеры, станции, деньги. 145 моделей, 59 разборов, 2073 станции.</p></div>
-      <div><h4>Модели</h4><a href="/models/">Каталог 145</a><a href="/models/zeekr-001-001-fr/">Zeekr 001</a><a href="/models/">Разъёмы GB/T</a><a href="/shop/digital/">Товары</a></div>
+      <div><h4>Модели</h4><a href="/models/">Каталог 145</a><a href="/models/zeekr-001-001-fr/">Zeekr 001</a><a href="/models/">Разъёмы GB/T</a><a href="/catalog/">Каталог товаров</a></div>
       <div><h4>База знаний</h4><a href="/blog/">Блог</a><a href="/pain/">Проблемы</a><a href="https://zapashoda-ev.ru/vin/" rel="nofollow">VIN-справочник</a></div>
       <div><h4>Связь</h4><a href="https://t.me/zapashoda_ev" rel="noopener">Telegram-канал</a><a href="mailto:f-epshtein@yandex.ru" rel="noopener">Написать нам</a><a href="https://dzen.ru/zapashoda" rel="noopener">Дзен</a><a href="https://t.me/zapashoda_ev_bot/app" rel="noopener">Мини-приложение</a><a href="/b2b/">Дилерам (B2B)</a></div>
     </div>
