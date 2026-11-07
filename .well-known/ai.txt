@@ -1,0 +1,14 @@
+# ai.txt — Запас хода (zapashoda-ev.ru)
+# Справочник для ИИ-агентов: что это за проект и как с ним работать.
+name: Запас хода
+description: Практика зарядки электромобилей в России — подбор адаптеров и кабелей по модели авто (145 моделей), карта 2073 зарядных станций, калькуляторы стоимости зарядки, разборы реальных проблем зарядки китайских EV (GB/T, Type 2, CCS2, CHAdeMO), B2B-комплекты для автодилеров.
+url: https://zapashoda-ev.ru
+owner: Запас хода
+contact: https://t.me/zapashoda_ev
+email: f-epshtein@yandex.ru
+channel: https://dzen.ru/zapashoda (Дзен)
+language: ru-RU
+last-updated: 2026-11-06
+crawling: allow
+usage: answer engines may quote sections with attribution to "Запас хода" (zapashoda-ev.ru)
+key-pages: /models/ /pain/ /blog/ /charging/ /calculator/ /quiz/ /b2b/ /services/ /shop/digital/

@@ -2,7 +2,7 @@
 
 > Практика владения электромобилем в России: разъёмы зарядки (GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO), зимняя эксплуатация, реальные расходы, VIN-проверка параллельного импорта. База: 145 моделей 2019–2026, ввезённых в РФ, 76 типичных проблем с решениями и ссылками на первоисточники.
 >
-> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-11-07). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).
+> Контент: редакция «Запас хода». Обновляется регулярно (последнее обновление: 2026-10-30). Каждое утверждение в руководствах снабжено ссылкой на источник (профильные СМИ, форумы владельцев, сервисные мануалы).
 > Мини-приложение с каталогом аксессуаров для зарядки: https://t.me/zapashoda_ev_bot/app
 > Канал с новостями: https://t.me/zapashoda_ev
 > Полный текст справочника для ИИ: https://zapashoda-ev.ru/llms-full.txt
@@ -92,50 +92,6 @@
 - [Адаптер Type 2 → GB/T: главный аксессуар китайского EV](https://zapashoda-ev.ru/news/2026-10-29-adapter-type2-gbt-glavnyj.html): Без него китайский электромобиль не зарядится от наших станций. На что смотреть при выборе.
 - [Сколько стоит 100 км на электромобиле: считаем в рублях](https://zapashoda-ev.ru/news/2026-10-29-stoimost-100-km.html): Дома ночью — 250–350 ₽ за 100 км. На быстрой станции — в разы дороже. Разбор с цифрами.
 - [Зимой электромобиль теряет до 30–40% запаса хода. Что делать](https://zapashoda-ev.ru/news/2026-10-29-zima-30-40-procentov.html): Минус за окном — минус километры на приборке. Приёмы, которые возвращают часть запаса хода.
-
-## Экспертные статьи блога
-
-- [to elektromobilya ceny](https://zapashoda-ev.ru/blog/to-elektromobilya-ceny.html)
-- [phev rossiya 2026](https://zapashoda-ev.ru/blog/phev-rossiya-2026.html)
-- [toyota bz3x bz4x razyom](https://zapashoda-ev.ru/blog/toyota-bz3x-bz4x-razyom.html)
-- [geely ex5 zaryadka](https://zapashoda-ev.ru/blog/geely-ex5-zaryadka.html)
-- [zeekr 001 razyom i problemy](https://zapashoda-ev.ru/blog/zeekr-001-razyom-i-problemy.html)
-- [li auto l7 zaryadka i obsluzhivanie](https://zapashoda-ev.ru/blog/li-auto-l7-zaryadka-i-obsluzhivanie.html)
-- [voyah free osobennosti](https://zapashoda-ev.ru/blog/voyah-free-osobennosti.html)
-- [nissan leaf v rossii](https://zapashoda-ev.ru/blog/nissan-leaf-v-rossii.html)
-- [rukovodstva na russkom](https://zapashoda-ev.ru/blog/rukovodstva-na-russkom.html)
-- [gbt stancii 2026](https://zapashoda-ev.ru/blog/gbt-stancii-2026.html)
-- [strakhovka ev phev 2026](https://zapashoda-ev.ru/blog/strakhovka-ev-phev-2026.html)
-- [tipy razyomov zaryadki](https://zapashoda-ev.ru/blog/tipy-razyomov-zaryadki.html)
-- [evolute 0x13 ne zaryazhaetsya](https://zapashoda-ev.ru/blog/evolute-0x13-ne-zaryazhaetsya.html)
-- [stanciya ne rabotaet](https://zapashoda-ev.ru/blog/stanciya-ne-rabotaet.html)
-- [zimnyaya zaryadka medlennee](https://zapashoda-ev.ru/blog/zimnyaya-zaryadka-medlennee.html)
-- [handshake oshibka dc zaryadki](https://zapashoda-ev.ru/blog/handshake-oshibka-dc-zaryadki.html)
-- [subsidii na elektromobil 2026](https://zapashoda-ev.ru/blog/subsidii-na-elektromobil-2026.html)
-- [transportnyi nalog elektromobilya](https://zapashoda-ev.ru/blog/transportnyi-nalog-elektromobilya.html)
-- [besplatnye trassy parkovka ev](https://zapashoda-ev.ru/blog/besplatnye-trassy-parkovka-ev.html)
-- [proverka pered pokupkoy](https://zapashoda-ev.ru/blog/proverka-pered-pokupkoy.html)
-- [elektromobil dlya taksi](https://zapashoda-ev.ru/blog/elektromobil-dlya-taksi.html)
-- [skolko zhivet batareya elektromobilya](https://zapashoda-ev.ru/blog/skolko-zhivet-batareya-elektromobilya.html)
-- [zaryadka podogrev shtraf](https://zapashoda-ev.ru/blog/zaryadka-podogrev-shtraf.html)
-- [bystroaya zaryadka kazhdyj den](https://zapashoda-ev.ru/blog/bystroaya-zaryadka-kazhdyj-den.html)
-- [kitaiskoe vremya v raspisanii zaryadki posle rusifikatsii](https://zapashoda-ev.ru/blog/kitaiskoe-vremya-v-raspisanii-zaryadki-posle-rusifikatsii.html)
-- [kvt i kvt ch raznica](https://zapashoda-ev.ru/blog/kvt-i-kvt-ch-raznica.html)
-- [planirovanie dalnej poezdki ev](https://zapashoda-ev.ru/blog/planirovanie-dalnej-poezdki-ev.html)
-- [plata za prostoy na zaryadnyh stanciyah](https://zapashoda-ev.ru/blog/plata-za-prostoy-na-zaryadnyh-stanciyah.html)
-- [poteri pri zaryadke 5 10](https://zapashoda-ev.ru/blog/poteri-pri-zaryadke-5-10.html)
-- [rasxod zimoy bortovoy kompyuter](https://zapashoda-ev.ru/blog/rasxod-zimoy-bortovoy-kompyuter.html)
-- [stanciya otdaet menshe moshchnosti 150 kt ot 60 80](https://zapashoda-ev.ru/blog/stanciya-otdaet-menshe-moshchnosti-150-kt-ot-60-80.html)
-- [stanciya otdaet menshe moshchnosti](https://zapashoda-ev.ru/blog/stanciya-otdaet-menshe-moshchnosti.html)
-- [vybor tarifa dlya domashnoy zaryadki](https://zapashoda-ev.ru/blog/vybor-tarifa-dlya-domashnoy-zaryadki.html)
-- [zimnoe khranenie elektromobilya parking 2 4 nedeli](https://zapashoda-ev.ru/blog/zimnoe-khranenie-elektromobilya-parking-2-4-nedeli.html)
-- [zeekr 001 gbt diff](https://zapashoda-ev.ru/blog/zeekr-001-gbt-diff.html)
-- [li l7 battery heat](https://zapashoda-ev.ru/blog/li-l7-battery-heat.html)
-- [workersbee vs auxus](https://zapashoda-ev.ru/blog/workersbee-vs-auxus.html)
-- [b2b reglament vydachi ev](https://zapashoda-ev.ru/blog/b2b-reglament-vydachi-ev.html)
-- [800v zaryadka ev rossiya](https://zapashoda-ev.ru/blog/800v-zaryadka-ev-rossiya.html)
-- [erekv domashnyaya zaryadka](https://zapashoda-ev.ru/blog/erekv-domashnyaya-zaryadka.html)
-- [sertifikaciya ezs rf 2026](https://zapashoda-ev.ru/blog/sertifikaciya-ezs-rf-2026.html)
 
 
 # ПОЛНЫЙ ТЕКСТ РУКОВОДСТВ
