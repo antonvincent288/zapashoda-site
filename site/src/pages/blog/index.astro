@@ -9,7 +9,7 @@ articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Блог</div>
       <h1>Блог</h1>
-      <p class="lead">{articles.length} разборов: деньгами, зима, станции, батарея, разъёмы. Прямой ответ — в первом абзаце.</p>
+      <p class="lead">{articles.length} разборов: деньги, зима, станции, батарея, разъёмы. Прямой ответ — в первом абзаце.</p>
       <div class="bgrid" style="margin-top:36px">
         {articles.map((a) => (
           <a class="bcard bc-th" href={a.section === 'pain' ? `/pain/${a.slug}` : a.section === 'safety' ? `/safety/${a.slug}` : `/blog/${a.slug}`}>
@@ -17,7 +17,7 @@ articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))
             <div class="in">
               {a.category && <span class="tag">{a.category}</span>}
               {a.date && <span class="tag">{a.date}</span>}
-              <h3>{a.title}</h3>
+              <h2 class="bh">{a.title}</h2>
               {a.desc && <p>{String(a.desc).slice(0, 120)}…</p>}
             </div>
           </a>
