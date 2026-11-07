@@ -1,14 +1,11 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import LegacyStyles from '../../components/LegacyStyles.astro';
-import src from '../../data/legacy/tools.json';
-const d = src.find((x) => x.slug === 'calculator');
 ---
-<ZhLayout title={d.title} description={d.desc}>
-  <section class="sec"><div class="wrap">
-    <LegacyStyles />
-    <div class="crumbs"><a href="/">Главная</a> / {d.title}</div>
-    <div class="article" set:html={d.body_html} />
-    {d.body_script && <script is:inline set:html={d.body_script} />}
+<ZhLayout title="Калькуляторы зарядки — Запас хода" description="Раздел калькуляторов: стоимость зарядки, время зарядки, сравнение моделей, матрица совместимости.">
+  <section class="sec"><div class="wrap" style="max-width:760px">
+    <h1 style="font-size:clamp(24px,3.4vw,30px)">Калькулятор переехал в раздел «Калькуляторы»</h1>
+    <p class="lead" style="margin-top:14px">Теперь у каждого инструмента — своя страница в общем разделе: стоимость зарядки, время зарядки, сравнение моделей и матрица совместимости. Открываем раздел…</p>
+    <p style="margin-top:16px">Если вас не перебросило автоматически — <a href="/calculators/">перейдите в раздел калькуляторов</a>.</p>
+    <script is:inline>window.location.replace('/calculators/');</script>
   </div></section>
 </ZhLayout>
