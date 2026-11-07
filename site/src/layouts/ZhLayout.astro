@@ -444,6 +444,15 @@ li{max-width:75ch}
 @media(max-width:960px){.nav-more{display:none}}
 .chip{min-height:36px;display:inline-flex;align-items:center}
 .btn{min-height:44px}
+
+/* === ЕДИНАЯ ТИПОГРАФИЧЕСКАЯ СЕТКА (стопы) === */
+:root{--measure:70ch;--measure-wide:75ch}
+p,li{max-width:var(--measure)}
+p.lead,.hero p,.article p{max-width:var(--measure)}
+.sec h2{max-width:var(--measure);font-size:clamp(22px,3vw,28px);line-height:1.25}
+.hero h1{max-width:min(820px,94%)}
+.card p,.mcard p{max-width:var(--measure)}
+.article li{margin-bottom:4px}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
