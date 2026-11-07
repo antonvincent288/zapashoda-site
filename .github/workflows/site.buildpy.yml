@@ -1,11 +1,6 @@
 name: build & deploy
 
 on:
-  schedule:
-    - cron: "13 */3 * * *"
-  push:
-    branches: [main]
-    paths: ["data/**", "build.py", "services.py", "artv3.py", "catalog.py", "style.css"]
   workflow_dispatch:
 
 permissions:
