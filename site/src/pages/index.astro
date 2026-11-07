@@ -1,15 +1,5 @@
 ---
-impor
-<section class="sec sec-alt"><div class="wrap"><h2>База знаний: опыт выживания EV в РФ</h2><p class="lead" style="margin-bottom:36px">Реальные кейсы и свежие разборы — без маркетинга.</p><div class="cards">{pains.map((c) =>(
-          <a class="card" href={c.href}><svg class="evicon" viewBox="0 0 120 64" aria-hidden="true"><path d="M8 46 L10 34 Q12 28 20 27 L32 26 L42 16 Q45 13 52 13 L82 13 Q89 13 94 17 L104 26 L112 28 Q116 30 116 35 L115 46" stroke="#0161EF" stroke-width="2.5" fill="rgba(1,97,239,.06)" stroke-linecap="round"/><circle cx="26" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle cx="96" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle class="zone" cx={c.zx} cy={c.zy} r="7" fill="#4A9EF0"/></svg><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></a>))}
-      </div>
-        <h3 style="margin:38px 0 16px">Свежие разборы</h3>
-        <div class="bgrid">{latest.map((a) =>(
-          <a class="bcard" href={`/blog/${a.slug}`}><span class="tag">{a.category || 'Блог'}</span><h3>{a.title}</h3><p>{shortLine(a.desc)}</p></a>))}
-        </div>
-        <div style="margin-top:20px"><a class="btn btn-ghost" href="/blog/">Все статьи</a></div>
-      </div></section>
-t ZhLayout from '../layouts/ZhLayout.astro';
+import ZhLayout from '../layouts/ZhLayout.astro';
 import LegacyStyles from '../components/LegacyStyles.astro';
 const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
 all.sort((a, b) =>String(b.date || '').localeCompare(String(a.date || '')));
@@ -48,7 +38,16 @@ const POP = (mlData.models || []).filter((x) => POP_SLUGS.includes(String(x.slug
 const ALL = (mlData.models || []).filter((m) => m.slug);
 ---
 <ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели в 3 шага. 145 моделей, 59 разборов, карта 2073 станций." jsonld={orgLd}><div class="hero zh-hero-big"><div class="wrap"><div class="badge">Справочник по электромобилям</div><h1>Если тоже за*бался <span>с этими зарядками&hellip;</span></h1><p>Мы затрахались делать этот сайт, но нашли разъёмы, мощность борта, зимний сценарий и стоимость зарядки — по вашей марке и году.</p><div class="zh-stats stats">{stats.map((s) =>(<div><b>{s.n}</b><span>{s.t}</span>{String(s.t).includes('станц') ? <small class="fresh">Обновлено: ноябрь 2026</small> : null}</div>))}</div></div><div class="zh-strip" aria-label="Все 145 моделей — переход в каталог"><div class="zh-strip-track">{ALL.filter((m)=>m.slug).map((m)=>(<a class="zh-strip-item" href={`/models/${m.slug}/`}>{m.name}</a>))}{ALL.filter((m)=>m.slug).map((m)=>(<a class="zh-strip-item" aria-hidden="true" tabindex="-1" href={`/models/${m.slug}/`}>{m.name}</a>))}</div></div>
-        </div><section class="sec" style="padding-top:40px"><div class="wrap">
+        </div><section class="sec sec-alt"><div class="wrap"><h2>База знаний: опыт выживания EV в РФ</h2><p class="lead" style="margin-bottom:36px">Реальные кейсы и свежие разборы — без маркетинга.</p><div class="cards">{pains.map((c) =>(
+          <a class="card" href={c.href}><svg class="evicon" viewBox="0 0 120 64" aria-hidden="true"><path d="M8 46 L10 34 Q12 28 20 27 L32 26 L42 16 Q45 13 52 13 L82 13 Q89 13 94 17 L104 26 L112 28 Q116 30 116 35 L115 46" stroke="#0161EF" stroke-width="2.5" fill="rgba(1,97,239,.06)" stroke-linecap="round"/><circle cx="26" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle cx="96" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle class="zone" cx={c.zx} cy={c.zy} r="7" fill="#4A9EF0"/></svg><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></a>))}
+      </div>
+        <h3 style="margin:38px 0 16px">Свежие разборы</h3>
+        <div class="bgrid">{latest.map((a) =>(
+          <a class="bcard" href={`/blog/${a.slug}`}><span class="tag">{a.category || 'Блог'}</span><h3>{a.title}</h3><p>{shortLine(a.desc)}</p></a>))}
+        </div>
+        <div style="margin-top:20px"><a class="btn btn-ghost" href="/blog/">Все статьи</a></div>
+      </div></section>
+<section class="sec" style="padding-top:40px"><div class="wrap">
         <div class="roleseg" data-roleseg role="tablist" aria-label="Кому подбираем">
           <button class="seg-btn on" type="button" data-role="b2c" aria-selected="true">Я владелец EV</button>
           <button class="seg-btn" type="button" data-role="b2b" aria-selected="false">Я дилер / СТО</button>
@@ -63,9 +62,7 @@ const ALL = (mlData.models || []).filter((m) => m.slug);
     <div class="bridge" style="margin-top:22px">
           <div class="bridge-l"><b>Посчитали цену простоя?</b><span>Комплект автономности — адаптер, кабель и держатель — вернёт вам эти деньги в дороге.</span></div>
           <a class="btn btn-gold" href="/quiz/">Собрать комплект</a>
-        </div></div></section><section class="sec"><div class="wrap stats">{stats.map((s) =>(
-        <div><b data-count={/^[0-9]+$/.test(String(s.n)) ? s.n : undefined}>{s.n}</b>{String(s.t).includes('станц') ? <span class="live-dot" aria-hidden="true"></span> : null}<span>{s.t}</span>{String(s.t).includes('станц') ? <small class="fresh">Обновлено: ноябрь 2026</small> : null}</div>))}
-    </div></section><section class="sec sec-alt"><div class="wrap">
+        </div></div></section><section class="sec sec-alt"><div class="wrap">
         <h2>Как это работает: одна схема</h2>
         <p class="lead">Станция РФ (Type 2 / CCS2) → адаптер → ваш EV с разъёмом GB/T. Дальше — обычная зарядка.</p>
         <div class="gbt-flow" aria-hidden="true">
