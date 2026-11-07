@@ -369,6 +369,20 @@ h1,h2,h3{text-wrap:balance}
 [id]{scroll-margin-top:84px}
 .zh-article table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .zh-article blockquote{border-left:3px solid #0161EF;background:rgba(1,97,239,.04);padding:10px 16px;border-radius:0 10px 10px 0}
+
+/* === UI-полировка: меню, карточки, фокус, скролл (пачка 2) === */
+@media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
+#nav a{background:linear-gradient(#0161EF,#0161EF) no-repeat bottom left/0 2px;transition:background-size .25s ease,padding-bottom .15s}
+#nav a:hover,#nav a.on{background-size:100% 2px}
+.mnav a{transition:opacity .15s}
+.mnav a:active{opacity:.6}
+.mcard,.card{transition:transform .18s ease,box-shadow .18s ease}
+.mcard:hover,.card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(15,23,42,.12)}
+:focus-visible{outline:2px solid #0161EF;outline-offset:2px;border-radius:4px}
+#zprog{position:fixed;top:0;left:0;height:3px;width:0;background:#0161EF;z-index:9999;transition:width .1s linear}
+#ztop{position:fixed;right:16px;bottom:16px;width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--txt);box-shadow:0 6px 18px rgba(15,23,42,.18);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s;z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:44px}
+#ztop.show{opacity:1;pointer-events:auto;transform:none}
+#ztop svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
@@ -385,7 +399,26 @@ function ofQty(id,d){var c=ofCart();for(var j=0;j<c.length;j++){if(c[j].id===id)
 function ofDel(id){ofSave(ofCart().filter(function(x){return x.id!==id}))}
 function ofRender(){var el=document.getElementById('of-items');if(!el)return;var c=ofCart();if(!c.length){el.innerHTML='<div style="color:var(--txt-muted);font-size:14px">Корзина пуста — выберите позиции из каталога выше.</div>'}else{var tot=0,h='';for(var i=0;i<c.length;i++){var x=c[i];var sm=x.price*x.qty;tot+=sm;h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px"><span>'+(x.emoji?x.emoji+' ':'')+x.name+'</span><span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><button type="button" onclick="ofQty('+x.id+',-1)" aria-label="минус" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:inherit">−</button><span>'+x.qty+'</span><button type="button" onclick="ofQty('+x.id+',1)" aria-label="плюс" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:inherit">+</button></span><span style="min-width:100px;text-align:right">'+sm.toLocaleString('ru-RU')+' ₽</span></div>'}h+='<div style="display:flex;justify-content:space-between;padding:10px 0 2px;font-weight:700"><span>Итого</span><span>'+tot.toLocaleString('ru-RU')+' ₽</span></div>';el.innerHTML=h}ofBar()}
 function ofBar(){var bar=document.getElementById('pc-bar');if(!bar)return;var c=ofCart();if(!c.length){bar.style.display='none';return}var tot=0,n=0;for(var i=0;i<c.length;i++){tot+=c[i].price*c[i].qty;n+=c[i].qty}bar.style.display='block';var t=document.getElementById('pc-bar-txt');if(t)t.textContent='В заявке: '+n+' поз. · '+tot.toLocaleString('ru-RU')+' ₽'}
-function ofSubmit(e){if(e&&e.preventDefault)e.preventDefault();var root=(e&&e.target)||document.getElementById('order-form');var c=ofCart();var st=document.getElementById('of-status');var q=function(n){var el=root.querySelector('[name='+n+']');return el?el.value:''};var d={t:'site_order',model:(window.OF_MODEL||''),items:c,total:c.reduce(function(s,x){return s+x.price*x.qty},0),name:q('name'),phone:q('phone'),city:q('city'),comment:q('comment')};if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Отправляем…</p>';fetch(OF_GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(){if(window.ym&&window.YM_ID){try{ym(window.YM_ID,'reachGoal','order_form')}catch(e2){}}if(st)st.innerHTML='<div style="background:rgba(1,97,239,.12);border:1px solid rgba(1,97,239,.6);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:10px">✓ Заявка отправлена! Свяжемся с вами по телефону или в Telegram. Оплата — дилеру при получении.</div>';if(root&&root.reset)root.reset();ofSave([])}).catch(function(){if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Не удалось отправить — напишите нам в Telegram: @zapashoda_ev.</p>'})}
+function ofSubmit(e){if(e&&e.preventDefault)e.preventDefault();var root=(e&&e.target)||document.getElementById('order-form');var c=ofCart();var st=document.getElementById('of-status');var q=function(n){var el=root.querySelector('[name='+n+']');return el?el.value:''};var d={t:'site_order',model:(window.OF_MODEL||''),items:c,total:c.reduce(functio
+<script is:inline>
+(function(){
+  try{
+    var pb=document.createElement('div');pb.id='zprog';document.body.appendChild(pb);
+    var bt=document.createElement('button');bt.id='ztop';bt.setAttribute('aria-label','Наверх');bt.title='Наверх';
+    bt.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    document.body.appendChild(bt);
+    var h=document.documentElement;
+    function upd(){
+      var max=h.scrollHeight-h.clientHeight||1;
+      pb.style.width=(h.scrollTop/max*100).toFixed(2)+'%';
+      if(h.scrollTop>600){bt.classList.add('show')}else{bt.classList.remove('show')}
+    }
+    addEventListener('scroll',upd,{passive:true});upd();
+    bt.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  }catch(e){}
+})();
+</script>
+n(s,x){return s+x.price*x.qty},0),name:q('name'),phone:q('phone'),city:q('city'),comment:q('comment')};if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Отправляем…</p>';fetch(OF_GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(){if(window.ym&&window.YM_ID){try{ym(window.YM_ID,'reachGoal','order_form')}catch(e2){}}if(st)st.innerHTML='<div style="background:rgba(1,97,239,.12);border:1px solid rgba(1,97,239,.6);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:10px">✓ Заявка отправлена! Свяжемся с вами по телефону или в Telegram. Оплата — дилеру при получении.</div>';if(root&&root.reset)root.reset();ofSave([])}).catch(function(){if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Не удалось отправить — напишите нам в Telegram: @zapashoda_ev.</p>'})}
 document.addEventListener('DOMContentLoaded',function(){var sec=document.getElementById('order-form');if(sec){var form=sec.querySelector('form');if(form){form.addEventListener('submit',ofSubmit)}else{var btn=sec.querySelector('button[type=submit],.of-send');if(btn)btn.addEventListener('click',function(e){e.preventDefault();ofSubmit({target:sec,preventDefault:function(){}})})}ofRender()}else{ofBar()}});
 </script>
 </body>
