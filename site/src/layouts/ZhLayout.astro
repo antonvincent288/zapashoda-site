@@ -370,12 +370,10 @@ h1,h2,h3{text-wrap:balance}
 .zh-article table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .zh-article blockquote{border-left:3px solid #0161EF;background:rgba(1,97,239,.04);padding:10px 16px;border-radius:0 10px 10px 0}
 
-/* === UI-полировка: меню, карточки, фокус, скролл (пачка 2) === */
+/* === UI-полировка: меню, карточки, фокус, прогресс, спойлеры === */
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
-#nav a{background:linear-gradient(#0161EF,#0161EF) no-repeat bottom left/0 2px;transition:background-size .25s ease,padding-bottom .15s}
+#nav a{background:linear-gradient(#0161EF,#0161EF) no-repeat bottom left/0 2px;transition:background-size .25s ease}
 #nav a:hover,#nav a.on{background-size:100% 2px}
-.mnav a{transition:opacity .15s}
-.mnav a:active{opacity:.6}
 .mcard,.card{transition:transform .18s ease,box-shadow .18s ease}
 .mcard:hover,.card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(15,23,42,.12)}
 :focus-visible{outline:2px solid #0161EF;outline-offset:2px;border-radius:4px}
@@ -383,8 +381,6 @@ h1,h2,h3{text-wrap:balance}
 #ztop{position:fixed;right:16px;bottom:16px;width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--txt);box-shadow:0 6px 18px rgba(15,23,42,.18);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s;z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:44px}
 #ztop.show{opacity:1;pointer-events:auto;transform:none}
 #ztop svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-
-/* === Progressive disclosure: длинные таблицы, details, цифровая клавиатура === */
 .spec tr.zs-collapsed{display:none}
 .spec-btn{margin:10px 0 0;padding:9px 16px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--txt);font-size:14px;font-weight:600;cursor:pointer;min-height:44px;transition:border-color .15s,color .15s}
 .spec-btn:hover{border-color:#0161EF;color:#0161EF}
@@ -414,38 +410,7 @@ document.addEventListener('DOMContentLoaded',function(){var sec=document.getElem
 <script is:inline>
 (function(){
   try{
-    var pb=document.createElem
-<script is:inline>
-(function(){
-  try{
-    // 1) длинные таблицы характеристик: свернуть в кнопку «Показать все»
-    document.querySelectorAll('.spec').forEach(function(t){
-      var rows=t.querySelectorAll('tbody tr');
-      if(rows.length<=10) return;
-      var n=0;
-      for(var i=10;i<rows.length;i++){rows[i].classList.add('zs-collapsed');n++;}
-      var btn=document.createElement('button');
-      btn.className='spec-btn';btn.type='button';
-      btn.textContent='Показать все характеристики ('+n+')';
-      btn.addEventListener('click',function(){
-        var collapsed=t.querySelectorAll('.zs-collapsed');
-        if(collapsed.length){collapsed.forEach(function(r){r.classList.remove('zs-collapsed')});btn.textContent='Свернуть характеристики';}
-        else{for(var j=10;j<rows.length;j++){rows[j].classList.add('zs-collapsed');}btn.textContent='Показать все характеристики ('+n+')';}
-      });
-      t.after(btn);
-    });
-    // 2) цифровая клавиатура на числовых полях (мобайл UX)
-    document.querySelectorAll('input[type=number]').forEach(function(e){
-      if(!e.hasAttribute('inputmode')) e.setAttribute('inputmode','numeric');
-    });
-    // 3) enterkeyhint для форм заявки
-    document.querySelectorAll('form input[type=tel]').forEach(function(e){
-      if(!e.hasAttribute('enterkeyhint')) e.setAttribute('enterkeyhint','send');
-    });
-  }catch(e){}
-})();
-</script>
-ent('div');pb.id='zprog';document.body.appendChild(pb);
+    var pb=document.createElement('div');pb.id='zprog';document.body.appendChild(pb);
     var bt=document.createElement('button');bt.id='ztop';bt.setAttribute('aria-label','Наверх');bt.title='Наверх';
     bt.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
     document.body.appendChild(bt);
@@ -457,6 +422,22 @@ ent('div');pb.id='zprog';document.body.appendChild(pb);
     }
     addEventListener('scroll',upd,{passive:true});upd();
     bt.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+    document.querySelectorAll('.spec').forEach(function(t){
+      var rows=t.querySelectorAll('tbody tr');
+      if(rows.length<=10) return;
+      for(var i=10;i<rows.length;i++){rows[i].classList.add('zs-collapsed');}
+      var btn=document.createElement('button');
+      btn.className='spec-btn';btn.type='button';
+      btn.textContent='Показать все характеристики ('+(rows.length-10)+')';
+      btn.addEventListener('click',function(){
+        var c=t.querySelectorAll('.zs-collapsed');
+        if(c.length){c.forEach(function(r){r.classList.remove('zs-collapsed')});btn.textContent='Свернуть характеристики';}
+        else{for(var j=10;j<rows.length;j++){rows[j].classList.add('zs-collapsed');}btn.textContent='Показать все характеристики ('+(rows.length-10)+')';}
+      });
+      t.after(btn);
+    });
+    document.querySelectorAll('input[type=number]').forEach(function(e){if(!e.hasAttribute('inputmode'))e.setAttribute('inputmode','numeric')});
+    document.querySelectorAll('form input[type=tel]').forEach(function(e){if(!e.hasAttribute('enterkeyhint'))e.setAttribute('enterkeyhint','send')});
   }catch(e){}
 })();
 </script>
