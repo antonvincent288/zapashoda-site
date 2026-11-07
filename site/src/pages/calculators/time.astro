@@ -16,9 +16,8 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
       .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
       .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
       .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
-      .wz-btn .e{font-size:30px;line-height:1}
-      .wz-btn .t{font-size:15.5px;font-weight:700}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn .t{font-size:16px;font-weight:700}
       .wz-btn .h{font-size:12px;font-weight:500;color:var(--txt-muted)}
       .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
       .wz-btn:hover{border-color:#0161EF}
@@ -169,20 +168,20 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
         {n:'Voyah',cap:88},
         {n:'Avatr',cap:116},
         {n:'Tesla',cap:60},
-        {n:'Другая машина',cap:60,e:'❓'}
+        {n:'Другая машина',cap:60}
       ];
       var P=[
-        {n:'Розетка дома',h:'обычная, 3,3 кВт',v:3.3,e:'🔌'},
-        {n:'Зарядка во дворе',h:'стена, 7 кВт',v:7,e:'🔋'},
-        {n:'Мощная зарядка',h:'11 кВт',v:11,e:'⚡'},
-        {n:'Быстрая станция',h:'60 кВт',v:60,e:'🚀'},
-        {n:'Супербыстрая',h:'120 кВт',v:120,e:'🚀🚀'}
+        {n:'Розетка дома',h:'обычная, 3,3 кВт',v:3.3},
+        {n:'Зарядка во дворе',h:'стена, 7 кВт',v:7},
+        {n:'Мощная зарядка',h:'11 кВт',v:11},
+        {n:'Быстрая станция',h:'60 кВт',v:60},
+        {n:'Супербыстрая',h:'120 кВт',v:120}
       ];
       var L=[
-        {n:'Почти пустая',h:'10% → 80%',a:10,b:80,e:'🪫'},
-        {n:'Половина',h:'40% → 80%',a:40,b:80,e:'🔋'},
-        {n:'Немного осталось',h:'60% → 80%',a:60,b:80,e:'🔋'},
-        {n:'Добить до 100%',h:'50% → 100%',a:50,b:100,e:'💯'}
+        {n:'Почти пустая',h:'10% → 80%',a:10,b:80},
+        {n:'Половина',h:'40% → 80%',a:40,b:80},
+        {n:'Немного осталось',h:'60% → 80%',a:60,b:80},
+        {n:'Добить до 100%',h:'50% → 100%',a:50,b:100}
       ];
       var st={m:6,p:0,l:0};
       function dots(n){
@@ -197,7 +196,7 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
         var box=el(boxId);box.innerHTML='';
         list.forEach(function(o){
           var b=document.createElement('button');b.type='button';b.className='wz-btn';
-          b.innerHTML='<span class="e">'+(o.e||e)+'</span><span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
+          b.innerHTML='<span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
           b.addEventListener('click',function(){
             st[key]=list.indexOf(o);
             if(key==='m'){show(2)}
@@ -220,9 +219,9 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
         el('wzt-r4').textContent=Math.round(e/eff)+' кВт·ч';
         var pc=el('tc-cap');if(pc){pc.value=m.cap;el('tc-kw').value=p;el('tc-from').value=lv.a;el('tc-to').value=lv.b;tcalc();}
       }
-      make('wzt-m1',M,'m','🚗');
-      make('wzt-m2',P,'p','🔌');
-      make('wzt-m3',L,'l','🔋');
+      make('wzt-m1',M,'m');
+      make('wzt-m2',P,'p');
+      make('wzt-m3',L,'l');
       Array.prototype.forEach.call(el('wzt').querySelectorAll('.wz-back'),function(b){
         b.addEventListener('click',function(){show(parseInt(b.getAttribute('data-back'),10))});
       });
