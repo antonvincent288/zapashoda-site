@@ -4,7 +4,7 @@ import LegacyStyles from '../../../components/LegacyStyles.astro';
 import src from '../../../data/legacy/tools.json';
 const d = src.find((x) => x.slug === 'calculator');
 const H = d.body_html;
-// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Из него убираем старый тяжёлый калькулятор (lcard) и старый блок «Цена простоя» — вместо них простой режим с кнопками.
+// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Старый тяжёлый калькулятор (lcard) и старый блок «Цена простоя» заменены простым режимом.
 const iHow = H.indexOf('<h2>Как считается</h2>');
 const iFaq = H.indexOf('<h2>Частые вопросы</h2>');
 const iDt = H.indexOf('<div class="gbox" id="dt-calc"');
@@ -16,76 +16,114 @@ const iFaqBox = H.indexOf('<div class="calc-faq"');
 const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '';
 ---
 
-<ZhLayout title="Сколько стоит зарядить электромобиль — калькулятор «Запас хода»" description="Простой калькулятор стоимости зарядки: выберите машину, пробег и где заряжаетесь — покажем цену за 100 км, за месяц и экономию против бензина. Два клика, без ввода цифр.">
+<ZhLayout title="Сколько стоит зарядить электромобиль — калькулятор «Запас хода»" description="Простой калькулятор стоимости зарядки: выберите машину, пробег и где заряжаетесь — покажем цену за 100 км, за месяц и экономию против бензина. Три нажатия кнопок, без ввода цифр.">
   <section class="sec"><div class="wrap">
     <LegacyStyles />
     <div class="crumbs"><a href="/">Главная</a> / <a href="/calculators/">Калькуляторы</a> / Стоимость зарядки</div>
 
     <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:16.5px;margin:18px 0 10px}
-      .wz-q:first-child{margin-top:0}
-      .wz-q .qnum{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:999px;background:#0161EF;color:#fff;font-size:13px;margin-right:8px}
-      .wz-q small{display:block;font-weight:400;color:var(--txt-muted);font-size:13px;margin-top:2px;margin-left:34px}
-      .wz-chips{display:flex;flex-wrap:wrap;gap:10px}
-      .wz-chip{padding:12px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--txt);font-size:15.5px;font-weight:600;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;user-select:none;transition:all .15s;font-family:inherit}
-      .wz-chip.on{background:#0161EF;border-color:#0161EF;color:#fff}
-      .wz-chip:hover:not(.on){border-color:#0161EF;color:#0161EF}
-      .wz-out{margin-top:20px;border:1.5px solid var(--line);border-radius:14px;padding:18px;background:var(--bg)}
-      .wz-big{font-size:clamp(34px,6.5vw,46px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
-      .wz-big small{font-size:15px;font-weight:600;color:var(--txt-muted)}
-      .wz-rows{margin-top:12px;display:grid;gap:8px;font-size:15px}
-      .wz-rows b{font-variant-numeric:tabular-nums}
-      .wz-delta{margin-top:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15.5px}
+      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
+      .wz-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+      .wz-bar .dot{width:10px;height:10px;border-radius:99px;background:var(--line)}
+      .wz-bar .dot.on{background:#0161EF;width:26px}
+      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
+      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
+      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn .e{font-size:30px;line-height:1}
+      .wz-btn .t{font-size:15.5px;font-weight:700}
+      .wz-btn .h{font-size:12px;font-weight:500;color:var(--txt-muted)}
+      .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
+      .wz-btn:hover{border-color:#0161EF}
+      .wz-back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:none;border:none;color:var(--txt-muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:10px 0;min-height:44px}
+      .wz-res{text-align:center;padding-top:6px}
+      .wz-big{font-size:clamp(44px,9vw,64px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
+      .wz-big small{font-size:16px;font-weight:700;color:var(--txt-muted);display:block;margin-top:4px}
+      .wz-mid{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:14px}
+      .wz-mid small{font-size:14px;color:var(--txt-muted);font-weight:600}
+      .wz-delta{margin-top:14px;padding:14px;border-radius:14px;font-weight:700;font-size:16px}
       .wz-delta.good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);color:#15803d}
       .wz-delta.bad{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);color:#b91c1c}
-      .wz-note{color:var(--txt-muted);font-size:12.5px;margin-top:14px;line-height:1.5}
-      .wz-cta{display:inline-block;margin-top:16px;background:#0161EF;color:#fff;font-weight:700;border-radius:12px;padding:14px 22px;min-height:48px;text-decoration:none;font-size:16px}
-      details.pro{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
+      .wz-cta{display:block;margin-top:18px;background:#0161EF;color:#fff;font-weight:800;border-radius:14px;padding:16px;min-height:56px;text-decoration:none;font-size:17px}
+      .wz-restart{display:inline-block;margin-top:12px;color:#0161EF;font-weight:700;font-size:14.5px;text-decoration:none;min-height:44px;padding:10px}
+      details.wz-note{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+      details.wz-note summary{color:var(--txt-muted);font-size:13px;cursor:pointer}
+      details.wz-note p{color:var(--txt-muted);font-size:13px;line-height:1.55;margin:10px 0 0}
+      details.pro{margin-top:26px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
       details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
       details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
+      .pro .p-row{margin:12px 0}
+      .pro .p-row label{display:block;font-size:13px;font-weight:600;color:var(--txt-muted);margin-bottom:4px}
+      .pro .p-row input{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px;font-size:15px;min-height:44px}
+      .pro .p-out{font-size:26px;font-weight:800;color:#0161EF;font-variant-numeric:tabular-nums;margin-top:10px}
     </style>
 
     <h1>Сколько стоит зарядить электромобиль: калькулятор</h1>
-    <p class="lede">Ответьте на три вопроса кнопками — калькулятор сам посчитает цену за 100 км, за месяц и сколько вы экономите против бензина. Цифры с клавиатуры вводить не нужно.</p>
+    <p class="lede">Три вопроса — и вы увидите цену. Цифры набирать не нужно, только нажимать большие кнопки.</p>
 
     <div class="wz" id="wzc">
-      <div class="wz-q"><span class="qnum">1</span>Ваша машина <small>не нашли свою — просто оставьте «Другая или не знаю»</small></div>
-      <div class="wz-chips" id="wzc-models"></div>
-      <div class="wz-q"><span class="qnum">2</span>Сколько ездите в месяц <small>если не знаете — выберите «Средне»</small></div>
-      <div class="wz-chips" id="wzc-km"></div>
-      <div class="wz-q"><span class="qnum">3</span>Где заряжаетесь <small>если по-разному — выберите «По-разному»</small></div>
-      <div class="wz-chips" id="wzc-scene"></div>
-      <div class="wz-out" id="wzc-out">
-        <div class="wz-big"><span id="wzc-per100">~120 ₽</span> <small>за 100 км</small></div>
-        <div class="wz-rows">
-          <span>В месяц при вашем пробеге: <b id="wzc-month">~1 440 ₽</b></span>
-          <span>Полная зарядка батареи дома: <b id="wzc-full">~210 ₽</b></span>
+      <div class="wz-bar"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+      <div id="wzc-s1">
+        <div class="wz-q">Ваша машина?</div>
+        <div class="wz-hint">Выберите марку — дальше сами посчитаем</div>
+        <div class="wz-grid" id="wzc-m1"></div>
+      </div>
+      <div id="wzc-s2" hidden>
+        <div class="wz-q">Сколько ездите за месяц?</div>
+        <div class="wz-hint">Не знаете — берите «Обычно»</div>
+        <div class="wz-grid" id="wzc-m2"></div>
+        <button class="wz-back" type="button" data-back="1">← Назад</button>
+      </div>
+      <div id="wzc-s3" hidden>
+        <div class="wz-q">Где заряжаете?</div>
+        <div class="wz-hint">Не знаете — берите «По-разному»</div>
+        <div class="wz-grid" id="wzc-m3"></div>
+        <button class="wz-back" type="button" data-back="2">← Назад</button>
+      </div>
+      <div id="wzc-s4" hidden>
+        <div class="wz-res">
+          <div class="wz-big" id="wzc-r1">120 ₽</div>
+          <div class="wz-mid">за 100 км пути</div>
+          <div class="wz-mid"><span id="wzc-r2">1 440 ₽</span> <small>в месяц</small></div>
+          <div class="wz-delta good" id="wzc-r3">—</div>
+          <div class="wz-mid" style="font-size:17px;font-weight:700">Полная зарядка дома: <span id="wzc-r4" style="font-variant-numeric:tabular-nums">210 ₽</span></div>
+          <a class="wz-cta" href="/quiz/" onclick="window.ym&&ym('113935123','reachGoal','cost_wizard_cta')">Подобрать зарядку под себя →</a>
+          <a class="wz-restart" href="#" id="wzc-restart">← Начать заново</a>
+          <details class="wz-note"><summary>Откуда эти цифры?</summary>
+            <p>Считаем честно по формуле: расход машины (кВт·ч на 100 км) × цена кВт·ч там, где вы заряжаетесь × ваш пробег. Дома ночью — 3,5 ₽/кВт·ч, днём — 7,5 ₽, городская станция — 15 ₽, быстрая на трассе — 24 ₽, «по-разному» — средняя ~11 ₽. Бензин для сравнения: 8 л × 65 ₽ на 100 км. Ёмкости и расход — типовые по марке; зимой расход выше на 10–25%. Точные цифры вашей машины — на странице модели, точный тариф — в приложении оператора.</p>
+          </details>
         </div>
-        <div class="wz-delta good" id="wzc-delta">Бензин на те же километры съел бы ~2 400 ₽ в месяц — экономия ~960 ₽ (11 500 ₽/год)</div>
-        <a class="wz-cta" href="/quiz/" onclick="window.ym&&ym('113935123','reachGoal','cost_wizard_cta')">Подобрать зарядку под себя →</a>
-        <div class="wz-note">Цифры — ориентир: зимой расход выше примерно на 10–25%. Тарифы — средние по рынку на конец 2026 года (дом ночью 3–4 ₽, днём 6–9 ₽, городская станция 10–20 ₽, быстрая на трассе 18–30 ₽ за кВт·ч). Точный тариф вашей сети смотрите в приложении оператора, точный расход — в характеристиках вашей модели.</div>
+        <button class="wz-back" type="button" data-back="3">← Назад</button>
       </div>
     </div>
 
+    <details class="pro" id="pro-exact">
+      <summary>Считать точнее, по своим цифрам <span class="hint">для тех, кто хочет свою цену кВт·ч и свой расход</span></summary>
+      <div class="p-row"><label>Расход машины, кВт·ч на 100 км</label><input id="pe-cons" type="number" min="5" max="40" step="0.5" value="16"></div>
+      <div class="p-row"><label>Пробег в месяц, км</label><input id="pe-km" type="number" min="50" max="30000" step="50" value="1200"></div>
+      <div class="p-row"><label>Цена кВт·ч, ₽</label><input id="pe-rate" type="number" min="0.5" max="60" step="0.5" value="3.5"></div>
+      <div class="p-out" id="pe-out">—</div>
+      <p style="font-size:13px;color:var(--txt-muted)">Формула та же: расход × цена × пробег. Тариф и расход — в характеристиках машины и в приложении оператора.</p>
+    </details>
+
     <details class="pro" id="pro-dt">
-      <summary>Похоже, батарея села: сколько стоит простой? <span class="hint">для бизнеса и дальних поездок</span></summary>
+      <summary>Машина всё-таки застряла: сколько стоит простой? <span class="hint">для бизнеса и дальних поездок</span></summary>
       <div style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:20px;margin-top:12px">
-        <h3 style="color:#d4af37;margin:0 0 6px">Цена простоя: сколько стоит застрять без заряда</h3>
-        <p style="color:#c9c9cf;font-size:14px;margin:0">Нажимайте кнопки — счётчик покажет, сколько денег сгорает, пока машина стоит. Оценка на ваших цифрах, не обещание услуг.</p>
+        <h3 style="color:#d4af37;margin:0 0 6px">Цена простоя</h3>
+        <p style="color:#c9c9cf;font-size:14px;margin:0">Нажимайте кнопки — покажем, сколько денег сгорает, пока машина стоит.</p>
         <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько стоит час вашей работы</div>
-        <div class="wz-chips" id="dt-hour-chips"></div>
-        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько часов простоя (полный день)</div>
-        <div class="wz-chips" id="dt-min-chips"></div>
-        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Пришлось вызывать эвакуатор?</div>
-        <div class="wz-chips" id="dt-tow-chips"></div>
+        <div class="wz-grid" id="dt-hour-chips"></div>
+        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько часов простоя</div>
+        <div class="wz-grid" id="dt-min-chips"></div>
+        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Эвакуатор?</div>
+        <div class="wz-grid" id="dt-tow-chips"></div>
         <div style="border:1px solid #d4af37;border-radius:10px;padding:14px;text-align:center;margin-top:16px">
           <div style="font-size:13px;color:#8e8e93">УБЫТОК ЗА ЭТОТ ПРОСТОЙ</div>
-          <div id="dt-loss" style="font-size:34px;font-weight:800;color:#ff453a">0 ₽</div>
+          <div id="dt-loss" style="font-size:40px;font-weight:800;color:#ff453a">0 ₽</div>
           <div id="dt-note" style="font-size:13px;color:#c9c9cf"></div>
         </div>
-        <p style="text-align:center;margin:14px 0"><a href="/catalog/" class="wz-cta" style="background:#d4af37;color:#1d1d1f;font-weight:700" onclick="window.ym&&ym('113935123','reachGoal','downtime_calc_click')">Собрать комплект автономности</a></p>
-        <p class="wz-note" style="color:#8e8e93">Что делает комплект: запасной кабель и переходник снимают риск «станция не принимает», а расчёты маршрута — риск застрять в «зоне смерти». См. <a href="/routes/" style="color:#d4af37">Имперский маршрут</a>.</p>
+        <p style="text-align:center;margin:14px 0"><a href="/catalog/" class="wz-cta" style="background:#d4af37;color:#1d1d1f;font-weight:800" onclick="window.ym&&ym('113935123','reachGoal','downtime_calc_click')">Собрать комплект автономности</a></p>
+        <p style="color:#8e8e93;font-size:13px">Комплект автономности: запасной кабель и переходник снимают риск «станция не принимает», а расчёты маршрута — риск застрять в «зоне смерти». См. <a href="/routes/" style="color:#d4af37">Имперский маршрут</a>.</p>
       </div>
     </details>
 
@@ -96,104 +134,116 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
 
     <script is:inline>
     (function(){
-      function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
       function el(id){return document.getElementById(id)}
-      // ——— ВИЗАРД СТОИМОСТИ ———
-      var MODELS=[
-        {n:'Zeekr 001 / 001 FR',cap:100,cons:16.5},
-        {n:'Zeekr 007 / 007GT',cap:100,cons:15.5},
-        {n:'Zeekr 7X / X',cap:93,cons:16},
-        {n:'Zeekr 009',cap:116,cons:18},
-        {n:'Li Auto L6–L9',cap:43,cons:20},
-        {n:'Voyah Free',cap:88,cons:18},
-        {n:'Voyah Dream',cap:108,cons:20},
-        {n:'BYD Atto 3 / Yuan Plus',cap:60,cons:14.5},
-        {n:'BYD Seal',cap:82,cons:15.5},
-        {n:'BYD Song Plus',cap:80,cons:16},
-        {n:'Avatr 11 / 12',cap:116,cons:17.5},
-        {n:'Deepal S07',cap:79,cons:16.5},
-        {n:'Geely Geometry C',cap:70,cons:15},
-        {n:'Hongqi E-HS9',cap:99,cons:19},
-        {n:'MG4',cap:61,cons:14.5},
-        {n:'Xpeng P7',cap:86,cons:16},
-        {n:'Tesla Model 3 / Y',cap:60,cons:14},
-        {n:'Другая машина / не знаю',cap:60,cons:16}
+      function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
+      // ——— ШАГИ 1–3 ———
+      var M=[
+        {n:'Zeekr',cap:100,cons:16},
+        {n:'Li Auto',cap:43,cons:20},
+        {n:'BYD',cap:70,cons:15},
+        {n:'Voyah',cap:88,cons:18},
+        {n:'Avatr',cap:116,cons:17},
+        {n:'Tesla',cap:60,cons:14},
+        {n:'Другая машина',cap:60,cons:16,e:'❓'}
       ];
       var KM=[
-        {n:'Мало: до 500 км',v:400},
-        {n:'Средне: ~1 200 км',v:1200},
-        {n:'Много: ~2 500 км',v:2500},
-        {n:'Очень много: ~5 000 км',v:5000}
+        {n:'Мало',h:'до 500 км в месяц',v:400},
+        {n:'Обычно',h:'около 1 200 км в месяц',v:1200},
+        {n:'Много',h:'около 2 500 км в месяц',v:2500},
+        {n:'Очень много',h:'около 5 000 км в месяц',v:5000}
       ];
-      var SCENES=[
-        {n:'🏠 Дома из розетки, ночью',v:3.5},
-        {n:'🏠 Дома днём',v:7.5},
-        {n:'🏪 Станции в городе',v:15},
-        {n:'🛣 Быстрые на трассе',v:24},
-        {n:'🔀 По-разному',v:11.1}
+      var SC=[
+        {n:'Дома',h:'ночью из розетки',v:3.5},
+        {n:'Город',h:'станции рядом с домом',v:15},
+        {n:'Трасса',h:'быстрые станции',v:24},
+        {n:'По-разному',h:'и дома, и в городе, и на трассе',v:11}
       ];
-      var FUEL_PER100=8*65; // 8 л × 65 ₽ — средний бензин для сравнения
-      var state={mi:17,km:1,sc:0};
-      function chips(boxId,list,key){
+      var FUEL_PER100=8*65;
+      var st={m:6,km:1,sc:3};
+      function dots(n){
+        var ds=el('wzc').querySelectorAll('.dot');
+        Array.prototype.forEach.call(ds,function(d,i){d.classList.toggle('on',i<n)});
+      }
+      function show(step){
+        [1,2,3,4].forEach(function(i){el('wzc-s'+i).hidden=(i!==step)});
+        dots(step);
+      }
+      function make(boxId,list,key,e){
         var box=el(boxId);box.innerHTML='';
-        list.forEach(function(o,i){
-          var b=document.createElement('button');b.type='button';b.className='wz-chip';b.textContent=o.n;
-          b.addEventListener('click',function(){state[key]=i;paint();});
+        list.forEach(function(o){
+          var b=document.createElement('button');b.type='button';b.className='wz-btn';
+          b.innerHTML='<span class="e">'+(o.e||e)+'</span><span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
+          b.addEventListener('click',function(){
+            st[key]=list.indexOf(o);
+            if(key==='m'){show(2)}
+            else if(key==='km'){show(3)}
+            else{res();show(4)}
+          });
           box.appendChild(b);
         });
       }
-      function cur(list,key){return list[state[key]]}
-      function upd(){
-        var m=cur(MODELS,'mi'),k=cur(KM,'km'),s=cur(SCENES,'sc');
-        el('wzc-per100').textContent='~'+fmt(m.cons*s.v)+' ₽';
-        el('wzc-month').textContent='~'+fmt(m.cons*s.v*k.v/100)+' ₽';
-        el('wzc-full').textContent='~'+fmt(m.cap*s.v)+' ₽';
-        var evMonth=m.cons*s.v*k.v/100;
-        var gasMonth=FUEL_PER100*k.v/100;
-        var diff=gasMonth-evMonth;
-        var dv=el('wzc-delta');
+      function res(){
+        var m=M[st.m],k=KM[st.km],s=SC[st.sc];
+        var per100=m.cons*s.v;
+        el('wzc-r1').textContent='~'+fmt(per100)+' ₽';
+        var month=per100*k.v/100;
+        el('wzc-r2').textContent='~'+fmt(month)+' ₽';
+        el('wzc-r4').textContent='~'+fmt(m.cap*s.v)+' ₽';
+        var gas=FUEL_PER100*k.v/100;
+        var diff=gas-month;
+        var dv=el('wzc-r3');
         if(diff>0){
           dv.className='wz-delta good';
-          dv.textContent='Бензин на те же километры съел бы ~'+fmt(gasMonth)+' ₽ в месяц — экономия ~'+fmt(diff)+' ₽ ('+fmt(diff*12)+' ₽/год)';
+          dv.textContent='Бензин на те же километры: ~'+fmt(gas)+' ₽ в месяц. Вы экономите ~'+fmt(diff)+' ₽ в месяц ('+fmt(diff*12)+' ₽ за год)';
         }else{
           dv.className='wz-delta bad';
-          dv.textContent='При зарядке только на трассе бензин с учётом тарифа выходит примерно столько же или дешевле — '+fmt(Math.abs(diff))+' ₽/мес разницы. Домашняя зарядка возвращает преимущество.';
+          dv.textContent='Если заряжаться только на трассе — выходит как бензин. Зарядка дома возвращает преимущество.';
         }
-        // подсветка выбранных чипов
-        [['wzc-models',MODELS,'mi'],['wzc-km',KM,'km'],['wzc-scene',SCENES,'sc']].forEach(function(t){
-          Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===state[t[2]])});
-        });
       }
-      function paint(){upd()}
-      chips('wzc-models',MODELS,'mi');
-      chips('wzc-km',KM,'km');
-      chips('wzc-scene',SCENES,'sc');
-      upd();
+      make('wzc-m1',M,'m','🚗');
+      make('wzc-m2',KM,'km','🛣');
+      make('wzc-m3',SC,'sc','🔌');
+      Array.prototype.forEach.call(el('wzc').querySelectorAll('.wz-back'),function(b){
+        b.addEventListener('click',function(){show(parseInt(b.getAttribute('data-back'),10))});
+      });
+      el('wzc-restart').addEventListener('click',function(ev){ev.preventDefault();show(1)});
+      show(1);
 
-      // ——— ЦЕНА ПРОСТОЯ (упрощённая) ———
-      var HOUR=[{n:'300 ₽/ч',v:300},{n:'600 ₽/ч',v:600},{n:'900 ₽/ч',v:900},{n:'1 500 ₽/ч',v:1500}];
-      var LOSS=[{n:'2 часа',v:2},{n:'4 часа',v:4},{n:'8 часов',v:8}];
-      var TOW=[{n:'Нет, доехал сам',v:0},{n:'Да, эвакуатор 8 000 ₽',v:8000}];
-      var dst={h:2,loss:1,tow:0};
-      function dchips(boxId,list,key){
+      // ——— ТОЧНЫЙ РАСЧЁТ ———
+      var pc=el('pe-cons'),pk=el('pe-km'),pr=el('pe-rate'),po=el('pe-out');
+      function pcalc(){
+        var a=parseFloat(pc.value),b=parseFloat(pk.value),c=parseFloat(pr.value);
+        if(a>0&&b>0&&c>0){po.textContent='~'+fmt(a*c*b/100)+' ₽ в месяц';}
+        else{po.textContent='—'}
+      }
+      [pc,pk,pr].forEach(function(x){x.addEventListener('input',pcalc);x.addEventListener('change',pcalc)});
+      pcalc();
+
+      // ——— ЦЕНА ПРОСТОЯ ———
+      var HOUR=[{n:'300 ₽',h:'за час',v:300},{n:'600 ₽',h:'за час',v:600},{n:'900 ₽',h:'за час',v:900},{n:'1 500 ₽',h:'за час',v:1500}];
+      var LOSS=[{n:'2 часа',h:'без машины',v:2},{n:'4 часа',h:'без машины',v:4},{n:'8 часов',h:'без машины',v:8}];
+      var TOW=[{n:'Нет',h:'доехал сам',v:0},{n:'Да',h:'эвакуатор ~8 000 ₽',v:8000}];
+      var dst={h:1,loss:1,tow:0};
+      function dmake(boxId,list,key){
         var box=el(boxId);box.innerHTML='';
-        list.forEach(function(o,i){
-          var b=document.createElement('button');b.type='button';b.className='wz-chip';b.style.cssText='background:#2a2a2c;color:#f5f5f7;border-color:#444';
-          b.textContent=o.n;
-          b.addEventListener('click',function(){dst[key]=i;dupd();});
+        list.forEach(function(o){
+          var b=document.createElement('button');b.type='button';b.className='wz-btn';
+          b.style.cssText='background:#2a2a2c;color:#f5f5f7;border-color:#444;min-height:64px';
+          b.innerHTML='<span class="t">'+o.n+'</span>'+(o.h?'<span class="h" style="color:#8e8e93">'+o.h+'</span>':'');
+          b.addEventListener('click',function(){dst[key]=list.indexOf(o);dupd();});
           box.appendChild(b);
         });
       }
       function dupd(){
         el('dt-loss').textContent=fmt(HOUR[dst.h].v*LOSS[dst.loss].v+TOW[dst.tow].v)+' ₽';
-        el('dt-note').textContent=LOSS[dst.loss].n+' без машины, час работы '+HOUR[dst.h].n+(TOW[dst.tow].v?', плюс эвакуатор':'');
+        el('dt-note').textContent=LOSS[dst.loss].n+' без машины × час '+HOUR[dst.h].n+(TOW[dst.tow].v?', плюс эвакуатор':'');
         [['dt-hour-chips',HOUR,'h'],['dt-min-chips',LOSS,'loss'],['dt-tow-chips',TOW,'tow']].forEach(function(t){
           Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===dst[t[2]])});
         });
       }
-      dchips('dt-hour-chips',HOUR,'h');
-      dchips('dt-min-chips',LOSS,'loss');
-      dchips('dt-tow-chips',TOW,'tow');
+      dmake('dt-hour-chips',HOUR,'h');
+      dmake('dt-min-chips',LOSS,'loss');
+      dmake('dt-tow-chips',TOW,'tow');
       dupd();
     })();
     </script>
