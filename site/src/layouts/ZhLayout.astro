@@ -586,6 +586,31 @@ details.seo-faq[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
 details.seo-faq > *:not(summary){padding:0 18px 16px}
 details.seo-faq{interpolate-size:allow-keywords}
 details.seo-faq::details-content{transition:height .3s ease,content-visibility .3s;overflow:hidden;display:block}
+
+/* === ЕДИНАЯ СИСТЕМА СТИЛЯ (unified wave): антрацит+золото, зелёный = только статусы === */
+:root{--rad-lg:22px;--rad-md:16px;--rad-sm:12px}
+.btn-gold{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;font-weight:700;box-shadow:0 4px 18px rgba(212,175,55,.32),0 0 0 rgba(212,175,55,0);transition:transform .2s,box-shadow .25s}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(212,175,55,.45)}
+.btn-ghost:hover{border-color:var(--gold,#D4AF37)}
+.glass-panel .btn.lime,.article .btn.lime{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;font-weight:700}
+.glass-panel .btn.lime:hover,.article .btn.lime:hover{box-shadow:0 6px 24px rgba(212,175,55,.45);transform:translateY(-1px)}
+.seg-btn.on{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;box-shadow:0 4px 14px rgba(212,175,55,.3)}
+.topbtn{background:rgba(212,175,55,.14)!important;border-color:rgba(212,175,55,.55)!important;color:#ffe9b0!important}
+.topbtn:hover{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important}
+.hnum{color:#e8b34b!important}
+.hdots button.on{background:var(--gold,#D4AF37)!important}
+.hero-slider{border-radius:var(--rad-lg)}
+.gbt-flow .node svg [stroke="#0161EF"]{stroke:var(--gold,#D4AF37)}
+.gbt-flow .node svg [fill="#0161EF"]{fill:var(--gold,#D4AF37)}
+.gbt-flow .node svg [fill="rgba(1,97,239,.08)"]{fill:rgba(212,175,55,.12)}
+.gbt-flow .arrow{color:#e8b34b}
+.card{border-radius:var(--rad-md)}
+.bcard{border-radius:var(--rad-md)}
+.glass-panel{border-radius:18px}
+.bridge{border-radius:18px;background:linear-gradient(120deg,rgba(212,175,55,.12),rgba(212,175,55,.04));border-color:rgba(212,175,55,.3)}
+.mfilter .fchip{border-radius:999px}
+.hero-pick select{border-radius:var(--rad-sm)}
+.glass-panel div[style*="1d1d1f"]{border-radius:18px!important}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
