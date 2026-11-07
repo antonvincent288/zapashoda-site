@@ -475,6 +475,13 @@ section+section,section+footer,footer+section{border-top:1px solid var(--line)}
 .duo{gap:28px}
 .bgrid{gap:24px}
 .article p{margin-bottom:14px}
+
+/* === МОБАЙЛ-НАВИГАЦИЯ: десктопное меню всегда скрыто, бургер в вьюпорте === */
+@media(max-width:960px){
+  #nav{display:none!important}
+  .hwrap{justify-content:space-between}
+  .menu-btn{margin-left:0;flex-shrink:0}
+}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
