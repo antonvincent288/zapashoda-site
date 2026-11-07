@@ -357,6 +357,18 @@ input[type=range]{accent-color:var(--gold)}
 .art-share .shbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--txt);text-decoration:none;transition:.15s;min-height:40px}
 .art-share .shbtn svg{width:18px;height:18px;fill:currentColor}
 .art-share .shbtn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* === Типографика 2.0: вдовы, выделение, ссылки, подписи === */
+h1,h2,h3{text-wrap:balance}
+.zh-article p{text-wrap:pretty}
+::selection{background:#0161EF;color:#fff}
+.zh-article a{text-underline-offset:3px;text-decoration-thickness:1px}
+.zh-article figure{margin:22px 0}
+.zh-article img{border-radius:12px;display:block;max-width:100%}
+.zh-article figcaption{font-size:13px;color:#6b7280;text-align:center;margin-top:7px;line-height:1.45}
+[id]{scroll-margin-top:84px}
+.zh-article table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.zh-article blockquote{border-left:3px solid #0161EF;background:rgba(1,97,239,.04);padding:10px 16px;border-radius:0 10px 10px 0}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
