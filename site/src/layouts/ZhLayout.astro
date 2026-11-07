@@ -513,6 +513,34 @@ section+section,section+footer,footer+section{border-top:1px solid var(--line)}
 .gbt-flow .node span{font-size:12.5px;color:var(--txt-muted,#64748b);text-align:center}
 .gbt-flow .arrow{font-size:22px;color:#0161EF;font-weight:700}
 .stats b{font-variant-numeric:tabular-nums}
+
+/* === MICRO-INTERACTIONS (native CSS/JS, без библиотек) === */
+input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;background:linear-gradient(90deg,#22c55e 0%,#22c55e var(--p,30%),#dbeafe var(--p,30%),#dbeafe 100%);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #0161EF;box-shadow:0 2px 8px rgba(1,97,239,.35);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #0161EF;box-shadow:0 2px 8px rgba(1,97,239,.35)}
+.faqbox details,.t-faq details,details.t-how{interpolate-size:allow-keywords}
+.faqbox details::details-content,.t-faq details::details-content,details.t-how::details-content{transition:height .28s ease,content-visibility .28s;overflow:hidden;display:block}
+.faqbox summary,.t-faq summary{position:relative;padding-right:34px}
+.faqbox summary::after,.t-faq summary::after{content:'';position:absolute;right:6px;top:50%;width:8px;height:8px;border-right:2px solid #0161EF;border-bottom:2px solid #0161EF;transform:translateY(-70%) rotate(45deg);transition:transform .22s}
+.faqbox details[open] summary::after,.t-faq details[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+.snap-row{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 18px;-webkit-overflow-scrolling:touch}
+.snap-row>*{flex:0 0 260px;scroll-snap-align:start}
+.fchip{min-height:36px;border:1px solid var(--line,#e2e8f0);background:var(--bg,#fff);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--txt,#0f172a)}
+.fchip.on{background:#0161EF;border-color:#0161EF;color:#fff}
+.ev-battery{display:inline-flex;align-items:center;gap:12px}
+.ev-battery .shell{width:56px;height:28px;border:2.5px solid #0161EF;border-radius:8px;position:relative;overflow:hidden;background:rgba(1,97,239,.06)}
+.ev-battery .shell::after{content:'';position:absolute;right:-4px;top:6px;bottom:6px;width:5px;border-radius:0 4px 4px 0;background:#0161EF}
+.ev-battery .fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#0161EF,#22c55e);animation:battCharge 2.6s ease-in-out infinite}
+@keyframes battCharge{0%{transform:translateX(-101%)}55%{transform:translateX(0)}82%{transform:translateX(0)}100%{transform:translateX(0);opacity:.25}}
+.ev-battery span{font-weight:700;font-size:13.5px;color:var(--txt-muted,#64748b)}
+@media(prefers-reduced-motion:reduce){.ev-battery .fill{animation:none;width:70%}}
+.mfilter{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+@media(max-width:700px){.bgrid.as-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 18px;gap:14px}
+.bgrid.as-slider>*{flex:0 0 74%;scroll-snap-align:start}}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
@@ -602,6 +630,19 @@ document.addEventListener('DOMContentLoaded',function(){try{
   },{threshold:.4});
   nums.forEach(function(n){io.observe(n)});
 }catch(e){}})();
+
+/* === МИКРО-ВЗАИМОДЕЙСТВИЯ: живой слайдер + reveal при скролле === */
+(function(){try{
+  function upd(el){var min=parseFloat(el.min)||0,max=parseFloat(el.max)||100,v=parseFloat(el.value)||0;el.style.setProperty('--p',(((v-min)/(max-min))*100).toFixed(1)+'%')}
+  document.querySelectorAll('input[type=range]').forEach(upd);
+  document.addEventListener('input',function(e){if(e.target&&e.target.type==='range')upd(e.target)});
+  if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var els=[].slice.call(document.querySelectorAll('.cards .card,.bgrid>a,.bcard,.stats>div,.gbt-flow,.faqbox,.glass-panel,.t-card'));
+    els.forEach(function(el,i){el.classList.add('reveal');el.style.transitionDelay=Math.min((i%6)*70,420)+'ms'});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){io.observe(el)});
+  }
+}catch(e){}});
 </script>
 
 </body>
