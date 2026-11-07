@@ -38,7 +38,7 @@ const POP_SLUGS = ['zeekr-001-001-fr','li-auto-l6-l7-l8-l9-2022-2025','byd-han-e
 const POP = (mlData.models || []).filter((x) => POP_SLUGS.includes(String(x.slug))).slice(0, 8);
 const ALL = (mlData.models || []).filter((m) => m.slug);
 ---
-<ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели в 3 шага. 145 моделей, 59 разборов, карта 2073 станций." jsonld={orgLd}><div class="hero"><div class="wrap"><div class="badge">Практика зарядки EV в России</div><h1>Подберите зарядку и адаптеры <span>для вашей модели</span>в 3 шага</h1><p>Разъёмы, мощность борта, зимний сценарий и стоимость зарядки — по вашей марке и году.</p><div class="hero-pick" data-hero-pick>
+<ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели в 3 шага. 145 моделей, 59 разборов, карта 2073 станций." jsonld={orgLd}><div class="hero"><div class="wrap"><div class="badge">Практика зарядки EV в России</div><h1>Если тоже за*бался <span>с этими зарядками</span></h1><p>Мы затрахались делать этот сайт, но нашли разъёмы, мощность борта, зимний сценарий и стоимость зарядки — по вашей марке и году.</p><div class="hero-pick" data-hero-pick>
           <select id="pickModel" aria-label="Выберите вашу модель">
             {ALL.filter((m)=>m.slug).map((m) => (<option value={m.slug}>{m.name}</option>))}
           </select>
