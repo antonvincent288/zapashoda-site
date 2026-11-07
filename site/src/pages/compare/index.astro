@@ -91,7 +91,7 @@ const d = src.find((x) => x.slug === 'compare');
           box1.appendChild(b1);
         });
         var oth=document.createElement('button');
-        oth.type='button';oth.className='wz-btn';oth.innerHTML='<span class="t">🔍 Другая машина</span>';
+        oth.type='button';oth.className='wz-btn';oth.innerHTML='<span class="t">Другая машина (полный список)</span>';
         oth.addEventListener('click',function(){showFullList()});
         box1.appendChild(oth);
         // шаг 2: те же кнопки, но без «Другая»
@@ -104,7 +104,7 @@ const d = src.find((x) => x.slug === 'compare');
           box2.appendChild(b2);
         });
         var oth2=document.createElement('button');
-        oth2.type='button';oth2.className='wz-btn';oth2.innerHTML='<span class="t">🔍 Другая машина</span>';
+        oth2.type='button';oth2.className='wz-btn';oth2.innerHTML='<span class="t">Другая машина (полный список)</span>';
         oth2.addEventListener('click',function(){showFullList()});
         box2.appendChild(oth2);
         var form=getFormBox();
