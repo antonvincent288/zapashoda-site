@@ -109,7 +109,8 @@ export default defineConfig({
         },
       },
       Image: false,
-      JavaScript: true,
+      // JS-minify off: terser merged inline scripts and produced syntax errors on prod
+      JavaScript: false,
       SVG: false,
       Logger: 1,
     }),
