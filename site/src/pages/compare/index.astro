@@ -11,26 +11,32 @@ const d = src.find((x) => x.slug === 'compare');
     <div class="crumbs"><a href="/">Главная</a> / Сравнение моделей</div>
 
     <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:16.5px;margin:18px 0 10px}
-      .wz-q:first-child{margin-top:0}
-      .wz-q small{display:block;font-weight:400;color:var(--txt-muted);font-size:13px;margin-top:2px}
-      .wz-chips{display:flex;flex-wrap:wrap;gap:10px}
-      .wz-chip{padding:12px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--txt);font-size:15.5px;font-weight:600;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;user-select:none;transition:all .15s;font-family:inherit}
-      .wz-chip:hover:not(.on){border-color:#0161EF;color:#0161EF}
-      .wz-chip.pick1{background:#0161EF;border-color:#0161EF;color:#fff}
-      .wz-chip.pick2{background:#d4af37;border-color:#d4af37;color:#1d1d1f}
-      details.pro{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
-      details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
-      details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
+      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
+      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
+      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
+      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn .t{font-size:15px;font-weight:700}
+      .wz-btn:hover{border-color:#0161EF}
+      .wz-btn.p1{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
+      .wz-back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:none;border:none;color:var(--txt-muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:10px 0;min-height:44px}
     </style>
 
     <h1>Сравнение моделей EV: разъёмы и зарядка</h1>
-    <p class="lede">Нажмите сначала первую машину, потом вторую — сравнение появится сразу: разъёмы, скорость зарядки, что докупить. Вводить цифры не нужно.</p>
+    <p class="lede">Выберите две машины по кнопкам — сравнение появится само. Вводить ничего не нужно.</p>
 
     <div class="wz" id="wzc">
-      <div class="wz-q">Выберите две машины <small>первая подсветится синим (№1), вторая — золотым (№2). Нет вашей в списке — откройте «Все модели» ниже</small></div>
-      <div class="wz-chips" id="wzc-models"></div>
+      <div id="wzc-s1">
+        <div class="wz-q">Первая машина</div>
+        <div class="wz-hint">Нет вашей в списке — «Другая машина» покажет весь список</div>
+        <div class="wz-grid" id="wzc-m1"></div>
+      </div>
+      <div id="wzc-s2" hidden>
+        <div class="wz-q">Вторая машина</div>
+        <div class="wz-hint">Первая уже выбрана: <b id="wzc-a1">—</b></div>
+        <div class="wz-grid" id="wzc-m2"></div>
+        <button class="wz-back" type="button" id="wzc-back1">← Назад</button>
+      </div>
     </div>
 
     <div class="article" set:html={d.body_html} />
@@ -40,11 +46,9 @@ const d = src.find((x) => x.slug === 'compare');
     (function(){
       var POP=[
         'Zeekr 001 / 001 FR','Zeekr 007 / 007GT','Zeekr 7X / X / MIX','Zeekr 009 / 009 Grand',
-        'Li Auto L6 / L7 / L8 / L9 (2022–2025)','Li Auto Mega','Voyah Free EVR (гибрид)',
-        'Voyah Dream / Dreamer (PHEV)','Avatr 11 / 12 (официально RU)','Xiaomi SU7 / SU7 Ultra',
-        'BYD Song Plus EV','BYD Seal','BYD Yuan Plus / Atto 3 / Yuan Up / Pro',
-        'Deepal S07 (RU официальная)','Geely Galaxy E5 / E8 / TT','Xpeng G9 / G6',
-        'Hongqi E-HS9','Leapmotor C10 / C11 / C01 / B10 / A05'
+        'Li Auto L6 / L7 / L8 / L9 (2022–2025)','Voyah Free EVR (гибрид)','Avatr 11 / 12 (официально RU)',
+        'Xiaomi SU7 / SU7 Ultra','BYD Song Plus EV','BYD Seal','Deepal S07 (RU официальная)',
+        'Geely Galaxy E5 / E8 / TT'
       ];
       var pickA=-1,pickB=-1;
       function getFormBox(){
@@ -56,69 +60,92 @@ const d = src.find((x) => x.slug === 'compare');
       function showFullList(){
         var form=getFormBox();
         if(form){
-          if(form.style.display==='none'){
-            form.style.display='';
-            form.scrollIntoView({behavior:'smooth'});
-          }
+          form.style.display='';
+          form.scrollIntoView({behavior:'smooth'});
         }
       }
-      function label(b){
-        b.textContent=b.textContent.replace(/^① |^② /,'');
-        if(b.dataset.pick==='1') b.textContent='① '+b.textContent;
-        if(b.dataset.pick==='2') b.textContent='② '+b.textContent;
+      function shortName(n){
+        var map={
+          'Zeekr 001 / 001 FR':'Zeekr 001','Zeekr 007 / 007GT':'Zeekr 007','Zeekr 7X / X / MIX':'Zeekr 7X / X',
+          'Zeekr 009 / 009 Grand':'Zeekr 009','Li Auto L6 / L7 / L8 / L9 (2022–2025)':'Li Auto L6–L9',
+          'Voyah Free EVR (гибрид)':'Voyah Free','Avatr 11 / 12 (официально RU)':'Avatr 11 / 12',
+          'Xiaomi SU7 / SU7 Ultra':'Xiaomi SU7','BYD Song Plus EV':'BYD Song Plus','BYD Seal':'BYD Seal',
+          'Deepal S07 (RU официальная)':'Deepal S07','Geely Galaxy E5 / E8 / TT':'Geely Galaxy'
+        };
+        return map[n]||n;
+      }
+      function build(){
+        var a=document.getElementById('c-a');
+        var box1=document.getElementById('wzc-m1'), box2=document.getElementById('wzc-m2');
+        if(!a||!box1||box1.children.length) return;
+        POP.forEach(function(name){
+          var idx=-1;
+          Array.prototype.forEach.call(a.options,function(o,i){
+            if(o.textContent.trim()===name) idx=i;
+          });
+          if(idx<0) return;
+          var b1=document.createElement('button');
+          b1.type='button';b1.className='wz-btn';b1.innerHTML='<span class="t">'+shortName(name)+'</span>';
+          b1.dataset.idx=idx;
+          b1.addEventListener('click',function(){pick(idx)});
+          box1.appendChild(b1);
+        });
+        var oth=document.createElement('button');
+        oth.type='button';oth.className='wz-btn';oth.innerHTML='<span class="t">🔍 Другая машина</span>';
+        oth.addEventListener('click',function(){showFullList()});
+        box1.appendChild(oth);
+        // шаг 2: те же кнопки, но без «Другая»
+        Array.prototype.forEach.call(box1.children,function(b){
+          if(b.textContent.indexOf('Другая')>=0) return;
+          var b2=document.createElement('button');
+          b2.type='button';b2.className='wz-btn';b2.innerHTML='<span class="t">'+b.textContent+'</span>';
+          b2.dataset.idx=b.dataset.idx;
+          b2.addEventListener('click',function(){pick(parseInt(b2.dataset.idx,10))});
+          box2.appendChild(b2);
+        });
+        var oth2=document.createElement('button');
+        oth2.type='button';oth2.className='wz-btn';oth2.innerHTML='<span class="t">🔍 Другая машина</span>';
+        oth2.addEventListener('click',function(){showFullList()});
+        box2.appendChild(oth2);
+        var form=getFormBox();
+        if(form) form.style.display='none';
+        // дефолтное сравнение показываем сразу (legacy-скрипт уже вызвал cShow)
+        paint();
+      }
+      function pick(idx){
+        if(pickA<0){pickA=idx;paint();document.getElementById('wzc-s1').hidden=true;document.getElementById('wzc-s2').hidden=false;document.getElementById('wzc-a1').textContent=aName(idx);return;}
+        pickB=idx;
+        document.getElementById('c-a').value=pickA;
+        document.getElementById('c-b').value=pickB;
+        if(typeof cShow==='function') cShow();
+        paint();
+        var out=document.getElementById('c-out');
+        if(out) out.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+      function aName(idx){
+        var a=document.getElementById('c-a');
+        return a && a.options[idx] ? a.options[idx].textContent.trim() : '';
       }
       function paint(){
-        Array.prototype.forEach.call(document.getElementById('wzc-models').children,function(b){
-          b.dataset.pick='0';
-          if(parseInt(b.dataset.idx,10)===pickA) b.dataset.pick='1';
-          if(parseInt(b.dataset.idx,10)===pickB) b.dataset.pick='2';
-          b.classList.toggle('pick1',b.dataset.pick==='1');
-          b.classList.toggle('pick2',b.dataset.pick==='2');
-          label(b);
+        var boxes=[document.getElementById('wzc-m1'),document.getElementById('wzc-m2')];
+        boxes.forEach(function(box){
+          if(!box) return;
+          Array.prototype.forEach.call(box.children,function(b){
+            var i=parseInt(b.dataset.idx,10);
+            b.classList.toggle('p1',i===pickA);
+            b.classList.toggle('p2',i===pickB);
+          });
         });
       }
-      function pick(idx,btn){
-        if(pickA===idx){pickA=-1;pickB=-1;paint();return;}
-        if(pickB===idx){pickB=-1;paint();return;}
-        if(pickA<0){pickA=idx;paint();return;}
-        pickB=idx;paint();
-        if(pickA>=0&&pickB>=0){
-          document.getElementById('c-a').value=pickA;
-          document.getElementById('c-b').value=pickB;
-          if(typeof cShow==='function') cShow();
-        }
-      }
-      function waitReady(tries){
+      document.getElementById('wzc-back1').addEventListener('click',function(){
+        document.getElementById('wzc-s2').hidden=true;document.getElementById('wzc-s1').hidden=false;
+      });
+      function wait(tries){
         var a=document.getElementById('c-a');
-        if(a){
-          var box=document.getElementById('wzc-models');
-          POP.forEach(function(name){
-            var idx=-1;
-            Array.prototype.forEach.call(a.options,function(o,i){
-              if(o.textContent.trim()===name) idx=i;
-            });
-            if(idx<0) return;
-            var b=document.createElement('button');
-            b.type='button';b.className='wz-chip';b.textContent=name;
-            b.dataset.idx=idx;
-            b.addEventListener('click',function(){pick(idx,b)});
-            box.appendChild(b);
-          });
-          var tb=document.createElement('button');
-          tb.type='button';tb.className='wz-chip';
-          tb.textContent='🔍 Все модели (141) — поиск в полном списке';
-          tb.addEventListener('click',function(){
-            showFullList();
-          });
-          box.appendChild(tb);
-          var form=getFormBox();
-          if(form) form.style.display='none';
-          paint();
-        }else if(tries<25){
-          setTimeout(function(){waitReady(tries+1)},80);
-        }
+        if(a && a.options.length>3){build();}
+        else if(tries<40){setTimeout(function(){wait(tries+1)},100);}
       }
-      waitReady(0);
+      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){wait(0)})}else{wait(0)}
     })();
     </script>
   </div></section>
