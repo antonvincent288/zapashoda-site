@@ -114,3 +114,6 @@
 - [@docmd/plugin-sitemap](https://www.npmjs.com/package/@docmd/plugin-sitemap) — Sitemap generator plugin for docmd.
 - [hexo-generator-sitemap](https://www.npmjs.com/package/hexo-generator-sitemap) — Sitemap generator plugin for Hexo
 - [vite-ssg-sitemap](https://www.npmjs.com/package/vite-ssg-sitemap) — sitemap generator working with vite-ssg
+## 2026-11-07
+
+Новых находок нет - все уже в базе.
