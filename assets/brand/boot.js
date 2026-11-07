@@ -39,7 +39,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var title=model?('Под вашу '+(model[0].replace(/\b\w/g,function(c){return c.toUpperCase();}))+(pain?': '+pain[2]:''))
                 :('Под ваш запрос: '+pain[2]);
   var links='';
-  if(model)links+='<a href="/models/'+model[1]+'/' style="color:#D4AF37;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
+  if(model)links+='<a href="/models/'+model[1]+'" style="color:#D4AF37;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
   if(pain)links+='<a href="'+pain[1]+'" style="color:#D4AF37;text-decoration:underline">'+pain[2]+'</a>';
   box.innerHTML='<div style="font-size:12px;letter-spacing:.08em;color:#8e8e93">ПОД ВАШ ЗАПРОС · ЗАПАС ХОДА</div>'
    +'<h3 style="color:#f5f5f7;margin:6px 0 8px;font-size:19px">'+title+'</h3>'
