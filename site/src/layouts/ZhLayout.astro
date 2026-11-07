@@ -527,6 +527,26 @@ document.addEventListener('DOMContentLoaded',function(){var sec=document.getElem
     document.querySelectorAll('form input[type=tel]').forEach(function(e){if(!e.hasAttribute('enterkeyhint'))e.setAttribute('enterkeyhint','send')});
   }catch(e){}
 })();
+
+/* === GB/T longread: progressive reveal на клиенте (SSR остаётся для SEO) === */
+document.addEventListener('DOMContentLoaded',function(){try{
+  var h2s=document.querySelectorAll('.sec-alt .wrap > h2');
+  for(var k=0;k<h2s.length;k++){
+    var h=h2s[k];
+    if(/адаптер GB\/T/i.test(h.textContent)){
+      var wrap=h.parentNode;
+      if(wrap.querySelector('.gbt-js-det')) continue;
+      var det=document.createElement('details');det.className='gbt-js-det';
+      var sum=document.createElement('summary');
+      sum.textContent=h.textContent;sum.style.cssText='font-weight:700;cursor:pointer;font-size:1.35em;margin-bottom:10px';
+      det.appendChild(sum);
+      while(h.nextSibling) det.appendChild(wrap.removeChild(h.nextSibling));
+      wrap.removeChild(h);
+      wrap.appendChild(det);
+      break;
+    }
+  }
+}catch(e){}});
 </script>
 
 </body>
