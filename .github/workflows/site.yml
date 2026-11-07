@@ -4,61 +4,110 @@ on:
   schedule:
     - cron: "13 */3 * * *"
   push:
-    branches: [main]
-    paths: ["data/**", "build.py", "services.py", "artv3.py", "catalog.py", "style.css"]
+    branches: [main, astrowind-migration]
+    paths:
+      - "data/**"
+      - "build.py"
+      - "services.py"
+      - "artv3.py"
+      - "catalog.py"
+      - "style.css"
+      - "scripts/**"
+      - ".github/workflows/site.yml"
+      - "site/src/**"
+      - "site/public/**"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: site-deploy
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          path: main
+
+      - uses: actions/checkout@v4
+        with:
+          ref: astrowind-migration
+          path: astro
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: astro/site/package-lock.json
 
       - name: Install deps
-        run: pip install requests pillow
+        working-directory: astro/site
+        run: npm ci
 
-      - name: Collect news (optional LLM)
-        env:
-          GIGA_AUTH_KEY: ${{ secrets.GIGA_AUTH_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python scripts/collector.py || true
+      - name: Sync prod data (new articles -> Astro tree)
+        run: python3 main/scripts/astro_data_sync.py
 
-      - name: Commit collected news
+      - name: Build site (Astro)
+        working-directory: astro/site
+        run: npm run build
+
+      - name: Pagefind index
+        working-directory: astro/site
+        run: npx --yes pagefind --site dist
+
+      - name: QA suite (smoke — fail)
+        working-directory: astro/site
         run: |
-          git config user.email "actions@users.noreply.github.com"
-          git config user.name "zapashoda-news-bot"
-          git add data
-          git diff --cached --quiet || (git commit -m "news: auto-collected" && git push)
-
-      - name: R-09 winter SEO trigger
-        run: python scripts/weather_trigger.py
-      - name: Build site
-        run: python build.py _site
-      - name: QA suite (regress gate — fail)
-        run: python scripts/qa_suite.py _site
-      - name: Fact-check factory drafts (report — не блокирует деплой)
-        run: python scripts/qa_suite.py _site --drafts bridge/drafts/guides
-        continue-on-error: true
-      - name: Visual QA
-        run: python scripts/visual_qa.py _site
-      - name: B2B QR booklets (если seed есть)
-        run: pip install -q qrcode reportlab && python scripts/b2b_qr_booklets.py
+          test -f dist/index.html || { echo 'MISSING dist/index.html'; exit 1; }
+          test -f dist/sitemap.xml || { echo 'MISSING dist/sitemap.xml'; exit 1; }
+          test -f dist/robots.txt || { echo 'MISSING dist/robots.txt'; exit 1; }
+          test -f dist/models/index.html || { echo 'MISSING dist/models/index.html'; exit 1; }
+          test -f dist/models/zeekr-001-001-fr/index.html || { echo 'MISSING model detail'; exit 1; }
+          test -f dist/blog/index.html || { echo 'MISSING dist/blog/index.html'; exit 1; }
+          test -f dist/blog/gbt-stancii-2026/index.html || { echo 'MISSING blog detail'; exit 1; }
+          test -f dist/pain/index.html || { echo 'MISSING dist/pain/index.html'; exit 1; }
+          test -f dist/pain/12v-akb/index.html || { echo 'MISSING pain detail'; exit 1; }
+          test -f dist/safety/index.html || { echo 'MISSING dist/safety/index.html'; exit 1; }
+          test -f dist/llms.txt || { echo 'MISSING llms.txt'; exit 1; }
+          test -f dist/assets/og/b-gbt-stancii-2026.png || { echo 'MISSING og article image'; exit 1; }
+          test -f dist/assets/og/m-aito-m5-m7.png || { echo 'MISSING og model image'; exit 1; }
+          grep -q FAQPage dist/pain/12v-akb/index.html || { echo 'MISSING FAQPage JSON-LD on pain article'; exit 1; }
+          test -f dist/shop/digital/index.html || { echo 'MISSING dist/shop/digital/index.html'; exit 1; }
+          test -f dist/charging/index.html || { echo 'MISSING dist/charging/index.html'; exit 1; }
+          test -f dist/charging/stations.json || { echo 'MISSING stations.json'; exit 1; }
+          test -f dist/assets/leaflet/leaflet.js || { echo 'MISSING leaflet.js'; exit 1; }
+          grep -q "Зарядные станции рядом" dist/charging/index.html || { echo 'MISSING charging H1'; exit 1; }
+          test -f dist/quiz/index.html || { echo 'MISSING dist/quiz/index.html'; exit 1; }
+          test -f dist/b2b/index.html || { echo 'MISSING dist/b2b/index.html'; exit 1; }
+          test -f dist/b2b/paket-dileram.pdf || { echo 'MISSING paket-dileram.pdf'; exit 1; }
+          test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
+          test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
+          grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
+          NITEM=$(find dist/catalog -name 'index.html' | wc -l)
+          [ "$NITEM" -ge 27 ] || { echo "MISSING catalog items: only $NITEM"; exit 1; }
+          test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
+          test -f dist/cost/avatr-11-12-ofitsialno-ru.html || test -f dist/cost/avatr-11-12-ofitsialno-ru.html/index.html || { echo 'MISSING cost page'; exit 1; }
+          test -f dist/news/index.html || { echo 'MISSING dist/news/index.html'; exit 1; }
+          test -f dist/about/index.html || { echo 'MISSING dist/about/index.html'; exit 1; }
+          NMOD=$(find dist/models -maxdepth 2 -name 'index.html' | wc -l)
+          [ "$NMOD" -ge 146 ] || { echo "MISSING model pages: only $NMOD"; exit 1; }
+          NART=$(find dist/blog -maxdepth 2 -name 'index.html' | wc -l)
+          [ "$NART" -ge 20 ] || { echo "MISSING blog pages: only $NART"; exit 1; }
+          echo "SMOKE OK (models/blog/pain/safety/shop/map/quiz/b2b/rss/catalog/services/cost/news/about)"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
+          publish_dir: ./astro/site/dist
           cname: zapashoda-ev.ru
+
       - name: Ping IndexNow (Yandex/Bing)
-        run: python3 scripts/indexnow_ping.py
+        run: python3 main/scripts/indexnow_ping.py
 
   lighthouse:
     needs: build
@@ -69,7 +118,7 @@ jobs:
         with:
           urls: |
             https://zapashoda-ev.ru/
-            https://zapashoda-ev.ru/catalog/
-            https://zapashoda-ev.ru/models/zeekr-001-001-fr.html
+            https://zapashoda-ev.ru/models/
+            https://zapashoda-ev.ru/models/zeekr-001-001-fr/
             https://zapashoda-ev.ru/charging/
           uploadArtifacts: true
