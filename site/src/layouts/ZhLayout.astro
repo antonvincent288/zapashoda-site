@@ -492,6 +492,27 @@ section+section,section+footer,footer+section{border-top:1px solid var(--line)}
 }
 
 .nav-more .dd a.on{color:#0161EF;font-weight:700}
+
+/* === ЖИВЫЕ СТАТУСЫ / GLASS / ИНФОГРАФИКА (visual pass) === */
+.nav-more .dd a{text-decoration:none!important}
+.glass-panel{background:rgba(255,255,255,.62);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(1,97,239,.16);border-radius:20px;box-shadow:0 10px 36px rgba(1,97,239,.10);padding:clamp(18px,3vw,28px)}
+@media(max-width:800px){.glass-panel{background:rgba(255,255,255,.72)}}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;position:relative;vertical-align:middle;margin-right:8px}
+.live-dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(34,197,94,.55);animation:livePulse 2.2s ease-out infinite}
+@keyframes livePulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@media(prefers-reduced-motion:reduce){.live-dot::after{animation:none}}
+.cards .card{transition:transform .18s ease,box-shadow .18s ease}
+.cards .card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(1,97,239,.12)}
+.card svg.evicon{width:100%;max-height:64px;height:auto;margin-bottom:10px;display:block}
+.card .zone{opacity:0;transition:opacity .18s}
+.card:hover .zone{opacity:1}
+.gbt-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 22px}
+.gbt-flow .node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:96px;padding:12px 14px;border-radius:14px;background:rgba(1,97,239,.05);border:1px solid rgba(1,97,239,.14)}
+.gbt-flow .node svg{width:36px;height:36px}
+.gbt-flow .node b{font-size:14px;text-align:center}
+.gbt-flow .node span{font-size:12.5px;color:var(--txt-muted,#64748b);text-align:center}
+.gbt-flow .arrow{font-size:22px;color:#0161EF;font-weight:700}
+.stats b{font-variant-numeric:tabular-nums}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
@@ -564,6 +585,23 @@ document.addEventListener('DOMContentLoaded',function(){try{
     }
   }
 }catch(e){}});
+/* === СЧЁТЧИКИ: 0 -> значение при появлении в вьюпорте === */
+(function(){try{
+  var nums=document.querySelectorAll('[data-count]');
+  if(!nums.length||!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      io.unobserve(e.target);
+      var el=e.target, target=parseInt(el.getAttribute('data-count'),10)||0;
+      var t0=null;
+      function step(ts){ if(!t0) t0=ts; var p=Math.min((ts-t0)/900,1); p=1-Math.pow(1-p,3);
+        el.textContent=String(Math.round(target*p)); if(p<1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    });
+  },{threshold:.4});
+  nums.forEach(function(n){io.observe(n)});
+}catch(e){}})();
 </script>
 
 </body>
