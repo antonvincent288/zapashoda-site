@@ -1,0 +1,116 @@
+# Разведчик — сводки
+
+Новые находки по темам проекта: GitHub, HN, npm. Дубли вычерпываются intel/seen.json.
+
+## 2026-11-07
+
+- [satnaing/astro-paper](https://github.com/satnaing/astro-paper) (star 5183) — A minimal, accessible and SEO-friendly Astro blog theme.
+- [alxshelepenok/lumen](https://github.com/alxshelepenok/lumen) (star 2019) — A constantly evolving and thoughtful architecture for creating static blogs.
+- [jonasmerlin/astro-seo](https://github.com/jonasmerlin/astro-seo) (star 1424) — Makes it easy to add information that is relevant for SEO to your Astro app.
+- [Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill) (star 1288) — GEO Optimizer, the open-source engine behind GeoReady (geoready.dev): audit whether ChatGPT, Perplexity, Gemini & Google
+- [danielcgilibert/blog-template](https://github.com/danielcgilibert/blog-template) (star 1021) — 📚 Openblog is an elegant, simple, and user-friendly blog. Focused on accessibility, SEO and performance.
+- [jdevalk/specification.website](https://github.com/jdevalk/specification.website) (star 922) — Website specification — HTML, accessibility, security, SEO, agent-readiness. Platform-agnostic, sourced, MIT.
+- [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) (star 27054) — Universal SEO skill for Claude Code. 26 sub-skills + 19 sub-agents covering technical SEO, E-E-A-T, schema, GEO/AEO, age
+- [AnswerDotAI/llms-txt](https://github.com/AnswerDotAI/llms-txt) (star 2679) — The /llms.txt file, helping language models use your website
+- [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) (star 2530) — ✏️ LaRecipe lives inside your Laravel app. Your coding agents write the docs and update them with every change. People g
+- [younatics/MotionBook](https://github.com/younatics/MotionBook) (star 1472) — 📖 103 open-source iOS motion, transition and UI libraries, catalogued for people and agents (catalog.json + llms.txt); 5
+- [sceneview/sceneview](https://github.com/sceneview/sceneview) (star 1357) — 3D & AR SDK for Android (Jetpack Compose + Filament), Apple (SwiftUI + RealityKit), Web, Flutter and React Native. Opens
+- [YunYouJun/valaxy](https://github.com/YunYouJun/valaxy) (star 1127) — 🌌 为表达而生的静态博客框架 · A static blog framework for your voice. Vue 3 + Vite, AI-ready (Skills / MCP / llms.txt)
+- [onvoyage-ai/gtm-engineer-skills](https://github.com/onvoyage-ai/gtm-engineer-skills) (star 1356) — Claude Code skill for improving website AEO (AI Engine Optimization) and GEO (Generative Engine Optimization) scores — 1
+- [yaojingang/GEOInflow](https://github.com/yaojingang/GEOInflow) (star 812) — Self-hosted web and AI crawler analytics for Generative Engine Optimization (GEO). Track visitors, AI search referrals, 
+- [elmohq/elmo](https://github.com/elmohq/elmo) (star 573) — Open-source Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO) platform. Track how ChatGPT, Claud
+- [amplifying-ai/awesome-generative-engine-optimization](https://github.com/amplifying-ai/awesome-generative-engine-optimization) (star 539) — A curated guide to Generative Engine Optimization (GEO) resources: guides, tools & research to boost visibility in AI-po
+- [yaojingang/GEORank](https://github.com/yaojingang/GEORank) (star 533) — Open-source GEO ranking and generative engine optimization platform.
+- [ai-search-guru/getcito-worlds-first-open-source-aio-aeo-or-geo-tool](https://github.com/ai-search-guru/getcito-worlds-first-open-source-aio-aeo-or-geo-tool) (star 433) — GetCito the World's First Open Source AI Search Optimization (AIO) / Answer Engine Optimization (AEO) or Generative Engi
+- [agamm/pseo-next](https://github.com/agamm/pseo-next) (star 64) — Next 13 Programmatic SEO template
+- [savvity/local-business-builder](https://github.com/savvity/local-business-builder) (star 51) — Claude Code plugin: Build SEO-optimized local business websites with 80-100+ programmatic pages using Astro 5, Tailwind 
+- [codinginflow/nextjs-programmatic-seo](https://github.com/codinginflow/nextjs-programmatic-seo) (star 47) — 
+- [santifer/santifer-irepair](https://github.com/santifer/santifer-irepair) (star 42) — Astro-based programmatic SEO website that generated 15,500+ unique pages from an Airtable ERP, reaching 2,000 monthly cl
+- [agamm/next-programmatic-seo-tutorial](https://github.com/agamm/next-programmatic-seo-tutorial) (star 24) — A simplistic guide on how to use Next.js for a programmatic SEO project.
+- [monu564100/Complete-SEO-Master-System](https://github.com/monu564100/Complete-SEO-Master-System) (star 21) — Complete modern SEO system for building topical authority, backlinks, internal linking, programmatic SEO, AI SEO workflo
+- [telegram-mini-apps-dev/awesome-telegram-mini-apps](https://github.com/telegram-mini-apps-dev/awesome-telegram-mini-apps) (star 1405) — A curated list of awesome things related to Telegram Mini Apps (TMA).
+- [Telegram-Mini-Apps/tma.js](https://github.com/Telegram-Mini-Apps/tma.js) (star 1211) — Made from scratch TypeScript packages, examples and documentation you will surely need to start developing on Telegram M
+- [tbxark/mail2telegram](https://github.com/tbxark/mail2telegram) (star 910) — Receive email in Telegram: instant push notifications plus a Mini App inbox.
+- [revenkroz/telegram-web-app-bot-example](https://github.com/revenkroz/telegram-web-app-bot-example) (star 883) — Telegram Web App (Mini App) for Bot Example
+- [telegram-mini-apps-dev/TelegramUI](https://github.com/telegram-mini-apps-dev/TelegramUI) (star 872) — React components library for Telegram Mini Apps inspired by Telegram interface
+- [vkruglikov/react-telegram-web-app](https://github.com/vkruglikov/react-telegram-web-app) (star 612) — React components for Telegram Mini Apps
+- [api-platform/schema-generator](https://github.com/api-platform/schema-generator) (star 474) — PHP Model Scaffolding from Schema.org and other RDF vocabularies
+- [pedroborges/meta-tags](https://github.com/pedroborges/meta-tags) (star 45) — HTML meta tags generator for PHP. Supports Open Graph, Twitter Cards, and JSON Linked Data out of the box
+- [Kobee1203/schema-org-java](https://github.com/Kobee1203/schema-org-java) (star 33) — Java library for working with Schema.org data in JSON-LD format
+- [hardik-143/sanity-plugin-seofields](https://github.com/hardik-143/sanity-plugin-seofields) (star 19) — Complete SEO toolkit for Sanity Studio. live SEO Health Dashboard, AI-generated meta content, Open Graph, Twitter Cards,
+- [onlineinference/json-ld-schema-generator](https://github.com/onlineinference/json-ld-schema-generator) (star 16) — Generate verified schema.org JSON-LD for web pages with entity linking and CMS-ready output.
+- [dachcom-digital/pimcore-schema](https://github.com/dachcom-digital/pimcore-schema) (star 10) — JSON-LD structured Data Snippet Generator
+- [zrashwani/arachnid](https://github.com/zrashwani/arachnid) (star 254) — Crawl all unique internal links found on a given website, and extract SEO related information - supports javascript base
+- [devbret/mapping-website-internal-links](https://github.com/devbret/mapping-website-internal-links) (star 98) — Crawl a website’s internal pages to extract SEO, accessibility, performance and link-structure data, then visualize the 
+- [web-extractors/arachnid-seo-js](https://github.com/web-extractors/arachnid-seo-js) (star 18) — Web crawler for extracting internal site links info for SEO auditing & optimization purposes
+- [dragosroua/claude-content-skills](https://github.com/dragosroua/claude-content-skills) (star 16) — Production-ready skills for dynamic content management, AI-assisted SEO optimization, and internal / external links mana
+- [mihdan/mihdan-no-external-links](https://github.com/mihdan/mihdan-no-external-links) (star 15) — Convert external links into internal links, site wide or post/page specific. Add NoFollow, Click logging, and more
+- [johnbe4/getSeoSitemap](https://github.com/johnbe4/getSeoSitemap) (star 15) — PHP library to get the sitemap. It crawls a whole website checking all internal and external links plus a Search Engine 
+- [EVtivity/evtivity-csms](https://github.com/EVtivity/evtivity-csms) (star 34) — An OCPP 1.6 and 2.1 compliant Charging Station Management System for managing EV charging infrastructure. Handles real-t
+- [Wallace-Best/best](https://github.com/Wallace-Best/best) (star 30) —         <!DOCTYPE html>Wallace-Best <html lang="en-us"> <head>    <link rel="node" href="//a.wallace-bestcdn.com/1391808
+- [formidablae/EV_Route_Planner](https://github.com/formidablae/EV_Route_Planner) (star 27) — EV (Electical Vehicle) Route Planner - Calculates route with in-trip stops in charging stations for battery recharge bas
+- [flashg1/evSolarCharger](https://github.com/flashg1/evSolarCharger) (star 17) — Home Assistant Blueprint using OCPP and/or EV specific API to charge EV from surplus solar and weather forecast.
+- [John-Weeks-Dev/ev-charge-map-api](https://github.com/John-Weeks-Dev/ev-charge-map-api) (star 16) — EV Charge Map Api is the the backend/api for ev-charge-map. Made with Laravel
+- [robeertm/ev-charge-tracker](https://github.com/robeertm/ev-charge-tracker) (star 13) — Self-hosted EV charge tracker with vehicle API integration (Kia, Hyundai, Tesla, VW group, Renault, Polestar +more). Das
+- [StanGirard/seo-audits-toolkit](https://github.com/StanGirard/seo-audits-toolkit) (star 828) — SEO & Security Audit for Websites. Lighthouse & Security Headers crawler, Sitemap/Keywords/Images Extractor,  Summarizer
+- [4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz](https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz) (star 5) — 20 free SEO and AEO tools for your terminal plus a curated open-source SEO library: site audit, llms.txt generator and v
+- [nurkamol/seo-audit](https://github.com/nurkamol/seo-audit) (star 4) — Crawl a site's sitemap and check every page for the SEO, metadata and structured-data problems single-page graders miss.
+- [alfa546/Crawler](https://github.com/alfa546/Crawler) (star 4) — An enterprise-grade, open-source technical SEO crawler and live ranking platform. Built as a limitless, privacy-first al
+- [wobqqq/sitemap-audit](https://github.com/wobqqq/sitemap-audit) (star 3) — 🗺️ Cross-platform sitemap auditor: validates sitemaps against the protocol, checks every URL (status, redirects, soft 40
+- [TechSoup/content-audit-crawler](https://github.com/TechSoup/content-audit-crawler) (star 2) — AI-powered website content audit for nonprofits. Crawls your site via sitemap — or automatic BFS link discovery when no 
+- [nette/schema](https://github.com/nette/schema) (star 1011) — 📐 Validating data structures against a given Schema.
+- [dry-rb/dry-schema](https://github.com/dry-rb/dry-schema) (star 495) — Coercion and validation for data structures
+- [asmyshlyaev177/state-in-url](https://github.com/asmyshlyaev177/state-in-url) (star 419) — Store any user state in query parameters; imagine JSON in a browser URL, while keeping types and structure of data, e.g.
+- [spy16/pyschemes](https://github.com/spy16/pyschemes) (star 360) — PySchemes is a library for validating data structures in python
+- [ManojKumarPatnaik/Major-project-list](https://github.com/ManojKumarPatnaik/Major-project-list) (star 261) — A list of practical projects that anyone can solve in any programming language (See solutions). These projects are divid
+- [Aastha2104/Parkinson-Disease-Prediction](https://github.com/Aastha2104/Parkinson-Disease-Prediction) (star 197) — Introduction  Parkinson’s Disease is the second most prevalent neurodegenerative disorder after Alzheimer’s, affecting m
+- [Llms.txt](https://llmstxt.org/) (star 206) — 
+- [llms.txt directory](https://directory.llmstxt.cloud/) (star 106) — 
+- [Ask HN: Is the web for machines (/llm.txt) the one we wished we had as humans?](https://news.ycombinator.com/item?id=48410589) (star 36) — 
+- [Show HN: Llms.txt Generator – Turn websites into a text file to feed to any LLM](https://llmstxt.firecrawl.dev/) (star 28) — 
+- [Show HN: CommerceTXT – An open standard for AI shopping context (like llms.txt)](https://commercetxt.org/) (star 20) — 
+- [Local agent first AI search optimization tooling](https://github.com/Canonry/canonry) (star 6) — 
+- [The founder's guide to AI search engine optimization](https://superamped.com/posts/ai-search-engine-optimization-b2b-saas/) (star 4) — 
+- [Show HN: Free Today) eBook: AI Search Engine Optimization Guide](https://www.amazon.com/dp/B0F2TT1MHR) (star 3) — 
+- [AI Search Optimization](https://www.mbcrosier.com/posts/ai-search-optimization) (star 3) — 
+- [We archived the GEO Standard – AIVO now defines AI search optimization](https://geostandard.org) (star 1) — 
+- [AI Overviews now surface in ~25 % of Google searches](https://www.webfx.com/blog/seo/where-and-why-google-ai-overviews-appear-2-3m-keywords-study/) (star 1) — 
+- [Every local SEO playbook is built on proximity, AI overviews ignore it completly](https://webmatrices.com/post/every-local-seo-playbook-is-built-on-proximity-ai-overviews-ignore-it-completely) (star 1) — 
+- [Do Google's AI Overviews Change Your SaaS SEO Strategy?](https://www.kapwing.com/blog/how-does-the-search-generative-experience-sge-change-seo-and-content-marketing/) (star 1) — 
+- [Google's AI Overviews Are Taking Over – Is SEO Dead?](https://hasdata.com/blog/google-ai-overview-study) (star 2) — 
+- [Show HN: Hikoo – Track and optimize how AI search engines talk about your brand](https://www.tryhikoo.com/en/) (star 2) — 
+- [Intuitive Static Site CMS for SEO-optimized and privacy-focused websites](https://github.com/GetPublii/Publii) (star 1) — 
+- [A Complete, Dead-Simple Guide to SEO for Static Site Generators](https://buttercms.com/blog/a-complete-dead-simple-guide-to-seo-for-static-site-generators) (star 2) — 
+- [Show HN: Startup Kit – A Django React starter kit for building startups](https://djangoreactkit.com) (star 5) — 
+- [Some basic SEO fixes Pelican-based Static sites](https://blog.kmonsoor.com/pelican-how-to-make-seo-friendly/) (star 1) — 
+- [Show HN: Type Chart Calculator – Fast Pokemon type effectiveness lookup](https://www.typematchup.org) (star 2) — 
+- [Show HN: Aventos – An experiment in cheap AI SEO](https://www.aventos.dev/) (star 19) — 
+- [Show HN: Open Dataset of the Lebanese Law](https://huggingface.co/datasets/taktekhq/lebanese-legislation) (star 2) — 
+- [Show HN: I Built an AEO/Geo Website Audit Tool](https://freeaiwebsiteaudit.com/) (star 2) — 
+- [AEO/Geo for Developer Tools: Win in AI-Powered Search](https://draft.dev/learn/aeo-geo-for-dev-tools) (star 2) — 
+- [Ask HN: How does ChatGPT decide which websites to recommend?](https://news.ycombinator.com/item?id=46907123) (star 5) — 
+- [astro-seo-meta](https://www.npmjs.com/package/astro-seo-meta) — Astro seo provides a <Seo> component to update meta tags
+- [@lexingtonthemes/seo](https://www.npmjs.com/package/@lexingtonthemes/seo) — Astro SEO: meta, Open Graph, Twitter, JSON-LD, canonical, robots
+- [astro-seo](https://www.npmjs.com/package/astro-seo) — Makes it easy to add SEO relevant tags to your Astro app.
+- [astro-seo-schema](https://www.npmjs.com/package/astro-seo-schema) — Easily insert valid Schema.org JSON-LD in your Astro apps.
+- [astro-seo-audit](https://www.npmjs.com/package/astro-seo-audit) — Score Astro SEO after every build with whole-site and single-page audits, regression gates, an interactive HTML dashboar
+- [llms](https://www.npmjs.com/package/llms) — 
+- [llm-tools](https://www.npmjs.com/package/llm-tools) — tools for working with LLMs
+- [@cloudflare/codemode](https://www.npmjs.com/package/@cloudflare/codemode) — Code Mode: use LLMs to generate executable code that performs tool calls
+- [@scalar/openapi-to-markdown](https://www.npmjs.com/package/@scalar/openapi-to-markdown) — Create plain Markdown from OpenAPI documents (for LLMs)
+- [@rspress/plugin-llms](https://www.npmjs.com/package/@rspress/plugin-llms) — A plugin for rspress to generate llms.txt, llms-full.txt, md files to let llm understand your website.
+- [nuxt-schema-org](https://www.npmjs.com/package/nuxt-schema-org) — The quickest and easiest way to build Schema.org graphs for Nuxt.
+- [@tryghost/schema-org](https://www.npmjs.com/package/@tryghost/schema-org) — `npm install @tryghost/schema-org --save`
+- [@unhead/schema-org](https://www.npmjs.com/package/@unhead/schema-org) — Generate Schema.org JSON-LD with Google-focused TypeScript helpers
+- [dataset-schema-org-markup](https://www.npmjs.com/package/dataset-schema-org-markup) — [![npm version](https://badge.fury.io/js/dataset-schema-org-markup.svg)](https://badge.fury.io/js/dataset-schema-org-mar
+- [json-schema](https://www.npmjs.com/package/json-schema) — JSON Schema validation and specifications
+- [pagefind](https://www.npmjs.com/package/pagefind) — Implement search on any static website.
+- [@pagefind/linux-x64](https://www.npmjs.com/package/@pagefind/linux-x64) — The platform-specific binary for pagefind on linux/x64
+- [@pagefind/linux-arm64](https://www.npmjs.com/package/@pagefind/linux-arm64) — The platform-specific binary for pagefind on linux/arm64
+- [@pagefind/component-ui](https://www.npmjs.com/package/@pagefind/component-ui) — Modular web components for Pagefind search.
+- [@pagefind/darwin-x64](https://www.npmjs.com/package/@pagefind/darwin-x64) — The platform-specific binary for pagefind on darwin/x64
+- [next-sitemap](https://www.npmjs.com/package/next-sitemap) — Sitemap generator for next.js
+- [vite-plugin-sitemap](https://www.npmjs.com/package/vite-plugin-sitemap) — Sitemap generator plugin for Vite
+- [@docmd/plugin-sitemap](https://www.npmjs.com/package/@docmd/plugin-sitemap) — Sitemap generator plugin for docmd.
+- [hexo-generator-sitemap](https://www.npmjs.com/package/hexo-generator-sitemap) — Sitemap generator plugin for Hexo
+- [vite-ssg-sitemap](https://www.npmjs.com/package/vite-ssg-sitemap) — sitemap generator working with vite-ssg
