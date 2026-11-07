@@ -19,7 +19,7 @@ const deepStrip = (o: any) => { for (const k in o) { const v = o[k]; if (typeof 
 deepStrip(m as any);
 const SOLUTIONS: Record<string, string> = {
   'GB/T': 'Адаптер Type 2 → GB/T (SKU 1 premium / SKU 8 базовый) или кабель',
-  'EU': 'Штатные станции Type 2/CCS2 РФ — без адаптера',
+  'EU': 'Разъёмы такие же, как в РФ — переходники не нужны',
   'Type1/CCS1': 'Адаптер Type 1 → Type 2; CCS1-станции редки',
   'JP/CHAdeMO': 'CHAdeMO-станции; адаптер по запросу',
 };
@@ -149,12 +149,12 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
       <table class="spec" style="margin:28px 0">
-        {spec.ac && <tr><td>AC (переменный ток)</td><td>{spec.ac}</td></tr>}
-        {spec.dc && <tr><td>DC (быстрая зарядка)</td><td>{spec.dc}</td></tr>}
-        {spec.obc && <tr><td>Бортовой заряд</td><td>{spec.obc}</td></tr>}
-        {spec.dcpow && <tr><td>Мощность DC</td><td>{spec.dcpow}</td></tr>}
-        {spec.market && <tr><td>Рынок вывоза</td><td>{spec.market}</td></tr>}
-        <tr><td>Решение для РФ</td><td>{solutionFor(m.port)}</td></tr>
+        {spec.ac && <tr><td>Дома и в городе</td><td>{spec.ac}</td></tr>}
+        {spec.dc && <tr><td>На трассе (быстро)</td><td>{spec.dc}</td></tr>}
+        {spec.obc && <tr><td>Скорость дома</td><td>{spec.obc}</td></tr>}
+        {spec.dcpow && <tr><td>Быстрая заправка</td><td>{spec.dcpow}</td></tr>}
+        {spec.market && <tr><td>Откуда машина</td><td>{spec.market}</td></tr>}
+        <tr><td>Нужен ли адаптер</td><td>{solutionFor(m.port)}</td></tr>
       </table>
       <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
