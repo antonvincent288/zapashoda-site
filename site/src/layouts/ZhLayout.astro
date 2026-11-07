@@ -55,6 +55,7 @@ window.YM_ID=113935123;
 <header>
   <div class="wrap hwrap">
     <a class="logo" href="/" aria-label="Запас хода — на главную"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></b><span>Запас хода</span><span class="logo-ev" aria-hidden="true">EV</span></a>
+    <form class="hsearch" action="/search/" method="get" role="search"><input type="search" name="q" placeholder="Поиск по сайту…" aria-label="Поиск по сайту"></form>
     <nav id="nav">
       <a href="/models/" class={isOn("/models/") ? "on" : ""}>Модели</a>
       <span class="nav-more" tabindex="0" role="button" aria-label="Калькуляторы">Калькуляторы <span aria-hidden="true">▾</span>
@@ -74,9 +75,12 @@ window.YM_ID=113935123;
           <a href="/pain/" class={isOn("/pain/") ? "on" : ""}>Проблемы</a>
           <a href="/forum/" class={isOn("/forum/") ? "on" : ""}>Форум</a>
           <a href="/safety/" class={isOn("/safety/") ? "on" : ""}>Безопасность</a>
-          <a href="/search/" class={isOn("/search/") ? "on" : ""}>Поиск</a>
-          <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
+                    <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
+          <a href="/vin/" class={isOn("/vin/") ? "on" : ""}>VIN-справочник</a>
+          <a href="/baza-znaniy/" class={isOn("/baza-znaniy/") ? "on" : ""}>База знаний</a>
+          <a href="/news/" class={isOn("/news/") ? "on" : ""}>Новости</a>
           <a href="/services/" class={isOn("/services/") ? "on" : ""}>Услуги</a>
+          <a href="/services/#sto-partners" class>Автосервисы-партнёры</a>
         </span>
       </span>
       <a href="/b2b/" class={"nav-b2b" + (isOn("/b2b/") ? " on" : "")}>Дилерам</a>
@@ -94,7 +98,6 @@ window.YM_ID=113935123;
   <a href="/pain/">Проблемы</a>
   <a href="/safety/">Безопасность</a>
   <div class="mnav-group">Инструменты</div>
-  <a href="/quiz/">Всё о твоей машине</a>
   <a href="/charging/">Карта ЗУ</a>
   <a href="/calculator/">Калькуляторы</a>
   <a href="/vin/">VIN-справочник</a>
@@ -277,12 +280,15 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .share{display:flex;gap:10px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
 .share a,.share span{font-size:13px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--txt-muted);cursor:pointer}
 .share a:hover{border-color:var(--gold);color:var(--head)}
-footer{background:var(--ink);color:rgba(229,236,246,.7);padding:56px 0 28px;font-size:14px}
+footer{background:var(--bg);color:rgba(229,236,246,.66);padding:56px 0 28px;font-size:14px}
+.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:36px;align-items:start}
+@media (max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr}}
 .fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
 footer h4{color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
 footer a{display:block;color:rgba(229,236,246,.7);text-decoration:none;padding:4px 0}
 footer a:hover{color:var(--gold)}
-.copy{border-top:1px solid rgba(229,236,246,.14);padding-top:20px;font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.copy{border-top:1px solid rgba(229,236,246,.14);padding-top:20px;font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:34px;padding-top:20px}
 #cat-chips .chip{cursor:pointer}
 #city-chips .chip,#cat-chips .chip{user-select:none}
 .menu-btn{display:none;flex-direction:column;justify-content:center;gap:4px;width:40px;height:38px;
