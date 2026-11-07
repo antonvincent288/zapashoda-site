@@ -1,1 +1,14 @@
-const CACHE="zsh-v3";self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(e=>e.addAll(["/","/assets/og/default.png"]),self.skipWaiting()))}),self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(e=>Promise.all(e.filter(e=>e!==CACHE).map(e=>caches.delete(e)))),self.clients.claim())}),self.addEventListener("fetch",e=>{const t=new URL(e.request.url);"navigate"!==e.request.mode?t.origin!==location.origin||!t.pathname.startsWith("/assets/")&&"/charging/stations.json"!==t.pathname||e.respondWith(caches.match(e.request).then(t=>t||fetch(e.request).then(t=>{const s=t.clone();return caches.open(CACHE).then(t=>t.put(e.request,s)),t}))):e.respondWith(fetch(e.request).then(t=>{const s=t.clone();return caches.open(CACHE).then(t=>t.put(e.request,s)),t}).catch(()=>caches.match(e.request)))});
+const CACHE='zsh-v3';
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/','/assets/og/default.png']),self.skipWaiting()));});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim());});
+self.addEventListener('fetch',e=>{
+  const url=new URL(e.request.url);
+  if(e.request.mode==='navigate'){
+    e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return r;}).catch(()=>caches.match(e.request)));
+    return;
+  }
+  if(url.origin===location.origin&&(url.pathname.startsWith('/assets/')||url.pathname==='/charging/stations.json')){
+    e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return r;})));
+    return;
+  }
+});
