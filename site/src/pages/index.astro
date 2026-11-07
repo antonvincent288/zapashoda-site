@@ -31,7 +31,7 @@ const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name:
 const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Запас хода', url: 'https://zapashoda-ev.ru', inLanguage: 'ru-RU', description: 'Подбор зарядки и адаптеров для электромобилей в России' };
 const tools = (await import('../data/legacy/tools.json')).default;
 const calc = tools.find((x) => x.slug === 'calculator') || {};
-const calcHtml = String(calc.body_html || '').replace(/^<h1[^>]*>[\s\S]*?<\/h1>/, '');
+const calcHtml = String(calc.body_html || '').replace(/<h1[^>]*>[\s\S]*?<\/h1>/g, '');
 const calcScript = String(calc.body_script || '');
 ---
 <ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description="Подберите зарядку и адаптеры для вашей модели в 3 шага. 145 моделей, 59 разборов, карта 2073 станций." jsonld={orgLd}>
