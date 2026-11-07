@@ -72,9 +72,21 @@ const cutFrom = (html: string, start: number, tag: string): [string, string] => 
   }
   return [html, html];
 };
+const cutMid = (html: string, start: number, tag: string): [string, string, string] => {
+  const rx = new RegExp('<' + tag + '[\\s>]|</' + tag + '>', 'g');
+  rx.lastIndex = start;
+  let d = 0, mm;
+  while ((mm = rx.exec(html))) {
+    if (mm[0][1] === '/') d--; else d++;
+    if (d === 0) return [html.slice(0, start), html.slice(start, rx.lastIndex), html.slice(rx.lastIndex)];
+  }
+  return [html, html, html];
+};
+
 const isGBT = String(m.port || '').includes('GB/T');
 // для машин с Type 2/CCS2 держатель GB/T не продаём — вместо него честный EU-аксессуар
 const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="9900"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
+const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="690"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
 const bodyClean = (() => {
   let h = String(m.body_html || '');
   h = h.replace(/^<main[^>]*>/, '').replace(/<\/main>\s*$/, '');
@@ -104,12 +116,64 @@ const bodyClean = (() => {
     h = h.replace('>28 190 ₽<', '>36 590 ₽<');
     h = h.replace('"price": 26190, "was": 28190, "items": [19, 21, 12, 17]', '"price": 34590, "was": 36590, "items": [19, 21, 26, 17]');
     // карточка держателя GB/T → карточка удлинителя Type 2
+    // персональный подбор: без готового комплекта, топ-3 = кабель → портативка → смазка
+    const kitIdx = h.indexOf('data-cat="Комплекты"');
+    if (kitIdx >= 0) {
+      const ks = h.lastIndexOf('<div class="', kitIdx);
+      const [, postK] = cutFrom(h, ks, 'div');
+      h = postK;
+    }
+    const bi = h.indexOf('"id": "b-eu"');
+    if (bi >= 0) {
+      const bs = h.lastIndexOf('{', bi);
+      const be = h.indexOf('},', bi) + 2;
+      h = h.slice(0, bs) + h.slice(be);
+    }
+    const cabIdx = h.indexOf('/catalog/kabel-type2-type2-5m-22kw.html');
+    if (cabIdx >= 0) {
+      const cs2 = h.lastIndexOf('<div class="relative', cabIdx);
+      const [pre3, seg, post3] = cutMid(h, cs2, 'div');
+      h = pre3 + post3;
+      const porIdx = h.indexOf('/catalog/portativnaya-zaryadka-type2-7kw.html');
+      if (porIdx >= 0) {
+        const ps3 = h.lastIndexOf('<div class="relative', porIdx);
+        h = h.slice(0, ps3) + seg + h.slice(ps3);
+      }
+    }
+    const stIdx = h.indexOf('/catalog/nastennaya-stanciya-type2-7kw.html');
+    if (stIdx >= 0) {
+      const ss3 = h.lastIndexOf('<div class="relative', stIdx);
+      h = h.slice(0, ss3) + OIL_CARD + h.slice(ss3);
+    }
     const ai = h.indexOf('/catalog/derzhatel-organayzer-kabelya.html');
     if (ai >= 0) {
       const cs = h.lastIndexOf('<div class="relative', ai);
       if (cs >= 0) {
         const [pre, post] = cutFrom(h, cs, 'div');
         h = pre + ULG_CARD + post;
+      }
+    }
+  }
+  // блок «Проблемы и решения»: только релевантные болеи, горизонтальный скролл на мобильных
+  if (!isGBT) {
+    const KEEP = ['UN-01', 'ZM-01', 'UN-04', 'UN-05', 'UN-06'];
+    const grids = [...h.matchAll(/<div class="prob-grid">/g)].map(m2 => m2.index);
+    if (grids.length) {
+      const gi = grids[grids.length - 1];
+      const rx = /<div\b|<\/div>/g;
+      rx.lastIndex = gi;
+      let d2 = 0, mm2, gEnd = -1;
+      while ((mm2 = rx.exec(h))) { if (mm2[0][1] === '/') d2--; else d2++; if (d2 === 0) { gEnd = rx.lastIndex; break; } }
+      if (gEnd > 0) {
+        const grid = h.slice(gi, gEnd);
+        const inner = grid.slice('<div class="prob-grid">'.length, grid.length - '</div>'.length);
+        const pis = [...inner.matchAll(/<div class="pt">/g)].map(x => x.index);
+        const cards = pis.map((p, j) => inner.slice(p, j + 1 < pis.length ? pis[j + 1] : inner.length));
+        const kept = cards.filter(c => { const mm3 = c.match(/pain-id">([A-Z0-9]+)/); return mm3 && KEEP.includes(mm3[1]); });
+        if (kept.length && kept.length < cards.length) {
+          const gridHtml = '<div class="prob-grid prob-grid-pains">' + kept.join('') + '</div>';
+          h = h.slice(0, gi) + gridHtml + h.slice(gEnd);
+        }
       }
     }
   }
@@ -135,6 +199,10 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .cout .k{font-size:12px;color:var(--txt-muted);margin-bottom:3px}
     .cout .v{font-size:18px;font-weight:700;color:var(--head)}
     .ccp-on{background:var(--gold,#C9A24B)!important;border-color:var(--gold,#C9A24B)!important;color:#fff!important}
+    @media (max-width:640px){
+      .prob-grid-pains{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+      .prob-grid-pains .pt{flex:0 0 84%;scroll-snap-align:start}
+    }
   </style>
   <section class="sec">
     <div class="wrap" style="max-width:980px">
