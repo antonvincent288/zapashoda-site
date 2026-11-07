@@ -24,12 +24,12 @@ jobs:
 
       - name: Dig GitHub + HN + npm (dedup into intel/)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCOUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 - <<'PYEOF'
           import json, os, urllib.request, urllib.parse, time
           from datetime import datetime, timezone
-          GH = os.environ.get("GH_TOKEN", "")
+          GH = os.environ.get("SCOUT_TOKEN", "")
           seen = set()
           if os.path.exists("intel/seen.json"):
               seen = set(json.load(open("intel/seen.json")))
