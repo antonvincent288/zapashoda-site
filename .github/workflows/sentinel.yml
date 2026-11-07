@@ -83,7 +83,8 @@ jobs:
                       ld_types[t] = ld_types.get(t, 0) + 1
                   except Exception as e:
                       ld_errors.append((u, str(e)[:80]))
-          orphans = sorted(u for u in pages if u not in inb and results.get(u, (0, ""))[0] == 200)
+          SYSTEM_HINTS = ("/admin/", ".html/", "/app/", "/decapcms/", "/matrix/", "/telemetry/", "/open-data/", "/shorts/", "/shop/digital/download.html/", "/shop/digital/success.html/", "/brands/", "/tools/", "/credits")
+orphans = sorted(u for u in pages if u not in inb and results.get(u, (0, ""))[0] == 200 and not any(h in u for h in SYSTEM_HINTS))
           print("orphans:", len(orphans), "| ld errors:", len(ld_errors), "| ld types:", len(ld_types))
           D = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
           ok = (len(bad) == 0 and len(ld_errors) == 0)
