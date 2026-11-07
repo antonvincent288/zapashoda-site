@@ -3,12 +3,199 @@ import ZhLayout from '../../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../../components/LegacyStyles.astro';
 import src from '../../../data/legacy/tools.json';
 const d = src.find((x) => x.slug === 'calculator');
+const H = d.body_html;
+// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Из него убираем старый тяжёлый калькулятор (lcard) и старый блок «Цена простоя» — вместо них простой режим с кнопками.
+const iHow = H.indexOf('<h2>Как считается</h2>');
+const iFaq = H.indexOf('<h2>Частые вопросы</h2>');
+const iDt = H.indexOf('<div class="gbox" id="dt-calc"');
+const segHow = iHow >= 0 && iFaq > iHow ? H.slice(iHow, iFaq) : '';
+const segFaq = iFaq >= 0 && iDt > iFaq ? H.slice(iFaq, iDt) : '';
+const iLd = H.indexOf('<script type="application/ld+json"');
+const segLd = iLd >= 0 ? H.slice(iLd) : '';
+const iFaqBox = H.indexOf('<div class="calc-faq"');
+const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '';
 ---
-<ZhLayout title={d.title + ' — Калькуляторы Запас хода'} description={d.desc}>
+
+<ZhLayout title="Сколько стоит зарядить электромобиль — калькулятор «Запас хода»" description="Простой калькулятор стоимости зарядки: выберите машину, пробег и где заряжаетесь — покажем цену за 100 км, за месяц и экономию против бензина. Два клика, без ввода цифр.">
   <section class="sec"><div class="wrap">
     <LegacyStyles />
     <div class="crumbs"><a href="/">Главная</a> / <a href="/calculators/">Калькуляторы</a> / Стоимость зарядки</div>
-    <div class="article" set:html={d.body_html} />
-    {d.body_script && <script is:inline set:html={d.body_script} />}
+
+    <style is:global>
+      .wz{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0}
+      .wz-q{font-weight:800;font-size:16.5px;margin:18px 0 10px}
+      .wz-q:first-child{margin-top:0}
+      .wz-q .qnum{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:999px;background:#0161EF;color:#fff;font-size:13px;margin-right:8px}
+      .wz-q small{display:block;font-weight:400;color:var(--txt-muted);font-size:13px;margin-top:2px;margin-left:34px}
+      .wz-chips{display:flex;flex-wrap:wrap;gap:10px}
+      .wz-chip{padding:12px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--txt);font-size:15.5px;font-weight:600;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;user-select:none;transition:all .15s;font-family:inherit}
+      .wz-chip.on{background:#0161EF;border-color:#0161EF;color:#fff}
+      .wz-chip:hover:not(.on){border-color:#0161EF;color:#0161EF}
+      .wz-out{margin-top:20px;border:1.5px solid var(--line);border-radius:14px;padding:18px;background:var(--bg)}
+      .wz-big{font-size:clamp(34px,6.5vw,46px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
+      .wz-big small{font-size:15px;font-weight:600;color:var(--txt-muted)}
+      .wz-rows{margin-top:12px;display:grid;gap:8px;font-size:15px}
+      .wz-rows b{font-variant-numeric:tabular-nums}
+      .wz-delta{margin-top:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15.5px}
+      .wz-delta.good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);color:#15803d}
+      .wz-delta.bad{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);color:#b91c1c}
+      .wz-note{color:var(--txt-muted);font-size:12.5px;margin-top:14px;line-height:1.5}
+      .wz-cta{display:inline-block;margin-top:16px;background:#0161EF;color:#fff;font-weight:700;border-radius:12px;padding:14px 22px;min-height:48px;text-decoration:none;font-size:16px}
+      details.pro{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
+      details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
+      details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
+    </style>
+
+    <h1>Сколько стоит зарядить электромобиль: калькулятор</h1>
+    <p class="lede">Ответьте на три вопроса кнопками — калькулятор сам посчитает цену за 100 км, за месяц и сколько вы экономите против бензина. Цифры с клавиатуры вводить не нужно.</p>
+
+    <div class="wz" id="wzc">
+      <div class="wz-q"><span class="qnum">1</span>Ваша машина <small>не нашли свою — просто оставьте «Другая или не знаю»</small></div>
+      <div class="wz-chips" id="wzc-models"></div>
+      <div class="wz-q"><span class="qnum">2</span>Сколько ездите в месяц <small>если не знаете — выберите «Средне»</small></div>
+      <div class="wz-chips" id="wzc-km"></div>
+      <div class="wz-q"><span class="qnum">3</span>Где заряжаетесь <small>если по-разному — выберите «По-разному»</small></div>
+      <div class="wz-chips" id="wzc-scene"></div>
+      <div class="wz-out" id="wzc-out">
+        <div class="wz-big"><span id="wzc-per100">~120 ₽</span> <small>за 100 км</small></div>
+        <div class="wz-rows">
+          <span>В месяц при вашем пробеге: <b id="wzc-month">~1 440 ₽</b></span>
+          <span>Полная зарядка батареи дома: <b id="wzc-full">~210 ₽</b></span>
+        </div>
+        <div class="wz-delta good" id="wzc-delta">Бензин на те же километры съел бы ~2 400 ₽ в месяц — экономия ~960 ₽ (11 500 ₽/год)</div>
+        <a class="wz-cta" href="/quiz/" onclick="window.ym&&ym('113935123','reachGoal','cost_wizard_cta')">Подобрать зарядку под себя →</a>
+        <div class="wz-note">Цифры — ориентир: зимой расход выше примерно на 10–25%. Тарифы — средние по рынку на конец 2026 года (дом ночью 3–4 ₽, днём 6–9 ₽, городская станция 10–20 ₽, быстрая на трассе 18–30 ₽ за кВт·ч). Точный тариф вашей сети смотрите в приложении оператора, точный расход — в характеристиках вашей модели.</div>
+      </div>
+    </div>
+
+    <details class="pro" id="pro-dt">
+      <summary>Похоже, батарея села: сколько стоит простой? <span class="hint">для бизнеса и дальних поездок</span></summary>
+      <div style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:20px;margin-top:12px">
+        <h3 style="color:#d4af37;margin:0 0 6px">Цена простоя: сколько стоит застрять без заряда</h3>
+        <p style="color:#c9c9cf;font-size:14px;margin:0">Нажимайте кнопки — счётчик покажет, сколько денег сгорает, пока машина стоит. Оценка на ваших цифрах, не обещание услуг.</p>
+        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько стоит час вашей работы</div>
+        <div class="wz-chips" id="dt-hour-chips"></div>
+        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько часов простоя (полный день)</div>
+        <div class="wz-chips" id="dt-min-chips"></div>
+        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Пришлось вызывать эвакуатор?</div>
+        <div class="wz-chips" id="dt-tow-chips"></div>
+        <div style="border:1px solid #d4af37;border-radius:10px;padding:14px;text-align:center;margin-top:16px">
+          <div style="font-size:13px;color:#8e8e93">УБЫТОК ЗА ЭТОТ ПРОСТОЙ</div>
+          <div id="dt-loss" style="font-size:34px;font-weight:800;color:#ff453a">0 ₽</div>
+          <div id="dt-note" style="font-size:13px;color:#c9c9cf"></div>
+        </div>
+        <p style="text-align:center;margin:14px 0"><a href="/catalog/" class="wz-cta" style="background:#d4af37;color:#1d1d1f;font-weight:700" onclick="window.ym&&ym('113935123','reachGoal','downtime_calc_click')">Собрать комплект автономности</a></p>
+        <p class="wz-note" style="color:#8e8e93">Что делает комплект: запасной кабель и переходник снимают риск «станция не принимает», а расчёты маршрута — риск застрять в «зоне смерти». См. <a href="/routes/" style="color:#d4af37">Имперский маршрут</a>.</p>
+      </div>
+    </details>
+
+    <div class="article" set:html={segHow + segFaq} />
+    {segFaqBox}
+
+    <script is:inline set:html={segLd} />
+
+    <script is:inline>
+    (function(){
+      function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
+      function el(id){return document.getElementById(id)}
+      // ——— ВИЗАРД СТОИМОСТИ ———
+      var MODELS=[
+        {n:'Zeekr 001 / 001 FR',cap:100,cons:16.5},
+        {n:'Zeekr 007 / 007GT',cap:100,cons:15.5},
+        {n:'Zeekr 7X / X',cap:93,cons:16},
+        {n:'Zeekr 009',cap:116,cons:18},
+        {n:'Li Auto L6–L9',cap:43,cons:20},
+        {n:'Voyah Free',cap:88,cons:18},
+        {n:'Voyah Dream',cap:108,cons:20},
+        {n:'BYD Atto 3 / Yuan Plus',cap:60,cons:14.5},
+        {n:'BYD Seal',cap:82,cons:15.5},
+        {n:'BYD Song Plus',cap:80,cons:16},
+        {n:'Avatr 11 / 12',cap:116,cons:17.5},
+        {n:'Deepal S07',cap:79,cons:16.5},
+        {n:'Geely Geometry C',cap:70,cons:15},
+        {n:'Hongqi E-HS9',cap:99,cons:19},
+        {n:'MG4',cap:61,cons:14.5},
+        {n:'Xpeng P7',cap:86,cons:16},
+        {n:'Tesla Model 3 / Y',cap:60,cons:14},
+        {n:'Другая машина / не знаю',cap:60,cons:16}
+      ];
+      var KM=[
+        {n:'Мало: до 500 км',v:400},
+        {n:'Средне: ~1 200 км',v:1200},
+        {n:'Много: ~2 500 км',v:2500},
+        {n:'Очень много: ~5 000 км',v:5000}
+      ];
+      var SCENES=[
+        {n:'🏠 Дома из розетки, ночью',v:3.5},
+        {n:'🏠 Дома днём',v:7.5},
+        {n:'🏪 Станции в городе',v:15},
+        {n:'🛣 Быстрые на трассе',v:24},
+        {n:'🔀 По-разному',v:11.1}
+      ];
+      var FUEL_PER100=8*65; // 8 л × 65 ₽ — средний бензин для сравнения
+      var state={mi:17,km:1,sc:0};
+      function chips(boxId,list,key){
+        var box=el(boxId);box.innerHTML='';
+        list.forEach(function(o,i){
+          var b=document.createElement('button');b.type='button';b.className='wz-chip';b.textContent=o.n;
+          b.addEventListener('click',function(){state[key]=i;paint();});
+          box.appendChild(b);
+        });
+      }
+      function cur(list,key){return list[state[key]]}
+      function upd(){
+        var m=cur(MODELS,'mi'),k=cur(KM,'km'),s=cur(SCENES,'sc');
+        el('wzc-per100').textContent='~'+fmt(m.cons*s.v)+' ₽';
+        el('wzc-month').textContent='~'+fmt(m.cons*s.v*k.v/100)+' ₽';
+        el('wzc-full').textContent='~'+fmt(m.cap*s.v)+' ₽';
+        var evMonth=m.cons*s.v*k.v/100;
+        var gasMonth=FUEL_PER100*k.v/100;
+        var diff=gasMonth-evMonth;
+        var dv=el('wzc-delta');
+        if(diff>0){
+          dv.className='wz-delta good';
+          dv.textContent='Бензин на те же километры съел бы ~'+fmt(gasMonth)+' ₽ в месяц — экономия ~'+fmt(diff)+' ₽ ('+fmt(diff*12)+' ₽/год)';
+        }else{
+          dv.className='wz-delta bad';
+          dv.textContent='При зарядке только на трассе бензин с учётом тарифа выходит примерно столько же или дешевле — '+fmt(Math.abs(diff))+' ₽/мес разницы. Домашняя зарядка возвращает преимущество.';
+        }
+        // подсветка выбранных чипов
+        [['wzc-models',MODELS,'mi'],['wzc-km',KM,'km'],['wzc-scene',SCENES,'sc']].forEach(function(t){
+          Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===state[t[2]])});
+        });
+      }
+      function paint(){upd()}
+      chips('wzc-models',MODELS,'mi');
+      chips('wzc-km',KM,'km');
+      chips('wzc-scene',SCENES,'sc');
+      upd();
+
+      // ——— ЦЕНА ПРОСТОЯ (упрощённая) ———
+      var HOUR=[{n:'300 ₽/ч',v:300},{n:'600 ₽/ч',v:600},{n:'900 ₽/ч',v:900},{n:'1 500 ₽/ч',v:1500}];
+      var LOSS=[{n:'2 часа',v:2},{n:'4 часа',v:4},{n:'8 часов',v:8}];
+      var TOW=[{n:'Нет, доехал сам',v:0},{n:'Да, эвакуатор 8 000 ₽',v:8000}];
+      var dst={h:2,loss:1,tow:0};
+      function dchips(boxId,list,key){
+        var box=el(boxId);box.innerHTML='';
+        list.forEach(function(o,i){
+          var b=document.createElement('button');b.type='button';b.className='wz-chip';b.style.cssText='background:#2a2a2c;color:#f5f5f7;border-color:#444';
+          b.textContent=o.n;
+          b.addEventListener('click',function(){dst[key]=i;dupd();});
+          box.appendChild(b);
+        });
+      }
+      function dupd(){
+        el('dt-loss').textContent=fmt(HOUR[dst.h].v*LOSS[dst.loss].v+TOW[dst.tow].v)+' ₽';
+        el('dt-note').textContent=LOSS[dst.loss].n+' без машины, час работы '+HOUR[dst.h].n+(TOW[dst.tow].v?', плюс эвакуатор':'');
+        [['dt-hour-chips',HOUR,'h'],['dt-min-chips',LOSS,'loss'],['dt-tow-chips',TOW,'tow']].forEach(function(t){
+          Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===dst[t[2]])});
+        });
+      }
+      dchips('dt-hour-chips',HOUR,'h');
+      dchips('dt-min-chips',LOSS,'loss');
+      dchips('dt-tow-chips',TOW,'tow');
+      dupd();
+    })();
+    </script>
   </div></section>
 </ZhLayout>
