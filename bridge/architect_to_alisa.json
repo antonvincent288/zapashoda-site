@@ -1206,6 +1206,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0070",
+      "ts": "2026-11-07T20:11:30+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: vybor-tarifa-dlya-domashnoy-zaryadki.json (slug уже существует; QA-маркер вне факт-базы: 'facts_pack')",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
