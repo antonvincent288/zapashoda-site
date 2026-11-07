@@ -4,7 +4,7 @@ import LegacyStyles from '../../../components/LegacyStyles.astro';
 import src from '../../../data/legacy/tools.json';
 const d = src.find((x) => x.slug === 'calculator');
 const H = d.body_html;
-// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Старый тяжёлый калькулятор (lcard) и старый блок «Цена простоя» заменены простым режимом.
+// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Старый тяжёлый калькулятор (lcard) и блок «Цена простоя» заменены простым шаговым режимом.
 const iHow = H.indexOf('<h2>Как считается</h2>');
 const iFaq = H.indexOf('<h2>Частые вопросы</h2>');
 const iDt = H.indexOf('<div class="gbox" id="dt-calc"');
@@ -105,27 +105,6 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
       <p style="font-size:13px;color:var(--txt-muted)">Формула та же: расход × цена × пробег. Тариф и расход — в характеристиках машины и в приложении оператора.</p>
     </details>
 
-    <details class="pro" id="pro-dt">
-      <summary>Машина всё-таки застряла: сколько стоит простой? <span class="hint">для бизнеса и дальних поездок</span></summary>
-      <div style="background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:20px;margin-top:12px">
-        <h3 style="color:#d4af37;margin:0 0 6px">Цена простоя</h3>
-        <p style="color:#c9c9cf;font-size:14px;margin:0">Нажимайте кнопки — покажем, сколько денег сгорает, пока машина стоит.</p>
-        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько стоит час вашей работы</div>
-        <div class="wz-grid" id="dt-hour-chips"></div>
-        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Сколько часов простоя</div>
-        <div class="wz-grid" id="dt-min-chips"></div>
-        <div style="font-weight:700;margin:14px 0 8px;color:#f5f5f7">Эвакуатор?</div>
-        <div class="wz-grid" id="dt-tow-chips"></div>
-        <div style="border:1px solid #d4af37;border-radius:10px;padding:14px;text-align:center;margin-top:16px">
-          <div style="font-size:13px;color:#8e8e93">УБЫТОК ЗА ЭТОТ ПРОСТОЙ</div>
-          <div id="dt-loss" style="font-size:40px;font-weight:800;color:#ff453a">0 ₽</div>
-          <div id="dt-note" style="font-size:13px;color:#c9c9cf"></div>
-        </div>
-        <p style="text-align:center;margin:14px 0"><a href="/catalog/" class="wz-cta" style="background:#d4af37;color:#1d1d1f;font-weight:800" onclick="window.ym&&ym('113935123','reachGoal','downtime_calc_click')">Собрать комплект автономности</a></p>
-        <p style="color:#8e8e93;font-size:13px">Комплект автономности: запасной кабель и переходник снимают риск «станция не принимает», а расчёты маршрута — риск застрять в «зоне смерти». См. <a href="/routes/" style="color:#d4af37">Имперский маршрут</a>.</p>
-      </div>
-    </details>
-
     <div class="article" set:html={segHow + segFaq} />
     {segFaqBox}
 
@@ -167,7 +146,7 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
         [1,2,3,4].forEach(function(i){el('wzc-s'+i).hidden=(i!==step)});
         dots(step);
       }
-      function make(boxId,list,key,e){
+      function make(boxId,list,key){
         var box=el(boxId);box.innerHTML='';
         list.forEach(function(o){
           var b=document.createElement('button');b.type='button';b.className='wz-btn';
@@ -217,33 +196,6 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
       }
       [pc,pk,pr].forEach(function(x){x.addEventListener('input',pcalc);x.addEventListener('change',pcalc)});
       pcalc();
-
-      // ——— ЦЕНА ПРОСТОЯ ———
-      var HOUR=[{n:'300 ₽',h:'за час',v:300},{n:'600 ₽',h:'за час',v:600},{n:'900 ₽',h:'за час',v:900},{n:'1 500 ₽',h:'за час',v:1500}];
-      var LOSS=[{n:'2 часа',h:'без машины',v:2},{n:'4 часа',h:'без машины',v:4},{n:'8 часов',h:'без машины',v:8}];
-      var TOW=[{n:'Нет',h:'доехал сам',v:0},{n:'Да',h:'эвакуатор ~8 000 ₽',v:8000}];
-      var dst={h:1,loss:1,tow:0};
-      function dmake(boxId,list,key){
-        var box=el(boxId);box.innerHTML='';
-        list.forEach(function(o){
-          var b=document.createElement('button');b.type='button';b.className='wz-btn';
-          b.style.cssText='background:#2a2a2c;color:#f5f5f7;border-color:#444;min-height:64px';
-          b.innerHTML='<span class="t">'+o.n+'</span>'+(o.h?'<span class="h" style="color:#8e8e93">'+o.h+'</span>':'');
-          b.addEventListener('click',function(){dst[key]=list.indexOf(o);dupd();});
-          box.appendChild(b);
-        });
-      }
-      function dupd(){
-        el('dt-loss').textContent=fmt(HOUR[dst.h].v*LOSS[dst.loss].v+TOW[dst.tow].v)+' ₽';
-        el('dt-note').textContent=LOSS[dst.loss].n+' без машины × час '+HOUR[dst.h].n+(TOW[dst.tow].v?', плюс эвакуатор':'');
-        [['dt-hour-chips',HOUR,'h'],['dt-min-chips',LOSS,'loss'],['dt-tow-chips',TOW,'tow']].forEach(function(t){
-          Array.prototype.forEach.call(el(t[0]).children,function(b,i){b.classList.toggle('on',i===dst[t[2]])});
-        });
-      }
-      dmake('dt-hour-chips',HOUR,'h');
-      dmake('dt-min-chips',LOSS,'loss');
-      dmake('dt-tow-chips',TOW,'tow');
-      dupd();
     })();
     </script>
   </div></section>
