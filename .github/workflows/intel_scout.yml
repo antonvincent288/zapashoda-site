@@ -90,3 +90,11 @@ jobs:
           json.dump(sorted(seen), open("intel/seen.json", "w"))
           print("digest written")
           PYEOF
+
+      - name: Commit report
+        run: |
+          git config user.name "bot-scout"
+          git config user.email "bot@zapashoda-ev.ru"
+          git add intel/
+          git commit -m "bot: scout digest [skip ci]" || echo "no changes"
+          git push
