@@ -60,11 +60,11 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
     (function(){
       var table=null;
       var ROWMAP={
-        'Type 2 AC':'🏠 Дома и в городе',
-        'CCS2 DC':'🚀 Быстрые станции (трасса)',
-        'Розетка 220 В':'🔌 Обычная розетка'
+        'Type 2 AC':'Дома и в городе',
+        'CCS2 DC':'Быстрые станции (трасса)',
+        'Розетка 220 В':'Обычная розетка'
       };
-      var LBL={ok:'✅ Прямо',ad:'🔌 Через адаптер',warn:'⚠️ Особый случай',no:'⛔ Не подходит'};
+      var LBL={ok:'Прямо',ad:'Через адаптер',warn:'Особый случай',no:'Не подходит'};
       var POP=['/models/zeekr-001-001-fr','/models/zeekr-007-007gt','/models/zeekr-7x-x-mix','/models/li-auto-l6-l7-l8-l9-2022-2025','/models/voyah-free-evr-gibrid','/models/avatr-11-12-ofitsialno-ru','/models/byd-song-plus-ev','/models/byd-seal','/models/deepal-s07-ru-ofitsialnaya','/models/geely-geometry-c-a'];
       function build(){
         var box=document.getElementById('wzm-models');
@@ -87,7 +87,7 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
           if(first===null) first=b;
         });
         var oth=document.createElement('button');
-        oth.type='button';oth.className='wz-btn';oth.textContent='🔍 Другая машина';
+        oth.type='button';oth.className='wz-btn';oth.textContent='Другая машина (полный список)';
         oth.addEventListener('click',function(){
           var det=document.getElementById('pro-matrix');
           if(det) det.open=true;
