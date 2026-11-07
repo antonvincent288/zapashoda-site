@@ -89,9 +89,9 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
       <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
       <div class="meta">
-        <span>⚡ {m.port || '—'}</span>
-        {spec.obc && <span>🏠 {spec.obc}</span>}
-        {spec.dcpow && <span>🚗 DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
+        <span>{m.port || '—'}</span>
+        {spec.obc && <span>{spec.obc}</span>}
+        {spec.dcpow && <span>DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
         <span>Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
