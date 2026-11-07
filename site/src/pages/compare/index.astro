@@ -47,10 +47,15 @@ const d = src.find((x) => x.slug === 'compare');
         'Hongqi E-HS9','Leapmotor C10 / C11 / C01 / B10 / A05'
       ];
       var pickA=-1,pickB=-1;
+      function getFormBox(){
+        var sel=document.getElementById('c-a');
+        if(!sel) return null;
+        var box=sel.closest('.of-grid');
+        return box ? (box.parentElement || box) : null;
+      }
       function showFullList(){
-        var lcards=document.querySelectorAll('.article .lcard');
-        if(lcards.length>1){
-          var form=lcards[0];
+        var form=getFormBox();
+        if(form){
           if(form.style.display==='none'){
             form.style.display='';
             form.scrollIntoView({behavior:'smooth'});
@@ -106,8 +111,8 @@ const d = src.find((x) => x.slug === 'compare');
             showFullList();
           });
           box.appendChild(tb);
-          var lcards=document.querySelectorAll('.article .lcard');
-          if(lcards.length>1) lcards[0].style.display='none';
+          var form=getFormBox();
+          if(form) form.style.display='none';
           paint();
         }else if(tries<25){
           setTimeout(function(){waitReady(tries+1)},80);
