@@ -1,6 +1,6 @@
 {
- "sitemap_count": 224,
- "sitemap_ok": 224,
+ "sitemap_count": 375,
+ "sitemap_ok": 375,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -20,7 +20,7 @@
   "/forum/": 200,
   "/charging/": 200,
   "/routes/": 200,
-  "/search.html": 404,
+  "/search.html": 200,
   "/pains.html": 200,
   "/about.html": 200,
   "/ev-services.html": 200,
@@ -29,48 +29,43 @@
   "/telemetry/": 200
  },
  "models_cards": 145,
- "app_scripts": 5,
- "catalog_products": 0,
- "link_targets": 204,
- "links_ok": 204,
+ "app_scripts": 9,
+ "app_brands": 78,
+ "app_models": 145,
+ "app_prods": 26,
+ "app_zeekr_models": 5,
+ "app_sku_missing": 0,
+ "catalog_products": 26,
+ "link_targets": 232,
+ "links_ok": 232,
  "links_bad": [],
- "assets_count": 29,
- "assets_ok": 29,
+ "assets_count": 47,
+ "assets_ok": 47,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "07.11 16:18",
+ "checked_at_msk": "07.11 17:59",
  "failures": [
-  {
-   "where": "page /search.html",
-   "what": "HTTP 404",
-   "crit": true
-  },
   {
    "where": "/",
    "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
    "crit": true
   },
   {
-   "where": "/models/",
-   "what": "нет фильтра брендов",
-   "crit": false
-  },
-  {
-   "where": "/models/",
-   "what": "фильтр не читает ?brand=",
-   "crit": false
-  },
-  {
    "where": "/app/",
-   "what": "D не парсится: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+   "what": "phrHtml: обрубок-кавычка вернулся",
    "crit": true
   },
   {
-   "where": "/catalog/",
-   "what": "товаров в OF_PRODUCTS: 0",
-   "crit": true
+   "where": "/search.html",
+   "what": "страница поиска игнорирует ?q= (известный баг)",
+   "crit": false
+  },
+  {
+   "where": "/pain/",
+   "what": "лента проблем: HTTP 404",
+   "crit": false
   }
  ],
- "failures_count": 6,
- "crit_count": 4
+ "failures_count": 4,
+ "crit_count": 2
 }
