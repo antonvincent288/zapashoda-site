@@ -4334,7 +4334,7 @@ def main():
 
     CSS = CSS + EXTRA_GRID_CSS + EX_CSS + UTIL_CSS + EXTRA_AIR_CSS + EXTRA_FIX_CSS + EXTRA_STICKY_CSS + EXTRA_V4_CSS + EXTRA_CALC_CSS + EXTRA_MATRIX_CSS + EXTRA_MAP_CSS + EXTRA_STO_CSS
     
-CSS += """
+    CSS += """
 
 /* ZS-MQA2: мобильные фиксы Алисы (2026-11-06) */
 @media(max-width:700px){
@@ -4347,7 +4347,7 @@ CSS += """
   .spec td{white-space:normal}
 }
 """
-with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
+    with open(os.path.join(outdir,'style.css'),'w',encoding='utf-8') as f: f.write(CSS)
     favicon_files(outdir)
     # leaflet
     lf = os.path.join(repo_root,'static','leaflet')
