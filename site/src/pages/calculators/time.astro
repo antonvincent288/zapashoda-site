@@ -1,0 +1,127 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import LegacyStyles from '../../components/LegacyStyles.astro';
+---
+<ZhLayout title="Калькулятор времени зарядки электромобиля — от розетки до быстрой станции" description="Сколько времени займёт зарядка от текущего уровня до целевого: розетка 16А, стена 7 кВт, трёхфазка 11 кВт, быстрая станция — с учётом потерь и бортового заряда.">
+  <section class="sec"><div class="wrap">
+    <LegacyStyles />
+    <div class="crumbs"><a href="/">Главная</a> / <a href="/calculators/">Калькуляторы</a> / Время зарядки</div>
+    <h1>Сколько заряжать по времени</h1>
+    <p class="lead" style="margin-top:12px">Задайте ёмкость батареи, мощность зарядки и уровень — калькулятор покажет время подъёма с учётом потерь. Плюс честная поправка: чем ближе к 100%, тем медленнее.</p>
+    <style is:global>
+      .t-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:24px}
+      .t-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+      .t-field{flex:1;min-width:180px}
+      .t-field label{display:block;font-size:13px;font-weight:600;color:var(--txt-muted);margin-bottom:6px}
+      .t-field input{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px;font-size:15px;font-variant-numeric:tabular-nums;min-height:44px}
+      .t-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+      .t-chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;cursor:pointer;min-height:36px;display:inline-flex;align-items:center;user-select:none}
+      .t-chip.on{background:#0161EF;border-color:#0161EF;color:#fff}
+      .t-res{margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+      .t-res .big{font-size:clamp(30px,5vw,40px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.1}
+      .t-res .sub{color:var(--txt-muted);font-size:14.5px;margin-top:8px}
+      .t-res .grid{display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;font-size:14px}
+      .t-res .grid b{font-variant-numeric:tabular-nums}
+      details.t-how{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+      details.t-how summary{font-weight:700;cursor:pointer;font-size:15px}
+      .t-faq{margin-top:36px}
+      .t-faq details{border-bottom:1px solid var(--line);padding:12px 0}
+      .t-faq summary{font-weight:700;cursor:pointer;font-size:16.5px}
+      .t-faq p{margin-top:8px}
+      @media(max-width:600px){.t-card{padding:18px}}
+    </style>
+    <div class="t-card">
+      <div class="t-row">
+        <div class="t-field">
+          <label for="tc-cap">Ёмкость батареи, кВт·ч</label>
+          <input id="tc-cap" type="number" inputmode="decimal" enterkeyhint="next" min="8" max="200" step="1" value="60">
+          <div class="t-chips" id="tc-cap-chips">
+            <span class="t-chip" data-cap="43">43 · гибрид</span>
+            <span class="t-chip" data-cap="60">60 · компакт</span>
+            <span class="t-chip on" data-cap="75">75</span>
+            <span class="t-chip" data-cap="88">88</span>
+            <span class="t-chip" data-cap="100">100</span>
+            <span class="t-chip" data-cap="116">116</span>
+          </div>
+        </div>
+        <div class="t-field">
+          <label for="tc-kw">Мощность зарядки, кВт</label>
+          <input id="tc-kw" type="number" inputmode="decimal" enterkeyhint="next" min="1.5" max="250" step="0.1" value="11">
+          <div class="t-chips" id="tc-kw-chips">
+            <span class="t-chip" data-kw="3.3">3.3 · розетка 16А</span>
+            <span class="t-chip" data-kw="7">7 · стена</span>
+            <span class="t-chip on" data-kw="11">11 · трёхфазка</span>
+            <span class="t-chip" data-kw="22">22</span>
+            <span class="t-chip" data-kw="60">60 · DC</span>
+            <span class="t-chip" data-kw="120">120 · DC</span>
+          </div>
+        </div>
+        <div class="t-field">
+          <label for="tc-from">Текущий уровень, %</label>
+          <input id="tc-from" type="number" inputmode="numeric" enterkeyhint="next" min="0" max="99" step="1" value="20">
+        </div>
+        <div class="t-field">
+          <label for="tc-to">Целевой уровень, %</label>
+          <input id="tc-to" type="number" inputmode="numeric" enterkeyhint="done" min="1" max="100" step="1" value="80">
+        </div>
+      </div>
+      <div class="t-res">
+        <div class="big" id="tc-out">—</div>
+        <div class="sub" id="tc-sub">Заполните поля выше — пересчёт мгновенный.</div>
+        <div class="grid">
+          <span>Энергия до цели: <b id="tc-kwh">—</b> кВт·ч</span>
+          <span>С учётом потерь: <b id="tc-kwh2">—</b> кВт·ч</span>
+          <span>Эффективность: <b>90%</b> на AC</span>
+        </div>
+      </div>
+      <details class="t-how">
+        <summary>Как считаем</summary>
+        <p>Время = энергия до цели ÷ эффективная мощность. Энергия = (целевой − текущий) ÷ 100 × ёмкость. На переменном токе (до 22 кВт) закладываем потери 10% (КПД 90%): часть энергии уходит в тепло бортового заряда. На постоянном токе (DC) КПД выше — 95%.</p>
+      </details>
+    </div>
+    <div class="t-faq">
+      <h2 style="margin-bottom:6px">Частые вопросы о времени зарядки</h2>
+      <details open><summary>Почему последние 20% заряжаются так долго?</summary><p>После ~80% бортовой заряд снижает ток, чтобы не перегревать батарею и продлить её ресурс. Это нормально: планируйте быструю сессию «до 80%», а 100% добирайте на ночёвке.</p></details>
+      <details><summary>Сколько даёт обычная розетка в квартире?</summary><p>Классическая розетка 16А на 230В — до 3.3 кВт, то есть 25–35 км запаса за час для большинства моделей. Полная зарядка 60 кВт·ч «с нуля» — около 20 часов. Именно поэтому ночной сценарий — базовый.</p></details>
+      <details><summary>Почему время зависит и от машины, и от станции?</summary><p>Скорость ограничивает узкое место цепочки: если бортовой заряд машины 11 кВт, станция 22 кВт не поможет. Соответствие вашей модели — в <a href="/models/">каталоге</a>: там же бортовой заряд каждой комплектации.</p></details>
+      <details><summary>Насколько точен расчёт на быстрой станции?</summary><p>На DC время зависит от кривой батареи: заявленная пиковая мощность держится не всю сессию. Калькулятор даёт верхнюю оценку при 95% КПД; реальное время до 80% обычно на 10–20% дольше, а после 80% — заметно дольше.</p></details>
+    </div>
+  </div></section>
+</ZhLayout>
+<script is:inline>
+(function(){
+  var cap=document.getElementById('tc-cap'), kw=document.getElementById('tc-kw'),
+      from=document.getElementById('tc-from'), to=document.getElementById('tc-to'),
+      out=document.getElementById('tc-out'), sub=document.getElementById('tc-sub'),
+      kwh=document.getElementById('tc-kwh'), kwh2=document.getElementById('tc-kwh2');
+  function bindChips(id, input, attr){
+    var box=document.getElementById(id); if(!box) return;
+    box.addEventListener('click', function(e){
+      var t=e.target.closest('.t-chip'); if(!t) return;
+      box.querySelectorAll('.t-chip').forEach(function(c){c.classList.remove('on')});
+      t.classList.add('on'); input.value=t.getAttribute(attr); calc();
+    });
+  }
+  function fmt(h){
+    if(!isFinite(h)||h<=0) return '—';
+    var hh=Math.floor(h), mm=Math.round((h-hh)*60);
+    if(mm===60){hh++;mm=0}
+    return hh>0? (hh+' ч '+(mm>0? mm+' мин':'')).trim() : (mm+' мин');
+  }
+  function calc(){
+    var c=parseFloat(cap.value), p=parseFloat(kw.value), a=parseFloat(from.value), b=parseFloat(to.value);
+    if(!(c>0&&p>0&&b>a)) { out.textContent='—'; sub.textContent='Проверьте значения: целевой уровень должен быть выше текущего.'; kwh.textContent=kwh2.textContent='—'; return; }
+    var eff = p>22 ? 0.95 : 0.9;
+    var e=(b-a)/100*c;
+    var h=e/(p*eff);
+    out.textContent='~ '+fmt(h);
+    sub.textContent='Подъём с '+Math.round(a)+' до '+Math.round(b)+'% на '+p+' кВт'+(p>22?' (DC, КПД 95%)':' (AC, КПД 90%)');
+    kwh.textContent=Math.round(e);
+    kwh2.textContent=Math.round(e/eff);
+  }
+  [cap,kw,from,to].forEach(function(el){el.addEventListener('input',calc);el.addEventListener('change',calc)});
+  bindChips('tc-cap-chips', cap, 'data-cap');
+  bindChips('tc-kw-chips', kw, 'data-kw');
+  calc();
+})();
+</script>
