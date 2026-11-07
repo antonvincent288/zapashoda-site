@@ -29,7 +29,7 @@
   "/telemetry/": 200
  },
  "models_cards": 145,
- "app_scripts": 4,
+ "app_scripts": 5,
  "catalog_products": 0,
  "link_targets": 204,
  "links_ok": 204,
@@ -38,7 +38,7 @@
  "assets_ok": 29,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "07.11 12:11",
+ "checked_at_msk": "07.11 14:02",
  "failures": [
   {
    "where": "page /search.html",
