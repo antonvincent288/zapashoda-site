@@ -248,7 +248,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .fbar input{flex:1;min-width:220px;padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font-size:15px}
 .fchip{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:var(--txt-muted)}
 .fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.artgrid{display:grid;grid-template-columns:230px minmax(0,780px);gap:56px}
+.artgrid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:56px}
 .toc{position:sticky;top:96px;align-self:start;font-size:14px}
 .toc div{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--txt-muted);margin-bottom:12px}
 .toc a{display:block;padding:6px 0;color:var(--txt-muted);text-decoration:none;border-left:2px solid transparent;padding-left:12px}
@@ -455,7 +455,7 @@ li{max-width:75ch}
 /* === ЕДИНАЯ ТИПОГРАФИЧЕСКАЯ СЕТКА (стопы) === */
 :root{--measure:70ch;--measure-wide:75ch}
 p,li{max-width:var(--measure)}
-p.lead,.hero p,.article p{max-width:var(--measure)}
+p.lead,.hero p,.article p{max-width:100%}
 .sec h2{max-width:var(--measure);font-size:clamp(22px,3vw,28px);line-height:1.25}
 .hero h1{max-width:min(820px,94%)}
 .card p,.mcard p{max-width:var(--measure)}
@@ -469,7 +469,7 @@ details summary{max-width:var(--measure)}
 
 /* === ЖЁСТКИЙ ПИКСЕЛЬНЫЙ СТОП: 760px единая кромка === */
 :root{--measure:760px;--measure-wide:760px}
-.hero h1,.hero p,.sec h2,.sec-alt h2,.lede,p.lead,.card p,.mcard p,.article p,details summary{max-width:760px!important}
+.hero h1,.hero p,.sec h2,.sec-alt h2,.lede,p.lead,.card p,.mcard p,.article p,details summary{max-width:100%!important}
 .wrap[style*="max-width"]{max-width:808px!important}
 @media(max-width:800px){.hero h1,.hero p,.sec h2,.sec-alt h2,.lede,p.lead,.card p,.mcard p,.article p{max-width:100%!important}}
 

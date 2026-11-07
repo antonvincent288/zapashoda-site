@@ -7,4 +7,20 @@ import d from '../../data/legacy/vin_index.json';
     <div class="crumbs"><a href="/">Главная</a> / VIN-справочник</div>
     <div class="article" set:html={d.body_html} />
   </div></section>
+
+<style is:global>
+.kicker{color:#5aa9ff}
+.tw table{width:100%;border-collapse:collapse;font-size:14.5px;margin:18px 0}
+.tw th{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
+.tw td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--txt);vertical-align:top;line-height:1.55}
+.tw tr:hover td{background:rgba(255,255,255,.025)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:10px 0}
+.mcard h3{font-size:16.5px;margin:0 0 8px;color:var(--head);line-height:1.35}
+.mcard p{margin:6px 0;color:var(--txt-muted);font-size:14px;line-height:1.6}
+.mcard b{color:var(--txt)}
+.lcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:18px 0}
+.note{color:var(--txt-muted);font-size:14px;line-height:1.6;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:16px 0}
+</style>
 </ZhLayout>
