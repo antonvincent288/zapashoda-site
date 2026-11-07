@@ -169,7 +169,7 @@ const bodyClean = (() => {
         const inner = grid.slice('<div class="prob-grid">'.length, grid.length - '</div>'.length);
         const pis = [...inner.matchAll(/<div class="pt">/g)].map(x => x.index);
         const cards = pis.map((p, j) => inner.slice(p, j + 1 < pis.length ? pis[j + 1] : inner.length));
-        const kept = cards.filter(c => { const mm3 = c.match(/pain-id">([A-Z0-9]+)/); return mm3 && KEEP.includes(mm3[1]); });
+        const kept = cards.filter(c => { const mm3 = c.match(/pain-id">([A-Z0-9-]+)/); return mm3 && KEEP.includes(mm3[1]); });
         if (kept.length && kept.length < cards.length) {
           const gridHtml = '<div class="prob-grid prob-grid-pains">' + kept.join('') + '</div>';
           h = h.slice(0, gi) + gridHtml + h.slice(gEnd);
