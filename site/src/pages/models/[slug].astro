@@ -28,7 +28,7 @@ const solutionFor = (port: string) => {
   return 'Уточните разъём по VIN — подберём комплект';
 };
 // парсинг таблицы спецификации из prod-контента
-const body = String(m.body_html || '');
+const body = String(m.body_html || '').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u2B00-\u2BFF]+/gu, '').replace(/\s{2,}/g, ' ');
 const spec: Record<string, string> = {};
 const rowRe = /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
 const strip = (s: string) => String(s || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
