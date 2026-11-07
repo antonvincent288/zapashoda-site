@@ -643,6 +643,21 @@ document.addEventListener('DOMContentLoaded',function(){try{
     els.forEach(function(el){io.observe(el)});
   }
 }catch(e){}})();
+
+/* === ФИЛЬТР МОДЕЛЕЙ НА ГЛАВНОЙ === */
+(function(){try{
+  var wrap=document.querySelector('[data-mfilter]'); var mc=document.querySelector('[data-mcards]');
+  if(!wrap||!mc) return;
+  wrap.addEventListener('click',function(e){
+    var b=e.target.closest('.fchip'); if(!b) return;
+    wrap.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on')});
+    b.classList.add('on');
+    var brand=b.getAttribute('data-brand');
+    mc.querySelectorAll('.card').forEach(function(c){
+      c.style.display = (brand==='Все'||c.getAttribute('data-brand')===brand) ? '' : 'none';
+    });
+  });
+}catch(e){}})();
 </script>
 
 </body>
