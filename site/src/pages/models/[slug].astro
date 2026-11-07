@@ -120,8 +120,8 @@ const bodyClean = (() => {
     const kitIdx = h.indexOf('data-cat="Комплекты"');
     if (kitIdx >= 0) {
       const ks = h.lastIndexOf('<div class="', kitIdx);
-      const [, postK] = cutFrom(h, ks, 'div');
-      h = postK;
+      const [preK, postK] = cutFrom(h, ks, 'div');
+      h = preK + postK;
     }
     const bi = h.indexOf('"id": "b-eu"');
     if (bi >= 0) {
