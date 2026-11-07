@@ -99,7 +99,7 @@ const ALL = (mlData.models || []).filter((m) => m.slug);
 /* === HERO v2: фото-фон, крупный текст, анимация (только главная) === */
 .zh-hero-big{position:relative;background:#060a0e;padding:132px 0 64px;overflow:hidden}
 .zh-hero-big::before{content:'';position:absolute;inset:0;background-image:linear-gradient(100deg,rgba(6,9,12,.92) 0%,rgba(6,9,12,.78) 42%,rgba(6,9,12,.38) 100%),url('/assets/img/hero-ev.webp');background-size:cover;background-position:center 30%;opacity:.92;z-index:0}
-.zh-hero-big .wrap{position:relative;z-index:1}
+.zh-hero-big .wrap{position:relative;z-index:1;display:block}
 .zh-hero-big h1{font-size:clamp(64px,14vw,144px)!important;line-height:.98;letter-spacing:-.03em;max-width:min(1200px,96%)!important;text-wrap:balance;margin-bottom:.06em!important}
 .zh-hero-big h1 span{color:#fff;white-space:nowrap}
 .zh-hero-big p{color:rgba(233,239,246,.85);font-size:clamp(14px,1.35vw,16px)!important;line-height:1.15;max-width:min(640px,96%)!important;margin-top:0!important;margin-bottom:0;text-shadow:0 1px 14px rgba(0,0,0,.45)}
@@ -123,6 +123,7 @@ const ALL = (mlData.models || []).filter((m) => m.slug);
 }
 @keyframes zhSheen{from{background-position:120% 0}to{background-position:-20% 0}}
 @media (max-width:640px){.zh-hero-big{padding:92px 0 44px}.zh-hero-big h1 span{white-space:normal}.zh-stats{gap:26px;margin-top:38px}.zh-stats>div+div{border-left:0;padding-left:0}.zh-stats b{font-size:26px}.zh-stats span{font-size:12px;max-width:140px}}
+
 @media (max-width:760px){
   .zh-hero-big{padding:92px 0 44px}
   .zh-hero-big::before{background-image:linear-gradient(180deg,rgba(6,9,12,.9) 0%,rgba(6,9,12,.84) 55%,rgba(6,9,12,.55) 100%),url('/assets/img/hero-ev.webp');background-position:center 22%}
