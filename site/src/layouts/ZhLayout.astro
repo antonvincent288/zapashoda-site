@@ -459,6 +459,12 @@ p.lead,.hero p,.article p{max-width:var(--measure)}
 .hero h1{font-size:clamp(26px,4.2vw,38px)}
 .faqbox .wrap{max-width:var(--measure)}
 details summary{max-width:var(--measure)}
+
+/* === ЖЁСТКИЙ ПИКСЕЛЬНЫЙ СТОП: 760px единая кромка === */
+:root{--measure:760px;--measure-wide:760px}
+.hero h1,.hero p,.sec h2,.sec-alt h2,.lede,p.lead,.card p,.mcard p,.article p,details summary{max-width:760px!important}
+.wrap[style*="max-width"]{max-width:808px!important}
+@media(max-width:800px){.hero h1,.hero p,.sec h2,.sec-alt h2,.lede,p.lead,.card p,.mcard p,.article p{max-width:100%!important}}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
