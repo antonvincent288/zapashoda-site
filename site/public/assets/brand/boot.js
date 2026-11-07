@@ -35,17 +35,17 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!model&&!pain)return;
   var main=document.querySelector('main.container');if(!main)return;
   var box=document.createElement('div');box.className='gbox';box.id='zs-vin-land';
-  box.style.cssText='background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:18px 20px;margin:18px 0;border-left:4px solid #D4AF37';
+  box.style.cssText='background:#1d1d1f;color:#f5f5f7;border-radius:14px;padding:18px 20px;margin:18px 0;border-left:4px solid #0161EF';
   var title=model?('Под вашу '+(model[0].replace(/\b\w/g,function(c){return c.toUpperCase();}))+(pain?': '+pain[2]:''))
                 :('Под ваш запрос: '+pain[2]);
   var links='';
-  if(model)links+='<a href="/models/'+model[1]+'" style="color:#D4AF37;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
-  if(pain)links+='<a href="'+pain[1]+'" style="color:#D4AF37;text-decoration:underline">'+pain[2]+'</a>';
+  if(model)links+='<a href="/models/'+model[1]+'" style="color:#0161EF;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
+  if(pain)links+='<a href="'+pain[1]+'" style="color:#0161EF;text-decoration:underline">'+pain[2]+'</a>';
   box.innerHTML='<div style="font-size:12px;letter-spacing:.08em;color:#8e8e93">ПОД ВАШ ЗАПРОС · ЗАПАС ХОДА</div>'
    +'<h3 style="color:#f5f5f7;margin:6px 0 8px;font-size:19px">'+title+'</h3>'
    +links
    +'<div style="margin-top:10px;font-size:13px;color:#c9c9cf">Цена ошибки при смене разъёма — недешёвая. Проверьте свою модель и сценарий за 2 минуты.</div>'
-   +'<a href="/calculator/" style="display:inline-block;margin-top:10px;background:#D4AF37;color:#1d1d1f;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none">Проверить мой сценарий</a>';
+   +'<a href="/calculator/" style="display:inline-block;margin-top:10px;background:#0161EF;color:#fff;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none">Проверить мой сценарий</a>';
   main.insertBefore(box,main.firstChild);
   if(window.ym){try{ym('113935123','reachGoal','vin_landing_shown');}catch(e){}}
   sessionStorage.setItem('zsvl','1');
@@ -66,10 +66,10 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
   var t=tips[0];
   var toast=document.createElement('div');toast.id='zs-ai-toast';
-  toast.style.cssText='position:fixed;left:14px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #D4AF37;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
+  toast.style.cssText='position:fixed;left:14px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #0161EF;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
   toast.innerHTML='<div style="font-size:11px;letter-spacing:.08em;color:#8e8e93">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
    +'<div style="margin:6px 0">'+t[0]+'</div>'
-   +'<a href="'+t[1]+'" style="display:inline-block;background:#D4AF37;color:#1d1d1f;font-weight:700;padding:6px 12px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a> '
+   +'<a href="'+t[1]+'" style="display:inline-block;background:#0161EF;color:#fff;font-weight:700;padding:6px 12px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a> '
    +'<button id="zs-ai-x" style="margin-left:8px;background:none;border:none;color:#8e8e93;cursor:pointer">Скрыть</button>';
   document.body.appendChild(toast);
   if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
