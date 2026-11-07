@@ -56,16 +56,21 @@ window.YM_ID=113935123;
   <div class="wrap hwrap">
     <a class="logo" href="/" aria-label="Запас хода — на главную"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></b><span>Запас хода</span><span class="logo-ev" aria-hidden="true">EV</span></a>
     <nav id="nav">
-      {navGroups.map((gr, gi) => (
-        <>
-          {gi > 0 && <span class="nav-div" aria-hidden="true"></span>}
-          {gr.g && <span class="nav-g">{gr.g}</span>}
-          {gr.items.map(([href, label]) => (
-            <a href={href} class={isOn(href) ? "on" : ""}>{label}</a>
-          ))}
-        </>
-      ))}
-      <span class="nav-div" aria-hidden="true"></span>
+      <a href="/models/" class={isOn("/models/") ? "on" : ""}>Модели</a>
+      <a href="/calculator/" class={isOn("/calculator/") ? "on" : ""}>Калькулятор</a>
+      <a href="/quiz/" class={isOn("/quiz/") ? "on" : ""}>Подбор</a>
+      <a href="/charging/" class={isOn("/charging/") ? "on" : ""}>Карта ЗУ</a>
+      <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
+      <span class="nav-more" tabindex="0" role="button" aria-label="Ещё разделы">Ещё <span aria-hidden="true">▾</span>
+        <span class="dd">
+          <a href="/pain/" class={isOn("/pain/") ? "on" : ""}>Проблемы</a>
+          <a href="/forum/" class={isOn("/forum/") ? "on" : ""}>Форум</a>
+          <a href="/safety/" class={isOn("/safety/") ? "on" : ""}>Безопасность</a>
+          <a href="/search/" class={isOn("/search/") ? "on" : ""}>Поиск</a>
+          <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Товары</a>
+          <a href="/services/" class={isOn("/services/") ? "on" : ""}>Услуги</a>
+        </span>
+      </span>
       <a href="/b2b/" class={"nav-b2b" + (isOn("/b2b/") ? " on" : "")}>Дилерам</a>
     </nav>
     <button class="icon-btn" id="themebtn" title="Сменить тему" aria-label="Сменить тему">
@@ -427,6 +432,18 @@ header{box-shadow:0 1px 0 rgba(15,23,42,.03)}
 .article a{word-break:break-word}
 p{max-width:75ch}
 li{max-width:75ch}
+
+/* === NAV 2.1: dropdown «Ещё» + чипсы/кнопки === */
+.nav-more{position:relative;cursor:pointer;padding:7px 11px;border-radius:8px;font-size:14px;font-weight:600;user-select:none;white-space:nowrap;color:var(--txt);transition:color .15s}
+.nav-more:hover,.nav-more:focus-visible{color:#0161EF;outline:none}
+.nav-more .dd{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.14);padding:6px;min-width:190px;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;z-index:300}
+.nav-more:hover .dd,.nav-more:focus-within .dd{opacity:1;visibility:visible;transform:none}
+.nav-more .dd a{display:block;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:600;color:var(--txt);background:none}
+.nav-more .dd a:hover{background:rgba(1,97,239,.08);color:#0161EF}
+.nav-more .dd a.on{color:#0161EF}
+@media(max-width:960px){.nav-more{display:none}}
+.chip{min-height:36px;display:inline-flex;align-items:center}
+.btn{min-height:44px}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
