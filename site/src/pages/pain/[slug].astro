@@ -32,7 +32,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
           ))}
         </aside>
         <article class="article">
-          <h1 style="font-size:clamp(28px,3.4vw,40px)">{a.title}</h1>
+          <div class="badge">{a.category || "Проблемы и решения"}</div><h1 style="font-size:clamp(30px,3.8vw,48px)">{a.title}</h1>
           {a.desc && <p class="lead">{a.desc}</p>}
           <div class="meta">
             <span>Проблемы</span>

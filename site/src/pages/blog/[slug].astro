@@ -22,7 +22,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
 ---
 <ZhLayout publishedTime={a.date} modifiedTime={a.date} title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}><section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a>/ <a href="/blog/">Блог</a>/ {a.title}</div><div class="artgrid"><aside class="toc"><div>Содержание</div>{(a.headings || []).map((h) =>(
             <a href={'#' + h.id}>{h.text}</a>))}
-        </aside><article class="article"><h1 style="font-size:clamp(28px,3.4vw,40px)">{a.title}</h1>{a.desc && <p class="lede">{a.desc}</p>}
+        </aside><article class="article"><div class="badge">{a.category || "Блог"}</div><h1 style="font-size:clamp(30px,3.8vw,48px)">{a.title}</h1>{a.desc && <p class="lede">{a.desc}</p>}
           <div class="meta">{a.read_min && <span>{a.read_min} мин чтения</span>}
             {a.category && <span>{a.category}</span>}
             {a.date && <span>Обновлено: {a.date}</span>}

@@ -8,4 +8,25 @@ import d from '../../data/legacy/forum_index.json';
     <div class="article" set:html={d.body_html} />
     {d.body_script && <script is:inline set:html={d.body_script} />}
   </div></section>
+
+<style is:global>
+/* тёмная тема форума: перекрываем светлые inline-стили legacy-разметки */
+.faside-box{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:16px}
+.faside-box h3{color:var(--txt-muted)!important}
+.fcomm{color:var(--txt)!important}
+.fcomm:hover{background:var(--bg2)!important}
+.fcomm .n{color:var(--txt-muted)!important}
+.fcard2{background:var(--card)!important;border:1px solid var(--line)!important;color:var(--txt)!important;box-shadow:none!important}
+.fcard2 .fc2-t{color:var(--head)!important}
+.fcard2 .fc2-d{color:var(--txt-muted)!important}
+.fcard2 .fc2-m{color:var(--txt-muted)!important}
+.fcard2 .fc2-a{color:var(--txt-muted)!important}
+.fcard2 .fc2-tag{color:#cfe2ff!important;border-color:rgba(77,155,245,.35)!important;background:rgba(1,97,239,.12)!important}
+.fcard2:hover{box-shadow:0 12px 34px rgba(0,0,0,.45)!important;transform:translateY(-1px)!important}
+.fchip{background:var(--bg2)!important;border:1px solid var(--line)!important;color:var(--txt)!important}
+.note{color:var(--txt-muted)!important}
+.hero .kicker{color:#5aa9ff!important}
+.btn.lime{background:#4d9bf5!important;color:#fff!important}
+.btn.ghost{border:1px solid rgba(255,255,255,.16)!important;color:#f5f5f7!important;background:transparent!important}
+</style>
 </ZhLayout>
