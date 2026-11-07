@@ -30,7 +30,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!q||q.length<6)return;
   var MODELS=[['zeekr 001','zeekr-001-001-fr'],['zeekr 007','zeekr-007'],['zeekr x','zeekr-x'],['zeekr 7x','zeekr-7x'],['li auto l7','li-auto-l7-l7-pro'],['li l7','li-auto-l7-l7-pro'],['li auto l8','li-auto-l7-l8'],['li auto l9','li-auto-l7-l9'],['voyah free','voyah-free'],['voyah dream','voyah-dream'],['byd seal','byd-seal'],['byd atto','byd-atto-3'],['avatr 11','avatr-11'],['avatr 12','avatr-12'],['deepal s07','changan-deepal-s07'],['geometry c','geely-geometry-c'],['geely ex5','geely-ex5'],['mg4','mg4'],['xpeng p7','xpeng-p7'],['hongqi e-hs9','hongqi-e-hs9'],['tesla model y','tesla-model-y'],['tesla model 3','tesla-model-3']];
   var model=null;for(var i=0;i<MODELS.length;i++){if(q.indexOf(MODELS[i][0])!==-1){model=MODELS[i];break;}}
-  var PAINS=[['не заряжает','/pain/ne-zaryazhaetsya.html','Электромобиль не заряжается: первые действия'],['зим|мороз|холод','/blog/zimnyaya-zaryadka-medlennee.html','Зимняя зарядка: почему медленнее'],['адаптер','/pain/adapter-gbt.html','Адаптер Type 2 ↔ GB/T'],['gbt','/pain/adapter-gbt.html','Порты GB/T и переходники'],['простой|штраф за простой','/blog/plata-za-prostoy-na-zaryadnyh-stanciyah.html','Плата за простой на станциях'],['скорость|медленн|мощность отдаёт','/blog/stanciya-otdaet-menshe-moshchnosti.html','Станция отдаёт меньше заявленной мощности'],['не работает станция|станция не работает','/blog/stanciya-ne-rabotaet.html','Станция не работает: алгоритм'],['застрял|состоял|батареи деград|ресурс батар','/blog/skolko-zhivet-batareya-elektromobilya.html','Сколько живёт батарея EV']];
+  var PAINS=[['не заряжает','/pain/ne-zaryazhaetsya/','Электромобиль не заряжается: первые действия'],['зим|мороз|холод','/blog/zimnyaya-zaryadka-medlennee/','Зимняя зарядка: почему медленнее'],['адаптер','/pain/adapter-gbt/','Адаптер Type 2 ↔ GB/T'],['gbt','/pain/adapter-gbt/','Порты GB/T и переходники'],['простой|штраф за простой','/blog/plata-za-prostoy-na-zaryadnyh-stanciyah/','Плата за простой на станциях'],['скорость|медленн|мощность отдаёт','/blog/stanciya-otdaet-menshe-moshchnosti/','Станция отдаёт меньше заявленной мощности'],['не работает станция|станция не работает','/blog/stanciya-ne-rabotaet/','Станция не работает: алгоритм'],['застрял|состоял|батареи деград|ресурс батар','/blog/skolko-zhivet-batareya-elektromobilya/','Сколько живёт батарея EV']];
   var pain=null;for(var j=0;j<PAINS.length;j++){var rx=new RegExp(PAINS[j][0]);if(rx.test(q)){pain=PAINS[j];break;}}
   if(!model&&!pain)return;
   var main=document.querySelector('main.container');if(!main)return;
@@ -39,7 +39,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var title=model?('Под вашу '+(model[0].replace(/\b\w/g,function(c){return c.toUpperCase();}))+(pain?': '+pain[2]:''))
                 :('Под ваш запрос: '+pain[2]);
   var links='';
-  if(model)links+='<a href="/models/'+model[1]+'.html" style="color:#D4AF37;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
+  if(model)links+='<a href="/models/'+model[1]+'/' style="color:#D4AF37;text-decoration:underline">Карточка модели: разъёмы и совместимость</a><br>';
   if(pain)links+='<a href="'+pain[1]+'" style="color:#D4AF37;text-decoration:underline">'+pain[2]+'</a>';
   box.innerHTML='<div style="font-size:12px;letter-spacing:.08em;color:#8e8e93">ПОД ВАШ ЗАПРОС · ЗАПАС ХОДА</div>'
    +'<h3 style="color:#f5f5f7;margin:6px 0 8px;font-size:19px">'+title+'</h3>'
@@ -60,7 +60,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var winter=(new Date().getMonth()>=9||new Date().getMonth()<=2);
   var path=location.pathname;
   var tips=[];
-  if(winter){tips.push(['При минусах полная сессия быстрой зарядки идёт в 1,5–2 раза дольше — планируйте запасные станции.','/blog/zimnyaya-zaryadka-medlennee.html']);}
+  if(winter){tips.push(['При минусах полная сессия быстрой зарядки идёт в 1,5–2 раза дольше — планируйте запасные станции.','/blog/zimnyaya-zaryadka-medlennee/']);}
   if(path.indexOf('/calculator')!==-1){tips.push(['Считаете бюджет? Проверьте ещё «цену простоя» — сколько стоит застрять без заряда.','#dt-calc']);}
   if(path.indexOf('/pain')!==-1||path.indexOf('/blog')!==-1){tips.push(['Хотите разбор под вашу модель? Карточки моделей: разъёмы, адаптеры, совместимость.','/catalog/']);}
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
