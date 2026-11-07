@@ -148,7 +148,7 @@ document.getElementById('themebtn').addEventListener('click', function(){
 </script>
 <style is:global>
 :root{
-  --ink:#1d1d1f; --navy:#001e2b; --gold:#D4AF37; --gold-soft:rgba(212,175,55,.6);
+  --ink:#1d1d1f; --navy:#001e2b; --gold:#0161EF; --gold-soft:rgba(1,97,239,.6);
   --bg:#ffffff; --bg2:#f8f9fa; --card:#ffffff; --line:#e5e7eb;
   --txt:#111417; --txt-muted:rgba(16,16,16,.66); --head:#001e2b;
   --radius:16px; --shadow:0 8px 30px rgba(0,0,0,.08);
@@ -227,7 +227,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .faqbox details p{padding:14px 20px;font-size:14.5px;color:var(--txt-muted)}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
 .plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;position:relative}
-.plan.pop{border-color:var(--gold);box-shadow:0 10px 40px rgba(212,175,55,.14)}
+.plan.pop{border-color:var(--gold);box-shadow:0 10px 40px rgba(1,97,239,.14)}
 .popb{position:absolute;top:-11px;left:22px;background:var(--gold);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 12px;border-radius:999px}
 .price{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--head);margin:10px 0 2px}
 .price small{font-size:13px;font-weight:600;color:var(--txt-muted)}
@@ -507,7 +507,7 @@ section+section,section+footer,footer+section{border-top:1px solid var(--line)}
 .card .zone{opacity:0;transition:opacity .18s}
 .card:hover .zone{opacity:1}
 .gbt-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 22px}
-.gbt-flow .node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:96px;padding:12px 14px;border-radius:14px;background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.14)}
+.gbt-flow .node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:96px;padding:12px 14px;border-radius:14px;background:rgba(212,175,55,.05);border:1px solid rgba(1,97,239,.14)}
 .gbt-flow .node svg{width:36px;height:36px}
 .gbt-flow .node b{font-size:14px;text-align:center}
 .gbt-flow .node span{font-size:12.5px;color:var(--txt-muted,#64748b);text-align:center}
@@ -569,7 +569,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .hero-pick select{flex:1;min-width:250px;min-height:48px;border-radius:12px;border:1px solid rgba(229,236,246,.3);background:rgba(255,255,255,.06);color:#f5f5f7;padding:10px 14px;font-size:15px;cursor:pointer}
 .hero-pick select option{color:#0f172a;background:#fff}
 .hero-pick .btn{min-height:48px;text-decoration:none}
-.topbtn{display:inline-flex;align-items:center;min-height:40px;padding:9px 16px;border-radius:12px;background:rgba(212,175,55,.16);border:1px solid rgba(212,175,55,.45);color:#eaf2ff;font-weight:700;font-size:14px;text-decoration:none;transition:.15s}
+.topbtn{display:inline-flex;align-items:center;min-height:40px;padding:9px 16px;border-radius:12px;background:rgba(212,175,55,.16);border:1px solid rgba(1,97,239,.4);color:#eaf2ff;font-weight:700;font-size:14px;text-decoration:none;transition:.15s}
 .topbtn:hover{background:#D4AF37;color:#fff}
 .bridge{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:18px 22px;border-radius:18px;background:linear-gradient(120deg,rgba(212,175,55,.10),rgba(34,197,94,.10));border:1px solid rgba(212,175,55,.22)}
 .bridge-l{display:flex;flex-direction:column;gap:4px}
@@ -589,25 +589,25 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 
 /* === ЕДИНАЯ СИСТЕМА СТИЛЯ (unified wave): антрацит+золото, зелёный = только статусы === */
 :root{--rad-lg:22px;--rad-md:16px;--rad-sm:12px}
-.btn-gold{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;font-weight:700;box-shadow:0 4px 18px rgba(212,175,55,.32),0 0 0 rgba(212,175,55,0);transition:transform .2s,box-shadow .25s}
-.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(212,175,55,.45)}
-.btn-ghost:hover{border-color:var(--gold,#D4AF37)}
-.glass-panel .btn.lime,.article .btn.lime{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;font-weight:700}
-.glass-panel .btn.lime:hover,.article .btn.lime:hover{box-shadow:0 6px 24px rgba(212,175,55,.45);transform:translateY(-1px)}
-.seg-btn.on{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important;box-shadow:0 4px 14px rgba(212,175,55,.3)}
-.topbtn{background:rgba(212,175,55,.14)!important;border-color:rgba(212,175,55,.55)!important;color:#ffe9b0!important}
-.topbtn:hover{background:var(--gold,#D4AF37)!important;color:#1a1a1c!important}
-.hnum{color:#e8b34b!important}
-.hdots button.on{background:var(--gold,#D4AF37)!important}
+.btn-gold{background:var(--gold)!important;color:#1a1a1c!important;font-weight:700;box-shadow:0 4px 18px rgba(1,97,239,.28);transition:transform .2s,box-shadow .25s}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(1,97,239,.4)}
+.btn-ghost:hover{border-color:var(--gold)}
+.glass-panel .btn.lime,.article .btn.lime{background:var(--gold)!important;color:#1a1a1c!important;font-weight:700}
+.glass-panel .btn.lime:hover,.article .btn.lime:hover{box-shadow:0 6px 24px rgba(1,97,239,.4);transform:translateY(-1px)}
+.seg-btn.on{background:var(--gold)!important;color:#1a1a1c!important;box-shadow:0 4px 14px rgba(1,97,239,.25)}
+.topbtn{background:rgba(1,97,239,.14)!important;border-color:rgba(1,97,239,.45)!important;color:#eaf2ff!important}
+.topbtn:hover{background:var(--gold)!important;color:#1a1a1c!important}
+.hnum{color:#4a9ef0!important}
+.hdots button.on{background:#0161EF!important}
 .hero-slider{border-radius:var(--rad-lg)}
-.gbt-flow .node svg [stroke="#D4AF37"]{stroke:var(--gold,#D4AF37)}
-.gbt-flow .node svg [fill="#D4AF37"]{fill:var(--gold,#D4AF37)}
+.gbt-flow .node svg [stroke="#D4AF37"]{stroke:var(--gold)}
+.gbt-flow .node svg [fill="#D4AF37"]{fill:var(--gold)}
 .gbt-flow .node svg [fill="rgba(212,175,55,.08)"]{fill:rgba(212,175,55,.12)}
 .gbt-flow .arrow{color:#e8b34b}
 .card{border-radius:var(--rad-md)}
 .bcard{border-radius:var(--rad-md)}
 .glass-panel{border-radius:18px}
-.bridge{border-radius:18px;background:linear-gradient(120deg,rgba(212,175,55,.12),rgba(212,175,55,.04));border-color:rgba(212,175,55,.3)}
+.bridge{border-radius:18px;background:linear-gradient(120deg,rgba(1,97,239,.10),rgba(1,97,239,.04));border-color:rgba(1,97,239,.25)}
 .mfilter .fchip{border-radius:999px}
 .hero-pick select{border-radius:var(--rad-sm)}
 .glass-panel div[style*="1d1d1f"]{border-radius:18px!important}
