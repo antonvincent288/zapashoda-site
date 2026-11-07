@@ -15,7 +15,7 @@ articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))
           <a class="bcard" href={`/pain/${a.slug}`}>
             {a.category && <span class="tag">{a.category}</span>}
             {a.date && <span class="tag">{a.date}</span>}
-            <h3>{a.title}</h3>
+            <h2 class="bh"{a.title}</h3>
             {a.desc && <p>{String(a.desc).slice(0, 120)}...</p>}
           </a>
         ))}
