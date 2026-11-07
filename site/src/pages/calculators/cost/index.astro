@@ -29,9 +29,8 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
       .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
       .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
       .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
-      .wz-btn .e{font-size:30px;line-height:1}
-      .wz-btn .t{font-size:15.5px;font-weight:700}
+      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
+      .wz-btn .t{font-size:16px;font-weight:700}
       .wz-btn .h{font-size:12px;font-weight:500;color:var(--txt-muted)}
       .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
       .wz-btn:hover{border-color:#0161EF}
@@ -144,7 +143,7 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
         {n:'Voyah',cap:88,cons:18},
         {n:'Avatr',cap:116,cons:17},
         {n:'Tesla',cap:60,cons:14},
-        {n:'Другая машина',cap:60,cons:16,e:'❓'}
+        {n:'Другая машина',cap:60,cons:16}
       ];
       var KM=[
         {n:'Мало',h:'до 500 км в месяц',v:400},
@@ -172,7 +171,7 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
         var box=el(boxId);box.innerHTML='';
         list.forEach(function(o){
           var b=document.createElement('button');b.type='button';b.className='wz-btn';
-          b.innerHTML='<span class="e">'+(o.e||e)+'</span><span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
+          b.innerHTML='<span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
           b.addEventListener('click',function(){
             st[key]=list.indexOf(o);
             if(key==='m'){show(2)}
@@ -200,9 +199,9 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
           dv.textContent='Если заряжаться только на трассе — выходит как бензин. Зарядка дома возвращает преимущество.';
         }
       }
-      make('wzc-m1',M,'m','🚗');
-      make('wzc-m2',KM,'km','🛣');
-      make('wzc-m3',SC,'sc','🔌');
+      make('wzc-m1',M,'m');
+      make('wzc-m2',KM,'km');
+      make('wzc-m3',SC,'sc');
       Array.prototype.forEach.call(el('wzc').querySelectorAll('.wz-back'),function(b){
         b.addEventListener('click',function(){show(parseInt(b.getAttribute('data-back'),10))});
       });
