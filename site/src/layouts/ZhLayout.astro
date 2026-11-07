@@ -642,7 +642,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
     els.forEach(function(el){io.observe(el)});
   }
-}catch(e){}});
+}catch(e){}})();
 </script>
 
 </body>
