@@ -24,6 +24,27 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
+  redirects: {
+    "/blog/12v-akb/": "/pain/12v-akb/",
+    "/blog/adapter-gbt/": "/pain/adapter-gbt/",
+    "/blog/chademo/": "/pain/chademo/",
+    "/blog/domashnie-stancii/": "/pain/domashnie-stancii/",
+    "/blog/kabel-ne-otdaet/": "/pain/kabel-ne-otdaet/",
+    "/blog/lyuchok/": "/pain/lyuchok/",
+    "/blog/ne-zaryazhaetsya/": "/pain/ne-zaryazhaetsya/",
+    "/blog/plata-za-prostoy/": "/pain/plata-za-prostoy/",
+    "/blog/podogrev-batarei/": "/pain/podogrev-batarei/",
+    "/blog/poteri-pri-zaryadke/": "/pain/poteri-pri-zaryadke/",
+    "/blog/stanciya-otdaet-pol-moshchnosti/": "/pain/stanciya-otdaet-pol-moshchnosti/",
+    "/blog/stoimost-zaryadki/": "/pain/stoimost-zaryadki/",
+    "/blog/tesla/": "/pain/tesla/",
+    "/blog/type1-ccs1/": "/pain/type1-ccs1/",
+    "/blog/udlinitel/": "/pain/udlinitel/",
+    "/blog/zapas-hoda-zimoy/": "/pain/zapas-hoda-zimoy/",
+    "/blog/zaryadka-na-trasse/": "/pain/zaryadka-na-trasse/",
+    "/blog/zaryadka-ot-rozetki/": "/pain/zaryadka-ot-rozetki/",
+    "/blog/zaryadka-pod-dozhdyom/": "/pain/zaryadka-pod-dozhdyom/",
+  },
   output: 'static',
 
   // Prefetch links as they enter the viewport for snappier navigations
