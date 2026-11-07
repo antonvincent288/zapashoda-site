@@ -1126,6 +1126,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0065",
+      "ts": "2026-11-07T11:41:26+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: kitaiskoe-vremya-v-raspisanii-zaryadki-posle-rusifikatsii.json (slug уже существует); plata-za-prostoy-na-zaryadnyh-stanciyah.json (slug уже существует); poteri-pri-zaryadke-5-10.json (slug уже существует); stanciya-otdaet-menshe-moshchnosti-150-kt-ot-60-80.json (slug уже существует); vybor-tarifa-dlya-domashnoy-zaryadki.json (slug уже существует; больше 6 вхождений ₽ — возможна выдуманная цена); zimnoe-khranenie-elektromobilya-parking-2-4-nedeli.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
