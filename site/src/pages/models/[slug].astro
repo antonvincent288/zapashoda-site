@@ -32,11 +32,15 @@ const solutionFor = (port: string) => {
 };
 // парсинг таблицы спецификации из prod-контента
 const body = String(m.body_html || '').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u2B00-\u2BFF]+/gu, '').replace(/\s{2,}/g, ' ');
+// spec собираем ТОЛЬКО из первой таблицы тела; вторая таблица («Сколько занимает зарядка»)
+// не должна попадать в спецификацию — раньше из неё утекали «до 100 кВт / 29 мин»
+const tEnd = body.indexOf('</table>');
+const specSource = tEnd >= 0 ? body.slice(0, tEnd + '</table>'.length) : body;
 const spec: Record<string, string> = {};
 const rowRe = /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
 const strip = (s: string) => String(s || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
 let rm: RegExpExecArray | null;
-while ((rm = rowRe.exec(body))) {
+while ((rm = rowRe.exec(specSource))) {
   const k = strip(rm[1]);
   const v = strip(rm[2]);
   if (!k || !v) continue;
@@ -46,7 +50,7 @@ while ((rm = rowRe.exec(body))) {
   else if (/Мощность DC/i.test(k)) spec.dcpow = v;
   else if (/Рынок/i.test(k)) spec.market = v;
 }
-const cutBalanced = (html, marker, tag) => {
+const cutBalanced = (html: string, marker: string, tag: string) => {
   const i = html.indexOf(marker);
   if (i < 0) return html;
   const rx = new RegExp('<' + tag + '[\\s>]|</' + tag + '>', 'g');
@@ -58,6 +62,19 @@ const cutBalanced = (html, marker, tag) => {
   }
   return html;
 };
+const cutFrom = (html: string, start: number, tag: string): [string, string] => {
+  const rx = new RegExp('<' + tag + '[\\s>]|</' + tag + '>', 'g');
+  rx.lastIndex = start;
+  let d = 0, mm;
+  while ((mm = rx.exec(html))) {
+    if (mm[0][1] === '/') d--; else d++;
+    if (d === 0) return [html.slice(0, start), html.slice(rx.lastIndex)];
+  }
+  return [html, html];
+};
+const isGBT = String(m.port || '').includes('GB/T');
+// для машин с Type 2/CCS2 держатель GB/T не продаём — вместо него честный EU-аксессуар
+const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="9900"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
 const bodyClean = (() => {
   let h = String(m.body_html || '');
   h = h.replace(/^<main[^>]*>/, '').replace(/<\/main>\s*$/, '');
@@ -65,15 +82,36 @@ const bodyClean = (() => {
   h = cutBalanced(h, '<div class="mhero">', 'div');
   h = cutBalanced(h, '<div class="pc-cartbar', 'div');
   h = cutBalanced(h, '<div class="cta">', 'div');
-  while (h.indexOf('<div class="prob-grid">') >= 0) h = cutBalanced(h, '<div class="prob-grid">', 'div');
   h = h.replace(/<button[^>]*pc-add[\s\S]*?<\/button>/g, '');
   h = h.replace(/(?:text-white\s+)?bg-green-600(?:\s+text-white)?/g, 'tag');
-  h = h.replace(/<h2[^>]*>\s*Что понадобится[^<]*<\/h2>\s*/g, '');
-  // первая таблица прода дублирует spec-таблицу выше — снять
+  // первая таблица дублирует spec-таблицу сверху — снять таблицу, её заголовок и пустую обёртку
   const tIdx = h.indexOf('<table');
   if (tIdx >= 0) {
     const rx2 = /<table[\s\S]*?<\/table>/;
     h = h.replace(rx2, '');
+  }
+  h = h.replace(/<h2[^>]*>\s*Разъёмы и мощность зарядки\s*<\/h2>\s*/g, '');
+  h = h.replace(/<div class="[^"]*overflow-x-auto[^"]*">\s*<\/div>/g, '');
+  if (!isGBT) {
+    // честный «что понадобится» для EU/Type 2: без GB/T-адаптеров и несуществующих SKU-ссылок
+    h = h.replace('Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. На GB/T-станциях: обратный адаптер GB/T→Type 2 (SKU 2). Держатель (SKU 12), смазка (SKU 17). Портативка Type 2 и держатель Type 2 — вне каталога (потенциальные новые SKU).', 'Type 2/CCS2 — штатные разъёмы РФ-инфраструктуры: заряжается напрямую, без адаптеров. Портативка Type 2, кабель Type 2 — Type 2 и удлинитель Type 2 — в каталоге ниже. Держатель Type 2 пока вне каталога — напишите нам в Telegram, добавим в поставку. Смазка контактов (SKU 17) — для лючка и коннектора зимой.');
+    // карточка UN-06: не отсылаем владельца «европейца» к GB/T-товарам
+    h = h.replace('выручит кабель 10 м (SKU 15) или удлинитель GB/T (SKU 14)', 'выручит кабель Type 2 — Type 2 7 м (SKU 22) или удлинитель Type 2 (SKU 26)');
+    // состав премиум-комплекта b-eu: держатель GB/T → удлинитель Type 2, цены пересчитаны
+    h = h.replace('В комплекте: Портативная зарядка Type 2, Кабель Type 2 — Type 2, Держатель / органайзер кабеля GB/T, Смазка силиконовая (зимний kit)', 'В комплекте: Портативная зарядка Type 2, Кабель Type 2 — Type 2, Удлинитель Type 2 — Type 2, 5 м, Смазка силиконовая (зимний kit)');
+    h = h.replace('Защита от перегрева, кабель повышенной прочности 5 м и органайзер для гаража', 'Защита от перегрева, кабель повышенной прочности 5 м и удлинитель Type 2 на парковке');
+    h = h.replace('>26 190 ₽<', '>34 590 ₽<');
+    h = h.replace('>28 190 ₽<', '>36 590 ₽<');
+    h = h.replace('"price": 26190, "was": 28190, "items": [19, 21, 12, 17]', '"price": 34590, "was": 36590, "items": [19, 21, 26, 17]');
+    // карточка держателя GB/T → карточка удлинителя Type 2
+    const ai = h.indexOf('/catalog/derzhatel-organayzer-kabelya.html');
+    if (ai >= 0) {
+      const cs = h.lastIndexOf('<div class="relative', ai);
+      if (cs >= 0) {
+        const [pre, post] = cutFrom(h, cs, 'div');
+        h = pre + ULG_CARD + post;
+      }
+    }
   }
   return h.trim();
 })();
@@ -83,6 +121,21 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
 ---
 <ZhLayout title={`${m.title} — Запас хода`} description={m.desc} og={m.og} jsonld={jsonld}>
   <LegacyStyles />
+  <style is:global>
+    .prob-grid{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+    .prob-grid .pt{flex:1 1 280px;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card)}
+    .prob-grid .pt h3{font-size:16px;margin:0 0 8px;line-height:1.4}
+    .prob-grid .sol{margin-top:8px;font-size:14px;line-height:1.5;color:var(--txt)}
+    .prob-grid .pain-id{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:6px;border:1px solid var(--gold,#C9A24B);color:var(--gold,#C9A24B);margin-right:8px}
+    .prob-grid .src{font-size:12px;color:var(--txt-muted);margin:10px 0 0;word-break:break-word}
+    .tbl-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+    .tbl-tabs .tt{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:10px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}
+    .tbl-tabs .tt.on{background:var(--gold,#C9A24B);border-color:var(--gold,#C9A24B);color:#fff}
+    .cout .f{display:inline-block;vertical-align:top;margin:0 10px 10px 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg2,transparent)}
+    .cout .k{font-size:12px;color:var(--txt-muted);margin-bottom:3px}
+    .cout .v{font-size:18px;font-weight:700;color:var(--head)}
+    .ccp-on{background:var(--gold,#C9A24B)!important;border-color:var(--gold,#C9A24B)!important;color:#fff!important}
+  </style>
   <section class="sec">
     <div class="wrap" style="max-width:980px">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
@@ -106,7 +159,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
           <h3 style="margin:0">Комплект под {m.name || m.title}</h3>
-          <p style="font-size:13.5px;color:var(--txt-muted)">Адаптер + держатель + смазка контактов</p>
+          <p style="font-size:13.5px;color:var(--txt-muted)">{isGBT ? 'Адаптер + держатель + смазка контактов' : 'Портативка Type 2 + кабель Type 2 + смазка контактов'}</p>
         </div>
         <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
       </div>
