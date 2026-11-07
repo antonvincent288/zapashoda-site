@@ -42,7 +42,7 @@ const POP = (mlData.models || []).filter((x) => POP_SLUGS.includes(String(x.slug
         <p class="lead">145 моделей в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</p>
         <div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
           {['Все'].concat([...new Set(POP.map((m) => m.brand))]).map((br) => (
-            <button class="fchip on" type="button" data-brand={br}>{br}</button>
+            <button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
           ))}
         </div>
         <div class="bgrid as-slider" style="margin-top:20px" data-mcards>
@@ -54,21 +54,7 @@ const POP = (mlData.models || []).filter((x) => POP_SLUGS.includes(String(x.slug
             </a>
           ))}
         </div>
-        <script is:inline>
-        (function(){try{
-          var wrap=document.querySelector('[data-mfilter]'); var mc=document.querySelector('[data-mcards]');
-          if(!wrap||!mc) return;
-          wrap.addEventListener('click',function(e){
-            var b=e.target.closest('.fchip'); if(!b) return;
-            wrap.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on')});
-            b.classList.add('on');
-            var brand=b.getAttribute('data-brand');
-            mc.querySelectorAll('.card').forEach(function(c){
-              c.style.display = (brand==='Все'||c.getAttribute('data-brand')===brand) ? '' : 'none';
-            });
-          });
-        }catch(e){}});
-        </script>
+        
         <div style="margin-top:20px"><a class="btn btn-ghost" href="/models/">Все 145 моделей</a></div>
       </div></section><section class="sec sec-alt"><div class="wrap" style="max-width:860px"><h2>Сколько стоит зарядить ваш электромобиль</h2><p class="lead">Двигайте ползунки: расход, сценарий, пробег — увидите цену за 100 км и за месяц, сравнение с бензином.</p><LegacyStyles /><div class="ev-battery" aria-hidden="true" style="margin:18px 0 10px"><span class="shell"><span class="fill"></span></span><span>Считается живьём: ползунок — мгновенный пересчёт</span></div><div class="article glass-panel" style="max-width:none" set:html={calcHtml} />{calcScript && <script is:inline set:html={calcScript} />}
     </div></section><section class="sec"><div class="wrap stats">{stats.map((s) =>(
