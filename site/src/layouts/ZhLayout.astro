@@ -57,7 +57,15 @@ window.YM_ID=113935123;
     <a class="logo" href="/" aria-label="Запас хода — на главную"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></b><span>Запас хода</span><span class="logo-ev" aria-hidden="true">EV</span></a>
     <nav id="nav">
       <a href="/models/" class={isOn("/models/") ? "on" : ""}>Модели</a>
-      <a href="/calculator/" class={isOn("/calculator/") ? "on" : ""}>Калькулятор</a>
+      <span class="nav-more" tabindex="0" role="button" aria-label="Калькуляторы">Калькуляторы <span aria-hidden="true">▾</span>
+        <span class="dd">
+          <a href="/calculators/" class={isOn("/calculators/") ? "on" : ""}>Все калькуляторы</a>
+          <a href="/calculator/" class={isOn("/calculator/") ? "on" : ""}>Калькуляторы</a>
+          <a href="/calculators/time/" class={isOn("/calculators/time/") ? "on" : ""}>Время зарядки</a>
+          <a href="/compare/" class={isOn("/compare/") ? "on" : ""}>Сравнение моделей</a>
+          <a href="/matrix/" class={isOn("/matrix/") ? "on" : ""}>Матрица совместимости</a>
+        </span>
+      </span>
       <a href="/quiz/" class={isOn("/quiz/") ? "on" : ""}>Подбор</a>
       <a href="/charging/" class={isOn("/charging/") ? "on" : ""}>Карта ЗУ</a>
       <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
@@ -92,7 +100,7 @@ window.YM_ID=113935123;
   <div class="mnav-group">Инструменты</div>
   <a href="/quiz/">Подбор за 30 сек</a>
   <a href="/charging/">Карта ЗУ</a>
-  <a href="/calculator/">Калькулятор зарядки</a>
+  <a href="/calculator/">Калькуляторы</a>
   <a href="/vin/">VIN-справочник</a>
   <div class="mnav-group">Сервис</div>
   <a href="/shop/digital/">Товары</a>
