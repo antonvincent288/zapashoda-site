@@ -31,12 +31,6 @@ const solutionFor = (port: string) => {
   if (port && port.includes('EU')) return SOLUTIONS['EU'];
   return 'Уточните разъём по VIN — подберём комплект';
 };
-const portSlug = (p: string) => {
-  if (p.includes('GB/T')) return 'gbt';
-  if (p.includes('CHAdeMO')) return 'chademo';
-  if (p.includes('Type1')) return 'type1';
-  return 'type2';
-};
 const portIcon = (p: string) => {
   if (!p) return 'type2';
   if (p.includes('GB/T')) return 'gbt';
@@ -260,12 +254,12 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .mfaq p{margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--txt-muted)}
   </style>
   <section class="sec">
-    <div class="wrap" style="max-width:980px" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'}>
+    <div class="wrap" style="max-width:980px" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'} data-mtype={m.type || ''}>
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
       <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
       <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
       <div class="meta">
-        <a href={`/razemy/${portSlug(String(m.port || ''))}/`} style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit" title="Справочник разъёма"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'} <span style="font-size:11px;color:var(--txt-muted)">что за разъём →</span></a>
+<span style="display:inline-flex;align-items:center;gap:6px"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'}</span>
         {spec.obc && <span>{spec.obc}</span>}
         {spec.dcpow && <span>DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
         <span>Обновлено: ноябрь 2026</span>
@@ -308,13 +302,22 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     var isGBT = wrapEl && wrapEl.getAttribute('data-mport') === 'GBT';
     var portTokens = isGBT ? ['gb/t','gbt'] : ['type 2','type2','ccs2','ccs'];
     var bodyKeywords = isGBT ? ['китай'] : ['европ','европейск'];
-    function keepPain(txt){
+    var mtype = ((wrapEl && wrapEl.getAttribute('data-mtype')) || '').toUpperCase();
+    function keepPain(txt, pid){
       var t = norm(txt).replace(/^кому актуально:\s*/, '');
       for (var i=0;i<tokens.length;i++){ if (t.indexOf(tokens[i]) >= 0) return true; }
       for (var i=0;i<portTokens.length;i++){ if (t.indexOf(portTokens[i]) >= 0) return true; }
       for (var i=0;i<bodyKeywords.length;i++){ if (t.indexOf(bodyKeywords[i]) >= 0) return true; }
       if (/^(все|китайск|импорт|владельц|люб)/.test(t.trim())) return true;
       if (t.indexOf('eu-групп') >= 0) return true;
+      if (t.indexOf('все ev') >= 0 || t.indexOf('многие ev') >= 0 || t.indexOf('все с adas') >= 0) return true;
+      if (t.indexOf('безрам') >= 0) {
+        var FRAMES = ['zeekr','tesla','voyah','avatr','lotus','hiphi','nio','im '];
+        for (var i=0;i<tokens.length;i++){ for (var j=0;j<FRAMES.length;j++){ if (tokens[i].indexOf(FRAMES[j]) === 0) return true; } }
+      }
+      if (mtype.indexOf('EREV') >= 0 || mtype.indexOf('PHEV') >= 0) {
+        if ((pid || '').indexOf('PHEV-') === 0 || t.indexOf('erev') >= 0) return true;
+      }
       return false;
     }
     function shortenSrc(box){
@@ -346,7 +349,10 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         cards.forEach(function(c){
           var act = c.querySelector('.sol');
           var actTxt = act ? act.textContent : '';
-          if (isGBT && /Кому актуально/i.test(actTxt) && !keepPain(actTxt)) { hidden.push(c); return; }
+          if (isGBT && /Кому актуально/i.test(actTxt)) {
+            var pid = ((c.querySelector('.pain-id') || {}).textContent || '').trim();
+            if (!keepPain(actTxt, pid)) { hidden.push(c); return; }
+          }
           kept.push(c);
         });
         var wrap = document.createElement('div');
