@@ -197,6 +197,12 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .mcard .ports{font-size:13px;color:var(--txt-muted);margin:8px 0 12px}
 .mcard .sol{font-size:13px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-top:auto}
 .mcard .sol b{font-size:12px;color:var(--gold);display:block;letter-spacing:.06em;text-transform:uppercase}
+.mclink{text-decoration:none;color:inherit;cursor:pointer}
+.mcard .ports{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mcard .ports .mc-raz{color:inherit;text-decoration:underline;text-decoration-color:rgba(125,125,135,.4);text-underline-offset:3px}
+.mcard .ports .mc-raz:hover{text-decoration-color:var(--gold)}
+.mcard .ports img{flex:0 0 auto}
+.mcard{cursor:pointer}
 .bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .bcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;text-decoration:none;display:block;transition:.18s}
 .bcard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}

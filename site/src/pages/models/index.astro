@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import PlugIcon from '../../components/PlugIcon.astro';
 const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
 const models = Object.values(modules) as any[];
 models.sort((a, b) => String(a.brand || '').localeCompare(String(b.brand || '')) || String(a.name || '').localeCompare(String(b.name || '')));
@@ -8,6 +9,18 @@ const SOLUTIONS: Record<string, string> = {
   'EU': 'Штатные станции Type 2/CCS2 РФ — без адаптера',
   'Type1/CCS1': 'Адаптер Type 1 → Type 2; CCS1-станции редки',
   'JP/CHAdeMO': 'CHAdeMO-станции; адаптер по запросу',
+};
+const plugIconOf = (p: string) => {
+  if (p.includes('GB/T')) return 'gbt-dc';
+  if (p.includes('CHAdeMO')) return 'chademo';
+  if (p.includes('Type1')) return 'type1';
+  return 'type2';
+};
+const plugSlugOf = (p: string) => {
+  if (p.includes('GB/T')) return 'gbt';
+  if (p.includes('CHAdeMO')) return 'chademo';
+  if (p.includes('Type1')) return 'type1';
+  return 'type2';
 };
 const solutionFor = (port: string, type: string) => {
   if (port && port.includes('GB/T')) return SOLUTIONS['GB/T'];
@@ -45,12 +58,12 @@ const typeOf = (t: string) => {
       </div>
       <div class="mgrid" id="mgrid">
         {models.map((m) => (
-          <a class="mcard" href={`/models/${m.slug}/`} data-brand={m.brand} data-type={typeOf(m.type)}>
-            <b>{m.brand} {m.name || ''}</b>
+          <div class="mcard" data-brand={m.brand} data-type={typeOf(m.type)}>
+            <a class="mclink" href={`/models/${m.slug}/`}><b>{m.brand} {m.name || ''}</b></a>
             {m.type && <span class="tag">{m.type} · {yearShort(m.years)}</span>}
-            {m.port && <div class="ports">Разъём: {m.port}</div>}
+            {m.port && <div class="ports"><PlugIcon name={plugIconOf(String(m.port))} size={18} label={String(m.port)} /> <a class="mc-raz" href={`/razemy/${plugSlugOf(String(m.port))}/`}>Разъём: {m.port}</a></div>}
             <div class="sol"><b>Решение</b>{solutionFor(m.port, m.type)}</div>
-          </a>
+          </div>
         ))}
       </div>
       <p class="note" id="mcount" style="margin-top:24px">Показано: {models.length} из {models.length}</p>
@@ -59,6 +72,7 @@ const typeOf = (t: string) => {
 </ZhLayout>
 <script>
   const inp = document.getElementById('q');
+  document.querySelectorAll('#mgrid .mcard').forEach((c) => c.addEventListener('click', (e) => { if (e.target.closest('a')) return; const l = c.querySelector('a.mclink'); if (l) window.location.href = l.href; }));
   const count = document.getElementById('mcount');
   const total = document.querySelectorAll('#mgrid .mcard').length;
   function apply() {
