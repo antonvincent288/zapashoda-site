@@ -149,7 +149,7 @@ const bodyClean = (() => {
   h = h.replace(/(?:text-white\s+)?bg-green-600(?:\s+text-white)?/g, 'tag');
   // «по данным модели: X» с colspan=3 растягивается под колонки «Время»/«Стоимость» — ставим в колонки —
   h = h.replace(/<td colspan="3">по данным модели:([^<]*)<\/td>/g, (s0, txt) => '<td>' + txt.trim() + '</td><td>—</td><td>—</td>');
-  h = h.replace('<td colspan="3">по данным модели: \'+e+"</td></tr>", '<td>\'+e+"</td><td>—</td><td>—</td></tr>");
+  h = h.replace('<td colspan="3">по данным модели: ' + chr(39) + '+e+' + chr(34) + '</td></tr>', '<td>' + chr(39) + '+e+' + chr(34) + '</td><td>—</td><td>—</td></tr>');
   // первая таблица дублирует spec-таблицу сверху — снять таблицу, её заголовок и пустую обёртку
   const tIdx = h.indexOf('<table');
   if (tIdx >= 0) {
