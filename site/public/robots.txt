@@ -1,5 +1,24 @@
+# robots.txt zapashoda-ev.ru — открыт для ИИ-поиска (AEO/GEO)
 User-agent: *
 Disallow:
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
 
 Sitemap: https://zapashoda-ev.ru/sitemap.xml
 Host: https://zapashoda-ev.ru
