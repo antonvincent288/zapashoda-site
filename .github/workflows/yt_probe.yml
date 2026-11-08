@@ -36,15 +36,16 @@ jobs:
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: |
+          set +e
           VID="https://www.youtube.com/watch?v=K0GV_0xE3Y8"
           POT="--extractor-args youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416"
           try() {
             name="$1"; shift
             echo "=== STRATEGY: $name ==="
             rm -f /tmp/probe_$name.*
+            rc=0
             timeout 100 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings \
-              --max-filesize 60M -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1
-            rc=$?
+              --max-filesize 60M -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1 || rc=$?
             echo "rc=$rc"
             grep -iE 'ERROR|WARNING' /tmp/log_$name.txt | head -4 || true
             if ls /tmp/probe_$name.* 2>/dev/null; then
