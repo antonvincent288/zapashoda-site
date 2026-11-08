@@ -1,4 +1,4 @@
-name: YT download probe 3
+name: YT download probe 4
 
 on:
   workflow_dispatch: {}
@@ -12,33 +12,31 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install
-        run: |
-          pip install -q -U yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
-          sudo apt-get -y install ffmpeg >/dev/null
-      - name: Probe web_music on other videos
+      - name: Cobalt deep probe
         run: |
           set +e
-          for id in HSKthPNbZtA CGDoQGNma74 7tJA8I_WF2k nBBrJIdYDpg oWXRO9EnMAA; do
-            echo "=== web_music $id ==="
-            rc=0
-            timeout 90 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings --max-filesize 60M \
-              --extractor-args "youtube:player_client=web_music" \
-              -o "/tmp/p3_$id.%(ext)s" "https://www.youtube.com/watch?v=$id" > /tmp/log_$id.txt 2>&1 || rc=$?
-            f=$(ls /tmp/p3_$id.* 2>/dev/null | head -1)
-            if [ -n "$f" ]; then
-              echo "FILE OK: $(stat -c%s "$f") bytes, dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null)"
-            else
-              echo "FAIL rc=$rc: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_$id.txt)"
-            fi
-          done
-          echo "=== combo music+web+POT ==="
-          timeout 90 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings \
-            --extractor-args "youtube:player_client=web_music,web" \
+          echo "=== instances list ==="
+          curl -sS --max-time 25 "https://instances.cobalt.best/api/instances.json" -o /tmp/cb.json; echo "curl rc=$?"
+          head -c 400 /tmp/cb.json; echo
+          echo "=== api.cobalt.tools POST ==="
+          curl -sS --max-time 30 -X POST "https://api.cobalt.tools/" \
+            -H "Accept: application/json" -H "Content-Type: application/json" \
+            -H "User-Agent: Mozilla/5.0" \
+            -d '{"url":"https://www.youtube.com/shorts/K0GV_0xE3Y8","videoQuality":"480","filenameStyle":"basic"}'; echo
+          echo "=== api.cobalt.best POST ==="
+          curl -sSk --max-time 30 -X POST "https://api.cobalt.best/" \
+            -H "Accept: application/json" -H "Content-Type: application/json" \
+            -d '{"url":"https://www.youtube.com/shorts/K0GV_0xE3Y8","videoQuality":"480","filenameStyle":"basic"}'; echo
+      - name: Free endpoint guesses
+        run: |
+          set +e
+          echo "=== yewtu.be latest_version ==="
+          curl -sS --max-time 20 -A "Mozilla/5.0" "https://yewtu.be/latest_version?id=K0GV_0xE3Y8&itag=18&local=true" -o /tmp/y.mp4; echo "rc=$? size=$(stat -c%s /tmp/y.mp4 2>/dev/null)"
+          head -c 200 /tmp/y.mp4; echo
+          echo "=== yt-dlp web client + POT, verbose (ключевые строки) ==="
+          pip install -q -U yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
+          docker run -d -p 4416:4416 --name pot brainicism/bgutil-ytdlp-pot-provider
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:4416/ping >/dev/null && break; sleep 3; done
+          yt-dlp -v --no-playlist --extractor-args "youtube:player_client=web" \
             --extractor-args "youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416" \
-            -o "/tmp/p3_combo.%(ext)s" "https://www.youtube.com/watch?v=7tJA8I_WF2k" > /tmp/log_combo.txt 2>&1 || true
-          f=$(ls /tmp/p3_combo.* 2>/dev/null | head -1)
-          [ -n "$f" ] && echo "COMBO FILE OK: $(stat -c%s "$f")" || echo "COMBO FAIL: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_combo.txt)"
+            "https://www.youtube.com/shorts/K0GV_0xE3Y8" 2>&1 | grep -iE 'pot|error|sign in|visitor|token' | head -15
