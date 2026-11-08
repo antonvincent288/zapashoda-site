@@ -31,14 +31,14 @@
  "models_cards": 145,
  "app_scripts": 5,
  "catalog_products": 0,
- "link_targets": 209,
- "links_ok": 209,
+ "link_targets": 208,
+ "links_ok": 208,
  "links_bad": [],
  "assets_count": 29,
  "assets_ok": 29,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "08.11 01:57",
+ "checked_at_msk": "08.11 04:34",
  "failures": [
   {
    "where": "page /search.html",
