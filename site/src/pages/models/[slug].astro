@@ -200,13 +200,25 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .cout .k{font-size:12px;color:var(--txt-muted);margin-bottom:3px}
     .cout .v{font-size:18px;font-weight:700;color:var(--head)}
     .ccp-on{background:var(--gold,#C9A24B)!important;border-color:var(--gold,#C9A24B)!important;color:#fff!important}
+    .pain-acc-wrap{margin:18px 0 8px}
+    .pain-acc{border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+    .pain-acc:hover{border-color:rgba(77,155,245,.4)}
+    .pain-acc summary{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;list-style:none;font-size:15px;line-height:1.45;color:var(--txt)}
+    .pain-acc summary::-webkit-details-marker{display:none}
+    .pain-acc .pa-arrow{margin-left:auto;color:var(--txt-muted);flex-shrink:0;transition:transform .15s}
+    .pain-acc[open] .pa-arrow{transform:rotate(180deg)}
+    .pain-acc .pa-body{padding:2px 18px 16px;font-size:14px;line-height:1.6;color:var(--txt-muted);max-width:65ch}
+    .pain-acc .pa-body .sol{margin-top:10px}
+    .pain-acc .pa-body .sol b{color:var(--txt)}
+    .pain-more summary{font-weight:600}
+    .pain-more .pa-body a{word-break:break-word}
     @media (max-width:640px){
       .prob-grid-pains{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}
       .prob-grid-pains .pt{flex:0 0 84%;scroll-snap-align:start}
     }
   </style>
   <section class="sec">
-    <div class="wrap" style="max-width:980px">
+    <div class="wrap" style="max-width:980px" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'}>
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
       <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
       <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
@@ -242,6 +254,77 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
       </div>
       {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
+
+  <script is:inline>
+  (function(){
+    function norm(s){ return (s||'').toLowerCase(); }
+    var brandTokens = (document.body.getAttribute('data-mbrand') || '') + ' ' + (document.body.getAttribute('data-mname') || '');
+    var tokens = brandTokens.toLowerCase().replace(/[()/]/g,' ').split(/\s+/).filter(function(t){return t.length>2;});
+    var isGBT = document.body.getAttribute('data-mport') === 'GBT';
+    var portTokens = isGBT ? ['gb/t','gbt'] : ['type 2','type2','ccs2','ccs'];
+    var bodyKeywords = isGBT ? ['китай'] : ['европ','европейск'];
+    function keepPain(txt){
+      var t = norm(txt);
+      for (var i=0;i<tokens.length;i++){ if (t.indexOf(tokens[i]) >= 0) return true; }
+      for (var i=0;i<portTokens.length;i++){ if (t.indexOf(portTokens[i]) >= 0) return true; }
+      for (var i=0;i<bodyKeywords.length;i++){ if (t.indexOf(bodyKeywords[i]) >= 0) return true; }
+      return false;
+    }
+    function shortenSrc(box){
+      box.querySelectorAll('a').forEach(function(a){
+        if (a.textContent.length > 34) a.textContent = 'Источник ↗';
+      });
+    }
+    var h2s = Array.prototype.slice.call(document.querySelectorAll('h2'));
+    h2s.forEach(function(h2){
+      var ht = (h2.textContent || '').trim();
+      if (ht.indexOf('Проблемы и решения') === 0) {
+        var container = h2.parentElement.querySelector('.prob-grid');
+        if (!container) return;
+        var cards = Array.prototype.slice.call(container.querySelectorAll('.pt'));
+        var kept = [], hidden = [];
+        cards.forEach(function(c){
+          var act = c.querySelector('.sol');
+          var actTxt = act ? act.textContent : '';
+          if (/Кому актуально/i.test(actTxt) && !keepPain(actTxt)) { hidden.push(c); return; }
+          kept.push(c);
+        });
+        var wrap = document.createElement('div');
+        wrap.className = 'pain-acc-wrap';
+        kept.forEach(function(c){
+          var head = c.querySelector('h3');
+          var id = head ? (head.querySelector('.pain-id') || {}).textContent || '' : '';
+          var title = head ? head.textContent.replace(id, '').trim() : '';
+          var d = document.createElement('details');
+          d.className = 'pain-acc';
+          var sum = document.createElement('summary');
+          sum.innerHTML = (id ? '<span class="pain-id">' + id + '</span> ' : '') + '<b>' + title + '</b><span class="pa-arrow">▾</span>';
+          var body = document.createElement('div');
+          body.className = 'pa-body';
+          Array.prototype.slice.call(c.children).forEach(function(ch){
+            if (ch.tagName === 'H3') return;
+            body.appendChild(ch.cloneNode(true));
+          });
+          shortenSrc(body);
+          d.appendChild(sum); d.appendChild(body);
+          wrap.appendChild(d);
+        });
+        container.innerHTML = '';
+        container.appendChild(wrap);
+        if (hidden.length) {
+          var more = document.createElement('details');
+          more.className = 'pain-acc pain-more';
+          more.innerHTML = '<summary><b>Ещё ' + hidden.length + ' проблем смежных сценариев</b><span class="pa-arrow">▾</span></summary><div class="pa-body">Разобраны в <a href="/pain/" style="color:#5aa9ff">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div>';
+          container.appendChild(more);
+        }
+        if (!kept.length) { h2.parentElement.style.display = 'none'; }
+      }
+      if (ht.indexOf('Что докупить') === 0) {
+        h2.textContent = 'Каталог подходящих товаров';
+      }
+    });
+  })();
+  </script>
     </div>
   </section>
 </ZhLayout>
