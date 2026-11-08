@@ -579,7 +579,10 @@ def main():
         print('TELEGRAM_TOKEN secret is missing'); return
     pub = load_pub()
     now = time.time()
-    cleanup_broken_posts()
+    if not pub.get('cleanup_done'):
+        if cleanup_broken_posts():
+            pub['cleanup_done'] = True
+            save_pub(pub)
     INV_INSTANCES[:] = dynamic_instances()
     candidates, seen = [], set()
     stats = {'inv': 0, 'api': 0, 'yt': 0, 'too_long': 0, 'dup': 0}
