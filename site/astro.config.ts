@@ -44,6 +44,7 @@ export default defineConfig({
     "/blog/zaryadka-na-trasse/": "/pain/zaryadka-na-trasse/",
     "/blog/zaryadka-ot-rozetki/": "/pain/zaryadka-ot-rozetki/",
     "/blog/zaryadka-pod-dozhdyom/": "/pain/zaryadka-pod-dozhdyom/",
+    "/about.html/": "/about/",
   },
   output: 'static',
 
