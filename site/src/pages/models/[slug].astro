@@ -2,7 +2,6 @@
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../components/LegacyStyles.astro';
 import PlugIcon from '../../components/PlugIcon.astro';
-import PlugIcon from '../../components/PlugIcon.astro';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -64,13 +63,6 @@ const FAQ_CD = `<div class="card" style="margin-top:26px">
         <details class="mfaq"><summary>Какой разъём у Leaf для медленной зарядки?</summary><p>Старые версии — Type 1 (до 7,4 кВт), поздние европейские — Type 2. Смотрите в таблице спецификации выше.</p></details>
       </div>`;
 const faqPort = String(m.port||'').includes('GB/T') ? FAQ_GB : (String(m.port||'').includes('Type1') ? FAQ_T1 : (String(m.port||'').includes('CHAdeMO') ? FAQ_CD : FAQ_EU));
-const portIcon = (p: string) => {
-  if (!p) return 'type2';
-  if (p.includes('GB/T')) return 'gbt';
-  if (p.includes('CHAdeMO')) return 'chademo';
-  if (p.includes('Type1')) return 'type1';
-  return 'type2';
-};
 // парсинг таблицы спецификации из prod-контента
 const body = String(m.body_html || '').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u2B00-\u2BFF]+/gu, '').replace(/\s{2,}/g, ' ');
 // spec собираем ТОЛЬКО из первой таблицы тела; вторая таблица («Сколько занимает зарядка»)
