@@ -49,6 +49,7 @@ while ((rm = rowRe.exec(specSource))) {
   else if (/Борт/i.test(k) || /OBC/i.test(k)) spec.obc = v;
   else if (/Мощность DC/i.test(k)) spec.dcpow = v;
   else if (/Рынок/i.test(k)) spec.market = v;
+  else if (/Батаре/i.test(k)) spec.batt = v;
 }
 const cutBalanced = (html: string, marker: string, tag: string) => {
   const i = html.indexOf(marker);
@@ -224,6 +225,15 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         {spec.market && <tr><td>Откуда машина</td><td>{spec.market}</td></tr>}
         <tr><td>Нужен ли адаптер</td><td>{solutionFor(m.port)}</td></tr>
       </table>
+      {spec.batt && (() => {
+        const kb = (String(spec.batt).match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || []);
+        const kwh = kb.length > 1 ? parseFloat(kb[1].replace(',', '.')) : 0;
+        return kwh > 0 && (<div class="card" style="margin-top:20px">
+          <h3 style="margin:0 0 6px">Сколько реально зальётся</h3>
+          <p style="font-size:13.5px;color:var(--txt-muted);margin:0">Паспортная ёмкость: <b style="color:var(--head)">{kwh} кВт·ч</b>. На ходу реально доступно примерно <b style="color:var(--head)">{Math.round(kwh * 0.9)} кВт·ч</b> (буфер сверху и снизу батареи, разница на 10%±3). При зарядке с учётом потерь преобразователей в батарею уйдёт до <b style="color:var(--head)">{Math.round(kwh * 0.95)} кВт·ч</b> — остальное греется по пути. Оценка усреднённая: точные цифры зависят от прошивки, температуры и износа батареи.</p>
+        </div>);
+      })()}
+      {isGBT && (<p style="margin-top:16px;font-size:13.5px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#5aa9ff">в разделе «Тематика»</a>.</p>)}
       <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
           <h3 style="margin:0">Комплект под {m.name || m.title}</h3>
