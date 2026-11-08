@@ -1,6 +1,6 @@
 {
- "sitemap_count": 230,
- "sitemap_ok": 230,
+ "sitemap_count": 237,
+ "sitemap_ok": 237,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -31,14 +31,19 @@
  "models_cards": 151,
  "app_scripts": 5,
  "catalog_products": 0,
- "link_targets": 215,
- "links_ok": 215,
+ "link_targets": 219,
+ "links_ok": 219,
  "links_bad": [],
- "assets_count": 29,
- "assets_ok": 29,
- "assets_bad": [],
+ "assets_count": 33,
+ "assets_ok": 32,
+ "assets_bad": [
+  [
+   "/assets/img/plugs/zsh-'+((a=String(a||",
+   404
+  ]
+ ],
  "gas_alive": true,
- "checked_at_msk": "08.11 16:18",
+ "checked_at_msk": "08.11 17:58",
  "failures": [
   {
    "where": "page /search.html",
@@ -74,8 +79,13 @@
    "where": "/catalog/",
    "what": "товаров в OF_PRODUCTS: 0",
    "crit": true
+  },
+  {
+   "where": "asset /assets/img/plugs/zsh-'+((a=String(a||",
+   "what": "HTTP 404",
+   "crit": false
   }
  ],
- "failures_count": 7,
+ "failures_count": 8,
  "crit_count": 4
 }
