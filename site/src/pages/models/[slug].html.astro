@@ -1,0 +1,22 @@
+---
+export async function getStaticPaths() {
+  const mods = import.meta.glob('/src/data/models/*.json');
+  const slugs = Object.keys(mods).map((p) => p.split('/').pop().replace(/\.json$/, ''));
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+const { slug } = Astro.params;
+const target = 'https://zapashoda-ev.ru/models/' + slug + '/';
+---
+<!doctype html>
+<html lang="ru-RU"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href={target}>
+<meta http-equiv="refresh" content={"0; url=" + target}>
+<title>Страница переехала</title>
+</head>
+<body>
+<script is:inline>location.replace({JSON.stringify(target)});</script>
+<p>Страница переехала: <a href={target}>{target}</a></p>
+</body></html>
