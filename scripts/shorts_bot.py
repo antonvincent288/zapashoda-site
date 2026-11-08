@@ -447,7 +447,8 @@ def cleanup_broken_posts():
         ups = json.load(urllib.request.urlopen(req_, timeout=40))
     except Exception as e:
         print('  [cleanup] getUpdates fail:', type(e).__name__, str(e)[:80])
-        return False
+        ups = {'result': []}
+    deleted = False
     for u in (ups.get('result') or []):
         cp = u.get('channel_post') or {}
         text = cp.get('caption') or cp.get('text') or ''
@@ -457,9 +458,17 @@ def cleanup_broken_posts():
             if r.get('ok'):
                 tg('sendMessage', chat_id=REPORT_CHAT,
                    text='🧹 Удалил пустой шорт «Необычная Зарядка Теслы» (пришёл fMP4-фрагмент вместо цельного mp4). Перевыкладываю исправленный.')
-            return bool(r.get('ok'))
-    print('  [cleanup] битого поста в pending-апдейтах не нашлось — удалить вручную')
-    return False
+            deleted = bool(r.get('ok'))
+            break
+    if not deleted:
+        # фолбэк: известный id пустого поста (SABR-фрагмент, 08.11 19:46 UTC, «Необычная Зарядка Теслы»)
+        r = tg('deleteMessage', chat_id=CHANNEL_ID, message_id=49)
+        print('  [cleanup] delete by id 49 -> ok=%s %s' % (r.get('ok'), r.get('description', '')))
+        deleted = bool(r.get('ok'))
+    if deleted:
+        tg('sendMessage', chat_id=REPORT_CHAT,
+           text='🧹 Удалил пустой шорт «Необычная Зарядка Теслы» (пришёл fMP4-фрагмент вместо цельного mp4). Пайплайн доработан: теперь файл валидируется ffprobe-ом перед отправкой.')
+    return deleted
 
 # ---------- отправка ----------
 def send_video(path, caption, kb):
