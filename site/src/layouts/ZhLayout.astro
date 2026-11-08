@@ -389,6 +389,10 @@ h1,h2,h3{text-wrap:balance}
 .brand-chip{display:inline-block;width:auto!important;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted)!important;background:transparent!important;border:1px solid var(--line);border-radius:999px;padding:2px 10px}
 .bg-gray-100{background:var(--bg2)!important;border:1px solid var(--line)!important;color:var(--txt-muted)!important}
 .bg-green-600{background:transparent!important;color:#22c55e!important;border:1px solid rgba(34,197,94,.35)!important}
+/* === Фикс таблицы результатов калькулятора (все модели): строка-заглушка с colspan=3 не должна
+   растягиваться под колонки «Время»/«Стоимость» — пересобираем в честные три ячейки. Наблюдатель, т.к.
+   таблица перерисовывается скриптом калькулятора при каждом input. === */
+<script is:inline>(function(){var f=function(s){document.querySelectorAll(s||'.cout').forEach(function(out){out.querySelectorAll('td[colspan="3"]').forEach(function(td){var txt=(td.textContent||'');if(!/по данным модели/i.test(txt))return;td.colSpan=1;td.textContent='уточнить';var tr=td.parentElement;if(tr&&tr.children.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}})})};var out=document.querySelector('.cout');if(out){f();new MutationObserver(function(){f()}).observe(out,{childList:true,subtree:true})}})();</script>
 
 /* === UI-полировка: меню, карточки, фокус, прогресс, спойлеры === */
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
