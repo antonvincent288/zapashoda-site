@@ -193,7 +193,8 @@ def main():
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
         meta = {"title": sc.get('title') or slug, "desc": sc['scenes'][0].get('s') or 'Шорт «Запас хода»',
-                "tags": sc.get('tags') or [], "kind": "synthetic", "script_id": slug}
+                "tags": sc.get('tags') or [], "kind": "synthetic", "script_id": slug,
+                "no_plate": True}
         json.dump(meta, open(os.path.join(incoming, slug + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
         print('made', fin, os.path.getsize(fin), 'bytes')
         made += 1
