@@ -1,9 +1,7 @@
-name: YT download probe
+name: YT download probe 2
 
 on:
   workflow_dispatch: {}
-  repository_dispatch:
-    types: [yt-probe]
 
 permissions:
   contents: read
@@ -17,51 +15,64 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install yt-dlp (latest) + plugins
+      - name: Install
         run: |
           pip install -q -U yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
+          sudo apt-get -y install ffmpeg >/dev/null
           yt-dlp --version
-          python -c "import yt_dlp; print('yt_dlp module ok')"
-          yt-dlp -v --version 2>&1 | head -20
-      - name: Start POT provider (wait for ping)
+      - name: Start POT provider
         run: |
           docker run -d -p 4416:4416 --name pot brainicism/bgutil-ytdlp-pot-provider
-          ok=""
-          for i in $(seq 1 40); do
-            if curl -sf http://127.0.0.1:4416/ping >/dev/null; then echo "POT UP after $((i*3))s"; ok=1; break; fi
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:4416/ping >/dev/null && { echo "POT UP"; break; }
             sleep 3
           done
-          [ -n "$ok" ] || echo "::warning::POT ping failed"
-      - name: Probe strategies
-        env:
-          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+      - name: Probe round 2
         run: |
           set +e
           VID="https://www.youtube.com/watch?v=K0GV_0xE3Y8"
           POT="--extractor-args youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416"
-          try() {
+
+          ytry() {
             name="$1"; shift
-            echo "=== STRATEGY: $name ==="
-            rm -f /tmp/probe_$name.*
+            echo "=== YT-DLP: $name ==="
             rc=0
-            timeout 100 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings \
-              --max-filesize 60M -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1 || rc=$?
-            echo "rc=$rc"
-            grep -iE 'ERROR|WARNING' /tmp/log_$name.txt | head -4 || true
-            if ls /tmp/probe_$name.* 2>/dev/null; then
-              f=$(ls /tmp/probe_$name.* | head -1)
-              size=$(stat -c%s "$f")
-              dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null || echo "?")
-              echo "FILE OK: size=$size duration=$dur"
+            timeout 90 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings --max-filesize 60M \
+              -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1 || rc=$?
+            f=$(ls /tmp/probe_$name.* 2>/dev/null | head -1)
+            if [ -n "$f" ]; then
+              echo "FILE OK: $(stat -c%s "$f") bytes, dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null)"
             else
-              echo "NO FILE"
-              tail -3 /tmp/log_$name.txt
+              echo "FAIL rc=$rc: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_$name.txt)"
             fi
           }
-          try "pot_web" $POT --extractor-args "youtube:player_client=web"
-          try "pot_web_auto" $POT
-          try "pot_tv" $POT --extractor-args "youtube:player_client=tv"
-          try "pot_tv_simply" $POT --extractor-args "youtube:player_client=tv_simply"
-          try "ios" --extractor-args "youtube:player_client=ios"
-          try "mweb" $POT --extractor-args "youtube:player_client=mweb"
-          try "default" 
+
+          ytry "web_embedded" $POT --extractor-args "youtube:player_client=web_embedded"
+          ytry "android" $POT --extractor-args "youtube:player_client=android"
+          ytry "web_safari" $POT --extractor-args "youtube:player_client=web_safari"
+          ytry "web_music" $POT --extractor-args "youtube:player_client=web_music"
+          ytry "tv_embedded" $POT --extractor-args "youtube:player_client=tv_embedded"
+
+          echo "=== COBALT ==="
+          curl -s --max-time 20 "https://instances.cobalt.best/api/instances.json" -o /tmp/cb.json
+          python3 - <<'PYEOF'
+          import json
+          try:
+              data = json.load(open('/tmp/cb.json'))
+              live = [i['api'] if i['api'].startswith('http') else 'https://'+i['api']
+                      for i in data if isinstance(i, dict) and i.get('api')
+                      and (i.get('services') or {}).get('youtube')]
+              print('cobalt youtube-capable instances:', live[:8])
+          except Exception as e:
+              print('cobalt list fail:', type(e).__name__, str(e)[:80])
+          PYEOF
+
+          echo "=== INVIDIOUS latest_version check ==="
+          for base in invidious.tiekoetter.com invidious.nerdvpn.de inv.nadeko.net yewtu.be invidious.fdn.fr iv.melmac.space invidious.privacyredirect.com; do
+            rc=0
+            timeout 60 curl -sL -A "Mozilla/5.0" "https://$base/latest_version?id=K0GV_0xE3Y8&itag=18&local=true" -o /tmp/inv_$base.mp4 2>/dev/null || rc=$?
+            sz=$(stat -c%s /tmp/inv_$base.mp4 2>/dev/null || echo 0)
+            sig=$(head -c 12 /tmp/inv_$base.mp4 2>/dev/null | od -An -tx1 | tr -d ' \n')
+            dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 /tmp/inv_$base.mp4 2>/dev/null || echo "?")
+            echo "$base: rc=$rc size=$sz sig=$sig dur=$dur"
+          done
