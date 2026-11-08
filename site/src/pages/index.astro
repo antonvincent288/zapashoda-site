@@ -5,7 +5,7 @@ const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager
 all.sort((a, b) =>String(b.date || '').localeCompare(String(a.date || '')));
 const latest = all.slice(0, 3);
 const stats = [
-  { n: '145', t: 'моделей с разъёмами и решениями' },
+  { n: '151', t: 'модель с разъёмами и решениями' },
   { n: '59', t: 'статей о зарядке и ремонте' },
   { n: '2073', t: 'станций на карте РФ' },
 ];
