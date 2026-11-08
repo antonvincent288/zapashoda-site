@@ -9,7 +9,7 @@ shorts_ingest.py (по одному за прогон) и публикует в 
 Запуск: python scripts/video_generator.py [--one] [--limit N]
 Дедуп: по scripts/shorts_published.json (items[].file == slug_zs30.mp4) и по pending в incoming.
 """
-import os, json, math, argparse, subprocess, tempfile, sys, shutil
+import os, json, math, argparse, subprocess, tempfile, sys, shutil, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -177,6 +177,10 @@ def main():
     except Exception:
         pass
     used = {it.get('file') for it in (pub.get('items') or [])}
+    today = datetime.date.today().isoformat()
+    if any((it.get('added') or '') == today for it in (pub.get('items') or [])):
+        print('синтетик сегодня уже публиковался — пауза (темп 1/день)')
+        return
     limit = 1 if args.one else args.limit
     made = 0
     for sc in scripts:
