@@ -9,9 +9,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       <h1>Зарядные станции рядом</h1>
       <p class="lead"><span id="stn-count">2073</span> станций (<span id="stn-upd">2026-11-01</span>). Синие — быстрые DC, зелёные — AC.</p>
       <div id="map" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:28px;border:1px solid var(--line)"></div>
-      <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC.</p></div>
+      <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:14px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
+      <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:220px;max-width:380px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" /><button id="city-go" class="chip" type="button">Найти</button><button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами">📍 Рядом со мной</button></div>
       <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
-      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:12px">Нажмите на точку на карте — откроется адрес станции, коннекторы и мощность. Синие точки — быстрые DC, зелёные — AC.</p>
+      <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin-top:12px"></p>
+      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:6px">Нажмите на точку на карте — откроется адрес станции, коннекторы и мощность. Синие точки — быстрые DC, зелёные — AC.</p>
     </div>
   </section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
@@ -47,6 +49,16 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['schuko', 'Розетка 220 В', 'zsh-schuko'],
       ];
       var active = {};
+      var PW_PREDS = {
+        pw100: function (s) { return (Number(s.pw) || 0) >= 100; },
+        pw50: function (s) { var p = Number(s.pw) || 0; return p >= 50 && p < 100; },
+        pw22: function (s) { var p = Number(s.pw) || 0; return p > 0 && p < 50; }
+      };
+      var PW_LABELS = [
+        ['pw100', '⌁ 100 кВт и быстрее (DC)'],
+        ['pw50', '⌁ 50–99 кВт (DC)'],
+        ['pw22', '⌁ до 50 кВт (AC и медленный DC)']
+      ];
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).then(function (data) {
         var st = data.stations || [];
         document.getElementById('stn-count').textContent = st.length;
@@ -105,9 +117,49 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           buildConnChips();
           applyFilter();
         }
+        var sBtn = document.getElementById('city-go');
+        if (sBtn) sBtn.addEventListener('click', function () {
+          var q = String(document.getElementById('city-search').value || '').trim().toLowerCase();
+          var note = document.getElementById('geo-note');
+          if (!q) return;
+          var hits = ALL.filter(function (m) { return String(m.__s.a || '').toLowerCase().indexOf(q) >= 0; });
+          if (hits.length) {
+            cluster.clearLayers();
+            hits.forEach(function (m) { cluster.addLayer(m); });
+            map.fitBounds(L.latLngBounds(hits.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
+            if (note) note.textContent = 'Найдено ' + hits.length + ' станций по запросу «' + q + '». Кликните по фильтру разъёмов, чтобы сбросить поиск.';
+          } else if (note) {
+            note.textContent = 'По запросу «' + q + '» ничего не найдено в базе. Попробуйте название города без улицы.';
+          }
+        });
+        var gBtn = document.getElementById('geo-btn');
+        if (gBtn) gBtn.addEventListener('click', function () {
+          var note = document.getElementById('geo-note');
+          if (!navigator.geolocation) { if (note) note.textContent = 'Браузер не поддерживает геолокацию — воспользуйтесь поиском города.'; return; }
+          navigator.geolocation.getCurrentPosition(function (pos) {
+            var lat = pos.coords.latitude, lon = pos.coords.longitude, R = 6371;
+            function hav(a) { var d = Math.PI / 180; var x = Math.sin((a[0]-lat)*d/2), y = Math.sin((a[1]-lon)*d/2); return 2*R*Math.asin(Math.sqrt(x*x + Math.cos(a[0]*d)*Math.cos(lat*d)*y*y)); }
+            var near = ALL.filter(function (m) { return m.__s.lat && m.__s.lon && hav([m.__s.lat, m.__s.lon]) <= 50; });
+            if (near.length) {
+              cluster.clearLayers();
+              near.forEach(function (m) { cluster.addLayer(m); });
+              map.fitBounds(L.latLngBounds(near.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
+              if (note) note.textContent = 'Рядом (до 50 км): ' + near.length + ' станций. Фильтр разъёмов работает поверх — выберите свой разъём выше.';
+            } else if (note) {
+              note.textContent = 'В радиусе 50 км станций не нашлось. Покажем всю карту.';
+              map.setView([lat, lon], 9);
+            }
+          }, function () {
+            if (note) note.textContent = 'Не удалось получить геолокацию — найдите свой город поиском выше.';
+          });
+        });
       });
       function hasAny(s) {
-        for (var k in active) if (active[k] && s.__c[k]) return true;
+        for (var k in active) {
+          if (!active[k]) continue;
+          if (PW_PREDS[k]) { if (PW_PREDS[k](s)) return true; }
+          else if (s.__c && s.__c[k]) return true;
+        }
         return false;
       }
       function applyFilter() {
@@ -120,7 +172,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           if (ok) { cluster.addLayer(m); shown++; }
         });
         var note = document.getElementById('conn-note');
-        if (note) note.textContent = keys.length ? ('Фильтр по разъёму: показано ' + shown + ' из ' + ALL.length + ' станций') : '';
+        if (note) note.textContent = keys.length ? ('Показано ' + shown + ' из ' + ALL.length + ' станций') : '';
+        try {
+          var hk = keys.filter(function (k) { return FILTERS.some(function (f) { return f[0] === k; }) || PW_PREDS[k]; }).join(',');
+          history.replaceState(null, '', hk ? '#f=' + hk : location.pathname + location.search);
+        } catch (e) {}
       }
       function buildConnChips() {
         var box = document.getElementById('conn-chips');
@@ -150,6 +206,32 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           applyFilter();
         });
         box.appendChild(all);
+        var pwBox = document.getElementById('pw-chips');
+        PW_LABELS.forEach(function (f) {
+          var b = document.createElement('button');
+          b.className = 'chip cchip';
+          b.dataset.k = f[0];
+          b.textContent = f[1];
+          b.addEventListener('click', function () {
+            active[f[0]] = !active[f[0]];
+            b.classList.toggle('on', !!active[f[0]]);
+            applyFilter();
+          });
+          pwBox.appendChild(b);
+        });
+        try {
+          var hh = String(location.hash || '');
+          if (hh.indexOf('#f=') === 0) {
+            hh.slice(3).split(',').forEach(function (k) {
+              k = decodeURIComponent(k);
+              if (FILTERS.some(function (f) { return f[0] === k; }) || PW_PREDS[k]) { active[k] = true; }
+            });
+            document.querySelectorAll('.cchip').forEach(function (x) {
+              if (active[x.dataset.k]) x.classList.add('on');
+              else if (x.dataset.k) x.classList.remove('on');
+            });
+          }
+        } catch (e) {}
       }
     })();
   </script>
