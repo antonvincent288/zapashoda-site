@@ -4,11 +4,7 @@ on:
   schedule:
     # 10:00, 14:00, 18:00, 22:00 МСК
     - cron: '0 7,11,15,19 * * *'
-  workflow_dispatch:
-    inputs:
-      force:
-        description: 'Опубликовать синтетический шорт немедленно (игнорируя дневной лимит)'
-        default: 'false'
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -41,11 +37,6 @@ jobs:
         run: |
           sudo apt-get -y install ffmpeg || true
           python scripts/shorts_bot.py
-      - name: Generate synthetic short (brand-made, always works)
-        run: |
-          sudo apt-get -y install fonts-dejavu-core || true
-          pip install -q pillow
-          python scripts/video_generator.py --one${{ github.event.client_payload.force == 'true' || inputs.force == 'true' && ' --force' || '' }}
       - name: Ingest shorts from architect (R-06)
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
