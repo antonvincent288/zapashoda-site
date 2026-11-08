@@ -1,6 +1,6 @@
 {
- "sitemap_count": 224,
- "sitemap_ok": 224,
+ "sitemap_count": 230,
+ "sitemap_ok": 230,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -28,17 +28,17 @@
   "/shorts/": 200,
   "/telemetry/": 200
  },
- "models_cards": 145,
+ "models_cards": 151,
  "app_scripts": 5,
  "catalog_products": 0,
- "link_targets": 208,
- "links_ok": 208,
+ "link_targets": 215,
+ "links_ok": 215,
  "links_bad": [],
  "assets_count": 29,
  "assets_ok": 29,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "08.11 12:12",
+ "checked_at_msk": "08.11 14:03",
  "failures": [
   {
    "where": "page /search.html",
