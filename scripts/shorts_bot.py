@@ -297,7 +297,12 @@ def inv_direct_download(c, dst, pub):
         urls = []
         for f in (v.get('formatStreams') or []) + (v.get('adaptiveFormats') or []):
             u = f.get('url') or ''
-            if 'googlevideo.com' not in u:
+            # SABR-компаньоны инстансов (companion/sabr-segment) — НЕ прямой файл:
+            # fMP4-фрагменты без moov, Telegram принимает их как «пустое» видео 0:00.
+            if 'sabr-segment' in u or 'companion/' in u:
+                continue
+            host = urllib.parse.urlparse(u).netloc.lower()
+            if not host.endswith('googlevideo.com'):
                 continue
             mime = (f.get('container') or '') + (f.get('mimeType') or '') + u
             if 'mp4' not in mime:
@@ -400,6 +405,62 @@ def api_search(topic):
                     '_src': 'api'})
     return out
 
+
+def validate_video(path, min_dur=2.0):
+    """Валидация скачанного файла перед отправкой: видео-дорожка есть, длительность >= min_dur.
+    Лечит случай SABR-потоков YouTube: инстанс отдаёт fMP4-фрагменты без moov — Telegram
+    принимает их как «пустое» видео 0:00, и в канале висит нерабочий файл."""
+    streams, dur = [], 0.0
+    try:
+        r = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+                            '-show_entries', 'stream=codec_name', '-show_entries', 'format=duration',
+                            '-of', 'json', path], capture_output=True, text=True, timeout=60)
+        meta = json.loads(r.stdout or '{}')
+        streams = meta.get('streams') or []
+        dur = float((meta.get('format') or {}).get('duration') or 0)
+    except Exception:
+        pass
+    if not streams or dur < min_dur:
+        # фолбэк: ffmpeg печатает Duration только для цельного файла с moov
+        try:
+            r = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-map', '0:v:0', '-f', 'null', '-'],
+                               capture_output=True, text=True, timeout=120)
+            m = re.search(r'Duration:\s*(\d+):(\d+):(\d+\.\d+)', (r.stderr or '') + (r.stdout or ''))
+            if m and r.returncode == 0:
+                dur = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3))
+                streams = [{'codec_name': 'video'}]
+        except Exception:
+            pass
+    if not streams:
+        return False, 'no video stream (не цельный mp4)'
+    if dur < min_dur:
+        return False, 'duration %.1fs < %.1fs (битый/фрагментированный файл)' % (dur, min_dur)
+    return True, 'ok (%.1fs)' % dur
+
+CLEANUP_TARGET = 'K0GV_0xE3Y8'
+
+def cleanup_broken_posts():
+    """Разовая чистка канала: удалить «пустой» шорт, отправленный из SABR-фрагмента (08.11).
+    Ищем в ещё неподтверждённых апдейтах бота channel_post с видео и нашим маркером в подписи."""
+    try:
+        req_ = urllib.request.Request('https://api.telegram.org/bot%s/getUpdates?allowed_updates=channel_post' % TELEGRAM_TOKEN)
+        ups = json.load(urllib.request.urlopen(req_, timeout=40))
+    except Exception as e:
+        print('  [cleanup] getUpdates fail:', type(e).__name__, str(e)[:80])
+        return False
+    for u in (ups.get('result') or []):
+        cp = u.get('channel_post') or {}
+        text = cp.get('caption') or cp.get('text') or ''
+        if cp.get('video') and CLEANUP_TARGET in text:
+            r = tg('deleteMessage', chat_id=CHANNEL_ID, message_id=cp['message_id'])
+            print('  [cleanup] delete %s -> ok=%s' % (cp['message_id'], r.get('ok')))
+            if r.get('ok'):
+                tg('sendMessage', chat_id=REPORT_CHAT,
+                   text='🧹 Удалил пустой шорт «Необычная Зарядка Теслы» (пришёл fMP4-фрагмент вместо цельного mp4). Перевыкладываю исправленный.')
+            return bool(r.get('ok'))
+    print('  [cleanup] битого поста в pending-апдейтах не нашлось — удалить вручную')
+    return False
+
 # ---------- отправка ----------
 def send_video(path, caption, kb):
     boundary = uuid.uuid4().hex
@@ -476,6 +537,12 @@ def process(c, pub, now):
             break
     if not clip:
         return False, 'download failed'
+    okv, whyv = validate_video(clip)
+    if not okv:
+        try: os.remove(clip)
+        except Exception: pass
+        print('  [validate] reject:', whyv)
+        return False, 'invalid file: %s' % whyv
     caption = ('🎬 ' + short(c.get('title'), 80) + '\n\n'
                '📺 Автор: ' + author + ' · лицензия Creative Commons\n'
                + c['url'] + '\n\n#видео #ev')
@@ -503,6 +570,7 @@ def main():
         print('TELEGRAM_TOKEN secret is missing'); return
     pub = load_pub()
     now = time.time()
+    cleanup_broken_posts()
     INV_INSTANCES[:] = dynamic_instances()
     candidates, seen = [], set()
     stats = {'inv': 0, 'api': 0, 'yt': 0, 'too_long': 0, 'dup': 0}
