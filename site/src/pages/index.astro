@@ -3,7 +3,9 @@ import ZhLayout from '../layouts/ZhLayout.astro';
 import LegacyStyles from '../components/LegacyStyles.astro';
 const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
 all.sort((a, b) =>String(b.date || '').localeCompare(String(a.date || '')));
-const latest = all.slice(0, 3);
+const PINNED = ['domashnyaya-zaryadka-elektromobilya', 'kabel-dlya-zaryadki-elektromobilya'];
+const pinned = PINNED.map((s) => all.find((a) => a.slug === s)).filter(Boolean);
+const latest = [...pinned, ...all.filter((a) => !pinned.includes(a)).slice(0, 2)].slice(0, 4);
 const stats = [
   { n: '151', t: 'модель с разъёмами и решениями' },
   { n: '59', t: 'статей о зарядке и ремонте' },
@@ -62,7 +64,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <section class="sec sec-alt"><div class="wrap"><h2>База знаний</h2><p class="lead" style="margin-bottom:36px">Реальные кейсы и свежие разборы — без маркетинга.</p><div class="cards">{pains.map((c) =>(
           <a class="card" href={c.href}><svg class="evicon" viewBox="0 0 120 64" aria-hidden="true"><path d="M8 46 L10 34 Q12 28 20 27 L32 26 L42 16 Q45 13 52 13 L82 13 Q89 13 94 17 L104 26 L112 28 Q116 30 116 35 L115 46" stroke="#0161EF" stroke-width="2.5" fill="rgba(1,97,239,.06)" stroke-linecap="round"/><circle cx="26" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle cx="96" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle class="zone" cx={c.zx} cy={c.zy} r="7" fill="#4A9EF0"/></svg><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></a>))}
       </div>
-        <h2 style="margin:64px 0 16px">Свежие разборы</h2>
+        <h2 style="margin:64px 0 16px">Разборы по спросу</h2>
         <div class="bgrid">{latest.map((a) =>(
           <a class="bcard" href={`/blog/${a.slug}`}><span class="tag">{a.category || 'Блог'}</span><h3>{a.title}</h3><p>{shortLine(a.desc)}</p></a>))}
         </div>
