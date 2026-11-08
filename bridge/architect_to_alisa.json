@@ -1276,6 +1276,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0074",
+      "ts": "2026-11-08T05:26:31+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: kitaiskoe-vremya-v-raspisanii-zaryadki-posle-rusifikatsii.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
