@@ -45,6 +45,7 @@ for f in sorted(glob.glob(os.path.join(MAIN, "data", "blog_extra", "*.json"))):
         "body_html": d.get("body_html") or d.get("body") or "",
         "extra_html": "",
         "headings": [],
+        "faq": ([{"q": x[0], "a": x[1]} for x in (d.get("faq") or d.get("FAQ_") or []) if len(x) >= 2]) if isinstance((d.get("faq") or d.get("FAQ_")), (list, tuple)) and (d.get("faq") or d.get("FAQ_")) else [],
     }
     with open(dst, "w", encoding="utf-8") as w:
         json.dump(rec, w, ensure_ascii=False)
