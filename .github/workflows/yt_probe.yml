@@ -1,4 +1,4 @@
-name: YT download probe 2
+name: YT download probe 3
 
 on:
   workflow_dispatch: {}
@@ -9,7 +9,7 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,60 +19,26 @@ jobs:
         run: |
           pip install -q -U yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
           sudo apt-get -y install ffmpeg >/dev/null
-          yt-dlp --version
-      - name: Start POT provider
-        run: |
-          docker run -d -p 4416:4416 --name pot brainicism/bgutil-ytdlp-pot-provider
-          for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:4416/ping >/dev/null && { echo "POT UP"; break; }
-            sleep 3
-          done
-      - name: Probe round 2
+      - name: Probe web_music on other videos
         run: |
           set +e
-          VID="https://www.youtube.com/watch?v=K0GV_0xE3Y8"
-          POT="--extractor-args youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416"
-
-          ytry() {
-            name="$1"; shift
-            echo "=== YT-DLP: $name ==="
+          for id in HSKthPNbZtA CGDoQGNma74 7tJA8I_WF2k nBBrJIdYDpg oWXRO9EnMAA; do
+            echo "=== web_music $id ==="
             rc=0
             timeout 90 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings --max-filesize 60M \
-              -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1 || rc=$?
-            f=$(ls /tmp/probe_$name.* 2>/dev/null | head -1)
+              --extractor-args "youtube:player_client=web_music" \
+              -o "/tmp/p3_$id.%(ext)s" "https://www.youtube.com/watch?v=$id" > /tmp/log_$id.txt 2>&1 || rc=$?
+            f=$(ls /tmp/p3_$id.* 2>/dev/null | head -1)
             if [ -n "$f" ]; then
               echo "FILE OK: $(stat -c%s "$f") bytes, dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null)"
             else
-              echo "FAIL rc=$rc: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_$name.txt)"
+              echo "FAIL rc=$rc: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_$id.txt)"
             fi
-          }
-
-          ytry "web_embedded" $POT --extractor-args "youtube:player_client=web_embedded"
-          ytry "android" $POT --extractor-args "youtube:player_client=android"
-          ytry "web_safari" $POT --extractor-args "youtube:player_client=web_safari"
-          ytry "web_music" $POT --extractor-args "youtube:player_client=web_music"
-          ytry "tv_embedded" $POT --extractor-args "youtube:player_client=tv_embedded"
-
-          echo "=== COBALT ==="
-          curl -s --max-time 20 "https://instances.cobalt.best/api/instances.json" -o /tmp/cb.json
-          python3 - <<'PYEOF'
-          import json
-          try:
-              data = json.load(open('/tmp/cb.json'))
-              live = [i['api'] if i['api'].startswith('http') else 'https://'+i['api']
-                      for i in data if isinstance(i, dict) and i.get('api')
-                      and (i.get('services') or {}).get('youtube')]
-              print('cobalt youtube-capable instances:', live[:8])
-          except Exception as e:
-              print('cobalt list fail:', type(e).__name__, str(e)[:80])
-          PYEOF
-
-          echo "=== INVIDIOUS latest_version check ==="
-          for base in invidious.tiekoetter.com invidious.nerdvpn.de inv.nadeko.net yewtu.be invidious.fdn.fr iv.melmac.space invidious.privacyredirect.com; do
-            rc=0
-            timeout 60 curl -sL -A "Mozilla/5.0" "https://$base/latest_version?id=K0GV_0xE3Y8&itag=18&local=true" -o /tmp/inv_$base.mp4 2>/dev/null || rc=$?
-            sz=$(stat -c%s /tmp/inv_$base.mp4 2>/dev/null || echo 0)
-            sig=$(head -c 12 /tmp/inv_$base.mp4 2>/dev/null | od -An -tx1 | tr -d ' \n')
-            dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 /tmp/inv_$base.mp4 2>/dev/null || echo "?")
-            echo "$base: rc=$rc size=$sz sig=$sig dur=$dur"
           done
+          echo "=== combo music+web+POT ==="
+          timeout 90 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings \
+            --extractor-args "youtube:player_client=web_music,web" \
+            --extractor-args "youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416" \
+            -o "/tmp/p3_combo.%(ext)s" "https://www.youtube.com/watch?v=7tJA8I_WF2k" > /tmp/log_combo.txt 2>&1 || true
+          f=$(ls /tmp/p3_combo.* 2>/dev/null | head -1)
+          [ -n "$f" ] && echo "COMBO FILE OK: $(stat -c%s "$f")" || echo "COMBO FAIL: $(grep -m1 -oE 'ERROR: .{0,90}' /tmp/log_combo.txt)"
