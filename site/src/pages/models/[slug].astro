@@ -46,7 +46,7 @@ const portIcon = (p: string) => {
 };
 const FAQ_GB = `<div class="card" style="margin-top:26px">
         <h3>Частые вопросы про разъём</h3>
-        <details class="mfaq"><summary>Можно ли зарядить GB/T-машину на Type 2 / CCS2 станции?</summary><p>Да, через адаптер: Type 2 → GB/T для медленной зарядки в городе (примерно 4–9 тыс. ₽) или CCS2 → GB/T DC для быстрой (100–200 тыс. ₽) — обычно ради дальних поездок. Подробнее — <a href="/razemy/gbt/">в справочнике GB/T</a>.</p></details>
+        <details class="mfaq"><summary>Можно ли зарядить GB/T-машину на Type 2 / CCS2 станции?</summary><p>Да, через адаптер: Type 2 → GB/T для медленной зарядки в городе (примерно 4–9 тыс. ₽) или CCS2 → GB/T DC для быстрой (95 000 ₽ в каталоге) — обычно ради дальних поездок. Подробнее — <a href="/razemy/gbt/">в справочнике GB/T</a>.</p></details>
         <details class="mfaq"><summary>GB/T AC и GB/T DC — это один разъём?</summary><p>Нет, это два разных порта: малый для медленной зарядки (до 7 кВт) и большой для быстрой (60–120 кВт на современных моделях). У машины обычно оба.</p></details>
         <details class="mfaq"><summary>Какой адаптер купить в первую очередь?</summary><p>Адаптер Type 2 → GB/T на 32 А: он открывает большинство городских станций. Полный план — в <a href="/matrix/">матрице совместимости</a>.</p></details>
       </div>`;
@@ -124,6 +124,11 @@ const cutMid = (html: string, start: number, tag: string): [string, string, stri
 };
 
 const isGBT = String(m.port || '').includes('GB/T');
+const CAP_OVERRIDES: Record<string, string> = { 'aito-m5-m7': '40' };
+const CAP_NOTE: Record<string, string> = { 'aito-m5-m7': ' (у EV-версии AITO M5 — 80 кВт·ч)' };
+const dcpowClean = String(spec.dcpow || '').replace(/\(не подтверждено\)/g, '(уточняем по VIN)');
+const dcShort = (dcpowClean.match(/[0-9]+(?:–[0-9]+)?\+?\s?кВт/) || [dcpowClean])[0];
+const battLabel = String(spec.batt || '').trim() || (CAP_OVERRIDES[String(m.slug || '')] ? CAP_OVERRIDES[String(m.slug || '')] + ' кВт·ч' : '');
 // для машин с Type 2/CCS2 держатель GB/T не продаём — вместо него честный EU-аксессуар
 const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="9900"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
 const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="690"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
@@ -194,26 +199,86 @@ const bodyClean = (() => {
       }
     }
   }
-  // блок «Проблемы и решения»: только релевантные болеи, горизонтальный скролл на мобильных
-  if (!isGBT) {
-    const KEEP = ['UN-01', 'ZM-01', 'UN-04', 'UN-05', 'UN-06'];
-    const grids = [...h.matchAll(/<div class="prob-grid">/g)].map(m2 => m2.index);
-    if (grids.length) {
-      const gi = grids[grids.length - 1];
+  // ГИГИЕНА (08.11): дубли плиток портов, внутренние пометки, дефолт батареи, имя бандла
+  h = h.replace(/<div class="pt">\s*<div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">\s*<img[^>]*src="\/assets\/img\/plugs\/zsh-[a-z0-9-]+\.svg"[^>]*>\s*<b>[^<]+<\/b>\s*<\/div>\s*<div class="sol"><\/div>\s*<\/div>/g, '');
+  h = h.replace(/<p class="note">\s*<b>Примечание:<\/b>\s*Канал Major[\s\S]{0,120}?<\/p>\s*/g, '');
+  const mslug2 = String(m.slug || '');
+  const capDefault = (String(spec.batt || '').match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || [])[1];
+  const capFinal = CAP_OVERRIDES[mslug2] || (capDefault ? capDefault.replace(',', '.') : null);
+  if (capFinal) {
+    h = h.replace(/value="60"/g, 'value="' + capFinal + '"');
+    h = h.replace(/Время посчитано для батареи 60 кВт·ч/g, 'Время посчитано для батареи ' + capFinal + ' кВт·ч' + (CAP_NOTE[mslug2] || ''));
+  }
+  if (isGBT) {
+    h = h.split('Пакет „Максимальный ход“ для Zeekr / Li Auto / Voyah').join('Пакет «Максимальный ход» для китайских EV (GB/T)');
+  }
+  // Блок «Проблемы и решения»: серверный фильтр по порту/марке + аккордеон (вместо клиентского JS-двойника)
+  {
+    const h2ms = [...h.matchAll(/<h2[^>]*>[^<]*Проблемы и решения[^<]*<\/h2>/g)].map(x => x.index);
+    const h2i = h2ms.length ? h2ms[h2ms.length - 1] : -1;
+    let gi = -1, gEnd = -1;
+    if (h2i >= 0) {
+      const gx = h.indexOf('<div class="prob-grid">', h2i);
+      if (gx >= 0) gi = gx;
+    }
+    if (gi < 0) {
+      const gs = [...h.matchAll(/<div class="prob-grid">/g)].map(x => x.index);
+      if (gs.length) gi = gs[gs.length - 1];
+    }
+    if (gi >= 0) {
       const rx = /<div\b|<\/div>/g;
       rx.lastIndex = gi;
-      let d2 = 0, mm2, gEnd = -1;
+      let d2 = 0, mm2;
       while ((mm2 = rx.exec(h))) { if (mm2[0][1] === '/') d2--; else d2++; if (d2 === 0) { gEnd = rx.lastIndex; break; } }
-      if (gEnd > 0) {
-        const grid = h.slice(gi, gEnd);
-        const inner = grid.slice('<div class="prob-grid">'.length, grid.length - '</div>'.length);
-        const pis = [...inner.matchAll(/<div class="pt">/g)].map(x => x.index);
-        const cards = pis.map((p, j) => inner.slice(p, j + 1 < pis.length ? pis[j + 1] : inner.length));
-        const kept = cards.filter(c => { const mm3 = c.match(/pain-id">([A-Z0-9-]+)/); return mm3 && KEEP.includes(mm3[1]); });
-        if (kept.length && kept.length < cards.length) {
-          const gridHtml = '<div class="prob-grid prob-grid-pains">' + kept.join('') + '</div>';
-          h = h.slice(0, gi) + gridHtml + h.slice(gEnd);
+    }
+    if (gi >= 0 && gEnd > 0) {
+      const inner = h.slice(gi + '<div class="prob-grid">'.length, gEnd - '</div>'.length);
+      const pis = [...inner.matchAll(/<div class="pt">/g)].map(x => x.index);
+      const cards = pis.map((p, j) => inner.slice(p, j + 1 < pis.length ? pis[j + 1] : inner.length));
+      const mnameAll = (String(m.brand || '') + ' ' + String(m.name || m.title || '')).toLowerCase().replace(/[()/]/g, ' ').split(/\s+/).filter(t => t.length > 2);
+      const mtype = String(m.type || '').toUpperCase();
+      const portTokens = isGBT ? ['gb/t', 'gbt'] : ['type 2', 'type2', 'ccs2', 'ccs'];
+      const bodyKeywords = isGBT ? ['китай'] : ['европ', 'европейск'];
+      const FRAMES = ['zeekr', 'tesla', 'voyah', 'avatr', 'lotus', 'hiphi', 'nio', 'im '];
+      const KEEP = ['UN-01', 'ZM-01', 'UN-04', 'UN-05', 'UN-06'];
+      const keepPainS = (txt, pid) => {
+        const t = String(txt || '').toLowerCase().replace(/^кому актуально:\s*/, '');
+        if (pid && KEEP.includes(pid)) return true;
+        for (const tk of mnameAll) if (tk && t.indexOf(tk) >= 0) return true;
+        for (const pt of portTokens) if (t.indexOf(pt) >= 0) return true;
+        for (const bk of bodyKeywords) if (t.indexOf(bk) >= 0) return true;
+        if (/^(все|китайск|импорт|владелец|люб)/.test(t.trim())) return true;
+        if (t.indexOf('eu-групп') >= 0) return true;
+        if (t.indexOf('все ev') >= 0 || t.indexOf('многие ev') >= 0 || t.indexOf('все с adas') >= 0) return true;
+        if (t.indexOf('безрам') >= 0) {
+          for (const tk of mnameAll) { for (const fr of FRAMES) { if (tk.indexOf(fr) === 0) return true; } }
         }
+        if (mtype.indexOf('EREV') >= 0 || mtype.indexOf('PHEV') >= 0) {
+          if ((pid || '').indexOf('PHEV-') === 0 || t.indexOf('erev') >= 0) return true;
+        }
+        return false;
+      };
+      const accParts = [];
+      let hiddenCount = 0;
+      for (const c of cards) {
+        const idm = c.match(/pain-id">([A-Z0-9-]+)/);
+        const pid = idm ? idm[1] : '';
+        const actm = c.match(/<div class="sol">[\s\S]*?<\/div>/);
+        const actTxt = actm ? actm[0].replace(/<[^>]+>/g, '').trim() : '';
+        if (!keepPainS(actTxt, pid)) { hiddenCount++; continue; }
+        const h3m = c.match(/<h3>[\s\S]*?<\/h3>/);
+        let title = h3m ? h3m[0].replace(/<[^>]+>/g, '').trim() : '';
+        title = pid && title.indexOf(pid) === 0 ? title.slice(pid.length).replace(/^\s+/, '') : title;
+        const rest = h3m ? c.slice(c.indexOf(h3m[0]) + h3m[0].length) : c;
+        accParts.push('<details class="pain-acc"><summary><span class="pain-id">' + pid + '</span> <b>' + title + '</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">' + rest + '</div></details>');
+      }
+      if (accParts.length === 0) {
+        const h2s2 = h2i >= 0 ? h.lastIndexOf('<h2', h2i) : -1;
+        const start = h2s2 >= 0 ? h2s2 : gi;
+        h = h.slice(0, start) + '<p class="note">Специфичные разборы для этой модели в подготовке. Общие проблемы и решения — в <a href="/pain/">разделе «Проблемы и решения»</a>.</p>' + h.slice(gEnd);
+      } else {
+        const more = hiddenCount ? '<details class="pain-acc pain-more"><summary><b>Ещё ' + hiddenCount + ' проблем смежных сценариев</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">Разобраны в <a href="/pain/">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div></details>' : '';
+        h = h.slice(0, gi) + '<div class="pain-acc-wrap">' + accParts.join('') + more + '</div>' + h.slice(gEnd);
       }
     }
   }
@@ -267,7 +332,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       <div class="meta">
         <a href={`/razemy/${portSlug(String(m.port || ''))}/`} style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit" title="Справочник разъёма"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'} <span style="font-size:11px;color:var(--txt-muted)">что за разъём →</span></a>
         {spec.obc && <span>{spec.obc}</span>}
-        {spec.dcpow && <span>DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
+        {dcpowClean && <span>DC {dcShort}</span>}
         <span>Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
@@ -275,25 +340,25 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         {spec.ac && <tr><td>Дома и в городе</td><td>{spec.ac}</td></tr>}
         {spec.dc && <tr><td>На трассе (быстро)</td><td>{spec.dc}</td></tr>}
         {spec.obc && <tr><td>Скорость дома</td><td>{spec.obc}</td></tr>}
-        {spec.dcpow && <tr><td>Быстрая заправка</td><td>{spec.dcpow}</td></tr>}
+        {dcpowClean && <tr><td>Быстрая заправка</td><td>{dcpowClean}</td></tr>}
         {spec.market && <tr><td>Откуда машина</td><td>{spec.market}</td></tr>}
         <tr><td>Нужен ли адаптер</td><td>{solutionFor(m.port)}</td></tr>
       </table>
-      {spec.batt && (() => {
-        const kb = (String(spec.batt).match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || []);
+      {battLabel && (() => {
+        const kb = (String(battLabel).match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || []);
         const kwh = kb.length > 1 ? parseFloat(kb[1].replace(',', '.')) : 0;
         return kwh > 0 && (<div class="card" style="margin-top:20px">
           <h3 style="margin:0 0 6px">Сколько реально зальётся</h3>
-          <p style="font-size:13.5px;color:var(--txt-muted);margin:0">Паспортная ёмкость: <b style="color:var(--head)">{kwh} кВт·ч</b>. На ходу реально доступно примерно <b style="color:var(--head)">{Math.round(kwh * 0.9)} кВт·ч</b> (буфер сверху и снизу батареи, разница на 10%±3). При зарядке с учётом потерь преобразователей в батарею уйдёт до <b style="color:var(--head)">{Math.round(kwh * 0.95)} кВт·ч</b> — остальное греется по пути. Оценка усреднённая: точные цифры зависят от прошивки, температуры и износа батареи.</p>
+          <p style="font-size:13.5px;color:var(--txt-muted);margin:0">Паспортная ёмкость: <b style="color:var(--head)">{kwh} кВт·ч</b>. На ходу реально доступно примерно <b style="color:var(--head)">{Math.round(kwh * 0.9)} кВт·ч</b> (буфер сверху и снизу батареи, разница на 10%±3). При зарядке с учётом потерь преобразователей в батарею уйдёт до <b style="color:var(--head)">{Math.round(kwh * 0.95)} кВт·ч</b> — остальное греется по пути. Оценка усреднённая: точные цифры зависят от прошивки, температуры и износа батареи.{CAP_NOTE[String(m.slug||'')] || ''}</p>
         </div>);
       })()}
-      {isGBT && (<p style="margin-top:16px;font-size:13.5px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#5aa9ff">в разделе «Тематика»</a>.</p>)}
+      {isGBT && (<p style="margin-top:16px;font-size:13.5px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#5aa9ff">в разделе «Телематика»</a>.</p>)}
       <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
           <h3 style="margin:0">Комплект под {m.name || m.title}</h3>
           <p style="font-size:13.5px;color:var(--txt-muted)">{isGBT ? 'Адаптер + держатель + смазка контактов' : 'Портативка Type 2 + кабель Type 2 + смазка контактов'}</p>
         </div>
-        <a class="btn btn-gold" href="/b2b/" style="text-decoration:none">Уточнить комплект</a>
+        <a class="btn btn-gold" href={isGBT ? ('/catalog/?line=gbt&model=' + encodeURIComponent(String(m.name || m.title))) : '/catalog/'} style="text-decoration:none">Подобрать комплект</a>
       </div>
       {faqPort && <Fragment set:html={faqPort} />}
             {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
@@ -348,54 +413,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     h2s.forEach(function(h2){
       var ht = (h2.textContent || '').trim();
       if (ht.indexOf('Проблемы и решения') === 0) {
-        var container = gridAfter(h2);
-        if (!container) return;
-        var cards = Array.prototype.slice.call(container.querySelectorAll('.pt'));
-        var kept = [], hidden = [];
-        cards.forEach(function(c){
-          var act = c.querySelector('.sol');
-          var actTxt = act ? act.textContent : '';
-          if (isGBT && /Кому актуально/i.test(actTxt)) {
-            var pid = ((c.querySelector('.pain-id') || {}).textContent || '').trim();
-            if (!keepPain(actTxt, pid)) { hidden.push(c); return; }
-          }
-          kept.push(c);
-        });
-        var wrap = document.createElement('div');
-        wrap.className = 'pain-acc-wrap';
-        kept.forEach(function(c){
-          var head = c.querySelector('h3');
-          var id = head ? (head.querySelector('.pain-id') || {}).textContent || '' : '';
-          var title = head ? head.textContent.replace(id, '').trim() : '';
-          var d = document.createElement('details');
-          d.className = 'pain-acc';
-          var sum = document.createElement('summary');
-          sum.innerHTML = (id ? '<span class="pain-id">' + id + '</span> ' : '') + '<b>' + title + '</b><span class="pa-arrow">▾</span>';
-          var body = document.createElement('div');
-          body.className = 'pa-body';
-          Array.prototype.slice.call(c.children).forEach(function(ch){
-            if (ch.tagName === 'H3') return;
-            body.appendChild(ch.cloneNode(true));
-          });
-          shortenSrc(body);
-          d.appendChild(sum); d.appendChild(body);
-          wrap.appendChild(d);
-        });
-        container.innerHTML = '';
-        container.appendChild(wrap);
-        if (hidden.length) {
-          var more = document.createElement('details');
-          more.className = 'pain-acc pain-more';
-          more.innerHTML = '<summary><b>Ещё ' + hidden.length + ' проблем смежных сценариев</b><span class="pa-arrow">▾</span></summary><div class="pa-body">Разобраны в <a href="/pain/" style="color:#5aa9ff">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div>';
-          container.appendChild(more);
-        }
-        if (!kept.length && hidden.length) {
-          var fb = document.createElement('p');
-          fb.style.cssText = 'font-size:13.5px;color:var(--txt-muted);margin:0';
-          fb.innerHTML = 'Специфичные разборы для этой модели в подготовке. Общие проблемы и решения — в <a href="/pain/" style="color:#5aa9ff">разделе «Проблемы и решения»</a>.';
-          container.innerHTML = '';
-          container.appendChild(fb);
-        } else if (!kept.length) { h2.parentElement.style.display = 'none'; }
+        // боли рендерятся серверно в bodyClean (аккордеон) — клиентский двойник больше не нужен (08.11)
       }
     if (ht.indexOf('Скачать руководство') === 0) {
       var el = h2.nextElementSibling;
