@@ -97,7 +97,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var pw = Number(s.pw) || 0;
             var dc = /CCS|CHAdeMO|GB\/T DC|type2_combo|gb_dc/i.test(conn) || pw >= 50;
             var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
-            m.bindPopup('<b>' + (s.n || 'Станция') + '</b><br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : ''));
+            m.bindPopup('<b>' + (s.n || 'Станция') + '</b><br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>');
             m.__s = s;
             ALL.push(m);
           });
