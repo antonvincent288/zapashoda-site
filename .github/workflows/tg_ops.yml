@@ -1,0 +1,34 @@
+name: TG ops (admin one-off)
+
+on:
+  repository_dispatch:
+    types: [tg-op]
+  workflow_dispatch:
+    inputs:
+      op:
+        description: 'Bot API method, e.g. deleteMessage'
+        default: 'deleteMessage'
+      message_id:
+        default: ''
+      text:
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run TG op
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TG_OP: ${{ github.event.client_payload.op || inputs.op }}
+          TG_MSG_ID: ${{ github.event.client_payload.msg_id || inputs.message_id }}
+          TG_TEXT: ${{ github.event.client_payload.text || inputs.text }}
+        run: python scripts/tg_ops.py
