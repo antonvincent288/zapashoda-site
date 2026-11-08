@@ -30,7 +30,12 @@ const ld = [
     .keygrid .num{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px}
     .keygrid .lbl{font-size:12.5px;color:var(--txt-muted);line-height:1.4;margin-top:6px}
     @media(max-width:640px){.keygrid{grid-template-columns:1fr}}
-    table{margin:16px 0 8px}
+    table{width:100%;border-collapse:collapse;font-size:14.5px;margin:16px 0 8px}
+    th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted)}
+    td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+    tr:nth-child(even) td{background:rgba(255,255,255,.04)}
+    tr:hover td{background:rgba(1,97,239,.07)}
+    td:nth-child(3){font-weight:700;color:var(--gold);white-space:nowrap}
     .srcs{font-size:13px;color:var(--txt-muted);line-height:1.6;margin-top:26px}
     .srcs a{color:var(--txt-muted);text-decoration:underline;text-underline-offset:3px}
   </style>
