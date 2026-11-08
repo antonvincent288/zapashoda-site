@@ -1,0 +1,34 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+const items = [
+  { slug: 'avatr-11-12-ofitsialno-ru', t: 'Avatr 11/12 (официально в РФ)', d: 'Сколько стоит зарядка Avatr 11 и 12 по тарифам РФ' },
+  { slug: 'evolute-i-jet-i-pro-i-space-i-joy-i-joa', t: 'Evolute i-Jet / i-Pro / i-Space / i-Joy / i-JOA', d: 'Стоимость зарядки всего модельного ряда Evolute' },
+  { slug: 'li-auto-l6-l7-l8-l9-2022-2025', t: 'Li Auto L6/L7/L8/L9 (2022–2025)', d: 'Цена зарядки L-серии: город, трасса, зима' },
+  { slug: 'byd-song-plus-ev', t: 'BYD Song Plus EV', d: 'Сколько стоит зарядка Song Plus EV по тарифам РФ' },
+  { slug: 'moskvich-3e-6', t: 'Москвич 3e / 6', d: 'Цена зарядки Москвича 3e и 6: город и трасса' },
+  { slug: 'geely-ex5-monjaro-hi-p-phev', t: 'Geely EX5 / Monjaro Hi·P (PHEV)', d: 'Сколько стоит зарядка EX5 и гибридного Monjaro' },
+  { slug: 'tesla-model-3-y-eu', t: 'Tesla Model 3 / Y (EU)', d: 'Цена зарядки Tesla Model 3 и Y по тарифам РФ' },
+  { slug: 'voyah-free-evr-gibrid', t: 'Voyah Free (EVR, гибрид)', d: 'Сколько стоит зарядка Voyah Free гибрида' },
+  { slug: 'voyah-free-ev-rannie-ofitsialnye-ru', t: 'Voyah Free EV (ранние официальные RU)', d: 'Цена зарядки ранних официальных Voyah Free' },
+  { slug: 'zeekr-001-001-fr', t: 'Zeekr 001 / 001 FR', d: 'Сколько стоит зарядка Zeekr 001 и 001 FR' },
+  { slug: 'zeekr-7x-x-mix', t: 'Zeekr 7X / X', d: 'Цена зарядки Zeekr 7X и Zeekr X' },
+];
+const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Сколько стоит зарядка: расчёты по моделям', description: 'Стоимость зарядки электромобилей по тарифам РФ: город, трасса, зима. Zeekr, Li Auto, BYD, Tesla, Voyah, Geely, Avatr, Evolute, Москвич.' };
+---
+<ZhLayout title="Сколько стоит зарядка электромобиля: расчёты по моделям - Запас хода" description="Стоимость зарядки электромобилей по тарифам РФ: город, трасса, зима. Zeekr, Li Auto, BYD, Tesla, Voyah, Geely, Avatr, Evolute, Москвич." jsonld={jsonld}>
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / <span>Сколько стоит зарядка</span></div>
+    <h1 style="font-size:clamp(28px,3.4vw,40px)">Сколько стоит зарядка: расчёты по моделям</h1>
+    <p class="lead" style="max-width:720px">Честные расчёты по 11 моделям: город (5,5 ₽/кВт·ч), двор (12 ₽), трасса (25 ₽). Тарифы — средние по РФ, у каждой модели — свои ёмкость батареи и расход.</p>
+    <div class="cards" style="margin-top:26px">
+      {items.map((c) => (
+        <a class="card" href={`/cost/${c.slug}.html/`}>
+          <span class="tag">Расчёт</span>
+          <h3>{c.t}</h3>
+          <p>{c.d}</p>
+        </a>
+      ))}
+    </div>
+    <div style="margin-top:30px"><a class="btn btn-ghost" href="/calculators/cost/">Посчитать под свой сценарий →</a></div>
+  </div></section>
+</ZhLayout>

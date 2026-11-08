@@ -7,8 +7,8 @@ const PINNED = ['domashnyaya-zaryadka-elektromobilya', 'kabel-dlya-zaryadki-elek
 const pinned = PINNED.map((s) => all.find((a) => a.slug === s)).filter(Boolean);
 const latest = [...pinned, ...all.filter((a) => !pinned.includes(a)).slice(0, 2)].slice(0, 4);
 const stats = [
-  { n: '151', t: 'модель с разъёмами и решениями' },
-  { n: '59', t: 'статей о зарядке и ремонте' },
+  { n: String(Object.values(import.meta.glob('../data/models/*.json', { eager: true, import: 'default' })).length), t: 'модель с разъёмами и решениями' },
+  { n: String(all.filter((a) => a && a.slug).length), t: 'материалов: статьи и разборы' },
   { n: '2073', t: 'станций на карте РФ' },
 ];
 const pains = [
