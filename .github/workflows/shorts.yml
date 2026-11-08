@@ -12,7 +12,7 @@ permissions:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,12 +41,6 @@ jobs:
         run: |
           sudo apt-get -y install ffmpeg || true
           python scripts/shorts_ingest.py
-      - name: Screencasts (R-06 QA, info-only)
-        continue-on-error: true
-        run: |
-          pip install -q playwright imageio-ffmpeg pillow
-          python -m playwright install chromium --with-deps || python -m playwright install chromium
-          python scripts/screen_capture_qa.py --pages calculator,routes --frames 30
       - name: Commit dedup
         run: |
           git config user.name "shorts-bot"
@@ -62,3 +56,10 @@ jobs:
             done
           fi
           echo "dedup step done (push conflicts are tolerated)"
+
+      - name: Screencasts (R-06 QA, info-only)
+        continue-on-error: true
+        run: |
+          pip install -q playwright imageio-ffmpeg pillow
+          python -m playwright install chromium --with-deps || python -m playwright install chromium
+          python scripts/screen_capture_qa.py --pages calculator,routes --frames 30
