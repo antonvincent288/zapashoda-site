@@ -8,7 +8,7 @@
 scripts/shorts_published.json и data/shorts.json (страница /shorts/ и
 video-sitemap.xml собираются из неё при следующей сборке). Публикация в ТГ.
 """
-import json, os, subprocess, glob, sys, datetime, urllib.request, urllib.parse
+import json, os, subprocess, glob, sys, uuid, datetime, urllib.request, urllib.parse, urllib.error
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 IN = os.path.join(HERE, '..', 'assets', 'shorts', 'incoming')
@@ -28,22 +28,24 @@ def publish_tg(path, caption, url_hint=None):
     if not TOKEN:
         print('no TELEGRAM_TOKEN — только локальная публикация'); return
     cap = caption if url_hint is None else (caption + '\n\n' + url_hint)
-    # multipart не нужен: sendVideo требует multipart — упрощённо шлём как документ через FormData минимально
-    boundary = 'zs' + str(id(path))
+    # multipart по проверенной схеме tg_ops (uuid boundary + supports_streaming)
+    boundary = uuid.uuid4().hex
+    parts = []
+    parts.append(('--%s\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n%s\r\n' % (boundary, CHANNEL)).encode())
+    parts.append(('--%s\r\nContent-Disposition: form-data; name="caption"\r\n\r\n%s\r\n' % (boundary, cap)).encode())
+    parts.append(('--%s\r\nContent-Disposition: form-data; name="supports_streaming"\r\n\r\ntrue\r\n' % boundary).encode())
+    parts.append(('--%s\r\nContent-Disposition: form-data; name="video"; filename="%s"\r\nContent-Type: video/mp4\r\n\r\n' % (boundary, os.path.basename(path))).encode())
     with open(path, 'rb') as f:
-        data = f.read()
-    body = []
-    body.append(('--%s\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n%s\r\n' % (boundary, CHANNEL)).encode())
-    body.append(('--%s\r\nContent-Disposition: form-data; name="caption"\r\n\r\n%s\r\n' % (boundary, cap)).encode())
-    body.append(('--%s\r\nContent-Disposition: form-data; name="video"; filename="%s"\r\nContent-Type: video/mp4\r\n\r\n' % (boundary, os.path.basename(path))).encode())
-    body.append(data)
-    body.append(('--%s--\r\n' % boundary).encode())
+        parts.append(f.read())
+    parts.append(('\r\n--%s--\r\n' % boundary).encode())
     req = urllib.request.Request('https://api.telegram.org/bot%s/sendVideo' % TOKEN,
-        data=b''.join(body), headers={'Content-Type': 'multipart/form-data; boundary=%s' % boundary})
+        data=b''.join(parts), headers={'Content-Type': 'multipart/form-data; boundary=%s' % boundary})
     try:
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=180) as r:
             res = json.load(r)
-            print('TG:', res.get('ok'))
+            print('TG:', res.get('ok'), 'msg_id:', (res.get('result') or {}).get('message_id'))
+    except urllib.error.HTTPError as e:
+        print('TG fail HTTP', e.code, 'BODY:', e.read().decode('utf-8', 'replace')[:400])
     except Exception as e:
         print('TG fail:', repr(e)[:160])
 
