@@ -379,6 +379,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       .prob-grid-pains .pt{flex:0 0 84%;scroll-snap-align:start}
     }
   .mfaq{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0 0;background:var(--bg2)}
+    [data-mport].wrap{max-width:1180px!important}
     .mgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start}
     .mside{position:sticky;top:16px}
     .pp-chip{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px}
@@ -396,7 +397,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .mfaq p{margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--txt-muted)}
   </style>
   <section class="sec">
-    <div class="wrap" style="max-width:1180px" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'} data-mtype={m.type || ''}>
+    <div class="wrap" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'} data-mtype={m.type || ''}>
       <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {m.name || m.title}</div>
       <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
       <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
