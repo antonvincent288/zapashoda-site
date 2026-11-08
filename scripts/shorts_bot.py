@@ -103,8 +103,21 @@ def tg(method, **params):
         print('tg error', method, e)
         return {'ok': False}
 
+def cookies_file():
+    raw = os.environ.get('YT_COOKIES', '')
+    if not raw:
+        return None
+    p = '/tmp/yt_cookies.txt'
+    with open(p, 'w') as f:
+        f.write(raw)
+    return p
+
 def ytdlp(args, timeout=240):
-    return subprocess.run(['yt-dlp'] + args, capture_output=True, text=True, timeout=timeout)
+    extra = []
+    cf = cookies_file()
+    if cf:
+        extra = ['--cookies', cf]
+    return subprocess.run(['yt-dlp'] + extra + args, capture_output=True, text=True, timeout=timeout)
 
 # ---------- источник 1: Invidious (деградировавший, оставлен как best-effort) ----------
 def inv_search(topic):
@@ -406,6 +419,83 @@ def api_search(topic):
     return out
 
 
+COOKIES_HELP = ('Чтобы я качал видео по ссылке с YouTube/Inst, нужны куки YouTube:\n'
+                '1) расширение «Get cookies.txt LOCALLY» в браузере;\n'
+                '2) открой youtube.com, экспортируй cookies.txt;\n'
+                '3) вставь содержимое в секрет YT_COOKIES репо zapashoda-site.\n'
+                'Пока куки нет: просто перешли мне сюда сам файл видео — опубликую в канале.')
+
+def process_pending_uploads(pub):
+    """Личные сообщения владельца боту:
+    видео-файл -> публикация в канал с брендовой подписью;
+    ссылка youtube/inst -> yt-dlp (нужен секрет YT_COOKIES).
+    Апдейты подтверждаем offset-ом, чтобы не репостить повторно."""
+    try:
+        offset = int(pub.get('tg_offset', 0) or 0)
+        req_ = urllib.request.Request('https://api.telegram.org/bot%s/getUpdates?allowed_updates=message&offset=%d' % (TELEGRAM_TOKEN, offset))
+        ups = json.load(urllib.request.urlopen(req_, timeout=40))
+    except Exception as e:
+        print('  [uploads] getUpdates fail:', type(e).__name__, str(e)[:80])
+        return
+    results = ups.get('result') or []
+    max_id, video_updates, link_updates = None, [], []
+    for u in results:
+        uid = u.get('update_id')
+        if uid is not None and (max_id is None or uid > max_id):
+            max_id = uid
+        m = u.get('message') or {}
+        chat = m.get('chat') or {}
+        if str(chat.get('id')) != str(REPORT_CHAT):
+            continue
+        if (m.get('date') or 0) < time.time() - 2 * 86400:
+            continue
+        doc = m.get('document') or {}
+        if m.get('video') or doc.get('mime_type', '').startswith('video/'):
+            video_updates.append(m)
+        elif m.get('text') and re.search(r'youtube\.com|youtu\.be|instagram\.com', m.get('text') or ''):
+            link_updates.append(m)
+    if video_updates:
+        m = video_updates[-1]  # только самый свежий — не спамим канал
+        src = m.get('video') or m.get('document')
+        file_id = src.get('file_id')
+        cap = (m.get('caption') or 'Видео дня').strip()
+        if 'http' not in cap:
+            cap = cap + '\n\nПолные гайды: https://zapashoda-ev.ru/shop/digital/'
+        cap += '\n#видео #запасхода'
+        r = tg('sendVideo', chat_id=CHANNEL_ID, video=file_id, caption=cap, supports_streaming='true')
+        ok = bool(r.get('ok'))
+        print('  [uploads] owner video -> ok=%s msg=%s' % (ok, (r.get('result') or {}).get('message_id')))
+        tg('sendMessage', chat_id=REPORT_CHAT,
+           text='✅ Видео опубликовано в канале.' if ok else 'Не смог опубликовать видео: %s' % (r.get('description') or 'ошибка'))
+    for m in link_updates[:1]:
+        url = re.search(r'https?://\S+', m.get('text') or '').group(0)
+        cf = cookies_file()
+        if not cf:
+            tg('sendMessage', chat_id=REPORT_CHAT, text=COOKIES_HELP)
+            print('  [uploads] link без YT_COOKIES — отправил инструкцию')
+        else:
+            mm = full_meta(url)
+            title = (mm or {}).get('title') or 'Видео'
+            out = '/tmp/owner_link.mp4'
+            dl = ytdlp_download(url, out)
+            if not dl:
+                tg('sendMessage', chat_id=REPORT_CHAT, text='Не смог скачать по ссылке (YT_COOKIES есть, но YouTube отказал).')
+                continue
+            dl = glob.glob(out + '.*')[0] if glob.glob(out + '.*') else dl
+            okv, whyv = validate_video(dl)
+            if not okv:
+                tg('sendMessage', chat_id=REPORT_CHAT, text='Скачанный файл битый: %s' % whyv)
+                continue
+            cap = '🎬 %s\n\n#видео #запасхода\n\nПолные гайды: https://zapashoda-ev.ru/shop/digital/' % title[:80]
+            sent = send_video(dl, cap, {'inline_keyboard': [[{'text': '🔋 Открыть гид', 'url': 'https://t.me/zapashoda_ev_bot/app'}]]})
+            print('  [uploads] link video -> ok=%s' % sent.get('ok'))
+            tg('sendMessage', chat_id=REPORT_CHAT,
+               text='✅ Опубликовал видео по ссылке.' if sent.get('ok') else 'Не смог опубликовать: %s' % sent.get('description', ''))
+    if max_id is not None:
+        pub['tg_offset'] = max_id + 1
+        save_pub(pub)
+        print('  [uploads] offset =', pub['tg_offset'])
+
 def validate_video(path, min_dur=2.0):
     """Валидация скачанного файла перед отправкой: видео-дорожка есть, длительность >= min_dur.
     Лечит случай SABR-потоков YouTube: инстанс отдаёт fMP4-фрагменты без moov — Telegram
@@ -583,6 +673,7 @@ def main():
         if cleanup_broken_posts():
             pub['cleanup_done'] = True
             save_pub(pub)
+    process_pending_uploads(pub)
     INV_INSTANCES[:] = dynamic_instances()
     candidates, seen = [], set()
     stats = {'inv': 0, 'api': 0, 'yt': 0, 'too_long': 0, 'dup': 0}
