@@ -8,7 +8,7 @@ const path = Astro.url.pathname.replace(/\/$/, "");
 const navGroups = [
   { g: null, items: [["/models/", "Модели"], ["/catalog/", "Каталог"], ["/charging/", "Карта ЗУ"], ["/shop/digital/", "Гайды"]] },
   { g: "Инструменты", items: [["/quiz/", "Всё о твоей машине"], ["/calculator/", "Калькуляторы"], ["/vin/", "VIN-справочник"], ["/search/", "Поиск"]] },
-  { g: null, items: [["/blog/", "Блог"], ["/pain/", "Проблемы"], ["/forum/", "Форум"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
+  { g: null, items: [["/baza-znaniy/", "База знаний"], ["/forum/", "Форум"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
 ];
 const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/, "") || path.startsWith(href.replace(/\/$/, "") + "/");
 ---
@@ -72,11 +72,9 @@ window.YM_ID=113935123;
       <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Гайды</a>
       <span class="nav-more" tabindex="0" role="button" aria-label="Ещё разделы">Ещё <span aria-hidden="true">▾</span>
         <span class="dd">
-          <a href="/pain/" class={isOn("/pain/") ? "on" : ""}>Проблемы</a>
           <a href="/forum/" class={isOn("/forum/") ? "on" : ""}>Форум</a>
           <a href="/safety/" class={isOn("/safety/") ? "on" : ""}>Безопасность</a>
-                    <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
-          <a href="/vin/" class={isOn("/vin/") ? "on" : ""}>VIN-справочник</a>
+                              <a href="/vin/" class={isOn("/vin/") ? "on" : ""}>VIN-справочник</a>
           <a href="/baza-znaniy/" class={isOn("/baza-znaniy/") ? "on" : ""}>База знаний</a>
           <a href="/news/" class={isOn("/news/") ? "on" : ""}>Новости</a>
           <a href="/services/" class={isOn("/services/") ? "on" : ""}>Услуги</a>
@@ -94,8 +92,7 @@ window.YM_ID=113935123;
   <div class="mnav-group">Разделы</div>
   <a href="/">Главная</a>
   <a href="/models/">Модели</a>
-  <a href="/blog/">Блог</a>
-  <a href="/pain/">Проблемы</a>
+  <a href="/baza-znaniy/">База знаний</a>
   <a href="/safety/">Безопасность</a>
   <div class="mnav-group">Инструменты</div>
   <a href="/charging/">Карта ЗУ</a>

@@ -1,11 +1,82 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import src from '../../data/legacy/baza.json';
-const d = src[0];
+const blogModules = import.meta.glob('../../data/articles/blog/*.json', { eager: true, import: 'default' });
+const blog = Object.values(blogModules).filter((a) => a && a.slug);
+const painModules = import.meta.glob('../../data/articles/pain/*.json', { eager: true, import: 'default' });
+const pain = Object.values(painModules).filter((a) => a && a.slug);
+const sortDesc = (arr) => arr.slice().sort((x, y) => String(y.date || '').localeCompare(String(x.date || '')));
+const blogSorted = sortDesc(blog);
+const painSorted = sortDesc(pain);
+const refs = [
+  { t: 'VIN-справочник: расшифровка и проверка', d: '17 символов: код завода, модельный год, серийник; проверка ЭПТС/СБКТС для параллельного импорта.', href: '/vin/' },
+  { t: 'Матрица совместимости разъёмов', d: 'Какие станции подходят вашему разъёму: Type 2, GB/T, CCS2 — таблица переходников.', href: '/matrix/' },
+  { t: 'PDF-гайды «Запас хода»', d: 'Интерактивные авто-гиды по М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядке на парковке ЖК.', href: '/shop/digital/' },
+  { t: 'Каталог моделей 145', d: 'Разъёмы, мощность борта и адаптеры для каждой модели — с фильтром по марке и году.', href: '/models/' },
+];
+const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'База знаний «Запас хода»', url: 'https://zapashoda-ev.ru/baza-znaniy/', mainEntity: { '@type': 'ItemList', itemListElement: [...src.map((g) => g.slug), ...blogSorted.map((a) => a.slug), ...painSorted.map((a) => a.slug)].map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://zapashoda-ev.ru/baza-znaniy/' + s + '/' })) } };
 ---
-<ZhLayout title={d.title} description={d.desc}>
+<ZhLayout title={src[0].title} description="База знаний «Запас хода»: руководства, разборы и решения проблем зарядки электромобилей в России." jsonld={jsonld}>
   <section class="sec"><div class="wrap">
     <div class="crumbs"><a href="/">Главная</a> / База знаний</div>
-    <div class="article" set:html={d.body_html} />
+    <div class="badge">База знаний</div>
+    <h1>База знаний «Запас хода»</h1>
+    <p class="lead">Руководства, разборы и решения проблем — всё в одном месте. {src.length + blog.length + pain.length} материалов, обновляется каждую неделю.</p>
+    <div class="bk-tabs">
+      <button class="bk-tab on" type="button" data-bk="guides">Руководства <b>{src.length}</b></button>
+      <button class="bk-tab" type="button" data-bk="blog">Разборы <b>{blog.length}</b></button>
+      <button class="bk-tab" type="button" data-bk="pain">Проблемы и решения <b>{pain.length}</b></button>
+      <button class="bk-tab" type="button" data-bk="ref">Справочники <b>{refs.length}</b></button>
+    </div>
+    <div class="bk-panel on" id="bk-guides">
+      {src.map((g) =>(<a class="card bk-card" href={'/baza-znaniy/' + g.slug + '/'}><h3>{g.title}</h3><p>{g.desc}</p><span class="bk-go">Читать →</span></a>))}
+    </div>
+    <div class="bk-panel" id="bk-blog">
+      {blogSorted.map((a) =>(<a class="card bk-card" href={'/blog/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">{a.category || 'Разбор'} · {a.read_min || '?'} мин →</span></a>))}
+    </div>
+    <div class="bk-panel" id="bk-pain">
+      {painSorted.map((a) =>(<a class="card bk-card" href={'/pain/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">Решение →</span></a>))}
+    </div>
+    <div class="bk-panel" id="bk-ref">
+      {refs.map((r) =>(<a class="card bk-card" href={r.href}><h3>{r.t}</h3><p>{r.d}</p><span class="bk-go">Открыть →</span></a>))}
+    </div>
+    <script is:inline>
+    (function(){
+      function bind(){
+        var tabs = document.querySelectorAll('.bk-tab');
+        if (!tabs.length) return;
+        tabs.forEach(function(t){
+          t.addEventListener('click', function(){
+            tabs.forEach(function(x){ x.classList.toggle('on', x === t); });
+            document.querySelectorAll('.bk-panel').forEach(function(p){ p.classList.toggle('on', p.id === 'bk-' + t.dataset.bk); });
+            history.replaceState(null, '', '#bk-' + t.dataset.bk);
+          });
+        });
+        var h = (location.hash || '').replace('#', '');
+        if (h.indexOf('bk-') === 0) {
+          var target = document.querySelector('.bk-tab[data-bk="' + h.slice(3) + '"]');
+          if (target) target.click();
+        }
+      }
+      bind();
+    })();
+    </script>
   </div></section>
+  <style is:global>
+    .bk-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 24px}
+    .bk-tab{padding:11px 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;font-family:inherit;transition:.15s}
+    .bk-tab b{font-weight:800;color:var(--txt-muted);margin-left:4px}
+    .bk-tab.on{background:#4d9bf5;border-color:#4d9bf5;color:#fff}
+    .bk-tab.on b{color:rgba(255,255,255,.85)}
+    .bk-tab:hover:not(.on){border-color:rgba(77,155,245,.4)}
+    .bk-panel{display:none;grid-template-columns:repeat(3,1fr);gap:20px}
+    .bk-panel.on{display:grid}
+    .bk-card{padding:24px 26px}
+    .bk-card h3{font-size:17.5px;line-height:1.35}
+    .bk-card p{font-size:14px;line-height:1.55;margin-top:8px}
+    .bk-go{display:block;margin-top:14px;color:#5aa9ff;font-size:13px;font-weight:600}
+    .bk-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+    @media (max-width:960px){.bk-panel{grid-template-columns:1fr 1fr}}
+    @media (max-width:640px){.bk-panel{grid-template-columns:1fr}}
+  </style>
 </ZhLayout>
