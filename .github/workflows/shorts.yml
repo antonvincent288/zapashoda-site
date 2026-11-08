@@ -37,6 +37,11 @@ jobs:
         run: |
           sudo apt-get -y install ffmpeg || true
           python scripts/shorts_bot.py
+      - name: Generate synthetic short (brand-made, always works)
+        run: |
+          sudo apt-get -y install fonts-dejavu-core || true
+          pip install -q pillow
+          python scripts/video_generator.py --one
       - name: Ingest shorts from architect (R-06)
         run: |
           sudo apt-get -y install ffmpeg || true
