@@ -8,7 +8,7 @@
 scripts/shorts_published.json и data/shorts.json (страница /shorts/ и
 video-sitemap.xml собираются из неё при следующей сборке). Публикация в ТГ.
 """
-import json, os, subprocess, glob, sys, urllib.request, urllib.parse
+import json, os, subprocess, glob, sys, datetime, urllib.request, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 IN = os.path.join(HERE, '..', 'assets', 'shorts', 'incoming')
@@ -88,12 +88,13 @@ def main():
         r = subprocess.run(cmd, capture_output=True, timeout=900)
         if r.returncode != 0:
             print('ffmpeg fail:', r.stderr.decode()[-400:]); continue
-        rec = {'file': outname, 'title': title, 'desc': desc,
+        rec = {'file': outname, 'title': title, 'desc': desc, 'tags': tags,
                'url': '/assets/shorts/published/' + outname,
-               'added': os.environ.get('BUILD_DATE', '')}
-        if base not in have:
+               'added': os.environ.get('BUILD_DATE') or datetime.date.today().isoformat(),
+               'kind': 'synthetic' if no_plate else 'ingest', 'script_id': base}
+        if outname not in have:
             pub['items'].append(rec)
-            have.add(base)
+            have.add(outname)
         records.append(rec)
         caps.append(cap)
         try: os.remove(f)  # входящий файл обработан
