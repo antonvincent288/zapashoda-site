@@ -336,5 +336,15 @@
   "cap": "83.4",
   "label": "62,6 / 83,4 кВт·ч (ID.6 Crozz; у facelift — 80,4) / 84,8 кВт·ч (ID.6 X)",
   "note": "GB/T AC+DC; 480–617 км CLTC в зависимости от версии"
+ },
+ "m-hero-917-ev-evr": {
+  "cap": "142.7",
+  "label": "65,8 кВт·ч (EREV, NMC CATL) / 142,7 кВт·ч (BEV, NMC CATL)",
+  "note": "EREV — до 200 км CLTC на электротяге, до 1032 с баком 85 л; BEV — 505 км"
+ },
+ "exeed-exlantix-et-es-sterra": {
+  "cap": "40",
+  "label": "~40 кВт·ч (Exlantix ET EREV, LFP CATL)",
+  "note": "до 180–200 км на электротяге, суммарно до 1180; у BEV-версий (ES/Sterra) — свои батареи"
  }
 }
