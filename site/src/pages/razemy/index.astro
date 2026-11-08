@@ -37,7 +37,7 @@ const ld = [
       <div class="rz-grid">
         {tiles.map((t) => (
           <a class="card rz-tile" href={'/razemy/' + t.c.slug + '/'}>
-            <div class="rz-top"><PlugIcon name={t.c.icon} size={40} label={t.c.title} /><span class="rz-kind">{t.c.kindtext.split('—')[0].trim()}</span></div>
+            <div class="rz-top"><PlugIcon name={t.c.icon} size={48} label={t.c.title} /><span class="rz-kind">{t.c.kindtext.split('—')[0].trim()}</span></div>
             <h3>{NAMES[t.c.slug] || t.c.slug}</h3>
             <p class="rz-sub">{t.sub}</p>
             <p class="rz-n">{t.n === null ? 'Домашний вариант' : plural(t.n)}</p>
@@ -50,8 +50,8 @@ const ld = [
         <h3>Кабель или розетка — почему это важно</h3>
         <p style="margin:6px 0 12px">Один и тот же стандарт на станции выглядит по-разному. Если на станции витой кабель — заряжаетесь сразу. Если только розетка — нужен свой кабель. У нас это различено в матрице и на карте:</p>
         <div class="rz-vs">
-          <div><PlugIcon name="type2" size={36} label="Type 2 с кабелем" /><b>Type 2 с кабелем</b><span>заряжаетесь сразу, кабель на станции</span></div>
-          <div><PlugIcon name="socket" size={36} label="Type 2 розетка" /><b>Type 2 розетка</b><span>нужен свой кабель Type 2</span></div>
+          <div><PlugIcon name="type2" size={44} label="Type 2 с кабелем" /><b>Type 2 с кабелем</b><span>заряжаетесь сразу, кабель на станции</span></div>
+          <div><PlugIcon name="socket" size={44} label="Type 2 розетка" /><b>Type 2 розетка</b><span>нужен свой кабель Type 2</span></div>
         </div>
       </div>
 

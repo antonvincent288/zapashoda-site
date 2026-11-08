@@ -14,6 +14,7 @@ for (const p of ['models','blog','pain','safety','tools','b2b','about','services
 urls.push({ loc: SITE + '/rss.xml', pri: '0.3' });
 for (const m of models) if (m && m.slug) urls.push({ loc: `${SITE}/models/${m.slug}/`, pri: '0.8' });
 for (const r of ['type2','ccs2','gbt','chademo','type1','schuko']) urls.push({ loc: `${SITE}/razemy/${r}/`, pri: '0.7' });
+for (const r of ['type2','ccs2','gbt','chademo','type1','schuko']) urls.push({ loc: `${SITE}/razemy/${r}/`, pri: '0.7' });
 for (const a of articles) if (a && a.slug && a.section) urls.push({ loc: `${SITE}/${a.section}/${a.slug}/`, pri: '0.7' });
 for (const f of Object.keys(publicPages)) {
   const u = f.replace('../../public', '');
