@@ -275,7 +275,8 @@ const bodyClean = (() => {
         const h3m = c.match(/<h3>[\s\S]*?<\/h3>/);
         let title = h3m ? h3m[0].replace(/<[^>]+>/g, '').trim() : '';
         title = pid && title.indexOf(pid) === 0 ? title.slice(pid.length).replace(/^\s+/, '') : title;
-        const rest = h3m ? c.slice(c.indexOf(h3m[0]) + h3m[0].length) : c;
+        let rest = h3m ? c.slice(c.indexOf(h3m[0]) + h3m[0].length) : c;
+        rest = rest.replace(/<\/div>\s*$/, '');
         accParts.push('<details class="pain-acc"><summary><span class="pain-id">' + pid + '</span> <b>' + title + '</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">' + rest + '</div></details>');
       }
       if (accParts.length === 0) {
