@@ -595,6 +595,17 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 .mfilter .fchip{border-radius:999px}
 .hero-pick select{border-radius:var(--rad-sm)}
 .glass-panel div[style*="1d1d1f"]{border-radius:18px!important}
+/* dark-theme overrides: legacy Tailwind fragments (bg-white cards, gray text) */
+.bg-white,.card-product{background:var(--card) !important;border-color:var(--line) !important}
+.bg-gray-100,.bg-gray-50{background:var(--bg2) !important}
+.bg-gray-200{background:var(--card) !important}
+.text-gray-900,.text-gray-800{color:var(--txt) !important}
+.text-gray-700,.text-gray-600,.text-gray-500,.text-gray-400{color:var(--txt-muted) !important}
+.border-gray-300,.border-gray-200{border-color:var(--line) !important}
+[style*="background:#fff"],[style*="background: #fff"],[style*="background:#ffffff"],[style*="background: #ffffff"]{background:var(--card) !important}
+details.rounded-lg.bg-white{background:var(--card) !important}
+.rounded-lg.bg-white details{background:transparent}
+.prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
 </style>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
