@@ -1,5 +1,5 @@
 {
-  "ts_utc": "2026-11-08T19:58:46Z",
+  "ts_utc": "2026-11-08T20:55:15Z",
   "ok": false,
   "checks_total": 11,
   "fails": [
@@ -9,11 +9,6 @@
       "status": 200,
       "ok": false,
       "detail": ""
-    },
-    {
-      "check": "Shorts-автопилот",
-      "ok": false,
-      "detail": "ни одной публикации с запуска (published.json пуст)"
     }
   ],
   "results": [
@@ -80,8 +75,8 @@
     },
     {
       "check": "Shorts-автопилот",
-      "ok": false,
-      "detail": "ни одной публикации с запуска (published.json пуст)"
+      "ok": true,
+      "detail": "последняя публикация 0 ч назад"
     }
   ]
 }
