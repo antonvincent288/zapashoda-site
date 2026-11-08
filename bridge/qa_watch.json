@@ -1,6 +1,6 @@
 {
- "sitemap_count": 306,
- "sitemap_ok": 305,
+ "sitemap_count": 308,
+ "sitemap_ok": 307,
  "sitemap_bad": [
   [
    "https://zapashoda-ev.ru/cost/index/",
@@ -34,7 +34,7 @@
   "/telemetry/": 200
  },
  "models_cards": 151,
- "app_scripts": 5,
+ "app_scripts": 6,
  "catalog_products": 0,
  "link_targets": 219,
  "links_ok": 219,
@@ -48,7 +48,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "08.11 23:58",
+ "checked_at_msk": "09.11 01:56",
  "failures": [
   {
    "where": "sitemap: /cost/index/",
