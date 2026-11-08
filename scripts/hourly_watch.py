@@ -96,6 +96,37 @@ try:
 except Exception as e:
     pass
 
+# IndexNow-ре-пинг: раз в неделю (ПН 15:00 UTC) пингуем sitemap на всякий случай
+def sitemap_weekly_ping():
+    KEY = "a1c7f3d9e2b5604f8d2a71c9be43f560"
+    HOST = "zapashoda-ev.ru"
+    try:
+        sm = urllib.request.urlopen(f"https://{HOST}/sitemap.xml", timeout=60).read().decode("utf-8", "ignore")
+        urls = [u.replace("</loc>", "").split("https://")[-1] for u in sm.split("<loc>")]
+        urls = ["https://" + u for u in urls if u and HOST in u]
+        urls = list(dict.fromkeys(urls))
+        if not urls:
+            return {"check": "IndexNow weekly re-ping", "ok": True, "detail": "sitemap пуст — пинг пропущен"}
+        payload = json.dumps({"host": HOST, "key": KEY,
+            "keyLocation": f"https://{HOST}/{KEY}.txt", "urlList": urls[:10000]}).encode("utf-8")
+        req = urllib.request.Request("https://api.indexnow.org/indexnow", data=payload,
+            headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "zapashoda-indexnow"})
+        resp = urllib.request.urlopen(req, timeout=60)
+        return {"check": "IndexNow weekly re-ping", "ok": 200 <= resp.status < 300,
+                "detail": f"пинг {len(urls)} URL, статус {resp.status}"}
+    except Exception as e:
+        return {"check": "IndexNow weekly re-ping", "ok": False, "detail": f"ошибка: {e}"}
+
+try:
+    _now = datetime.datetime.utcnow()
+    if _now.weekday() == 0 and _now.hour == 15:
+        _ping = sitemap_weekly_ping()
+        results.insert(0, _ping)
+        if not _ping["ok"]:
+            fails.append(_ping)
+except Exception:
+    pass
+
 report = {
     "ts_utc": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
     "ok": len(fails) == 0,
