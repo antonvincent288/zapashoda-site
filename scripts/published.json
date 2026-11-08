@@ -1,5 +1,17 @@
 {
- "ids": {},
- "authors": {},
- "last_topic": null
+ "ids": {
+  "K0GV_0xE3Y8": {
+   "title": "Необычная Зарядка Теслы",
+   "author": "DOROGA SHORTS",
+   "views": 745997,
+   "topic": "tesla charging",
+   "ts": 1794168245,
+   "src": "inv",
+   "note": "posted 2026-11-08 19:46 UTC as broken SABR fragment; deleted by cleanup"
+  }
+ },
+ "authors": {
+  "UCeg1wYSWZVbszzoH0_bR9Qw": 1794168245
+ },
+ "last_topic": "tesla charging"
 }
