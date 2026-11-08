@@ -16,6 +16,14 @@ for (const m of models) if (m && m.slug) urls.push({ loc: `${SITE}/models/${m.sl
 for (const r of ['type2','ccs2','gbt','chademo','type1','schuko']) urls.push({ loc: `${SITE}/razemy/${r}/`, pri: '0.7' });
 for (const s2 of ['taksi','avtopark','azs','jk','salony','predlozh-mesto']) urls.push({ loc: `${SITE}/b2b/${s2}/`, pri: '0.6' });
 for (const a of articles) if (a && a.slug && a.section) urls.push({ loc: `${SITE}/${a.section}/${a.slug}/`, pri: '0.7' });
+const costPages = import.meta.glob('../pages/cost/*.astro') as Record<string, unknown>;
+const costSlugs = Object.keys(costPages).map((p) => p.split('/').pop()!.replace('.astro', ''));
+for (const c of costSlugs) urls.push({ loc: `${SITE}/cost/${c}`, pri: '0.6' });
+const brands = (await import('../data/legacy/brands.json')).default as any[];
+urls.push({ loc: `${SITE}/brands/`, pri: '0.6' });
+for (const b of brands) if (b.slug) urls.push({ loc: `${SITE}/brands/${b.slug}.html`, pri: '0.5' });
+const sku = (await import('../data/sku.json')).default as any;
+for (const s3 of (sku.items || [])) if (s3.slug) urls.push({ loc: `${SITE}/catalog/${s3.slug}.html`, pri: '0.7' });
 for (const f of Object.keys(publicPages)) {
   const u = f.replace('../../public', '');
   if (u === '/index.html') continue;
