@@ -44,14 +44,16 @@ jobs:
       - name: Screencasts (R-06 QA, info-only)
         continue-on-error: true
         run: |
-          pip install -q playwright imageio-ffmpeg
+          pip install -q playwright imageio-ffmpeg pillow
           python -m playwright install chromium --with-deps || python -m playwright install chromium
           python scripts/screen_capture_qa.py --pages calculator,routes --frames 30
       - name: Commit dedup
         run: |
           git config user.name "shorts-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add scripts/published.json scripts/shorts_published.json data/shorts.json assets/shorts/published || true
+          git add scripts/published.json || true
+          git add data/shorts.json || true
+          git add assets/shorts/published || true
           if ! git diff --cached --quiet; then
             git commit -m "shorts: dedup update [skip ci]" || true
             for i in 1 2 3; do
