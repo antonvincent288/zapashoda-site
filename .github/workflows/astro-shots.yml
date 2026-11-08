@@ -30,16 +30,9 @@ jobs:
       - name: Take screenshots
         run: python3 scripts/take_shots.py
 
-      - name: Commit screenshots
-        run: |
-          git config user.name "alisa-robot"
-          git config user.email "bot@zapashoda-ev.ru"
-          git add -A reports/astrowind_previews
-          if git status --porcelain | grep -q .; then
-            git commit -m "shots: превью-скриншоты wave 4 (prod-структура)"
-            git pull --rebase origin astrowind-migration
-            git pull --rebase origin astrowind-migration && git push origin astrowind-migration \
-              || { git pull --rebase origin astrowind-migration && git push origin astrowind-migration; }
-          else
-            echo "no changes"
-          fi
+      - name: Upload screenshots artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: astrowind_previews
+          path: reports/astrowind_previews
+          retention-days: 14
