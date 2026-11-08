@@ -1,19 +1,12 @@
 {
-  "ts_utc": "2026-11-08T17:52:07Z",
+  "ts_utc": "2026-11-08T19:06:26Z",
   "ok": false,
   "checks_total": 11,
   "fails": [
     {
-      "check": "robots.txt",
-      "url": "https://zapashoda-ev.ru/robots.txt",
-      "status": 200,
-      "ok": false,
-      "detail": "missing: GPTBot, PerplexityBot"
-    },
-    {
       "check": "AI_BRIDGE.json",
       "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
-      "status": 404,
+      "status": 200,
       "ok": false,
       "detail": ""
     },
@@ -70,8 +63,7 @@
       "check": "robots.txt",
       "url": "https://zapashoda-ev.ru/robots.txt",
       "status": 200,
-      "ok": false,
-      "detail": "missing: GPTBot, PerplexityBot"
+      "ok": true
     },
     {
       "check": "llms.txt",
@@ -82,7 +74,7 @@
     {
       "check": "AI_BRIDGE.json",
       "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
-      "status": 404,
+      "status": 200,
       "ok": false,
       "detail": ""
     },
