@@ -1,0 +1,66 @@
+name: YT download probe
+
+on:
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [yt-probe]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install yt-dlp (latest) + plugins
+        run: |
+          pip install -q -U yt-dlp yt-dlp-ejs bgutil-ytdlp-pot-provider
+          yt-dlp --version
+          python -c "import yt_dlp; print('yt_dlp module ok')"
+          yt-dlp -v --version 2>&1 | head -20
+      - name: Start POT provider (wait for ping)
+        run: |
+          docker run -d -p 4416:4416 --name pot brainicism/bgutil-ytdlp-pot-provider
+          ok=""
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:4416/ping >/dev/null; then echo "POT UP after $((i*3))s"; ok=1; break; fi
+            sleep 3
+          done
+          [ -n "$ok" ] || echo "::warning::POT ping failed"
+      - name: Probe strategies
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+        run: |
+          VID="https://www.youtube.com/watch?v=K0GV_0xE3Y8"
+          POT="--extractor-args youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416"
+          try() {
+            name="$1"; shift
+            echo "=== STRATEGY: $name ==="
+            rm -f /tmp/probe_$name.*
+            timeout 100 yt-dlp -f 'best[ext=mp4]/best' --no-playlist --no-warnings \
+              --max-filesize 60M -o "/tmp/probe_$name.%(ext)s" "$@" "$VID" > /tmp/log_$name.txt 2>&1
+            rc=$?
+            echo "rc=$rc"
+            grep -iE 'ERROR|WARNING' /tmp/log_$name.txt | head -4 || true
+            if ls /tmp/probe_$name.* 2>/dev/null; then
+              f=$(ls /tmp/probe_$name.* | head -1)
+              size=$(stat -c%s "$f")
+              dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null || echo "?")
+              echo "FILE OK: size=$size duration=$dur"
+            else
+              echo "NO FILE"
+              tail -3 /tmp/log_$name.txt
+            fi
+          }
+          try "pot_web" $POT --extractor-args "youtube:player_client=web"
+          try "pot_web_auto" $POT
+          try "pot_tv" $POT --extractor-args "youtube:player_client=tv"
+          try "pot_tv_simply" $POT --extractor-args "youtube:player_client=tv_simply"
+          try "ios" --extractor-args "youtube:player_client=ios"
+          try "mweb" $POT --extractor-args "youtube:player_client=mweb"
+          try "default" 
