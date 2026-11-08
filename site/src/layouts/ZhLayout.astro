@@ -392,7 +392,6 @@ h1,h2,h3{text-wrap:balance}
 /* === Фикс таблицы результатов калькулятора (все модели): строка-заглушка с colspan=3 не должна
    растягиваться под колонки «Время»/«Стоимость» — пересобираем в честные три ячейки. Наблюдатель, т.к.
    таблица перерисовывается скриптом калькулятора при каждом input. === */
-<script is:inline>(function(){var f=function(s){document.querySelectorAll(s||'.cout').forEach(function(out){out.querySelectorAll('td[colspan="3"]').forEach(function(td){var txt=(td.textContent||'');if(!/по данным модели/i.test(txt))return;td.colSpan=1;td.textContent='уточнить';var tr=td.parentElement;if(tr&&tr.children.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}})})};var out=document.querySelector('.cout');if(out){f();new MutationObserver(function(){f()}).observe(out,{childList:true,subtree:true})}})();</script>
 
 /* === UI-полировка: меню, карточки, фокус, прогресс, спойлеры === */
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
@@ -622,6 +621,7 @@ details.rounded-lg.bg-white{background:var(--card) !important}
 .rounded-lg.bg-white details{background:transparent}
 .prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
 </style>
+<script is:inline>(function(){var f=function(s){document.querySelectorAll(s||'.cout').forEach(function(out){out.querySelectorAll('td[colspan="3"]').forEach(function(td){var txt=(td.textContent||'');if(!/по данным модели/i.test(txt))return;td.colSpan=1;td.textContent='уточнить';var tr=td.parentElement;if(tr&&tr.children.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}})})};var out=document.querySelector('.cout');if(out){f();new MutationObserver(function(){f()}).observe(out,{childList:true,subtree:true})}})();</script>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
 <script is:inline src="/assets/brand/lead.js" defer></script>
