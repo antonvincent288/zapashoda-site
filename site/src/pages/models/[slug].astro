@@ -84,6 +84,8 @@ while ((rm = rowRe.exec(specSource))) {
   const k = strip(rm[1]);
   const v = strip(rm[2]);
   if (!k || !v) continue;
+  // заглушки («нет публичных данных», «н/д», «—») не превращаем в чипы паспорта
+  if (/^(нет\s+(публичных\s+)?дан|н\/д|н\.д\.|[—−-]|уточняем|подтвержд[ао]|нет\s+инфо)/i.test(v)) continue;
   if (/AC/i.test(k) && /медлен/i.test(k)) spec.ac = v;
   else if (/DC/i.test(k) && /быстр/i.test(k)) { if (!/dmin|&quot;|"/.test(v)) spec.dc = v; }
   else if (/Борт/i.test(k) || /OBC/i.test(k)) spec.obc = v;
