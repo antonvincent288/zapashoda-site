@@ -2,6 +2,7 @@
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../components/LegacyStyles.astro';
 import PlugIcon from '../../components/PlugIcon.astro';
+import BATTERY from '../../data/models_battery.json';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -128,7 +129,10 @@ const CAP_OVERRIDES: Record<string, string> = { 'aito-m5-m7': '40' };
 const CAP_NOTE: Record<string, string> = { 'aito-m5-m7': ' (у EV-версии AITO M5 — 80 кВт·ч)' };
 const dcpowClean = String(spec.dcpow || '').replace(/\(не подтверждено\)/g, '(уточняем по VIN)');
 const dcShort = (dcpowClean.match(/[0-9]+(?:–[0-9]+)?\+?\s?кВт/) || [dcpowClean])[0];
-const battLabel = String(spec.batt || '').trim() || (CAP_OVERRIDES[String(m.slug || '')] ? CAP_OVERRIDES[String(m.slug || '')] + ' кВт·ч' : '');
+const battInfo = BATTERY[String(m.slug || '')] || null;
+const specBattCap = (String(spec.batt || '').match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || [])[1];
+const capFinal = CAP_OVERRIDES[String(m.slug || '')] || (battInfo && battInfo.cap) || (specBattCap ? specBattCap.replace(',', '.') : null);
+const battLabel = String(spec.batt || '').trim() || (battInfo ? battInfo.label : '') || (CAP_OVERRIDES[String(m.slug || '')] ? CAP_OVERRIDES[String(m.slug || '')] + ' кВт·ч' : '');
 // для машин с Type 2/CCS2 держатель GB/T не продаём — вместо него честный EU-аксессуар
 const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="9900"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
 const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="690"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
@@ -203,11 +207,13 @@ const bodyClean = (() => {
   h = h.replace(/<div class="pt">\s*<div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">\s*<img[^>]*src="\/assets\/img\/plugs\/zsh-[a-z0-9-]+\.svg"[^>]*>\s*<b>[^<]+<\/b>\s*<\/div>\s*<div class="sol"><\/div>\s*<\/div>/g, '');
   h = h.replace(/<p class="note">\s*<b>Примечание:<\/b>\s*Канал Major[\s\S]{0,120}?<\/p>\s*/g, '');
   const mslug2 = String(m.slug || '');
-  const capDefault = (String(spec.batt || '').match(/([0-9]+(?:[.,][0-9]+)?)\s*кВт[·.]?\s*ч/i) || [])[1];
-  const capFinal = CAP_OVERRIDES[mslug2] || (capDefault ? capDefault.replace(',', '.') : null);
   if (capFinal) {
     h = h.replace(/value="60"/g, 'value="' + capFinal + '"');
     h = h.replace(/Время посчитано для батареи 60 кВт·ч/g, 'Время посчитано для батареи ' + capFinal + ' кВт·ч' + (CAP_NOTE[mslug2] || ''));
+  }
+  if (!capFinal) {
+    h = h.replace(/Время посчитано для батареи 60 кВт·ч; для своей машины умножьте на её ёмкость\./g, 'Ёмкость батареи этой модели не указана — подставьте свою (у большинства EV из Китая 60–80 кВт·ч); расчёт обновится автоматически.');
+    h = h.replace('value="60"', 'value=""');
   }
   if (isGBT) {
     h = h.split('Пакет „Максимальный ход“ для Zeekr / Li Auto / Voyah').join('Пакет «Максимальный ход» для китайских EV (GB/T)');
@@ -341,6 +347,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         {spec.dc && <tr><td>На трассе (быстро)</td><td>{spec.dc}</td></tr>}
         {spec.obc && <tr><td>Скорость дома</td><td>{spec.obc}</td></tr>}
         {dcpowClean && <tr><td>Быстрая заправка</td><td>{dcpowClean}</td></tr>}
+        {battLabel && <tr><td>Батарея</td><td>{battLabel}</td></tr>}
         {spec.market && <tr><td>Откуда машина</td><td>{spec.market}</td></tr>}
         <tr><td>Нужен ли адаптер</td><td>{solutionFor(m.port)}</td></tr>
       </table>
@@ -349,7 +356,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         const kwh = kb.length > 1 ? parseFloat(kb[1].replace(',', '.')) : 0;
         return kwh > 0 && (<div class="card" style="margin-top:20px">
           <h3 style="margin:0 0 6px">Сколько реально зальётся</h3>
-          <p style="font-size:13.5px;color:var(--txt-muted);margin:0">Паспортная ёмкость: <b style="color:var(--head)">{kwh} кВт·ч</b>. На ходу реально доступно примерно <b style="color:var(--head)">{Math.round(kwh * 0.9)} кВт·ч</b> (буфер сверху и снизу батареи, разница на 10%±3). При зарядке с учётом потерь преобразователей в батарею уйдёт до <b style="color:var(--head)">{Math.round(kwh * 0.95)} кВт·ч</b> — остальное греется по пути. Оценка усреднённая: точные цифры зависят от прошивки, температуры и износа батареи.{CAP_NOTE[String(m.slug||'')] || ''}</p>
+          <p style="font-size:13.5px;color:var(--txt-muted);margin:0">Паспортная ёмкость: <b style="color:var(--head)">{kwh} кВт·ч</b>. На ходу реально доступно примерно <b style="color:var(--head)">{Math.round(kwh * 0.9)} кВт·ч</b> (буфер сверху и снизу батареи, разница на 10%±3). При зарядке с учётом потерь преобразователей в батарею уйдёт до <b style="color:var(--head)">{Math.round(kwh * 0.95)} кВт·ч</b> — остальное греется по пути. Оценка усреднённая: точные цифры зависят от прошивки, температуры и износа батареи.{CAP_NOTE[String(m.slug||'')] || ''}{battInfo && battInfo.note ? ' ' + battInfo.note : ''}</p>
         </div>);
       })()}
       {isGBT && (<p style="margin-top:16px;font-size:13.5px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#5aa9ff">в разделе «Телематика»</a>.</p>)}
