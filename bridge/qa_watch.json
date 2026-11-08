@@ -1,7 +1,12 @@
 {
- "sitemap_count": 303,
- "sitemap_ok": 303,
- "sitemap_bad": [],
+ "sitemap_count": 306,
+ "sitemap_ok": 305,
+ "sitemap_bad": [
+  [
+   "https://zapashoda-ev.ru/cost/index/",
+   404
+  ]
+ ],
  "key_pages": {
   "/": 200,
   "/models/": 200,
@@ -31,8 +36,8 @@
  "models_cards": 151,
  "app_scripts": 5,
  "catalog_products": 0,
- "link_targets": 218,
- "links_ok": 218,
+ "link_targets": 219,
+ "links_ok": 219,
  "links_bad": [],
  "assets_count": 33,
  "assets_ok": 32,
@@ -43,8 +48,13 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "08.11 22:11",
+ "checked_at_msk": "08.11 23:58",
  "failures": [
+  {
+   "where": "sitemap: /cost/index/",
+   "what": "HTTP 404",
+   "crit": true
+  },
   {
    "where": "page /search.html",
    "what": "HTTP 404",
@@ -86,6 +96,6 @@
    "crit": false
   }
  ],
- "failures_count": 8,
- "crit_count": 4
+ "failures_count": 9,
+ "crit_count": 5
 }
