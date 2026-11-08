@@ -5,52 +5,7 @@ import d from '../../data/legacy/vin_index.json';
 <ZhLayout title={d.title} description={d.desc}>
   <section class="sec"><div class="wrap">
     <div class="crumbs"><a href="/">Главная</a> / VIN-справочник</div>
-    <div class="vinbox" style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:22px 0">
-  <h2 style="font-size:22px;color:var(--txt);margin:0 0 6px">Проверь свой VIN</h2>
-  <p style="color:var(--txt-muted);font-size:14.5px;line-height:1.6;margin:0 0 14px">Введите 17 символов — покажем регион сборки, модельный год и подсказки: какие разъёмы ждать и что проверить в ЭПТС/СБКТС.</p>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <input id="vinInput" maxlength="17" autocomplete="off" spellcheck="false" placeholder="Например, LRW3E7FA5FC000000" style="flex:1 1 260px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 14px;color:var(--txt);font-size:15px;letter-spacing:.06em;text-transform:uppercase">
-    <button id="vinGo" style="background:#4d9bf5;color:#fff;border:1px solid #4d9bf5;border-radius:10px;padding:11px 22px;font-size:14.5px;font-weight:600;cursor:pointer">Расшифровать</button>
-  </div>
-  <div id="vinOut" style="margin-top:14px;font-size:14.5px;line-height:1.65;color:var(--txt-muted)"></div>
-</div>
-<script is:inline>
-(function(){
-  var REGION = {L:'Китай', J:'Япония', K:'Южная Корея', W:'Германия', S:'Великобритания', V:'Франция', Z:'Италия', T:'Швеция или Чехия', R:'Тайвань', X:'Россия', 1:'США', 4:'США', 5:'США', 7:'США', 2:'Канада', 3:'Мексика', 6:'Австралия', 9:'Бразилия', M:'Индия', A:'ЮАР', G:'Египет'};
-  var YEAR = {A:2010, B:2011, C:2012, D:2013, E:2014, F:2015, G:2016, H:2017, J:2018, K:2019, L:2020, M:2021, N:2022, P:2023, R:2024, S:2025, T:2026, V:2027};
-  function out(html){ var el = document.getElementById('vinOut'); el.innerHTML = html; }
-  function go(){
-    var raw = (document.getElementById('vinInput').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (raw.length !== 17) { out('<b style="color:#e8927f">VIN должен быть длиной 17 символов — сейчас ' + raw.length + '.</b> Проверьте, что скопировали целиком.'); return; }
-    var region = REGION[raw[0]] || 'регион не определён';
-    var year = YEAR[raw[9]];
-    var brand = '', hint = '', port = '';
-    if (raw.indexOf('5YJ') === 0 || raw.indexOf('LRW') === 0) {
-      brand = 'Tesla';
-      hint = raw.indexOf('LRW') === 0 ? 'Сборка — Шанхай: это европейская спецификация, порты Type 2 / CCS2.' : 'Американская спецификация: разъём Type 1/CCS1 или NACS — смотрите карточку модели.';
-    } else if (raw[0] === 'L') {
-      hint = 'Сборка — Китай: почти наверняка GB/T-порты (AC + DC). Уточните по карточке вашей модели в каталоге.';
-      port = 'GB/T';
-    } else if (raw[0] === 'J') {
-      hint = 'Сборка — Япония: вероятно Type 1/CCS1 или CHAdeMO. Уточните по карточке модели.';
-    } else if (raw[0] === 'K') {
-      hint = 'Сборка — Корея: чаще Type 1/CCS1, в европейской партии — Type 2/CCS2.';
-    } else if (raw[0] === 'W') {
-      hint = 'Сборка — Европа: Type 2/CCS2.';
-    } else if (raw[0] === 'X') {
-      hint = 'Сборка — Россия. Уточните разъём по документам или карточке модели.';
-    }
-    var next = '<ul style="margin:8px 0 0;padding-left:18px">' +
-      '<li><b>Регион сборки:</b> ' + region + (brand ? ' — <b>' + brand + '</b>' : '') + '</li>' +
-      (year ? '<li><b>Модельный год:</b> ' + year + '</li>' : '') +
-      (hint ? '<li><b>Разъёмы:</b> ' + hint + '</li>' : '') +
-      '<li><b>Дальше:</b> сверьте год и комплектацию с ЭПТС/СБКТС у параллельного импорта — подробнее в карточках брендов ниже.</li></ul>';
-    out(next);
-  }
-  document.getElementById('vinGo').addEventListener('click', go);
-  document.getElementById('vinInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') go(); });
-})();
-</script>
+    
 <div class="article" set:html={d.body_html} />
   </div></section>
 
@@ -68,5 +23,37 @@ import d from '../../data/legacy/vin_index.json';
 .mcard b{color:var(--txt)}
 .lcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:18px 0}
 .note{color:var(--txt-muted);font-size:14px;line-height:1.6;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:16px 0}
+/* === VIN-чекер и сервисы === */
+.vinbox{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:24px 0}
+.vinbox h2{margin:0 0 6px;font-size:clamp(22px,3.4vw,28px);color:var(--txt)}
+.vin-sub{color:var(--txt-muted);font-size:14.5px;line-height:1.6;margin:0 0 16px}
+.vin-row{display:flex;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px}
+.vin-row input{flex:1 1 220px;background:transparent;border:none;outline:none;color:var(--txt);font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:8px 10px;min-width:0}
+.vin-row button{background:#4d9bf5;color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.vin-row button:hover{background:#3d8cf0}
+.vin-hint{color:var(--txt-muted);font-size:12.5px;margin:10px 2px 0;letter-spacing:.02em}
+.vin-out{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14.5px;line-height:1.65;color:var(--txt-muted)}
+.vin-out ul{margin:0;padding-left:18px}
+.vin-out li{margin-bottom:6px}
+.vin-out b{color:var(--txt)}
+.vin-warn{color:#e8927f}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:18px 0}
+.svc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.svc-card h3{font-size:16.5px;color:var(--txt);margin:0 0 8px}
+.svc-card p{font-size:14px;color:var(--txt-muted);line-height:1.6;margin:0 0 12px}
+.svc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.svc-actions a,.svc-actions button{display:inline-block;border-radius:999px;padding:9px 16px;font-size:13.5px;text-decoration:none;cursor:pointer;font-family:inherit}
+.svc-actions a{background:#4d9bf5;color:#fff;border:1px solid #4d9bf5}
+.svc-actions a:hover{background:#3d8cf0}
+.svc-actions button{background:transparent;color:var(--txt-muted);border:1px solid var(--line)}
+.svc-actions button:hover{color:var(--txt);border-color:rgba(255,255,255,.2)}
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:18px 0}
+.brand-card{display:flex;justify-content:space-between;align-items:baseline;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;transition:border-color .15s}
+.brand-card:hover{border-color:rgba(77,155,245,.45)}
+.brand-card b{color:var(--txt);font-size:14.5px}
+.brand-card span{color:var(--txt-muted);font-size:12.5px;white-space:nowrap}
+.note.tip{border-left:3px solid #4d9bf5}
+.note.warn{border-left:3px solid #e06c5a}
+.tw.year-table td{width:16.6%;padding:8px 14px;font-size:14px}
 </style>
 </ZhLayout>
