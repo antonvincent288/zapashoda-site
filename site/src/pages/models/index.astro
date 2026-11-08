@@ -18,6 +18,12 @@ const solutionFor = (port: string, type: string) => {
 };
 const brands = ['Все', 'Zeekr', 'Li Auto', 'BYD', 'Voyah', 'Geely', 'Tesla'];
 const yearShort = (years: string) => String(years || '').split(' · ')[0];
+const typeOf = (t: string) => {
+  const s = String(t || '').toUpperCase();
+  if (s.includes('EREV')) return 'erev';
+  if (s.includes('PHEV') || s.includes('C-DM') || s.includes('DM-I')) return 'phev';
+  return 'bev';
+};
 ---
 <ZhLayout title="Каталог моделей — Запас хода" description={`Каталог ${models.length} моделей: разъёмы, мощность борта, решения и совместимость с российской инфраструктурой зарядки.`}>
   <section class="sec">
@@ -31,9 +37,15 @@ const yearShort = (years: string) => String(years || '').split(' · ')[0];
           <button class:list={["fchip", b === 'Все' && "on"]} data-brand={b === 'Все' ? 'all' : b}>{b}</button>
         ))}
       </div>
+      <div class="fbar" style="margin-top:12px">
+        <button class="fchip on" data-type="all">Все типы</button>
+        <button class="fchip" data-type="bev">Электромобиль (BEV)</button>
+        <button class="fchip" data-type="erev">Гибрид-резерв (EREV)</button>
+        <button class="fchip" data-type="phev">Подключаемый (PHEV)</button>
+      </div>
       <div class="mgrid" id="mgrid">
         {models.map((m) => (
-          <a class="mcard" href={`/models/${m.slug}/`} data-brand={m.brand}>
+          <a class="mcard" href={`/models/${m.slug}/`} data-brand={m.brand} data-type={typeOf(m.type)}>
             <b>{m.brand} {m.name || ''}</b>
             {m.type && <span class="tag">{m.type} · {yearShort(m.years)}</span>}
             {m.port && <div class="ports">Разъём: {m.port}</div>}
@@ -51,20 +63,24 @@ const yearShort = (years: string) => String(years || '').split(' · ')[0];
   const total = document.querySelectorAll('#mgrid .mcard').length;
   function apply() {
     const q = (inp && inp.value ? inp.value.toLowerCase() : '');
-    const active = document.querySelector('.fchip.on');
+    const active = document.querySelector('.fchip.on[data-brand]');
     const v = active ? active.getAttribute('data-brand') : 'all';
+    const tActive = document.querySelector('.fchip.on[data-type]');
+    const tv = tActive ? tActive.getAttribute('data-type') : 'all';
     let shown = 0;
     document.querySelectorAll('#mgrid .mcard').forEach((c) => {
       const okBrand = (v === 'all' || c.getAttribute('data-brand') === v);
+      const okType = (tv === 'all' || c.getAttribute('data-type') === tv);
       const okText = c.textContent.toLowerCase().includes(q);
-      const show = okBrand && okText;
+      const show = okBrand && okType && okText;
       (c as HTMLElement).style.display = show ? '' : 'none';
       if (show) shown++;
     });
     if (count) count.textContent = `Показано: ${shown} из ${total}`;
   }
   document.querySelectorAll('.fchip').forEach((b) => b.addEventListener('click', () => {
-    document.querySelectorAll('.fchip').forEach((x) => x.classList.remove('on'));
+    const grp = b.hasAttribute('data-type') ? '[data-type]' : '[data-brand]';
+    document.querySelectorAll('.fchip' + grp).forEach((x) => x.classList.remove('on'));
     b.classList.add('on');
     apply();
   }));

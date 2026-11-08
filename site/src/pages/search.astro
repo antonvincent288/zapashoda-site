@@ -36,6 +36,8 @@ import ZhLayout from '../layouts/ZhLayout.astro';
         }
       }catch(e){pfOut.innerHTML='<p class="pf-empty">Поиск временно недоступен. Обновите страницу.</p>';}
     }
+    const q0 = new URLSearchParams(location.search).get('q');
+    if (q0) { pfInput.value = q0; const qq = q0.trim(); if (qq.length >= 2) pfRun(qq); }
     pfInput.addEventListener('input',()=>{clearTimeout(pfDeb);pfDeb=setTimeout(()=>{const q=pfInput.value.trim();pfOut.innerHTML='';if(q.length>=2)pfRun(q);},300);});
   </script>
 </ZhLayout>
