@@ -301,7 +301,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         cards.forEach(function(c){
           var act = c.querySelector('.sol');
           var actTxt = act ? act.textContent : '';
-          if (/Кому актуально/i.test(actTxt) && !keepPain(actTxt)) { hidden.push(c); return; }
+          if (isGBT && /Кому актуально/i.test(actTxt) && !keepPain(actTxt)) { hidden.push(c); return; }
           kept.push(c);
         });
         var wrap = document.createElement('div');
@@ -332,7 +332,13 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
           more.innerHTML = '<summary><b>Ещё ' + hidden.length + ' проблем смежных сценариев</b><span class="pa-arrow">▾</span></summary><div class="pa-body">Разобраны в <a href="/pain/" style="color:#5aa9ff">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div>';
           container.appendChild(more);
         }
-        if (!kept.length) { h2.parentElement.style.display = 'none'; }
+        if (!kept.length && hidden.length) {
+          var fb = document.createElement('p');
+          fb.style.cssText = 'font-size:13.5px;color:var(--txt-muted);margin:0';
+          fb.innerHTML = 'Специфичные разборы для этой модели в подготовке. Общие проблемы и решения — в <a href="/pain/" style="color:#5aa9ff">разделе «Проблемы и решения»</a>.';
+          container.innerHTML = '';
+          container.appendChild(fb);
+        } else if (!kept.length) { h2.parentElement.style.display = 'none'; }
       }
       if (ht.indexOf('Что докупить') === 0) {
         h2.textContent = 'Каталог подходящих товаров';
@@ -341,76 +347,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
   })();
   </script>
 
-  <script is:inline>
-  (function(){
-    function norm(s){ return (s||'').toLowerCase(); }
-    var brandTokens = (document.body.getAttribute('data-mbrand') || '') + ' ' + (document.body.getAttribute('data-mname') || '');
-    var tokens = brandTokens.toLowerCase().replace(/[()/]/g,' ').split(/\s+/).filter(function(t){return t.length>2;});
-    var isGBT = document.body.getAttribute('data-mport') === 'GBT';
-    var portTokens = isGBT ? ['gb/t','gbt'] : ['type 2','type2','ccs2','ccs'];
-    var bodyKeywords = isGBT ? ['китай'] : ['европ','европейск'];
-    function keepPain(txt){
-      var t = norm(txt);
-      for (var i=0;i<tokens.length;i++){ if (t.indexOf(tokens[i]) >= 0) return true; }
-      for (var i=0;i<portTokens.length;i++){ if (t.indexOf(portTokens[i]) >= 0) return true; }
-      for (var i=0;i<bodyKeywords.length;i++){ if (t.indexOf(bodyKeywords[i]) >= 0) return true; }
-      return false;
-    }
-    function shortenSrc(box){
-      box.querySelectorAll('a').forEach(function(a){
-        if (a.textContent.length > 34) a.textContent = 'Источник ↗';
-      });
-    }
-    var h2s = Array.prototype.slice.call(document.querySelectorAll('h2'));
-    h2s.forEach(function(h2){
-      var ht = (h2.textContent || '').trim();
-      if (ht.indexOf('Проблемы и решения') === 0) {
-        var container = h2.parentElement.querySelector('.prob-grid');
-        if (!container) return;
-        var cards = Array.prototype.slice.call(container.querySelectorAll('.pt'));
-        var kept = [], hidden = [];
-        cards.forEach(function(c){
-          var act = c.querySelector('.sol');
-          var actTxt = act ? act.textContent : '';
-          if (/Кому актуально/i.test(actTxt) && !keepPain(actTxt)) { hidden.push(c); return; }
-          kept.push(c);
-        });
-        var wrap = document.createElement('div');
-        wrap.className = 'pain-acc-wrap';
-        kept.forEach(function(c){
-          var head = c.querySelector('h3');
-          var id = head ? (head.querySelector('.pain-id') || {}).textContent || '' : '';
-          var title = head ? head.textContent.replace(id, '').trim() : '';
-          var d = document.createElement('details');
-          d.className = 'pain-acc';
-          var sum = document.createElement('summary');
-          sum.innerHTML = (id ? '<span class="pain-id">' + id + '</span> ' : '') + '<b>' + title + '</b><span class="pa-arrow">▾</span>';
-          var body = document.createElement('div');
-          body.className = 'pa-body';
-          Array.prototype.slice.call(c.children).forEach(function(ch){
-            if (ch.tagName === 'H3') return;
-            body.appendChild(ch.cloneNode(true));
-          });
-          shortenSrc(body);
-          d.appendChild(sum); d.appendChild(body);
-          wrap.appendChild(d);
-        });
-        container.innerHTML = '';
-        container.appendChild(wrap);
-        if (hidden.length) {
-          var more = document.createElement('details');
-          more.className = 'pain-acc pain-more';
-          more.innerHTML = '<summary><b>Ещё ' + hidden.length + ' проблем смежных сценариев</b><span class="pa-arrow">▾</span></summary><div class="pa-body">Разобраны в <a href="/pain/" style="color:#5aa9ff">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div>';
-          container.appendChild(more);
-        }
-        if (!kept.length) { h2.parentElement.style.display = 'none'; }
-      }
-      if (ht.indexOf('Что докупить') === 0) {
-        h2.textContent = 'Каталог подходящих товаров';
-      }
-    });
-  })();
-  </script>
+
     </div>
   </section>
 </ZhLayout>
