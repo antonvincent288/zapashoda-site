@@ -14,6 +14,14 @@ const catFor = (t) => {
   if (s.includes('станция')) return 'Станции';
   return 'Аксессуары';
 };
+const kIcons = {
+  'Станции': '<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/>',
+  'Зарядки': '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 6v2M14 6v2M10.5 12h3M11 16.5l2-2.5"/>',
+  'Адаптеры': '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>',
+  'Кабели': '<path d="M4 16c0-4 4-4 4-8M20 8c0 4-4 4-4 8M8 8h2M14 16h2"/>',
+  'Аксессуары': '<path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M10 5h4"/>'
+};
+const kIcon = (c) => kIcons[c] || null;
 const prods = items.map((p) => ({ ...p, cat: catFor(p.title), of: ofMap[p.slug] }));
 const catOrder = ['Станции', 'Зарядки', 'Адаптеры', 'Кабели', 'Аксессуары'];
 const cats = catOrder.filter((c) => prods.some((p) => p.cat === c)).concat(Array.from(new Set(prods.map((p) => p.cat))).filter((c) => !catOrder.includes(c)));
@@ -30,21 +38,32 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
       <div class="crumbs"><a href="/">Главная</a> / Каталог</div>
       <h1>Зарядные станции и аксессуары для электромобиля — купить</h1>
       <p class="lead">{prods.length} позиций: адаптеры, кабели, зарядки, станции и аксессуары. Добавляйте в заявку — заберёте у партнёра-дилера в вашем городе, оплата при получении.</p>
-      <div id="cat-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
-        <button class="chip" type="button" data-cat="all" style="background:var(--gold);color:#1d1d1f;border-color:var(--gold)">Все ({prods.length})</button>
+      <div id="cat-chips" class="kchips" style="margin-top:26px">
+        <button class="kchip on" type="button" data-cat="all">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 9h18"/></svg>
+          Все ({prods.length})
+        </button>
         {cats.map((c) => (
-          <button class="chip" type="button" data-cat={c}>{c} ({prods.filter((p) => p.cat === c).length})</button>
+          <button class="kchip" type="button" data-cat={c}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" dangerouslySetInnerHTML={kIcon(c) || ''}/>
+            {c} ({prods.filter((p) => p.cat === c).length})
+          </button>
         ))}
       </div>
-      <div class="mgrid" style="margin-top:32px">
+      <div class="kgrid" style="margin-top:32px">
         {prods.map((p) => (
-          <div class="mcard" data-cat={p.cat}>
-            {p.image && <a href={`/catalog/${p.slug}.html`}><img src={p.image} alt={p.title} loading="lazy" decoding="async" style="width:100%;height:170px;object-fit:contain;background:#fff;border-radius:12px 12px 0 0;padding:8px" /></a>}
-            <a href={`/catalog/${p.slug}.html`}><b>{p.title}</b></a>
-            <span class="tag">{specLine(p)}</span>
-            <div class="sol" style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-              <b style="font-size:18px">{p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : 'по запросу'}</b>
-              <button class="btn btn-gold" type="button" style="font-size:13px;padding:8px 14px" onclick={`ofAdd(${p.of ? p.of.id : 0},this)`}>В заявку</button>
+          <div class="kcard" data-cat={p.cat}>
+            <a class="kimg" href={`/catalog/${p.slug}.html`}>
+              {p.image && <img src={p.image} alt={p.title} loading="lazy" decoding="async" />}
+              <span class="kcat">{p.cat}</span>
+            </a>
+            <div class="kbody">
+              <a class="ktitle" href={`/catalog/${p.slug}.html`}>{p.title}</a>
+              <span class="kmeta">{specLine(p)}</span>
+            </div>
+            <div class="kfoot">
+              <b class="kprice">{p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : 'по запросу'}</b>
+              <button class="btn btn-gold kbtn" type="button" onclick={`ofAdd(${p.of ? p.of.id : 0},this)`}>В заявку</button>
             </div>
           </div>
         ))}
@@ -52,15 +71,36 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
       <OrderForm model="Каталог аксессуаров" />
     </div>
   </section>
-  <style is:inline>.mcard a{color:inherit;text-decoration:none}</style>
+  <style is:inline>
+    .kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .kcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:border-color .18s,transform .18s,box-shadow .18s}
+    .kcard:hover{border-color:rgba(77,155,245,.45);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .kimg{display:block;position:relative;height:196px;background:linear-gradient(180deg,#fff 0%,#f2f3f5 100%)}
+    .kimg img{width:100%;height:100%;object-fit:contain;padding:10px;display:block}
+    .kcat{position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(20,20,22,.82);color:#f5f5f7;backdrop-filter:blur(4px)}
+    .kbody{display:flex;flex-direction:column;gap:6px;padding:16px 18px 0;flex:1}
+    .ktitle{color:var(--head);font-weight:700;font-size:16.5px;line-height:1.3;letter-spacing:-.01em;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:43px}
+    .ktitle:hover{color:#6db3ff}
+    .kmeta{font-size:12.5px;color:var(--txt-muted);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+    .kfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px 18px;border-top:1px solid var(--line);margin-top:14px}
+    .kprice{font-size:20px;color:var(--gold);white-space:nowrap}
+    .kbtn{font-size:13px;padding:9px 16px;flex-shrink:0}
+    .kchips{display:flex;gap:9px;flex-wrap:wrap}
+    .kchip{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--head);font-size:13.5px;cursor:pointer;transition:.15s}
+    .kchip:hover{border-color:rgba(77,155,245,.45)}
+    .kchip.on{background:var(--gold);border-color:var(--gold);color:#1d1d1f}
+    .kchip svg{flex-shrink:0;opacity:.75}
+    @media (max-width:920px){.kgrid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:600px){.kgrid{grid-template-columns:1fr}.kimg{height:210px}.ktitle{min-height:0}}
+  </style>
   <script is:inline set:html={ofScript} />
   <script define:vars={{ cats }}>
-    document.querySelectorAll('#cat-chips .chip').forEach(function (btn) {
+    document.querySelectorAll('#cat-chips .kchip').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var c = btn.getAttribute('data-cat');
-        document.querySelectorAll('#cat-chips .chip').forEach(function (b) { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; });
-        btn.style.background = 'var(--gold)'; btn.style.color = '#1d1d1f'; btn.style.borderColor = 'var(--gold)';
-        document.querySelectorAll('.mcard[data-cat]').forEach(function (card) {
+        document.querySelectorAll('#cat-chips .kchip').forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        document.querySelectorAll('.kcard[data-cat]').forEach(function (card) {
           card.style.display = (c === 'all' || card.getAttribute('data-cat') === c) ? '' : 'none';
         });
       });
