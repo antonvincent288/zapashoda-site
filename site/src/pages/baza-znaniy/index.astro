@@ -12,7 +12,7 @@ const refs = [
   { t: 'VIN-справочник: расшифровка и проверка', d: '17 символов: код завода, модельный год, серийник; проверка ЭПТС/СБКТС для параллельного импорта.', href: '/vin/' },
   { t: 'Матрица совместимости разъёмов', d: 'Какие станции подходят вашему разъёму: Type 2, GB/T, CCS2 — таблица переходников.', href: '/matrix/' },
   { t: 'PDF-гайды «Запас хода»', d: 'Интерактивные авто-гиды по М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядке на парковке ЖК.', href: '/shop/digital/' },
-  { t: 'Каталог моделей 145', d: 'Разъёмы, мощность борта и адаптеры для каждой модели — с фильтром по марке и году.', href: '/models/' },
+  { t: 'Каталог моделей', d: 'Разъёмы, мощность борта и адаптеры для каждой модели — с фильтром по марке, году и типу (BEV/EREV/PHEV).', href: '/models/' },
 ];
 const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'База знаний «Запас хода»', url: 'https://zapashoda-ev.ru/baza-znaniy/', mainEntity: { '@type': 'ItemList', itemListElement: [...src.map((g) => g.slug), ...blogSorted.map((a) => a.slug), ...painSorted.map((a) => a.slug)].map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://zapashoda-ev.ru/baza-znaniy/' + s + '/' })) } };
 ---
@@ -21,7 +21,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     <div class="crumbs"><a href="/">Главная</a> / База знаний</div>
     <div class="badge">База знаний</div>
     <h1>База знаний «Запас хода»</h1>
-    <p class="lead">Руководства, разборы и решения проблем — всё в одном месте. {src.length + blog.length + pain.length} материалов, обновляется каждую неделю.</p>
+    <p class="lead">Руководства, разборы и решения проблем — всё в одном месте. {src.length + blog.length + pain.length + refs.length} материалов, обновляется каждую неделю.</p>
+    <div class="card bk-card" style="border-color:rgba(77,155,245,.4);background:rgba(1,97,239,.06)">
+      <h3 style="color:#7fb8f7">Не знаете, с чего начать?</h3>
+      <p>Не уверены, какой разъём у машины — начните с <a href="/matrix/" style="color:#5aa9ff">матрицы совместимости</a> (одна таблица — все типы станций). Заряжаетесь на трассе — сразу к <a href="/tarify/" style="color:#5aa9ff">тарифам ЭЗС</a> и <a href="/charging/" style="color:#5aa9ff">карте ЗУ</a>.</p>
+    </div>
     <div class="bk-tabs">
       <button class="bk-tab on" type="button" data-bk="guides">Руководства <b>{src.length}</b></button>
       <button class="bk-tab" type="button" data-bk="blog">Разборы <b>{blog.length}</b></button>
