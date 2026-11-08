@@ -44,5 +44,17 @@ const icos = ['', '', ''];
           </div></>)}
       <h2 style="margin-top:56px">FAQ по сотрудничеству</h2><div class="faqbox" style="margin-top:20px;max-width:820px">{faq.map((f: any) =>(
           <details open={f.q === faq[0].q}><summary>{f.q}</summary><p>{f.a}</p></details>))}
-      </div></div></section><section class="sec"><div class="wrap"><div class="cta"><h2>Запросить расчёт проекта</h2><p>Опишите вашу машину и задачи в форме подбора — на продвижении прайса и условий для дилеров ответит наш менеджер. Партнёрский пакет с ценами пришлём вместе с расчётом.</p><a class="btn btn-gold" href="/quiz/" style="text-decoration:none">Отправить заявку за 30 секунд</a></div></div></section>{faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+      </div></div></section><section class="sec-alt"><div class="wrap">
+      <h2 style="margin-top:8px">Кому подходим</h2>
+      <div class="cards" style="margin-top:24px">
+        {[['taksi','Таксопарки и каршеринг','Комплекты адаптеров, обучение водителей, замена за 1 день'],['avtopark','Корпоративные автопарки','Разные разъёмы в одном гараже: адаптеры и настенные станции'],['azs','АЗС и платные парковки','Зарядка как допродажа к остановке; точка на карте — бесплатно'],['jk','ЖК и застройщики','Паркинги и дворы: расчёт мощности и схема учёта'],['salony','Автосалоны и дилеры','Партнёрские уровни Старт / Комплект / Зимний без заморозки денег'],['predlozh-mesto','Предложить место для зарядки','Бесплатный расчёт сценария для собственников площадок']].map((sg) => (
+          <a class="card" href={`/b2b/${sg[0]}/`} style="text-decoration:none;display:block">
+            <b style="display:block;margin-bottom:6px">{sg[1]}</b>
+            <p style="font-size:14px;color:var(--txt-muted)">{sg[2]}</p>
+            <p style="margin-top:8px;font-size:13px;color:var(--gold)">Подробнее →</p>
+          </a>
+        ))}
+      </div>
+    </div></section>
+      <section class="sec"><div class="wrap"><div class="cta"><h2>Запросить расчёт проекта</h2><p>Опишите вашу машину и задачи в форме подбора — на продвижении прайса и условий для дилеров ответит наш менеджер. Партнёрский пакет с ценами пришлём вместе с расчётом.</p><a class="btn btn-gold" href="/quiz/" style="text-decoration:none">Отправить заявку за 30 секунд</a></div></div></section>{faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
 </ZhLayout>

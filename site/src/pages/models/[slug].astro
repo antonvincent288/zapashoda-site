@@ -31,6 +31,12 @@ const solutionFor = (port: string) => {
   if (port && port.includes('EU')) return SOLUTIONS['EU'];
   return 'Уточните разъём по VIN — подберём комплект';
 };
+const portSlug = (p: string) => {
+  if (p.includes('GB/T')) return 'gbt';
+  if (p.includes('CHAdeMO')) return 'chademo';
+  if (p.includes('Type1')) return 'type1';
+  return 'type2';
+};
 const portIcon = (p: string) => {
   if (!p) return 'type2';
   if (p.includes('GB/T')) return 'gbt';
@@ -259,7 +265,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       <div class="badge">{m.type || 'EV'} · {yearsShort}{spec.market ? ` · ${spec.market}` : ''}</div>
       <h1>{m.name || m.title}: разъёмы, адаптеры и совместимость</h1>
       <div class="meta">
-<span style="display:inline-flex;align-items:center;gap:6px"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'}</span>
+        <a href={`/razemy/${portSlug(String(m.port || ''))}/`} style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit" title="Справочник разъёма"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'} <span style="font-size:11px;color:var(--txt-muted)">что за разъём →</span></a>
         {spec.obc && <span>{spec.obc}</span>}
         {spec.dcpow && <span>DC {(spec.dcpow.match(/[0-9]+\+?\s?кВт/) || [spec.dcpow])[0]}</span>}
         <span>Обновлено: ноябрь 2026</span>
