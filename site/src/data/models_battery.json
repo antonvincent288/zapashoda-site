@@ -121,5 +121,10 @@
   "cap": "65.7",
   "label": "65,7 кВт·ч (Москвич 3е)",
   "note": "у 6е — своя ёмкость"
+ },
+ "xiaomi-su7-su7-ultra": {
+  "cap": "73.6",
+  "label": "73,6 кВт·ч (Standard RWD, LFP Blade)",
+  "note": "у Pro/Max — батарея большего объёма (CATL Qilin)"
  }
 }
