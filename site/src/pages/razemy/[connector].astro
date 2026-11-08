@@ -1,0 +1,107 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import PlugIcon from '../../components/PlugIcon.astro';
+import light from '../../data/models_light.json';
+import conf from '../../data/razemy_conf.json';
+
+const allConf = conf as any[];
+export async function getStaticPaths() {
+  const conf = (await import('../../data/razemy_conf.json')).default as any[];
+  return conf.map((c) => ({ params: { connector: c.slug }, props: { c } }));
+}
+const { c } = Astro.props as any;
+const models = (light as any).models as any[];
+const groupModels = c.group ? models.filter((m: any) => m.port === c.group) : [];
+const nModels = groupModels.length;
+const byBrand = new Map<string, any[]>();
+groupModels.forEach((m) => {
+  const k = String(m.brand || 'Другие');
+  if (!byBrand.has(k)) byBrand.set(k, []);
+  byBrand.get(k)!.push(m);
+});
+const brands = Array.from(byBrand.entries()).sort((a, b) => b[1].length - a[1].length);
+const facts = c.facts.map((f: [string, string]) => [f[0], String(f[1]).replace('{n}', String(nModels))]);
+const idx = allConf.findIndex((x: any) => x.slug === c.slug);
+const prev = allConf[(idx + allConf.length - 1) % allConf.length];
+const next = allConf[(idx + 1) % allConf.length];
+const SHORT: Record<string, string> = { type2: 'Type 2', ccs2: 'CCS2', gbt: 'GB/T', chademo: 'CHAdeMO', type1: 'Type 1', schuko: 'Розетка 220 В' };
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: c.title, description: c.desc },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((f: [string, string]) => ({ '@type': 'Question', name: f[0], acceptedAnswer: { '@type': 'Answer', text: f[1] } })) },
+];
+---
+<ZhLayout title={c.title + ' — Запас хода'} description={c.desc} jsonld={ld}>
+  <section class="sec">
+    <div class="wrap" style="max-width:980px">
+      <div class="crumbs"><a href="/">Главная</a> / <a href="/razemy/">Разъёмы зарядки</a> / {c.slug}</div>
+      <div class="badge">{c.kindtext}</div>
+      <h1>{c.title}</h1>
+      <p class="lead">{c.lede}</p>
+
+      <div class="card rz-head">
+        <PlugIcon name={c.icon} size={64} label={c.title} />
+        <div>
+          <h3 style="margin:0 0 4px">Иконка в справочнике</h3>
+          <p style="margin:0;font-size:14px;color:var(--txt-muted)">Такой значок вы увидите в матрице совместимости, на карте ЗУ и в карточках моделей: {c.kindtext.toLowerCase()}.</p>
+        </div>
+      </div>
+
+      <ul class="rz-facts">
+        {facts.map((f: [string, string]) => (<li><b>{f[0]}.</b> <span set:html={f[1]} /></li>))}
+      </ul>
+
+      {nModels > 0 && (
+        <div class="card" style="margin-top:30px">
+          <h3>Модели с этим стандартом: {nModels}</h3>
+          <p style="font-size:13.5px;color:var(--txt-muted);margin-top:2px">Сгруппированы по маркам. В карточке каждой модели — время зарядки, мощность борта и нужные адаптеры.</p>
+          <div class="rz-brands">
+            {brands.map(([brand, ms]) => (
+              <div class="rz-brand">
+                <h4>{brand} <span class="rz-cnt">{ms.length}</span></h4>
+                <ul>
+                  {ms.map((m: any) => (<li><a href={'/models/' + m.slug + '/'}>{m.name}</a></li>))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="card" style="margin-top:30px">
+        <h3>Что делать дальше</h3>
+        <p style="margin:6px 0 10px">Проверьте свою модель в <a href="/matrix/">матрице совместимости</a> — покажет, где заряжается напрямую, где нужен адаптер и что докупить. Станции поблизости — на <a href="/charging/">карте ЗУ</a> (фильтр по разъёму). Общий обзор — в разборе <a href="/blog/tipy-razyomov-zaryadki/">«Типы разъёмов зарядки»</a>.</p>
+      </div>
+
+      <h2 style="margin-top:44px">Частые вопросы про {SHORT[c.slug] || c.slug}</h2>
+      <div class="rz-faq">
+        {c.faq.map((f: [string, string]) => (
+          <details><summary>{f[0]}</summary><div class="rz-a"><p>{f[1]}</p></div></details>
+        ))}
+      </div>
+
+      <div class="card" style="margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <a class="chip" href={'/razemy/' + prev.slug + '/'} style="display:inline-flex;gap:8px;align-items:center"><PlugIcon name={prev.icon} size={18} label={prev.slug} /> {SHORT[prev.slug] || prev.slug}</a>
+        <a class="chip" href={'/razemy/' + next.slug + '/'} style="display:inline-flex;gap:8px;align-items:center"><PlugIcon name={next.icon} size={18} label={next.slug} /> {SHORT[next.slug] || next.slug}</a>
+        <span style="font-size:13.5px;color:var(--txt-muted)">Все шесть разъёмов — в <a href="/razemy/">справочнике</a></span>
+      </div>
+    </div>
+  </section>
+  <style is:global>
+    .rz-head{display:flex;gap:22px;align-items:center;margin-top:26px;flex-wrap:wrap}
+    .rz-facts{margin:24px 0 0;padding:0;list-style:none}
+    .rz-facts li{padding:12px 0;border-top:1px solid var(--line);font-size:15.5px;line-height:1.55}
+    .rz-facts li:first-child{border-top:none}
+    .rz-facts b{color:var(--head)}
+    .rz-facts a{color:#5aa9ff}
+    .rz-brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:14px}
+    .rz-brand h4{margin:0 0 8px;font-size:15px;color:var(--head)}
+    .rz-cnt{font-size:12px;color:var(--txt-muted);font-weight:400}
+    .rz-brand ul{margin:0;padding:0;list-style:none;font-size:13.5px;line-height:1.7}
+    .rz-brand a{color:var(--txt);text-decoration:none}
+    .rz-brand a:hover{color:#5aa9ff;text-decoration:underline}
+    .rz-faq{margin-top:14px}
+    .rz-faq details{border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:10px 0;background:var(--card)}
+    .rz-faq summary{font-weight:700;cursor:pointer;font-size:15.5px}
+    .rz-faq .rz-a{margin-top:8px;font-size:14.5px;line-height:1.55;color:var(--txt)}
+  </style>
+</ZhLayout>

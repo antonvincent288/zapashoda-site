@@ -1,0 +1,87 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import PlugIcon from '../../components/PlugIcon.astro';
+import light from '../../data/models_light.json';
+import conf from '../../data/razemy_conf.json';
+
+const models = (light as any).models as any[];
+const cnt = (g: string) => models.filter((m: any) => m.port === g).length;
+const tiles = [
+  { c: conf[0], n: cnt('EU'), sub: 'AC · 7–22 кВт' },
+  { c: conf[1], n: cnt('EU'), sub: 'DC · до 150–350 кВт' },
+  { c: conf[2], n: cnt('GB/T'), sub: 'AC 7 кВт + DC 60–120 кВт' },
+  { c: conf[3], n: cnt('JP/CHAdeMO'), sub: 'DC · обычно до 50 кВт' },
+  { c: conf[4], n: cnt('Type1/CCS1'), sub: 'AC · до 7,4 кВт' },
+  { c: conf[5], n: null, sub: '2,3–3,7 кВт' },
+];
+const NAMES: Record<string, string> = { type2: 'Type 2 (Mennekes)', ccs2: 'CCS2 (Combo 2)', gbt: 'GB/T (китайский)', chademo: 'CHAdeMO', type1: 'Type 1 (J1772)', schuko: 'Розетка 220 В (Schuko)' };
+const plural = (n: number) => (n === 1 ? '1 модель в каталоге' : n >= 2 && n <= 4 ? n + ' модели в каталоге' : n + ' моделей в каталоге');
+const faq = [
+  ['Какой разъём у моей машины?', 'Самый надёжный способ — открыть лючок зарядки: 7 круглых контактов и подпись GB/T — китайский стандарт, Type 2 — 7 контактов с плоским гнездом, CCS2 — Type 2 плюс два крупных контакта снизу. Быстрый способ — выбрать модель в матрице совместимости или каталоге.'],
+  ['Кабель или розетка — в чём разница?', 'Станция с витым кабелем заряжает вашу машину «из коробки». Станция-розетка (Type 2 socket или GB/T-розетка) требует своего кабеля. На карте ЗУ и в матрице мы различаем оба варианта.'],
+  ['Адаптер обязательно покупать?', 'Только если разъём станции не совпадает с портом машины. Владельцам GB/T-машин в России базовый набор — адаптер Type 2 → GB/T (4–9 тыс. ₽); без него в городе зарядиться сложнее.'],
+];
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Разъёмы зарядки электромобилей: Type 2, CCS2, GB/T, CHAdeMO', description: 'Справочник разъёмов зарядки EV в России: какой порт у вашей машины, чем отличается кабель от розетки на станции и какой адаптер нужен.' },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f[0], acceptedAnswer: { '@type': 'Answer', text: f[1] } })) },
+];
+---
+<ZhLayout title="Разъёмы зарядки электромобилей: Type 2, CCS2, GB/T, CHAdeMO — Запас хода" description="Справочник разъёмов зарядки EV в России: какой порт у вашей машины, чем отличается кабель от розетки на станции и какой адаптер нужен." jsonld={ld}>
+  <section class="sec">
+    <div class="wrap" style="max-width:980px">
+      <div class="crumbs"><a href="/">Главная</a> / Разъёмы зарядки</div>
+      <div class="badge">Справочник</div>
+      <h1>Разъёмы зарядки электромобилей</h1>
+      <p class="lead">Разъём зарядки — это «вилка», через которую станция передаёт энергию в машину. В России встречаются шесть типов: Type 2, CCS2, GB/T (AC и DC), CHAdeMO, Type 1 и обычная розетка 220 В. Ниже — каждый из них: что это, кому подходит и что докупить.</p>
+
+      <div class="rz-grid">
+        {tiles.map((t) => (
+          <a class="card rz-tile" href={'/razemy/' + t.c.slug + '/'}>
+            <div class="rz-top"><PlugIcon name={t.c.icon} size={40} label={t.c.title} /><span class="rz-kind">{t.c.kindtext.split('—')[0].trim()}</span></div>
+            <h3>{NAMES[t.c.slug] || t.c.slug}</h3>
+            <p class="rz-sub">{t.sub}</p>
+            <p class="rz-n">{t.n === null ? 'Домашний вариант' : plural(t.n)}</p>
+            <span class="rz-go">Открыть →</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="card" style="margin-top:34px">
+        <h3>Кабель или розетка — почему это важно</h3>
+        <p style="margin:6px 0 12px">Один и тот же стандарт на станции выглядит по-разному. Если на станции витой кабель — заряжаетесь сразу. Если только розетка — нужен свой кабель. У нас это различено в матрице и на карте:</p>
+        <div class="rz-vs">
+          <div><PlugIcon name="type2" size={36} label="Type 2 с кабелем" /><b>Type 2 с кабелем</b><span>заряжаетесь сразу, кабель на станции</span></div>
+          <div><PlugIcon name="socket" size={36} label="Type 2 розетка" /><b>Type 2 розетка</b><span>нужен свой кабель Type 2</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:26px">
+        <h3>Как узнать, какой разъём у вашей машины</h3>
+        <p style="margin:6px 0 10px">Откройте лючок зарядки: 7 круглых контактов и подпись GB/T — китайский стандарт; Type 2 — 7 контактов с плоским гнездом; CCS2 — Type 2 плюс два крупных контакта снизу. Ещё быстрее: выберите модель в <a href="/matrix/">матрице совместимости</a> или <a href="/models/">каталоге</a> — покажем разъём, время зарядки и адаптеры.</p>
+      </div>
+
+      <h2 style="margin-top:40px">Частые вопросы</h2>
+      <div class="rz-faq">
+        {faq.map((f) => (<details><summary>{f[0]}</summary><div class="rz-a"><p>{f[1]}</p></div></details>))}
+      </div>
+    </div>
+  </section>
+  <style is:global>
+    .rz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:26px}
+    .rz-tile{display:flex;flex-direction:column;padding:20px;text-decoration:none;color:var(--txt)}
+    .rz-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+    .rz-kind{font-size:12px;color:var(--txt-muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+    .rz-tile h3{margin:0 0 4px;font-size:17px;color:var(--head)}
+    .rz-sub{margin:0;font-size:13.5px;color:var(--txt-muted)}
+    .rz-n{margin:6px 0 0;font-size:13px;color:var(--txt-muted)}
+    .rz-go{margin-top:auto;padding-top:12px;font-size:13px;color:#5aa9ff}
+    .rz-vs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+    .rz-vs>div{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:14px;padding:16px}
+    .rz-vs span{font-size:13.5px;color:var(--txt-muted)}
+    .rz-faq{margin-top:14px}
+    .rz-faq details{border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:10px 0;background:var(--card)}
+    .rz-faq summary{font-weight:700;cursor:pointer;font-size:15.5px}
+    .rz-faq .rz-a{margin-top:8px;font-size:14.5px;line-height:1.55}
+    .rz-faq a,.card a{color:#5aa9ff}
+  </style>
+</ZhLayout>

@@ -1,0 +1,15 @@
+---
+const { name = 'type2', size = 22, label = '' } = Astro.props;
+const files: Record<string, string> = {
+  type2: 'zsh-type2',
+  socket: 'zsh-type2-socket',
+  ccs2: 'zsh-ccs2',
+  gbt: 'zsh-gbt-dc',
+  gbt_ac: 'zsh-gbt-ac',
+  chademo: 'zsh-chademo',
+  type1: 'zsh-type1',
+  schuko: 'zsh-schuko',
+};
+const f = files[name] || files.type2;
+---
+<img src={`/assets/img/plugs/${f}.svg`} width={size} height={size} alt={label || name} style="display:inline-block;vertical-align:middle" loading="lazy" />

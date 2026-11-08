@@ -65,6 +65,7 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
         'Розетка 220 В':'Обычная розетка'
       };
       var LBL={ok:'Прямо',ad:'Через адаптер',warn:'Особый случай',no:'Не подходит'};
+      var ICONMAP={'Type 2 AC':'zsh-type2','CCS2 DC':'zsh-ccs2','Розетка 220 В':'zsh-schuko'};
       var POP=['/models/zeekr-001-001-fr','/models/zeekr-007-007gt','/models/zeekr-7x-x-mix','/models/li-auto-l6-l7-l8-l9-2022-2025','/models/voyah-free-evr-gibrid','/models/avatr-11-12-ofitsialno-ru','/models/byd-song-plus-ev','/models/byd-seal','/models/deepal-s07-ru-ofitsialnaya','/models/geely-geometry-c-a'];
       function build(){
         var box=document.getElementById('wzm-models');
@@ -116,14 +117,16 @@ const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
           var title=td.getAttribute('title')||'';
           var links=Array.prototype.map.call(td.querySelectorAll('a'),function(a){return '<a href="'+a.getAttribute('href')+'">'+a.textContent.trim()+'</a>'});
           var extras=(links.length)?' → '+links.join(' или '):'';
-          html+='<div class="mx-line"><span class="mx-st '+cls+'">'+LBL[cls]+'</span><span><b>'+human+'</b><br>'+title+(extras)+'</span></div>';
+          var icon=ICONMAP[label]||'';
+          html+='<div class="mx-line">'+(icon?'<img src="/assets/img/plugs/'+icon+'.svg" width="22" height="22" alt="" style="flex:0 0 auto;margin-top:1px">':'')+'<span class="mx-st '+cls+'">'+LBL[cls]+'</span><span><b>'+human+'</b><br>'+title+(extras)+'</span></div>';
           if(cls==='ad'||cls==='warn'){links.forEach(function(l){if(buy.indexOf(l)<0) buy.push(l)})}
         });
         if(buy.length){
           html+='<div class="mx-buy"><b>Что докупить:</b> '+buy.join(' · ')+'</div>';
         }
         var slug=btn.dataset.slug;
-        if(slug) html+='<p style="margin:12px 0 0"><a href="/models/'+slug+'/" style="color:#0161EF">Страница модели →</a></p>';
+if(slug) html+='<p style="margin:12px 0 0"><a href="/models/'+slug+'/" style="color:#0161EF">Страница модели →</a></p>';
+        html+='<p style="margin:10px 0 0;font-size:13px;color:var(--txt-muted)">Type 2 бывает в двух видах: станция <b>с кабелем</b> — заряжаетесь сразу, станция-<b>розетка</b> — нужен свой кабель. Разбираем все шесть разъёмов в <a href="/razemy/" style="color:#0161EF">справочнике разъёмов</a>.</p>';
         html+='</div>';
         out.innerHTML=html;
         out.scrollIntoView({behavior:'smooth',block:'nearest'});
