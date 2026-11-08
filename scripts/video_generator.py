@@ -142,14 +142,14 @@ def assemble(scene_files, out_path):
         cmd += ["-i", sf]
     cmd += ["-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100"]
     # индекс lavfi-входа = n
-    filt, prev, offset = "", "[0:v]", 0.0
+    chains, prev, offset = [], "[0:v]", 0.0
     for i in range(1, n):
         offset += SCENE_DUR - XFADE
         out_v = "[v%d]" % i
-        filt += "%s[%d:v]xfade=transition=fade:duration=%.1f:offset=%.2f%s;" % (prev, i, XFADE, offset, out_v)
+        chains.append("%s[%d:v]xfade=transition=fade:duration=%.1f:offset=%.2f%s" % (prev, i, XFADE, offset, out_v))
         prev = out_v
     total_dur = offset + SCENE_DUR
-    filt = filt + prev
+    filt = ";".join(chains)
     cmd += ["-filter_complex", filt,
             "-map", prev, "-map", "%d:a" % n,
             "-c:v", "libx264", "-preset", "medium", "-crf", "24", "-pix_fmt", "yuv420p",
