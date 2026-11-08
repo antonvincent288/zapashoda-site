@@ -255,12 +255,14 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       </div>
       {bodyClean && <div class="article" style="margin-top:44px" set:html={bodyClean} />}
 
+
   <script is:inline>
   (function(){
     function norm(s){ return (s||'').toLowerCase(); }
-    var brandTokens = (document.body.getAttribute('data-mbrand') || '') + ' ' + (document.body.getAttribute('data-mname') || '');
+    var wrapEl = document.querySelector('[data-mport]');
+    var brandTokens = ((wrapEl && wrapEl.getAttribute('data-mbrand')) || '') + ' ' + ((wrapEl && wrapEl.getAttribute('data-mname')) || '');
     var tokens = brandTokens.toLowerCase().replace(/[()/]/g,' ').split(/\s+/).filter(function(t){return t.length>2;});
-    var isGBT = document.body.getAttribute('data-mport') === 'GBT';
+    var isGBT = wrapEl && wrapEl.getAttribute('data-mport') === 'GBT';
     var portTokens = isGBT ? ['gb/t','gbt'] : ['type 2','type2','ccs2','ccs'];
     var bodyKeywords = isGBT ? ['китай'] : ['европ','европейск'];
     function keepPain(txt){
