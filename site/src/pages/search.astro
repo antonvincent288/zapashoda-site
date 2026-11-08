@@ -18,7 +18,7 @@ import ZhLayout from '../layouts/ZhLayout.astro';
     .pf-x mark{background:rgba(1,97,239,.18);color:var(--txt);border-radius:4px;padding:0 3px}
     .pf-empty{color:var(--txt-muted)}
   </style>
-  <script>
+  <script is:inline>
     const pfInput=document.getElementById('pf-q'), pfOut=document.getElementById('pf-out');
     let pfLib=null, pfDeb=null;
     async function pfRun(q){
