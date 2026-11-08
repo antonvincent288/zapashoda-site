@@ -162,6 +162,7 @@ def assemble(scene_files, out_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--one', action='store_true', help='сгенерить один шорт за прогон')
+    ap.add_argument('--force', action='store_true', help='игнорировать дневной лимит (немедленная публикация)')
     ap.add_argument('--limit', type=int, default=1)
     args = ap.parse_args()
     scripts_path = os.path.join(ROOT, 'data', 'shorts_scripts.json')
@@ -178,7 +179,7 @@ def main():
         pass
     used = {it.get('file') for it in (pub.get('items') or [])}
     today = datetime.date.today().isoformat()
-    if any((it.get('added') or '') == today for it in (pub.get('items') or [])):
+    if not args.force and any((it.get('added') or '') == today for it in (pub.get('items') or [])):
         print('синтетик сегодня уже публиковался — пауза (темп 1/день)')
         return
     limit = 1 if args.one else args.limit
