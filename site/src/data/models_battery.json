@@ -276,5 +276,35 @@
   "cap": "100",
   "label": "75 / 83 / 100 кВт·ч (IM LS6)",
   "note": "75 — LFP, 83 и 100 — NMC; платформы 400/800/900V; у L7 — свои варианты"
+ },
+ "vw-id-3-id-4-id-5-id-buzz": {
+  "cap": "77",
+  "label": "58 кВт·ч (ID.3) / 77 кВт·ч (ID.4, доступная) / 82 кВт·ч (ID.4 полная) / 77 кВт·ч (ID.Buzz)",
+  "note": "MEB-платформа; у китайских ID.3 — 53,6 кВт·ч LFP"
+ },
+ "hyundai-ioniq-5-ioniq-6-kr": {
+  "cap": "77.4",
+  "label": "58 кВт·ч (Standard) / 77,4 кВт·ч (Long Range)",
+  "note": "800V (E-GMP); Ioniq 6 Long Range — 614 км WLTP"
+ },
+ "hyundai-kona-electric-kr": {
+  "cap": "64",
+  "label": "64 кВт·ч",
+  "note": "до 415 км"
+ },
+ "genesis-gv60-electrified-g80-gv70": {
+  "cap": "87.2",
+  "label": "87,2 кВт·ч (Electrified G80)",
+  "note": "у GV60 и GV70 — свои варианты"
+ },
+ "tesla-model-3-y-s-x-us": {
+  "cap": "100",
+  "label": "75 кВт·ч (Model 3 LR) / 85–100 кВт·ч (Model S/X)",
+  "note": "зависит от года и версии"
+ },
+ "tesla-model-s-x-eu": {
+  "cap": "100",
+  "label": "100 кВт·ч (Long Range, NCA)",
+  "note": "у ранних версий — 75/90 кВт·ч"
  }
 }
