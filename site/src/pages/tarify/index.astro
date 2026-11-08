@@ -1,23 +1,91 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+
+const faq: [string, string][] = [
+  ['Сколько стоит быстрая зарядка электромобиля в России?', 'Обычно 15–22 ₽ за кВт·ч. Самая дешёвая сеть в справочнике — Volt в Перми (14 ₽/кВт·ч), самая дорогая — Electro.cars в Челябинске (до 24,7 ₽/кВт·ч).'],
+  ['Сколько стоит зарядить электромобиль дома в Москве?', 'Одноставочный тариф — 7,87 ₽ за кВт·ч. На двухставочном тарифе ночная зона стоит около 4 ₽. Это в 2–4 раза дешевле публичной сети.'],
+  ['Где в России дешевле всего заряжаться на трассах?', 'На М-11 «Нева» у Punkt E — 18–19,5 ₽ за кВт·ч. Дороже всего на М-4 «Дон»: Sitronics и Электро Порт берут до 22 ₽.'],
+  ['Как проверить актуальную цену конкретной станции?', 'Тарифы сетей меняются несколько раз в год. Актуальную цену конкретной станции смотрите в приложении оператора перед поездкой.'],
+];
+
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Тарифы ЭЗС в России: сети, трассы, города', description: 'Актуальные тарифы зарядных станций России: Энергия Москвы, Sitronics, Punkt E, itCharge, Газпромнефть и другие. Цены по трассам М-4, М-1, М-9 и городам.' },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f[0], acceptedAnswer: { '@type': 'Answer', text: f[1] } })) },
+];
 ---
-<ZhLayout title="Тарифы ЭЗС в России: сети, трассы, города — ноябрь 2026" description="Актуальные тарифы зарядных станций России: Энергия Москвы, Sitronics, Punkt E, itCharge, Газпромнефть и другие. Цены по трассам М-4, М-1, М-9 и городам.">
-  <section class="sec"><div class="wrap">
+
+<ZhLayout title="Тарифы ЭЗС в России: сети, трассы, города — ноябрь 2026" description="Актуальные тарифы зарядных станций России: Энергия Москвы, Sitronics, Punkt E, itCharge, Газпромнефть и другие. Цены по трассам М-4, М-1, М-9 и городам." jsonld={ld}>
+  <style>
+    .callout{border:1px solid var(--line);background:var(--bg2);border-radius:12px;padding:18px 20px;margin:22px 0;max-width:65ch}
+    .callout .k{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+    .callout p{font-size:15px;line-height:1.6;margin:0}
+    .callout p + p{margin-top:8px}
+    .callout a{color:#5aa9ff;text-decoration:none;border-bottom:1px solid rgba(90,169,255,.4)}
+    .k-gold{color:var(--gold)}
+    .k-green{color:#22c55e}
+    .k-blue{color:#5aa9ff}
+    .keynum{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:4px 0 6px}
+    .keynum small{font-size:16px;font-weight:600;color:var(--txt-muted);letter-spacing:0}
+    .keygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .keygrid .num{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px}
+    .keygrid .lbl{font-size:12.5px;color:var(--txt-muted);line-height:1.4;margin-top:6px}
+    @media(max-width:640px){.keygrid{grid-template-columns:1fr}}
+    table{margin:16px 0 8px}
+    .srcs{font-size:13px;color:var(--txt-muted);line-height:1.6;margin-top:26px}
+    .srcs a{color:var(--txt-muted);text-decoration:underline;text-underline-offset:3px}
+  </style>
+
+  <section class="sec"><div class="wrap" style="max-width:980px">
     <div class="crumbs"><a href="/">Главная</a> / Тарифы ЭЗС</div>
     <div class="badge">Справочник</div>
     <h1>Тарифы ЭЗС в России</h1>
-    <p class="lead">Актуальная сводка цен на быструю и медленную зарядку: московские сети, федеральные трассы и регионы. Проверено 8 ноября 2026 года. Тарифы меняются — перед дальней поездкой сверяйтесь в приложении оператора.</p>
-    <h2>Москва: сети и городские станции</h2>
-    <div class="overflow-x-auto"><table><tr><th>Сеть</th><th>Мощность</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>Энергия Москвы (городская)</td><td>AC 22–44 кВт</td><td>15 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Энергия Москвы (городская)</td><td>DC от 50 кВт</td><td>20 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Газпромнефть</td><td>150 кВт</td><td>18 ₽</td><td>23 ЭЗС в Москве</td></tr><tr><td>itcharge</td><td>150–200 кВт</td><td>16–19 ₽</td><td>10 ЭЗС</td></tr><tr><td>ZEVS</td><td>150 кВт</td><td>17 ₽</td><td></td></tr><tr><td>Evolute</td><td>150 кВт</td><td>17–18 ₽</td><td></td></tr><tr><td>EV-Time</td><td>150 кВт</td><td>18,5–21 ₽</td><td>21 ЭЗС</td></tr><tr><td>Sitronics</td><td>150–180 кВт</td><td>19–21 ₽</td><td></td></tr><tr><td>Punkt E</td><td>150 кВт</td><td>20–21 ₽</td><td>11 ЭЗС</td></tr><tr><td>Touch</td><td>240 кВт</td><td>20 ₽</td><td></td></tr><tr><td>Electro.cars</td><td>150–240 кВт</td><td>20–24,7 ₽</td><td>Дешевле на электрохабах</td></tr></table></div>
-    <p class="lead">Дом в Москве дешевле публичной сети в 2–4 раза: одноставочный тариф — 7,87 ₽/кВт·ч, ночная зона двухставочного — около 4 ₽/кВт·ч. Супербыстрые станции «Россетей» (350 кВт) уже работают в Москве и области, к 2026 году сеть планируют довести до 200–250 станций — тариф смотрите в приложении «Россети Электротранспорт».</p>
-    <h2>Федеральные трассы</h2>
-    <div class="overflow-x-auto"><table><tr><th>Трасса</th><th>Сеть</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>М-4 «Дон»</td><td>Трасса (сеть)</td><td>19,8 ₽</td><td>Быстрые 150 кВт</td></tr><tr><td>М-4 «Дон»</td><td>Punkt E</td><td>19,9 ₽</td><td></td></tr><tr><td>М-4 «Дон»</td><td>Sitronics</td><td>19–22 ₽</td><td>8 ЭЗС</td></tr><tr><td>М-4 «Дон»</td><td>Электро Порт</td><td>20–22 ₽</td><td>9 ЭЗС</td></tr><tr><td>М-1 «Беларусь»</td><td>Sitronics / Трасса</td><td>19,8–22 ₽</td><td></td></tr><tr><td>М-2 «Крым»</td><td>Трасса</td><td>19,8 ₽</td><td>Подольск</td></tr><tr><td>М-9 «Балтия»</td><td>Трасса (электрохаб)</td><td>19,8 ₽</td><td>18 колонок на 32-м км</td></tr><tr><td>М-11 «Нева» / СПб</td><td>Punkt E</td><td>18–19,5 ₽</td><td></td></tr></table></div>
-    <h2>Регионы</h2>
-    <div class="overflow-x-auto"><table><tr><th>Город</th><th>Сеть</th><th>Мощность</th><th>Цена, ₽/кВт·ч</th></tr><tr><td>Казань</td><td>Non Stop Power</td><td>150 кВт</td><td>15 ₽</td></tr><tr><td>Самара</td><td>Electro.Cars</td><td>150 кВт</td><td>16–16,5 ₽</td></tr><tr><td>Пермь</td><td>Volt</td><td>150 кВт</td><td>14 ₽</td></tr><tr><td>Пермь</td><td>itcharge</td><td>150 кВт</td><td>15 ₽</td></tr><tr><td>Пермь</td><td>Sitronics</td><td>150 кВт</td><td>15 ₽</td></tr><tr><td>Екатеринбург</td><td>Electro.cars</td><td>150 кВт</td><td>17–20 ₽</td></tr><tr><td>Екатеринбург</td><td>Punkt E</td><td>150 кВт</td><td>18–19,5 ₽</td></tr><tr><td>Самара</td><td>itcharge</td><td>150 кВт</td><td>17,5 ₽</td></tr><tr><td>СПб</td><td>Electro.cars</td><td>150 кВт</td><td>21 ₽</td></tr><tr><td>Екатеринбург</td><td>Sitronics</td><td>150 кВт</td><td>24 ₽</td></tr><tr><td>Челябинск</td><td>itcharge</td><td>150 кВт</td><td>16 ₽</td></tr><tr><td>Челябинск</td><td>Punkt E</td><td>150 кВт</td><td>19 ₽</td></tr><tr><td>Челябинск</td><td>Electro.cars</td><td>150 кВт</td><td>24,7 ₽</td></tr></table></div>
-    <div class="card" style="margin-top:26px">
-      <h3>Как это читать</h3>
-      <p style="font-size:14.5px;line-height:1.6">1. «Дешевле» не значит «лучше»: у сетей разная загруженность и розетки. Перед длинной поездкой проверьте трассу на нашей <a href="/charging/" style="color:#5aa9ff">карте ЗУ</a>.<br>2. Тариф 15–22 ₽/кВт·ч — это «быстрая заправка» — примерно как 4–5 литров бензина на 100 км. Дома дешевле в 2–4 раза.<br>3. Считайте свой сценарий: возьмите расход вашей машины и тариф — <a href="/#zcalc" style="color:#5aa9ff">калькулятор</a> всё пересчитает сразу.</p>
+    <p class="lead">Сколько стоит быстрая и медленная зарядка: московские сети, федеральные трассы и регионы. Цены проверены 8 ноября 2026 года.</p>
+
+    <div class="callout">
+      <span class="k k-green">Коротко</span>
+      <p>Быстрая зарядка (DC, 150 кВт и выше) на публичных станциях стоит <strong>14–25 ₽ за кВт·ч</strong> — это примерно как 4–5 литров бензина на 100 км пути. Дома зарядка обходится в 2–4 раза дешевле публичной сети.</p>
+      <div class="keygrid">
+        <div class="num"><div class="keynum">14 ₽ <small>минимум</small></div><div class="lbl">Volt, Пермь — самая дешёвая сеть в списке</div></div>
+        <div class="num"><div class="keynum">7,87 ₽</div><div class="lbl">Дома в Москве, одноставочный тариф</div></div>
+        <div class="num"><div class="keynum">~4 ₽</div><div class="lbl">Дома в Москве ночью, двухставочный тариф</div></div>
+      </div>
     </div>
-    <p class="lead" style="font-size:13px;color:var(--txt-muted);margin-top:22px">Источники: Ассоциация развития электротранспорта (aetransport.ru/prices, обновлено 05.11.2026), Департамент транспорта Москвы (via Коммерсантъ, 22.07.2025), auto.mail.ru. Тарифы периодически меняются — актуальную цену конкретной станции всегда смотрите в приложении оператора.</p>
+
+    <h2>Москва: что почём в городе</h2>
+    <p>Городская сеть «Энергии Москвы» — самая предсказуемая: тариф закреплён приказом и не прыгает. Коммерческие сети держатся в коридоре 16–25 ₽ за кВт·ч.</p>
+    <div class="overflow-x-auto"><table><tr><th>Сеть</th><th>Мощность</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>Энергия Москвы (городская)</td><td>AC 22–44 кВт</td><td>15 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Энергия Москвы (городская)</td><td>DC от 50 кВт</td><td>20 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Газпромнефть</td><td>150 кВт</td><td>18 ₽</td><td>23 ЭЗС в Москве</td></tr><tr><td>itcharge</td><td>150–200 кВт</td><td>16–19 ₽</td><td>10 ЭЗС</td></tr><tr><td>ZEVS</td><td>150 кВт</td><td>17 ₽</td><td></td></tr><tr><td>Evolute</td><td>150 кВт</td><td>17–18 ₽</td><td></td></tr><tr><td>EV-Time</td><td>150 кВт</td><td>18,5–21 ₽</td><td>21 ЭЗС</td></tr><tr><td>Sitronics</td><td>150–180 кВт</td><td>19–21 ₽</td><td></td></tr><tr><td>Punkt E</td><td>150 кВт</td><td>20–21 ₽</td><td>11 ЭЗС</td></tr><tr><td>Touch</td><td>240 кВт</td><td>20 ₽</td><td></td></tr><tr><td>Electro.cars</td><td>150–240 кВт</td><td>20–24,7 ₽</td><td>Дешевле на электрохабах</td></tr></table></div>
+
+    <div class="callout">
+      <span class="k k-blue">Совет</span>
+      <p><strong>Дом дешевле городской сети в 2–4 раза.</strong> Одноставочный тариф в Москве — 7,87 ₽/кВт·ч, ночная зона двухставочного — около 4 ₽/кВт·ч.</p>
+      <p>Супербыстрые станции «Россетей» (350 кВт) уже работают в Москве и области, к 2026 году сеть планируют довести до 200–250 станций. Тариф — в приложении «Россети Электротранспорт».</p>
+    </div>
+
+    <h2>Федеральные трассы: сколько берут на дороге</h2>
+    <p>На трассах разброс цен меньше, чем в городе: почти всё крутится вокруг 18–22 ₽ за кВт·ч. Дешевле всех — Punkt E на М-11 «Нева».</p>
+    <div class="overflow-x-auto"><table><tr><th>Трасса</th><th>Сеть</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>М-4 «Дон»</td><td>Трасса (сеть)</td><td>19,8 ₽</td><td>Быстрые 150 кВт</td></tr><tr><td>М-4 «Дон»</td><td>Punkt E</td><td>19,9 ₽</td><td></td></tr><tr><td>М-4 «Дон»</td><td>Sitronics</td><td>19–22 ₽</td><td>8 ЭЗС</td></tr><tr><td>М-4 «Дон»</td><td>Электро Порт</td><td>20–22 ₽</td><td>9 ЭЗС</td></tr><tr><td>М-1 «Беларусь»</td><td>Sitronics / Трасса</td><td>19,8–22 ₽</td><td></td></tr><tr><td>М-2 «Крым»</td><td>Трасса</td><td>19,8 ₽</td><td>Подольск</td></tr><tr><td>М-9 «Балтия»</td><td>Трасса (электрохаб)</td><td>19,8 ₽</td><td>18 колонок на 32-м км</td></tr><tr><td>М-11 «Нева» / СПб</td><td>Punkt E</td><td>18–19,5 ₽</td><td></td></tr></table></div>
+
+    <div class="callout">
+      <span class="k k-gold">Пример</span>
+      <p><strong>Быстрая зарядка на трассе — это как 4–5 литров бензина на 100 км.</strong> При тарифе 15–22 ₽/кВт·ч «заправка» тягается по деньгам с обычным автомобилем. Экономия живёт только дома — там цена ниже в 2–4 раза.</p>
+    </div>
+
+    <h2>Регионы: где дешевле</h2>
+    <p>Самый дешёвый тариф из справочника — 14 ₽ у Volt в Перми. Самый дорогой — 24,7 ₽ у Electro.cars в Челябинске. Все станции в таблице — быстрые, 150 кВт.</p>
+    <div class="overflow-x-auto"><table><tr><th>Город</th><th>Сеть</th><th>Цена, ₽/кВт·ч</th></tr><tr><td>Пермь</td><td>Volt</td><td>14 ₽</td></tr><tr><td>Казань</td><td>Non Stop Power</td><td>15 ₽</td></tr><tr><td>Пермь</td><td>itcharge</td><td>15 ₽</td></tr><tr><td>Пермь</td><td>Sitronics</td><td>15 ₽</td></tr><tr><td>Самара</td><td>Electro.Cars</td><td>16–16,5 ₽</td></tr><tr><td>Челябинск</td><td>itcharge</td><td>16 ₽</td></tr><tr><td>Самара</td><td>itcharge</td><td>17,5 ₽</td></tr><tr><td>Екатеринбург</td><td>Electro.cars</td><td>17–20 ₽</td></tr><tr><td>Екатеринбург</td><td>Punkt E</td><td>18–19,5 ₽</td></tr><tr><td>Челябинск</td><td>Punkt E</td><td>19 ₽</td></tr><tr><td>СПб</td><td>Electro.cars</td><td>21 ₽</td></tr><tr><td>Екатеринбург</td><td>Sitronics</td><td>24 ₽</td></tr><tr><td>Челябинск</td><td>Electro.cars</td><td>24,7 ₽</td></tr></table></div>
+
+    <h2>Что делать с этими цифрами</h2>
+    <ul>
+      <li><strong>«Дешевле» не значит «лучше».</strong> У сетей разная загруженность и разные розетки. Перед длинной поездкой проверьте трассу на нашей <a href="/charging/" style="color:#5aa9ff">карте ЗУ</a>.</li>
+      <li><strong>Переводите тариф в «бензин».</strong> Тариф 15–22 ₽/кВт·ч — это примерно как 4–5 литров бензина на 100 км. Дома дешевле в 2–4 раза.</li>
+      <li><strong>Считайте свой сценарий.</strong> Возьмите расход вашей машины и тариф — <a href="/#zcalc" style="color:#5aa9ff">калькулятор</a> всё пересчитает сразу.</li>
+    </ul>
+
+    <h2>Частые вопросы</h2>
+    <div class="faqbox">
+      {faq.map((f) => <details><summary>{f[0]}</summary><div style="padding:0 20px 16px;font-size:15px;line-height:1.6;color:var(--txt-muted)">{f[1]}</div></details>)}
+    </div>
+
+    <p class="srcs">Источники: <a href="https://aetransport.ru/prices">Ассоциация развития электротранспорта</a> (aetransport.ru/prices, обновлено 05.11.2026), Департамент транспорта Москвы (via Коммерсантъ, 22.07.2025), auto.mail.ru. Тарифы периодически меняются — актуальную цену конкретной станции всегда смотрите в приложении оператора.</p>
   </div></section>
 </ZhLayout>
