@@ -31,4 +31,5 @@ jobs:
           TG_OP: ${{ github.event.client_payload.op || inputs.op }}
           TG_MSG_ID: ${{ github.event.client_payload.msg_id || inputs.message_id }}
           TG_TEXT: ${{ github.event.client_payload.text || inputs.text }}
+          TG_FILE: ${{ github.event.client_payload.file || '' }}
         run: python scripts/tg_ops.py
