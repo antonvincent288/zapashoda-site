@@ -3,6 +3,7 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../components/LegacyStyles.astro';
 import PlugIcon from '../../components/PlugIcon.astro';
 import BATTERY from '../../data/models_battery.json';
+import { priceFix as pf, fmtRub as fmtR } from '../../lib/prices';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -306,7 +307,7 @@ const bodyClean = (() => {
       '<a class="sc" href="/catalog/portativnaya-zaryadka-type2-7kw.html"><div class="sc-k">Дом и дача (220 В)</div><div class="sc-t">Портативная зарядка Type 2</div><div class="sc-p">от 7 500 ₽ · от любой розетки</div></a>' +
       '<a class="sc" href="/razemy/ccs2/"><div class="sc-k">Трасса (быстрая зарядка)</div><div class="sc-t">CCS2-станции — напрямую</div><div class="sc-p">без адаптеров: у машины CCS2 на борту</div></a>' +
       '</div>';
-    const scenHtml = isGBT ? GBT_SCEN : EU_SCEN;
+    const scenHtml = pf(isGBT ? GBT_SCEN : EU_SCEN);
     const h2i2 = h.indexOf('Что докупить');
     if (h2i2 >= 0) {
       const h2end = h.indexOf('</h2>', h2i2);
@@ -345,7 +346,7 @@ const bodyClean = (() => {
       }
     }
   }
-  return h.trim();
+  return pf(h.trim());
 })();
 
 const yearsShort = String(m.years || '').split(' · ')[0];

@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import { priceFix } from '../../lib/prices';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/articles/blog/*.json', { eager: true, import: 'default' });
   const seen: Map<string, number>= new Map();
@@ -13,8 +14,13 @@ export async function getStaticPaths() {
   });
 }
 const { a } = Astro.props;
-const extra = String(a.extra_html || '')
+const extraRaw = String(a.extra_html || '')
   .replace(/<section[^>]*class=["'][^"']*comments[^"']*\/[\s\S]*?<\/section>/gi, '')
+  .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
+  .replace(/<form[\s\S]*?<\/form>/gi, '')
+  .replace(/<script[\s\S]*?<\/script>/gi, '');
+const extra = priceFix(extraRaw)
+  .replace(/<section[^>]*class=["'][^"']*comments[^"']*[\/][\s\S]*?<\/section>/gi, '')
   .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
   .replace(/<form[\s\S]*?<\/form>/gi, '')
   .replace(/<script[\s\S]*?<\/script>/gi, '');
@@ -26,7 +32,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
           <div class="meta">{a.read_min && <span>{a.read_min} мин чтения</span>}
             {a.category && <span>{a.category}</span>}
             {a.date && <span>Обновлено: {a.date}</span>}
-          </div><div set:html={a.body_html} />{extra && <div set:html={extra} />}
+          </div><div set:html={priceFix(a.body_html)} />{extra && <div set:html={extra} />}
                     {a.faq && (
             <div class="faqbox"><h2>Частые вопросы</h2>{a.faq.map((f) =>(
                 <details><summary>{f.q}</summary><p>{f.a}</p></details>))}

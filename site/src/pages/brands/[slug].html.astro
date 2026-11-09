@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import { priceFix } from '../../lib/prices';
 import src from '../../data/legacy/brands.json';
 export async function getStaticPaths() {
   return src.map((x) => ({ params: { slug: x.slug }, props: { d: x } }));
@@ -9,6 +10,6 @@ const { d } = Astro.props;
 <ZhLayout title={d.title} description={d.desc}>
   <section class="sec"><div class="wrap">
     <div class="crumbs"><a href="/">Главная</a> / <a href="/models/">Модели</a> / {d.title}</div>
-    <div class="article" set:html={d.body_html} />
+    <div class="article" set:html={priceFix(d.body_html)} />
   </div></section>
 </ZhLayout>
