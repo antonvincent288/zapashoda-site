@@ -1,5 +1,6 @@
 ---
 import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/articles/pain/*.json', { eager: true, import: 'default' });
@@ -14,6 +15,15 @@ export async function getStaticPaths() {
   });
 }
 const { a } = Astro.props;
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+let modelHit = null;
+{
+  const hay = (a.title + ' ' + String(a.body_html || '').slice(0, 4000)).toLowerCase();
+  for (const mm of Object.values(modelGlob)) {
+    const nm = String(mm && (mm.name || mm.title) || '').toLowerCase();
+    if (nm && nm.length >= 4 && hay.includes(nm)) { modelHit = mm; break; }
+  }
+}
 const extra = String(a.extra_html || '')
   .replace(/<section[^>]*class=["'][^"']*comments[^"']*\/[\s\S]*?<\/section>/gi, '')
   .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
@@ -63,5 +73,6 @@ const canonHref = CANON[String(a.slug || '')];
       </div>
     </div>
   </section>
+<ModelBuyBlock model={modelHit} />
 <LeadCTA />
 </ZhLayout>
