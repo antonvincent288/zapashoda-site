@@ -1,6 +1,6 @@
 {
- "sitemap_count": 312,
- "sitemap_ok": 311,
+ "sitemap_count": 313,
+ "sitemap_ok": 312,
  "sitemap_bad": [
   [
    "https://zapashoda-ev.ru/cost/index/",
@@ -26,7 +26,7 @@
   "/charging/": 200,
   "/routes/": 200,
   "/search.html": 404,
-  "/pains.html": 503,
+  "/pains.html": 200,
   "/about.html": 200,
   "/ev-services.html": 200,
   "/services/": 200,
@@ -48,7 +48,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "09.11 20:26",
+ "checked_at_msk": "09.11 22:20",
  "failures": [
   {
    "where": "sitemap: /cost/index/",
@@ -58,11 +58,6 @@
   {
    "where": "page /search.html",
    "what": "HTTP 404",
-   "crit": true
-  },
-  {
-   "where": "page /pains.html",
-   "what": "HTTP 503",
    "crit": true
   },
   {
@@ -101,6 +96,6 @@
    "crit": false
   }
  ],
- "failures_count": 10,
- "crit_count": 6
+ "failures_count": 9,
+ "crit_count": 5
 }
