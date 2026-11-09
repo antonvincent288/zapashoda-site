@@ -1,4 +1,5 @@
 ---
+import LeadCTA from '../../components/LeadCTA.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import { priceFix } from '../../lib/prices';
 export async function getStaticPaths() {
@@ -44,4 +45,5 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     if (navigator.clipboard) navigator.clipboard.writeText(cl.getAttribute('data-copy'));
     cl.textContent = 'Скопировано ';
   });
-</script></article></div></div></section></ZhLayout>
+</script></article></div></div></section><LeadCTA />
+</ZhLayout>

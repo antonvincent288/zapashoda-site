@@ -1,0 +1,26 @@
+---
+const { variant = 'retail' } = Astro.props;
+const isB2B = variant === 'b2b';
+const title = isB2B ? 'Нужны оптовые условия?' : 'Не разобрались в разъёмах и совместимости?';
+const text = isB2B
+  ? 'Пришлём прайс и условия: дилерам, таксопаркам, АЗС, ЖК и салонам. Отвечаем в течение рабочего дня.'
+  : 'Оставьте заявку — подберём комплект под вашу машину и проверим совместимость с вашими станциями. Оплата — дилеру при получении.';
+const cta = isB2B ? 'Запросить прайс' : 'Оставить заявку';
+---
+<section class="lead-cta" style="margin-top:48px;background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:28px 32px">
+  <h2 style="margin:0 0 6px;font-size:22px">{title}</h2>
+  <p style="color:var(--txt-muted);font-size:15px;max-width:680px;margin:0 0 18px">{text}</p>
+  <button type="button" class="btn btn-gold zs-cta-btn" data-mode={isB2B ? 'b2b' : 'retail'} style="cursor:pointer;text-decoration:none">{cta}</button>
+  <a class="zs-cta-quiz" style="margin-left:14px;font-size:14px;color:var(--gold)" href="/quiz/">Или подбор за 30 секунд →</a>
+</section>
+<script is:inline>
+(function(){
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.zs-cta-btn');
+    if(!btn) return;
+    var mode = btn.getAttribute('data-mode') || 'retail';
+    if(window.ZS_OPEN_LEAD){ window.ZS_OPEN_LEAD('', '', '', '', mode === 'b2b' ? 'b2b' : 'retail'); }
+    else { location.href = '/quiz/'; }
+  }, true);
+})();
+</script>

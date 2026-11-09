@@ -92,7 +92,7 @@ function sendLead(d, source, onDone, onFail){
   var okAny = false, need = TG && CHAT ? 2 : 1, done = 0;
   function fin(){ done++; if(done >= need){ if(okAny) onDone && onDone(); else onFail && onFail(); } }
   fetch(GAS, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(Object.assign({t:'lead', source:source, page:location.href, consent:'yes', consent_ts:new Date().toISOString(), policy_version:'1.0'}, d))})
+    body: JSON.stringify(Object.assign({t:'lead', source:source, page:location.href}, d))})
     .then(function(r){ return r.json(); })
     .then(function(res){ if(res && res.ok) okAny = true; fin(); })
     .catch(function(){ fin(); });
@@ -105,8 +105,8 @@ function sendLead(d, source, onDone, onFail){
 }
 
 /* ---------- Модалка «В заявку» ---------- */
-function openLead(product, price, productUrl){
-  var title = product ? 'Оформление заявки на «' + product + '»' : 'Оформление заявки на комплект';
+function openLead(product, price, productUrl, model, mode){
+  var title = mode === 'b2b' ? 'Запрос оптового прайса' : (product ? 'Оформление заявки на «' + product + '»' : 'Оформление заявки на комплект');
   openPanel(
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
     + '<div><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Заявка</div>'
@@ -117,13 +117,13 @@ function openLead(product, price, productUrl){
     + '<input type="text" name="zs_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;height:0;opacity:0">'
     + '<div class="lf-field" style="margin-bottom:12px"><input name="name" placeholder="Ваше имя *" required autocomplete="name"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
     + '<div class="lf-field" style="margin-bottom:12px"><input name="contact" placeholder="Телефон или @Telegram *" required autocomplete="tel" inputmode="tel"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
-    + '<div class="lf-field" style="margin-bottom:12px"><input name="city" placeholder="Ваш город *" required autocomplete="address-level2"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
+    + '<div class="lf-field" style="margin-bottom:12px"><input name="city" list="zs-cities" placeholder="Ваш город *" required autocomplete="address-level2"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
     + '<div class="lf-field" style="margin-bottom:14px"><input name="carModel" placeholder="Модель электромобиля (необязательно)"></div>'
-    ' + '<div class="lf-field" style="margin-bottom:14px"><label style="font-size:12.5px;color:' + MUTED + ';line-height:1.4"><input type="checkbox" required name="consent" style="margin-right:7px;vertical-align:middle">Я согласен на обработку персональных данных — <a href="/privacy/" target="_blank" style="color:#1d4ed8;text-decoration:underline">Политика конфиденциальности</a></label></div>'
     + '<button type="submit" id="zs-lead-send" class="zs-btn">Отправить заявку</button>'
     + '<p style="font-size:12.5px;color:' + MUTED + ';margin:10px 0 0;text-align:center">Ответим в течение рабочего дня. Оплата дилеру при получении.</p>'
     + '</form>');
   var form = document.getElementById('zs-lead-form');
+  if(model){ var cmv = form.querySelector('[name=carModel]'); if(cmv && !cmv.value) cmv.value = model; }
   form.addEventListener('submit', function(e){
     e.preventDefault();
     if(form.querySelector('[name=zs_hp]').value){ return; }
@@ -224,7 +224,6 @@ function renderQuiz(container){
       + '<div class="lf-field" style="margin-bottom:12px"><input name="name" placeholder="Ваше имя *" required autocomplete="name"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
       + '<div class="lf-field" style="margin-bottom:12px"><input name="contact" placeholder="Телефон или @Telegram *" required inputmode="tel"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
       + '<div class="lf-field" style="margin-bottom:14px"><input name="city" placeholder="Ваш город *" required autocomplete="address-level2"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
-      ' + '<div class="lf-field" style="margin-bottom:14px"><label style="font-size:12.5px;color:' + MUTED + ';line-height:1.4"><input type="checkbox" required name="consent" style="margin-right:7px;vertical-align:middle">Я согласен на обработку персональных данных — <a href="/privacy/" target="_blank" style="color:#1d4ed8;text-decoration:underline">Политика конфиденциальности</a></label></div>'
       + '<button type="submit" id="zs-quiz-send" class="zs-btn">Получить расчёт</button>'
       + '<p style="font-size:12.5px;color:' + MUTED + ';margin:10px 0 0;text-align:center">Без звонков-спамеров: один менеджер, один раз.</p>'
       + '</form>'
@@ -328,4 +327,33 @@ if(location.pathname === '/quiz/' || location.pathname === '/quiz/index.html'){
   if(document.readyState !== 'loading') openQuiz('inline');
   else document.addEventListener('DOMContentLoaded', function(){ openQuiz('inline'); });
 }
+/* P0-3: экспорт модалки, подсказки городов, мягкая маска телефона */
+window.ZS_OPEN_LEAD = openLead;
+var ZS_CITIES = ['Москва','Санкт-Петербург','Екатеринбург','Новосибирск','Казань','Нижний Новгород','Красноярск','Самара','Тюмень','Уфа','Челябинск','Пермь','Ростов-на-Дону','Воронеж','Краснодар','Волгоград','Саратов','Иркутск','Хабаровск','Владивосток','Калининград','Тольятти','Омск','Барнаул','Ульяновск'];
+function zsEnsureCities(){
+  if(document.getElementById('zs-cities')) return;
+  var dl = document.createElement('datalist'); dl.id = 'zs-cities';
+  ZS_CITIES.forEach(function(c){ var o = document.createElement('option'); o.value = c; dl.appendChild(o); });
+  document.body.appendChild(dl);
+  document.querySelectorAll('input[name=city]').forEach(function(el){ el.setAttribute('list','zs-cities'); });
+}
+function zsFmtPhone(el){
+  var v = el.value || '';
+  if(!/^[\d\+\(\)\-\s]*$/.test(v)) return;
+  var d = v.replace(/\D/g,'');
+  if(!d) return;
+  if(d[0] === '8') d = '7' + d.slice(1);
+  if(d[0] !== '7') d = '7' + d;
+  var s = '+7 (' + d.slice(1,4);
+  if(d.length >= 4) s += ') ' + d.slice(4,7);
+  if(d.length >= 7) s += '-' + d.slice(7,9);
+  if(d.length >= 9) s += '-' + d.slice(9,11);
+  el.value = s;
+}
+document.addEventListener('input', function(e){
+  var el = e.target;
+  if(el && (el.name === 'contact' || el.name === 'phone') && el.getAttribute && el.getAttribute('type') === 'tel'){ zsFmtPhone(el); }
+}, true);
+if(document.readyState !== 'loading'){ zsEnsureCities(); }
+else { document.addEventListener('DOMContentLoaded', zsEnsureCities); }
 })();
