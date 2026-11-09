@@ -1646,6 +1646,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": "Z-0048"
+    },
+    {
+      "id": "V-0095",
+      "ts": "2026-11-09T23:24:47+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: plata-za-prostoy-na-zaryadnyh-stanciyah.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
