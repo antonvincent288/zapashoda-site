@@ -328,7 +328,8 @@ if(location.pathname === '/quiz/' || location.pathname === '/quiz/index.html'){
   else document.addEventListener('DOMContentLoaded', function(){ openQuiz('inline'); });
 }
 /* P0-3: экспорт модалки, подсказки городов, мягкая маска телефона */
-window.ZS_OPEN_LEAD = openLead;
+window.ZS_SEND_PARTNER = function(d){ return sendLead(Object.assign({type:'b2b_partner'}, d), 'partner'); };
+  window.ZS_OPEN_LEAD = openLead;
 var ZS_CITIES = ['Москва','Санкт-Петербург','Екатеринбург','Новосибирск','Казань','Нижний Новгород','Красноярск','Самара','Тюмень','Уфа','Челябинск','Пермь','Ростов-на-Дону','Воронеж','Краснодар','Волгоград','Саратов','Иркутск','Хабаровск','Владивосток','Калининград','Тольятти','Омск','Барнаул','Ульяновск'];
 function zsEnsureCities(){
   if(document.getElementById('zs-cities')) return;
