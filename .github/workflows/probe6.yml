@@ -1,0 +1,48 @@
+name: yt-probe6
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cobalt registry alternates + direct instances
+        run: |
+          set +e
+          for u in "https://instances.cobalt.best/api/instances.json" "https://instances.cobalt.best/instances.json" \
+                   "https://raw.githubusercontent.com/imputnet/cobalt/main/docs/instances.md" \
+                   "https://registry.cobalt.best/api/instances.json"; do
+            echo "=== LIST $u ==="
+            curl -sk --max-time 20 "$u" | head -c 200; echo
+          done
+          for api in "https://co.otomir23.me/api" "https://cobalt-api.kwiatekmiki.com" "https://co.eepy.today/api" \
+                     "https://api.cobalt.best" "https://cobalt.auzer.us/api"; do
+            echo "=== POST $api ==="
+            curl -sk --max-time 25 -X POST "$api" \
+              -H "Accept: application/json" -H "Content-Type: application/json" \
+              -d '{"url":"https://www.youtube.com/shorts/K0GV_0xE3Y8","videoQuality":"480","filenameStyle":"basic","youtubeVideoCodec":"h264"}'; echo
+          done
+      - name: Wikimedia Commons — план Б (реальные CC-видео)
+        run: |
+          set +e
+          for q in "electric%20car%20charging" "electric%20vehicle%20charging%20station" "tesla%20charging"; do
+            curl -s --max-time 25 -A "zapashoda-bot/1.0" \
+              "https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=$q%20filetype:video&srnamespace=6&srlimit=8&format=json" \
+              -o /tmp/commons.json
+            python3 - <<'EOF'
+            import json
+            try:
+                d = json.load(open('/tmp/commons.json'))
+                hits = d.get('query', {}).get('search', [])
+                print('commons hits:', len(hits))
+                for h in hits[:8]: print('  ', h.get('title'))
+            except Exception as e:
+                print('commons fail:', type(e).__name__)
+            EOF
+          done
