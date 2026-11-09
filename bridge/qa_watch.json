@@ -48,7 +48,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "09.11 12:33",
+ "checked_at_msk": "09.11 14:17",
  "failures": [
   {
    "where": "sitemap: /cost/index/",
