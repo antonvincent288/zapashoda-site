@@ -1,7 +1,7 @@
 {
-  "ts_utc": "2026-11-09T15:15:14Z",
+  "ts_utc": "2026-11-09T16:23:22Z",
   "ok": false,
-  "checks_total": 12,
+  "checks_total": 11,
   "fails": [
     {
       "check": "AI_BRIDGE.json",
@@ -12,11 +12,6 @@
     }
   ],
   "results": [
-    {
-      "check": "IndexNow weekly re-ping",
-      "ok": true,
-      "detail": "пинг 309 URL, статус 200"
-    },
     {
       "check": "Главная",
       "url": "https://zapashoda-ev.ru/",
@@ -81,7 +76,7 @@
     {
       "check": "Shorts-автопилот",
       "ok": true,
-      "detail": "последняя публикация 19 ч назад"
+      "detail": "последняя публикация 20 ч назад"
     }
   ]
 }
