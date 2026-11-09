@@ -1,5 +1,5 @@
 {
-  "ts_utc": "2026-11-05T11:19:56Z",
+  "ts_utc": "2026-11-09T15:08:34Z",
   "ok": true,
   "checks_total": 10,
   "fails": [],
@@ -62,8 +62,7 @@
       "check": "AI_BRIDGE.json",
       "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
       "status": 200,
-      "ok": true,
-      "detail": ""
+      "ok": true
     }
   ]
 }
