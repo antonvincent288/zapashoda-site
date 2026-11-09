@@ -12,6 +12,7 @@ for (const p of ['models','blog','pain','safety','tools','b2b','about','services
   urls.push({ loc: `${SITE}/${p}/`, pri: '0.7' });
 }
 urls.push({ loc: SITE + '/rss.xml', pri: '0.3' });
+urls.push({ loc: SITE + '/privacy/', pri: '0.4' });
 for (const m of models) if (m && m.slug) urls.push({ loc: `${SITE}/models/${m.slug}/`, pri: '0.8' });
 for (const r of ['type2','ccs2','gbt','chademo','type1','schuko']) urls.push({ loc: `${SITE}/razemy/${r}/`, pri: '0.7' });
 for (const s2 of ['taksi','avtopark','azs','jk','salony','predlozh-mesto']) urls.push({ loc: `${SITE}/b2b/${s2}/`, pri: '0.6' });
