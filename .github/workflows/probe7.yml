@@ -1,0 +1,67 @@
+name: yt-probe7
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wikimedia Commons — поиск и скачивание CC-видео
+        run: |
+          sudo apt-get -y install ffmpeg >/dev/null
+          python3 - <<'PY'
+          import json, time, subprocess, urllib.request, urllib.parse
+          UA = {'User-Agent': 'zapashoda-bot/1.0 (https://zapashoda-ev.ru)'}
+          def api(params):
+              url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
+              return json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30))
+          queries = ['electric car charging filetype:video', 'electric vehicle charging station filetype:video',
+                     'tesla charging filetype:video', 'EV charging filetype:video', 'electric car filetype:video']
+          total = 0
+          for q in queries:
+              try:
+                  d = api({'action': 'query', 'list': 'search', 'srsearch': q, 'srnamespace': '6', 'srlimit': '8', 'format': 'json'})
+                  hits = d.get('query', {}).get('search', [])
+              except Exception as e:
+                  print(q, '-> fail', type(e).__name__); continue
+              print('\nQUERY:', q, '| hits:', len(hits))
+              for h in hits[:8]:
+                  print('  ', h.get('title'))
+              total += len(hits)
+          print('\nTOTAL:', total)
+          # берём первый подходящий файл и пробуем скачать
+          for q in queries:
+              try:
+                  d = api({'action': 'query', 'list': 'search', 'srsearch': q, 'srnamespace': '6', 'srlimit': '8', 'format': 'json'})
+                  titles = [h['title'] for h in d.get('query', {}).get('search', [])]
+              except Exception:
+                  continue
+              for t in titles:
+                  if not t.lower().endswith(('.webm', '.mp4', '.ogv', '.mov')): continue
+                  try:
+                      info = api({'action': 'query', 'titles': t, 'prop': 'imageinfo', 'iiprop': 'url|size|mediatype|mime|duration', 'format': 'json'})
+                      pages = info['query']['pages']
+                      ii = list(pages.values())[0]['imageinfo'][0]
+                      print('\nCANDIDATE:', t)
+                      print('  mime:', ii.get('mime'), 'size:', ii.get('size'), 'dur:', ii.get('duration'))
+                      if (ii.get('size') or 0) > 60 * 1024 * 1024:
+                          print('  слишком большой — дальше'); continue
+                      out = '/tmp/commons_test.mp4'
+                      r = subprocess.run(['curl', '-sL', '--max-time', '180', '-A', 'zapashoda-bot/1.0', ii['url'], '-o', out])
+                      import os
+                      print('  download rc:', r.returncode, 'size:', os.path.getsize(out))
+                      pr = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', out], capture_output=True, text=True)
+                      print('  duration:', (pr.stdout or '?').strip())
+                      raise SystemExit(0)
+                  except SystemExit:
+                      raise
+                  except Exception as e:
+                      print('  info fail:', type(e).__name__, str(e)[:80])
+          print('нет подходящих видео для теста')
+          PY
