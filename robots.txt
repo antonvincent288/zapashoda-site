@@ -1,8 +1,8 @@
 # robots.txt zapashoda-ev.ru — открыт для ИИ-поиска (AEO/GEO)
 User-agent: *
 Disallow: /app/
-Disallow: /admin/
 Disallow: /decapcms/
+Disallow: /admin/
 
 User-agent: GPTBot
 Allow: /
