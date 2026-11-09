@@ -1,12 +1,7 @@
 {
- "sitemap_count": 313,
- "sitemap_ok": 312,
- "sitemap_bad": [
-  [
-   "https://zapashoda-ev.ru/cost/index/",
-   404
-  ]
- ],
+ "sitemap_count": 337,
+ "sitemap_ok": 337,
+ "sitemap_bad": [],
  "key_pages": {
   "/": 200,
   "/models/": 200,
@@ -20,7 +15,7 @@
   "/quiz/": 200,
   "/vin/": 200,
   "/compare/": 200,
-  "/matrix/": 200,
+  "/matrix/": 404,
   "/news/": 200,
   "/forum/": 200,
   "/charging/": 200,
@@ -36,11 +31,16 @@
  "models_cards": 151,
  "app_scripts": 6,
  "catalog_products": 0,
- "link_targets": 219,
- "links_ok": 219,
- "links_bad": [],
- "assets_count": 33,
- "assets_ok": 32,
+ "link_targets": 221,
+ "links_ok": 220,
+ "links_bad": [
+  [
+   "https://zapashoda-ev.ru/matrix",
+   404
+  ]
+ ],
+ "assets_count": 34,
+ "assets_ok": 33,
  "assets_bad": [
   [
    "/assets/img/plugs/zsh-'+((a=String(a||",
@@ -48,10 +48,10 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "10.11 00:13",
+ "checked_at_msk": "10.11 02:04",
  "failures": [
   {
-   "where": "sitemap: /cost/index/",
+   "where": "page /matrix/",
    "what": "HTTP 404",
    "crit": true
   },
@@ -64,11 +64,6 @@
    "where": "/",
    "what": "нет счётчика 145 моделей",
    "crit": false
-  },
-  {
-   "where": "/",
-   "what": "токен бота вшит в публичный HTML (ZS_LEAD_CFG)",
-   "crit": true
   },
   {
    "where": "/models/",
@@ -91,11 +86,16 @@
    "crit": true
   },
   {
+   "where": "link /matrix",
+   "what": "HTTP 404",
+   "crit": false
+  },
+  {
    "where": "asset /assets/img/plugs/zsh-'+((a=String(a||",
    "what": "HTTP 404",
    "crit": false
   }
  ],
  "failures_count": 9,
- "crit_count": 5
+ "crit_count": 4
 }
