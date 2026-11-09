@@ -1,143 +1,128 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import LegacyStyles from '../../components/LegacyStyles.astro';
-import src from '../../data/legacy/tools.json';
-const d = src.find((x) => x.slug === 'matrix');
-// берём от легенды: свой h1/lede выше, hero legacy вырезаем целиком (там был дубликат h1)
-const li = d.body_html.indexOf('<div class="mx-legend">');
-const body = li >= 0 ? d.body_html.slice(li) : d.body_html;
+import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
+import skuData from '../../data/sku.json';
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const models = Object.values(modelGlob).filter(Boolean).sort((x, y) => String(x.slug).localeCompare(String(y.slug)));
+const SKU = {
+  'portativnaya-zaryadka-gbt-3-5kw': 'Портативная зарядка GB/T 3,5 кВт',
+  'portativnaya-zaryadka-type2-3-5kw': 'Портативная зарядка Type 2 3,5 кВт',
+  'adapter-type2-gbt-base': 'Адаптер Type 2 → GB/T 22 кВт (базовый)',
+  'adapter-type1-type2': 'Адаптер Type 1 → Type 2',
+  'adapter-gbt-type2-reverse': 'Обратный адаптер GB/T → Type 2',
+  'adapter-ccs2-gbt-dc': 'Адаптер CCS2 → GB/T DC',
+};
+const skuUrl = (s) => '/catalog/' + s + '.html';
+const skuPrice = {};
+for (const it of (skuData.items || [])) skuPrice[it.slug] = parseInt(it.price).toLocaleString('ru-RU');
+type Cell = { kind: 'native' | 'sku' | 'no', sku?: string, note?: string };
+function cellsFor(m): Cell[] {
+  const port = (m.port || '').trim();
+  const type = (m.type || '').trim();
+  const isPlugInHybrid = type.includes('EREV') || type.includes('PHEV') || type.includes('DM') || type.includes('Hi');
+  if (!port) return [ {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'} ];
+  const outlet: Cell = { kind:'native', note:'обычно штатный кабель — проверьте комплект' };
+  if (port === 'GB/T') {
+    return [
+      outlet,
+      { kind:'sku', sku:'adapter-type2-gbt-base', note:'адаптер для городских станций' },
+      { kind:'native', note:'родной разъём' },
+      isPlugInHybrid ? { kind:'no', note:'у гибридов обычно нет быстрой DC-зарядки' } : { kind:'sku', sku:'adapter-ccs2-gbt-dc', note:'редко нужен — дорогой' },
+      { kind:'native', note:'родной разъём' },
+    ];
+  }
+  if (port === 'EU') {
+    return [
+      outlet,
+      { kind:'native', note:'родной разъём' },
+      { kind:'sku', sku:'adapter-gbt-type2-reverse', note:'адаптер для китайских станций' },
+      isPlugInHybrid ? { kind:'no', note:'у гибридов обычно нет быстрой DC-зарядки' } : { kind:'native', note:'родной разъём' },
+      { kind:'no', note:'нет адаптера GB/T DC для этой машины' },
+    ];
+  }
+  if (port === 'Type1/CCS1' || port === 'JP/CHAdeMO') {
+    return [
+      outlet,
+      { kind:'sku', sku:'adapter-type1-type2', note:'адаптер Type 1 → Type 2' },
+      { kind:'no', note:'нет адаптера для этой машины' },
+      { kind:'no', note:'нет адаптера CCS1 → CCS2' },
+      { kind:'no', note:'нет адаптера для этой машины' },
+    ];
+  }
+  return [ outlet, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'} ];
+}
+const cols = ['Розетка 220 В','Type 2 AC (город)','GB/T AC (Китай)','CCS2 DC (быстрая)','GB/T DC (быстрая)'];
+const faqLd = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'Что означают значки в матрице совместимости?', acceptedAnswer: { '@type': 'Answer', text: 'Зелёная точка — разъём родной, заряжаетесь напрямую. Стрелка — нужен адаптер или кабель из каталога (в ячейке ссылка). Серый прочерк — сценарий для этой машины не реализуем или требует уточнения по VIN.' } },
+    { '@type': 'Question', name: 'Нужен ли адаптер для машины с европейским портом?', acceptedAnswer: { '@type': 'Answer', text: 'Для европейских Type 2 / CCS2 машин адаптер нужен только для китайских GB/T-станций — обратный адаптер GB/T → Type 2. Для обычных городских и европейских станций ничего докупать не нужно.' } },
+    { '@type': 'Question', name: 'Как проверить разъём перед покупкой адаптера?', acceptedAnswer: { '@type': 'Answer', text: 'Разъём зависит от рынка вывоза, а не от марки: проверьте фото лючка или VIN. У многих машин два порта — малый (AC) и большой (DC).' } },
+  ],
+};
 ---
-
-<ZhLayout title="Какой переходник нужен вашей модели: матрица совместимости — Запас хода" description="Простая проверка: выберите вашу модель — покажем, где она заряжается напрямую, где нужен адаптер и что купить. Полная таблица по 20 моделям и 6 типам станций ниже.">
-  <section class="sec"><div class="wrap">
-    <LegacyStyles />
-    <div class="crumbs"><a href="/">Главная</a> / Матрица совместимости</div>
-
-    <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
-      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
-      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:64px;display:flex;align-items:center;justify-content:center;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
-      .wz-btn:hover{border-color:#0161EF}
-      .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
-      .mx-out{margin-top:18px}
-      .mx-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-      .mx-card h3{margin:0 0 12px;font-size:20px}
-      .mx-line{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-size:16px;line-height:1.45}
-      .mx-line:first-of-type{border-top:none}
-      .mx-st{flex:0 0 auto;font-size:13px;font-weight:800;border-radius:999px;padding:6px 12px;white-space:nowrap;margin-top:1px}
-      .mx-st.ok{background:rgba(34,197,94,.14);color:#15803d}
-      .mx-st.ad{background:rgba(1,97,239,.12);color:#0161EF}
-      .mx-st.warn{background:rgba(212,175,55,.16);color:#8a6d1a}
-      .mx-st.no{background:rgba(239,68,68,.1);color:#b91c1c}
-      .mx-line a{color:#0161EF;text-decoration:none}
-      .mx-line a:hover{text-decoration:underline}
-      .mx-buy{margin-top:14px;padding:14px;border-radius:14px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.45);font-size:15.5px}
-      .mx-buy b{font-size:16px}
-      .mx-buy a{color:#8a6d1a;font-weight:700}
-      details.pro{margin-top:26px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
-      details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
-      details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
-    </style>
-
-    <h1>Какой переходник нужен вашему электромобилю</h1>
-    <p class="lede">Нажмите вашу машину — и сразу увидите: где заряжается напрямую, где нужен адаптер и что докупить. Никаких таблиц, пока сами не захотите.</p>
-
-    <div class="wz" id="wzm">
-      <div class="wz-q">Ваша машина</div>
-      <div class="wz-hint">Нет вашей в списке — «Другая машина» покажет всю таблицу</div>
-      <div class="wz-grid" id="wzm-models"></div>
-      <div class="mx-out" id="wzm-out" style="display:none"></div>
-    </div>
-
-    <details class="pro" id="pro-matrix">
-      <summary>Полная таблица: 20 моделей × 6 типов станций <span class="hint">клик по колонке — страница модели</span></summary>
-      <div class="article" set:html={body} />
-    </details>
-
-    <script is:inline>
-    (function(){
-      var table=null;
-      var ROWMAP={
-        'Type 2 AC':'Дома и в городе',
-        'CCS2 DC':'Быстрые станции (трасса)',
-        'Розетка 220 В':'Обычная розетка'
-      };
-      var LBL={ok:'Прямо',ad:'Через адаптер',warn:'Особый случай',no:'Не подходит'};
-      var ICONMAP={'Type 2 AC':'zsh-type2','CCS2 DC':'zsh-ccs2','Розетка 220 В':'zsh-schuko'};
-      var POP=['/models/zeekr-001-001-fr','/models/zeekr-007-007gt','/models/zeekr-7x-x-mix','/models/li-auto-l6-l7-l8-l9-2022-2025','/models/voyah-free-evr-gibrid','/models/avatr-11-12-ofitsialno-ru','/models/byd-song-plus-ev','/models/byd-seal','/models/deepal-s07-ru-ofitsialnaya','/models/geely-geometry-c-a'];
-      function build(){
-        var box=document.getElementById('wzm-models');
-        table=document.querySelector('#pro-matrix table');
-        if(!table||!box||box.children.length) return;
-        var ths=table.querySelectorAll('thead th');
-        var first=null;
-        ths.forEach(function(th,i){
-          if(i===0) return;
-          var a=th.querySelector('a');
-          if(!a) return;
-          var slug=(a.getAttribute('href')||'').replace('/models/','').replace(/\/$/,'');
-          var popular=POP.indexOf((a.getAttribute('href')||'').replace(/\/$/,''))>=0;
-          if(!popular) return;
-          var b=document.createElement('button');
-          b.type='button';b.className='wz-btn';b.textContent=a.textContent.trim();
-          b.dataset.ci=i; b.dataset.slug=slug;
-          b.addEventListener('click',function(){show(i,b)});
-          box.appendChild(b);
-          if(first===null) first=b;
-        });
-        var oth=document.createElement('button');
-        oth.type='button';oth.className='wz-btn';oth.textContent='Другая машина (полный список)';
-        oth.addEventListener('click',function(){
-          var det=document.getElementById('pro-matrix');
-          if(det) det.open=true;
-          det.scrollIntoView({behavior:'smooth'});
-        });
-        box.appendChild(oth);
-        if(first) show(parseInt(first.dataset.ci,10),first);
-      }
-      function show(ci,btn){
-        if(!table) return;
-        var out=document.getElementById('wzm-out');
-        out.style.display='';
-        var name=btn.textContent;
-        Array.prototype.forEach.call(document.getElementById('wzm-models').children,function(b){b.classList.toggle('on',b===btn)});
-        var rows=table.querySelectorAll('tbody tr');
-        var html='<div class="mx-card"><h3>'+name+' — как заряжать</h3>';
-        var buy=[];
-        rows.forEach(function(r){
-          var th=r.querySelector('th');
-          var td=r.querySelector('td:nth-child('+ci+')');
-          if(!th||!td) return;
-          var label=th.textContent.replace(/·.*$/,'').trim();
-          var human=ROWMAP[label];
-          if(!human) return;
-          var cls=td.className.indexOf('m-ok')>=0?'ok':(td.className.indexOf('m-ad')>=0?'ad':(td.className.indexOf('m-warn')>=0?'warn':'no'));
-          var title=td.getAttribute('title')||'';
-          var links=Array.prototype.map.call(td.querySelectorAll('a'),function(a){return '<a href="'+a.getAttribute('href')+'">'+a.textContent.trim()+'</a>'});
-          var extras=(links.length)?' → '+links.join(' или '):'';
-          var icon=ICONMAP[label]||'';
-          html+='<div class="mx-line">'+(icon?'<img src="/assets/img/plugs/'+icon+'.svg" width="22" height="22" alt="" style="flex:0 0 auto;margin-top:1px">':'')+'<span class="mx-st '+cls+'">'+LBL[cls]+'</span><span><b>'+human+'</b><br>'+title+(extras)+'</span></div>';
-          if(cls==='ad'||cls==='warn'){links.forEach(function(l){if(buy.indexOf(l)<0) buy.push(l)})}
-        });
-        if(buy.length){
-          html+='<div class="mx-buy"><b>Что докупить:</b> '+buy.join(' · ')+'</div>';
-        }
-        var slug=btn.dataset.slug;
-if(slug) html+='<p style="margin:12px 0 0"><a href="/models/'+slug+'/" style="color:#0161EF">Страница модели →</a></p>';
-        html+='<p style="margin:10px 0 0;font-size:13px;color:var(--txt-muted)">Type 2 бывает в двух видах: станция <b>с кабелем</b> — заряжаетесь сразу, станция-<b>розетка</b> — нужен свой кабель. Разбираем все шесть разъёмов в <a href="/razemy/" style="color:#0161EF">справочнике разъёмов</a>.</p>';
-        html+='</div>';
-        out.innerHTML=html;
-        out.scrollIntoView({behavior:'smooth',block:'nearest'});
-      }
-      function wait(tries){
-        if(!table) table=document.querySelector('#pro-matrix table');
-        if(table){build();}
-        else if(tries<25){setTimeout(function(){wait(tries+1)},80);}
-      }
-      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){wait(0)})}else{wait(0)}
-    })();
-    </script>
-  </div></section>
+<ZhLayout title="Матрица совместимости зарядки: 151 модель — Запас хода" description="Что заряжает вашу машину: розетка, Type 2 AC, GB/T AC, CCS2 DC, GB/T DC — для 151 модели в России. Где нужен адаптер — прямые ссылки на каталок." jsonld={faqLd}>
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">Матрица совместимости: 151 модель × 5 сценариев зарядки</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:780px">Найдите свою машину и смотрите, где она заряжается напрямую, а где нужен адаптер. Разъём зависит от рынка вывоза — проверьте по фото лючка или VIN.</p>
+<div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <input id="mx-search" placeholder="Поиск модели: например, Zeekr 001" style="flex:1;min-width:240px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <select id="mx-type" style="padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:14px">
+    <option value="">Все типы</option><option value="bev">Электро (BEV)</option><option value="hyb">Гибриды (EREV/PHEV)</option>
+  </select>
+</div>
+<div style="overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:18px">
+<table class="mx-table" style="width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px">
+<thead><tr style="border-bottom:1px solid var(--line)">
+<th style="text-align:left;padding:10px 14px;position:sticky;left:0;background:var(--bg2);min-width:220px">Модель</th>
+{cols.map((c) => (<th style="text-align:left;padding:10px 10px;white-space:nowrap">{c}</th>))}
+</tr></thead>
+<tbody>
+{models.map((m) => {
+  const cs = cellsFor(m);
+  const t = String(m.type || '').toLowerCase();
+  const rowType = (t.includes('bev') && !t.includes('erev')) ? 'bev' : 'hyb';
+  return (
+    <tr class="mx-row" data-mx-name={String(m.name || m.title || '').toLowerCase()} data-mx-type={rowType} style="border-bottom:1px solid var(--line)">
+      <td style="padding:9px 14px;position:sticky;left:0;background:var(--bg2);white-space:nowrap">
+        <a href={'/models/' + m.slug + '/'} style="color:var(--txt);text-decoration:none;font-weight:600">{m.name || m.title}</a>
+        <div style="font-size:11.5px;color:var(--txt-muted)">{m.years || m.type || ''}</div>
+      </td>
+      {cs.map((c) => c.kind === 'native' ? (
+        <td style="padding:9px 10px;color:#0aad0a;font-weight:700" title={c.note || ''}>●</td>
+      ) : c.kind === 'sku' ? (
+        <td style="padding:9px 10px"><a href={skuUrl(c.sku!)} title={SKU[c.sku!] + ' — ' + (c.note || '')} style="color:var(--gold);text-decoration:none;font-weight:700">↺ {skuPrice[c.sku!] || ''}</a></td>
+      ) : (
+        <td style="padding:9px 10px;color:var(--txt-muted)" title={c.note || ''}>—</td>
+      ))}
+    </tr>
+  );
+})}
+</tbody>
+</table>
+</div>
+<p style="font-size:13px;color:var(--txt-muted);margin-top:10px">● — родной разъём · ↺ — нужен адаптер (цена в ячейке, ссылка ведёт в каталог) · — — сценарий недоступен или требует уточнения по VIN.</p>
+<h2 style="margin-top:36px;font-size:21px">Как читать матрицу</h2>
+<p style="font-size:15px;line-height:1.6;color:var(--txt);max-width:780px">Китайские машины с портами GB/T заряжаются на китайских станциях напрямую, а для городских Type 2-станций нужен адаптер Type 2 → GB/T (22 кВт). Европейские машины — наоборот: городские станции напрямую, китайские станции через обратный адаптер. Американские и японские машины (Type 1 / CCS1) — через адаптер Type 1 → Type 2 для медленной зарядки; быстрые станции для них в России пока ограничены.</p>
+<ModelBuyBlock />
+<LeadCTA />
+</div></section>
+<script is:inline>
+(function(){
+  var si = document.getElementById('mx-search'), ti = document.getElementById('mx-type');
+  if(!si) return;
+  function apply(){
+    var q = (si.value || '').trim().toLowerCase();
+    var ty = ti ? (ti.value || '') : '';
+    document.querySelectorAll('.mx-row').forEach(function(r){
+      var okName = !q || (r.getAttribute('data-mx-name') || '').indexOf(q) >= 0;
+      var okType = !ty || r.getAttribute('data-mx-type') === ty;
+      r.style.display = (okName && okType) ? '' : 'none';
+    });
+  }
+  si.addEventListener('input', apply);
+  if(ti) ti.addEventListener('change', apply);
+})();
+</script>
 </ZhLayout>
