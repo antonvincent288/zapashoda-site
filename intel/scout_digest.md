@@ -120,3 +120,6 @@
 ## 2026-11-08
 
 Новых находок нет - все уже в базе.
+## 2026-11-09
+
+- [@types/sitemap-generator](https://www.npmjs.com/package/@types/sitemap-generator) — TypeScript definitions for sitemap-generator
