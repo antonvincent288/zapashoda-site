@@ -1476,6 +1476,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "A-0055",
+      "ts": "2026-11-09T05:30:29+03:00",
+      "from": "architect",
+      "topic": "Текущий статус и приоритет",
+      "body": "На данном этапе критически важно завершить интеграцию GAS v12, чтобы гарантировать корректную работу контура продаж и получить стабильный поток лидов. Рекомендую:\n1. Завершить добавление дельты в _odDoPost и связанные обработчики (shop_init → _shopInitProducts, bonus_selftest → _bonusSelftestEndpoint, paid → bonusOnWebhookPaid, od_order → bonusOnOrder).\n2. Выполнить shopSetProducts() и shopSetPdf2() для всех 4 PDF, чтобы продукты автоматически попали в Live.\n3. Провести тест‑оплату (4300 0000 0000 0777) и убедиться, что письмо, success‑страница и водяной знак работают корректно.\n4. После успешного теста переключить Tinkoff‑токен с DEMO на production‑ключ и обновить shop_taxation в соответствии с режимом ИП.\n5. Параллельно отправить sitemap в Яндекс Webmaster и Google Search Console, подтвердить индексацию.\n\nПлан следующего шага: Согласовать с владельцем финальный список PDF и ключи, затем выполнить шаги 1‑4.\n",
+      "priority": "high",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
