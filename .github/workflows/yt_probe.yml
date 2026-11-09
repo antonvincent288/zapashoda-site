@@ -1,4 +1,4 @@
-name: YT download probe 5
+name: yt-probe5
 
 on:
   workflow_dispatch: {}
@@ -12,14 +12,14 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Bot-to-bot test (доказательство)
+      - name: Bot-to-bot test
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         run: |
-          echo "=== наш бот -> @SaveAsBot ==="
+          echo "=== bot -> @SaveAsBot ==="
           curl -sS --max-time 20 "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             --data-urlencode "chat_id=@SaveAsBot" --data-urlencode "text=ping" ; echo
-      - name: Cobalt community instances (без авторизации)
+      - name: Cobalt community instances
         run: |
           set +e
           curl -sk --max-time 25 "https://instances.cobalt.best/api/instances.json" -o /tmp/cb.json; echo "rc=$? size=$(stat -c%s /tmp/cb.json 2>/dev/null)"
@@ -48,7 +48,7 @@ jobs:
               -H "Accept: application/json" -H "Content-Type: application/json" \
               -d '{"url":"https://www.youtube.com/shorts/K0GV_0xE3Y8","videoQuality":"480","filenameStyle":"basic","youtubeVideoCodec":"h264"}'; echo
           done
-      - name: Wikimedia Commons (план Б: CC-видео напрямую)
+      - name: Wikimedia Commons plan B
         run: |
           set +e
           curl -s --max-time 25 -A "zapashoda-bot/1.0" \
