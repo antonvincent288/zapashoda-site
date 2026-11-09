@@ -1,4 +1,5 @@
 ---
+import LeadCTA from '../components/LeadCTA.astro';
 import ZhLayout from '../layouts/ZhLayout.astro';
 import LegacyStyles from '../components/LegacyStyles.astro';
 const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
@@ -199,4 +200,5 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
   .zh-hero-big::before{background-image:linear-gradient(0deg,rgba(6,10,14,.94) 0%,rgba(6,10,14,.6) 18%,rgba(6,10,14,0) 40%),linear-gradient(180deg,rgba(6,9,12,.9) 0%,rgba(6,9,12,.84) 55%,rgba(6,9,12,.55) 100%),url('/assets/img/hero-ev.webp');background-position:center 22%}
   .zh-hero-big h1 span{white-space:normal}
 }
-</style></ZhLayout>
+</style><LeadCTA />
+</ZhLayout>

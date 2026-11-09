@@ -1,0 +1,73 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
+const faqLd = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'Какой минимальный объём для старта?', acceptedAnswer: { '@type': 'Answer', text: 'Начинаем с пилотной партии без заморозки денег: небольшой комплект адаптеров и аксессуаров, чтобы проверить спрос на вашей площадке.' } },
+    { '@type': 'Question', name: 'Какие условия опта?', acceptedAnswer: { '@type': 'Answer', text: 'Оптовые цены и объёмы фиксируются в прайсе по запросу — скидка зависит от объёма и позиций. Рекомендуемые розничные цены совпадают с каталогом сайта.' } },
+    { '@type': 'Question', name: 'Как быстро вы отвечаете?', acceptedAnswer: { '@type': 'Answer', text: 'В течение рабочего дня: прайс, условия пилота и договор по запросу.' } },
+    { '@type': 'Question', name: 'Что входит в маркетинговую поддержку?', acceptedAnswer: { '@type': 'Answer', text: 'База болей владельцев, карточки моделей и руководства на русском — с вашим логотипом, чтобы продавали допы без лишних вопросов. Плюс видимость в каталоге сайта с кнопкой «подобрать дилера».' } },
+  ],
+};
+---
+<ZhLayout title="Партнёрская программа для дилеров и салонов — Запас хода" description="Оптовые комплекты адаптеров Type 2 → GB/T, материалы с вашим логотипом и лиды с каталога. Заявка — прайс и условия в течение рабочего дня." jsonld={faqLd} og="/assets/og/m-partner.png">
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<div class="crumbs"><a href="/">Главная</a> / <a href="/b2b/">B2B</a> / Партнёрская программа</div>
+<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">Партнёрская программа: комплекты адаптеров и поддержка продаж</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:780px">Для дилеров запчастей, автосалонов, сервисов китайских машин, АЗС и таксопарков. Начинаем с пилотной партии, чтобы проверить спрос без заморозки денег.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:26px">
+  <div style="padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--bg2)"><b>Опт по прайсу</b><p style="font-size:14px;color:var(--txt-muted);margin-top:6px">Условия и объёмы фиксируем в прайсе — с ценами, не «на пальцах». РРЦ совпадает с каталогом 1:1.</p></div>
+  <div style="padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--bg2)"><b>Материалы под ваш бренд</b><p style="font-size:14px;color:var(--txt-muted);margin-top:6px">База болей, карточки моделей и руководства на русском — с вашим логотипом, чтобы продавали допы без лишних вопросов.</p></div>
+  <div style="padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--bg2)"><b>Лиды с сайта</b><p style="font-size:14px;color:var(--txt-muted);margin-top:6px">Покупатели из каталога и сравнений уходят к дилерам в своём городе — оплата при получении, без риска клиента.</p></div>
+</div>
+<h2 style="margin-top:40px;font-size:21px">Кому подходит</h2>
+<p style="font-size:15px;color:var(--txt-muted);max-width:760px">Уличные пункты запчастей и ателье, сервисы китайских машин, автосалоны китайских брендов, продавцы на маркетплейсах, АЗС с трафиком трасс, таксопарки и автофирмы с китайскими EV в парке.</p>
+<h2 style="margin-top:40px;font-size:21px">Как начинается работа</h2>
+<ol style="max-width:760px;font-size:15px;line-height:1.7;padding-left:20px">
+  <li>Оставляете заявку — отвечаем в течение рабочего дня.</li>
+  <li>Присылаем прайс, условия пилота и <a href="/b2b/paket-dileram.pdf" style="color:var(--gold)">PDF-пакет дилера</a> (матрица совместимости, маржа, FAQ).</li>
+  <li>Собираем пилотную партию под ваш город и тип площадки.</li>
+  <li>Фиксируем договор и рекуррентные поставки.</li>
+</ol>
+<h2 style="margin-top:40px;font-size:21px" id="apply">Заявка на прайс</h2>
+<form id="partner-form" style="max-width:560px;display:grid;gap:12px;margin-top:14px">
+  <input name="company" required placeholder="Компания / площадка" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <input name="name" required placeholder="Ваше имя" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <input name="phone" required placeholder="Телефон или @telegram" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <input name="city" required placeholder="Город" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <select name="btype" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px">
+    <option>Дилер запчастей</option><option>Автосалон</option><option>Сервис китайских машин</option><option>АЗС / трасса</option><option>Таксопарк / автофирма</option><option>Другое</option>
+  </select>
+  <textarea name="comment" rows="3" placeholder="Комментарий: объёмы, сроки, что интересует" style="padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px"></textarea>
+  <label style="font-size:13px;color:var(--txt-muted)"><input type="checkbox" required name="consent" style="margin-right:7px;vertical-align:middle">Я согласен на обработку персональных данных — <a href="/privacy/" target="_blank" style="color:var(--gold)">Политика конфиденциальности</a></label>
+  <button type="submit" class="btn btn-gold" style="cursor:pointer">Отправить заявку на прайс</button>
+  <div id="pf-status" style="font-size:14px;color:var(--txt-muted)"></div>
+</form>
+<script is:inline>
+(function(){
+  var f = document.getElementById('partner-form');
+  if(!f) return;
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var q = function(n){ var el = f.querySelector('[name='+n+']'); return el ? el.value.trim() : ''; };
+    var st = document.getElementById('pf-status');
+    if(window.ZS_SEND_PARTNER){
+      window.ZS_SEND_PARTNER({
+        name: q('name'), phone: q('phone'), city: q('city'),
+        company: q('company'), btype: q('btype'),
+        comment: '[Партнёр ' + q('btype') + '] ' + q('company') + ', ' + q('city') + '. ' + q('comment')
+      });
+      st.innerHTML = '<span style="color:#0aad0a">Заявка отправлена. Ответим в течение рабочего дня.</span>';
+      f.reset();
+    } else {
+      st.innerHTML = '<span style="color:#e5484d">Не удалось отправить. Напишите нам в Telegram @zapashoda_ev</span>';
+    }
+  });
+})();
+</script>
+<LeadCTA variant="b2b" />
+<ModelBuyBlock />
+</div></section>
+</ZhLayout>

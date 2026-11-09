@@ -1,4 +1,5 @@
 ---
+import LeadCTA from '../../components/LeadCTA.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import c from '../../data/b2b_content.json';
 const rrc = c.rrc || [];
@@ -39,7 +40,7 @@ const icos = [
       <h2 style="margin-top:56px">Как работаем</h2><div class="cards" style="margin-top:24px">{c.steps.map((s: string, i: number) =>(
           <div class="card"><span class="ico">{i + 1}</span><p style="font-size:15px;color:var(--txt)">{s}</p></div>))}
       </div>{rrc.length >0 && (
-        <><h2 style="margin-top:56px">Рекомендуемые розничные цены (РРЦ)</h2><div class="card" style="margin-top:18px;padding:0;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:15px"><thead><tr style="border-bottom:1px solid var(--line)"><th style="text-align:left;padding:12px 16px">Позиция</th><th style="text-align:right;padding:12px 16px">РРЦ</th></tr></thead><tbody>{rrc.map(([name, price]: [string, string]) =>(
+        <><h2 style="margin-top:56px">Рекомендуемые розничные цены (РРЦ)</h2><p style="font-size:13.5px;color:var(--txt-muted);margin-top:6px">РРЦ соответствуют ценам каталога zapashoda-ev.ru/catalog/ 1:1. Оптовые цены и состав партии фиксируются в прайсе по запросу — скидка зависит от объёма и позиций.</p><div class="card" style="margin-top:18px;padding:0;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:15px"><thead><tr style="border-bottom:1px solid var(--line)"><th style="text-align:left;padding:12px 16px">Позиция</th><th style="text-align:right;padding:12px 16px">РРЦ</th></tr></thead><tbody>{rrc.map(([name, price]: [string, string]) =>(
                   <tr style="border-bottom:1px solid var(--line)"><td style="padding:10px 16px">{name}</td><td style="padding:10px 16px;text-align:right;font-weight:700">{price}</td></tr>))}
               </tbody></table></div></>)}
       {c.infra && c.infra.length >0 && (
@@ -85,4 +86,5 @@ const icos = [
       </div>
     </div></section>
       <section class="sec"><div class="wrap"><div class="cta"><h2>Запросить расчёт проекта</h2><p>Опишите вашу машину и задачи в форме подбора — на продвижении прайса и условий для дилеров ответит наш менеджер. Партнёрский пакет с ценами пришлём вместе с расчётом.</p><a class="btn btn-gold" href="/quiz/" style="text-decoration:none">Отправить заявку за 30 секунд</a></div></div></section>{faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+<LeadCTA variant="b2b" />
 </ZhLayout>

@@ -1,0 +1,73 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
+import pairsData from '../../data/compare_pairs.json';
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const bySlug = {};
+for (const mm of Object.values(modelGlob)) bySlug[mm.slug] = mm;
+export async function getStaticPaths() {
+  const PAIRS = pairsData.pairs || [];
+  return PAIRS.map((p) => ({ params: { pair: p.slug }, props: { pair: p } }));
+}
+const { pair } = Astro.props;
+const A = bySlug[pair.a], B = bySlug[pair.b];
+const nameA = A.name || A.title, nameB = B.name || B.title;
+const specRowsOf = (m) => {
+  const out = {};
+  const re = /<tr><td[^>]*>([^<]+)<\/td><td[^>]*>([^<]+)<\/td><\/tr>/g;
+  let x;
+  const html = String(m.body_html || '');
+  while ((x = re.exec(html))) { if (!out[x[1]]) out[x[1]] = x[2]; }
+  return out;
+};
+const sA = specRowsOf(A), sB = specRowsOf(B);
+const rows = [
+  ['Тип привода', A.type || '—', B.type || '—'],
+  ['Разъём AC (медленная)', sA['AC (медленная)'] || A.port || '—', sB['AC (медленная)'] || B.port || '—'],
+  ['Разъём DC (быстрая)', sA['DC (быстрая)'] || '—', sB['DC (быстрая)'] || '—'],
+  ['Бортовое зарядное (OBC)', sA['Бортовое зарядное (OBC)'] || '—', sB['Бортовое зарядное (OBC)'] || '—'],
+  ['Мощность DC', sA['Мощность DC'] || '—', sB['Мощность DC'] || '—'],
+  ['Батарея', sA['Батарея'] || '—', sB['Батарея'] || '—'],
+  ['Рынок вывоза', sA['Рынок вывоза'] || '—', sB['Рынок вывоза'] || '—'],
+];
+const samePorts = (A.port || '') && (A.port === B.port);
+const chargeVerdict = samePorts
+  ? `Разъёмы у обеих машин одинаковые (${A.port}) — комплект адаптеров и кабелей общий. Достаточно одного комплекта: адаптер для городских станций, кабель или портативная зарядка для запасного варианта.`
+  : `Порты у машин разные: у ${nameA} — ${A.port || '—'}, у ${nameB} — ${B.port || '—'}. Это разные экосистемы зарядки: адаптеры и кабели подбираются отдельно под каждую машину (смотрите страницы моделей).`;
+const faqLd = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: `Какие разъёмы зарядки у ${nameA}?`, acceptedAnswer: { '@type': 'Answer', text: `AC (медленная): ${sA['AC (медленная)'] || A.port || '—'}. DC (быстрая): ${sA['DC (быстрая)'] || '—'}. Полный разбор — на странице модели.` } },
+    { '@type': 'Question', name: `Какие разъёмы зарядки у ${nameB}?`, acceptedAnswer: { '@type': 'Answer', text: `AC (медленная): ${sB['AC (медленная)'] || B.port || '—'}. DC (быстрая): ${sB['DC (быстрая)'] || '—'}. Полный разбор — на странице модели.` } },
+    { '@type': 'Question', name: `Чем отличаются ${nameA} и ${nameB} по зарядке?`, acceptedAnswer: { '@type': 'Answer', text: samePorts ? `Разъёмы одинаковые (${A.port}): комплект адаптеров и кабелей общий. Отличия — в бортовом зарядном и мощности DC.` : `Порты разные: у ${nameA} — ${A.port || '—'}, у ${nameB} — ${B.port || '—'}. Комплекты адаптеров подбираются отдельно.` } },
+    { '@type': 'Question', name: `Какие батареи у ${nameA} и ${nameB}?`, acceptedAnswer: { '@type': 'Answer', text: `${nameA}: ${sA['Батарея'] || '—'}. ${nameB}: ${sB['Батарея'] || '—'}. Точные значения зависят от комплектации.` } },
+    { '@type': 'Question', name: 'Что докупить для зарядки в России?', acceptedAnswer: { '@type': 'Answer', text: 'Для GB/T-машин — адаптер Type 2 → GB/T (22 кВт) для городских станций и портативная зарядка GB/T как запасной вариант. Для машин с Type 2 / CCS2 — кабель Type 2 — Type 2 и портативная зарядка Type 2. Полный каталог — в разделе «Каталог».' } },
+  ],
+};
+---
+<ZhLayout title={`${nameA} vs ${nameB}: зарядка, разъёмы, батареи — Запас хода`} description={`Сравнение ${nameA} и ${nameB}: разъёмы зарядки (${A.port} против ${B.port}), бортовое зарядное, батареи и что докупить для зарядки в России.`} jsonld={faqLd} og={`/assets/og/c-${pair.slug}.png`}>
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<div class="crumbs"><a href="/">Главная</a> / <a href="/compare/">Сравнения</a> / {nameA} vs {nameB}</div>
+<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">{nameA} <span style="color:var(--gold)">vs</span> {nameB}</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:760px">Сравнение по фактам: разъёмы, бортовое зарядное, батареи и адаптеры. Разъём зависит от рынка вывоза — проверьте по фото лючка или VIN перед покупкой адаптера.</p>
+<div style="overflow-x:auto;margin-top:26px;border:1px solid var(--line);border-radius:18px">
+<table style="width:100%;border-collapse:collapse;font-size:15px;min-width:560px">
+<thead><tr style="border-bottom:1px solid var(--line)"><th style="text-align:left;padding:12px 16px">Параметр</th><th style="text-align:left;padding:12px 16px">{nameA}</th><th style="text-align:left;padding:12px 16px">{nameB}</th></tr></thead>
+<tbody>
+{rows.map(([lab, va, vb]) => (
+  <tr style="border-bottom:1px solid var(--line)">
+    <td style="padding:10px 16px;color:var(--txt-muted);font-size:13.5px;white-space:nowrap">{lab}</td>
+    <td style="padding:10px 16px;font-weight:600">{va}</td>
+    <td style="padding:10px 16px;font-weight:600">{vb}</td>
+  </tr>
+))}
+</tbody>
+</table>
+</div>
+<h2 style="margin-top:36px;font-size:21px">Что это значит для зарядки</h2>
+<p style="font-size:15px;line-height:1.6;color:var(--txt);max-width:760px">{chargeVerdict}</p>
+<ModelBuyBlock model={samePorts ? A : null} />
+<LeadCTA />
+</div></section>
+</ZhLayout>

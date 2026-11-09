@@ -1,4 +1,5 @@
 ---
+import LeadCTA from '../../components/LeadCTA.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 export async function getStaticPaths() {
   const segs = (await import('../../data/b2b_segments.json')).default as any[];
@@ -84,4 +85,5 @@ const STEPS = [
     </div>
   </div></div></section>
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+<LeadCTA variant="b2b" />
 </ZhLayout>

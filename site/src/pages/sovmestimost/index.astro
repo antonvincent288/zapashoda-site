@@ -1,0 +1,128 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
+import skuData from '../../data/sku.json';
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const models = Object.values(modelGlob).filter(Boolean).sort((x, y) => String(x.slug).localeCompare(String(y.slug)));
+const SKU = {
+  'portativnaya-zaryadka-gbt-3-5kw': 'Портативная зарядка GB/T 3,5 кВт',
+  'portativnaya-zaryadka-type2-3-5kw': 'Портативная зарядка Type 2 3,5 кВт',
+  'adapter-type2-gbt-base': 'Адаптер Type 2 → GB/T 22 кВт (базовый)',
+  'adapter-type1-type2': 'Адаптер Type 1 → Type 2',
+  'adapter-gbt-type2-reverse': 'Обратный адаптер GB/T → Type 2',
+  'adapter-ccs2-gbt-dc': 'Адаптер CCS2 → GB/T DC',
+};
+const skuUrl = (s) => '/catalog/' + s + '.html';
+const skuPrice = {};
+for (const it of (skuData.items || [])) skuPrice[it.slug] = parseInt(it.price).toLocaleString('ru-RU');
+type Cell = { kind: 'native' | 'sku' | 'no', sku?: string, note?: string };
+function cellsFor(m): Cell[] {
+  const port = (m.port || '').trim();
+  const type = (m.type || '').trim();
+  const isPlugInHybrid = type.includes('EREV') || type.includes('PHEV') || type.includes('DM') || type.includes('Hi');
+  if (!port) return [ {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'} ];
+  const outlet: Cell = { kind:'native', note:'обычно штатный кабель — проверьте комплект' };
+  if (port === 'GB/T') {
+    return [
+      outlet,
+      { kind:'sku', sku:'adapter-type2-gbt-base', note:'адаптер для городских станций' },
+      { kind:'native', note:'родной разъём' },
+      isPlugInHybrid ? { kind:'no', note:'у гибридов обычно нет быстрой DC-зарядки' } : { kind:'sku', sku:'adapter-ccs2-gbt-dc', note:'редко нужен — дорогой' },
+      { kind:'native', note:'родной разъём' },
+    ];
+  }
+  if (port === 'EU') {
+    return [
+      outlet,
+      { kind:'native', note:'родной разъём' },
+      { kind:'sku', sku:'adapter-gbt-type2-reverse', note:'адаптер для китайских станций' },
+      isPlugInHybrid ? { kind:'no', note:'у гибридов обычно нет быстрой DC-зарядки' } : { kind:'native', note:'родной разъём' },
+      { kind:'no', note:'нет адаптера GB/T DC для этой машины' },
+    ];
+  }
+  if (port === 'Type1/CCS1' || port === 'JP/CHAdeMO') {
+    return [
+      outlet,
+      { kind:'sku', sku:'adapter-type1-type2', note:'адаптер Type 1 → Type 2' },
+      { kind:'no', note:'нет адаптера для этой машины' },
+      { kind:'no', note:'нет адаптера CCS1 → CCS2' },
+      { kind:'no', note:'нет адаптера для этой машины' },
+    ];
+  }
+  return [ outlet, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'}, {kind:'no',note:'уточните по VIN'} ];
+}
+const cols = ['Розетка 220 В','Type 2 AC (город)','GB/T AC (Китай)','CCS2 DC (быстрая)','GB/T DC (быстрая)'];
+const faqLd = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'Что означают значки в таблице совместимости?', acceptedAnswer: { '@type': 'Answer', text: 'Зелёная точка — разъём родной, заряжаетесь напрямую. Стрелка — нужен адаптер или кабель из каталога (в ячейке ссылка). Серый прочерк — сценарий для этой машины не реализуем или требует уточнения по VIN.' } },
+    { '@type': 'Question', name: 'Нужен ли адаптер для машины с европейским портом?', acceptedAnswer: { '@type': 'Answer', text: 'Для европейских Type 2 / CCS2 машин адаптер нужен только для китайских GB/T-станций — обратный адаптер GB/T → Type 2. Для обычных городских и европейских станций ничего докупать не нужно.' } },
+    { '@type': 'Question', name: 'Как проверить разъём перед покупкой адаптера?', acceptedAnswer: { '@type': 'Answer', text: 'Разъём зависит от рынка вывоза, а не от марки: проверьте фото лючка или VIN. У многих машин два порта — малый (AC) и большой (DC).' } },
+  ],
+};
+---
+<ZhLayout title="Совместимость зарядки: 151 модель × 5 сценариев — Запас хода" description="Совместимость зарядки для 151 модели: что заряжается напрямую, где нужен адаптер, а где сценарий недоступен. Розетка 220 В, Type 2 AC, GB/T AC, CCS2 DC, GB/T DC — со ссылками на каталог." jsonld={faqLd} og="/assets/og/s-sovmestimost.png">
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">Совместимость зарядки: 151 модель × 5 сценариев</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:780px">Найдите свою машину и смотрите, где она заряжается напрямую, а где нужен адаптер. Разъём зависит от рынка вывоза — проверьте по фото лючка или VIN.</p>
+<div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <input id="mx-search" placeholder="Поиск модели: например, Zeekr 001" style="flex:1;min-width:240px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
+  <select id="mx-type" style="padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:14px">
+    <option value="">Все типы</option><option value="bev">Электро (BEV)</option><option value="hyb">Гибриды (EREV/PHEV)</option>
+  </select>
+</div>
+<div style="overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:18px">
+<table class="mx-table" style="width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px">
+<thead><tr style="border-bottom:1px solid var(--line)">
+<th style="text-align:left;padding:10px 14px;position:sticky;left:0;background:var(--bg2);min-width:220px">Модель</th>
+{cols.map((c) => (<th style="text-align:left;padding:10px 10px;white-space:nowrap">{c}</th>))}
+</tr></thead>
+<tbody>
+{models.map((m) => {
+  const cs = cellsFor(m);
+  const t = String(m.type || '').toLowerCase();
+  const rowType = (t.includes('bev') && !t.includes('erev')) ? 'bev' : 'hyb';
+  return (
+    <tr class="mx-row" data-mx-name={String(m.name || m.title || '').toLowerCase()} data-mx-type={rowType} style="border-bottom:1px solid var(--line)">
+      <td style="padding:9px 14px;position:sticky;left:0;background:var(--bg2);white-space:nowrap">
+        <a href={'/models/' + m.slug + '/'} style="color:var(--txt);text-decoration:none;font-weight:600">{m.name || m.title}</a>
+        <div style="font-size:11.5px;color:var(--txt-muted)">{m.years || m.type || ''}</div>
+      </td>
+      {cs.map((c) => c.kind === 'native' ? (
+        <td style="padding:9px 10px;color:#0aad0a;font-weight:700" title={c.note || ''}>●</td>
+      ) : c.kind === 'sku' ? (
+        <td style="padding:9px 10px"><a href={skuUrl(c.sku!)} title={SKU[c.sku!] + ' — ' + (c.note || '')} style="color:var(--gold);text-decoration:none;font-weight:700">↺ {skuPrice[c.sku!] || ''}</a></td>
+      ) : (
+        <td style="padding:9px 10px;color:var(--txt-muted)" title={c.note || ''}>—</td>
+      ))}
+    </tr>
+  );
+})}
+</tbody>
+</table>
+</div>
+<p style="font-size:13px;color:var(--txt-muted);margin-top:10px">● — родной разъём · ↺ — нужен адаптер (цена в ячейке, ссылка ведёт в каталог) · — — сценарий недоступен или требует уточнения по VIN.</p>
+<h2 style="margin-top:36px;font-size:21px">Как читать матрицу</h2>
+<p style="font-size:15px;line-height:1.6;color:var(--txt);max-width:780px">Китайские машины с портами GB/T заряжаются на китайских станциях напрямую, а для городских Type 2-станций нужен адаптер Type 2 → GB/T (22 кВт). Европейские машины — наоборот: городские станции напрямую, китайские станции через обратный адаптер. Американские и японские машины (Type 1 / CCS1) — через адаптер Type 1 → Type 2 для медленной зарядки; быстрые станции для них в России пока ограничены.</p>
+<ModelBuyBlock />
+<LeadCTA />
+</div></section>
+<script is:inline>
+(function(){
+  var si = document.getElementById('mx-search'), ti = document.getElementById('mx-type');
+  if(!si) return;
+  function apply(){
+    var q = (si.value || '').trim().toLowerCase();
+    var ty = ti ? (ti.value || '') : '';
+    document.querySelectorAll('.mx-row').forEach(function(r){
+      var okName = !q || (r.getAttribute('data-mx-name') || '').indexOf(q) >= 0;
+      var okType = !ty || r.getAttribute('data-mx-type') === ty;
+      r.style.display = (okName && okType) ? '' : 'none';
+    });
+  }
+  si.addEventListener('input', apply);
+  if(ti) ti.addEventListener('change', apply);
+})();
+</script>
+</ZhLayout>

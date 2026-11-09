@@ -1,4 +1,6 @@
 ---
+import LeadCTA from '../../components/LeadCTA.astro';
+import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import { priceFix } from '../../lib/prices';
 export async function getStaticPaths() {
@@ -14,6 +16,15 @@ export async function getStaticPaths() {
   });
 }
 const { a } = Astro.props;
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+let modelHit = null;
+{
+  const hay = (a.title + ' ' + String(a.body_html || '').slice(0, 4000)).toLowerCase();
+  for (const mm of Object.values(modelGlob)) {
+    const nm = String(mm && (mm.name || mm.title) || '').toLowerCase();
+    if (nm && nm.length >= 4 && hay.includes(nm)) { modelHit = mm; break; }
+  }
+}
 const extraRaw = String(a.extra_html || '')
   .replace(/<section[^>]*class=["'][^"']*comments[^"']*\/[\s\S]*?<\/section>/gi, '')
   .replace(/<section[^>]*id=["']comments["'][^>]*>[\s\S]*?<\/section>/gi, '')
@@ -44,4 +55,6 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     if (navigator.clipboard) navigator.clipboard.writeText(cl.getAttribute('data-copy'));
     cl.textContent = 'Скопировано ';
   });
-</script></article></div></div></section></ZhLayout>
+</script></article></div></div></section><ModelBuyBlock model={modelHit} />
+<LeadCTA />
+</ZhLayout>
