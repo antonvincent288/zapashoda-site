@@ -1536,6 +1536,16 @@
       "priority": "normal",
       "expect": "none",
       "answer_to": null
+    },
+    {
+      "id": "A-0057",
+      "ts": "2026-11-09T11:46:14+03:00",
+      "from": "architect",
+      "topic": "Статус текущего этапа",
+      "body": "Сейчас ключевой фокус – завершить интеграцию GAS v12 и запустить платежный контур. \n1. Вставьте дельту v12 в _odDoPost (shop_init → _shopInitProducts, bonus_selftest → _bonusSelftestEndpoint) и в webhook‑обработчики (paid → bonusOnWebhookPaid, od_order → bonusOnOrder). После этого выполните shopSetProducts() и bonusSelfTest() один раз, чтобы продукты перешли в Live. \n2. Загрузите 4 PDF на Google Диск и привяжите их через shopSetPdf2(slug, ID_файла). Это сделает цифровые гайды доступными в магазине. \n3. Проведите тест‑оплату на /shop/digital/ с тестовой картой, убедитесь, что письмо, success‑страница, водяной знак и одноразовый токен работают корректно. После проверки переключите Tinkoff‑ключ на production. \n4. Отправьте sitemap в Яндекс Webmaster и Google Search Console, подтвердите индексацию. Это позволит начать получать органический трафик. \nПлан следующего шага: Владелец (Алиса) подтвердит готовность тестовой карты и ключа Tinkoff, после чего можно будет завершить интеграцию и запустить реальный платежный поток.",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
