@@ -395,8 +395,8 @@ h1,h2,h3{text-wrap:balance}
 .cout table th,.cout table td{vertical-align:top}
 .cout table th{white-space:nowrap;font-size:12px;padding:8px}
 .cout table td:nth-child(n+2){white-space:nowrap}
-.cout table th:nth-child(1){width:28%}
-.cout table th:nth-child(2){width:24%}
+.cout table th:nth-child(1){width:26%}
+.cout table th:nth-child(2){width:26%}
 .cout table th:nth-child(3){width:23%}
 .cout table th:nth-child(4){width:25%}
 /* === Фикс таблицы результатов калькулятора (все модели): строка-заглушка с colspan=3 не должна
@@ -631,7 +631,7 @@ details.rounded-lg.bg-white{background:var(--card) !important}
 .rounded-lg.bg-white details{background:transparent}
 .prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
 </style>
-<script is:inline>(function(){function scan(){document.querySelectorAll('.cout').forEach(function(out){out.querySelectorAll('tr').forEach(function(tr){var tds=tr.children;if(tds.length<2)return;var c2=tds[1];if(c2.getAttribute('colspan')==='3'&&/по данным модели/i.test(c2.textContent)){c2.colSpan=1;c2.textContent='уточнить';if(tds.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}tds=tr.children}if(tds.length===4){var t3=tds[2],mm=/0→80%[^0-9]*(\d+)\s*мин/.exec(t3.textContent);if(mm){t3.textContent='≈ '+mm[1]+' мин';var t1=tds[0];if(t1.textContent.indexOf('0→80%')<0){t1.textContent=t1.textContent.trim().replace(/\s*$/,'')+' (0→80%)'}}}})})}var out=document.querySelector('.cout');if(out){scan();new MutationObserver(scan).observe(out,{childList:true,subtree:true,characterData:true})}})();</script>
+<script is:inline>document.addEventListener('DOMContentLoaded',function(){(function(){function scan(){document.querySelectorAll('.cout').forEach(function(out){out.querySelectorAll('tr').forEach(function(tr){var tds=tr.children;if(tds.length<2)return;var c2=tds[1];if(c2.getAttribute('colspan')==='3'&&/по данным модели/i.test(c2.textContent)){c2.colSpan=1;c2.textContent='уточнить';if(tds.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}tds=tr.children}if(tds.length===4){var t3=tds[2],mm=/0→80%[^0-9]*(\d+)\s*мин/.exec(t3.textContent);if(mm){t3.textContent='≈ '+mm[1]+' мин';var t1=tds[0];if(t1.textContent.indexOf('0→80%')<0){t1.textContent=t1.textContent.trim().replace(/\s*$/,'')+' (0→80%)'}}}})})}var out=document.querySelector('.cout');if(out){scan();new MutationObserver(scan).observe(out,{childList:true,subtree:true,characterData:true})}})();});</script>
 
 <script is:inline>window.ZS_LEAD_CFG={token:"8766863167:AAFPzVuoYPsKQFUmETCeHM8mEjMZWOik-gM",chat:"-1002316192115",gas:"https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec"};</script>
 <script is:inline src="/assets/brand/lead.js" defer></script>
