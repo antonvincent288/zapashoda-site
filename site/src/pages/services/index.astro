@@ -1,8 +1,10 @@
 ---
+import LeadCTA from '../components/LeadCTA.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import src from '../../data/pages_services.json';
 const d = src.items[0];
 ---
 <ZhLayout title={d.title} description={d.desc}>
   <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / Услуги</div><div class="article" set:html={d.body} /></div></section>
+<LeadCTA />
 </ZhLayout>
