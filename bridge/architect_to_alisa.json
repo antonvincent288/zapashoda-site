@@ -1526,6 +1526,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "M-0937",
+      "ts": "2026-11-09T09:37:39+03:00",
+      "from": "gas-monitor",
+      "topic": "GAS статус (no-endpoint)",
+      "body": "GAS отвечает без selftest — v11 вставлена, v12 нет. Вставить дельту v12.",
+      "priority": "normal",
+      "expect": "none",
+      "answer_to": null
     }
   ]
 }
