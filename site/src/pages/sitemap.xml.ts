@@ -9,7 +9,7 @@ const SITE = 'https://zapashoda-ev.ru';
 const LASTMOD = '2026-11-09';
 type U = { loc: string; pri: string };
 const urls: U[] = [{ loc: SITE + '/', pri: '1.0' }];
-for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','matrix','razemy']) {
+for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','sovmestimost','razemy']) {
   urls.push({ loc: `${SITE}/${p}/`, pri: '0.7' });
 }
 for (const m of models) if (m && m.slug) urls.push({ loc: `${SITE}/models/${m.slug}/`, pri: '0.8' });

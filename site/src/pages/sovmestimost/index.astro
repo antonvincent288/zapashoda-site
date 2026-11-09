@@ -56,15 +56,15 @@ const cols = ['Розетка 220 В','Type 2 AC (город)','GB/T AC (Кит�
 const faqLd = {
   '@context': 'https://schema.org', '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: 'Что означают значки в матрице совместимости?', acceptedAnswer: { '@type': 'Answer', text: 'Зелёная точка — разъём родной, заряжаетесь напрямую. Стрелка — нужен адаптер или кабель из каталога (в ячейке ссылка). Серый прочерк — сценарий для этой машины не реализуем или требует уточнения по VIN.' } },
+    { '@type': 'Question', name: 'Что означают значки в таблице совместимости?', acceptedAnswer: { '@type': 'Answer', text: 'Зелёная точка — разъём родной, заряжаетесь напрямую. Стрелка — нужен адаптер или кабель из каталога (в ячейке ссылка). Серый прочерк — сценарий для этой машины не реализуем или требует уточнения по VIN.' } },
     { '@type': 'Question', name: 'Нужен ли адаптер для машины с европейским портом?', acceptedAnswer: { '@type': 'Answer', text: 'Для европейских Type 2 / CCS2 машин адаптер нужен только для китайских GB/T-станций — обратный адаптер GB/T → Type 2. Для обычных городских и европейских станций ничего докупать не нужно.' } },
     { '@type': 'Question', name: 'Как проверить разъём перед покупкой адаптера?', acceptedAnswer: { '@type': 'Answer', text: 'Разъём зависит от рынка вывоза, а не от марки: проверьте фото лючка или VIN. У многих машин два порта — малый (AC) и большой (DC).' } },
   ],
 };
 ---
-<ZhLayout title="Матрица совместимости зарядки: 151 модель — Запас хода" description="Что заряжает вашу машину: розетка, Type 2 AC, GB/T AC, CCS2 DC, GB/T DC — для 151 модели в России. Где нужен адаптер — прямые ссылки на каталок." jsonld={faqLd} og="/assets/og/m-matrix.png">
+<ZhLayout title="Совместимость зарядки: 151 модель × 5 сценариев — Запас хода" description="Совместимость зарядки для 151 модели: что заряжается напрямую, где нужен адаптер, а где сценарий недоступен. Розетка 220 В, Type 2 AC, GB/T AC, CCS2 DC, GB/T DC — со ссылками на каталог." jsonld={faqLd} og="/assets/og/s-sovmestimost.png">
 <section class="sec"><div class="wrap" style="padding:56px 0 72px">
-<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">Матрица совместимости: 151 модель × 5 сценариев зарядки</h1>
+<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">Совместимость зарядки: 151 модель × 5 сценариев</h1>
 <p style="color:var(--txt-muted);font-size:16px;max-width:780px">Найдите свою машину и смотрите, где она заряжается напрямую, а где нужен адаптер. Разъём зависит от рынка вывоза — проверьте по фото лючка или VIN.</p>
 <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
   <input id="mx-search" placeholder="Поиск модели: например, Zeekr 001" style="flex:1;min-width:240px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--txt);font-size:15px" />
