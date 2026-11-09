@@ -1,152 +1,27 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import LegacyStyles from '../../components/LegacyStyles.astro';
-import src from '../../data/legacy/tools.json';
-const d = src.find((x) => x.slug === 'compare');
+import LeadCTA from '../../components/LeadCTA.astro';
+import pairsData from '../../data/compare_pairs.json';
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const bySlug = {};
+for (const mm of Object.values(modelGlob)) bySlug[mm.slug] = mm;
+const cards = (pairsData.pairs || []).map((p) => {
+  const A = bySlug[p.a], B = bySlug[p.b];
+  return { href: '/compare/' + p.slug + '/', a: A ? (A.name || A.title) : p.a, b: B ? (B.name || B.title) : p.b, tA: A ? A.type : '', tB: B ? B.type : '', pA: A ? A.port : '', pB: B ? B.port : '' };
+});
 ---
-
-<ZhLayout title={d.title} description={d.desc}>
-  <section class="sec"><div class="wrap">
-    <LegacyStyles />
-    <div class="crumbs"><a href="/">Главная</a> / Сравнение моделей</div>
-
-    <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
-      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
-      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
-      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
-      .wz-btn .t{font-size:15px;font-weight:700}
-      .wz-btn:hover{border-color:#0161EF}
-      .wz-btn.p1{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
-      .wz-back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:none;border:none;color:var(--txt-muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:10px 0;min-height:44px}
-    </style>
-
-    <h1>Сравнение моделей EV: разъёмы и зарядка</h1>
-    <p class="lede">Выберите две машины по кнопкам — сравнение появится само. Вводить ничего не нужно.</p>
-
-    <div class="wz" id="wzc">
-      <div id="wzc-s1">
-        <div class="wz-q">Первая машина</div>
-        <div class="wz-hint">Нет вашей в списке — «Другая машина» покажет весь список</div>
-        <div class="wz-grid" id="wzc-m1"></div>
-      </div>
-      <div id="wzc-s2" hidden>
-        <div class="wz-q">Вторая машина</div>
-        <div class="wz-hint">Первая уже выбрана: <b id="wzc-a1">—</b></div>
-        <div class="wz-grid" id="wzc-m2"></div>
-        <button class="wz-back" type="button" id="wzc-back1">← Назад</button>
-      </div>
-    </div>
-
-    <div class="article" set:html={d.body_html} />
-    {d.body_script && <script is:inline set:html={d.body_script} />}
-
-    <script is:inline>
-    (function(){
-      var POP=[
-        'Zeekr 001 / 001 FR','Zeekr 007 / 007GT','Zeekr 7X / X / MIX','Zeekr 009 / 009 Grand',
-        'Li Auto L6 / L7 / L8 / L9 (2022–2025)','Voyah Free EVR (гибрид)','Avatr 11 / 12 (официально RU)',
-        'Xiaomi SU7 / SU7 Ultra','BYD Song Plus EV','BYD Seal','Deepal S07 (RU официальная)',
-        'Geely Galaxy E5 / E8 / TT'
-      ];
-      var pickA=-1,pickB=-1;
-      function getFormBox(){
-        var sel=document.getElementById('c-a');
-        if(!sel) return null;
-        var box=sel.closest('.of-grid');
-        return box ? (box.parentElement || box) : null;
-      }
-      function showFullList(){
-        var form=getFormBox();
-        if(form){
-          form.style.display='';
-          form.scrollIntoView({behavior:'smooth'});
-        }
-      }
-      function shortName(n){
-        var map={
-          'Zeekr 001 / 001 FR':'Zeekr 001','Zeekr 007 / 007GT':'Zeekr 007','Zeekr 7X / X / MIX':'Zeekr 7X / X',
-          'Zeekr 009 / 009 Grand':'Zeekr 009','Li Auto L6 / L7 / L8 / L9 (2022–2025)':'Li Auto L6–L9',
-          'Voyah Free EVR (гибрид)':'Voyah Free','Avatr 11 / 12 (официально RU)':'Avatr 11 / 12',
-          'Xiaomi SU7 / SU7 Ultra':'Xiaomi SU7','BYD Song Plus EV':'BYD Song Plus','BYD Seal':'BYD Seal',
-          'Deepal S07 (RU официальная)':'Deepal S07','Geely Galaxy E5 / E8 / TT':'Geely Galaxy'
-        };
-        return map[n]||n;
-      }
-      function build(){
-        var a=document.getElementById('c-a');
-        var box1=document.getElementById('wzc-m1'), box2=document.getElementById('wzc-m2');
-        if(!a||!box1||box1.children.length) return;
-        POP.forEach(function(name){
-          var idx=-1;
-          Array.prototype.forEach.call(a.options,function(o,i){
-            if(o.textContent.trim()===name) idx=i;
-          });
-          if(idx<0) return;
-          var b1=document.createElement('button');
-          b1.type='button';b1.className='wz-btn';b1.innerHTML='<span class="t">'+shortName(name)+'</span>';
-          b1.dataset.idx=idx;
-          b1.addEventListener('click',function(){pick(idx)});
-          box1.appendChild(b1);
-        });
-        var oth=document.createElement('button');
-        oth.type='button';oth.className='wz-btn';oth.innerHTML='<span class="t">Другая машина (полный список)</span>';
-        oth.addEventListener('click',function(){showFullList()});
-        box1.appendChild(oth);
-        // шаг 2: те же кнопки, но без «Другая»
-        Array.prototype.forEach.call(box1.children,function(b){
-          if(b.textContent.indexOf('Другая')>=0) return;
-          var b2=document.createElement('button');
-          b2.type='button';b2.className='wz-btn';b2.innerHTML='<span class="t">'+b.textContent+'</span>';
-          b2.dataset.idx=b.dataset.idx;
-          b2.addEventListener('click',function(){pick(parseInt(b2.dataset.idx,10))});
-          box2.appendChild(b2);
-        });
-        var oth2=document.createElement('button');
-        oth2.type='button';oth2.className='wz-btn';oth2.innerHTML='<span class="t">Другая машина (полный список)</span>';
-        oth2.addEventListener('click',function(){showFullList()});
-        box2.appendChild(oth2);
-        var form=getFormBox();
-        if(form) form.style.display='none';
-        // дефолтное сравнение показываем сразу (legacy-скрипт уже вызвал cShow)
-        paint();
-      }
-      function pick(idx){
-        if(pickA<0){pickA=idx;paint();document.getElementById('wzc-s1').hidden=true;document.getElementById('wzc-s2').hidden=false;document.getElementById('wzc-a1').textContent=aName(idx);return;}
-        pickB=idx;
-        document.getElementById('c-a').value=pickA;
-        document.getElementById('c-b').value=pickB;
-        if(typeof cShow==='function') cShow();
-        paint();
-        var out=document.getElementById('c-out');
-        if(out) out.scrollIntoView({behavior:'smooth',block:'start'});
-      }
-      function aName(idx){
-        var a=document.getElementById('c-a');
-        return a && a.options[idx] ? a.options[idx].textContent.trim() : '';
-      }
-      function paint(){
-        var boxes=[document.getElementById('wzc-m1'),document.getElementById('wzc-m2')];
-        boxes.forEach(function(box){
-          if(!box) return;
-          Array.prototype.forEach.call(box.children,function(b){
-            var i=parseInt(b.dataset.idx,10);
-            b.classList.toggle('p1',i===pickA);
-            b.classList.toggle('p2',i===pickB);
-          });
-        });
-      }
-      document.getElementById('wzc-back1').addEventListener('click',function(){
-        document.getElementById('wzc-s2').hidden=true;document.getElementById('wzc-s1').hidden=false;
-      });
-      function wait(tries){
-        var a=document.getElementById('c-a');
-        if(a && a.options.length>3){build();}
-        else if(tries<40){setTimeout(function(){wait(tries+1)},100);}
-      }
-      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){wait(0)})}else{wait(0)}
-    })();
-    </script>
-  </div></section>
+<ZhLayout title="Сравнения моделей по зарядке: разъёмы, батареи, адаптеры — Запас хода" description="Попарные сравнения популярных электромобилей и гибридов в России: разъёмы зарядки, бортовое зарядное, батареи и что докупить для домашней и дорожной зарядки.">
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<h1 style="font-size:30px;line-height:1.2;margin:0 0 12px">Сравнения моделей: зарядка, разъёмы, батареи</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:760px">Разъём зависит от рынка вывоза, а не от марки — поэтому сравниваем по фактам: какой порт у каждой машины, сколько принимает бортовое зарядное и что докупить для станций в России.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:28px">
+{cards.map((c) => (
+  <a href={c.href} style="display:block;padding:20px;border:1px solid var(--line);border-radius:18px;text-decoration:none;color:var(--txt);background:var(--bg2)">
+    <div style="font-size:16px;font-weight:700">{c.a} <span style="color:var(--gold)">vs</span> {c.b}</div>
+    <div style="margin-top:8px;font-size:13.5px;color:var(--txt-muted)">Порты: {c.pA} / {c.pB} · {c.tA} против {c.tB} · что докупить</div>
+  </a>
+))}
+</div>
+<LeadCTA />
+</div></section>
 </ZhLayout>
