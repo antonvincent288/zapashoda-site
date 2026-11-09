@@ -496,6 +496,109 @@ def process_pending_uploads(pub):
         save_pub(pub)
         print('  [uploads] offset =', pub['tg_offset'])
 
+# ---------- Commons: реальные CC-видео напрямую (без авторизаций) ----------
+COMMONS_UA = {'User-Agent': 'zapashoda-bot/1.0 (https://zapashoda-ev.ru)'}
+COMMONS_QUERIES = ['electric car charging filetype:video', 'electric vehicle charging station filetype:video',
+                   'tesla supercharger filetype:video', 'electric car battery filetype:video',
+                   'ev charging station filetype:video', 'electric car winter filetype:video']
+
+def commons_api(params):
+    url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
+    return json.load(urllib.request.urlopen(urllib.request.Request(url, headers=COMMONS_UA), timeout=30))
+
+def commons_send_video(path, caption):
+    boundary = uuid.uuid4().hex
+    parts = [('--%s\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n%s\r\n' % (boundary, CHANNEL_ID)).encode(),
+             ('--%s\r\nContent-Disposition: form-data; name="caption"\r\n\r\n%s\r\n' % (boundary, caption)).encode(),
+             ('--%s\r\nContent-Disposition: form-data; name="supports_streaming"\r\n\r\ntrue\r\n' % boundary).encode(),
+             ('--%s\r\nContent-Disposition: form-data; name="video"; filename="%s"\r\nContent-Type: video/mp4\r\n\r\n' % (boundary, os.path.basename(path))).encode(),
+             open(path, 'rb').read(),
+             ('\r\n--%s--\r\n' % boundary).encode()]
+    req_ = urllib.request.Request('https://api.telegram.org/bot%s/sendVideo' % TELEGRAM_TOKEN,
+        data=b''.join(parts), headers={'Content-Type': 'multipart/form-data; boundary=%s' % boundary})
+    try:
+        return json.load(urllib.request.urlopen(req_, timeout=180))
+    except urllib.error.HTTPError as e:
+        print('  [commons] sendVideo HTTP', e.code, e.read().decode('utf-8', 'replace')[:200])
+        return {'ok': False}
+
+def commons_short(pub):
+    """Один реальный CC-ролик с Wikimedia Commons за день: поиск -> скачивание -> mp4 -> пост."""
+    today = time.strftime('%Y-%m-%d', time.gmtime())
+    if pub.get('last_commons_date') == today:
+        print('  [commons] сегодня уже публиковали — пауза')
+        return False
+    used = set(pub.get('commons_used', []))
+    chosen = None
+    for q in COMMONS_QUERIES:
+        try:
+            d = commons_api({'action': 'query', 'list': 'search', 'srsearch': q, 'srnamespace': '6',
+                             'srlimit': '10', 'format': 'json'})
+        except Exception as e:
+            print('  [commons] search fail', type(e).__name__, str(e)[:80]); continue
+        for h in (d.get('query') or {}).get('search', []):
+            t = h['title']
+            if t in used or not t.lower().endswith(('.webm', '.mp4', '.ogv', '.mov')):
+                continue
+            try:
+                ii = list(commons_api({'action': 'query', 'titles': t, 'prop': 'imageinfo',
+                                       'iiprop': 'url|size|duration|extmetadata', 'format': 'json'})['query']['pages'].values())[0]['imageinfo'][0]
+            except Exception:
+                continue
+            size = ii.get('size') or 0
+            if size > MAX_BYTES or size < 300000:
+                continue
+            dur = float(ii.get('duration') or 0)
+            if dur and dur > 185:
+                continue
+            lic = (((ii.get('extmetadata') or {}).get('LicenseShortName') or {}).get('value') or 'CC')
+            chosen = {'title': t, 'url': ii['url'],
+                      'page': 'https://commons.wikimedia.org/wiki/' + urllib.parse.quote(t),
+                      'dur': dur, 'lic': lic}
+            break
+        if chosen:
+            break
+    if not chosen:
+        print('  [commons] кандидатов нет')
+        return False
+    print('  [commons] выбрал:', chosen['title'], chosen['dur'], 's')
+    ext = os.path.splitext(chosen['url'])[1][:5] or '.bin'
+    raw = '/tmp/commons_raw' + ext
+    try:
+        req_ = urllib.request.Request(chosen['url'], headers=COMMONS_UA)
+        with urllib.request.urlopen(req_, timeout=300) as r_, open(raw, 'wb') as f_:
+            f_.write(r_.read())
+    except Exception as e:
+        print('  [commons] download fail', type(e).__name__, str(e)[:100])
+        return False
+    out = '/tmp/commons_post.mp4'
+    cmd = ['ffmpeg', '-y', '-i', raw] + (['-t', '59'] if chosen['dur'] > 60 else []) + [
+        '-vf', "scale='min(1080,iw)':-2", '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
+        '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', out]
+    r_ = subprocess.run(cmd, capture_output=True, timeout=900)
+    if r_.returncode != 0:
+        print('  [commons] ffmpeg fail:', r_.stderr.decode()[-200:])
+        return False
+    okv, dur2 = validate_video(out)
+    if not okv:
+        print('  [commons] файл битый:', dur2)
+        return False
+    clean = chosen['title'].replace('File:', '')
+    for ext_ in ('.webm', '.mp4', '.ogv', '.mov'):
+        clean = clean.replace(ext_, '')
+    cap = ('🎬 %s\n\n📁 Источник: Wikimedia Commons · %s\n%s\n\n#видео #запасхода'
+           % (clean[:70], chosen['lic'], chosen['page']))
+    sent = commons_send_video(out, cap)
+    msg_id = (sent.get('result') or {}).get('message_id')
+    print('  [commons] sent:', sent.get('ok'), 'msg_id:', msg_id)
+    if sent.get('ok'):
+        pub.setdefault('commons_used', []).append(chosen['title'])
+        pub['commons_used'] = pub['commons_used'][-40:]
+        pub['last_commons_date'] = today
+        save_pub(pub)
+        return True
+    return False
+
 def validate_video(path, min_dur=2.0):
     """Валидация скачанного файла перед отправкой: видео-дорожка есть, длительность >= min_dur.
     Лечит случай SABR-потоков YouTube: инстанс отдаёт fMP4-фрагменты без moov — Telegram
@@ -675,6 +778,8 @@ def main():
             save_pub(pub)
     process_pending_uploads(pub)
     INV_INSTANCES[:] = dynamic_instances()
+    if commons_short(pub):
+        return
     candidates, seen = [], set()
     stats = {'inv': 0, 'api': 0, 'yt': 0, 'too_long': 0, 'dup': 0}
     for topic in TOPICS:
