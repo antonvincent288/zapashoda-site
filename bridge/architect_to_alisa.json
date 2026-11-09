@@ -1486,6 +1486,16 @@
       "priority": "high",
       "expect": "answer",
       "answer_to": null
+    },
+    {
+      "id": "V-0086",
+      "ts": "2026-11-09T05:31:47+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: stanciya-otdaet-menshe-moshchnosti-150-kt-ot-60-80.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
