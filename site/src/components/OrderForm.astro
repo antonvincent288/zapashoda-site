@@ -13,7 +13,7 @@ const { model } = Astro.props;
     </div>
     <input name="city" list="zs-cities" placeholder="Город (доставка через салон-дилера)" aria-label="Город" class="of-inp" style="margin-top:12px" />
     <textarea name="comment" rows="2" placeholder="Комментарий: модель машины, пожелания по доставке" aria-label="Комментарий" class="of-inp" style="margin-top:12px"></textarea>
-    <button class="btn btn-gold of-send" type="submit" style="width:100%;margin-top:14px">Отправить заявку</button>
+    <label style="display:block;font-size:12.5px;color:var(--txt-muted);margin-top:10px"><input type="checkbox" required name="consent" style="margin-right:7px;vertical-align:middle">Я согласен на обработку персональных данных — <a href="/privacy/" target="_blank" style="color:#1d4ed8;text-decoration:underline">Политика конфиденциальности</a></label><button class="btn btn-gold of-send" type="submit" style="width:100%;margin-top:14px">Отправить заявку</button>
   </form>
   <div id="of-status" style="margin-top:10px"></div>
 </section>
