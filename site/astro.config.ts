@@ -71,7 +71,19 @@ export default defineConfig({
   ],
 
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) => {
+        let p: string = page;
+        try {
+          p = new URL(page).pathname;
+        } catch {
+          /* keep raw */
+        }
+        if (p.startsWith('/app') || p.startsWith('/admin') || p.startsWith('/decapcms')) return false;
+        if (p.endsWith('.html') && !p.endsWith('.html/')) return false;
+        return true;
+      },
+    }),
     mdx(),
     icon({
       // Local SVG icons (used as <Icon name="file-name" />) live next to the other assets.

@@ -27,6 +27,8 @@ for (const s3 of (sku.items || [])) if (s3.slug) urls.push({ loc: `${SITE}/catal
 for (const f of Object.keys(publicPages)) {
   const u = f.replace('../../public', '');
   if (u === '/index.html') continue;
+  if (u.startsWith('/app') || u.startsWith('/admin') || u.startsWith('/decapcms')) continue;
+  if (u.endsWith('.html') && !u.endsWith('.html/')) continue;
   const clean = u.endsWith('/index.html') ? u.replace(/index\.html$/, '') : u;
   urls.push({ loc: SITE + clean, pri: '0.5' });
 }
