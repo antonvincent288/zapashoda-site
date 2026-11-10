@@ -6,7 +6,7 @@ var TG = CFG.token || '';
 var CHAT = CFG.chat || '';
 var GAS = CFG.gas || '';
 var lastSend = 0;
-var ACC = '#2563EB', ACC_H = '#1D4ED8', LINE = '#E2E8F0', MUTED = '#64748B';
+var ACC = '#5AA9FF', ACC_H = '#7FB8FF', LINE = 'rgba(255,255,255,.16)', MUTED = '#9AA3B2';
 
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function digits(s){return (s||'').replace(/\D/g,'');}
@@ -16,19 +16,19 @@ var ov = document.createElement('div');
 ov.id = 'zs-lead-ov';
 ov.style.cssText = 'position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)';
 var panel = document.createElement('div');
-panel.style.cssText = 'background:#fff;width:100%;max-width:560px;max-height:100dvh;overflow-y:auto;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:zsIn .28s cubic-bezier(.4,0,.2,1)';
+panel.style.cssText = 'background:#15161C;color:#E9EDF4;width:100%;max-width:560px;max-height:100dvh;overflow-y:auto;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:zsIn .28s cubic-bezier(.4,0,.2,1)';
 ov.appendChild(panel);
 if(!document.getElementById('zs-lead-style')){
   var st = document.createElement('style'); st.id = 'zs-lead-style';
   st.textContent = '@keyframes zsIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}'
     + '@keyframes zsFade{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}'
     + '.zs-fade{animation:zsFade .26s cubic-bezier(.4,0,.2,1)}'
-    + '.lf-field input{width:100%;border:1.5px solid ' + LINE + ';border-radius:12px;padding:14px;font-size:16px;background:#fff;transition:all .25s cubic-bezier(.4,0,.2,1)}'
+    + '.lf-field input{width:100%;border:1.5px solid ' + LINE + ';background:#101116;color:#F2F5F9;border-radius:12px;padding:14px;font-size:16px;background:#1B1C23;color:#E9EDF4;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.lf-field input:focus{outline:none;border-color:' + ACC + ';box-shadow:0 0 0 3px rgba(37,99,235,.14)}'
     + '.zs-btn{width:100%;background:' + ACC + ';color:#fff;border:none;border-radius:12px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.zs-btn:hover{background:' + ACC_H + '}'
     + '.zs-btn:disabled{opacity:.6;cursor:not-allowed}'
-    + '.zs-qopt{display:block;width:100%;text-align:left;border:1.5px solid ' + LINE + ';background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
+    + '.zs-qopt{display:block;width:100%;text-align:left;border:1.5px solid ' + LINE + ';background:#1B1C23;color:#E9EDF4;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.zs-qopt:hover{border-color:' + ACC + ';transform:translateY(-1px)}'
     + '.zs-qopt b{font-size:15.5px;display:block}'
     + '.zs-qopt span{font-size:13px;color:' + MUTED + '}';
@@ -112,7 +112,7 @@ function openLead(product, price, productUrl, model, mode){
     + '<div><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Заявка</div>'
     + '<h3 style="margin:6px 0 2px;font-size:19px;line-height:1.3">' + esc(title) + '</h3>'
     + (price ? '<div style="font-size:15px;color:' + MUTED + ';font-weight:600">' + esc(price) + '</div>' : '') + '</div>'
-    + '<button type="button" data-zs-close style="border:none;background:#F1F5F9;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;flex:0 0 auto">✕</button></div>'
+    + '<button type="button" data-zs-close style="border:none;background:#23242E;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;flex:0 0 auto">✕</button></div>'
     + '<form id="zs-lead-form" novalidate style="margin-top:14px">'
     + '<input type="text" name="zs_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;height:0;opacity:0">'
     + '<div class="lf-field" style="margin-bottom:12px"><input name="name" placeholder="Ваше имя *" required autocomplete="name"><div class="lf-err" style="color:#e5484d;font-size:12.5px;margin-top:3px"></div></div>'
@@ -190,12 +190,12 @@ function renderQuiz(container){
     var st = QUIZ_STEPS[s];
     var pct = Math.round(((s+1)/(QUIZ_STEPS.length+1))*100);
     html += '<div style="display:flex;justify-content:space-between;align-items:center"><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Шаг ' + (s+1) + ' из ' + QUIZ_STEPS.length + '</div><div style="font-size:12px;color:' + MUTED + ';font-weight:600">' + pct + '%</div></div>';
-    html += '<div style="height:6px;background:#EFF6FF;border-radius:3px;margin:10px 0 16px"><div style="height:100%;background:' + ACC + ';border-radius:3px;width:' + pct + '%;transition:width .3s cubic-bezier(.4,0,.2,1)"></div></div>';
+    html += '<div style="height:6px;background:#23242E;border-radius:3px;margin:10px 0 16px"><div style="height:100%;background:' + ACC + ';border-radius:3px;width:' + pct + '%;transition:width .3s cubic-bezier(.4,0,.2,1)"></div></div>';
     html += '<h3 style="font-size:20px;margin:0 0 14px">' + esc(st.title) + '</h3>';
     if(st.opts){
       st.opts.forEach(function(o){
         var sel = quizState.answers[st.key] === o[0];
-        html += '<button type="button" class="zs-qopt" data-v="' + esc(o[0]) + '" style="border-color:' + (sel ? ACC : LINE) + ';background:' + (sel ? '#EFF6FF' : '#fff') + '">'
+        html += '<button type="button" class="zs-qopt" data-v="' + esc(o[0]) + '" style="border-color:' + (sel ? ACC : LINE) + ';background:' + (sel ? 'rgba(90,169,255,.18)' : '#1B1C23') + '">'
           + '<b>' + esc(o[0]) + '</b>' + (o[1] ? '<span>' + esc(o[1]) + '</span>' : '') + '</button>';
       });
     }
@@ -203,19 +203,19 @@ function renderQuiz(container){
       html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">';
       st.brands.forEach(function(b){
         var sel = quizState.answers[st.key] === b;
-        html += '<button type="button" class="zs-qopt" data-v="' + esc(b) + '" style="border-color:' + (sel ? ACC : LINE) + ';background:' + (sel ? '#EFF6FF' : '#fff') + ';padding:12px 6px;font-weight:700;font-size:14px;text-align:center;display:block">' + esc(b) + '</button>';
+        html += '<button type="button" class="zs-qopt" data-v="' + esc(b) + '" style="border-color:' + (sel ? ACC : LINE) + ';background:' + (sel ? 'rgba(90,169,255,.18)' : '#1B1C23') + ';padding:12px 6px;font-weight:700;font-size:14px;text-align:center;display:block">' + esc(b) + '</button>';
       });
       html += '</div>';
-      html += '<input type="text" class="zs-qfree lf-input" placeholder="' + esc(st.free) + '" value="' + esc(quizState.answers.freeModel || '') + '" style="width:100%;border:1.5px solid ' + LINE + ';border-radius:12px;padding:14px;font-size:16px">';
+      html += '<input type="text" class="zs-qfree lf-input" placeholder="' + esc(st.free) + '" value="' + esc(quizState.answers.freeModel || '') + '" style="width:100%;border:1.5px solid ' + LINE + ';background:#101116;color:#F2F5F9;border-radius:12px;padding:14px;font-size:16px">';
     }
     html += '<div style="display:flex;gap:10px;margin-top:16px">'
-      + (s > 0 ? '<button type="button" class="zs-qback" style="border:1.5px solid ' + LINE + ';background:#fff;border-radius:12px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer">Назад</button>' : '')
+      + (s > 0 ? '<button type="button" class="zs-qback" style="border:1.5px solid ' + LINE + ';background:#1B1C23;color:#E9EDF4;border-radius:12px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer">Назад</button>' : '')
       + (s > 0 ? '' : '')
       + '<button type="button" class="zs-qnext" style="flex:1;background:' + ACC + ';color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)">Далее →</button>'
       + '</div>';
   } else {
     html += '<div style="display:flex;justify-content:space-between;align-items:center"><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Финал</div><div style="font-size:12px;font-weight:700;color:' + ACC + '">100% Заполнено</div></div>'
-      + '<div style="height:6px;background:#EFF6FF;border-radius:3px;margin:10px 0 16px"><div style="height:100%;background:' + ACC + ';border-radius:3px;width:100%"></div></div>'
+      + '<div style="height:6px;background:#23242E;border-radius:3px;margin:10px 0 16px"><div style="height:100%;background:' + ACC + ';border-radius:3px;width:100%"></div></div>'
       + '<h3 style="font-size:20px;margin:0 0 8px">Спасибо! Мы подобрали идеальное решение</h3>'
       + '<p style="font-size:13.5px;color:' + MUTED + ';margin:0 0 10px;white-space:pre-line">' + esc(quizAnswersText().replace(/^   /gm, ' ')) + '</p>'
       + '<p style="font-size:14.5px;margin:0 0 14px">Куда прислать расчёт стоимости и контакты ближайшего сертифицированного дилера для установки?</p>'
@@ -281,7 +281,7 @@ function openQuiz(mode){
     if(!box){
       box = document.createElement('div');
       box.id = 'zs-quiz-inline';
-      box.style.cssText = 'max-width:640px;margin:0 auto;padding:24px;background:#fff;border:1px solid ' + LINE + ';border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06)';
+      box.style.cssText = 'max-width:640px;margin:0 auto;padding:24px;background:#1B1C23;color:#E9EDF4;border:1px solid ' + LINE + ';border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06)';
       var mainEl = document.querySelector('main');
       if(mainEl && mainEl.parentNode) mainEl.parentNode.insertBefore(box, mainEl); else document.body.appendChild(box);
     }
@@ -291,7 +291,7 @@ function openQuiz(mode){
     box.scrollIntoView({behavior:'smooth', block:'start'});
     return;
   }
-  openPanel('<div style="display:flex;justify-content:flex-end;margin:-8px -8px 0 0"><button type="button" data-zs-close style="border:none;background:#F1F5F9;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer">✕</button></div><div id="zs-quiz-body"></div>');
+  openPanel('<div style="display:flex;justify-content:flex-end;margin:-8px -8px 0 0"><button type="button" data-zs-close style="border:none;background:#23242E;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer">✕</button></div><div id="zs-quiz-body"></div>');
   panel.querySelector('[data-zs-close]').addEventListener('click', closeAll);
   renderQuiz(panel.querySelector('#zs-quiz-body'));
 }
