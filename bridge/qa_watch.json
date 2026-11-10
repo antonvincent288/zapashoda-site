@@ -1,6 +1,6 @@
 {
- "sitemap_count": 337,
- "sitemap_ok": 337,
+ "sitemap_count": 346,
+ "sitemap_ok": 346,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -15,7 +15,7 @@
   "/quiz/": 200,
   "/vin/": 200,
   "/compare/": 200,
-  "/matrix/": 404,
+  "/matrix/": 200,
   "/news/": 200,
   "/forum/": 200,
   "/charging/": 200,
@@ -32,13 +32,8 @@
  "app_scripts": 6,
  "catalog_products": 0,
  "link_targets": 221,
- "links_ok": 220,
- "links_bad": [
-  [
-   "https://zapashoda-ev.ru/matrix",
-   404
-  ]
- ],
+ "links_ok": 221,
+ "links_bad": [],
  "assets_count": 34,
  "assets_ok": 33,
  "assets_bad": [
@@ -48,13 +43,8 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "10.11 02:04",
+ "checked_at_msk": "10.11 04:29",
  "failures": [
-  {
-   "where": "page /matrix/",
-   "what": "HTTP 404",
-   "crit": true
-  },
   {
    "where": "page /search.html",
    "what": "HTTP 404",
@@ -77,7 +67,7 @@
   },
   {
    "where": "/app/",
-   "what": "D не парсится: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+   "what": "нет данных D",
    "crit": true
   },
   {
@@ -86,16 +76,11 @@
    "crit": true
   },
   {
-   "where": "link /matrix",
-   "what": "HTTP 404",
-   "crit": false
-  },
-  {
    "where": "asset /assets/img/plugs/zsh-'+((a=String(a||",
    "what": "HTTP 404",
    "crit": false
   }
  ],
- "failures_count": 9,
- "crit_count": 4
+ "failures_count": 7,
+ "crit_count": 3
 }
