@@ -1,6 +1,6 @@
 {
- "sitemap_count": 371,
- "sitemap_ok": 369,
+ "sitemap_count": 381,
+ "sitemap_ok": 379,
  "sitemap_bad": [
   [
    "https://zapashoda-ev.ru/import/elektromobil-iz-kitaya-kak-privezti/",
@@ -52,7 +52,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "10.11 20:14",
+ "checked_at_msk": "10.11 22:24",
  "failures": [
   {
    "where": "sitemap: /import/elektromobil-iz-kitaya-kak-privezti/",
