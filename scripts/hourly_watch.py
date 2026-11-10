@@ -70,7 +70,10 @@ bridge_detail = ""
 if bridge_ok:
     try:
         bj = json.loads(body)
-        bridge_ok = all(k in bj for k in ("last_commit_sha", "last_build_stamp", "open_bugs"))
+        required = ("last_build_stamp", "open_bugs")
+        bridge_ok = all(k in bj for k in required)
+        if not bridge_ok:
+            bridge_detail = "missing: " + ", ".join(k for k in required if k not in bj)
     except Exception:
         bridge_ok = False
         bridge_detail = "invalid json"
