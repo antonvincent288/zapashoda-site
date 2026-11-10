@@ -16,6 +16,14 @@ export async function getStaticPaths() {
   });
 }
 const { a } = Astro.props;
+const bodyRaw = priceFix(String(a.body_html || ''));
+const SHORT_OPEN = '<div class="shortbox"><h2 id="s1">';
+let artBody = bodyRaw.includes('<h2 id="s1">') ? bodyRaw.replace('<h2 id="s1">', SHORT_OPEN) : bodyRaw;
+const nextH2 = artBody.indexOf('<h2', artBody.indexOf(SHORT_OPEN) + SHORT_OPEN.length);
+if (nextH2 > -1) artBody = artBody.slice(0, nextH2) + '</div>' + artBody.slice(nextH2);
+const artHeadings = [...artBody.matchAll(/<h2[^>]*id=["']([^"']+)["'][^>]*>([\s\S]*?)<\/h2>/g)]
+  .map((m) => ({ id: m[1], text: m[2].replace(/<[^>]+>/g, '').trim() }))
+  .filter((h) => h.id && h.text);
 const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
 let modelHit = null;
 {
@@ -37,13 +45,13 @@ const extra = priceFix(extraRaw)
   .replace(/<script[\s\S]*?<\/script>/gi, '');
 const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.desc, datePublished: a.date, dateModified: a.date, author: { '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' }, articleSection: 'Блог' };
 ---
-<ZhLayout publishedTime={a.date} modifiedTime={a.date} title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}><section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a>/ <a href="/blog/">Блог</a>/ {a.title}</div><div class="artgrid"><aside class="toc"><div>Содержание</div>{(a.headings || []).map((h) =>(
+<ZhLayout publishedTime={a.date} modifiedTime={a.date} title={`${a.title} - Запас хода`} description={a.desc} og={a.og} jsonld={jsonld}><section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a>/ <a href="/blog/">Блог</a>/ {a.title}</div><div class="artgrid">{artHeadings.length > 0 && <aside class="toc"><div>Содержание</div>{artHeadings.map((h) =>(
             <a href={'#' + h.id}>{h.text}</a>))}
-        </aside><article class="article"><div class="badge">{a.category || "Блог"}</div><h1 style="font-size:clamp(30px,3.8vw,48px)">{a.title}</h1>{a.desc && <p class="lede">{a.desc}</p>}
+        </aside>}<article class="article"><div class="readbar" aria-hidden="true"></div><div class="badge">{a.category || "Блог"}</div><h1 style="font-size:clamp(30px,3.8vw,48px)">{a.title}</h1>{a.desc && <p class="lede">{a.desc}</p>}
           <div class="meta">{a.read_min && <span>{a.read_min} мин чтения</span>}
             {a.category && <span>{a.category}</span>}
             {a.date && <span style="color:#22c55e">Актуально: {a.date.split("-").reverse().join(".")}</span>}
-          </div><div set:html={priceFix(a.body_html)} />{extra && <div set:html={extra} />}
+          </div><div set:html={artBody} />{extra && <div set:html={extra} />}
                     {a.faq && (
             <div class="faqbox"><h2>Частые вопросы</h2>{a.faq.map((f) =>(
                 <details><summary>{f.q}</summary><p>{f.a}</p></details>))}
@@ -57,4 +65,45 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
   });
 </script></article></div></div></section><ModelBuyBlock model={modelHit} />
 <LeadCTA />
+
+<style is:global>
+/* ==== JOURNAL v1: типографика статей (AstroWind dark) ==== */
+.article ul,.article ol{list-style:disc;padding-left:26px;margin:18px 0 18px 6px}
+.article ol{list-style:decimal}
+.article li{margin:9px 0;line-height:1.72;font-size:17px}
+.article li::marker{color:var(--gold)}
+.article p{margin:18px 0;line-height:1.8;font-size:17.5px;max-width:70ch}
+.article strong{color:var(--head);font-weight:700}
+.article h2{margin:52px 0 16px;font-size:clamp(25px,3.2vw,33px);line-height:1.22;letter-spacing:-.02em;font-weight:800}
+.article h2:first-child{margin-top:8px}
+.article h3{margin:34px 0 12px;font-size:clamp(19px,2.3vw,23px);font-weight:700;letter-spacing:-.01em}
+.article a{color:var(--gold);text-decoration:underline;text-underline-offset:3px;text-decoration-color:#5aa9e966}
+.article a:hover{text-decoration-color:var(--gold)}
+.article blockquote{border-left:3px solid var(--gold);padding:4px 0 4px 18px;margin:22px 0;color:var(--txt-muted);font-size:16.5px}
+.article table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}
+.article th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-muted);border-bottom:2px solid var(--line);padding:10px 12px}
+.article td{border-bottom:1px solid var(--line);padding:11px 12px;vertical-align:top}
+.article code{background:#ffffff14;border:1px solid var(--line);border-radius:8px;padding:2px 7px;font-size:15px}
+.article img{max-width:100%;border-radius:14px;margin:18px 0}
+.article hr{border:0;border-top:1px solid var(--line);margin:36px auto;max-width:70ch}
+/* Врезка «Коротко» */
+.shortbox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:16px;padding:20px 24px 8px;margin:18px 0 30px;max-width:70ch}
+.shortbox h2{margin:0 0 12px;font-size:clamp(21px,2.6vw,26px);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);font-weight:800}
+.shortbox p{margin:12px 0;font-size:17px}
+/* FAQ */
+.faqbox{margin-top:44px}
+.faqbox h2{margin:0 0 18px}
+.faqbox details{border:1px solid var(--line);background:var(--card);border-radius:14px;margin-bottom:12px;transition:border-color .15s}
+.faqbox details:hover{border-color:#5aa9e955}
+.faqbox summary{padding:17px 22px;font-size:16.5px;font-weight:650;line-height:1.45}
+.faqbox details p{padding:0 22px 16px;font-size:15.5px;line-height:1.7;margin:12px 0 0}
+/* TOC */
+.toc{position:sticky;top:96px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;min-width:230px}
+.toc a{font-size:13.5px;line-height:1.4;padding:7px 0 7px 12px;border-radius:8px}
+.toc a:hover{background:#ffffff0d}
+/* Прогресс чтения */
+.readbar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#0161ef,#5aa9ff);z-index:1001;transition:width .08s linear}
+@media(max-width:980px){.article p{font-size:16.5px}.article li{font-size:16.5px}.shortbox{padding:16px 18px 4px}}
+</style>
+
 </ZhLayout>
