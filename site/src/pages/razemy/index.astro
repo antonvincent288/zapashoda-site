@@ -13,8 +13,9 @@ const tiles = [
   { c: conf[3], n: cnt('JP/CHAdeMO'), sub: 'DC · обычно до 50 кВт' },
   { c: conf[4], n: cnt('Type1/CCS1'), sub: 'AC · до 7,4 кВт' },
   { c: conf[5], n: null, sub: '2,3–3,7 кВт' },
+  { c: conf[6], n: null, sub: 'AC+DC · только с адаптером' },
 ];
-const NAMES: Record<string, string> = { type2: 'Type 2 (Mennekes)', ccs2: 'CCS2 (Combo 2)', gbt: 'GB/T (китайский)', chademo: 'CHAdeMO', type1: 'Type 1 (J1772)', schuko: 'Розетка 220 В (Schuko)' };
+const NAMES: Record<string, string> = { type2: 'Type 2 (Mennekes)', ccs2: 'CCS2 (Combo 2)', gbt: 'GB/T (китайский)', chademo: 'CHAdeMO', type1: 'Type 1 (J1772)', schuko: 'Розетка 220 В (Schuko)', nacs: 'NACS (Tesla)' };
 const plural = (n: number) => (n === 1 ? '1 модель в каталоге' : n >= 2 && n <= 4 ? n + ' модели в каталоге' : n + ' моделей в каталоге');
 const faq = [
   ['Какой разъём у моей машины?', 'Самый надёжный способ — открыть лючок зарядки: 7 круглых контактов и подпись GB/T — китайский стандарт, Type 2 — 7 контактов с плоским гнездом, CCS2 — Type 2 плюс два крупных контакта снизу. Быстрый способ — выбрать модель в матрице совместимости или каталоге.'],
