@@ -228,6 +228,7 @@ h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|sp
   h = h.replace(/color:var\(--muted\)/g, 'color:var(--txt-muted)');
   h = h.replace(/alt="Иконка разъёма"/g, 'alt="Схема разъёма зарядки"');
   if (!isGBT) h = h.replace('Проверьте фото лючка перед покупкой адаптера.', 'Проверьте фото лючка перед покупкой аксессуаров.');
+  h = h.replace(/<div class="rounded-lg[^"]*"><h3[^>]*>Что понадобится для зарядки<\/h3><p[\s\S]*?<\/p><\/div>/g, '');
 // (b) «Что понадобится для зарядки этой модели» — дублирует сценарные карточки и каталог: снять целиком
   {
     const wp = /<h2[^>]*>[^<]*Что понадобится для зарядки этой модели[^<]*<\/h2>/.exec(h);
@@ -453,6 +454,18 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .mmain a:hover{color:var(--gold)}
     .mmain .article p{line-height:1.68}
     .card-product:has(.bg-gray-800){border-color:var(--gold)!important;box-shadow:0 0 0 1px var(--gold) inset}
+    .article .rounded-lg{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold)!important;border-radius:14px;padding:20px 22px;margin:30px 0}
+    .article .rounded-lg h3{margin:0 0 10px;font-size:17.5px;font-weight:700;color:var(--head)}
+    .article .rounded-lg p{margin:0;color:var(--txt);max-width:78ch!important;line-height:1.7;font-size:15.5px}
+    .article .rounded-lg p.text-sm,.article .rounded-lg p[class*="text-gray-6"]{color:var(--txt-muted)}
+    .article .docs-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:30px 0}
+    .article .lcard{background:transparent;border:none;padding:0;margin:0}
+    .article a,.article a:hover{text-decoration:none}
+    .article h2{margin:40px 0 20px}
+    .article .note{margin:18px 0}
+    .article .scen{margin:20px 0}
+    .calc-cta{margin:26px 0}
+    .prob-grid{margin:20px 0}
     .card-product .bg-gray-800{background:var(--gold);color:#0B1018}
     .calc-cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-left:3px solid var(--gold);background:var(--card);border-radius:12px;padding:14px 18px;margin:18px 0}
     .calc-cta b{color:var(--head)}
