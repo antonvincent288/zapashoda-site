@@ -1,0 +1,12 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import src from '../../data/legacy/app.json';
+const d = src.find((x) => x.slug === 'app-manager');
+---
+<ZhLayout title={d.title} description={d.desc} noindex>
+  <script is:inline src="https://telegram.org/js/telegram-web-app.js"></script>
+  <section class="sec"><div class="wrap">
+    <div class="article" set:html={d.body_html} />
+    {d.body_script && <script is:inline set:html={d.body_script} />}
+  </div></section>
+</ZhLayout>
