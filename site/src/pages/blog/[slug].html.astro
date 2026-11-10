@@ -1,11 +1,14 @@
 ---
 export async function getStaticPaths() {
-  const mods = import.meta.glob('/src/data/articles/blog/*.json');
-  const slugs = Object.keys(mods).map((p) => p.split('/').pop().replace(/\.json$/, ''));
-  return slugs.map((slug) => ({ params: { slug } }));
+  const mods = import.meta.glob('/src/data/articles/blog/*.json', { eager: true, import: 'default' });
+  const entries = Object.entries(mods).map(([p, a]) => {
+    const file = p.split('/').pop().replace(/\.json$/, '');
+    return { file, real: String((a as any).slug || file) };
+  });
+  return entries.map((e) => ({ params: { slug: e.file }, props: { real: e.real } }));
 }
-const { slug } = Astro.params;
-const target = 'https://zapashoda-ev.ru/blog/' + slug + '/';
+const { real } = Astro.props;
+const target = 'https://zapashoda-ev.ru/blog/' + real + '/';
 ---
 <!doctype html>
 <html lang="ru-RU"><head>
@@ -19,4 +22,5 @@ const target = 'https://zapashoda-ev.ru/blog/' + slug + '/';
 <body>
 <script is:inline set:html={"location.replace(" + JSON.stringify(target) + ");"}></script>
 <p>Страница переехала: <a href={target}>{target}</a></p>
-</body></html>
+</body>
+</html>

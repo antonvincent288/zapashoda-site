@@ -23,6 +23,11 @@ const RULES: Array<[RegExp, string, string, string]> = [
   [/\b7\s?000\s*\u20bd/g, 'adapter-type2-gbt-premium', '', ' ' + RUB],
   [/\b44\s?000\s*\u20bd/g, 'stanciya-2v1-type2-gbt', '', ' ' + RUB],
   [/\b16\s?000\s*\u20bd/g, 'portativnaya-zaryadka-gbt-7kw', '', ' ' + RUB],
+  [/\b6\s?500\s*\u20bd/g, 'adapter-gbt-type2-reverse', '', ' ' + RUB],
+  [/\b8\s?500\s*\u20bd/g, 'adapter-type1-type2', '', ' ' + RUB],
+  [/\b13\s?000\s*\u20bd/g, 'kabel-type2-gbt-5m-22kw', '', ' ' + RUB],
+  [/\b34\s?500\s*\u20bd/g, 'nastennaya-stanciya-type2-22kw', '', ' ' + RUB],
+  [/\b15\s?500\s*\u20bd/g, 'kabel-type2-type2-7m-32a', '', ' ' + RUB],
 ];
 
 export function priceFix(s: string): string {
