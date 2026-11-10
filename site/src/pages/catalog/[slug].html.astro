@@ -50,7 +50,8 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
           <h2 style="margin-top:44px">Подходит для</h2>
           <p style="color:var(--txt-muted);font-size:15px;margin-top:10px">Проверьте совместимость по разъёмам — на странице каждой модели:</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-            {fit.map((f) => <a class="chip" style="text-decoration:none" href={f.href.replace('.html', '/')}>{f.title}</a>)}
+            {fit.slice(0, 24).map((f) => <a class="chip" style="text-decoration:none" href={f.href.replace('.html', '/')}>{f.title}</a>)}
+            {fit.length > 24 && <a class="chip" style="text-decoration:none" href="/catalog/">+ ещё {fit.length - 24} моделей — подбор в каталоге</a>}
           </div>
         </>
       )}
