@@ -6,10 +6,10 @@ const articles = Object.values(import.meta.glob('../data/articles/**/*.json', { 
 const publicPages = import.meta.glob('../../public/**/*.html', { eager: false }) as Record<string, unknown>;
 
 const SITE = 'https://zapashoda-ev.ru';
-const LASTMOD = '2026-11-09';
+const LASTMOD = '2026-11-10';
 type U = { loc: string; pri: string };
 const urls: U[] = [{ loc: SITE + '/', pri: '1.0' }];
-for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','sovmestimost','razemy']) {
+for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','sovmestimost','razemy','calculators','tarify']) {
   urls.push({ loc: `${SITE}/${p}/`, pri: '0.7' });
 }
 for (const m of models) if (m && m.slug) urls.push({ loc: `${SITE}/models/${m.slug}/`, pri: '0.8' });
@@ -18,7 +18,7 @@ for (const s2 of ['taksi','avtopark','azs','jk','salony','predlozh-mesto']) urls
 for (const s5 of ['ustanovka-stancii','ustanovka-stancii-v-garazhe','uvelichenie-moshchnosti','stanciya-gbt','stanciya-type2','stanciya-2v1','tehobsluzhivanie','tehobsluzhivanie-stanciy','moschnost-stancii','oshibki-ustanovki']) urls.push({ loc: `${SITE}/services/${s5}.html`, pri: '0.6' });
 const cmpPairs = (await import('../data/compare_pairs.json')).default as any;
 for (const cp of (cmpPairs.pairs || [])) urls.push({ loc: `${SITE}/compare/${cp.slug}/`, pri: '0.6' });
-for (const a of articles) if (a && a.slug && a.section) urls.push({ loc: `${SITE}/${a.section}/${a.slug}/`, pri: '0.7' });
+for (const a of articles) if (a && a.slug && ['blog','pain','safety'].includes(String(a.section))) urls.push({ loc: `${SITE}/${a.section}/${a.slug}/`, pri: '0.7' });
 const costPages = import.meta.glob('../pages/cost/*.astro') as Record<string, unknown>;
 const costSlugs = Object.keys(costPages).map((p) => p.split('/').pop()!.replace('.astro', ''));
 for (const c of costSlugs) urls.push(c === 'index' ? { loc: `${SITE}/cost/`, pri: '0.7' } : { loc: `${SITE}/cost/${c}/`, pri: '0.6' });

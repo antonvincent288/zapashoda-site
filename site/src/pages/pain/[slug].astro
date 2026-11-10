@@ -59,11 +59,11 @@ const canonHref = CANON[String(a.slug || '')];
             <div class="faqbox">
               <h2>Частые вопросы</h2>
               {a.faq.map((f) => (
-                <details><summary>{f.q}</summary><p>{f.a}</p></details>
+                <details><summary>{f.q}</summary><p set:html={f.a} /></details>
               ))}
             </div>
           )}
-          {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) })} />}
+          {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: String(f.a).replace(/<[^>]*>/g,'') } })) })} />}
 <div class="b2b-note">
             <b>Вы дилер или СТО?</b>
             <p>Каждый такой кейс у вашего клиента — репутационный риск и лишняя работа сервиса. Укомплектуйте выдачу EV адаптерами и комплектами «Запас хода» — и закройте вопрос зарядки ещё на этапе передачи машины клиенту.</p>

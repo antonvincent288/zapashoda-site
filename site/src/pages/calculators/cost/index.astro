@@ -106,9 +106,9 @@ const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '
     </details>
 
     <div class="article" set:html={segHow + segFaq} />
-    {segFaqBox}
+    <Fragment set:html={segFaqBox} />
 
-    <script is:inline set:html={segLd} />
+    <Fragment set:html={segLd} />
 
     <script is:inline>
     (function(){

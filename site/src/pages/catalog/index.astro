@@ -45,7 +45,7 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
         </button>
         {cats.map((c) => (
           <button class="kchip" type="button" data-cat={c}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" dangerouslySetInnerHTML={kIcon(c) || ''}/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={kIcon(c) || ''}/>
             {c} ({prods.filter((p) => p.cat === c).length})
           </button>
         ))}

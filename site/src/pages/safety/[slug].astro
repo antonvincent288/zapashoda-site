@@ -46,11 +46,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             <div class="faqbox">
               <h2>Частые вопросы</h2>
               {a.faq.map((f) => (
-                <details><summary>{f.q}</summary><p>{f.a}</p></details>
+                <details><summary>{f.q}</summary><p set:html={f.a} /></details>
               ))}
             </div>
           )}
-          {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) })} />}
+          {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: String(f.a).replace(/<[^>]*>/g,'') } })) })} />}
 <div class="share"><span>Telegram</span><span>WhatsApp</span><span>Скопировать ссылку</span></div>
         </article>
       </div>
