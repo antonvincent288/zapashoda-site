@@ -1,16 +1,7 @@
 {
- "sitemap_count": 381,
- "sitemap_ok": 379,
- "sitemap_bad": [
-  [
-   "https://zapashoda-ev.ru/import/elektromobil-iz-kitaya-kak-privezti/",
-   404
-  ],
-  [
-   "https://zapashoda-ev.ru/vybor/kakoy-elektromobil-vybrat-2026/",
-   404
-  ]
- ],
+ "sitemap_count": 393,
+ "sitemap_ok": 393,
+ "sitemap_bad": [],
  "key_pages": {
   "/": 200,
   "/models/": 200,
@@ -52,18 +43,8 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "10.11 22:24",
+ "checked_at_msk": "11.11 00:08",
  "failures": [
-  {
-   "where": "sitemap: /import/elektromobil-iz-kitaya-kak-privezti/",
-   "what": "HTTP 404",
-   "crit": true
-  },
-  {
-   "where": "sitemap: /vybor/kakoy-elektromobil-vybrat-2026/",
-   "what": "HTTP 404",
-   "crit": true
-  },
   {
    "where": "page /search.html",
    "what": "HTTP 404",
@@ -100,6 +81,6 @@
    "crit": false
   }
  ],
- "failures_count": 9,
- "crit_count": 5
+ "failures_count": 7,
+ "crit_count": 3
 }
