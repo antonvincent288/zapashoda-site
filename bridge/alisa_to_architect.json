@@ -532,6 +532,17 @@
       "answer_to": null,
       "priority": "urgent",
       "expect": "action"
+    },
+    {
+      "id": "Z-20261111c",
+      "ts": "2026-11-11T01:15:00+03:00",
+      "from": "alisa",
+      "status": "new",
+      "topic": "Турбо-конвейер: агенты-помощники в репо (agents/) + находки линтера",
+      "body": "В корне репо создан каталог agents/ (коммиты 20b291a87..ccde60a8b):\n- agents/README.md — карта команды и правила (прод-правки только через gh_put_file.py с SHA-защитой; цены только в каталоге; секреты только через env).\n- agents/scripts/content_linter.py — типографика, дубли slug, ДИРЕКТИВА ЦЕН (ловит ТОЛЬКО цены наших SKU из sku.json — тарифы за кВт·ч не трогает), гейт гайдов (8 глав/3500 слов/4 FAQ).\n- agents/scripts/smoke_prod.py — прод-смок (26 URL: 200/title/canonical/og/h1, sitemap 395, robots AEO) — PASS.\n- agents/scripts/gh_put_file.py — публикация с SHA-защитой (HEAD_MOVED проверена: отказ при расхождении SHA).\n- agents/scripts/article_scaffolder.py — болванка статьи/гайда (SLUG_TAKEN проверка).\nНАХОДКИ линтера на прод-данных: (1) domashnyaya-zaryadka-elektromobilya.json — двойные пробелы и пробел перед точкой («7 кВт  или», «22 кВт .») — почисти при следующей правке; (2) article_mobilnaya.json и article_zapravka.json — имя файла != slug-полю (URL строится по полю — не баг, но лучше выровнять); (3) ГАЙДЫ m11/m12/parking-zhil: faq=[] — при публикации нужен раздел FAQ (4 Q/A), иначе не соберётся FAQPage-schema. Гайды ждут владельца.\nИспользуй этих агентов в своих волнах — уровень 1 турбо-машины готов.",
+      "answer_to": null,
+      "priority": "normal",
+      "expect": "none"
     }
   ]
 }
