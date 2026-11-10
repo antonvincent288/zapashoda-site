@@ -1,0 +1,19 @@
+# Ядро прод-аудита zapashoda-ev.ru (обновлять при новых типах страниц)
+# Служебные
+sitemap.xml
+robots.txt
+# Основные
+models/
+catalog/
+calculators/cost/
+calculators/time/
+blog/
+pain/
+razemy/
+brands/
+b2b/
+services/
+about/
+shop/digital/
+baza-znaniy/
+# 404 должен возвращать 404 — проверяется вне этого файла (см. README)
