@@ -50,7 +50,7 @@ const canonHref = CANON[String(a.slug || '')];
           <div class="meta">
             <span>Проблемы</span>
             {a.category && <span>{a.category}</span>}
-            {a.date && <span>{a.date}</span>}
+            {a.date && <span style="color:#22c55e">Актуально: {a.date.split("-").reverse().join(".")}</span>}
             {a.read_min && <span>{a.read_min} мин</span>}
           </div>
           <div set:html={a.body_html} />

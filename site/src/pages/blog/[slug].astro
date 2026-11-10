@@ -42,7 +42,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         </aside><article class="article"><div class="badge">{a.category || "Блог"}</div><h1 style="font-size:clamp(30px,3.8vw,48px)">{a.title}</h1>{a.desc && <p class="lede">{a.desc}</p>}
           <div class="meta">{a.read_min && <span>{a.read_min} мин чтения</span>}
             {a.category && <span>{a.category}</span>}
-            {a.date && <span>Обновлено: {a.date}</span>}
+            {a.date && <span style="color:#22c55e">Актуально: {a.date.split("-").reverse().join(".")}</span>}
           </div><div set:html={priceFix(a.body_html)} />{extra && <div set:html={extra} />}
                     {a.faq && (
             <div class="faqbox"><h2>Частые вопросы</h2>{a.faq.map((f) =>(
