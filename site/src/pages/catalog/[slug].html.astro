@@ -19,7 +19,7 @@ const faqLd = d.faq && d.faq.length ? { '@context': 'https://schema.org', '@type
 const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.title, description: d.desc, image: d.image ? 'https://zapashoda-ev.ru' + d.image : undefined, offers: { '@type': 'Offer', price: String(d.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } };
 const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS=' + JSON.stringify(ofpAll) + ';';
 ---
-<ZhLayout title={d.title + ' — купить | Запас хода'} description={d.desc || (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».')} jsonld={[prodLd, faqLd].filter(Boolean)}>
+<ZhLayout og={d.image || undefined} title={d.title + ' — купить | Запас хода'} description={d.desc || (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».')} jsonld={[prodLd, faqLd].filter(Boolean)}>
   <section class="sec">
     <div class="wrap sk-wrap">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/catalog/">Каталог</a> / {d.title}</div>

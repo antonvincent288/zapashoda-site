@@ -27,7 +27,7 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 <link rel="manifest" href="/manifest.json" />
 <link rel="alternate" type="application/rss+xml" title="Запас хода — RSS" href="/rss.xml" />
 <link rel="stylesheet" href="/assets/fonts/inter.css" />
-<meta property="og:image" content={og || "/assets/og/default.png"} />
+<meta property="og:image" content={og ? new URL(og, Astro.site ?? "https://zapashoda-ev.ru").href : "https://zapashoda-ev.ru/assets/og/default.png"} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:site_name" content="Запас хода" />
