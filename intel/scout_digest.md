@@ -123,3 +123,6 @@
 ## 2026-11-09
 
 - [@types/sitemap-generator](https://www.npmjs.com/package/@types/sitemap-generator) — TypeScript definitions for sitemap-generator
+## 2026-11-10
+
+- [@pagefind/windows-x64](https://www.npmjs.com/package/@pagefind/windows-x64) — The platform-specific binary for pagefind on win32/x64
