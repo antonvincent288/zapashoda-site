@@ -31,6 +31,8 @@ const specLine = (p) => {
   return pairs || (p.desc ? String(p.desc).slice(0, 90) : '');
 };
 const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PRODUCTS=' + JSON.stringify(ofp) + ';';
+const fitTitle = (p) => ((p.fit || []).map((f) => String(f.title || '').trim()).filter(Boolean)).join('||');
+const fitSlugs = (p) => ((p.fit || []).map((f) => String(f.href || '').replace(/^\/models\//, '').replace(/\.html$/, '').trim()).filter(Boolean)).join('|');
 ---
 <ZhLayout title="Зарядные станции для электромобилей купить — цены от 6 500 ₽ | Запас хода" description="Купить зарядную станцию для электромобиля: настенные 7–22 кВт, портативные зарядки, адаптеры Type 2 → GB/T, кабели и удлинители. Цены РРЦ, подбор под вашу модель, оплата при получении." jsonld={ld}>
   <section class="sec">
@@ -50,9 +52,10 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
           </button>
         ))}
       </div>
+      <div id="model-bar" class="mbar" hidden><span id="model-bar-txt"></span><a href="/catalog/" class="mbar-reset">Показать всё</a></div>
       <div class="kgrid" style="margin-top:32px">
         {prods.map((p) => (
-          <div class="kcard" data-cat={p.cat}>
+          <div class="kcard" data-cat={p.cat} data-fit={fitTitle(p)} data-fitslug={fitSlugs(p)}>
             <a class="kimg" href={`/catalog/${p.slug}.html`}>
               {p.image && <img src={p.image} alt={p.title} loading="lazy" decoding="async" />}
               <span class="kcat">{p.cat}</span>
@@ -86,6 +89,8 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
     .kprice{font-size:20px;color:var(--gold);white-space:nowrap}
     .kbtn{font-size:13px;padding:9px 16px;flex-shrink:0}
     .kchips{display:flex;gap:9px;flex-wrap:wrap}
+    .mbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding:12px 16px;border:1px solid rgba(77,155,245,.45);border-radius:12px;background:rgba(77,155,245,.08);font-size:14px}
+    .mbar-reset{color:#6db3ff;text-decoration:none;font-weight:600;white-space:nowrap}
     .kchip{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--head);font-size:13.5px;cursor:pointer;transition:.15s}
     .kchip:hover{border-color:rgba(77,155,245,.45)}
     .kchip.on{background:var(--gold);border-color:var(--gold);color:#1d1d1f}
@@ -94,16 +99,58 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
     @media (max-width:600px){.kgrid{grid-template-columns:1fr}.kimg{height:210px}.ktitle{min-height:0}}
   </style>
   <script is:inline set:html={ofScript} />
-  <script define:vars={{ cats }}>
-    document.querySelectorAll('#cat-chips .kchip').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var c = btn.getAttribute('data-cat');
-        document.querySelectorAll('#cat-chips .kchip').forEach(function (b) { b.classList.remove('on'); });
+  <script is:inline>
+    var currentCat = 'all', currentModel = null;
+    function znorm(s){return String(s||'').toLowerCase().replace(/&amp;/g,'&').replace(/[^a-z0-9\u0430-\u044f\u0451]+/gi,'');}
+    function applyF(){
+      document.querySelectorAll('.kcard[data-cat]').forEach(function(card){
+        var okCat = currentCat === 'all' || card.getAttribute('data-cat') === currentCat;
+        var okModel = !currentModel || card.getAttribute('data-fithit') === '1';
+        card.style.display = (okCat && okModel) ? '' : 'none';
+      });
+    }
+    document.querySelectorAll('#cat-chips .kchip').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        currentCat = btn.getAttribute('data-cat');
+        document.querySelectorAll('#cat-chips .kchip').forEach(function(b){ b.classList.remove('on'); });
         btn.classList.add('on');
-        document.querySelectorAll('.kcard[data-cat]').forEach(function (card) {
-          card.style.display = (c === 'all' || card.getAttribute('data-cat') === c) ? '' : 'none';
-        });
+        applyF();
       });
     });
+    (function(){
+      var q = new URLSearchParams(location.search);
+      var mv = (q.get('model') || '').trim();
+      if (!mv) { applyF(); return; }
+      var target = znorm(mv);
+      var hits = 0, total = 0;
+      document.querySelectorAll('.kcard').forEach(function(card){
+        total++;
+        var slugs = (card.getAttribute('data-fitslug') || '').split('|').filter(Boolean);
+        var titles = (card.getAttribute('data-fit') || '').split('||').filter(Boolean);
+        var hit = slugs.some(function(s){ return s && target === s; }) ||
+                  titles.some(function(t){ var n = znorm(t); return n && (target.indexOf(n) >= 0 || n.indexOf(target) >= 0); });
+        card.setAttribute('data-fithit', hit ? '1' : '0');
+        if (hit) hits++;
+      });
+      var bar = document.getElementById('model-bar');
+      if (bar) {
+        bar.hidden = false;
+        var txt = document.getElementById('model-bar-txt');
+        txt.textContent = '';
+        var bold = document.createElement('b');
+        bold.textContent = mv;
+        if (hits > 0) {
+          txt.append('\u0424\u0438\u043b\u044c\u0442\u0440: \u0441\u043e\u0432\u043c\u0435\u0441\u0442\u0438\u043c\u043e \u0441 \u00ab');
+          txt.append(bold);
+          txt.append('\u00bb \u2014 \u043f\u043e\u043a\u0430\u0437\u0430\u043d\u043e ' + hits + ' \u0438\u0437 ' + total + '.');
+          currentModel = mv;
+        } else {
+          txt.append('\u0421\u043e\u0432\u043c\u0435\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u0441 \u00ab');
+          txt.append(bold);
+          txt.append('\u00bb \u043f\u043e\u043a\u0430 \u043d\u0435 \u0440\u0430\u0437\u043c\u0435\u0447\u0435\u043d\u0430 \u2014 \u043f\u043e\u043a\u0430\u0437\u0430\u043d \u0432\u0435\u0441\u044c \u043a\u0430\u0442\u0430\u043b\u043e\u0433.');
+        }
+      }
+      applyF();
+    })();
   </script>
 </ZhLayout>
