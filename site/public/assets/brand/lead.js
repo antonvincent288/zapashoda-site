@@ -25,7 +25,7 @@ if(!document.getElementById('zs-lead-style')){
     + '.zs-fade{animation:zsFade .26s cubic-bezier(.4,0,.2,1)}'
     + '.lf-field input{width:100%;border:1.5px solid ' + LINE + ';background:#101116;color:#F2F5F9;border-radius:12px;padding:14px;font-size:16px;background:#1B1C23;color:#E9EDF4;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.lf-field input:focus{outline:none;border-color:' + ACC + ';box-shadow:0 0 0 3px rgba(37,99,235,.14)}'
-    + '.zs-btn{width:100%;background:' + ACC + ';color:#fff;border:none;border-radius:12px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
+    + '.zs-btn{width:100%;background:' + ACC + ';color:#0B1018;border:none;border-radius:12px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.zs-btn:hover{background:' + ACC_H + '}'
     + '.zs-btn:disabled{opacity:.6;cursor:not-allowed}'
     + '.zs-qopt{display:block;width:100%;text-align:left;border:1.5px solid ' + LINE + ';background:#1B1C23;color:#E9EDF4;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
@@ -211,7 +211,7 @@ function renderQuiz(container){
     html += '<div style="display:flex;gap:10px;margin-top:16px">'
       + (s > 0 ? '<button type="button" class="zs-qback" style="border:1.5px solid ' + LINE + ';background:#1B1C23;color:#E9EDF4;border-radius:12px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer">Назад</button>' : '')
       + (s > 0 ? '' : '')
-      + '<button type="button" class="zs-qnext" style="flex:1;background:' + ACC + ';color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)">Далее →</button>'
+      + '<button type="button" class="zs-qnext" style="flex:1;background:' + ACC + ';color:#0B1018;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)">Далее →</button>'
       + '</div>';
   } else {
     html += '<div style="display:flex;justify-content:space-between;align-items:center"><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Финал</div><div style="font-size:12px;font-weight:700;color:' + ACC + '">100% Заполнено</div></div>'
