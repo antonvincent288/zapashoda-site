@@ -17,7 +17,8 @@ export async function getStaticPaths() {
   });
 }
 const { m } = Astro.props;
-const stripEmo = (x: string) => String(x || '').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u2B00-\u2BFF]+/gu, '').replace(/\s{2,}/g, ' ').trim();
+// (10.11) шаблонная тавтология генерации: «какой адаптер совместимый адаптер» — лечим на лету (46 моделей)
+const descFix = String(m.desc || '').replace(/какой адаптер\s+совместимый\s+адаптер/g, 'какой адаптер нужен').replace(/совместимый\s+адаптер/g, 'адаптер');const stripEmo = (x: string) => String(x || '').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u2B00-\u2BFF]+/gu, '').replace(/\s{2,}/g, ' ').trim();
 const deepStrip = (o: any) => { for (const k in o) { const v = o[k]; if (typeof v === 'string') o[k] = stripEmo(v); else if (v && typeof v === 'object') deepStrip(v); } return o; };
 deepStrip(m as any);
 const SOLUTIONS: Record<string, string> = {
@@ -141,12 +142,17 @@ const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white bo
 const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="690"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
 const bodyClean = (() => {
   let h = String(m.body_html || '');
+// (10.11 UX) типографика-гигиена тела: « · »-дубли, двойные пробелы, пробел перед пунктуацией — вне <script>
+h = h.replace(/(<script[\s\S]*?<\/script>)| ·[\s ]*·/g, (mm, sc) => sc || ' ·');
+h = h.replace(/(<script[\s\S]*?<\/script>)| {2,}/g, (mm, sc) => sc || ' ');
+h = h.replace(/(<script[\s\S]*?<\/script>)| +([,;:!?])/g, (mm, sc, p) => sc || p);
+h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|span|code)>\s*)+)([,;:!?])/g, (mm, sc, pre, p) => sc ? mm : pre.replace(/[\s]+$/,'') + p);
   h = h.replace(/^<main[^>]*>/, '').replace(/<\/main>\s*$/, '');
   h = cutBalanced(h, '<nav ', 'nav');
   h = cutBalanced(h, '<div class="mhero">', 'div');
   h = cutBalanced(h, '<div class="pc-cartbar', 'div');
   h = cutBalanced(h, '<div class="cta">', 'div');
-  h = h.replace(/<button[^>]*pc-add[\s\S]*?<\/button>/g, '');
+  // (10.11 UX) родные кнопки «В заявку» (ofAdd/ofAddB) сохранены — раньше вырезались, что делало форму заявки мёртвой
   h = h.replace(/(?:text-white\s+)?bg-green-600(?:\s+text-white)?/g, 'tag');
   // «по данным модели: X» с colspan=3 растягивается под колонки «Время»/«Стоимость» — ставим в колонки —
   h = h.replace(/<td colspan="3">по данным модели:([^<]*)<\/td>/g, (s0, txt) => '<td>' + txt.trim() + '</td><td>—</td><td>—</td>');
@@ -212,6 +218,27 @@ const bodyClean = (() => {
   // ГИГИЕНА (08.11): дубли плиток портов, внутренние пометки, дефолт батареи, имя бандла
   h = h.replace(/<div class="pt">\s*<div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">\s*<img[^>]*src="\/assets\/img\/plugs\/zsh-[a-z0-9-]+\.svg"[^>]*>\s*<b>[^<]+<\/b>\s*<\/div>\s*<div class="sol"><\/div>\s*<\/div>/g, '');
   h = h.replace(/<p class="note">\s*<b>Примечание:<\/b>\s*Канал Major[\s\S]{0,120}?<\/p>\s*/g, '');
+    // (10.11 UX) (a) дубль-плитки портов (иконка + <b> + sol) — регексом с ограничением
+  // (баланс div опасен: в телах есть легаси-скрипты с неспаренными <div, цикл съедал хвост вплоть до карточек «Проблем и решений»);
+  // легаси-пара AC/DC (inline-плитки) остаётся; попутно: фон под тёмную тему, несуществующая --muted, alt-заглушки
+  h = h.replace(/<div class="pt">\s*<div style="display:flex;gap:10px;align-items:center;margin-bottom:6px"><img[^>]*src="\/assets\/img\/plugs\/zsh-[a-z0-9-]+\.svg"[^>]*>\s*<b>[^<]+<\/b>\s*<\/div>\s*<div class="sol">[^<]*<\/div>\s*<\/div>/g, '');
+  h = h.replace(/(<div style="flex:1 1 130px;[^"]*)background:#fff/g, '$1background:var(--card)');
+  h = h.replace(/color:var\(--muted\)/g, 'color:var(--txt-muted)');
+  h = h.replace(/alt="Иконка разъёма"/g, 'alt="Схема разъёма зарядки"');
+  if (!isGBT) h = h.replace('Проверьте фото лючка перед покупкой адаптера.', 'Проверьте фото лючка перед покупкой аксессуаров.');
+// (b) «Что понадобится для зарядки этой модели» — дублирует сценарные карточки и каталог: снять целиком
+  {
+    const wp = /<h2[^>]*>[^<]*Что понадобится для зарядки этой модели[^<]*<\/h2>/.exec(h);
+    if (wp) {
+      const gI = h.indexOf('<div class="prob-grid">', wp.index);
+      if (gI >= 0 && gI - wp.index < 400) {
+        const rxg1 = /<div\b|<\/div>/g; rxg1.lastIndex = gI;
+        let dg1 = 0, mmg1, ge1 = -1;
+        while ((mmg1 = rxg1.exec(h))) { if (mmg1[0][1] === '/') dg1--; else dg1++; if (dg1 === 0) { ge1 = rxg1.lastIndex; break; } }
+        if (ge1 > 0 && ge1 - gI < 3000) h = h.slice(0, wp.index) + h.slice(ge1);
+      }
+    }
+  }
   const mslug2 = String(m.slug || '');
   if (capFinal) {
     h = h.replace(/value="60"/g, 'value="' + capFinal + '"');
@@ -252,16 +279,17 @@ const bodyClean = (() => {
       const portTokens = isGBT ? ['gb/t', 'gbt'] : ['type 2', 'type2', 'ccs2', 'ccs'];
       const bodyKeywords = isGBT ? ['китай'] : ['европ', 'европейск'];
       const FRAMES = ['zeekr', 'tesla', 'voyah', 'avatr', 'lotus', 'hiphi', 'nio', 'im '];
-      const KEEP = ['UN-01', 'ZM-01', 'UN-04', 'UN-05', 'UN-06'];
+      // (10.11 UX) строгий фильтр: прямые совпадения (бренд/порт) + 4 универсальные боли; остальное — под спойлер
+      const KEEP_UNIV = ['UN-01', 'UN-02', 'ZM-01', 'BAT-04'];
       const keepPainS = (txt, pid) => {
         const t = String(txt || '').toLowerCase().replace(/^кому актуально:\s*/, '');
-        if (pid && KEEP.includes(pid)) return true;
+        if ((pid || '').indexOf('ST-') === 0) return isGBT;
+        if (pid === 'T1-03') return isGBT || String(m.port || '').includes('Type1');
+        if (pid === 'BAT-05') return false;
         for (const tk of mnameAll) if (tk && t.indexOf(tk) >= 0) return true;
         for (const pt of portTokens) if (t.indexOf(pt) >= 0) return true;
         for (const bk of bodyKeywords) if (t.indexOf(bk) >= 0) return true;
-        if (/^(все|китайск|импорт|владелец|люб)/.test(t.trim())) return true;
-        if (t.indexOf('eu-групп') >= 0) return true;
-        if (t.indexOf('все ev') >= 0 || t.indexOf('многие ev') >= 0 || t.indexOf('все с adas') >= 0) return true;
+        if (pid && KEEP_UNIV.includes(pid)) return true;
         if (t.indexOf('безрам') >= 0) {
           for (const tk of mnameAll) { for (const fr of FRAMES) { if (tk.indexOf(fr) === 0) return true; } }
         }
@@ -270,6 +298,7 @@ const bodyClean = (() => {
         }
         return false;
       };
+      const pluralProb = (n) => (n === 1 ? 'проблема' : (n >= 2 && n <= 4 ? 'проблемы' : 'проблем'));
       const accParts = [];
       let hiddenCount = 0;
       for (const c of cards) {
@@ -283,6 +312,17 @@ const bodyClean = (() => {
         title = pid && title.indexOf(pid) === 0 ? title.slice(pid.length).replace(/^\s+/, '') : title;
         let rest = h3m ? c.slice(c.indexOf(h3m[0]) + h3m[0].length) : c;
         rest = rest.replace(/<\/div>\s*$/, '');
+        // (10.11 UX) длинные URL-источники → компактные ссылки «Источник N» (на мобиле ломали ширину)
+        rest = rest.replace(/(Источники:\s*)([\s\S]*?)(<\/p>|$)/, (m0, pre, seg0, tail) => {
+          if (seg0.indexOf('<a ') >= 0) {
+            let n = 0;
+            const shortened = seg0.replace(/<a ([^>]*)>([^<]{34,})<\/a>/g, (mm, attrs, text) => { n++; return '<a ' + attrs + '>Источник ' + n + '</a>'; });
+            return shortened === seg0 ? m0 : pre + shortened + tail;
+          }
+          const toks = seg0.split(/\s+/).filter((x) => x.length > 6 && x.indexOf('/') >= 0);
+          if (!toks.length) return m0;
+          return pre + toks.map((u, i) => '<a href="https://' + u.replace(/^https?:\/\//, '').replace(/[.,;)]+$/, '') + '" target="_blank" rel="noopener nofollow">Источник ' + (i + 1) + '</a>').join(' · ') + tail;
+        });
         accParts.push('<details class="pain-acc"><summary><span class="pain-id">' + pid + '</span> <b>' + title + '</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">' + rest + '</div></details>');
       }
       if (accParts.length === 0) {
@@ -290,7 +330,7 @@ const bodyClean = (() => {
         const start = h2s2 >= 0 ? h2s2 : gi;
         h = h.slice(0, start) + '<p class="note">Специфичные разборы для этой модели в подготовке. Общие проблемы и решения — в <a href="/pain/">разделе «Проблемы и решения»</a>.</p>' + h.slice(gEnd);
       } else {
-        const more = hiddenCount ? '<details class="pain-acc pain-more"><summary><b>Ещё ' + hiddenCount + ' проблем смежных сценариев</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">Разобраны в <a href="/pain/">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div></details>' : '';
+        const more = hiddenCount ? '<details class="pain-acc pain-more"><summary><b>Ещё ' + hiddenCount + ' ' + pluralProb(hiddenCount) + ' смежных сценариев</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">Разобраны в <a href="/pain/">общем разделе «Проблемы и решения»</a> и на страницах соответствующих моделей.</div></details>' : '';
         h = h.slice(0, gi) + '<div class="pain-acc-wrap">' + accParts.join('') + more + '</div>' + h.slice(gEnd);
       }
     }
@@ -323,6 +363,11 @@ const bodyClean = (() => {
         while ((mmS = rxs.exec(h))) { if (mmS[0][1] === '/') ddS--; else ddS++; if (ddS === 0) { h = h.slice(0, stw) + h.slice(rxs.lastIndex); break; } }
       }
     }
+    // (10.11 UX) подводка «Сколько занимает зарядка» осталась без таблицы (таблица снята выше) — снять заголовок и note: считает калькулятор ниже
+    {
+      const wq = /<h2[^>]*>[^<]*Сколько занимает зарядка[^<]*<\/h2>\s*(<p class="note">[\s\S]*?<\/p>)?/.exec(h);
+      if (wq) h = h.slice(0, wq.index) + h.slice(wq.index + wq[0].length);
+    }
     // SKU-заметка «Что понадобится для зарядки» (h3-блок) — дублирует сценарные карточки
     const h3m = /<h3[^>]*>Что понадобится для зарядки<\/h3>/.exec(h);
     if (h3m) {
@@ -333,16 +378,23 @@ const bodyClean = (() => {
         while ((mm3 = rx3.exec(h))) { if (mm3[0][1] === '/') dd3--; else dd3++; if (dd3 === 0) { h = h.slice(0, ds3) + h.slice(rx3.lastIndex); break; } }
       }
     }
-    // весь каталог — в сворачиваемый блок
-    const pg = h.indexOf('<div class="pc-grid">');
-    if (pg >= 0) {
-      const rxc = /<div\b|<\/div>/g; rxc.lastIndex = pg;
-      let dd2 = 0, mm4, pEnd = -1;
-      while ((mm4 = rxc.exec(h))) { if (mm4[0][1] === '/') dd2--; else dd2++; if (dd2 === 0) { pEnd = rxc.lastIndex; break; } }
-      if (pEnd > 0) {
-        const cnt = (h.slice(pg, pEnd).match(/card-product/g) || []).length;
-        const grid = h.slice(pg, pEnd);
-        h = h.slice(0, pg) + '<details class="pain-acc pc-more"><summary><b>Показать весь каталог (' + cnt + ' позиций) — цены и кнопка заказа</b><span class="pa-arrow">\u25be</span></summary><div class="pa-body">' + grid + '</div></details>' + h.slice(pEnd);
+    // (10.11 UX) каталог раскрыт (спойлер убивал импульсную покупку), секция получает якорь для CTA
+    {
+      const wd = /<h2[^>]*>[^<]*Что докупить[^<]*<\/h2>/.exec(h);
+      if (wd) h = h.replace(wd[0], wd[0].replace('<h2', '<h2 id="catalog-sec"'));
+    }
+    // (10.11 UX) CTA сразу после калькулятора — не терять горячего пользователя на «VIN/ЭПТС»
+    {
+      const cgI = h.indexOf('id="chg-calc"');
+      if (cgI >= 0) {
+        const cStart = h.lastIndexOf('<div', cgI);
+        const rxc2 = /<div\b|<\/div>/g; rxc2.lastIndex = cStart;
+        let d2 = 0, mm2, cEnd2 = -1;
+        while ((mm2 = rxc2.exec(h))) { if (mm2[0][1] === '/') d2--; else d2++; if (d2 === 0) { cEnd2 = rxc2.lastIndex; break; } }
+        if (cEnd2 > 0) {
+          const cta = '<div class="calc-cta"><b>Посчитали время и цену?</b> <span>Подберите зарядку под разъёмы этой модели — заявка уходит дилеру в вашем городе.</span><a class="btn btn-gold" href="#catalog-sec" style="text-decoration:none;white-space:nowrap">Подобрать зарядку</a></div>';
+          h = h.slice(0, cEnd2) + cta + h.slice(cEnd2);
+        }
       }
     }
   }
@@ -350,9 +402,9 @@ const bodyClean = (() => {
 })();
 
 const yearsShort = String(m.years || '').split(' · ')[0];
-const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: m.title, description: m.desc };
+const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline: m.title, description: descFix };
 ---
-<ZhLayout title={`${m.title} — Запас хода`} description={m.desc} og={m.og} jsonld={jsonld}>
+<ZhLayout title={`${m.title} — Запас хода`} description={descFix} og={m.og} jsonld={jsonld}>
   <LegacyStyles />
   <style is:global>
     .prob-grid{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
@@ -380,6 +432,14 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .pain-acc .pa-body .sol b{color:var(--txt)}
     .pain-more summary{font-weight:600}
     .pain-more .pa-body a{word-break:break-word}
+    .pa-body .src a{color:#5aa9ff;word-break:break-word}
+    .card-product .sku-add{background:transparent!important;border-color:var(--gold)!important;color:var(--gold)!important;border-radius:10px!important;padding:7px 13px;font-weight:600;cursor:pointer;transition:background .15s,color .15s;box-shadow:none}
+    .card-product .sku-add:hover{background:var(--gold)!important;color:#0B1018!important}
+    .card-product:has(.bg-gray-800){border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+    .card-product .bg-gray-800{background:var(--gold);color:#0B1018}
+    .calc-cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-left:3px solid var(--gold);background:var(--card);border-radius:12px;padding:14px 18px;margin:18px 0}
+    .calc-cta b{color:var(--head)}
+    .calc-cta span{color:var(--txt-muted);font-size:14.5px}
     @media (max-width:640px){
       .prob-grid-pains{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}
       .prob-grid-pains .pt{flex:0 0 84%;scroll-snap-align:start}
@@ -413,7 +473,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         {dcpowClean && <span>DC {dcShort}</span>}
         <span>Обновлено: ноябрь 2026</span>
       </div>
-      {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {m.desc}</p>}
+      {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {descFix}</p>}
       <div class="mgrid">
         <div class="mmain">
       {isGBT && (<p style="margin-top:16px;font-size:13.5px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#5aa9ff">в разделе «Телематика»</a>.</p>)}
@@ -516,6 +576,13 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         h2.textContent = 'Каталог подходящих товаров';
       }
     });
+    // (10.11 UX) прятать пустую корзину в форме заявки — показывается, когда пользователь что-то добавил
+    var oi = document.getElementById('of-items');
+    if (oi) {
+      var syncCart = function(){ var has = false; try { has = (JSON.parse(sessionStorage.getItem('of_items')||'[]')||[]).length > 0; } catch(e){} oi.style.display = has ? 'block' : 'none'; };
+      try { new MutationObserver(syncCart).observe(oi, {childList:true, subtree:true}); } catch(e){}
+      syncCart();
+    }
   })();
   </script>
 
