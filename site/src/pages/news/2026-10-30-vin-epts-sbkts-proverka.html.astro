@@ -5,4 +5,13 @@ const d = src.items.find((i) => i.path === '/news/2026-10-30-vin-epts-sbkts-prov
 ---
 <ZhLayout title={d.title + ' — Запас хода'} description={d.desc}>
   <section class="sec"><div class="wrap"><div class="crumbs"><a href="/">Главная</a> / <a href="/news/">Новости</a> / {d.title}</div><div class="article" set:html={d.body} /></div></section>
+
+<style is:global>
+/* NEWS-шаблон: spacing и типографика (журнальный апгрейд) */
+.crumbs{margin-bottom:10px}
+.article > .back{display:inline-block;margin:26px 0 12px;font-size:14px;color:var(--txt-muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.article > .back:hover{color:var(--gold);border-color:#5aa9e966}
+.newsdate{margin:0 0 20px;font-size:13.5px;color:var(--txt-muted);letter-spacing:.02em}
+.article h1{margin-top:0}
+</style>
 </ZhLayout>
