@@ -1,16 +1,8 @@
 {
-  "ts_utc": "2026-11-10T18:02:04Z",
-  "ok": false,
+  "ts_utc": "2026-11-10T19:14:13Z",
+  "ok": true,
   "checks_total": 11,
-  "fails": [
-    {
-      "check": "AI_BRIDGE.json",
-      "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
-      "status": 200,
-      "ok": false,
-      "detail": ""
-    }
-  ],
+  "fails": [],
   "results": [
     {
       "check": "Главная",
@@ -70,13 +62,13 @@
       "check": "AI_BRIDGE.json",
       "url": "https://zapashoda-ev.ru/AI_BRIDGE.json",
       "status": 200,
-      "ok": false,
+      "ok": true,
       "detail": ""
     },
     {
       "check": "Shorts-автопилот",
       "ok": true,
-      "detail": "последняя публикация 45 ч назад"
+      "detail": "последняя публикация 47 ч назад"
     }
   ]
 }
