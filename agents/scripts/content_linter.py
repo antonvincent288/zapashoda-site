@@ -59,8 +59,14 @@ def check_file(path):
     # гейт гайдов
     if d.get("kind") == "guide" or "/guides/" in path or slug.startswith(("m1", "m12")) and "trassa" in slug:
         chapters = d.get("chapters", []) or []
-        wc = d.get("word_count", 0) or sum(len(strip_tags((c.get("body", "") or c if isinstance(c, str) else json.dumps(c, ensure_ascii=False))).split()) for c in chapters)
-        if len(chapters) < GUIDE_MIN_CH: errs.append(("guide_gate", f"глав {len(chapters)} < {GUIDE_MIN_CH}"))
+        if chapters:
+            wc = d.get("word_count", 0) or sum(len(strip_tags((c.get("body", "") or c if isinstance(c, str) else json.dumps(c, ensure_ascii=False))).split()) for c in chapters)
+            n_ch = len(chapters)
+        else:
+            # blog-формат (published): главы = h2 в body_html, слова по телу
+            n_ch = body.count("<h2")
+            wc = len(text.split())
+        if n_ch < GUIDE_MIN_CH: errs.append(("guide_gate", f"глав {n_ch} < {GUIDE_MIN_CH}"))
         if wc < GUIDE_MIN_WORDS: errs.append(("guide_gate", f"слов {wc} < {GUIDE_MIN_WORDS}"))
         if len(d.get("faq", []) or []) < GUIDE_MIN_FAQ: errs.append(("guide_gate", f"faq {len(d.get('faq', []) or [])} < {GUIDE_MIN_FAQ}"))
     return errs, warns
