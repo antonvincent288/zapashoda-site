@@ -18,6 +18,10 @@ const cano = painSlug ? 'https://zapashoda-ev.ru/pain/' + painSlug + '/' : undef
 <style is:global>
 /* форум — широкая legacy-сетка: снимаем узкую 760px-колонку статей */
 .f-full{display:block;max-width:1152px;grid-template-columns:none}.f-full .article{max-width:none}
+/* сетка плиток: 3 колонки на десктопе вместо чужих 4; брейкпоинты как у шаблона */
+.f-full .fgrid{grid-template-columns:repeat(3,1fr);gap:22px}
+@media (width<=860px){.f-full .fgrid{grid-template-columns:1fr 1fr}}
+@media (width<=520px){.f-full .fgrid{grid-template-columns:1fr}}
 /* тёмная тема форума: перекрываем светлые inline-стили legacy-разметки */
 .faside-box{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:16px}
 .faside-box h3{color:var(--txt-muted)!important}
