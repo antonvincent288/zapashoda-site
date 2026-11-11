@@ -28,6 +28,7 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 <link rel="manifest" href="/manifest.json" />
 <link rel="alternate" type="application/rss+xml" title="Запас хода — RSS" href="/rss.xml" />
 <link rel="stylesheet" href="/assets/fonts/inter.css" />
+<link rel="stylesheet" href="/assets/fonts/montserrat.css" />
 <meta property="og:image" content={og ? new URL(og, Astro.site ?? "https://zapashoda-ev.ru").href : "https://zapashoda-ev.ru/assets/og/default.png"} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -170,10 +171,10 @@ html.dark{
   --txt:#f5f5f7; --txt-muted:rgba(229,236,246,.66); --head:#f5f5f7;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+body{font-family:Inter,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-synthesis:none;
   background:var(--bg);color:var(--txt);line-height:1.6;font-size:16px;transition:background .3s,color .3s}
 .wrap{max-width:1152px;margin:0 auto;padding:0 24px}
-h1,h2,h3,h4{color:var(--head);letter-spacing:-.03em;line-height:1.12;font-weight:700}
+h1,h2,h3,h4{color:var(--head);letter-spacing:-.03em;line-height:1.12;font-weight:800;font-family:Montserrat,Inter,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
 h1{font-size:clamp(36px,5.2vw,60px);margin-bottom:16px}
 h2{font-size:clamp(26px,3.4vw,40px);margin-bottom:12px}
 h3{font-size:20px;margin-bottom:8px}
@@ -183,7 +184,7 @@ p.lead{font-size:18px;line-height:1.75;color:var(--txt-muted);max-width:680px}
 .bar a{color:var(--gold);font-weight:600;text-decoration:none;margin-left:6px}
 header{position:sticky;top:0;z-index:1100;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hwrap{display:flex;align-items:center;gap:20px;height:64px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--head);text-decoration:none}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--head);text-decoration:none;font-family:Montserrat,Inter,sans-serif}
 .logo b{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--gold);color:#fff;font-size:13px}
 nav{display:flex;gap:4px;margin-left:auto}
 nav a{padding:8px 12px;border-radius:9px;font-size:14.5px;font-weight:400;color:var(--txt);text-decoration:none;opacity:.85}
@@ -249,7 +250,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;position:relative}
 .plan.pop{border-color:var(--gold);box-shadow:0 10px 40px rgba(1,97,239,.14)}
 .popb{position:absolute;top:-11px;left:22px;background:var(--gold);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 12px;border-radius:999px}
-.price{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--head);margin:10px 0 2px}
+.price{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--head);margin:10px 0 2px;font-family:Montserrat,Inter,sans-serif;font-variant-numeric:tabular-nums}
 .price small{font-size:13px;font-weight:600;color:var(--txt-muted)}
 .plan ul{list-style:none;margin:18px 0 22px;font-size:14px}
 .plan li{padding:7px 0;border-bottom:1px dashed var(--line)}
@@ -266,7 +267,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .cta h2{color:#fff}
 .cta p{color:rgba(229,236,246,.72);margin-bottom:24px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
-.stats b{display:block;font-size:40px;letter-spacing:-.02em;color:var(--head)}
+.stats b{display:block;font-size:40px;letter-spacing:-.02em;color:var(--head);font-family:Montserrat,Inter,sans-serif}
 .stats span{font-size:14px;color:var(--txt-muted)}
 .fbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;align-items:center}
 .fbar input{flex:1;min-width:220px;padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font-size:15px}
@@ -280,7 +281,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .article{font-size:17px;line-height:1.75;max-width:700px;overflow-wrap:anywhere;word-break:break-word}
 .article h1{margin-bottom:20px;font-size:clamp(28px,2vw + 20px,38px);letter-spacing:-.02em;line-height:1.15}
 .comments,.c-form,#comments{display:none!important}
-.article h2{font-size:clamp(22px,.5714vw + 18.77px,27px);margin:44px 0 14px;letter-spacing:-.02em;line-height:1.25}
+.article h2{font-size:clamp(22px,.5714vw + 18.77px,27px);margin:44px 0 14px;letter-spacing:-.02em;line-height:1.25;font-weight:700}
 .article p{margin:16px 0}
 .article blockquote{margin:20px 0;padding:12px 18px;border-left:3px solid var(--gold);color:var(--txt-muted);background:var(--bg2);border-radius:0 10px 10px 0}
 .article blockquote p{margin:4px 0}
