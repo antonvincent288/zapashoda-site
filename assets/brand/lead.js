@@ -89,13 +89,12 @@ function sendLead(d, source, onDone, onFail){
   var now = Date.now();
   if(now - lastSend < 8000){ onFail && onFail('Слишком часто. Подождите несколько секунд.'); return; }
   lastSend = now;
-  try{ window.__zsLastLead = buildMessage(d, source); }catch(e){}
   var okAny = false, need = TG && CHAT ? 2 : 1, done = 0;
   function fin(){ done++; if(done >= need){ if(okAny) onDone && onDone(); else onFail && onFail(); } }
   fetch(GAS, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(Object.assign({t:'lead', source:source, page:location.href, consent:'yes', consent_ts:new Date().toISOString(), policy_version:'1.0'}, d))})
-    .then(function(r){ return r.json(); })
-    .then(function(res){ if(res && res.ok) okAny = true; fin(); })
+    .then(function(r){ if(r && r.ok) okAny = true; return r && r.text ? r.text() : ''; })
+    .then(function(t){ try{ var res=JSON.parse(t||''); if(res && res.ok) okAny = true; }catch(e){ /* GAS возвращает 302/HTML даже при выполненной записи — считаем успех по статусу ответа */ } fin(); })
     .catch(function(){ fin(); });
   if(TG && CHAT){
     fetch('https://api.telegram.org/bot' + TG + '/sendMessage', {method:'POST', mode:'no-cors',
@@ -149,29 +148,7 @@ function showLeadError(btn, msg){
   btn.disabled = false; btn.textContent = 'Отправить заявку';
   var box = btn.parentElement.querySelector('.lf-note');
   if(!box){ box = document.createElement('p'); box.className = 'lf-note'; box.style.cssText = 'font-size:13px;color:#e5484d;margin:10px 0 0;text-align:center'; btn.insertAdjacentElement('afterend', box); }
-  box.innerHTML = '';
-  var p = document.createElement('span');
-  p.textContent = msg || 'Не удалось отправить заявку автоматически. Отправьте её напрямую — так вы точно не потеряете ответ.';
-  var btnCp = document.createElement('a');
-  btnCp.href = '#'; btnCp.textContent = '📋 Скопировать заявку';
-  btnCp.style.cssText = 'display:inline-block;margin:8px 6px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #e5484d;color:#e5484d;font-size:13px;text-decoration:none;cursor:pointer';
-  btnCp.addEventListener('click', function(ev){
-    ev.preventDefault();
-    var t = window.__zsLastLead || 'Заявка с сайта (сводка недоступна)';
-    var done_ = function(){ btnCp.textContent = '✅ Скопировано — вставьте в чат'; };
-    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done_, done_); }
-    else done_();
-  });
-  var btnTg = document.createElement('a');
-  btnTg.href = 'https://t.me/zapashoda_ev'; btnTg.target = '_blank'; btnTg.rel = 'noopener';
-  btnTg.textContent = '✈️ Telegram';
-  btnTg.style.cssText = 'display:inline-block;margin:8px 6px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #e5484d;color:#e5484d;font-size:13px;text-decoration:none;cursor:pointer';
-  var btnMail = document.createElement('a');
-  btnMail.href = 'mailto:f-epshtein@yandex.ru?subject=' + encodeURIComponent('Заявка с сайта zapashoda-ev.ru') + '&body=' + encodeURIComponent(window.__zsLastLead || '');
-  btnMail.textContent = '✉️ Почта';
-  btnMail.style.cssText = 'display:inline-block;margin:8px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #e5484d;color:#e5484d;font-size:13px;text-decoration:none;cursor:pointer';
-  box.appendChild(p); box.appendChild(document.createElement('br'));
-  box.appendChild(btnCp); box.appendChild(btnTg); box.appendChild(btnMail);
+  box.textContent = msg || 'Ошибка при отправке. Пожалуйста, попробуйте позже или напишите нам: @zapashoda_ev';
 }
 
 function showSuccess(h, p){
