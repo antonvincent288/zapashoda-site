@@ -9,13 +9,15 @@ const painSlug = d.slug.startsWith('pain-') ? d.slug.replace(/^pain-/, '') : nul
 const cano = painSlug ? 'https://zapashoda-ev.ru/pain/' + painSlug + '/' : undefined;
 ---
 <ZhLayout title={d.title} description={d.desc} canonical={cano}>
-  <section class="sec"><div class="wrap">
+  <section class="sec"><div class="wrap f-full">
     <div class="crumbs"><a href="/">Главная</a> / <a href="/forum/">Форум</a> / {d.title}</div>
     <div class="article" set:html={d.body_html} />
     {d.body_script && <script is:inline set:html={d.body_script} />}
   </div></section>
 
 <style is:global>
+/* форум — широкая legacy-сетка: снимаем узкую 760px-колонку статей */
+.f-full{display:block;max-width:1152px;grid-template-columns:none}
 /* тёмная тема форума: перекрываем светлые inline-стили legacy-разметки */
 .faside-box{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:16px}
 .faside-box h3{color:var(--txt-muted)!important}
