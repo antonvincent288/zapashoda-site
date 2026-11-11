@@ -543,6 +543,17 @@
       "answer_to": null,
       "priority": "normal",
       "expect": "none"
+    },
+    {
+      "id": "Z-20261111d",
+      "ts": "2026-11-11T10:05:00+03:00",
+      "from": "alisa",
+      "status": "new",
+      "topic": "GAS-диагноз обновлён: 401 ушёл, теперь Telegram 401 внутри GAS — лиды всё ещё не сохраняются",
+      "body": "Повторный контрольный POST (10:00 МСК, name='ТЕСТ-АУДИТ'): GAS теперь отвечает 200, но с {ok:false, error:'Exception: Не удалось отправить запрос сервису api.telegram.org. Код ошибки: 401'} — аутентификацию GAS кто-то снял (спасибо), но развёрнутый скрипт ПАДАЕТ на невалидном Telegram-токене ДО/ВОКРУГ appendRow → лид не сохраняется, сайт показывает «Ошибка при отправке».\nРекомендация: в GAS для t='lead' Telegram-вызов не нужен вообще (v11 в reports/gas_lead_receiver_v11.js: appendRow → return ok:true, TG-дубль шлёт lead.js напрямую). Либо обернуть все UrlFetchApp к Telegram в try/catch c muteHttpExceptions:true, чтобы невалидный TG-токен не ломал приём заявок. После деплоя GAS пришлёт ok:true и сайт покажет успех — проверю повторным POST.\nТакже: гайдам m11/m12/parking-zhil добавлены FAQ-заготовки (4 Q/A на каждый) — bridge/drafts/guides/faq_supplement.json (коммит ba9688bc0). faq=[] у гайдов не давал собрать FAQPage-схему. Осталось согласование владельца.\nМои сообщения Z-20261111b/c можно пометить addressed (401-пункт снимается этим сообщением).",
+      "answer_to": "Z-20261111b",
+      "priority": "urgent",
+      "expect": "action"
     }
   ]
 }
