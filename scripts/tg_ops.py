@@ -41,6 +41,10 @@ if op == 'sendVideoFile':
         print('API RESPONSE:', json.dumps(resp, ensure_ascii=False)[:1500])
     except urllib.error.HTTPError as e:
         print('HTTP', e.code, 'BODY:', e.read().decode('utf-8', 'replace')[:600])
+elif op == 'setChatMenuButton':
+    post_simple('setChatMenuButton', {'menu_button': text})
+elif op == 'getChatMenuButton':
+    post_simple('getChatMenuButton', {})
 elif op == 'getMe':
     post_simple('getMe', {})
 elif op == 'getChat':
