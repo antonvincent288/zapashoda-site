@@ -18,6 +18,14 @@ const cano = painSlug ? 'https://zapashoda-ev.ru/pain/' + painSlug + '/' : undef
 <style is:global>
 /* форум — широкая legacy-сетка: снимаем узкую 760px-колонку статей */
 .f-full{display:block;max-width:1152px;grid-template-columns:none}.f-full .article{max-width:none}
+/* полировка v3: чужие подложки, подчёркивания, выравнивание плиток */
+.f-full .article .hero{background:transparent;padding:24px 0 6px}
+.f-full .article a{text-decoration:none}
+.f-full .article p a,.f-full .article li a,.f-full .article td a{text-decoration:underline}
+.f-full .fgrid{align-items:stretch}
+.f-full .fgrid .fcard2,.f-full .fgrid .fcard{height:100%}
+.f-full .fcard2 .fc2-m{margin-top:auto;padding-top:6px}
+.f-full .fcard2 .fc2-d,.f-full .fcard .fc-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* сетка плиток: 3 колонки на десктопе вместо чужих 4; брейкпоинты как у шаблона */
 .f-full .fgrid{grid-template-columns:repeat(3,1fr);gap:22px}
 @media (width<=860px){.f-full .fgrid{grid-template-columns:1fr 1fr}}
