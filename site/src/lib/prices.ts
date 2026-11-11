@@ -43,6 +43,8 @@ const RULES: Array<[RegExp, string, string, string]> = [
   [/\b15\s?500\s*\u20bd/g, 'kabel-type2-type2-7m-32a', '', ' ' + RUB],
 ];
 const LIT_EXTRA: RegExp[] = [
+  /\b20\s?190\s*\u20bd/g,
+  /\b22\s?190\s*\u20bd/g,
   /\b26\s?190\s*\u20bd/g,
   /\b28\s?190\s*\u20bd/g,
   /\b34\s?590\s*\u20bd/g,
@@ -55,9 +57,10 @@ export function priceFix(s: string): string {
     for (const [re] of RULES) out = out.replace(re, SOON);
     for (const re of LIT_EXTRA) out = out.replace(re, SOON);
     // «Выгода N ₽» при выключенных ценах не имеет смысла — убираем целиком
-    out = out.replace(/[Вв]ыгода\s+\d(?:\s?\d{3})+\s*\u20bd/g, '');
-    // любая литеральная цена с тысячной группой (4 500 ₽, 20 190 ₽…) — не товарные тарифы (они без групп)
-    out = out.replace(/\b\d(?:\s?\d{3})+\s*\u20bd/g, SOON);
+    out = out.replace(/[Вв]ыгода\s+\d{1,3}(?:\s?\d{3})+\s*\u20bd/g, '');
+    // любая литеральная цена с тысячной группой (4 500 ₽, 19 900 ₽, 20 190 ₽…) — 1–3 цифры + группы;
+    // товарные тарифы (15–22 ₽/кВт·ч, 3,5 ₽) не матчатся, у них нет тысячной группы
+    out = out.replace(/\b\d{1,3}(?:\s?\d{3})+\s*\u20bd/g, SOON);
     return out;
   }
   for (const [re, slug, prefix, suffix] of RULES) {

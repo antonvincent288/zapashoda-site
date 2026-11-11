@@ -405,6 +405,7 @@ h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|sp
   // (11.11) надписи «SKU N» покупателю не показываем нигде
   h = h.replace(/\([^()]*SKU[^()]*\)/g, '');
   h = h.replace(/\bSKU\s*\d+/g, '');
+  h = h.replace('потенциальные новые SKU.', 'вне каталога.');
   // (11.11) при выключенных ценах — гасим data-price во всех легаси-карточках
   if (!PRICES_ON) { h = h.replace(/data-price="\d+"/g, 'data-price=""'); }
   return pf(h.trim());
