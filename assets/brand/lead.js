@@ -111,7 +111,7 @@ function openLead(product, price, productUrl){
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
     + '<div><div class="q-step" style="font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:' + ACC + '">Заявка</div>'
     + '<h3 style="margin:6px 0 2px;font-size:19px;line-height:1.3">' + esc(title) + '</h3>'
-    + (price ? '<div style="font-size:15px;color:' + MUTED + ';font-weight:600">' + esc(price) + '</div>' : '') + '</div>'
+    + (price && window.ZS_PRICES_ON !== false ? '<div style="font-size:15px;color:' + MUTED + ';font-weight:600">' + esc(price) + '</div>' : '') + '</div>'
     + '<button type="button" data-zs-close style="border:none;background:#F1F5F9;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;flex:0 0 auto">✕</button></div>'
     + '<form id="zs-lead-form" novalidate style="margin-top:14px">'
     + '<input type="text" name="zs_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;height:0;opacity:0">'

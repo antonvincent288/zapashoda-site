@@ -3,6 +3,7 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import OrderForm from '../../components/OrderForm.astro';
 import sku from '../../data/sku.json';
 import ofp from '../../data/of_products.json';
+import { priceOut, PRICES_ON } from '../../lib/prices';
 const items = (sku.items || []);
 const ofMap = {};
 (ofp || []).forEach((p) => { ofMap[p.slug] = p; });
@@ -25,7 +26,7 @@ const kIcon = (c) => kIcons[c] || null;
 const prods = items.map((p) => ({ ...p, cat: catFor(p.title), of: ofMap[p.slug] }));
 const catOrder = ['Станции', 'Зарядки', 'Адаптеры', 'Кабели', 'Аксессуары'];
 const cats = catOrder.filter((c) => prods.some((p) => p.cat === c)).concat(Array.from(new Set(prods.map((p) => p.cat))).filter((c) => !catOrder.includes(c)));
-const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: prods.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, image: p.image ? 'https://zapashoda-ev.ru' + p.image : undefined, offers: { '@type': 'Offer', price: String(p.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } } })) };
+const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: prods.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.title, image: p.image ? 'https://zapashoda-ev.ru' + p.image : undefined, offers: PRICES_ON ? { '@type': 'Offer', price: String(p.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } : undefined } })) };
 const specLine = (p) => {
   const pairs = (p.spec || []).filter(Array.isArray).slice(0, 2).map(([k, v]) => `${k}: ${v}`).join(' · ');
   return pairs || (p.desc ? String(p.desc).slice(0, 90) : '');
@@ -34,7 +35,7 @@ const ofScript = 'var OF_MODEL="Каталог аксессуаров";var OF_PR
 const fitTitle = (p) => ((p.fit || []).map((f) => String(f.title || '').trim()).filter(Boolean)).join('||');
 const fitSlugs = (p) => ((p.fit || []).map((f) => String(f.href || '').replace(/^\/models\//, '').replace(/\.html$/, '').trim()).filter(Boolean)).join('|');
 ---
-<ZhLayout title="Зарядные станции для электромобилей купить — цены от 6 500 ₽ | Запас хода" description="Купить зарядную станцию для электромобиля: настенные 7–22 кВт, портативные зарядки, адаптеры Type 2 → GB/T, кабели и удлинители. Цены РРЦ, подбор под вашу модель, оплата при получении." jsonld={ld}>
+<ZhLayout title={PRICES_ON ? 'Зарядные станции для электромобилей купить — цены от 6 500 ₽ | Запас хода' : 'Зарядные станции и аксессуары для электромобиля — купить | Запас хода'} description={PRICES_ON ? 'Купить зарядную станцию для электромобиля: настенные 7–22 кВт, портативные зарядки, адаптеры Type 2 → GB/T, кабели и удлинители. Цены РРЦ, подбор под вашу модель, оплата при получении.' : 'Купить зарядную станцию для электромобиля: настенные 7–22 кВт, портативные зарядки, адаптеры Type 2 → GB/T, кабели и удлинители. Подбор под вашу модель, оплата при получении.'} jsonld={ld}>
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Каталог</div>
@@ -65,7 +66,7 @@ const fitSlugs = (p) => ((p.fit || []).map((f) => String(f.href || '').replace(/
               <span class="kmeta">{specLine(p)}</span>
             </div>
             <div class="kfoot">
-              <b class="kprice">{p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : 'по запросу'}</b>
+              <b class="kprice">{priceOut(p.price)}</b>
               <button class="btn btn-gold kbtn" type="button" onclick={`ofAdd(${p.of ? p.of.id : 0},this)`}>В заявку</button>
             </div>
           </div>

@@ -5,7 +5,7 @@ const modules = import.meta.glob('../../data/models/*.json', { eager: true, impo
 const models = Object.values(modules) as any[];
 models.sort((a, b) => String(a.brand || '').localeCompare(String(b.brand || '')) || String(a.name || '').localeCompare(String(b.name || '')));
 const SOLUTIONS: Record<string, string> = {
-  'GB/T': 'Адаптер Type 2 → GB/T (SKU 1 premium / SKU 8 базовый) или кабель',
+  'GB/T': 'Адаптер Type 2 → GB/T или кабель',
   'EU': 'Штатные станции Type 2/CCS2 РФ — без адаптера',
   'Type1/CCS1': 'Адаптер Type 1 → Type 2; CCS1-станции редки',
   'JP/CHAdeMO': 'CHAdeMO-станции; адаптер по запросу',

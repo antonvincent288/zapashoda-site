@@ -3,7 +3,7 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import LegacyStyles from '../../components/LegacyStyles.astro';
 import PlugIcon from '../../components/PlugIcon.astro';
 import BATTERY from '../../data/models_battery.json';
-import { priceFix as pf, fmtRub as fmtR } from '../../lib/prices';
+import { priceFix as pf, fmtRub as fmtR, PRICES_ON } from '../../lib/prices';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -22,7 +22,7 @@ const descFix = String(m.desc || '').replace(/какой адаптер\s+сов
 const deepStrip = (o: any) => { for (const k in o) { const v = o[k]; if (typeof v === 'string') o[k] = stripEmo(v); else if (v && typeof v === 'object') deepStrip(v); } return o; };
 deepStrip(m as any);
 const SOLUTIONS: Record<string, string> = {
-  'GB/T': 'Адаптер Type 2 → GB/T (SKU 1 premium / SKU 8 базовый) или кабель',
+  'GB/T': 'Адаптер Type 2 → GB/T или кабель',
   'EU': 'Разъёмы такие же, как в РФ — переходники не нужны',
   'Type1/CCS1': 'Адаптер Type 1 → Type 2; CCS1-станции редки',
   'JP/CHAdeMO': 'CHAdeMO-станции; адаптер по запросу',
@@ -49,7 +49,7 @@ const portIcon = (p: string) => {
 };
 const FAQ_GB = `<div class="card" style="margin-top:26px">
         <h3>Частые вопросы про разъём</h3>
-        <details class="mfaq"><summary>Можно ли зарядить GB/T-машину на Type 2 / CCS2 станции?</summary><p>Да, через адаптер: Type 2 → GB/T для медленной зарядки в городе (примерно 4–9 тыс. ₽) или CCS2 → GB/T DC для быстрой (95 000 ₽ в каталоге) — обычно ради дальних поездок. Подробнее — <a href="/razemy/gbt/">в справочнике GB/T</a>.</p></details>
+        <details class="mfaq"><summary>Можно ли зарядить GB/T-машину на Type 2 / CCS2 станции?</summary><p>Да, через адаптер: Type 2 → GB/T для медленной зарядки в городе${PRICES_ON ? ' (примерно 4–9 тыс. ₽)' : ''} или CCS2 → GB/T DC для быстрой${PRICES_ON ? ' (95 000 ₽ в каталоге)' : ''} — обычно ради дальних поездок. Подробнее — <a href="/razemy/gbt/">в справочнике GB/T</a>.</p></details>
         <details class="mfaq"><summary>GB/T AC и GB/T DC — это один разъём?</summary><p>Нет, это два разных порта: малый для медленной зарядки (до 7 кВт) и большой для быстрой (60–120 кВт на современных моделях). У машины обычно оба.</p></details>
         <details class="mfaq"><summary>Какой адаптер купить в первую очередь?</summary><p>Адаптер Type 2 → GB/T на 32 А: он открывает большинство городских станций. Полный план — в <a href="/matrix/">матрице совместимости</a>.</p></details>
       </div>`;
@@ -138,8 +138,8 @@ const specBattCap = (String(spec.batt || '').match(/([0-9]+(?:[.,][0-9]+)?)\s*к
 const capFinal = CAP_OVERRIDES[String(m.slug || '')] || (battInfo && battInfo.cap) || (specBattCap ? specBattCap.replace(',', '.') : null);
 const battLabel = String(spec.batt || '').trim() || (battInfo ? battInfo.label : '') || (CAP_OVERRIDES[String(m.slug || '')] ? CAP_OVERRIDES[String(m.slug || '')] + ' кВт·ч' : '');
 // для машин с Type 2/CCS2 держатель GB/T не продаём — вместо него честный EU-аксессуар
-const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="9900"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
-const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price="690"><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
+const ULG_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price=' + (PRICES_ON ? '9900' : '') + '><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Опционально</span></div><a href="/catalog/udlinitel-type2-type2-5m.html" aria-label="Удлинитель Type 2 — Type 2, 5 м, 32 А"><img src="/assets/sku/cable-t2t2-5m.webp" alt="Удлинитель Type 2 — Type 2, 5 м, 32 А" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/udlinitel-type2-type2-5m.html" class="text-gray-800">Удлинитель Type 2 — Type 2, 5 м, 32 А</a></h3></div><small class="text-gray-500" style="display:block">5 м запаса на парковке, если штатного кабеля не хватает</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">9 900 ₽</span></div></div></div></div></div>';
+const OIL_CARD = '<div class="relative rounded-lg break-words border bg-white border-gray-300 card-product" data-cat="Аксессуары" data-ln="both phev" data-price=' + (PRICES_ON ? '690' : '') + '><div class="flex-auto p-4"><div class="text-center relative flex justify-center"><div class="absolute top-0 left-0"><span class="inline-block p-1 text-center font-semibold text-sm align-baseline leading-none rounded bg-gray-800 text-white">Нужно</span></div><a href="/catalog/smazka-silikonom-zima.html" aria-label="Смазка силиконовая (зимний kit)"><img src="/assets/sku/smazka-silicone.webp" alt="Смазка силиконовая (зимний kit)" loading="lazy" decoding="async"></a></div><div class="flex flex-col gap-3"><a href="/catalog/smazka-silikonom-zima.html" class="text-decoration-none text-gray-500"><small>Аксессуары</small></a><div class="flex flex-col gap-2"><h3 class="text-base"><a href="/catalog/smazka-silikonom-zima.html" class="text-gray-800">Смазка силиконовая (зимний kit)</a></h3></div><small class="text-gray-500" style="display:block">чтобы зимой не примерзал лючок и коннектор</small><div class="flex justify-between items-center"><div><span class="text-gray-900 font-semibold">690 ₽</span></div></div></div></div></div>';
 const bodyClean = (() => {
   let h = String(m.body_html || '');
 h = h.replace('rounded-lg break-words border bg-white border-gray-300 p-5 my-4', 'zs-callout');
@@ -402,6 +402,10 @@ h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|sp
       }
     }
   }
+  // (11.11) надписи «SKU N» покупателю не показываем нигде
+  h = h.replace(/\([^()]*SKU[^()]*\)/g, '');
+  // (11.11) при выключенных ценах — гасим data-price во всех легаси-карточках
+  if (!PRICES_ON) { h = h.replace(/data-price="\d+"/g, 'data-price=""'); }
   return pf(h.trim());
 })();
 

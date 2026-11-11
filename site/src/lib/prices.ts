@@ -5,6 +5,18 @@ for (const it of ((SKUS as any).items || [])) SKU_BY[String(it.slug)] = it;
 
 export const fmtRub = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
+// ФЛАГ ЦЕН (директива владельца 11.11.2026): одна константа управляет ценами на ВСЁМ сайте.
+//   PRICES_ON = false — цены каталога выключены: вместо цены показывается «скоро»,
+//                       литеральные цены в контенте гасятся priceFix'ом, РРЦ-блок B2B скрыт,
+//                       суммы в корзине и lead-модалке не показываются (цена уходит только дилеру в заявку).
+//   PRICES_ON = true  — цены снова видны везде автоматически, без правок страниц.
+export const PRICES_ON = false;
+export const SOON = 'скоро';
+
+export function priceOut(price: number | null | undefined): string {
+  return PRICES_ON && price != null ? fmtRub(Number(price)) + ' ₽' : SOON;
+}
+
 // Директива владельца (09.11.2026): цены нигде не вшиваются жёстко.
 // В контенте (JSON body_html, статьи) могут остаться старые литералы —
 // при рендере они заменяются на актуальные цены каталога (sku.json).
@@ -17,7 +29,7 @@ const RULES: Array<[RegExp, string, string, string]> = [
   [/\b95\s?000\s*\u20bd/g, 'adapter-ccs2-gbt-dc', '', ' ' + RUB],
   [/\b13\s?500\s*\u20bd/g, 'kabel-type2-type2-5m-22kw', '', ' ' + RUB],
   [/\b9\s?900\s*\u20bd/g, 'udlinitel-type2-type2-5m', '', ' ' + RUB],
-  [/(>\s*)\b690\s*\u20bd/g, 'smazka-silikonom-zima', '$1', ' ' + RUB],
+  [/(?:&gt;|>)\s*690\s*\u20bd/g, 'smazka-silikonom-zima', '', ' ' + RUB],
   [/\b39\s?000\s*\u20bd/g, 'nastennaya-stanciya-gbt-7kw', '', ' ' + RUB],
   [/\b24\s?500\s*\u20bd/g, 'nastennaya-stanciya-type2-7kw', '', ' ' + RUB],
   [/\b7\s?000\s*\u20bd/g, 'adapter-type2-gbt-premium', '', ' ' + RUB],
@@ -29,9 +41,20 @@ const RULES: Array<[RegExp, string, string, string]> = [
   [/\b34\s?500\s*\u20bd/g, 'nastennaya-stanciya-type2-22kw', '', ' ' + RUB],
   [/\b15\s?500\s*\u20bd/g, 'kabel-type2-type2-7m-32a', '', ' ' + RUB],
 ];
+const LIT_EXTRA: RegExp[] = [
+  /\b26\s?190\s*\u20bd/g,
+  /\b28\s?190\s*\u20bd/g,
+  /\b34\s?590\s*\u20bd/g,
+  /\b36\s?590\s*\u20bd/g,
+];
 
 export function priceFix(s: string): string {
   let out = String(s || '');
+  if (!PRICES_ON) {
+    for (const [re] of RULES) out = out.replace(re, SOON);
+    for (const re of LIT_EXTRA) out = out.replace(re, SOON);
+    return out;
+  }
   for (const [re, slug, prefix, suffix] of RULES) {
     const it = SKU_BY[slug];
     if (!it || it.price == null) continue;

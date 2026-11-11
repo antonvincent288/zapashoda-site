@@ -3,6 +3,7 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import LeadCTA from '../../components/LeadCTA.astro';
 import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
 import skuData from '../../data/sku.json';
+import { priceOut, PRICES_ON } from '../../lib/prices';
 const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
 const models = Object.values(modelGlob).filter(Boolean).sort((x, y) => String(x.slug).localeCompare(String(y.slug)));
 const SKU = {
@@ -15,7 +16,7 @@ const SKU = {
 };
 const skuUrl = (s) => '/catalog/' + s + '.html';
 const skuPrice = {};
-for (const it of (skuData.items || [])) skuPrice[it.slug] = parseInt(it.price).toLocaleString('ru-RU');
+for (const it of (skuData.items || [])) skuPrice[it.slug] = priceOut(it.price);
 type Cell = { kind: 'native' | 'sku' | 'no', sku?: string, note?: string };
 function cellsFor(m): Cell[] {
   const port = (m.port || '').trim();
@@ -102,7 +103,7 @@ const faqLd = {
 </tbody>
 </table>
 </div>
-<p style="font-size:13px;color:var(--txt-muted);margin-top:10px">● — родной разъём · ↺ — нужен адаптер (цена в ячейке, ссылка ведёт в каталог) · — — сценарий недоступен или требует уточнения по VIN.</p>
+<p style="font-size:13px;color:var(--txt-muted);margin-top:10px">● — родной разъём · ↺ — нужен адаптер ({PRICES_ON ? 'цена в ячейке, ссылка ведёт в каталог' : 'ссылка ведёт в каталог'}) · — — сценарий недоступен или требует уточнения по VIN.</p>
 <h2 style="margin-top:36px;font-size:21px">Как читать матрицу</h2>
 <p style="font-size:15px;line-height:1.6;color:var(--txt);max-width:780px">Китайские машины с портами GB/T заряжаются на китайских станциях напрямую, а для городских Type 2-станций нужен адаптер Type 2 → GB/T (22 кВт). Европейские машины — наоборот: городские станции напрямую, китайские станции через обратный адаптер. Американские и японские машины (Type 1 / CCS1) — через адаптер Type 1 → Type 2 для медленной зарядки; быстрые станции для них в России пока ограничены.</p>
 <ModelBuyBlock />

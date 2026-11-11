@@ -1,6 +1,7 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import OrderForm from '../../components/OrderForm.astro';
+import { priceOut, PRICES_ON } from '../../lib/prices';
 export async function getStaticPaths() {
   const src = (await import('../../data/sku.json')).default;
   const ofp = (await import('../../data/of_products.json')).default;
@@ -16,10 +17,10 @@ const skuMap = {};
 const relProds = (d.related || []).map((r) => ({ r, s: skuMap[r.href.replace('/catalog/','').replace('.html','')] })).filter((x) => x.s);
 const fit = (d.fit || []).filter((f) => typeof f === 'object');
 const faqLd = d.faq && d.faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
-const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.title, description: d.desc, image: d.image ? 'https://zapashoda-ev.ru' + d.image : undefined, offers: { '@type': 'Offer', price: String(d.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } };
+const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.title, description: d.desc, image: d.image ? 'https://zapashoda-ev.ru' + d.image : undefined, offers: PRICES_ON ? { '@type': 'Offer', price: String(d.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } : undefined };
 const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS=' + JSON.stringify(ofpAll) + ';';
 ---
-<ZhLayout og={d.image || undefined} title={d.title + ' — купить | Запас хода'} description={d.desc || (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».')} jsonld={[prodLd, faqLd].filter(Boolean)}>
+<ZhLayout og={d.image || undefined} title={d.title + ' — купить | Запас хода'} description={d.desc || (PRICES_ON ? (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».') : (d.title + ' — купить. Совместимость и подбор под модель — «Запас хода».'))} jsonld={[prodLd, faqLd].filter(Boolean)}>
   <section class="sec">
     <div class="wrap sk-wrap">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/catalog/">Каталог</a> / {d.title}</div>
@@ -31,7 +32,7 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
         <div class="sk-buy">
           <p class="lead" style="margin:0">{d.lead}</p>
           {d.spec.slice(0, 3).map(([k, v]) => <span class="tag">{k}: {v}</span>)}
-          <b class="sk-price">{d.price.toLocaleString('ru-RU')} ₽</b>
+          <b class="sk-price">{priceOut(d.price)}</b>
           <button class="btn btn-gold sk-cta" type="button" onclick={`ofAdd(${of ? of.id : 0},this)`}>В заявку</button>
           <a class="btn btn-ghost sk-cta2" style="text-decoration:none" href="/catalog/#order-form">Оформить заявку →</a>
           <p class="sk-trust">Оплата при получении · Заберёте у партнёра-дилера в вашем городе</p>
@@ -71,7 +72,7 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
               <a class="sk-relcard" href={r.href}>
                 {s.image && <img src={s.image} alt={r.title} loading="lazy" decoding="async" />}
                 <span class="sk-reltitle">{r.title}</span>
-                <span class="sk-relprice">{s.price.toLocaleString('ru-RU')} ₽</span>
+                <span class="sk-relprice">{priceOut(s.price)}</span>
               </a>
             ))}
           </div>
