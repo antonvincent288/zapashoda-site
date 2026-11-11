@@ -69,6 +69,32 @@ def check_file(path):
         if n_ch < GUIDE_MIN_CH: errs.append(("guide_gate", f"глав {n_ch} < {GUIDE_MIN_CH}"))
         if wc < GUIDE_MIN_WORDS: errs.append(("guide_gate", f"слов {wc} < {GUIDE_MIN_WORDS}"))
         if len(d.get("faq", []) or []) < GUIDE_MIN_FAQ: errs.append(("guide_gate", f"faq {len(d.get('faq', []) or [])} < {GUIDE_MIN_FAQ}"))
+
+    # ЧЕЛОВЕЧНОСТЬ (директива 11.11 «статьи и для людей»): предупреждения, не ошибки
+    paras_hv = [strip_tags(p).strip() for p in re.findall(r"<p[^>]*>(.*?)</p>", body, re.S) if strip_tags(p).strip()]
+    full_hv = " ".join(paras_hv)
+    words_hv = len(full_hv.split())
+    if words_hv >= 300:
+        sents_hv = [s for s in re.split(r"(?<=[.!?…])\s+", full_hv) if len(s.strip()) > 15]
+        vy_hv = len(re.findall(r"\b[Вв]ы\b|\b[Вв]аш(ем|его|ей|и|их|у|ю|ой|ая)\b|\b[Тт]еб[яе]\b", full_hv))
+        vyk_hv = 1000 * vy_hv / max(words_hv, 1)
+        avg_hv = words_hv / max(len(sents_hv), 1)
+        if vyk_hv < 1.0:
+            warns.append(("human_voice", f"обращений «вы/ваш» {vyk_hv:.1f}/1000 слов — текст безликий (цель >=3)"))
+        if avg_hv > 22:
+            warns.append(("human_voice", f"среднее предложение {avg_hv:.1f} слов — плотно (цель <=18)"))
+        walls_hv = len([p for p in paras_hv if len(p) > 550])
+        if walls_hv > 2:
+            warns.append(("human_voice", f"абзацев-стен >550 зн.: {walls_hv} — разбить на короткие"))
+        for kind_hv, rx_hv in (("канцелярит «в рамках»", r"\bв рамках\b"), ("канцелярит «в свою очередь»", r"\bв свою очередь\b"),
+                               ("канцелярит «осуществляется»", r"\b(осуществля|производ)(ется|ются)\b"), ("канцелярит «представляет собой»", r"\bпредставляет собой\b")):
+            n_hv = len(re.findall(rx_hv, full_hv, re.I))
+            if n_hv:
+                warns.append(("human_voice", f"{kind_hv}: {n_hv}x — заменить живой формулировкой"))
+        for term_hv, excl_hv in (("УЗО", r"защит|утечек"), ("LFP", r"LiFePO4|феррофосфат"), ("OBC", r"бортов"), ("BMS", r"электроник|управл"), ("SOH", r"состояни|остаточн")):
+            m_hv = re.search(r"\b" + term_hv + r"\b", full_hv)
+            if m_hv and not full_hv[:m_hv.start()].rstrip().endswith("(") and not re.search(excl_hv, full_hv[max(0, m_hv.start()-90):m_hv.end()+40], re.I):
+                warns.append(("human_voice", f"{term_hv} без расшифровки при первом упоминании"))
     return errs, warns
 
 def load_sku_prices(root):
