@@ -478,8 +478,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .bgrid.as-slider>*{flex:0 0 74%;scroll-snap-align:start}}
 
 /* === HERO SLIDER: асимметрия + гайд 3 шага (native, без Swiper) === */
-.hero .wrap{display:grid;grid-template-columns:minmax(0,760px);justify-content:start;align-items:center}
-@media(max-width:960px){.hero .wrap{display:block}}
+.hero:not(.zh-hero-big) .wrap{display:grid;grid-template-columns:minmax(0,760px);justify-content:start;align-items:center}
+@media(max-width:960px){.hero:not(.zh-hero-big) .wrap{display:block}}
 /* свечение CTA */
 .btn-gold{box-shadow:0 4px 18px rgba(1,97,239,.28),0 0 0 rgba(1,97,239,0);transition:transform .2s,box-shadow .25s}
 .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(1,97,239,.4)}
