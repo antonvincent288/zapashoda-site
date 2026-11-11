@@ -28,7 +28,6 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 <link rel="manifest" href="/manifest.json" />
 <link rel="alternate" type="application/rss+xml" title="Запас хода — RSS" href="/rss.xml" />
 <link rel="stylesheet" href="/assets/fonts/inter.css" />
-<link rel="stylesheet" href="/assets/fonts/montserrat.css" />
 <meta property="og:image" content={og ? new URL(og, Astro.site ?? "https://zapashoda-ev.ru").href : "https://zapashoda-ev.ru/assets/og/default.png"} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -589,8 +588,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .bgrid.as-slider>*{flex:0 0 74%;scroll-snap-align:start}}
 
 /* === HERO SLIDER: асимметрия + гайд 3 шага (native, без Swiper) === */
-.hero:not(.zh-hero-big) .wrap{display:grid;grid-template-columns:minmax(0,760px);justify-content:start;align-items:center}
-@media(max-width:960px){.hero:not(.zh-hero-big) .wrap{display:block}}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,760px);justify-content:start;align-items:center}
+@media(max-width:960px){.hero .wrap{display:block}}
 /* свечение CTA */
 .btn-gold{box-shadow:0 4px 18px rgba(1,97,239,.28),0 0 0 rgba(1,97,239,0);transition:transform .2s,box-shadow .25s}
 .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(1,97,239,.4)}
