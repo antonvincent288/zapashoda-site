@@ -1,6 +1,6 @@
 {
- "sitemap_count": 404,
- "sitemap_ok": 404,
+ "sitemap_count": 415,
+ "sitemap_ok": 415,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -43,7 +43,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "11.11 10:41",
+ "checked_at_msk": "11.11 12:18",
  "failures": [
   {
    "where": "page /search.html",
