@@ -7,8 +7,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
       <h1>Зарядные станции рядом</h1>
-      <p class="lead"><span id="stn-count">2073</span> станций (<span id="stn-upd">2026-11-01</span>). Синие — быстрые DC, зелёные — AC. Живой статус коннекторов — в <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;text-decoration:underline">2Chargers</a>, маршрут — в <a href="https://yandex.ru/maps/" target="_blank" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Яндекс.Картах</a>.</p>
-      <div id="map" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:28px;border:1px solid var(--line)"></div>
+      <p class="lead"><span id="stn-count">2073</span> станций в нашей базе (<span id="stn-upd">2026-11-01</span>). <b>По умолчанию — поиск на Яндекс.Картах:</b> там все станции с живым статусом. Наша вкладка — единственный фильтр по GB/T, Type 1 и мощности в рунете.</p>
+      <div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap" id="map-tabs">
+        <button id="tab-ya" class="chip" type="button" style="border-color:#4d9bf5;background:rgba(77,155,245,.12)">Поиск на Яндекс.Картах — все станции</button>
+        <button id="tab-own" class="chip" type="button">Фильтр по разъёмам — наша база</button>
+      </div>
+      <div id="map-ya" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
+      <div id="map" style="height:64vh;min-height:420px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:14px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
       <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:220px;max-width:380px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" /><button id="city-go" class="chip" type="button">Найти</button><button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами">📍 Рядом со мной</button></div>
       <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
@@ -95,7 +100,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           b.textContent = pair[0] + ' (' + pair[1] + ')';
           b.addEventListener('click', function () {
             var pts = cityPts[pair[0]] || [];
-            if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 12 });
+            if (yaActive) {
+              loadYaWidget(pts, pair[0]);
+            } else if (pts.length) {
+              map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 12 });
+            }
           });
           chipsBox.appendChild(b);
         });
@@ -233,6 +242,51 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           }
         } catch (e) {}
       }
+
+      // ===== Вкладки: Яндекс-виджет vs наша фильтр-карта =====
+      var yaActive = true, yaFrame = null, yaLL = '37.62,55.75', yaZ = 5, yaText = 'электрозаправки';
+      function buildYaUrl() {
+        return 'https://yandex.ru/map-widget/v1/?text=' + encodeURIComponent(yaText) + '&ll=' + yaLL + '&z=' + yaZ + '&l=map';
+      }
+      function ensureYaFrame() {
+        if (yaFrame) return;
+        yaFrame = document.createElement('iframe');
+        yaFrame.style.cssText = 'width:100%;height:100%;border:0';
+        yaFrame.src = buildYaUrl();
+        yaFrame.title = 'Поиск зарядных станций на Яндекс.Картах';
+        yaFrame.loading = 'lazy';
+        document.getElementById('map-ya').appendChild(yaFrame);
+      }
+      function loadYaWidget(pts, city) {
+        ensureYaFrame();
+        if (pts && pts.length) {
+          var lat = pts.reduce(function (a, p) { return a + p[0]; }, 0) / pts.length;
+          var lon = pts.reduce(function (a, p) { return a + p[1]; }, 0) / pts.length;
+          yaLL = lon.toFixed(4) + ',' + lat.toFixed(4);
+          yaZ = Math.max(10, Math.min(14, 11 + (pts.length > 40 ? 1 : 0)));
+        }
+        if (city) yaText = 'электрозаправки ' + city;
+        yaFrame.src = buildYaUrl();
+        var note = document.getElementById('geo-note');
+        if (note) note.textContent = 'Открыли поиск Яндекс.Карт: «' + yaText + '». Там видны все станции Яндекса, включая живой статус.' ;
+      }
+      var tYa = document.getElementById('tab-ya'), tOwn = document.getElementById('tab-own');
+      function setTab(ya) {
+        yaActive = ya;
+        document.getElementById('map-ya').style.display = ya ? '' : 'none';
+        document.getElementById('map').style.display = ya ? 'none' : '';
+        tYa.style.borderColor = ya ? '#4d9bf5' : '';
+        tYa.style.background = ya ? 'rgba(77,155,245,.12)' : '';
+        tOwn.style.borderColor = ya ? '' : '#4d9bf5';
+        tOwn.style.background = ya ? '' : 'rgba(77,155,245,.12)';
+        if (ya) ensureYaFrame();
+        else setTimeout(function () { map.invalidateSize(); }, 50);
+        try { history.replaceState(null, '', ya ? '#view=ya' : '#view=own'); } catch (e) {}
+      }
+      if (tYa) tYa.addEventListener('click', function () { setTab(true); });
+      if (tOwn) tOwn.addEventListener('click', function () { setTab(false); });
+      ensureYaFrame();
+      try { if (location.hash.indexOf('#view=own') === 0) setTab(false); } catch (e) {}
     })();
   </script>
 <style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}#map{background:#0b0b0d}</style>
