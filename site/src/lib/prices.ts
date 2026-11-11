@@ -7,8 +7,9 @@ export const fmtRub = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, 
 
 // ФЛАГ ЦЕН (директива владельца 11.11.2026): одна константа управляет ценами на ВСЁМ сайте.
 //   PRICES_ON = false — цены каталога выключены: вместо цены показывается «скоро»,
-//                       литеральные цены в контенте гасятся priceFix'ом, РРЦ-блок B2B скрыт,
-//                       суммы в корзине и lead-модалке не показываются (цена уходит только дилеру в заявку).
+//                       литеральные цены в контенте гасятся priceFix'ом (включая бандлы и «выгоду»),
+//                       РРЦ-блок B2B скрыт, суммы в корзине и lead-модалке не показываются
+//                       (цена уходит только дилеру в заявку).
 //   PRICES_ON = true  — цены снова видны везде автоматически, без правок страниц.
 export const PRICES_ON = false;
 export const SOON = 'скоро';
@@ -53,6 +54,10 @@ export function priceFix(s: string): string {
   if (!PRICES_ON) {
     for (const [re] of RULES) out = out.replace(re, SOON);
     for (const re of LIT_EXTRA) out = out.replace(re, SOON);
+    // «Выгода N ₽» при выключенных ценах не имеет смысла — убираем целиком
+    out = out.replace(/[Вв]ыгода\s+\d(?:\s?\d{3})+\s*\u20bd/g, '');
+    // любая литеральная цена с тысячной группой (4 500 ₽, 20 190 ₽…) — не товарные тарифы (они без групп)
+    out = out.replace(/\b\d(?:\s?\d{3})+\s*\u20bd/g, SOON);
     return out;
   }
   for (const [re, slug, prefix, suffix] of RULES) {
