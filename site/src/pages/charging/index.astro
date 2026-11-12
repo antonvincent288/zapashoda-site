@@ -162,7 +162,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var dc = /CCS|CHAdeMO|GB\/T DC|type2_combo|gb_dc/i.test(conn) || pw >= 50;
             s.__dc = dc;
             var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
-            m.bindPopup('<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>');
+            m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
+              + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600">✓ Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600">Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
+              ; });
             m.__s = s;
             ALL.push(m);
           });
@@ -304,9 +306,10 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           var fit = null;
           if (direct.some(function (k) { return c[k]; })) fit = 'direct';
           else if (adapt.some(function (k) { return c[k]; })) fit = 'adapt';
+          else fit = 'unknown';
           s.__fit = fit;
           if (carSel && m.setStyle) {
-            m.setStyle({ color: fit === 'direct' ? '#16a34a' : '#f59e0b', fillColor: fit === 'direct' ? '#16a34a' : '#f59e0b' });
+            m.setStyle({ color: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98', fillColor: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98' });
           } else if (!carSel && m.setStyle) {
             m.setStyle({ color: s.__dc ? '#2563eb' : '#16a34a', fillColor: s.__dc ? '#2563eb' : '#16a34a' });
           }
@@ -372,10 +375,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           if (box) { var allb = box.querySelector('.cchip:last-child'); if (allb && allb.textContent === 'Все станции') allb.classList.add('on'); }
           var direct = ALL.filter(function (m) { return m.__s.__fit === 'direct'; }).length;
           var adapt = ALL.filter(function (m) { return m.__s.__fit === 'adapt'; }).length;
+          var unk = ALL.filter(function (m) { return m.__s.__fit === 'unknown'; }).length;
           var portName = String(carEntry.port || '');
           info.innerHTML = '<b style="color:var(--txt)">' + (carEntry.brand ? carEntry.brand + ' ' : '') + carEntry.name + '</b> · разъём ' + portName + '. ' +
-            'Прямое подключение: <b style="color:#16a34a">' + direct + '</b> станций. ' +
+            'Прямое подключение: <b style="color:#16a34a">' + direct + '</b>. ' +
             'Через адаптер ' + (ADAPTER_LABEL[carPort] || '') + ': <b style="color:#f59e0b">' + adapt + '</b>. ' +
+            'Разъём не подтверждён: <b style="color:#8a8f98">' + unk + '</b> (серые — не блокируем, проверьте по ссылке в карточке). ' +
             '<a href="/catalog/?model=' + encodeURIComponent(slug) + '" style="color:#4d9bf5;text-decoration:underline">Адаптеры и кабели для вашей модели →</a>';
           applyFilter();
         } else {
