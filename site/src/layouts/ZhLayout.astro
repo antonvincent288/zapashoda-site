@@ -681,6 +681,16 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 details.rounded-lg.bg-white{background:var(--card) !important}
 .rounded-lg.bg-white details{background:transparent}
 .prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
+/* == МИЛЛИМЕТРОВКА v3: последние перекрытые пары, специфичность на 1 выше == */
+html .cards .card h3,html .bgrid .bcard h3{margin-top:12px;margin-bottom:8px}
+html .card h3,html .tile h3,html .plan h3{margin-bottom:8px}
+html .article h3{margin:32px 0 12px}
+html .buy-block h2,html .lead-cta h2{margin-bottom:16px}
+@media(max-width:640px){
+html .cards .card h3,html .bgrid .bcard h3{margin-top:8px;margin-bottom:6px}
+html .buy-block h2,html .lead-cta h2{margin-bottom:12px}
+}
+
 /* == МИЛЛИМЕТРОВКА v2: ритм 8px, перекрывает поздние правила (html-префикс = специфичность выше) == */
 html .article h2{margin:48px 0 16px}
 html .article h3{margin:32px 0 12px}
