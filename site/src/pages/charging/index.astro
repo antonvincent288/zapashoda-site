@@ -67,6 +67,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   <script is:inline>
     (function () {
       var map, cluster, ALL = [];
+      function plural(n, one, few, many) {
+        var m10 = n % 10, m100 = n % 100;
+        if (m10 === 1 && m100 !== 11) return one;
+        if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+        return many;
+      }
       // Нормализация значений коннекторов из stations.json (CCS2, chademo, chademo:current, type2_combo, gb_dc:output, Type 2 кабель, type2_cable, schuko, type1, type1_combo...)
       function normConn(raw) {
         var s = String(raw || '').trim().toLowerCase();
@@ -182,7 +188,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             cluster.clearLayers();
             hits.forEach(function (m) { cluster.addLayer(m); });
             map.fitBounds(L.latLngBounds(hits.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
-            if (note) note.textContent = 'Найдено ' + hits.length + ' станций по запросу «' + q + '». Кликните по фильтру разъёмов, чтобы сбросить поиск.';
+            if (note) note.textContent = 'Найдено ' + hits.length + ' ' + plural(hits.length, 'станция', 'станции', 'станций') + ' по запросу «' + q + '». Кликните по фильтру разъёмов, чтобы сбросить поиск.';
             var h0 = hits[0].__s; if (h0) fetchTemp(h0.lat, h0.lon, q);
           } else if (note) {
             note.textContent = 'По запросу «' + q + '» ничего не найдено в базе. Попробуйте название города без улицы.';
@@ -200,7 +206,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               cluster.clearLayers();
               near.forEach(function (m) { cluster.addLayer(m); });
               map.fitBounds(L.latLngBounds(near.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
-              if (note) note.textContent = 'Рядом (до 50 км): ' + near.length + ' станций. Фильтр разъёмов работает поверх — выберите свой разъём выше.';
+              if (note) note.textContent = 'Рядом (до 50 км): ' + near.length + ' ' + plural(near.length, 'станция', 'станции', 'станций') + '. Фильтр разъёмов работает поверх — выберите свой разъём выше.';
               fetchTemp(lat, lon, 'рядом с вами');
             } else if (note) {
               note.textContent = 'В радиусе 50 км станций не нашлось. Покажем всю карту.';
@@ -395,6 +401,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       if (resetCar) resetCar.addEventListener('click', function () { selCar.value = ''; setModel(null); });
       var socEl = document.getElementById('range-soc');
       if (socEl) socEl.addEventListener('input', updateRange);
+      // авто-погода на старте: Москва как нейтральная точка; после геолокации/города пересчитается
+      fetchTemp(55.7559, 37.6177, 'Москва');
 
       // ===== Вкладки: Яндекс-виджет vs наша фильтр-карта =====
       var yaActive = false, yaFrame = null, yaLL = '37.62,55.75', yaZ = 5, yaText = 'электрозаправки';
