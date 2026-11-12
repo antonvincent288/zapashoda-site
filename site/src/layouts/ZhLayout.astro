@@ -298,9 +298,9 @@ body .sec h2,body .sec-alt h2{font-size:clamp(22px,3vw,28px)}
 body .sec > .wrap > h2,body .sec-alt > .wrap > h2{font-size:clamp(26px,4.2vw,42px);max-width:none;letter-spacing:-.02em;line-height:1.18}
 /* таблицы: единая фактура (границы/паддинги уже едины в dark-базе) */
 html.dark table{font-size:14.5px;font-variant-numeric:tabular-nums}
-html.dark table th{font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--txt-muted);text-align:left}
+html.dark table th{font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--txt-muted);text-align:left;text-transform:uppercase}
 /* h2 чтения: один масштаб внутри статей (about был 24, блог/модели 28) */
-body .article h2{font-size:clamp(22px,3vw,28px)}
+body .article h2{font-size:clamp(22px,3vw,28px)!important}
 /* lead-cta: не выпадает за контейнер на страницах, где секция без .wrap */
 body section.lead-cta{max-width:1104px;margin-left:auto;margin-right:auto}
 .article p{margin:16px 0}
