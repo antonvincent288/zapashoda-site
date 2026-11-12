@@ -31,11 +31,11 @@
  "models_cards": 154,
  "app_scripts": 3,
  "catalog_products": 0,
- "link_targets": 225,
- "links_ok": 225,
+ "link_targets": 224,
+ "links_ok": 224,
  "links_bad": [],
- "assets_count": 35,
- "assets_ok": 34,
+ "assets_count": 34,
+ "assets_ok": 33,
  "assets_bad": [
   [
    "/assets/img/plugs/zsh-'+((a=String(a||",
@@ -43,7 +43,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "12.11 02:13",
+ "checked_at_msk": "12.11 04:40",
  "failures": [
   {
    "where": "page /search.html",
