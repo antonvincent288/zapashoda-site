@@ -280,7 +280,14 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .comments,.c-form,#comments{display:none!important}
 .article h2{font-size:clamp(22px,.5714vw + 18.77px,27px);margin:44px 0 14px;letter-spacing:-.02em;line-height:1.25}
 /* zh-stats главной: нейтрализация чужого .stats лейаута (4-колоночная сетка перебивала flex-ряд цифр) */
-.zh-stats{display:flex;grid-template-columns:none}
+.zh-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.zh-stats>div{padding:0 28px;border-left:1px solid rgba(255,255,255,.14)}
+.zh-stats>div:first-child{border-left:none;padding-left:0}
+.zh-stats>div:last-child{padding-right:0}
+@media(max-width:900px){.zh-stats{grid-template-columns:1fr 1fr;gap:22px 18px}.zh-stats>div{border-left:none;padding:0}}
+/* воздух под хиро: изолируем чужой .hero-паддинг лейаута, у главной 96/0 (мобайл 52/0) */
+.hero.zh-hero-big{padding:96px 0 0}
+@media(max-width:900px){.hero.zh-hero-big{padding:52px 0 0}}
 .zh-stats b{font-family:inherit;font-size:clamp(34px,3.6vw,52px)}
 .zh-stats span{max-width:190px;line-height:1.25}
 .zh-stats .fresh{color:#e9eff673;font-size:11px}
