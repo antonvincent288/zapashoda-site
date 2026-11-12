@@ -75,6 +75,18 @@ const STEPS = [
     </div>
   </div></section>
 
+
+  {s.articles && (
+    <section class="sec"><div class="wrap">
+      <h2>Разборы по теме</h2>
+      <div class="cards" style="margin-top:24px">
+        {s.articles.map((a: any) => (
+          <div class="card"><a href={a[0]} style="color:var(--gold);text-decoration:none"><b>{a[1]}</b></a></div>
+        ))}
+      </div>
+    </div></section>
+  )}
+
   <section class="sec"><div class="wrap"><div class="cta">
     <h2>Обсудить ваш сценарий</h2>
     <p>Опишите задачи в форме подбора — ответит наш менеджер. Партнёрский пакет с ценами пришлём вместе с расчётом. Быстрый канал — Telegram.</p>
