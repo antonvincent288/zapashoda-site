@@ -43,7 +43,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "12.11 12:22",
+ "checked_at_msk": "12.11 14:22",
  "failures": [
   {
    "where": "page /search.html",
