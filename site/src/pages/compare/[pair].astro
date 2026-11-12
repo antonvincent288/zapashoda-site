@@ -49,7 +49,7 @@ const faqLd = {
 <ZhLayout title={`${nameA} vs ${nameB}: зарядка, разъёмы, батареи — Запас хода`} description={`Сравнение ${nameA} и ${nameB}: разъёмы зарядки (${A.port} против ${B.port}), бортовое зарядное, батареи и что докупить для зарядки в России.`} jsonld={faqLd} og={`/assets/og/c-${pair.slug}.png`}>
 <section class="sec"><div class="wrap" style="padding:56px 0 72px">
 <div class="crumbs"><a href="/">Главная</a> / <a href="/compare/">Сравнения</a> / {nameA} vs {nameB}</div>
-<h1 style="font-size:29px;line-height:1.25;margin:10px 0 12px">{nameA} <span style="color:var(--gold)">vs</span> {nameB}</h1>
+<h1>{nameA} <span style="color:var(--gold)">vs</span> {nameB}</h1>
 <p style="color:var(--txt-muted);font-size:16px;max-width:760px">Сравнение по фактам: разъёмы, бортовое зарядное, батареи и адаптеры. Разъём зависит от рынка вывоза — проверьте по фото лючка или VIN перед покупкой адаптера.</p>
 <div style="overflow-x:auto;margin-top:26px;border:1px solid var(--line);border-radius:18px">
 <table style="width:100%;border-collapse:collapse;font-size:15px;min-width:560px">
@@ -65,7 +65,7 @@ const faqLd = {
 </tbody>
 </table>
 </div>
-<h2 style="margin-top:36px;font-size:21px">Что это значит для зарядки</h2>
+<h2 style="margin-top:36px">Что это значит для зарядки</h2>
 <p style="font-size:15px;line-height:1.6;color:var(--txt);max-width:760px">{chargeVerdict}</p>
 <ModelBuyBlock model={samePorts ? A : null} />
 <LeadCTA />
