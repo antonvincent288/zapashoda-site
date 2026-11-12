@@ -288,46 +288,6 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 /* воздух под хиро: изолируем чужой .hero-паддинг лейаута, у главной 96/0 (мобайл 52/0) */
 .hero.zh-hero-big{padding:96px 0 0}
 @media(max-width:900px){.hero.zh-hero-big{padding:52px 0 0}}
-
-/* == МИЛЛИМЕТРОВКА: вертикальный ритм 8px; воздух добавлен там, где было тесно == */
-.article h2{margin:48px 0 16px}
-.article h3{margin:32px 0 12px}
-.article p{margin-bottom:16px}
-.article ul,.article ol{margin:16px 0 16px 24px}
-.article .faqbox{margin-top:32px}
-.zh-article figure{margin:24px 0}
-.zh-article figcaption{margin-top:8px}
-.art-share{margin-top:24px}
-.crumbs{margin-bottom:16px}
-.meta{margin:16px 0 32px}
-.cards .card h3,.bgrid .bcard h3{margin-top:12px;margin-bottom:8px}
-.bcard p{margin-top:8px}
-.mcard b{margin-bottom:8px}
-.card.prodcard .price{margin-top:16px}
-.price{margin:12px 0 4px}
-.sec h2{margin-bottom:24px}
-.sec .lead,.sec .lede{margin-bottom:32px}
-.buy-block{padding-top:32px;padding-bottom:32px}
-.lead-cta{padding-top:32px;padding-bottom:32px}
-.zh-strip{margin-top:48px;padding:16px 0}
-.faq-d summary{padding:16px 0}
-.faq-d .faq-a{padding:4px 0 16px}
-footer{padding:64px 0 32px}
-footer h4{margin-bottom:16px}
-.copy{margin-top:32px}
-@media(max-width:640px){
-.article h2{margin:32px 0 12px}
-.article h3{margin:24px 0 8px}
-.article p{margin-bottom:12px}
-.article ul,.article ol{margin:12px 0 12px 20px}
-.sec h2{margin-bottom:16px}
-.sec .lead,.sec .lede{margin-bottom:24px}
-.buy-block{padding-top:24px;padding-bottom:24px}
-.lead-cta{padding-top:24px;padding-bottom:24px}
-footer{padding:48px 0 24px}
-.meta{margin:12px 0 24px}
-}
-
 .zh-stats b{font-family:inherit;font-size:clamp(34px,3.6vw,52px)}
 .zh-stats span{max-width:190px;line-height:1.25}
 .zh-stats .fresh{color:#e9eff673;font-size:11px}
@@ -739,7 +699,7 @@ function ofQty(id,d){var c=ofCart();for(var j=0;j<c.length;j++){if(c[j].id===id)
 function ofDel(id){ofSave(ofCart().filter(function(x){return x.id!==id}))}
 function ofRender(){var el=document.getElementById('of-items');if(!el)return;var c=ofCart();if(!c.length){el.innerHTML='<div style="color:var(--txt-muted);font-size:14px">Корзина пуста — выберите позиции из каталога выше.</div>'}else{var tot=0,h='';for(var i=0;i<c.length;i++){var x=c[i];var sm=x.price*x.qty;tot+=sm;h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px"><span>'+(x.emoji?x.emoji+' ':'')+x.name+'</span><span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><button type="button" onclick="ofQty('+x.id+',-1)" aria-label="минус" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:inherit">−</button><span>'+x.qty+'</span><button type="button" onclick="ofQty('+x.id+',1)" aria-label="плюс" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:inherit">+</button></span><span style="min-width:100px;text-align:right">'+(window.ZS_PRICES_ON===false?'скоро':sm.toLocaleString('ru-RU')+' ₽')+'</span></div>'}h+=(window.ZS_PRICES_ON===false?'':'<div style="display:flex;justify-content:space-between;padding:10px 0 2px;font-weight:700"><span>Итого</span><span>'+tot.toLocaleString('ru-RU')+' ₽</span></div>');el.innerHTML=h}ofBar()}
 function ofBar(){var bar=document.getElementById('pc-bar');if(!bar)return;var c=ofCart();if(!c.length){bar.style.display='none';return}var tot=0,n=0;for(var i=0;i<c.length;i++){tot+=c[i].price*c[i].qty;n+=c[i].qty}bar.style.display='block';var t=document.getElementById('pc-bar-txt');if(t)t.textContent='В заявке: '+n+' поз.'+(window.ZS_PRICES_ON===false?'':' · '+tot.toLocaleString('ru-RU')+' ₽')}
-function ofSubmit(e){if(e&&e.preventDefault)e.preventDefault();var root=(e&&e.target)||document.getElementById('order-form');var c=ofCart();var st=document.getElementById('of-status');var q=function(n){var el=root.querySelector('[name='+n+']');return el?el.value:''};var d={t:'site_order',model:(window.OF_MODEL||''),items:c,total:c.reduce(function(s,x){return s+x.price*x.qty},0),name:q('name'),phone:q('phone'),city:q('city'),comment:q('comment'),consent:'yes',consent_ts:new Date().toISOString(),policy_version:'1.0'};if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Отправляем…</p>';fetch(OF_GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json()}).then(function(){if(window.ym&&window.YM_ID){try{ym(window.YM_ID,'reachGoal','order_form')}catch(e2){}}if(st)st.innerHTML='<div style="background:rgba(1,97,239,.12);border:1px solid rgba(1,97,239,.6);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:10px">✓ Заявка отправлена! Свяжемся с вами по телефону или в Telegram. Оплата — дилеру при получении.</div>';if(root&&root.reset)root.reset();ofSave([])}).catch(function(){if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Не удалось отправить — напишите нам в Telegram: @zapashoda_ev.</p>'})}
+function ofSubmit(e){if(e&&e.preventDefault)e.preventDefault();var root=(e&&e.target)||document.getElementById('order-form');var c=ofCart();var st=document.getElementById('of-status');var q=function(n){var el=root.querySelector('[name='+n+']');return el?el.value:''};var d={t:'site_order',model:(window.OF_MODEL||''),items:c,total:c.reduce(function(s,x){return s+x.price*x.qty},0),name:q('name'),phone:q('phone'),city:q('city'),comment:q('comment'),consent:'yes',consent_ts:new Date().toISOString(),policy_version:'1.0'};if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Отправляем…</p>';fetch(OF_GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json()}).then(function(){if(window.ym&&window.YM_ID){try{ym(window.YM_ID,'reachGoal','order_form')}catch(e2){}}if(st)st.innerHTML='<div style="background:rgba(1,97,239,.12);border:1px solid rgba(1,97,239,.6);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:10px"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"vertical-align:-2px\"><polyline points=\"20 6 9 17 4 12\"/></svg> Заявка отправлена! Свяжемся с вами по телефону или в Telegram. Оплата — дилеру при получении.</div>';if(root&&root.reset)root.reset();ofSave([])}).catch(function(){if(st)st.innerHTML='<p style="color:var(--txt-muted);font-size:14px">Не удалось отправить — напишите нам в Telegram: @zapashoda_ev.</p>'})}
 document.addEventListener('DOMContentLoaded',function(){var sec=document.getElementById('order-form');if(sec){var form=sec.querySelector('form');if(form){form.addEventListener('submit',ofSubmit)}else{var btn=sec.querySelector('button[type=submit],.of-send');if(btn)btn.addEventListener('click',function(e){e.preventDefault();ofSubmit({target:sec,preventDefault:function(){}})})}ofRender()}else{ofBar()}});
 </script>
 <script is:inline>
