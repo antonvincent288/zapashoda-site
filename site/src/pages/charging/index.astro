@@ -1,20 +1,58 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта зарядных станций России: поиск по городу, коннекторы и мощность.' };
+import modelsLight from '../../data/models_light.json';
+import modelsBattery from '../../data/models_battery.json';
+const MODELS = (modelsLight.models || [])
+  .filter((m) => m && m.slug && m.port)
+  .map((m) => {
+    const b = modelsBattery[m.slug];
+    let cap = null;
+    if (b && b.cap) { const v = parseFloat(String(b.cap).replace(',', '.')); if (isFinite(v)) cap = v; }
+    return { slug: m.slug, brand: m.brand || '', name: m.name, port: m.port, type: m.type || '', cap: cap };
+  })
+  .sort((a, b2) => (a.brand + a.name).localeCompare(b2.brand + b2.name, 'ru'));
+const MODELS_JSON = JSON.stringify(MODELS).replace(/<\//g, '<\\/');
+const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта зарядных станций России: фильтр по вашей модели (GB/T, Type 2, CCS2, CHAdeMO, Type 1), пересчёт запаса хода по реальной температуре за окном, поиск по городу и мощности.' };
 ---
-<ZhLayout title="Карта зарядных станций — Запас хода" description="Карта 3109 зарядных станций России: поиск по городу, коннекторы и мощность." jsonld={ld}>
+<ZhLayout title="Карта зарядных станций — Запас хода" description="Карта 3109 зарядных станций России: выберите свою модель — покажем только совместимые станции, пересчёт запаса хода по текущей температуре." jsonld={ld}>
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
       <h1>Зарядные станции рядом</h1>
       <p class="lead"><span id="stn-count" data-stn-count>3109</span> станций в нашей базе (<span id="stn-upd">2026-11-01</span>). По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
+      <div id="car-block" style="margin-top:26px;padding:18px;border:1px solid var(--line);border-radius:16px;background:rgba(77,155,245,.05)">
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px">Ваша машина — карта подстроится сама</div>
+        <p style="font-size:13.5px;color:var(--txt-muted);margin:0 0 12px">Выберите модель: покажем станции, которые она заряжает напрямую (зелёные точки), и станции через адаптер (янтарные). Плюс пересчитаем запас хода по реальной температуре за окном — она подтягивается онлайн.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select id="car-model" style="flex:1;min-width:240px;max-width:420px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px">
+            <option value="">— выберите модель —</option>
+            {MODELS.map((m) => (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{m.name}</option>))}
+          </select>
+          <button id="car-reset" class="chip" type="button" style="display:none">Сбросить модель</button>
+          <span id="weather-chip" class="chip" style="display:none" title="Онлайн-погода в точке карты">🌡 погода…</span>
+        </div>
+        <div id="car-info" style="margin-top:12px;font-size:13.5px;color:var(--txt-muted)"></div>
+        <div id="range-card" style="display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card)">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:220px">
+              <div id="range-line" style="font-size:15px;font-weight:600;color:var(--txt)"></div>
+              <div id="range-note" style="font-size:12.5px;color:var(--txt-muted);margin-top:4px"></div>
+            </div>
+            <div style="min-width:200px">
+              <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас: <b id="soc-val">80%</b></label>
+              <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap" id="map-tabs">
         <button id="tab-ya" class="chip" type="button">Все станции — Яндекс.Карты</button>
         <button id="tab-own" class="chip" type="button" style="border-color:#4d9bf5;background:rgba(77,155,245,.12)">Фильтр по разъёмам — наша база</button>
       </div>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
-      <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:14px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
+      <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:14px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. С выбранной машиной: зелёные — прямое подключение, янтарные — через адаптер. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
       <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:220px;max-width:380px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" /><button id="city-go" class="chip" type="button">Найти</button><button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами">📍 Рядом со мной</button></div>
       <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
       <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin-top:12px"></p>
@@ -105,6 +143,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             } else if (pts.length) {
               map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 12 });
             }
+            if (pts.length) {
+              var lat = pts.reduce(function (a, p) { return a + p[0]; }, 0) / pts.length;
+              var lon = pts.reduce(function (a, p) { return a + p[1]; }, 0) / pts.length;
+              fetchTemp(lat, lon, pair[0]);
+            }
           });
           chipsBox.appendChild(b);
         });
@@ -117,6 +160,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var conn = (s.s || []).join(' ');
             var pw = Number(s.pw) || 0;
             var dc = /CCS|CHAdeMO|GB\/T DC|type2_combo|gb_dc/i.test(conn) || pw >= 50;
+            s.__dc = dc;
             var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
             m.bindPopup('<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>');
             m.__s = s;
@@ -137,6 +181,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             hits.forEach(function (m) { cluster.addLayer(m); });
             map.fitBounds(L.latLngBounds(hits.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
             if (note) note.textContent = 'Найдено ' + hits.length + ' станций по запросу «' + q + '». Кликните по фильтру разъёмов, чтобы сбросить поиск.';
+            var h0 = hits[0].__s; if (h0) fetchTemp(h0.lat, h0.lon, q);
           } else if (note) {
             note.textContent = 'По запросу «' + q + '» ничего не найдено в базе. Попробуйте название города без улицы.';
           }
@@ -154,6 +199,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               near.forEach(function (m) { cluster.addLayer(m); });
               map.fitBounds(L.latLngBounds(near.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
               if (note) note.textContent = 'Рядом (до 50 км): ' + near.length + ' станций. Фильтр разъёмов работает поверх — выберите свой разъём выше.';
+              fetchTemp(lat, lon, 'рядом с вами');
             } else if (note) {
               note.textContent = 'В радиусе 50 км станций не нашлось. Покажем всю карту.';
               map.setView([lat, lon], 9);
@@ -177,7 +223,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         cluster.clearLayers();
         var shown = 0;
         ALL.forEach(function (m) {
-          var ok = keys.length === 0 || hasAny(m.__s);
+          var ok = (keys.length === 0 || hasAny(m.__s)) && fitOk(m.__s);
           if (ok) { cluster.addLayer(m); shown++; }
         });
         var note = document.getElementById('conn-note');
@@ -242,6 +288,108 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           }
         } catch (e) {}
       }
+
+      // ===== Карта твоей машины + погода + запас хода =====
+      var MODELS = [];
+      try { MODELS = JSON.parse(document.getElementById('car-models-json').textContent); } catch (e) {}
+      var PORT_DIRECT = { 'gb/t': ['gbt_dc', 'gbt_ac'], 'eu': ['type2', 'type2_socket', 'ccs2'], 'type1/ccs1': ['type1'], 'jp/chademo': ['chademo'] };
+      var PORT_ADAPT = { 'gb/t': ['type2', 'type2_socket', 'ccs2'], 'eu': ['gbt_dc', 'gbt_ac'], 'type1/ccs1': ['type2', 'type2_socket'], 'jp/chademo': ['type2', 'type1'] };
+      var ADAPTER_LABEL = { 'gb/t': 'GB/T → Type 2', 'eu': 'Type 2 → GB/T', 'type1/ccs1': 'Type 1 → Type 2', 'jp/chademo': 'Type 2 → CHAdeMO (где есть)' };
+      var carSel = null, carPort = null, carEntry = null, curTemp = null;
+      function fitOk(s) { return !carSel || !!s.__fit; }
+      function classifyAll() {
+        ALL.forEach(function (m) {
+          var s = m.__s, c = s.__c || {};
+          var direct = PORT_DIRECT[carPort] || [], adapt = PORT_ADAPT[carPort] || [];
+          var fit = null;
+          if (direct.some(function (k) { return c[k]; })) fit = 'direct';
+          else if (adapt.some(function (k) { return c[k]; })) fit = 'adapt';
+          s.__fit = fit;
+          if (carSel && m.setStyle) {
+            m.setStyle({ color: fit === 'direct' ? '#16a34a' : '#f59e0b', fillColor: fit === 'direct' ? '#16a34a' : '#f59e0b' });
+          } else if (!carSel && m.setStyle) {
+            m.setStyle({ color: s.__dc ? '#2563eb' : '#16a34a', fillColor: s.__dc ? '#2563eb' : '#16a34a' });
+          }
+        });
+      }
+      function tempFactor(t) {
+        if (t === null || t === undefined || isNaN(t)) return 1;
+        if (t <= 15) return Math.max(0.55, 1 - 0.018 * (15 - t));
+        if (t >= 25) return Math.max(0.82, 1 - 0.007 * (t - 25));
+        return 1;
+      }
+      function updateRange() {
+        var card = document.getElementById('range-card'), line = document.getElementById('range-line'), note = document.getElementById('range-note');
+        if (!card) return;
+        if (!carEntry || !carEntry.cap) { card.style.display = 'none'; return; }
+        card.style.display = '';
+        var soc = Number((document.getElementById('range-soc') || {}).value || 80);
+        var socVal = document.getElementById('soc-val'); if (socVal) socVal.textContent = soc + '%';
+        var summer = Math.round(carEntry.cap * 6.2 * soc / 100);
+        var f = tempFactor(curTemp);
+        var real = Math.round(summer * f);
+        if (curTemp === null || curTemp === undefined) {
+          line.textContent = 'Запас при заряде ' + soc + '%: ~' + real + ' км';
+          note.textContent = 'Разрешите геолокацию или выберите город — подставим реальную температуру и пересчитаем.';
+        } else {
+          line.textContent = 'При ' + (curTemp > 0 ? '+' : '') + curTemp + ' °C и заряде ' + soc + '%: ~' + real + ' км' + (f < 1 ? ' (летом было бы ~' + summer + ' км)' : '');
+          note.textContent = 'Пересчёт автоматический: холод бьёт по батарее и отоплению, жара — по кондиционеру. Оценка по среднему расходу 16 кВт·ч/100 км; точная цифра зависит от шин, скорости и стиля.';
+        }
+      }
+      function fetchTemp(lat, lon, label) {
+        var chip = document.getElementById('weather-chip');
+        if (!chip) return;
+        chip.style.display = '';
+        chip.textContent = '🌡 погода…';
+        try {
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&current=temperature_2m')
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
+              if (t === null) { chip.textContent = '🌡 погода недоступна'; return; }
+              curTemp = t;
+              chip.textContent = '🌡 ' + (t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами');
+              updateRange();
+            })
+            .catch(function () { chip.textContent = '🌡 погода недоступна'; });
+        } catch (e) { chip.textContent = '🌡 погода недоступна'; }
+      }
+      function setModel(slug) {
+        carEntry = null; carSel = slug || null; carPort = null;
+        if (slug) {
+          carEntry = MODELS.filter(function (m) { return m.slug === slug; })[0] || null;
+          if (carEntry) carPort = String(carEntry.port || '').toLowerCase();
+        }
+        var resetBtn = document.getElementById('car-reset');
+        if (resetBtn) resetBtn.style.display = carSel ? '' : 'none';
+        var info = document.getElementById('car-info');
+        if (carSel && carEntry) {
+          classifyAll();
+          // сброс чипов, чтобы показать весь совместимый набор
+          active = {};
+          document.querySelectorAll('.cchip').forEach(function (x) { x.classList.remove('on'); });
+          var box = document.getElementById('conn-chips');
+          if (box) { var allb = box.querySelector('.cchip:last-child'); if (allb && allb.textContent === 'Все станции') allb.classList.add('on'); }
+          var direct = ALL.filter(function (m) { return m.__s.__fit === 'direct'; }).length;
+          var adapt = ALL.filter(function (m) { return m.__s.__fit === 'adapt'; }).length;
+          var portName = String(carEntry.port || '');
+          info.innerHTML = '<b style="color:var(--txt)">' + (carEntry.brand ? carEntry.brand + ' ' : '') + carEntry.name + '</b> · разъём ' + portName + '. ' +
+            'Прямое подключение: <b style="color:#16a34a">' + direct + '</b> станций. ' +
+            'Через адаптер ' + (ADAPTER_LABEL[carPort] || '') + ': <b style="color:#f59e0b">' + adapt + '</b>. ' +
+            '<a href="/catalog/?model=' + encodeURIComponent(slug) + '" style="color:#4d9bf5;text-decoration:underline">Адаптеры и кабели для вашей модели →</a>';
+          applyFilter();
+        } else {
+          classifyAll();
+          info.textContent = '';
+          applyFilter();
+        }
+        updateRange();
+      }
+      var selCar = document.getElementById('car-model'), resetCar = document.getElementById('car-reset');
+      if (selCar) selCar.addEventListener('change', function () { setModel(selCar.value || null); });
+      if (resetCar) resetCar.addEventListener('click', function () { selCar.value = ''; setModel(null); });
+      var socEl = document.getElementById('range-soc');
+      if (socEl) socEl.addEventListener('input', updateRange);
 
       // ===== Вкладки: Яндекс-виджет vs наша фильтр-карта =====
       var yaActive = false, yaFrame = null, yaLL = '37.62,55.75', yaZ = 5, yaText = 'электрозаправки';
