@@ -681,6 +681,15 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 details.rounded-lg.bg-white{background:var(--card) !important}
 .rounded-lg.bg-white details{background:transparent}
 .prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
+/* == ЖУРНАЛЬНЫЙ КАНОН v5: воздуха НАД заголовком больше, чем ПОД ним (закон близости, Gestalt) == */
+html .sec h2:not(:first-child){margin-top:48px}
+html .cards .card h3+p,html .bgrid .bcard h3+p{margin-top:0}
+html .card h3{margin-bottom:12px!important}
+@media(max-width:640px){
+html .sec h2:not(:first-child){margin-top:32px}
+html .card h3{margin-bottom:8px!important}
+}
+
 /* == МИЛЛИМЕТРОВКА v4: инлайн-заголовки CTA-блоков (inline проигрывает — нужен !important) == */
 html .buy-block h2,html .lead-cta h2{margin:0 0 16px!important}
 @media(max-width:640px){html .buy-block h2,html .lead-cta h2{margin:0 0 12px!important}}
