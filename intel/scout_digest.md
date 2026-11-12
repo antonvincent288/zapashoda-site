@@ -129,3 +129,7 @@
 ## 2026-11-11
 
 Новых находок нет - все уже в базе.
+## 2026-11-12
+
+- [astro-llms-md](https://www.npmjs.com/package/astro-llms-md) — Generate llms.txt, llms-full.txt, and individual markdown files from your Astro site with this Astro integration
+- [@pagefind/darwin-arm64](https://www.npmjs.com/package/@pagefind/darwin-arm64) — The platform-specific binary for pagefind on darwin/arm64
