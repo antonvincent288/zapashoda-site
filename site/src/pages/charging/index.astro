@@ -75,11 +75,18 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
         <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:21px"></div>
         <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:13px 0 0"></p>
+        <div style="margin-top:21px;padding-top:17px;border-top:1px solid rgba(77,155,245,.18)">
+          <div class="os-row">
+            <div><div class="os-label">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div>
+            <div><div class="os-label">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div>
+          </div>
+          <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
+          <p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. С выбранной машиной: зелёные — прямое подключение, янтарные — через адаптер, серые — разъём не подтверждён. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p>
+        </div>
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
-      <div style="margin-top:21px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:13px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. С выбранной машиной: зелёные — прямое подключение, янтарные — через адаптер, серые — разъём не подтверждён. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
     </div>
   </section>
@@ -645,5 +652,20 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       try { if (location.hash.indexOf('#view=ya') === 0) setTab(true); } catch (e) {}
     })();
   </script>
-<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}</style>
+<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}
+#os-widget{position:relative;border:1px solid rgba(77,155,245,.22);background:linear-gradient(135deg,rgba(77,155,245,.13),rgba(77,155,245,.03) 45%,rgba(201,162,39,.10));box-shadow:0 20px 70px rgba(2,6,16,.45),0 0 0 1px rgba(77,155,245,.07),inset 0 1px 0 rgba(255,255,255,.06)}
+#os-widget::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,155,245,.75) 30%,rgba(201,162,39,.55) 60%,transparent);pointer-events:none}
+#os-widget::after{content:"";position:absolute;right:-120px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(77,155,245,.14),transparent 65%);pointer-events:none}
+#range-big{background:linear-gradient(92deg,#e8f2ff 0%,#9ecbff 55%,#4d9bf5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 46px rgba(77,155,245,.32)}
+.os-label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
+#weather-chip{background:rgba(77,155,245,.13);border-color:rgba(77,155,245,.32);backdrop-filter:blur(6px)}
+#weather-chip svg{color:#4d9bf5}
+.scn{transition:all .18s ease}
+.scn:hover{border-color:#4d9bf5}
+.scn.on{border-color:#4d9bf5;background:linear-gradient(180deg,rgba(77,155,245,.30),rgba(77,155,245,.10));color:#dcebff;box-shadow:0 0 18px rgba(77,155,245,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+.cchip.on{border-color:#4d9bf5;background:linear-gradient(180deg,rgba(77,155,245,.26),rgba(77,155,245,.08));color:#dcebff;box-shadow:0 0 14px rgba(77,155,245,.26)}
+#car-model{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
+#city-search{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
+#os-widget .chip{background:rgba(10,16,28,.55);backdrop-filter:blur(4px)}
+@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}</style>
 </ZhLayout>
