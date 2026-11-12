@@ -29,7 +29,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             {MODELS.map((m) => (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{m.name}</option>))}
           </select>
           <button id="car-reset" class="chip" type="button" style="display:none">Сбросить модель</button>
-          <span id="weather-chip" class="chip" style="display:none" title="Онлайн-погода в точке карты">🌡 погода…</span>
+          <span id="weather-chip" class="chip" style="display:none;gap:7px" title="Онлайн-погода в точке карты"></span>
         </div>
         <div id="car-info" style="margin-top:12px;font-size:13.5px;color:var(--txt-muted)"></div>
         <div id="range-card" style="display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card)">
@@ -53,7 +53,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
       <div style="margin-top:22px"><div style="font-weight:700;font-size:15px;margin-bottom:8px">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><div style="font-weight:700;font-size:15px;margin:14px 0 8px">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div><p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0"></p><p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. С выбранной машиной: зелёные — прямое подключение, янтарные — через адаптер. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p></div>
-      <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:220px;max-width:380px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" /><button id="city-go" class="chip" type="button">Найти</button><button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами">📍 Рядом со мной</button></div>
+      <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:220px;max-width:380px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" /><button id="city-go" class="chip" type="button">Найти</button><button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами" style="gap:7px"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Рядом со мной</span></button></div>
       <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"></div>
       <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin-top:12px"></p>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:6px">Нажмите на точку на карте — откроется адрес станции, коннекторы и мощность. Синие точки — быстрые DC, зелёные — AC.</p>
@@ -67,6 +67,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   <script is:inline>
     (function () {
       var map, cluster, ALL = [];
+      var SVG_THERM = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 14.76V5a2 2 0 0 0-4 0v9.76a4 4 0 1 0 4 0z"/></svg>';
+      var SVG_BOLT = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>';
+      function chipHTML(txt) { return SVG_THERM + '<span>' + txt + '</span>'; }
       function plural(n, one, few, many) {
         var m10 = n % 10, m100 = n % 100;
         if (m10 === 1 && m100 !== 11) return one;
@@ -104,9 +107,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         pw22: function (s) { var p = Number(s.pw) || 0; return p > 0 && p < 50; }
       };
       var PW_LABELS = [
-        ['pw100', '⌁ 100 кВт и быстрее (DC)'],
-        ['pw50', '⌁ 50–99 кВт (DC)'],
-        ['pw22', '⌁ до 50 кВт (AC и медленный DC)']
+        ['pw100', SVG_BOLT + '<span>100 кВт и быстрее (DC)</span>'],
+        ['pw50', SVG_BOLT + '<span>50–99 кВт (DC)</span>'],
+        ['pw22', SVG_BOLT + '<span>до 50 кВт (AC и медленный DC)</span>']
       ];
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).then(function (data) {
         var st = data.stations || [];
@@ -169,7 +172,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             s.__dc = dc;
             var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
             m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
-              + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600">✓ Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600">Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
+              + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
               ; });
             m.__s = s;
             ALL.push(m);
@@ -274,7 +277,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           var b = document.createElement('button');
           b.className = 'chip cchip';
           b.dataset.k = f[0];
-          b.textContent = f[1];
+          b.innerHTML = f[1];
           b.addEventListener('click', function () {
             active[f[0]] = !active[f[0]];
             b.classList.toggle('on', !!active[f[0]]);
@@ -349,19 +352,19 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var chip = document.getElementById('weather-chip');
         if (!chip) return;
         chip.style.display = '';
-        chip.textContent = '🌡 погода…';
+        chip.innerHTML = chipHTML('погода…');
         try {
           fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&current=temperature_2m')
             .then(function (r) { return r.json(); })
             .then(function (d) {
               var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
-              if (t === null) { chip.textContent = '🌡 погода недоступна'; return; }
+              if (t === null) { chip.innerHTML = chipHTML('погода недоступна'); return; }
               curTemp = t;
-              chip.textContent = '🌡 ' + (t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами');
+              chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами'));
               updateRange();
             })
-            .catch(function () { chip.textContent = '🌡 погода недоступна'; });
-        } catch (e) { chip.textContent = '🌡 погода недоступна'; }
+            .catch(function () { chip.innerHTML = chipHTML('погода недоступна'); });
+        } catch (e) { chip.innerHTML = chipHTML('погода недоступна'); }
       }
       function setModel(slug) {
         carEntry = null; carSel = slug || null; carPort = null;
