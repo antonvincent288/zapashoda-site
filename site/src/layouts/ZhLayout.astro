@@ -722,6 +722,28 @@ html footer{padding:48px 0 24px}
 html .meta{margin:12px 0 24px}
 }
 
+/* === UNIFY v5: компоненты — единая фактура (Z-20261112as) === */
+/* FAQ-аккордеоны: один стиль на всём сайте (базовый — faqbox); на главной было два разных стиля рядом */
+details.seo-faq{border-radius:12px}
+details.seo-faq summary{padding:16px 34px 16px 20px;font-size:15.5px;font-weight:700}
+details.seo-faq summary::after{top:50%;right:6px;width:8px;height:8px;border-right-width:2px;border-bottom-width:2px}
+details.seo-faq>:not(summary){padding:0 20px 16px}
+.faq-d{border:1px solid var(--line);background:var(--card);border-radius:12px;margin:0 0 12px;padding:0;overflow:hidden}
+.faq-d summary{padding:16px 34px 16px 20px;font-size:15.5px;font-weight:700;position:relative}
+.faq-d summary::after{content:"";float:none;position:absolute;top:50%;right:6px;width:8px;height:8px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:translateY(-70%)rotate(45deg);transition:transform .22s;line-height:0;font-size:0}
+.faq-d[open] summary::after{transform:translateY(-30%)rotate(-135deg)}
+.faq-d .faq-a{padding:0 20px 14px}
+/* один маркер вместо двух (глобальный стрелка-▸ дублировала шеврон) */
+.faq-d summary::before,.faqbox summary::before,details.seo-faq summary::before,.t-faq summary::before{content:none}
+/* поля и селекты: один радиус 12, один ритм, 16px — без iOS-зума при фокусе */
+.lcard input[type=text],.lcard input[type=number],.lcard input[type=tel],.lcard input[type=email],.lcard select,.calc-grid input[type=number],.calc-grid select,.fbar input{border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:16px}
+/* кнопки: один радиус */
+.btn,.spec-btn,.card-product button,.card-product .sku-add{border-radius:12px}
+/* слайдеры: бренд-синий везде (зелёный — только статусы, как в дизайн-языке unified wave) */
+input[type=range]{background:linear-gradient(90deg,#4d9bf5 0%,#4d9bf5 var(--p,50%),#ffffff24 var(--p,50%));height:6px}
+input[type=range]::-webkit-slider-thumb{border:0;background:#fff;width:20px;height:20px;box-shadow:0 0 0 4px #4d9bf559}
+input[type=range]::-moz-range-thumb{border:0;background:#fff;width:20px;height:20px;box-shadow:0 0 0 4px #4d9bf559}
+
 </style>
 <script is:inline>document.addEventListener('DOMContentLoaded',function(){function scan(){document.querySelectorAll('.cout').forEach(function(out){out.querySelectorAll('tr').forEach(function(tr){var tds=tr.children;if(tds.length<2)return;var c2=tds[1];if(c2.getAttribute('colspan')==='3'&&/по данным модели/i.test(c2.textContent)){c2.colSpan=1;c2.textContent='уточнить';if(tds.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}tds=tr.children}if(tds.length===4){var t3=tds[2],mm=/0→80%[^0-9]*(\d+)\s*мин/.exec(t3.textContent);if(mm)t3.textContent='≈ '+mm[1]+' мин';var nt=out.querySelector('p.note');if(nt&&nt.textContent.indexOf('10 до 80%')<0)nt.textContent+=' Время быстрой зарядки — от 10 до 80% заряда.'}})})}scan();var out=document.querySelector('.cout');if(out){new MutationObserver(scan).observe(out,{childList:true,subtree:true,characterData:true})}});</script>
 
