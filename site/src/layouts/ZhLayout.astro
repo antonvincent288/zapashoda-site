@@ -681,6 +681,33 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 details.rounded-lg.bg-white{background:var(--card) !important}
 .rounded-lg.bg-white details{background:transparent}
 .prob-grid svg rect[fill="#fff"]{fill:var(--card);stroke:var(--txt-muted)}
+/* == МИЛЛИМЕТРОВКА v2: ритм 8px, перекрывает поздние правила (html-префикс = специфичность выше) == */
+html .article h2{margin:48px 0 16px}
+html .article h3{margin:32px 0 12px}
+html .article p{margin-bottom:16px}
+html .article ul,html .article ol{margin:16px 0 16px 24px}
+html .article .faqbox{margin-top:32px}
+html .sec h2{margin-bottom:24px}
+html .sec .lead,html .sec .lede{margin-bottom:32px}
+html .meta{margin:16px 0 32px}
+html .crumbs{margin-bottom:16px}
+html .price{margin:12px 0 4px}
+html .buy-block{margin-top:48px!important;padding-top:32px!important;padding-bottom:32px!important}
+html .lead-cta{padding-top:32px!important;padding-bottom:32px!important}
+html footer{padding:64px 0 32px}
+html footer h4{margin-bottom:16px}
+html .copy{margin-top:32px}
+@media(max-width:640px){
+html .article h2{margin:32px 0 12px}
+html .article h3{margin:24px 0 8px}
+html .article p{margin-bottom:12px}
+html .sec h2{margin-bottom:16px}
+html .buy-block{padding-top:24px!important;padding-bottom:24px!important;margin-top:32px!important}
+html .lead-cta{padding-top:24px!important;padding-bottom:24px!important}
+html footer{padding:48px 0 24px}
+html .meta{margin:12px 0 24px}
+}
+
 </style>
 <script is:inline>document.addEventListener('DOMContentLoaded',function(){function scan(){document.querySelectorAll('.cout').forEach(function(out){out.querySelectorAll('tr').forEach(function(tr){var tds=tr.children;if(tds.length<2)return;var c2=tds[1];if(c2.getAttribute('colspan')==='3'&&/по данным модели/i.test(c2.textContent)){c2.colSpan=1;c2.textContent='уточнить';if(tds.length<4){tr.insertAdjacentHTML('beforeend','<td>—</td><td>—</td>')}tds=tr.children}if(tds.length===4){var t3=tds[2],mm=/0→80%[^0-9]*(\d+)\s*мин/.exec(t3.textContent);if(mm)t3.textContent='≈ '+mm[1]+' мин';var nt=out.querySelector('p.note');if(nt&&nt.textContent.indexOf('10 до 80%')<0)nt.textContent+=' Время быстрой зарядки — от 10 до 80% заряда.'}})})}scan();var out=document.querySelector('.cout');if(out){new MutationObserver(scan).observe(out,{childList:true,subtree:true,characterData:true})}});</script>
 
