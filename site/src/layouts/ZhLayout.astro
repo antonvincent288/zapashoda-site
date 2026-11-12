@@ -297,8 +297,12 @@ body .article h1{font-size:clamp(30px,3.8vw,48px)!important;line-height:1.15;let
 body .sec h2,body .sec-alt h2{font-size:clamp(22px,3vw,28px)}
 body .sec > .wrap > h2,body .sec-alt > .wrap > h2{font-size:clamp(26px,4.2vw,42px);max-width:none;letter-spacing:-.02em;line-height:1.18}
 /* таблицы: единая фактура (границы/паддинги уже едины в dark-базе) */
-body .dark table{font-size:14.5px;font-variant-numeric:tabular-nums}
-body .dark table th{font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--txt-muted);text-align:left}
+html.dark table{font-size:14.5px;font-variant-numeric:tabular-nums}
+html.dark table th{font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--txt-muted);text-align:left}
+/* h2 чтения: один масштаб внутри статей (about был 24, блог/модели 28) */
+body .article h2{font-size:clamp(22px,3vw,28px)}
+/* lead-cta: не выпадает за контейнер на страницах, где секция без .wrap */
+body section.lead-cta{max-width:1104px;margin-left:auto;margin-right:auto}
 .article p{margin:16px 0}
 .article blockquote{margin:20px 0;padding:12px 18px;border-left:3px solid var(--gold);color:var(--txt-muted);background:var(--bg2);border-radius:0 10px 10px 0}
 .article blockquote p{margin:4px 0}
