@@ -37,6 +37,7 @@ const solutionFor = (port: string) => {
 };
 const portSlug = (p: string) => {
   if (p.includes('GB/T')) return 'gbt';
+  if (p.includes('NACS')) return 'nacs';
   if (p.includes('CHAdeMO')) return 'chademo';
   if (p.includes('Type1')) return 'type1';
   return 'type2';
@@ -130,6 +131,8 @@ const cutMid = (html: string, start: number, tag: string): [string, string, stri
 };
 
 const isGBT = String(m.port || '').includes('GB/T');
+const isUS = /Type1|CCS1/i.test(String(m.port || '')) || (/tesla/i.test(String(m.slug || '')) && /-us\b/.test(String(m.slug || '')));
+const isJP = /CHAdeMO/i.test(String(m.port || ''));
 const CAP_OVERRIDES: Record<string, string> = { 'aito-m5-m7': '40' };
 const CAP_NOTE: Record<string, string> = { 'aito-m5-m7': ' (у EV-версии AITO M5 — 80 кВт·ч)' };
 const dcpowClean = String(spec.dcpow || '').replace(/\(не подтверждено\)/g, '(уточняем по VIN)');
@@ -352,7 +355,23 @@ h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|sp
       '<a class="sc" href="/catalog/portativnaya-zaryadka-type2-7kw.html"><div class="sc-k">Дом и дача (220 В)</div><div class="sc-t">Портативная зарядка Type 2</div><div class="sc-p">от 7 500 ₽ · от любой розетки</div></a>' +
       '<a class="sc" href="/razemy/ccs2/"><div class="sc-k">Трасса (быстрая зарядка)</div><div class="sc-t">CCS2-станции — напрямую</div><div class="sc-p">без адаптеров: у машины CCS2 на борту</div></a>' +
       '</div>';
-    const scenHtml = pf(isGBT ? GBT_SCEN : EU_SCEN);
+    const isTeslaUS = /tesla/i.test(String(m.slug || ''));
+    const q = '?model=' + encodeURIComponent(mslug2);
+    const US_SCEN = isTeslaUS ? '<div class="scen">' +
+      '<a class="sc" href="/catalog/adapter-nacs-ccs2-type2.html"><div class="sc-k">Город и станции</div><div class="sc-t">Адаптер Tesla NACS → CCS2 / Type 2</div><div class="sc-p">открывает сети CCS2 и Type 2 для US-Tesla</div></a>' +
+      '<a class="sc" href="/catalog/portativnaya-zaryadka-type2-3-5kw.html"><div class="sc-k">Дом и дача (220 В)</div><div class="sc-t">Портативная Type 2, 3,5 кВт + адаптер</div><div class="sc-p">от любой розетки · через адаптер NACS</div></a>' +
+      '<a class="sc" href="/razemy/nacs/"><div class="sc-k">Трасса</div><div class="sc-t">Supercharger — напрямую (NACS)</div><div class="sc-p">остальные сети — через адаптер</div></a>' +
+      '</div>' : '<div class="scen">' +
+      '<a class="sc" href="/catalog/adapter-type1-type2.html"><div class="sc-k">Город и Type 2-станции</div><div class="sc-t">Адаптер Type 1 → Type 2</div><div class="sc-p">открывает городские станции Type 2</div></a>' +
+      '<a class="sc" href="/catalog/portativnaya-zaryadka-type2-3-5kw.html"><div class="sc-k">Дом и дача (220 В)</div><div class="sc-t">Портативная Type 2, 3,5 кВт + адаптер</div><div class="sc-p">от любой розетки · ночью до ~120 км</div></a>' +
+      '<a class="sc" href="/razemy/type1/"><div class="sc-k">Трасса</div><div class="sc-t">CCS1-станции в РФ редки</div><div class="sc-p">подберём решение по VIN — @zapashoda_ev_bot</div></a>' +
+      '</div>';
+    const JP_SCEN = '<div class="scen">' +
+      '<a class="sc" href="/catalog/adapter-type1-type2.html"><div class="sc-k">Город и станции</div><div class="sc-t">Адаптер Type 1 → Type 2</div><div class="sc-p">AC-порт CHAdeMO-машин обычно Type 1 (J1772)</div></a>' +
+      '<a class="sc" href="/catalog/portativnaya-zaryadka-type2-3-5kw.html"><div class="sc-k">Дом и дача (220 В)</div><div class="sc-t">Портативная Type 2, 3,5 кВт + адаптер</div><div class="sc-p">от любой розетки · ночью до ~120 км</div></a>' +
+      '<a class="sc" href="/razemy/chademo/"><div class="sc-k">Быстрая зарядка</div><div class="sc-t">CHAdeMO-станции редки</div><div class="sc-p">подберём решение по VIN — @zapashoda_ev_bot</div></a>' +
+      '</div>';
+    const scenHtml = pf(isGBT ? GBT_SCEN : isUS ? US_SCEN : isJP ? JP_SCEN : EU_SCEN).replace(/href="(\/catalog\/[a-z0-9-]+\.html)"/g, (mm, sl) => 'href="' + sl + q + '"');
     const h2i2 = h.indexOf('Что докупить');
     if (h2i2 >= 0) {
       const h2end = h.indexOf('</h2>', h2i2);
