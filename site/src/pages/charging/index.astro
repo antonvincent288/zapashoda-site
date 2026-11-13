@@ -94,7 +94,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         <div id="car-kpi" style="margin-top:10px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
           <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
         </div>
-        <div id="city-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
+        <div id="city-chips" style="display:flex;gap:8px;margin-top:10px"></div>
         <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
         <div class="zh-ribbon">
           <div class="zh-chips">
@@ -929,7 +929,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-bcard p{font-size:13.5px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
 .zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
-@media(min-width:640px){#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
+@media(min-width:640px){#city-chips{flex-wrap:wrap}#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
 @media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}#city-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}#city-chips::-webkit-scrollbar{display:none}#city-chips .chip{flex:none}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
