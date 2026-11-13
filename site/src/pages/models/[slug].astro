@@ -4,6 +4,7 @@ import LegacyStyles from '../../components/LegacyStyles.astro';
 import PlugIcon from '../../components/PlugIcon.astro';
 import BATTERY from '../../data/models_battery.json';
 import { priceFix as pf, fmtRub as fmtR, PRICES_ON } from '../../lib/prices';
+import { buyKitHtml } from '../../lib/interlink';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -408,6 +409,15 @@ h = h.replace(/(<script[\s\S]*?<\/script>)|((?:\s*<\/(?:a|b|i|em|strong|small|sp
   h = h.replace('потенциальные новые SKU.', 'вне каталога.');
   // (11.11) при выключенных ценах — гасим data-price во всех легаси-карточках
   if (!PRICES_ON) { h = h.replace(/data-price="\d+"/g, 'data-price=""'); }
+    // (13.11) Базовый комплект зарядки — сразу после блока «Разъёмы и мощность зарядки»
+  {
+    const rm = /<h2[^>]*>\s*Разъёмы и мощность зарядки\s*<\/h2>/.exec(h);
+    if (rm) {
+      const nx = h.indexOf('<h2', rm.index + 1);
+      const pos = nx >= 0 ? nx : h.length;
+      h = h.slice(0, pos) + buyKitHtml({ name: m.name || m.title, slug: String(m.slug || ''), port: (m.dc || m.ac || '') }) + h.slice(pos);
+    }
+  }
   return pf(h.trim());
 })();
 

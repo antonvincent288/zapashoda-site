@@ -2,6 +2,7 @@
 import LeadCTA from '../../components/LeadCTA.astro';
 import ModelBuyBlock from '../../components/ModelBuyBlock.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import { injectIntoArticle } from '../../lib/interlink';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/articles/pain/*.json', { eager: true, import: 'default' });
   const seen: Map<string, number> = new Map();
@@ -53,7 +54,7 @@ const canonHref = CANON[String(a.slug || '')];
             {a.date && <span style="color:#22c55e">Актуально: {a.date.split("-").reverse().join(".")}</span>}
             {a.read_min && <span>{a.read_min} мин</span>}
           </div>
-          <div set:html={a.body_html} />
+          <div set:html={injectIntoArticle(String(a.body_html || ''), String(a.slug || ''))} />
           {extra && <div set:html={extra} />}
                     {a.faq && (
             <div class="faqbox">

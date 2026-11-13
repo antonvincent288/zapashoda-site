@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import { injectIntoArticle } from '../../lib/interlink';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/articles/safety/*.json', { eager: true, import: 'default' });
   const seen: Map<string, number> = new Map();
@@ -40,7 +41,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             {a.date && <span>{a.date}</span>}
             {a.read_min && <span>{a.read_min} мин</span>}
           </div>
-          <div set:html={a.body_html} />
+          <div set:html={injectIntoArticle(String(a.body_html || ''), String(a.slug || ''))} />
           {extra && <div set:html={extra} />}
                     {a.faq && (
             <div class="faqbox">
