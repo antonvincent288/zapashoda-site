@@ -39,7 +39,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           <div>
             <label for="car-model" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-muted)">Ваша машина</label>
             <div style="display:flex;gap:13px;margin-top:8px;align-items:center">
-              <select id="car-model" style="flex:1;min-width:220px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px">
+              <select id="car-model" style="flex:1;min-width:220px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:16px">
                 <option value="">— выберите модель —</option>
                 {MODELS.map((m) => { const n = (m.brand && m.name.toLowerCase().startsWith(m.brand.toLowerCase())) ? m.name.slice(m.brand.length).replace(/^\s+/, '') : m.name; return (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{n}</option>); })}
               </select>
@@ -79,7 +79,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
         <div class="os-row os-mid" style="margin-top:21px">
           <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:center">
-            <input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px" />
+            <input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:16px" />
             <button id="city-go" class="chip" type="button">Найти</button>
             <button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами" style="gap:7px"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Рядом со мной</span></button>
           </div>
@@ -162,7 +162,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['pw50', SVG_BOLT + '<span>50–99 кВт (DC)</span>'],
         ['pw22', SVG_BOLT + '<span>до 50 кВт (AC и медленный DC)</span>']
       ];
-      fetch('/charging/stations.json').then(function (r) { return r.json(); }).then(function (data) {
+      fetch('/charging/stations.json').then(function (r) { return r.json(); }).catch(function () { return null; }).then(function (data) { if (!data) { var nn = document.getElementById('geo-note'); if (nn) nn.textContent = 'Не удалось загрузить базу станций — проверьте интернет и обновите страницу.'; return; }
         var st = data.stations || [];
         document.getElementById('stn-count').textContent = st.length;
         document.getElementById('stn-upd').textContent = (function (v) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); if (!m) return v || ''; var mo = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; return parseInt(m[3], 10) + ' ' + mo[parseInt(m[2], 10) - 1]; })(data.updated) || '';
@@ -502,6 +502,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           info.textContent = '';
           applyFilter();
         }
+        try { var qp2 = new URLSearchParams(location.search); if (slug) qp2.set('model', slug); else qp2.delete('model'); var qs2 = qp2.toString(); history.replaceState(null, '', location.pathname + (qs2 ? '?' + qs2 : '') + location.hash); } catch (e) {}
         updateRange();
       }
       var selCar = document.getElementById('car-model'), resetCar = document.getElementById('car-reset');
