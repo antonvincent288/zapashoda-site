@@ -106,7 +106,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
-      <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);touch-action:pan-y"></div>
+      <div style="position:relative;margin-top:14px"><div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.45)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn"></b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button></div></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
@@ -157,6 +157,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['schuko', 'Розетка 220 В', 'zsh-schuko'],
       ];
       var active = {};
+      var zhVisibleStations = [];
       var PW_PREDS = {
         pw100: function (s) { return (Number(s.pw) || 0) >= 100; },
         pw50: function (s) { var p = Number(s.pw) || 0; return p >= 50 && p < 100; },
@@ -170,6 +171,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).catch(function () { return null; }).then(function (data) { if (!data) { var nn = document.getElementById('geo-note'); if (nn) nn.textContent = 'Не удалось загрузить базу станций — проверьте интернет и обновите страницу.'; return; }
         var st = data.stations || [];
         document.getElementById('stn-count').textContent = st.length;
+        var es = document.getElementById('empty-stn'); if (es) es.textContent = st.length;
         document.getElementById('stn-upd').textContent = (function (v) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); if (!m) return v || ''; var mo = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; return parseInt(m[3], 10) + ' ' + mo[parseInt(m[2], 10) - 1]; })(data.updated) || '';
         st.forEach(function (s) {
           s.__c = {};
@@ -178,7 +180,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             if (!k) return;
             var low = String(raw).toLowerCase();
             if (k === 'Type 2') {
-              if (low.indexOf('cable') >= 0 || low.indexOf('кабель') >= 0) s.__c.type2 = true;
+              if (low.indexOf('cable') >= 0 || low.indexOf('кабель') >= 0) { s.__c.type2 = true; s.__cab2 = true; }
               else if (low.indexOf('socket') >= 0) s.__c.type2_socket = true;
               else s.__c.type2 = true;
             } else if (k === 'CCS2') s.__c.ccs2 = true;
@@ -254,8 +256,15 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var pw = Number(s.pw) || 0;
             var dc = /CCS|CHAdeMO|GB\/T DC|type2_combo|gb_dc/i.test(conn) || pw >= 50;
             s.__dc = dc;
+            var cab = '';
+            if (s.__c && (s.__c.type2 || s.__c.type2_socket)) {
+              var cabUrl = '/catalog/' + (carSel && carSel.slug ? '?model=' + encodeURIComponent(carSel.slug) : '');
+              if (s.__c.type2_socket) cab = '<br><span style="color:#eab308">Розетка Type 2 без кабеля — нужен свой кабель Type 2</span>';
+              else if (s.__cab2) cab = '<br><span style="color:#16a34a">Кабель Type 2 закреплён — свой не нужен</span>';
+              else cab = '<br><span style="color:#8a8f98">Тип Type 2 не уточнён — возьмите свой кабель на случай, если на станции только розетка</span> <a href="' + cabUrl + '" style="color:#4d9bf5">Кабели и адаптеры →</a>';
+            }
             var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
-            m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
+            m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (cab || '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
               + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
 + (carSel && carEntry && carEntry.cap && s.pw ? '<br><span style="font-size:12.5px;color:#9ecbff">Сессия 20 → 80%: ~' + sessMin(carEntry, Number(s.pw)) + ' мин</span>' : '')
 + '<br><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">'
@@ -272,6 +281,31 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           map.addLayer(cluster);
           buildConnChips();
           applyFilter();
+          // спасатель на пустом вьюпорте: debounce 450 мс после moveend, крестик, переключение на Яндекс.Карты
+          var emptyCard = document.getElementById('empty-note');
+          if (emptyCard) {
+            var zhDeb = null, zhDismiss = false;
+            var checkEmpty = function () {
+              if (yaActive) { emptyCard.style.display = 'none'; return; }
+              try {
+                var bb = map.getBounds(), n = 0;
+                (zhVisibleStations || []).forEach(function (s) {
+                  if (s.lat >= bb.getSouth() && s.lat <= bb.getNorth() && s.lon >= bb.getWest() && s.lon <= bb.getEast()) n++;
+                });
+                if (n === 0 && !zhDismiss) emptyCard.style.display = 'block';
+                else { if (n > 0) zhDismiss = false; emptyCard.style.display = 'none'; }
+              } catch (e) {}
+            };
+            map.on('moveend zoomend', function () {
+              if (zhDeb) clearTimeout(zhDeb);
+              zhDeb = setTimeout(checkEmpty, 450);
+            });
+            var exBtn = document.getElementById('empty-x');
+            if (exBtn) exBtn.addEventListener('click', function () { emptyCard.style.display = 'none'; zhDismiss = true; });
+            var yaBtn = document.getElementById('empty-ya');
+            if (yaBtn) yaBtn.addEventListener('click', function () { emptyCard.style.display = 'none'; setTab(true); });
+            checkEmpty();
+          }
           // диплинк: ?model=<slug>&st=<lat>,<lon> — выбрать машину, найти станцию, открыть памятку
           try {
             var qp = new URLSearchParams(location.search);
@@ -340,6 +374,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         for (var k in active) {
           if (!active[k]) continue;
           if (PW_PREDS[k]) { if (PW_PREDS[k](s)) return true; }
+          else if (k === '__dc') { if (s.__c && (s.__c.ccs2 || s.__c.chademo || s.__c.gbt_dc) && (!carSel || s.__fit !== 'unknown')) return true; }
           else if (s.__c && s.__c[k]) return true;
         }
         return false;
@@ -349,20 +384,32 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var keys = Object.keys(active).filter(function (k) { return active[k]; });
         cluster.clearLayers();
         var shown = 0;
+        zhVisibleStations = [];
         ALL.forEach(function (m) {
           var ok = (keys.length === 0 || hasAny(m.__s)) && fitOk(m.__s);
-          if (ok) { cluster.addLayer(m); shown++; }
+          if (ok) { cluster.addLayer(m); shown++; zhVisibleStations.push(m.__s); }
         });
+        if (typeof checkEmpty === 'function') checkEmpty();
         var note = document.getElementById('conn-note');
         if (note) note.textContent = keys.length ? ('Показано ' + shown + ' из ' + ALL.length + ' станций') : '';
         try {
-          var hk = keys.filter(function (k) { return FILTERS.some(function (f) { return f[0] === k; }) || PW_PREDS[k]; }).join(',');
+          var hk = keys.filter(function (k) { return k === '__dc' || FILTERS.some(function (f) { return f[0] === k; }) || PW_PREDS[k]; }).join(',');
           history.replaceState(null, '', hk ? '#f=' + hk : location.pathname + location.search);
         } catch (e) {}
       }
       function buildConnChips() {
         var box = document.getElementById('conn-chips');
         if (!box) return;
+        var dcb = document.createElement('button');
+        dcb.className = 'chip cchip';
+        dcb.dataset.k = '__dc';
+        dcb.innerHTML = SVG_BOLT + '<span>Быстрые DC</span>';
+        dcb.addEventListener('click', function () {
+          active['__dc'] = !active['__dc'];
+          dcb.classList.toggle('on', !!active['__dc']);
+          applyFilter();
+        });
+        box.appendChild(dcb);
         FILTERS.forEach(function (f) {
           var b = document.createElement('button');
           b.className = 'chip cchip';
