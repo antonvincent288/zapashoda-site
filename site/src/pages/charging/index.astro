@@ -39,7 +39,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
       </div>
       <p class="zh-lead-sub">База обновлена <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
-<div id="os-widget" style="margin-top:22px;border-radius:20px;padding:20px;overflow:hidden">
+<div id="os-widget" style="margin-top:14px;border-radius:20px;padding:16px;overflow:hidden">
         <div class="zh-grid3">
           <div class="zh-cell">
             <label for="car-search" class="zh-label">Ваша машина</label>
@@ -91,10 +91,10 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             </div>
           </div>
         </div>
-        <div id="car-kpi" style="margin-top:12px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
+        <div id="car-kpi" style="margin-top:10px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
           <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
         </div>
-        <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"></div>
+        <div id="city-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
         <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
         <div class="zh-ribbon">
           <div class="zh-chips">
@@ -112,7 +112,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-top:14px;display:none"></div>
-      <div style="position:relative;margin-top:14px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      <div style="position:relative;margin-top:12px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
@@ -176,9 +176,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         pw22: function (s) { var p = Number(s.pw) || 0; return p > 0 && p < 50; }
       };
       var PW_LABELS = [
-        ['pw100', SVG_BOLT + '<span>100 кВт и быстрее (DC)</span>'],
+        ['pw100', SVG_BOLT + '<span>100+ кВт (DC)</span>'],
         ['pw50', SVG_BOLT + '<span>50–99 кВт (DC)</span>'],
-        ['pw22', SVG_BOLT + '<span>до 50 кВт (AC и медленный DC)</span>']
+        ['pw22', SVG_BOLT + '<span>до 50 кВт (AC/DC)</span>']
       ];
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).catch(function () { return null; }).then(function (data) { if (!data) { var nn = document.getElementById('geo-note'); if (nn) nn.textContent = 'Не удалось загрузить базу станций — проверьте интернет и обновите страницу.'; return; }
         var st = data.stations || [];
@@ -889,12 +889,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #range-tune[open]>summary::before{transform:rotate(45deg)}
 #range-soc{height:8px}#range-soc::-webkit-slider-thumb{width:28px;height:28px}#range-soc::-moz-range-thumb{width:28px;height:28px}#os-widget .chip,.os-mid .chip,#conn-chips .chip,#pw-chips .chip,#soc-presets .chip{min-height:44px}@media(max-width:639px){#map-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;font-size:12px}.lg-note{grid-column:1/-1}}@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}
 /* ── Cockpit UI: система поверхностей/теней/отступов (адаптация под тёмную тему прода) ── */
-.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5}
+.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5;padding-top:32px;padding-bottom:48px}
 .zh-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.zh-head h1{margin:4px 0 0;font-size:clamp(22px,3.2vw,28px)}
+.zh-head h1{margin:2px 0 0;font-size:clamp(22px,2.6vw,24px)}
 .zh-head-l{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#9ecbff;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.22);border-radius:999px;padding:4px 12px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.zh-lead-sub{font-size:13.5px;color:var(--txt-muted);margin:12px 0 0}
+.zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#9ecbff;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.22);border-radius:999px;padding:3px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zh-lead-sub{font-size:13px;color:var(--txt-muted);margin:8px 0 0}
 .zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(77,155,245,.22)}
 .zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
 .zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
@@ -917,11 +917,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #os-widget .zh-loc .chip{border:0;background:transparent;color:#9ecbff;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
 #os-widget .zh-loc .chip:hover{color:#dcebff}
 .zh-loc-div{width:1px;flex:none;background:rgba(77,155,245,.25);margin:9px 0}
-.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:16px;padding-top:14px}
+.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:12px;padding-top:12px}
 .zh-chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0}
 .zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(77,155,245,.20)}
 .zh-ribbon-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.zh-subnote{font-size:12.5px;color:var(--txt-muted);margin:8px 0 0}
+.zh-subnote{font-size:12.5px;color:var(--txt-muted);margin:6px 0 0}
 .zh-map-h{height:clamp(520px,68vh,780px)}#empty-note{width:calc(100% - 28px)}
 .zh-bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
 .zh-bcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
@@ -929,8 +929,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-bcard p{font-size:13.5px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
 .zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
+@media(min-width:640px){#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
 @media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}}
+@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
 #range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
 </ZhLayout>
