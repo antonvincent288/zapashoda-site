@@ -9,7 +9,11 @@ const cssCode = "\n\n*{box-sizing:border-box;margin:0;padding:0}\nbody{backgroun
 ---
 <ZhLayout title="Зарядные станции и аксессуары для электромобиля — купить | Запас хода" description="Купить зарядную станцию для электромобиля: настенные 7–22 кВт, портативные зарядки, адаптеры Type 2 → GB/T, кабели и удлинители. Подбор под вашу модель, оплата при получении." jsonld={ld}>
   <Fragment set:html={bodyHtml} />
-  <section class="sec" style="padding-top:26px"><div class="wrap"><OrderForm model="Каталог аксессуаров" /></div></section>
+  <section class="sec" id="order-sec" style="padding-top:26px;display:none"><div class="wrap"><OrderForm model="Каталог аксессуаров" /></div></section>
+<script is:inline>
+(function(){var s=document.getElementById('order-sec');if(!s)return;function upd(){var it=document.getElementById('of-items');var empty=!it||/Корзина пуста/.test(it.textContent||'');s.style.display=empty?'none':'';}var it=document.getElementById('of-items');if(it){new MutationObserver(upd).observe(it,{childList:true,subtree:true});}setTimeout(upd,600);setTimeout(upd,2000);window.addEventListener('load',upd);})();
+</script>
+
   <style is:inline set:html={cssCode} />
   <script is:inline set:html={jsCode} />
 </ZhLayout>
