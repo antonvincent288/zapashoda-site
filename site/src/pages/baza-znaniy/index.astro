@@ -38,6 +38,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     </div>
     <div class="bk-panel" id="bk-blog">
       {blogSorted.map((a) =>(<a class="card bk-card" href={'/blog/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">{a.category || 'Разбор'} · {a.read_min || '?'} мин →</span></a>))}
+      <button class="bk-more" id="bk-more" type="button">Показать ещё 30</button>
     </div>
     <div class="bk-panel" id="bk-pain">
       {painSorted.map((a) =>(<a class="card bk-card" href={'/pain/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">Решение →</span></a>))}
@@ -57,6 +58,23 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
             history.replaceState(null, '', '#bk-' + t.dataset.bk);
           });
         });
+        var blogCards = document.querySelectorAll('#bk-blog .bk-card');
+        var step = 30, shownN = 0;
+        var moreBtn = document.getElementById('bk-more');
+        function bkShowNext(){
+          var to = Math.min(shownN + step, blogCards.length);
+          for (var i = shownN; i < to; i++) blogCards[i].style.display = '';
+          shownN = to;
+          if (moreBtn){
+            if (shownN >= blogCards.length){ moreBtn.style.display = 'none'; }
+            else { moreBtn.textContent = 'Показать ещё 30 (осталось ' + (blogCards.length - shownN) + ')'; }
+          }
+        }
+        if (blogCards.length > step){
+          for (var i2 = step; i2 < blogCards.length; i2++) blogCards[i2].style.display = 'none';
+          if (moreBtn) moreBtn.textContent = 'Показать ещё 30 (осталось ' + (blogCards.length - step) + ')';
+          moreBtn.addEventListener('click', bkShowNext);
+        } else if (moreBtn){ moreBtn.style.display = 'none'; }
         var h = (location.hash || '').replace('#', '');
         if (h.indexOf('bk-') === 0) {
           var target = document.querySelector('.bk-tab[data-bk="' + h.slice(3) + '"]');
@@ -81,6 +99,8 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     .bk-card p{font-size:14px;line-height:1.55;margin-top:8px}
     .bk-go{display:block;margin-top:14px;color:#5aa9ff;font-size:13px;font-weight:600}
     .bk-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+    .bk-more{grid-column:1/-1;padding:14px;border-radius:12px;border:1px dashed rgba(77,155,245,.5);background:transparent;color:#5aa9ff;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+    .bk-more:hover{border-color:#5aa9ff;background:rgba(77,155,245,.08)}
     @media (max-width:960px){.bk-panel{grid-template-columns:1fr 1fr}}
     @media (max-width:640px){.bk-panel{grid-template-columns:1fr}}
   </style>
