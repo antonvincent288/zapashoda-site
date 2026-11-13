@@ -1,5 +1,6 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+import fs from 'node:fs';
 import modelsLight from '../../data/models_light.json';
 import modelsBattery from '../../data/models_battery.json';
 const MODELS = (modelsLight.models || [])
@@ -12,14 +13,22 @@ const MODELS = (modelsLight.models || [])
   })
   .sort((a, b2) => (a.brand + a.name).localeCompare(b2.brand + b2.name, 'ru'));
 const MODELS_JSON = JSON.stringify(MODELS).replace(/<\//g, '<\\/');
+const MODEL_TOTAL = (modelsLight.models || []).filter((m) => m && m.slug).length;
+let STN = 3129; let STN_UPD = '12 ноября'; let STN_UPD_FULL = '12 ноября 2026';
+try { const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); if (Array.isArray(rawS.stations)) STN = rawS.stations.length;
+const mmo = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(rawS.updated || ''));
+if (mmo) { const MO = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; STN_UPD = parseInt(mmo[3], 10) + ' ' + MO[parseInt(mmo[2], 10) - 1]; STN_UPD_FULL = STN_UPD + ' ' + mmo[1]; }
+} catch {}
+const stnWord = (n) => { const a = n % 10, b = n % 100; return (a === 1 && b !== 11) ? 'станция' : (a >= 2 && a <= 4 && (b < 12 || b > 14)) ? 'станции' : 'станций'; };
+const modelWord = (n) => { const a = n % 10, b = n % 100; return (a === 1 && b !== 11) ? 'модель' : (a >= 2 && a <= 4 && (b < 12 || b > 14)) ? 'модели' : 'моделей'; };
 const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта зарядных станций России: фильтр по вашей модели (GB/T, Type 2, CCS2, CHAdeMO, Type 1), пересчёт запаса хода по реальной температуре за окном, поиск по городу и мощности.' };
 ---
-<ZhLayout title="Карта зарядных станций — Запас хода" description="Карта 3109 зарядных станций России: выберите свою модель — покажем только совместимые станции, пересчёт запаса хода по текущей температуре." jsonld={ld}>
+<ZhLayout title="Карта зарядных станций — Запас хода" description={`Карта ${STN} зарядных станций России: выберите свою модель — покажем только совместимые станции, пересчёт запаса хода по текущей температуре.`} jsonld={ld}>
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
       <h1>Карта зарядных станций для электромобилей</h1>
-      <p class="lead"><span id="stn-count" data-stn-count>3109</span> станций в нашей базе · обновлено <span id="stn-upd">1 ноября</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
+      <p class="lead"><span id="stn-count" data-stn-count>{STN}</span> {stnWord(STN)} в нашей базе · обновлено <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
 <div id="os-widget" style="margin-top:26px;border-radius:20px;padding:24px;overflow:hidden">
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:13px;flex-wrap:wrap">
           <div style="font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9ecbff">Запас хода · виджет</div>
@@ -92,11 +101,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
-      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то. Обводка точки: сплошная — быстрые DC, пунктирная — AC.</p>
+      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
-        <p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (зелёные), и станции, где понадобится переходник (янтарные). Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога 151 модели</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Уточнить «зарядные станции GB/T в Москве», «где зарядить Zeekr 001» или «есть ли CCS2 рядом с трассой» можно за один выбор в фильтрах выше — фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
-        <p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: 3129 станций на 1 ноября 2026. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам (М-4, М-11, М-12) и правилам аренды жилья с зарядкой — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
+        <p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (зелёные), и станции, где понадобится переходник (янтарные). Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога {MODEL_TOTAL} {modelWord(MODEL_TOTAL)}</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Зарядные станции GB/T в Москве, точка зарядки для Zeekr 001 или CCS2-коннектор рядом с трассой — такие вопросы решаются одним выбором в фильтрах выше. Фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
+        <p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: {STN} {stnWord(STN)} на {STN_UPD_FULL}. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам М-4, М-11 и М-12 — в <a href="/baza-znaniy/zaryadki-na-trassah-m4-m11-m12/" style="color:#4d9bf5;text-decoration:underline">разборе трасс</a>, правила аренды жилья с зарядкой и другие сценарии — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
       </div>
     </div>
   </section>
@@ -155,7 +164,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       fetch('/charging/stations.json').then(function (r) { return r.json(); }).then(function (data) {
         var st = data.stations || [];
         document.getElementById('stn-count').textContent = st.length;
-        document.getElementById('stn-upd').textContent = data.updated || '';
+        document.getElementById('stn-upd').textContent = (function (v) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); if (!m) return v || ''; var mo = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; return parseInt(m[3], 10) + ' ' + mo[parseInt(m[2], 10) - 1]; })(data.updated) || '';
         st.forEach(function (s) {
           s.__c = {};
           (s.s || []).forEach(function (raw) {
