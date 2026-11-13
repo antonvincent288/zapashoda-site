@@ -51,7 +51,7 @@ const sl6 = d.slug.indexOf('ccs2')>=0 ? 'dc' : (d.slug.indexOf('adapter')>=0 ? '
 const heroHtml = de(V7DATA[d.slug] && V7DATA[d.slug].hero ? V7DATA[d.slug].hero : '').split('%%SCHEME%%').join('<div class="ph main phscheme">' + (SCHEME7[sl6] || '') + '</div>').split('%%BADGE%%').join('<span class="badge-ok">' + escF(badgeText) + '</span>');
 const descHtml = de(V7DATA[d.slug] && V7DATA[d.slug].desc ? V7DATA[d.slug].desc : '');
 const specsHtml = de(V7DATA[d.slug] && V7DATA[d.slug].specs ? V7DATA[d.slug].specs : '');
-const compatHtml = '<section id="compat"><h2>Совместимость с авто</h2><p>Товар под разъём <b style="color:#f5f5f7">' + escF(portLab) + '</b>. Начните печатать модель в поиске выше — бейдж покажет статус сразу.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">' + fitLinks + moreChip + '</div><p style="font-size:13.5px;color:#7d8794;margin-top:12px">Не нашли свою машину? Напишите в Telegram @zapashoda_ev_bot — проверим порт по VIN или фото лючка.</p></section>';
+const compatHtml = '<section id="compat"><h2>Совместимость с авто</h2><p>Товар под разъём <b style="color:#f5f5f7">' + escF(portLab) + '</b>. Начните печатать модель в поиске выше — бейдж покажет статус сразу.</p><div style="display:flex;gap:10px;flex-wrap:wrap;id=\"compatList\" style=\"display:flex;gap:10px;flex-wrap:wrap;margin-top:14px\"">' + fitLinks + moreChip + '</div><p style="font-size:13.5px;color:#7d8794;margin-top:12px">Не нашли свою машину? Напишите в Telegram @zapashoda_ev_bot — проверим порт по VIN или фото лючка.</p></section>';
 const limHtml = de(V7DATA[d.slug] && V7DATA[d.slug].limits ? V7DATA[d.slug].limits : '');
 const bundleHtml = de(V7DATA[d.slug] && V7DATA[d.slug].bundle ? V7DATA[d.slug].bundle : '');
 const tabsHtml = de(TABS7);
