@@ -46,6 +46,8 @@ const de = (s) => s.split('%%CHK%%').join(CHECK).split('%%X%%').join(CROSS).spli
 const heroHtml = de(V7DATA[d.slug] && V7DATA[d.slug].hero ? V7DATA[d.slug].hero : '').split('%%BADGE%%').join('<span class="badge-ok">' + escF(badgeText) + '</span>');
 const descHtml = de(V7DATA[d.slug] && V7DATA[d.slug].desc ? V7DATA[d.slug].desc : '');
 const specsHtml = de(V7DATA[d.slug] && V7DATA[d.slug].specs ? V7DATA[d.slug].specs : '');
+const fitLinks = fit.slice(0, 24).map((f) => '<a class="chip" href="' + f.href.replace('.html','/') + '">' + escF(f.title) + '</a>').join('');
+const moreChip = fit.length > 24 ? '<a class="chip" href="/catalog/">+ ещё ' + (fit.length - 24) + ' моделей — подбор в каталоге</a>' : '';
 const compatHtml = '<section id="compat"><h2>Совместимость с авто</h2><p>Товар под разъём <b style="color:#f5f5f7">' + escF(portLab) + '</b>. Начните печатать модель в поиске выше — бейдж покажет статус сразу.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">' + fitLinks + moreChip + '</div><p style="font-size:13.5px;color:#7d8794;margin-top:12px">Не нашли свою машину? Напишите в Telegram @zapashoda_ev_bot — проверим порт по VIN или фото лючка.</p></section>';
 const limHtml = de(V7DATA[d.slug] && V7DATA[d.slug].limits ? V7DATA[d.slug].limits : '');
 const bundleHtml = de(V7DATA[d.slug] && V7DATA[d.slug].bundle ? V7DATA[d.slug].bundle : '');
