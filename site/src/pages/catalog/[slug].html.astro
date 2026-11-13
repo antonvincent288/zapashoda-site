@@ -35,6 +35,9 @@ const chips = fit.slice(0, 6);
 const specGrid = specRows.slice(0, 4).map(([k, v]) => '<div class="spec"><div class="v">' + escF(v) + '</div><div class="k">' + escF(k) + '</div></div>').join('');
 const CHIPS_FIX = [['zeekr-001-001-fr','Zeekr 001'],['li-auto-l6-l7-l8-l9-2022-2025','Li Auto L7 / L9'],['voyah-free-evr-gibrid','Voyah Free'],['byd-song-plus-ev','BYD Song'],['evolute-i-jet-i-pro-i-space-i-joy-i-joa','Evolute'],['tesla-model-3-y-eu','Tesla Model Y']];
 const chipBtns = CHIPS_FIX.map((c) => '<button class="pchip" data-model="' + c[0] + '">' + c[1] + '</button>').join('');
+const leadText = String(d.lead||'').trim();
+const si = leadText.indexOf(':');
+const subline = (si>0 && si<70 && si<leadText.length-5) ? leadText.slice(si+1).trim().replace(/^./, (c)=>c.toUpperCase()) : leadText;
 const heroHtml = '<div class="hero"><div class="gal"><div class="ph main">' + (d.image ? '<img src="' + d.image + '" alt="' + escF(d.title) + '" loading="eager"/>' : '') + '</div>' + '<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="#5aa9ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="7" width="6" height="10" rx="2"/><path d="M4 12h5"/><path d="M15 12h2.5"/><circle cx="19.5" cy="12" r="1.6"/></svg></div>' + '<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="#5aa9ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>' + '</div><div>'
   + '<h1>' + escF(d.title) + '</h1>'
   + '<p class="subline">' + escF(subline) + '</p>' + (fit[0] ? '<span class="badge-ok">Проверено для ' + escF(fit[0].title) + '</span>' : '')
@@ -46,10 +49,7 @@ const heroHtml = '<div class="hero"><div class="gal"><div class="ph main">' + (d
   + '<div class="cta"><button class="btn btn-main pc-add">Зафиксировать цену у дилера</button><a class="btn btn-ghost" href="https://t.me/zapashoda_ev_bot" style="text-decoration:none">Спросить в Telegram</a></div>'
   + '<div class="gift">🎁 <b>Подарок:</b> PDF-гайд по зарядке на трассах М-4 / М-11 при бронировании через сайт.</div>'
   + '<div class="tiny">Заявка уходит партнёру-дилеру в вашем городе. Оплата при получении. Заявка ни к чему не обязывает.</div></div></div></div>';
-const leadText = String(d.lead||'').trim();
 const descText = String(d.desc||'').trim();
-const si = leadText.indexOf(':');
-const subline = (si>0 && si<70 && si<leadText.length-5) ? leadText.slice(si+1).trim().replace(/^./, (c)=>c.toUpperCase()) : leadText;
 const descRest = descText && leadText && (descText.startsWith(leadText) || leadText.startsWith(descText))
   ? (descText.length > leadText.length ? descText.slice(leadText.length).replace(/^[\s,.:;]+/,'').trim() : '')
   : descText;
