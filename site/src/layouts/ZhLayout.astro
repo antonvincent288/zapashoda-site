@@ -17,7 +17,7 @@ const path = Astro.url.pathname.replace(/\/$/, "");
 const navGroups = [
   { g: null, items: [["/models/", "Модели"], ["/catalog/", "Каталог"], ["/charging/", "Карта ЗУ"], ["/shop/digital/", "Гайды"]] },
   { g: "Инструменты", items: [["/quiz/", "Всё о твоей машине"], ["/calculator/", "Калькуляторы"], ["/vin/", "VIN-справочник"], ["/search/", "Поиск"]] },
-  { g: null, items: [["/baza-znaniy/", "База знаний"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
+  { g: null, items: [["/blog/", "Блог"], ["/baza-znaniy/", "База знаний"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
 ];
 const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/, "") || path.startsWith(href.replace(/\/$/, "") + "/");
 ---
@@ -100,6 +100,7 @@ html.dark a[href="/privacy/"]{color:#7FB8FF !important}
       <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Гайды</a>
       <span class="nav-more" tabindex="0" role="button" aria-label="Ещё разделы">Ещё <span aria-hidden="true">▾</span>
         <span class="dd">
+          <a href="/blog/" class={isOn("/blog/") ? "on" : ""}>Блог</a>
           <a href="/safety/" class={isOn("/safety/") ? "on" : ""}>Безопасность</a>
                               <a href="/vin/" class={isOn("/vin/") ? "on" : ""}>VIN-справочник</a>
           <a href="/baza-znaniy/" class={isOn("/baza-znaniy/") ? "on" : ""}>База знаний</a>
@@ -119,6 +120,7 @@ html.dark a[href="/privacy/"]{color:#7FB8FF !important}
   <div class="mnav-group">Разделы</div>
   <a href="/">Главная</a>
   <a href="/models/">Модели</a>
+  <a href="/blog/">Блог</a>
   <a href="/baza-znaniy/">База знаний</a>
   <a href="/safety/">Безопасность</a>
   <div class="mnav-group">Инструменты</div>
