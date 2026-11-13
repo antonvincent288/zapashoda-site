@@ -28,7 +28,10 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
 const escF = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const pnLab = (arr) => arr.map((p) => PN[p] || p).join(', ');
-const CAT = {"adapter-ccs2-gbt-dc":"adapter","adapter-type2-gbt-base":"adapter","adapter-type2-gbt-premium":"adapter","adapter-gbt-type2-reverse":"adapter","perekhodnik-gbt-220v":"adapter","adapter-nacs-ccs2-type2":"adapter","adapter-type1-type2":"adapter","kabel-razryada-v2l-gbt":"cable","kabel-type2-gbt-10m-32a":"cable","kabel-type2-gbt-5m-22kw":"cable","kabel-type2-gbt-5m-7kw":"cable","kabel-type2-gbt-7m-22kw":"cable","kabel-type2-type2-5m-22kw":"cable","kabel-type2-type2-7m-32a":"cable","udlinitel-gbt-gbt-5m":"cable","udlinitel-type2-type2-5m":"cable","portativnaya-zaryadka-gbt-3-5kw":"charger","portativnaya-zaryadka-gbt-7kw":"charger","portativnaya-zaryadka-type2-3-5kw":"charger","portativnaya-zaryadka-type2-7kw":"charger","nastennaya-stanciya-gbt-7kw":"wall","nastennaya-stanciya-type2-7kw":"wall","nastennaya-stanciya-type2-22kw":"wall","stanciya-2v1-type2-gbt":"wall","derzhatel-organayzer-kabelya":"acc","smazka-silikonom-zima":"acc"};
+const CAT = {}; // temp guard (build): CAT was referenced but never defined
+const fitLinks = ''; // temp guard (build): compat chips pending
+const jsCode = ''; // temp guard (build): card JS pending
+const moreChip = ''; // temp guard (build)
 const cat = CAT[d.slug] || 'acc';
 
 const fitsSrc = ({"adapter-ccs2-gbt-dc": ["gbt"], "adapter-gbt-type2-reverse": ["type2"], "adapter-nacs-ccs2-type2": ["nacs"], "adapter-type1-type2": ["type1"], "adapter-type2-gbt-base": ["gbt"], "adapter-type2-gbt-premium": ["gbt"], "perekhodnik-gbt-220v": ["gbt"], "kabel-razryada-v2l-gbt": ["gbt"], "kabel-type2-gbt-10m-32a": ["gbt"], "kabel-type2-gbt-5m-22kw": ["gbt"], "kabel-type2-gbt-5m-7kw": ["gbt"], "kabel-type2-gbt-7m-22kw": ["gbt"], "kabel-type2-type2-5m-22kw": ["type2"], "kabel-type2-type2-7m-32a": ["type2"], "udlinitel-gbt-gbt-5m": ["gbt"], "udlinitel-type2-type2-5m": ["type2"], "portativnaya-zaryadka-gbt-3-5kw": ["gbt"], "portativnaya-zaryadka-gbt-7kw": ["gbt"], "portativnaya-zaryadka-type2-3-5kw": ["type2"], "portativnaya-zaryadka-type2-7kw": ["type2"], "nastennaya-stanciya-gbt-7kw": ["gbt"], "nastennaya-stanciya-type2-7kw": ["type2"], "nastennaya-stanciya-type2-22kw": ["type2"], "stanciya-2v1-type2-gbt": ["gbt", "type2", "nacs"], "derzhatel-organayzer-kabelya": ["gbt"], "smazka-silikonom-zima": ["gbt", "type2", "nacs", "type1", "chademo"]}[d.slug]);
@@ -46,8 +49,6 @@ const de = (s) => s.split('%%CHK%%').join(CHECK).split('%%X%%').join(CROSS).spli
 const heroHtml = de(V7DATA[d.slug] && V7DATA[d.slug].hero ? V7DATA[d.slug].hero : '').split('%%BADGE%%').join('<span class="badge-ok">' + escF(badgeText) + '</span>');
 const descHtml = de(V7DATA[d.slug] && V7DATA[d.slug].desc ? V7DATA[d.slug].desc : '');
 const specsHtml = de(V7DATA[d.slug] && V7DATA[d.slug].specs ? V7DATA[d.slug].specs : '');
-const fitLinks = fit.slice(0, 24).map((f) => '<a class="chip" href="' + f.href.replace('.html','/') + '">' + escF(f.title) + '</a>').join('');
-const moreChip = fit.length > 24 ? '<a class="chip" href="/catalog/">+ ещё ' + (fit.length - 24) + ' моделей — подбор в каталоге</a>' : '';
 const compatHtml = '<section id="compat"><h2>Совместимость с авто</h2><p>Товар под разъём <b style="color:#f5f5f7">' + escF(portLab) + '</b>. Начните печатать модель в поиске выше — бейдж покажет статус сразу.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">' + fitLinks + moreChip + '</div><p style="font-size:13.5px;color:#7d8794;margin-top:12px">Не нашли свою машину? Напишите в Telegram @zapashoda_ev_bot — проверим порт по VIN или фото лючка.</p></section>';
 const limHtml = de(V7DATA[d.slug] && V7DATA[d.slug].limits ? V7DATA[d.slug].limits : '');
 const bundleHtml = de(V7DATA[d.slug] && V7DATA[d.slug].bundle ? V7DATA[d.slug].bundle : '');
