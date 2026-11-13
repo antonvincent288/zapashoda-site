@@ -106,7 +106,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
-      <div style="position:relative;margin-top:14px"><div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.45)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn"></b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button></div></div>
+      <div style="position:relative;margin-top:14px"><div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.45)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
@@ -288,12 +288,36 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var checkEmpty = function () {
               if (yaActive) { emptyCard.style.display = 'none'; return; }
               try {
-                var bb = map.getBounds(), n = 0;
-                (zhVisibleStations || []).forEach(function (s) {
-                  if (s.lat >= bb.getSouth() && s.lat <= bb.getNorth() && s.lon >= bb.getWest() && s.lon <= bb.getEast()) n++;
+                var bb = map.getBounds(), nAll = 0, nVis = 0;
+                ALL.forEach(function (s) {
+                  if (s.lat >= bb.getSouth() && s.lat <= bb.getNorth() && s.lon >= bb.getWest() && s.lon <= bb.getEast()) nAll++;
                 });
-                if (n === 0 && !zhDismiss) emptyCard.style.display = 'block';
-                else { if (n > 0) zhDismiss = false; emptyCard.style.display = 'none'; }
+                (zhVisibleStations || []).forEach(function (s) {
+                  if (s.lat >= bb.getSouth() && s.lat <= bb.getNorth() && s.lon >= bb.getWest() && s.lon <= bb.getEast()) nVis++;
+                });
+                var tEl = document.getElementById('empty-title');
+                var tBase = document.getElementById('empty-text-base');
+                var tFilt = document.getElementById('empty-text-filter');
+                var yaBtnEl = document.getElementById('empty-ya');
+                var rsBtnEl = document.getElementById('empty-reset');
+                if (nAll === 0 && !zhDismiss) {
+                  if (tEl) tEl.textContent = 'В нашей проверенной базе здесь пока пусто';
+                  if (tBase) tBase.style.display = '';
+                  if (tFilt) tFilt.style.display = 'none';
+                  if (yaBtnEl) yaBtnEl.style.display = '';
+                  if (rsBtnEl) rsBtnEl.style.display = 'none';
+                  emptyCard.style.display = 'block';
+                } else if (nAll > 0 && nVis === 0 && !zhDismiss) {
+                  if (tEl) tEl.textContent = 'По выбранному фильтру здесь пусто';
+                  if (tBase) tBase.style.display = 'none';
+                  if (tFilt) tFilt.style.display = '';
+                  if (yaBtnEl) yaBtnEl.style.display = 'none';
+                  if (rsBtnEl) rsBtnEl.style.display = '';
+                  emptyCard.style.display = 'block';
+                } else {
+                  if (nAll > 0) zhDismiss = false;
+                  emptyCard.style.display = 'none';
+                }
               } catch (e) {}
             };
             map.on('moveend zoomend', function () {
@@ -304,6 +328,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             if (exBtn) exBtn.addEventListener('click', function () { emptyCard.style.display = 'none'; zhDismiss = true; });
             var yaBtn = document.getElementById('empty-ya');
             if (yaBtn) yaBtn.addEventListener('click', function () { emptyCard.style.display = 'none'; setTab(true); });
+            var rsBtn = document.getElementById('empty-reset');
+            if (rsBtn) rsBtn.addEventListener('click', function () {
+              emptyCard.style.display = 'none';
+              active = {};
+              document.querySelectorAll('.cchip').forEach(function (x) { x.classList.toggle('on', x.id === 'all-chip'); });
+              applyFilter();
+            });
             checkEmpty();
           }
           // диплинк: ?model=<slug>&st=<lat>,<lon> — выбрать машину, найти станцию, открыть памятку
@@ -427,6 +458,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           box.appendChild(b);
         });
         var all = document.createElement('button');
+        all.id = 'all-chip';
         all.className = 'chip cchip on';
         all.textContent = 'Все станции';
         all.addEventListener('click', function () {
