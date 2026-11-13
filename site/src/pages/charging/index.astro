@@ -18,8 +18,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   <section class="sec">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
-      <h1>Зарядные станции рядом</h1>
-      <p class="lead"><span id="stn-count" data-stn-count>3109</span> станций в нашей базе (<span id="stn-upd">2026-11-01</span>). По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
+      <h1>Карта зарядных станций для электромобилей</h1>
+      <p class="lead"><span id="stn-count" data-stn-count>3109</span> станций в нашей базе · обновлено <span id="stn-upd">1 ноября</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
 <div id="os-widget" style="margin-top:26px;border-radius:20px;padding:24px;overflow:hidden">
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:13px;flex-wrap:wrap">
           <div style="font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9ecbff">Запас хода · виджет</div>
@@ -31,7 +31,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             <div style="display:flex;gap:13px;margin-top:8px;align-items:center">
               <select id="car-model" style="flex:1;min-width:220px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px">
                 <option value="">— выберите модель —</option>
-                {MODELS.map((m) => (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{m.name}</option>))}
+                {MODELS.map((m) => { const n = (m.brand && m.name.toLowerCase().startsWith(m.brand.toLowerCase())) ? m.name.slice(m.brand.length).replace(/^\s+/, '') : m.name; return (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{n}</option>); })}
               </select>
               <button id="car-reset" class="chip" type="button" style="display:none">Сброс</button>
             </div>
@@ -46,17 +46,22 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               <span id="range-big" style="font-size:clamp(30px,4.6vw,44px);font-weight:800;line-height:1.05;letter-spacing:-.02em">— км</span>
               <span id="range-cap" style="font-size:12.5px;color:var(--txt-muted)">выберите модель — покажем реальный запас</span>
             </div>
-            <div style="margin-top:13px;max-width:380px">
-              <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас: <b id="soc-val">80%</b></label>
-              <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
-            </div>
-            <div id="scn-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:13px">
-              <button type="button" class="chip scn on" data-scn="base" title="Без поправок: паспортный запас и погода">База</button>
-              <button type="button" class="chip scn" data-scn="cold" title="Мороз: шины, масло, отопление">Мороз</button>
-              <button type="button" class="chip scn" data-scn="ac" title="Жара: кондиционер">Кондиционер</button>
-              <button type="button" class="chip scn" data-scn="hw" title="Трасса: 110 км/ч и выше">Трасса</button>
-            </div>
-            <div id="range-note" style="margin-top:13px;font-size:12.5px;color:var(--txt-muted)"></div>
+            <details id="range-tune" open style="margin-top:13px">
+              <summary style="font-size:12.5px;color:#7fa8d9;cursor:pointer;user-select:none">Настройка расчёта — заряд, сценарий</summary>
+              <div style="margin-top:11px">
+                <div style="max-width:380px">
+                  <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас: <b id="soc-val">80%</b></label>
+                  <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
+                </div>
+                <div id="scn-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:13px">
+                  <button type="button" class="chip scn on" data-scn="base" title="Без поправок: паспортный запас и погода">База</button>
+                  <button type="button" class="chip scn" data-scn="cold" title="Мороз: шины, масло, отопление">Мороз</button>
+                  <button type="button" class="chip scn" data-scn="ac" title="Жара: кондиционер">Кондиционер</button>
+                  <button type="button" class="chip scn" data-scn="hw" title="Трасса: 110 км/ч и выше">Трасса</button>
+                </div>
+                <div id="range-note" style="margin-top:13px;font-size:12.5px;color:var(--txt-muted)"></div>
+              </div>
+            </details>
           </div>
           <div id="car-kpi" style="font-size:13.5px;color:var(--txt-muted);line-height:1.6">
             <div id="car-info">Выберите модель — карта подсветит совместимые станции: зелёные точки заряжают напрямую, янтарные — через адаптер, серые — разъём не подтверждён.</div>
@@ -81,13 +86,18 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             <div><div class="os-label">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div>
           </div>
           <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
-          <p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Синие точки — быстрые DC, зелёные — AC. С выбранной машиной: зелёные — прямое подключение, янтарные — через адаптер, серые — разъём не подтверждён. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться.</p>
+          <p style="font-size:13px;color:var(--txt-muted);margin:4px 0 0">Ничего не выбрано — показаны все станции. Цвет заливки без выбранной машины: синие — быстрые DC, зелёные — AC. С машиной цвет — совместимость: зелёные — прямое подключение, янтарные — через адаптер, серые — не подтверждён. Тип тока виден по обводке: сплошная — быстрые DC, пунктирная — AC. Выбранный фильтр сохраняется в адресе страницы — ссылкой можно делиться. Фильтры работают на вкладке «Наша база»; на Яндекс.Картах они не действуют, но выбор машины и запас хода сохраняются.</p>
         </div>
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
       <div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line)"></div>
-      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
+      <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то. Обводка точки: сплошная — быстрые DC, пунктирная — AC.</p>
+      <div style="margin-top:34px">
+        <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
+        <p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (зелёные), и станции, где понадобится переходник (янтарные). Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога 151 модели</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Уточнить «зарядные станции GB/T в Москве», «где зарядить Zeekr 001» или «есть ли CCS2 рядом с трассой» можно за один выбор в фильтрах выше — фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
+        <p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: 3129 станций на 1 ноября 2026. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам (М-4, М-11, М-12) и правилам аренды жилья с зарядкой — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
+      </div>
     </div>
   </section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
@@ -201,7 +211,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             var pw = Number(s.pw) || 0;
             var dc = /CCS|CHAdeMO|GB\/T DC|type2_combo|gb_dc/i.test(conn) || pw >= 50;
             s.__dc = dc;
-            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
+            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85, dashArray: dc ? undefined : '2 2' });
             m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
               + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
 + (carSel && carEntry && carEntry.cap && s.pw ? '<br><span style="font-size:12.5px;color:#9ecbff">Сессия 20 → 80%: ~' + sessMin(carEntry, Number(s.pw)) + ' мин</span>' : '')
@@ -209,6 +219,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 + '<a href="https://yandex.ru/maps/?rtext=~' + s.lon + ',' + s.lat + '&rtt=auto&z=17" target="_blank" rel="noopener" class="chip" style="padding:6px 10px;font-size:12.5px;text-decoration:none">Маршрут</a>'
 + '<button type="button" class="chip" style="padding:6px 10px;font-size:12.5px;cursor:pointer" data-memo="' + s.lat.toFixed(5) + ',' + s.lon.toFixed(5) + '">Памятка</button>'
 + '<button type="button" class="chip" style="padding:6px 10px;font-size:12.5px;cursor:pointer" data-copy="' + s.lat.toFixed(5) + ',' + s.lon.toFixed(5) + '">Ссылка</button>'
++ (carSel && s.__fit !== 'direct' ? '<a href="/catalog/?model=' + encodeURIComponent(carSel) + '" class="chip" style="padding:6px 10px;font-size:12.5px;text-decoration:none">Адаптер в каталоге</a>' : '')
 + '</div>'
 + '<div id="memo-body" style="display:none;margin-top:9px;padding:10px;border:1px dashed var(--line);border-radius:10px;font-size:12.5px;line-height:1.55"></div>'
               ; });
@@ -395,9 +406,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           else fit = 'unknown';
           s.__fit = fit;
           if (carSel && m.setStyle) {
-            m.setStyle({ color: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98', fillColor: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98' });
+            m.setStyle({ color: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98', fillColor: fit === 'direct' ? '#16a34a' : fit === 'adapt' ? '#f59e0b' : '#8a8f98', dashArray: s.__dc ? undefined : '2 2' });
           } else if (!carSel && m.setStyle) {
-            m.setStyle({ color: s.__dc ? '#2563eb' : '#16a34a', fillColor: s.__dc ? '#2563eb' : '#16a34a' });
+            m.setStyle({ color: s.__dc ? '#2563eb' : '#16a34a', fillColor: s.__dc ? '#2563eb' : '#16a34a', dashArray: s.__dc ? undefined : '2 2' });
           }
         });
       }
@@ -495,6 +506,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         scnRow.querySelectorAll('.scn').forEach(function (x) { x.classList.toggle('on', x === b); });
         updateRange();
       });
+      try { if (window.innerWidth < 881) { var rt = document.getElementById('range-tune'); if (rt) rt.removeAttribute('open'); } } catch (e) {}
       // авто-погода на старте: Москва как нейтральная точка; после геолокации/города пересчитается
       fetchTemp(55.7559, 37.6177, 'Москва');
 
@@ -667,5 +679,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #car-model{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
 #city-search{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
 #os-widget .chip{background:rgba(10,16,28,.55);backdrop-filter:blur(4px)}
+#range-tune>summary{list-style:none;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid rgba(77,155,245,.25);border-radius:10px;background:rgba(10,16,28,.45)}
+#range-tune>summary::-webkit-details-marker{display:none}
+#range-tune>summary::before{content:"";width:8px;height:8px;border-right:1.6px solid #9ecbff;border-bottom:1.6px solid #9ecbff;transform:rotate(-45deg);transition:transform .18s ease;transform-origin:center}
+#range-tune[open]>summary::before{transform:rotate(45deg)}
 @media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}</style>
 </ZhLayout>
