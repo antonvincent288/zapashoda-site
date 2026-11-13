@@ -378,7 +378,8 @@ footer a:hover{color:var(--gold)}
 
   .cards,.bgrid,.mgrid,.plans,.tiles{grid-template-columns:1fr 1fr}
   .fgrid{grid-template-columns:1fr 1fr}
-  .artgrid{grid-template-columns:1fr;gap:24px}
+  .artgrid{grid-template-columns:minmax(0,1fr);gap:24px}
+  article.article{min-width:0}
   .toc{display:none}
   nav{display:none}
   .menu-btn{display:flex}
