@@ -57,7 +57,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           </div>
           <div class="zh-cell zh-soc-cell">
             <label for="range-soc" class="zh-label">Запас хода</label>
-            <details id="range-tune" open style="margin-top:8px;position:relative">
+            <details id="range-tune" open class="zh-nocar" style="margin-top:8px;position:relative">
               <summary class="zh-capsule">
                 <span id="range-big" class="zh-caps-big">— км</span>
                 <span class="zh-caps-badges"><b id="soc-val">80%</b><i id="scn-name">База</i></span>
@@ -561,13 +561,14 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       function updateRange() {
         var big = document.getElementById('range-big'), capl = document.getElementById('range-cap'), note = document.getElementById('range-note');
         if (!big) return;
-        if (!carEntry || !carEntry.cap) { big.textContent = '— км'; capl.textContent = 'выберите модель — покажем реальный запас'; if (note) note.textContent = ''; return; }
+        if (!carEntry || !carEntry.cap) { big.textContent = '— км'; var rtN = document.getElementById('range-tune'); if (rtN) rtN.classList.add('zh-nocar'); capl.textContent = 'выберите модель — покажем реальный запас'; if (note) note.textContent = ''; return; }
         var soc = Number((document.getElementById('range-soc') || {}).value || 80);
         var socVal = document.getElementById('soc-val'); if (socVal) socVal.textContent = soc + '%';
         var summer = Math.round(carEntry.cap * 6.2 * soc / 100);
         var tF = tempFactor(curTemp), sF = SCN_FACTORS[scnCur] || 1;
         var real = Math.round(summer * tF * sF);
         big.textContent = '~' + real + ' км';
+        var rtY = document.getElementById('range-tune'); if (rtY) rtY.classList.remove('zh-nocar');
         capl.textContent = 'реальный запас сейчас · при заряде ' + soc + '%';
         var parts = [];
         if (tF < 1) parts.push('погода ' + (curTemp > 0 ? '+' : '') + curTemp + ' °C (−' + Math.round((1 - tF) * 100) + '%)');
@@ -928,5 +929,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
 @media(max-width:880px){.zh-grid3{grid-template-columns:1fr}}
-@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}}</style>
+@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}}
+#range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
+#range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
 </ZhLayout>
