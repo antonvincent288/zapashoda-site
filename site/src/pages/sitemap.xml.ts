@@ -6,7 +6,7 @@ const articles = Object.values(import.meta.glob('../data/articles/**/*.json', { 
 const publicPages = import.meta.glob('../../public/**/*.html', { eager: false }) as Record<string, unknown>;
 
 const SITE = 'https://zapashoda-ev.ru';
-const LASTMOD = '2026-11-10';
+const LASTMOD = '2026-11-13';
 type U = { loc: string; pri: string };
 const urls: U[] = [{ loc: SITE + '/', pri: '1.0' }];
 for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','sovmestimost','razemy','calculators','tarify']) {
@@ -27,7 +27,7 @@ const brands = (await import('../data/legacy/brands.json')).default as any[];
 urls.push({ loc: `${SITE}/brands/`, pri: '0.6' });
 for (const b of brands) if (b.slug) urls.push({ loc: `${SITE}/brands/${b.slug}.html/`, pri: '0.5' });
 const sku = (await import('../data/sku.json')).default as any;
-for (const s3 of (sku.items || [])) if (s3.slug) urls.push({ loc: `${SITE}/catalog/${s3.slug}.html/`, pri: '0.7' });
+for (const s3 of (sku.items || [])) if (s3.slug) urls.push({ loc: `${SITE}/catalog/${s3.slug}/`, pri: '0.7' });
 const SKIP_PREFIXES = ['/decapcms', '/admin', '/app', '/assets'];
 const known = new Set<string>(urls.map((x2) => x2.loc));
 for (const f of Object.keys(publicPages)) {
