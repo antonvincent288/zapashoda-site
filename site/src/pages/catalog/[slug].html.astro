@@ -122,7 +122,7 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
         if(!gas){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Не удалось отправить — напишите отзыв в Telegram @zapashoda_ev_bot</p>');return}
         msg('<p style="color:var(--txt-muted);font-size:14px;margin:0">Отправляем…</p>');
         var d={t:'review',sku:sec.getAttribute('data-sku')||'',sku_title:sec.getAttribute('data-title')||'',model:(new URLSearchParams(location.search).get('model')||''),rating:r,name:sec.querySelector('[name=rv-name]').value.trim(),text:text,consent:'yes',consent_ts:new Date().toISOString(),policy_version:'1.0',page:location.pathname};
-        fetch(gas,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(resp){if(!resp.ok)throw new Error('http '+resp.status);return resp.json()}).then(function(){
+        fetch(gas,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(resp){if(!resp.ok)throw new Error('http '+resp.status);return resp.json()}).then(function(j){if(!j||j.ok===false)throw new Error('gas rejected');
           sec.querySelector('[name=rv-text]').value='';
           sec.querySelector('[name=rv-name]').value='';
           stars.forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false')});r=0;
