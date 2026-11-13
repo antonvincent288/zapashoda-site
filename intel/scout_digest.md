@@ -133,3 +133,6 @@
 
 - [astro-llms-md](https://www.npmjs.com/package/astro-llms-md) — Generate llms.txt, llms-full.txt, and individual markdown files from your Astro site with this Astro integration
 - [@pagefind/darwin-arm64](https://www.npmjs.com/package/@pagefind/darwin-arm64) — The platform-specific binary for pagefind on darwin/arm64
+## 2026-11-13
+
+- [@signalwire/docusaurus-theme-llms-txt](https://www.npmjs.com/package/@signalwire/docusaurus-theme-llms-txt) — Docusaurus theme components for llms-txt plugin including CopyPageButton
