@@ -2,7 +2,7 @@
 import LeadCTA from '../components/LeadCTA.astro';
 import ZhLayout from '../layouts/ZhLayout.astro';
 import LegacyStyles from '../components/LegacyStyles.astro';
-const all = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
+const all = Object.values(import.meta.glob('../data/articles/blog/*.json', { eager: true, import: 'default' })) as any[];
 const allPain = Object.values(import.meta.glob('../data/articles/pain/*.json', { eager: true, import: 'default' })) as any[];
 import legacyBaza from '../data/legacy/baza.json';
 all.push(...allPain, ...legacyBaza);
