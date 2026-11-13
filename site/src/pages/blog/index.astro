@@ -3,6 +3,40 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 const modules = import.meta.glob('../../data/articles/**/*.json', { eager: true, import: 'default' });
 const articles = Object.values(modules) as any[];
 articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+// Обложки-иконки: знак категории в фирменном круге (бренд-волна 13.11, знак «Индикатор запаса»)
+const ICONS = {
+  guide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l2.2 5.5-5.2-1.8z"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5A1.5 1.5 0 016.5 4H19v13.5H6.5A1.5 1.5 0 005 19V5.5z"/><path d="M19 17.5H6.5A1.5 1.5 0 005 19"/><path d="M8.5 8h6.5M8.5 11h4.5"/></svg>',
+  magnifier: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="5.5"/><path d="M14.8 14.8L20 20"/></svg>',
+  chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M9.5 20V6M15 20v-7M20.5 20V8"/></svg>',
+  briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9.5 8V6.5A1.5 1.5 0 0111 5h2a1.5 1.5 0 011.5 1.5V8M4 12.5h16"/></svg>',
+  badge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><path d="M8.5 12.2l2.3 2.3 4.7-4.9"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 4L7.6 12.8h3.6l-1.4 6.2 6-8.8h-3.7z"/></svg>',
+  plug: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v4M16 4v4M7.5 8h9v3.5a4.5 4.5 0 01-9 0zM12 16v4"/></svg>',
+  station: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="10" height="17" rx="1.5"/><path d="M15 8.5h2.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 11-3 0V14"/><path d="M12 5.5L9.2 10h3l-2 4.2"/></svg>',
+  box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5L20 8v8l-8 4.5L4 16V8z"/><path d="M4 8l8 4.5L20 8M12 12.5v8"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6L7.2 19l1-5.4-4-3.8 5.4-.7z"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5h2M5 12h2M5 17.5h2M10.5 6.5H19M10.5 12H19M10.5 17.5H19"/></svg>',
+  cable: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20c-1.5-2 0-4 2-5s4-2 4-4.5S10 7 11 4"/><circle cx="6.5" cy="20.5" r="1.5"/><circle cx="12.5" cy="2.5" r="1.5"/></svg>',
+};
+const ICON_MAP: Record<string, string> = {
+  'Гайд': ICONS.guide,
+  'Руководство': ICONS.book,
+  'Разбор': ICONS.magnifier,
+  'Рынок': ICONS.chart,
+  'Бизнес': ICONS.briefcase,
+  'Выбор': ICONS.badge,
+  'Зарядка': ICONS.bolt,
+  'Оборудование': ICONS.plug,
+  'Инфраструктура': ICONS.station,
+  'ЭЗС': ICONS.station,
+  'Импорт': ICONS.box,
+  'Рейтинг': ICONS.star,
+  'Справочник': ICONS.list,
+  'Аксессуары': ICONS.cable,
+};
+const iconFor = (c?: string) => (c && ICON_MAP[c]) || ICONS.bolt;
 ---
 <ZhLayout title="Блог — Запас хода" description={`Блог о зарядке EV: ${articles.length} материалов. Прямой ответ — в первом абзаце.`}>
   <section class="sec">
@@ -13,7 +47,10 @@ articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))
       <div class="bgrid" style="margin-top:36px">
         {articles.map((a) => (
           <a class="bcard bc-th" href={a.section === 'pain' ? `/pain/${a.slug}` : a.section === 'safety' ? `/safety/${a.slug}` : `/blog/${a.slug}`}>
-            <div class="th"><span>{a.category || 'Блог'}</span></div>
+            <div class="th">
+              <span class="cic" set:html={iconFor(a.category)} />
+              <span class="cat">{a.category || 'Блог'}</span>
+            </div>
             <div class="in">
               {a.category && <span class="tag">{a.category}</span>}
               {a.date && <span class="tag">{a.date}</span>}
@@ -26,3 +63,11 @@ articles.sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))
     </div>
   </section>
 </ZhLayout>
+<style>
+.bcard .th { background: linear-gradient(180deg, #0d1013 0%, #161c23 100%); position: relative; overflow: hidden; }
+.bcard .th::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 90px at 22% 30%, rgba(0,119,255,.28), transparent 70%); pointer-events: none; }
+.bcard .th::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, rgba(0,119,255,.9), rgba(0,119,255,.15) 60%, transparent); pointer-events: none; }
+.bcard .th .cic { position: absolute; left: 20px; top: 18px; width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(90,169,255,.4); background: radial-gradient(circle at 30% 25%, rgba(89,179,255,.28), rgba(0,119,255,.10) 60%, transparent); box-shadow: 0 0 24px rgba(0,119,255,.28), inset 0 0 12px rgba(0,119,255,.14); display: grid; place-items: center; color: #59B3FF; }
+.bcard .th .cic :global(svg) { width: 27px; height: 27px; filter: drop-shadow(0 0 6px rgba(0,119,255,.55)); }
+.bcard .th .cat { color: #e8edf4; letter-spacing: .07em; text-transform: uppercase; font-size: 11px; font-weight: 700; position: absolute; bottom: 12px; left: 16px; }
+</style>
