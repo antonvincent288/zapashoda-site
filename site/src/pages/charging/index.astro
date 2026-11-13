@@ -39,7 +39,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
       </div>
       <p class="zh-lead-sub">База обновлена <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
-<div id="os-widget" style="margin-top:14px;border-radius:20px;padding:16px;overflow:hidden">
+<div id="os-widget" style="margin-top:10px;border-radius:20px;padding:16px;overflow:hidden">
         <div class="zh-grid3">
           <div class="zh-cell">
             <label for="car-search" class="zh-label">Ваша машина</label>
@@ -91,10 +91,10 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             </div>
           </div>
         </div>
-        <div id="car-kpi" style="margin-top:10px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
+        <div id="car-kpi" style="margin-top:8px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
           <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
         </div>
-        <div id="city-chips" style="display:flex;gap:8px;margin-top:10px"></div>
+        <div id="city-chips" style="display:flex;gap:8px;margin-top:8px"></div>
         <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
         <div class="zh-ribbon">
           <div class="zh-chips">
@@ -112,7 +112,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-top:14px;display:none"></div>
-      <div style="position:relative;margin-top:12px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      <div style="position:relative;margin-top:8px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line)"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
@@ -232,34 +232,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         });
         if (!map) {
           map = L.map('map').setView([55.75, 37.62], 5);
-          // тач: один палец — скролл страницы, два пальца — карта (страховка поверх touch-action:pan-y)
-          if (L.Browser.mobile) {
-            var mapEl = document.getElementById('map');
-            var zh2fStart = null, zh2fShown = false;
-            try { zh2fShown = !!sessionStorage.getItem('zh_map2f'); } catch (e) {}
-            var zhTouch = function (e) {
-              if (e.touches.length >= 2) { if (map.dragging) map.dragging.enable(); }
-              else if (map.dragging) map.dragging.disable();
-            };
-            var zhHint = function (e) {
-              if (zh2fShown || !zh2fStart || e.touches.length !== 1) return;
-              var dx = Math.abs(e.touches[0].clientX - zh2fStart[0]), dy = Math.abs(e.touches[0].clientY - zh2fStart[1]);
-              if (dx > 12 || dy > 12) {
-                zh2fShown = true;
-                try { sessionStorage.setItem('zh_map2f', '1'); } catch (e2) {}
-                var note = document.getElementById('geo-note');
-                if (note) { note.textContent = 'Двигайте карту двумя пальцами'; setTimeout(function () { if (note.textContent === 'Двигайте карту двумя пальцами') note.textContent = ''; }, 2600); }
-              }
-            };
-            ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach(function (ev) {
-              mapEl.addEventListener(ev, zhTouch, { passive: true });
-            });
-            mapEl.addEventListener('touchstart', function (e) { zh2fStart = e.touches.length === 1 ? [e.touches[0].clientX, e.touches[0].clientY] : null; }, { passive: true });
-            mapEl.addEventListener('touchmove', zhHint, { passive: true });
-            mapEl.addEventListener('touchend', function () { zh2fStart = null; }, { passive: true });
-            mapEl.addEventListener('touchcancel', function () { zh2fStart = null; }, { passive: true });
-            map.dragging.disable();
-          }
+          // тач-страховка снята по решению владельца: стандартные жесты Leaflet — один палец двигает карту, щипок — зум
           var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(map);});
           cluster = L.markerClusterGroup();
           st.forEach(function (s) {
@@ -889,12 +862,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #range-tune[open]>summary::before{transform:rotate(45deg)}
 #range-soc{height:8px}#range-soc::-webkit-slider-thumb{width:28px;height:28px}#range-soc::-moz-range-thumb{width:28px;height:28px}#os-widget .chip,.os-mid .chip,#conn-chips .chip,#pw-chips .chip,#soc-presets .chip{min-height:44px}@media(max-width:639px){#map-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;font-size:12px}.lg-note{grid-column:1/-1}}@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}
 /* ── Cockpit UI: система поверхностей/теней/отступов (адаптация под тёмную тему прода) ── */
-.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5;padding-top:32px;padding-bottom:48px}
+.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5;padding-top:20px;padding-bottom:40px}
 .zh-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.zh-head h1{margin:2px 0 0;font-size:clamp(22px,2.6vw,24px)}
+.zh-head h1{margin:2px 0 0;font-size:clamp(24px,3.6vw,32px)}
 .zh-head-l{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#9ecbff;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.22);border-radius:999px;padding:3px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.zh-lead-sub{font-size:13px;color:var(--txt-muted);margin:8px 0 0}
+.zh-lead-sub{font-size:13px;color:var(--txt-muted);margin:6px 0 0}
 .zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(77,155,245,.22)}
 .zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
 .zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
@@ -917,8 +890,10 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #os-widget .zh-loc .chip{border:0;background:transparent;color:#9ecbff;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
 #os-widget .zh-loc .chip:hover{color:#dcebff}
 .zh-loc-div{width:1px;flex:none;background:rgba(77,155,245,.25);margin:9px 0}
-.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:12px;padding-top:12px}
-.zh-chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0}
+.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:10px;padding-top:10px}
+.zh-chips{display:flex;gap:10px;align-items:center;flex:1 1 100%;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
+.zh-chips::-webkit-scrollbar{display:none}
+.zh-chips .chip{flex:none}
 .zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(77,155,245,.20)}
 .zh-ribbon-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .zh-subnote{font-size:12.5px;color:var(--txt-muted);margin:6px 0 0}
@@ -929,9 +904,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-bcard p{font-size:13.5px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
 .zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
-@media(min-width:640px){#city-chips{flex-wrap:wrap}#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
+@media(min-width:640px){#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
 @media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}#city-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}#city-chips::-webkit-scrollbar{display:none}#city-chips .chip{flex:none}}
+@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
 #range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
 </ZhLayout>
