@@ -1,5 +1,4 @@
 ---
-import LeadCTA from '../../components/LeadCTA.astro';
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import c from '../../data/b2b_content.json';
 import { PRICES_ON, priceFix } from '../../lib/prices';
@@ -7,21 +6,21 @@ const rrc = c.rrc || [];
 const faqProd = c.faq || [];
 const faqMock = [
   { q: 'Как оформить первый пилот?', a: 'Начинаем с небольшой партии, чтобы проверить спрос без заморозки денег. Условия и объёмы фиксируем в прайсе — с ценами, не «на пальцах».' },
-  { q: 'Что входит в маркетинговую поддержку?', a: 'База 88 болей, 138 карточек моделей, руководства на русском и карта станций — с вашим логотипом, чтобы продавали допы без лишних вопросов.' },
+  { q: 'Что входит в маркетинговую поддержку?', a: 'База 164 типовых разбора, 154 карточки моделей, руководства на русском и карта станций — с вашим логотипом, чтобы продавали допы без лишних вопросов.' },
 ];
 const faq = [...faqMock, ...faqProd.filter((f: any) =>!faqMock.some((m) =>m.q === f.q))];
 const faqLd = faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) =>({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
 const plans = [
   { name: 'Старт', note: 'Проверка спроса без заморозки денег', pop: false, cta: 'Оставить заявку', items: ['Базовый адаптер Type 2 → GB/T', 'Обратный адаптер GB/T → Type 2', 'Мини-партия для пилота', 'Консультация по подбору'] },
-  { name: 'Комплект', note: 'Оптимальный выбор для салона', pop: true, cta: 'Получить прайс', items: ['Премиум-адаптер Type 2 → GB/T', 'Держатель кабеля', 'Смазка контактов', 'Карточки моделей и базы болей — с вашим логотипом', 'Руководства на русском'] },
-  { name: 'Зимний комплект', note: 'Сезонный лид-оффер', pop: false, cta: 'Запросить условия', items: ['Комплект «Комплект» + зимний набор', 'Кейс: простая стоянка, ночёвка, замена', 'Витринная упаковка под полку'] },
+  { name: 'Стандарт', note: 'Оптимальный выбор для салона', pop: true, cta: 'Получить прайс', items: ['Премиум-адаптер Type 2 → GB/T', 'Держатель кабеля', 'Смазка контактов', 'Карточки моделей и базы болей — с вашим логотипом', 'Руководства на русском'] },
+  { name: 'Зимний', note: 'Сезонный лид-оффер', pop: false, cta: 'Запросить условия', items: ['Набор уровня «Стандарт» + зимний комплект', 'Кейс: простая стоянка, ночёвка, замена', 'Витринная упаковка под полку'] },
 ];
 const cmp = [
   ['Адаптер Type 2 → GB/T', 'Базовый', 'Премиум', 'Премиум'],
   ['Обратный адаптер', 'Входит', 'Входит', 'Входит'],
   ['Держатель / смазка', '—', 'В комплекте', 'В комплекте'],
-  ['Маркетинг-база (боли, карточки)', '—', ' с логотипом', ''],
-  ['Поддержка подбора', 'консультация', ' приоритет', ''],
+  ['Маркетинг-база (боли, карточки)', '—', 'с логотипом', 'с логотипом'],
+  ['Поддержка подбора', 'консультация', 'приоритет', 'приоритет'],
 ];
 const icos = [
   '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H9a3 3 0 0 0-3 3v9"/><path d="M20 7V3H8"/><rect x="3" y="14" width="8" height="7" rx="1.5"/></svg>',
@@ -32,7 +31,7 @@ const icos = [
 <ZhLayout title="Комплекты адаптеров и поддержка продаж — B2B — Запас хода" description="Дилерам и автосалонам: оптовые комплекты адаптеров Type 2 → GB/T, поддержка продаж, РРЦ и партнёрский пакет PDF." jsonld={faqLd}><div class="hero" style="padding:72px 0 64px"><div class="wrap"><div class="badge" style="color:#4D9BF5">Дилерам и автосалонам</div><h1>Комплекты адаптеров <span>и поддержка продаж</span></h1><p>Оптовые цены и условия фиксируем в прайсе — публично показываем только розницу и состав комплектов.</p><a class="btn btn-gold" href="/b2b/paket-dileram.pdf" download>Скачать партнёрский пакет (PDF)</a></div></div><section class="sec"><div class="wrap"><h2>Три партнёрских уровня</h2><div class="plans" style="margin-top:32px">{plans.map((p) =>(
           <div class:list={["plan", p.pop && "pop"]}>{p.pop && <div class="popb">Популярный</div>}
             <h3>{p.name}</h3><p style="font-size:13.5px;color:var(--txt-muted)">{p.note}</p><div class="price">по запросу <small>/ опт</small></div><ul>{p.items.map((it) =><li>{it}</li>)}</ul><a class="btn btn-ghost" style="width:100%;text-align:center;text-decoration:none" href="https://zapashoda-ev.ru/b2b/" rel="nofollow">{p.cta}</a></div>))}
-      </div><h2 style="margin-top:56px">Сравнение уровней</h2><table class="cmp"><tr><th>Фича</th><th>Старт</th><th>Комплект</th><th>Зимний</th></tr>{cmp.map((row) =>(
+      </div><h2 style="margin-top:56px">Сравнение уровней</h2><table class="cmp"><tr><th>Фича</th><th>Старт</th><th>Стандарт</th><th>Зимний</th></tr>{cmp.map((row) =>(
           <tr><td>{row[0]}</td><td>{row[1]}</td><td>{row[2]}</td><td>{row[3]}</td></tr>))}
       </table>{c.benefits && c.benefits.length >0 && (
         <><h2 style="margin-top:56px">Что получает партнёр</h2><div class="cards" style="margin-top:24px">{c.benefits.map((b: string, i: number) =>(
@@ -53,7 +52,7 @@ const icos = [
       </div></div></section><section class="sec-alt"><div class="wrap">
       <h2 style="margin-top:8px">Кому подходим</h2>
       <div class="cards" style="margin-top:24px">
-        {[['taksi','Таксопарки и каршеринг','Комплекты адаптеров, обучение водителей, замена за 1 день'],['avtopark','Корпоративные автопарки','Разные разъёмы в одном гараже: адаптеры и настенные станции'],['azs','АЗС и платные парковки','Зарядка как допродажа к остановке; точка на карте — бесплатно'],['jk','ЖК и застройщики','Паркинги и дворы: расчёт мощности и схема учёта'],['salony','Автосалоны и дилеры','Партнёрские уровни Старт / Комплект / Зимний без заморозки денег'],['predlozh-mesto','Предложить место для зарядки','Бесплатный расчёт сценария для собственников площадок']].map((sg) => (
+        {[['taksi','Таксопарки и каршеринг','Комплекты адаптеров, обучение водителей, замена за 1 день'],['avtopark','Корпоративные автопарки','Разные разъёмы в одном гараже: адаптеры и настенные станции'],['azs','АЗС и платные парковки','Зарядка как допродажа к остановке; точка на карте — бесплатно'],['jk','ЖК и застройщики','Паркинги и дворы: расчёт мощности и схема учёта'],['salony','Автосалоны и дилеры','Партнёрские уровни Старт / Стандарт / Зимний без заморозки денег'],['predlozh-mesto','Предложить место для зарядки','Бесплатный расчёт сценария для собственников площадок']].map((sg) => (
           <a class="card" href={`/b2b/${sg[0]}/`} style="text-decoration:none;display:block">
             <b style="display:block;margin-bottom:6px">{sg[1]}</b>
             <p style="font-size:14px;color:var(--txt-muted)">{sg[2]}</p>
@@ -61,31 +60,5 @@ const icos = [
           </a>
         ))}
       </div>
-    </div></section>
-      <section class="sec-alt"><div class="wrap">
-      <h2 style="margin-top:8px">Кому подходим</h2>
-      <div class="cards" style="margin-top:24px">
-        {[['taksi','Таксопарки и каршеринг','Комплекты адаптеров, обучение водителей, замена за 1 день'],['avtopark','Корпоративные автопарки','Разные разъёмы в одном гараже: адаптеры и настенные станции'],['azs','АЗС и платные парковки','Зарядка как допродажа к остановке; точка на карте — бесплатно'],['jk','ЖК и застройщики','Паркинги и дворы: расчёт мощности и схема учёта'],['salony','Автосалоны и дилеры','Партнёрские уровни Старт / Комплект / Зимний без заморозки денег'],['predlozh-mesto','Предложить место для зарядки','Бесплатный расчёт сценария для собственников площадок']].map((sg) => (
-          <a class="card" href={`/b2b/${sg[0]}/`} style="text-decoration:none;display:block">
-            <b style="display:block;margin-bottom:6px">{sg[1]}</b>
-            <p style="font-size:14px;color:var(--txt-muted)">{sg[2]}</p>
-            <p style="margin-top:8px;font-size:13px;color:var(--gold)">Подробнее →</p>
-          </a>
-        ))}
-      </div>
-    </div></section>
-      <section class="sec-alt"><div class="wrap">
-      <h2 style="margin-top:8px">Кому подходим</h2>
-      <div class="cards" style="margin-top:24px">
-        {[['taksi','Таксопарки и каршеринг','Комплекты адаптеров, обучение водителей, замена за 1 день'],['avtopark','Корпоративные автопарки','Разные разъёмы в одном гараже: адаптеры и настенные станции'],['azs','АЗС и платные парковки','Зарядка как допродажа к остановке; точка на карте — бесплатно'],['jk','ЖК и застройщики','Паркинги и дворы: расчёт мощности и схема учёта'],['salony','Автосалоны и дилеры','Партнёрские уровни Старт / Комплект / Зимний без заморозки денег'],['predlozh-mesto','Предложить место для зарядки','Бесплатный расчёт сценария для собственников площадок']].map((sg) => (
-          <a class="card" href={`/b2b/${sg[0]}/`} style="text-decoration:none;display:block">
-            <b style="display:block;margin-bottom:6px">{sg[1]}</b>
-            <p style="font-size:14px;color:var(--txt-muted)">{sg[2]}</p>
-            <p style="margin-top:8px;font-size:13px;color:var(--gold)">Подробнее →</p>
-          </a>
-        ))}
-      </div>
-    </div></section>
-      <section class="sec"><div class="wrap"><div class="cta"><h2>Запросить расчёт проекта</h2><p>Опишите вашу машину и задачи в форме подбора — на продвижении прайса и условий для дилеров ответит наш менеджер. Партнёрский пакет с ценами пришлём вместе с расчётом.</p><a class="btn btn-gold" href="/quiz/" style="text-decoration:none">Отправить заявку за 30 секунд</a></div></div></section>{faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
-<LeadCTA variant="b2b" />
+    </div></section><section class="sec"><div class="wrap"><div class="cta"><h2>Запросить прайс и условия для бизнеса</h2><p>Укажите профиль компании, город и ориентировочный парк или объём продаж — пришлём дилерский прайс и расчёт пилотной партии в течение рабочего дня.</p><div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px"><a class="btn btn-gold zs-cta-btn" data-mode="b2b" style="cursor:pointer;text-decoration:none">Запросить оптовый прайс</a><a class="btn btn-ghost" href="https://t.me/zapashoda_ev" target="_blank" rel="noopener" style="text-decoration:none">Написать в Telegram</a></div></div></section><script is:inline>(function(){document.addEventListener("click",function(e){var btn=e.target.closest(".zs-cta-btn");if(!btn)return;var mode=btn.getAttribute("data-mode")||"retail";if(window.ZS_OPEN_LEAD){window.ZS_OPEN_LEAD("","","","",mode==="b2b"?"b2b":"retail");}else{location.href="/quiz/";}},true);})();</script>{faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
 </ZhLayout>
