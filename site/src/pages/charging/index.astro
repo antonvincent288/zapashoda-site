@@ -67,7 +67,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
                 <div style="max-width:380px">
                   <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас</label>
                   <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
-<div id="soc-presets" style="display:flex;gap:8px;margin-top:10px"><button type="button" class="chip soc-preset" data-soc="20">20%</button><button type="button" class="chip soc-preset" data-soc="50">50%</button><button type="button" class="chip soc-preset" data-soc="80">80%</button><button type="button" class="chip soc-preset" data-soc="100">100%</button></div>
+<div id="soc-presets" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button type="button" class="chip soc-preset" data-soc="20">20%</button><button type="button" class="chip soc-preset" data-soc="50">50%</button><button type="button" class="chip soc-preset" data-soc="80">80%</button><button type="button" class="chip soc-preset" data-soc="100">100%</button></div>
                 </div>
                 <div id="scn-row" role="radiogroup" aria-label="Сценарий поездки — активен один режим" title="Сценарии исключают друг друга: активен один режим" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:13px">
                   <button type="button" role="radio" aria-checked="true" class="chip scn on" data-scn="base" title="Без поправок: паспортный запас и погода">База</button>
@@ -301,7 +301,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               if (yaActive) { emptyCard.style.display = 'none'; return; }
               try {
                 var bb = map.getBounds(), nAll = 0, nVis = 0;
-                ALL.forEach(function (s) {
+                ALL.forEach(function (m) {
+                  var s = m.__s || m;
                   if (s.lat >= bb.getSouth() && s.lat <= bb.getNorth() && s.lon >= bb.getWest() && s.lon <= bb.getEast()) nAll++;
                 });
                 (zhVisibleStations || []).forEach(function (s) {
@@ -898,7 +899,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
 .zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .zh-label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
-.zh-grid3{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:12px;align-items:start}
+.zh-grid3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.2fr);gap:12px;align-items:start}.zh-cell{min-width:0}
 .zh-inp-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ecbff;display:flex;pointer-events:none}
 #range-tune>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:6px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);cursor:pointer;user-select:none;font-variant-numeric:tabular-nums}
 #range-tune>summary::-webkit-details-marker{display:none}
@@ -921,14 +922,14 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(77,155,245,.20)}
 .zh-ribbon-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .zh-subnote{font-size:12.5px;color:var(--txt-muted);margin:8px 0 0}
-.zh-map-h{height:clamp(520px,68vh,780px)}
+.zh-map-h{height:clamp(520px,68vh,780px)}#empty-note{width:calc(100% - 28px)}
 .zh-bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
 .zh-bcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
 .zh-bcard h3{font-size:15px;font-weight:800;margin:10px 0 0;letter-spacing:-.01em}
 .zh-bcard p{font-size:13.5px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
 .zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
-@media(max-width:880px){.zh-grid3{grid-template-columns:1fr}}
+@media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
 #range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
