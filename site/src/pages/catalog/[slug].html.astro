@@ -19,9 +19,10 @@ const relProds = (d.related || []).map((r) => ({ r, s: skuMap[r.href.replace('/c
 const fit = (d.fit || []).filter((f) => typeof f === 'object');
 const faqLd = d.faq && d.faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
 const prodLd = { '@context': 'https://schema.org', '@type': 'Product', name: d.title, description: d.desc, image: d.image ? 'https://zapashoda-ev.ru' + d.image : undefined, offers: PRICES_ON ? { '@type': 'Offer', price: String(d.price), priceCurrency: 'RUB', availability: 'https://schema.org/InStock' } : undefined };
+const crumbLd = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [ { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' }, { '@type': 'ListItem', position: 2, name: 'Каталог', item: 'https://zapashoda-ev.ru/catalog/' }, { '@type': 'ListItem', position: 3, name: d.title, item: 'https://zapashoda-ev.ru/catalog/' + d.slug + '.html' } ] };
 const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS=' + JSON.stringify(ofpAll) + ';var MODEL_NAMES=' + JSON.stringify(NAMES) + ';';
 ---
-<ZhLayout og={d.image || undefined} title={d.title + ' — купить | Запас хода'} description={d.desc || (PRICES_ON ? (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».') : (d.title + ' — купить. Совместимость и подбор под модель — «Запас хода».'))} jsonld={[prodLd, faqLd].filter(Boolean)}>
+<ZhLayout og={d.image || undefined} title={d.title + ' — купить | Запас хода'} description={d.desc || (PRICES_ON ? (d.title + ' — купить по РРЦ ' + d.price + ' ₽. Совместимость и подбор под модель — «Запас хода».') : (d.title + ' — купить. Совместимость и подбор под модель — «Запас хода».'))} jsonld={[prodLd, faqLd, crumbLd].filter(Boolean)}>
   <section class="sec">
     <div class="wrap sk-wrap">
       <div class="crumbs"><a href="/">Главная</a> / <a href="/catalog/">Каталог</a> / {d.title}</div>
@@ -82,7 +83,56 @@ const ofScript = 'var OF_MODEL=' + JSON.stringify(d.title) + ';var OF_PRODUCTS='
       <div style="margin-top:40px">
         <a class="btn btn-ghost" style="text-decoration:none" href="/quiz/">Подобрать под свою модель →</a>
       </div>
-      <OrderForm model={d.title} />
+<section class="rv-sec" style="margin-top:40px;background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:28px" data-sku={d.slug} data-title={d.title}>
+      <h2 style="margin-bottom:6px">Отзыв о товаре</h2>
+      <p style="color:var(--txt-muted);font-size:14px;max-width:640px">Купили через наших партнёров? Расскажите, как комплект показал себя. Отзывы публикуем после проверки — честные в обе стороны, без модерации под звёзды.</p>
+      <div class="rv-stars" role="radiogroup" aria-label="Оценка от 1 до 5">
+        <button type="button" class="rv-star" data-v="1" role="radio" aria-checked="false" aria-label="1 из 5">1</button>
+        <button type="button" class="rv-star" data-v="2" role="radio" aria-checked="false" aria-label="2 из 5">2</button>
+        <button type="button" class="rv-star" data-v="3" role="radio" aria-checked="false" aria-label="3 из 5">3</button>
+        <button type="button" class="rv-star" data-v="4" role="radio" aria-checked="false" aria-label="4 из 5">4</button>
+        <button type="button" class="rv-star" data-v="5" role="radio" aria-checked="false" aria-label="5 из 5">5</button>
+      </div>
+      <input name="rv-name" placeholder="Имя (можно не указывать)" aria-label="Имя" class="of-inp" style="margin-top:12px" />
+      <textarea name="rv-text" rows="3" placeholder="Как комплект показал себя: установка, зарядка, зима" aria-label="Текст отзыва" class="of-inp" style="margin-top:10px"></textarea>
+      <label style="display:block;font-size:12.5px;color:var(--txt-muted);margin-top:10px"><input type="checkbox" required class="rv-consent" style="margin-right:7px;vertical-align:middle" />Я согласен на обработку персональных данных — <a href="/privacy/" target="_blank" style="color:#1d4ed8;text-decoration:underline">Политика конфиденциальности</a></label>
+      <button class="btn btn-gold rv-send" type="button" style="width:100%;margin-top:12px">Отправить отзыв</button>
+      <div class="rv-status" style="margin-top:8px"></div>
+    </section>
+    <style is:inline>
+      .rv-stars{display:flex;gap:8px;margin-top:14px}
+      .rv-star{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--txt);font-size:15px;font-weight:700;cursor:pointer;min-height:44px;transition:all .18s}
+      .rv-star:hover{border-color:rgba(77,155,245,.6)}
+      .rv-star.on{background:var(--gold);border-color:var(--gold);color:#0b0b0d}
+    </style>
+    <script is:inline>
+    (function(){
+      var sec=document.querySelector('.rv-sec');if(!sec)return;
+      var stars=sec.querySelectorAll('.rv-star'),r=0;
+      stars.forEach(function(b){b.addEventListener('click',function(){r=+b.getAttribute('data-v');stars.forEach(function(x){var on=(x===b);x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false')})})});
+      var st=sec.querySelector('.rv-status');
+      function msg(html){if(st)st.innerHTML=html}
+      sec.querySelector('.rv-send').addEventListener('click',function(){
+        var text=sec.querySelector('[name=rv-text]').value.trim();
+        var cons=sec.querySelector('.rv-consent').checked;
+        if(!r){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Поставьте оценку от 1 до 5</p>');return}
+        if(!text){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Добавьте пару слов об опыте</p>');return}
+        if(!cons){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Нужно согласие на обработку данных</p>');return}
+        var gas=(window.ZS_LEAD_CFG&&window.ZS_LEAD_CFG.gas)||window.OF_GAS||'';
+        if(!gas){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Не удалось отправить — напишите отзыв в Telegram @zapashoda_ev_bot</p>');return}
+        msg('<p style="color:var(--txt-muted);font-size:14px;margin:0">Отправляем…</p>');
+        var d={t:'review',sku:sec.getAttribute('data-sku')||'',sku_title:sec.getAttribute('data-title')||'',model:(new URLSearchParams(location.search).get('model')||''),rating:r,name:sec.querySelector('[name=rv-name]').value.trim(),text:text,consent:'yes',consent_ts:new Date().toISOString(),policy_version:'1.0',page:location.pathname};
+        fetch(gas,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(resp){if(!resp.ok)throw new Error('http '+resp.status);return resp.json()}).then(function(){
+          sec.querySelector('[name=rv-text]').value='';
+          sec.querySelector('[name=rv-name]').value='';
+          stars.forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false')});r=0;
+          msg('<p style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--txt);margin:0">Спасибо! Отзыв отправлен — покажем после проверки.</p>');
+          if(window.ym&&window.YM_ID){try{ym(window.YM_ID,'reachGoal','review_send')}catch(e2){}}
+        }).catch(function(){msg('<p style="color:#f87171;font-size:13.5px;margin:0">Не ушло — напишите отзыв в Telegram @zapashoda_ev_bot</p>')});
+      });
+    })();
+    </script>
+          <OrderForm model={d.title} />
     <script is:inline>
     (function(){
       var q=new URLSearchParams(location.search).get('model');
