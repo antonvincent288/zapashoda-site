@@ -39,7 +39,11 @@ const heroHtml = '<div class="hero"><div class="gal"><div class="ph main">' + (d
   + '<div class="guar">Каждую партию проверяем перед отгрузкой партнёрам</div>'
   + '<div class="cta"><button class="btn btn-main pc-add">Зафиксировать цену у дилера</button><a class="btn btn-ghost" href="https://t.me/zapashoda_ev_bot" style="text-decoration:none">Спросить в Telegram</a></div>'
   + '<div class="tiny">Заявка уходит партнёру-дилеру в вашем городе. Оплата при получении. Заявка ни к чему не обязывает.</div></div></div></div>';
-const descHtml = ('<section id="desc"><h2>Что это и для чего</h2><p>' + escF(d.lead) + '</p><p>' + escF(DESC_EXTRA[d.slug] || d.desc || '') + '</p><p style="font-size:14px;color:#7d8794">Каждую партию проверяем перед отгрузкой партнёрам. Если сомневаетесь в совместимости — напишите в Telegram @zapashoda_ev_bot, проверим по VIN до заявки.</p><div class="cta-plate"><div class="cp-t">Подбор по разъёму (' + escF(portLab) + ') · оплата только при получении у дилера</div><button class="btn btn-main pc-add">Зафиксировать цену у дилера</button></div></section>')
+const leadText = String(d.lead||'').trim();
+const descText = String(d.desc||'').trim();
+const descRest = descText && descText.startsWith(leadText) ? descText.slice(leadText.length).replace(/^[\s,.:;]+/,'').trim() : descText;
+const descPara2 = DESC_EXTRA[d.slug] || descRest;
+const descHtml = ('<section id="desc"><h2>Что это и для чего</h2><p>' + escF(d.lead) + '</p>' + (descPara2 ? '<p>' + escF(descPara2) + '</p>' : '') + '</p><p style="font-size:14px;color:#7d8794">Каждую партию проверяем перед отгрузкой партнёрам. Если сомневаетесь в совместимости — напишите в Telegram @zapashoda_ev_bot, проверим по VIN до заявки.</p><div class="cta-plate"><div class="cp-t">Подбор по разъёму (' + escF(portLab) + ') · оплата только при получении у дилера</div><button class="btn btn-main pc-add">Зафиксировать цену у дилера</button></div></section>')
 ;
 const specTrs = (specRows.length ? specRows : [['Совместимость', 'См. блок «Совместимость с авто» — проверяем по VIN']]).map(([k, v]) => '<tr><td>' + escF(k) + '</td><td class="pl">' + escF(v) + '</td></tr>').join('');
 const specsHtml = '<section id="specs"><h2>Характеристики</h2><table><tr><th>Параметр</th><th>Значение</th></tr>' + specTrs + '</table></section>';
