@@ -48,7 +48,6 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               <button id="car-clear" type="button" aria-label="Очистить выбор модели" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:0;background:transparent;color:var(--txt-muted);font-size:20px;line-height:1;cursor:pointer;display:none">×</button>
               <div id="car-list" role="listbox" aria-label="Список моделей" style="display:none;position:absolute;z-index:60;top:calc(100% + 6px);left:0;right:0;max-height:280px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.4);padding:6px"></div>
               </div>
-              <button id="car-reset" class="chip" type="button" style="display:none">Сброс</button>
             </div>
           </div>
           <div style="display:flex;justify-content:flex-end;align-items:center">
@@ -219,6 +218,34 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         });
         if (!map) {
           map = L.map('map').setView([55.75, 37.62], 5);
+          // тач: один палец — скролл страницы, два пальца — карта (страховка поверх touch-action:pan-y)
+          if (L.Browser.mobile) {
+            var mapEl = document.getElementById('map');
+            var zh2fStart = null, zh2fShown = false;
+            try { zh2fShown = !!sessionStorage.getItem('zh_map2f'); } catch (e) {}
+            var zhTouch = function (e) {
+              if (e.touches.length >= 2) { if (map.dragging) map.dragging.enable(); }
+              else if (map.dragging) map.dragging.disable();
+            };
+            var zhHint = function (e) {
+              if (zh2fShown || !zh2fStart || e.touches.length !== 1) return;
+              var dx = Math.abs(e.touches[0].clientX - zh2fStart[0]), dy = Math.abs(e.touches[0].clientY - zh2fStart[1]);
+              if (dx > 12 || dy > 12) {
+                zh2fShown = true;
+                try { sessionStorage.setItem('zh_map2f', '1'); } catch (e2) {}
+                var note = document.getElementById('geo-note');
+                if (note) { note.textContent = 'Двигайте карту двумя пальцами'; setTimeout(function () { if (note.textContent === 'Двигайте карту двумя пальцами') note.textContent = ''; }, 2600); }
+              }
+            };
+            ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach(function (ev) {
+              mapEl.addEventListener(ev, zhTouch, { passive: true });
+            });
+            mapEl.addEventListener('touchstart', function (e) { zh2fStart = e.touches.length === 1 ? [e.touches[0].clientX, e.touches[0].clientY] : null; }, { passive: true });
+            mapEl.addEventListener('touchmove', zhHint, { passive: true });
+            mapEl.addEventListener('touchend', function () { zh2fStart = null; }, { passive: true });
+            mapEl.addEventListener('touchcancel', function () { zh2fStart = null; }, { passive: true });
+            map.dragging.disable();
+          }
           var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(map);});
           cluster = L.markerClusterGroup();
           st.forEach(function (s) {
@@ -482,8 +509,6 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           carEntry = MODELS.filter(function (m) { return m.slug === slug; })[0] || null;
           if (carEntry) carPort = String(carEntry.port || '').toLowerCase();
         }
-        var resetBtn = document.getElementById('car-reset');
-        if (resetBtn) resetBtn.style.display = carSel ? '' : 'none';
         var info = document.getElementById('car-info');
         if (carSel && carEntry) {
           classifyAll();
@@ -515,10 +540,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         try { var qp2 = new URLSearchParams(location.search); if (slug) qp2.set('model', slug); else qp2.delete('model'); var qs2 = qp2.toString(); history.replaceState(null, '', location.pathname + (qs2 ? '?' + qs2 : '') + location.hash); } catch (e) {}
         updateRange();
       }
-      var selCar = document.getElementById('car-model'), resetCar = document.getElementById('car-reset');
+      var selCar = document.getElementById('car-model');
       if (selCar) selCar.addEventListener('change', function () { setModel(selCar.value || null); try { if (selCar.value) localStorage.setItem('zh_selected_car', selCar.value); else localStorage.removeItem('zh_selected_car'); } catch (e) {} });
-      if (resetCar) resetCar.addEventListener('click', function () { selCar.value = ''; setModel(null); var ci = document.getElementById('car-search'); if (ci) ci.value = ''; var cc = document.getElementById('car-clear'); if (cc) cc.style.display = 'none'; });
-      // комбо-поиск модели + память выбора (localStorage)
+            // комбо-поиск модели + память выбора (localStorage)
       var carInput = document.getElementById('car-search'), carList = document.getElementById('car-list'), carClear = document.getElementById('car-clear');
       if (carInput && carList && selCar) {
         var SYN = { 'zeekr': 'зик зикр зекр', 'li auto': 'ли лисян ли авто', 'voyah': 'воя воях вояж', 'byd': 'бид буд', 'tesla': 'тесла', 'geely': 'джили', 'changan': 'чанган', 'avatr': 'аватр', 'hongqi': 'хунцы хончи', 'xpeng': 'икспенг экспенг', 'xiaomi': 'сяоми ксяоми', 'volkswagen': 'фольксваген фв', 'vw': 'фольксваген фв', 'bmw': 'бмв', 'mercedes': 'мерседес мерс', 'audi': 'ауди', 'nissan': 'ниссан лиф', 'evolute': 'эволют', 'moskvich': 'москвич', 'amberauto': 'амберавто' };
