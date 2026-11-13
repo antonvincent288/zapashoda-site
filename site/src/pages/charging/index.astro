@@ -25,46 +25,47 @@ const modelGen = (n) => { const a = n % 10, b = n % 100; return (a === 1 && b !=
 const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Карта зарядных станций', description: 'Карта зарядных станций России: фильтр по вашей модели (GB/T, Type 2, CCS2, CHAdeMO, Type 1), пересчёт запаса хода по реальной температуре за окном, поиск по городу и мощности.' };
 ---
 <ZhLayout title="Карта зарядных станций — Запас хода" description={`Карта ${STN} зарядных станций России: выберите свою модель — покажем только совместимые станции, пересчёт запаса хода по текущей температуре.`} jsonld={ld}>
-  <section class="sec">
+  <section class="sec zh-cockpit-page">
     <div class="wrap">
       <div class="crumbs"><a href="/">Главная</a> / Карта ЗУ</div>
-      <h1>Карта зарядных станций для электромобилей</h1>
-      <p class="lead"><span id="stn-count" data-stn-count>{STN}</span> {stnWord(STN)} в нашей базе · обновлено <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
-<div id="os-widget" style="margin-top:26px;border-radius:20px;padding:24px;overflow:hidden">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:13px;flex-wrap:wrap">
-          <div style="font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9ecbff">Запас хода · виджет</div>
-          <div id="weather-wrap"></div>
+      <div class="zh-head">
+        <div class="zh-head-l">
+          <h1>Карта зарядных станций для электромобилей</h1>
+          <span class="zh-badge"><span id="stn-count" data-stn-count>{STN}</span> проверенных ЭЗС · без рекламы</span>
         </div>
-        <div class="os-row" style="margin-top:13px;align-items:center">
-          <div>
-            <label for="car-search" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-muted)">Ваша машина</label>
-            <div style="display:flex;gap:13px;margin-top:8px;align-items:center">
-              <div style="position:relative;flex:1;min-width:220px">
+        <div id="map-tabs" class="zh-seg" role="tablist" aria-label="Режим карты">
+          <button id="tab-own" class="zh-seg-btn on" type="button">Наша база</button>
+          <button id="tab-ya" class="zh-seg-btn" type="button">Яндекс.Карты</button>
+        </div>
+      </div>
+      <p class="zh-lead-sub">База обновлена <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
+<div id="os-widget" style="margin-top:22px;border-radius:20px;padding:20px;overflow:hidden">
+        <div class="zh-grid3">
+          <div class="zh-cell">
+            <label for="car-search" class="zh-label">Ваша машина</label>
+            <div style="margin-top:8px">
+              <div style="position:relative">
               <select id="car-model" aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0">
                 <option value="">— выберите модель —</option>
                 {MODELS.map((m) => { const n = (m.brand && m.name.toLowerCase().startsWith(m.brand.toLowerCase())) ? m.name.slice(m.brand.length).replace(/^\s+/, '') : m.name; return (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{n}</option>); })}
               </select>
-              <input id="car-search" type="text" autocomplete="off" enterkeyhint="search" placeholder="Найдите машину: Zeekr, зик, тесла…" aria-label="Поиск модели автомобиля" style="width:100%;padding:10px 34px 10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:16px" />
+              <span class="zh-inp-ic" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></span><input id="car-search" type="text" autocomplete="off" enterkeyhint="search" placeholder="Найдите машину: Zeekr, зик, тесла…" aria-label="Поиск модели автомобиля" style="width:100%;padding:11px 38px;border-radius:12px;border:1px solid rgba(77,155,245,.30);background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;min-height:46px;box-sizing:border-box" />
               <button id="car-clear" type="button" aria-label="Очистить выбор модели" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:0;background:transparent;color:var(--txt-muted);font-size:20px;line-height:1;cursor:pointer;display:none">×</button>
               <div id="car-list" role="listbox" aria-label="Список моделей" style="display:none;position:absolute;z-index:60;top:calc(100% + 6px);left:0;right:0;max-height:280px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.4);padding:6px"></div>
               </div>
             </div>
           </div>
-          <div style="display:flex;justify-content:flex-end;align-items:center">
-            <span id="weather-chip" class="chip" style="display:none;gap:7px" title="Онлайн-погода в точке карты"></span>
-          </div>
-        </div>
-        <div class="os-row" style="margin-top:21px">
-          <div>
-            <div style="display:flex;align-items:baseline;gap:13px;flex-wrap:wrap">
-              <span id="range-big" style="font-size:clamp(30px,4.6vw,44px);font-weight:800;line-height:1.05;letter-spacing:-.02em">— км</span>
-              <span id="range-cap" style="font-size:12.5px;color:var(--txt-muted)">выберите модель — покажем реальный запас</span>
-            </div>
-            <details id="range-tune" open style="margin-top:13px">
-              <summary style="font-size:12.5px;color:#7fa8d9;cursor:pointer;user-select:none">Настройка расчёта — заряд, сценарий</summary>
-              <div style="margin-top:11px">
+          <div class="zh-cell zh-soc-cell">
+            <label for="range-soc" class="zh-label">Запас хода</label>
+            <details id="range-tune" open style="margin-top:8px;position:relative">
+              <summary class="zh-capsule">
+                <span id="range-big" class="zh-caps-big">— км</span>
+                <span class="zh-caps-badges"><b id="soc-val">80%</b><i id="scn-name">База</i></span>
+              </summary>
+              <div class="zh-pop-inner">
+                <div id="range-cap" style="font-size:12.5px;color:#9ecbff;margin-bottom:10px">выберите модель — покажем реальный запас</div>
                 <div style="max-width:380px">
-                  <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас: <b id="soc-val">80%</b></label>
+                  <label for="range-soc" style="font-size:12.5px;color:var(--txt-muted)">Заряд сейчас</label>
                   <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
 <div id="soc-presets" style="display:flex;gap:8px;margin-top:10px"><button type="button" class="chip soc-preset" data-soc="20">20%</button><button type="button" class="chip soc-preset" data-soc="50">50%</button><button type="button" class="chip soc-preset" data-soc="80">80%</button><button type="button" class="chip soc-preset" data-soc="100">100%</button></div>
                 </div>
@@ -78,40 +79,51 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               </div>
             </details>
           </div>
-          <div id="car-kpi" style="font-size:13.5px;color:var(--txt-muted);line-height:1.6">
-            <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
+          <div class="zh-cell">
+            <label for="city-search" class="zh-label">Локация</label>
+            <div class="zh-loc" style="margin-top:8px">
+              <input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:0;padding:10px 14px;border:0;background:transparent;color:var(--txt);font-size:16px" />
+              <div class="zh-loc-btns">
+                <button id="city-go" class="chip" type="button">Найти</button>
+                <span class="zh-loc-div" aria-hidden="true"></span>
+                <button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами" style="gap:7px"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Рядом со мной</span></button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="os-row os-mid" style="margin-top:21px">
-          <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:center">
-            <input id="city-search" type="text" placeholder="Ваш город или адрес: например, Краснодар" style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:16px" />
-            <button id="city-go" class="chip" type="button">Найти</button>
-            <button id="geo-btn" class="chip" type="button" title="Показать станции рядом с вами" style="gap:7px"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Рядом со мной</span></button>
+        <div id="car-kpi" style="margin-top:12px;font-size:13.5px;color:var(--txt-muted);line-height:1.6">
+          <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
+        </div>
+        <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"></div>
+        <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
+        <div class="zh-ribbon">
+          <div class="zh-chips">
+            <div id="conn-chips" aria-label="Фильтр по разъёму" style="display:flex;gap:8px;align-items:center"></div>
+            <span class="zh-chips-div" aria-hidden="true"></span>
+            <div id="pw-chips" aria-label="Фильтр по мощности" style="display:flex;gap:8px;align-items:center"></div>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end" id="map-tabs">
-            <button id="tab-own" class="chip" type="button" style="border-color:#4d9bf5;background:rgba(77,155,245,.12)">Наша база</button>
-            <button id="tab-ya" class="chip" type="button">Яндекс.Карты</button>
+          <div class="zh-ribbon-right">
+            <div id="weather-wrap"><span id="weather-chip" class="chip" style="display:none;gap:7px" title="Онлайн-погода в точке карты"></span></div>
+            <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#2563eb"></span>DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#f97316"></span>DC адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#eab308"></span>AC адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>Не проверено</span></div>
           </div>
         </div>
-        <div id="city-chips" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:21px"></div>
-        <p id="geo-note" style="font-size:13px;color:var(--txt-muted);margin:13px 0 0"></p>
-        <div style="margin-top:21px;padding-top:17px;border-top:1px solid rgba(77,155,245,.18)">
-          <div class="os-row">
-            <div><div class="os-label">Фильтр по разъёму</div><div id="conn-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div>
-            <div><div class="os-label">Фильтр по мощности</div><div id="pw-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div>
-          </div>
-          <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
-          <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#2563eb"></span>быстрые DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#f97316"></span>DC через адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#eab308"></span>AC через адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>не подтверждено</span><span class="lg-note" style="opacity:.7;margin-left:8px">— адаптер и серые появляются при выбранной машине</span></div><p style="font-size:12.5px;color:var(--txt-muted);margin:6px 0 0">Фильтры работают на вкладке «Наша база»; на Яндекс.Картах — нет, но выбор машины сохраняется в адресе страницы: ссылкой можно делиться.</p>
-        </div>
+        <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
+        <p class="zh-subnote">Фильтры работают на вкладке «Наша база»; на Яндекс.Картах — нет, но выбор машины сохраняется в адресе страницы: ссылкой можно делиться.</p>
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
-      <div id="map-ya" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;margin-top:14px;border:1px solid var(--line);display:none"></div>
-      <div style="position:relative;margin-top:14px"><div id="map" style="height:80vh;min-height:560px;border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.45)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      <div id="map-ya" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-top:14px;display:none"></div>
+      <div style="position:relative;margin-top:14px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);touch-action:pan-y"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
       <p style="font-size:13.5px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
-        <p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (синие — быстрые DC, зелёные — AC), и станции, где понадобится переходник (оранжевые — быстрые DC, жёлтые — AC). Серые точки — разъём станции пока не подтверждён: перед поездкой уточните тип коннектора в приложении оператора или напишите нам — <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, проверим и обновим базу. Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога {MODEL_TOTAL} {modelGen(MODEL_TOTAL)}</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Зарядные станции GB/T в Москве, точка зарядки для Zeekr 001 или CCS2-коннектор рядом с трассой — такие вопросы решаются одним выбором в фильтрах выше. Фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
-        <p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: {STN} {stnWord(STN)} на {STN_UPD_FULL} — это выбранная база, где у каждой станции указаны коннекторы и совместимость с моделями. Полный индекс публичных ЭЗС (около 9 900) — в обзоре <a href="/blog/karta-elektrozapravok/" style="color:#4d9bf5;text-decoration:underline">«Карта электрозаправок России 2026»</a>. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам М-4, М-11 и М-12 — в <a href="/baza-znaniy/zaryadki-na-trassah-m4-m11-m12/" style="color:#4d9bf5;text-decoration:underline">разборе трасс</a>, правила аренды жилья с зарядкой и другие сценарии — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
+        <div class="zh-bento-grid">
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="9" r="2.6"/><circle cx="15" cy="7" r="2.6"/><circle cx="11" cy="15" r="2.6"/></svg></div><h3>Как читать цвета станций</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (синие — быстрые DC, зелёные — AC), и станции, где понадобится переходник (оранжевые — быстрые DC, жёлтые — AC). Серые точки — разъём станции пока не подтверждён: перед поездкой уточните тип коннектора в приложении оператора или напишите нам — <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, проверим и обновим базу.</p>
+        </div>
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6l4 2v6l-4 2-4-2v-6l4-2"/><path d="M17 5.5a5.5 5.5 0 0 1 0 6"/></svg></div><h3>Совместимость и модели</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога {MODEL_TOTAL} {modelGen(MODEL_TOTAL)}</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Зарядные станции GB/T в Москве, точка зарядки для Zeekr 001 или CCS2-коннектор рядом с трассой — такие вопросы решаются одним выбором в фильтрах выше. Фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
+        </div>
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="17" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></svg></div><h3>Актуальность базы и трассы</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: {STN} {stnWord(STN)} на {STN_UPD_FULL} — это выбранная база, где у каждой станции указаны коннекторы и совместимость с моделями. Полный индекс публичных ЭЗС (около 9 900) — в обзоре <a href="/blog/karta-elektrozapravok/" style="color:#4d9bf5;text-decoration:underline">«Карта электрозаправок России 2026»</a>. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам М-4, М-11 и М-12 — в <a href="/baza-znaniy/zaryadki-na-trassah-m4-m11-m12/" style="color:#4d9bf5;text-decoration:underline">разборе трасс</a>, правила аренды жилья с зарядкой и другие сценарии — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
+        </div>
+        </div>
       </div>
     </div>
   </section>
@@ -695,6 +707,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!b) return;
         scnCur = b.getAttribute('data-scn') || 'base';
         scnRow.querySelectorAll('.scn').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b ? 'true' : 'false'); });
+        var sn = document.getElementById('scn-name'); if (sn) sn.textContent = b.textContent || '';
         updateRange();
       });
       try { if (window.innerWidth < 881) { var rt = document.getElementById('range-tune'); if (rt) rt.removeAttribute('open'); } } catch (e) {}
@@ -842,10 +855,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         yaActive = ya;
         document.getElementById('map-ya').style.display = ya ? '' : 'none';
         document.getElementById('map').style.display = ya ? 'none' : '';
-        tYa.style.borderColor = ya ? '#4d9bf5' : '';
-        tYa.style.background = ya ? 'rgba(77,155,245,.12)' : '';
-        tOwn.style.borderColor = ya ? '' : '#4d9bf5';
-        tOwn.style.background = ya ? '' : 'rgba(77,155,245,.12)';
+        tYa.classList.toggle('on', ya);
+        tOwn.classList.toggle('on', !ya);
         if (ya) ensureYaFrame();
         else setTimeout(function () { map.invalidateSize(); }, 50);
         try { history.replaceState(null, '', ya ? '#view=ya' : '#view=own'); } catch (e) {}
@@ -874,5 +885,48 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #range-tune>summary::-webkit-details-marker{display:none}
 #range-tune>summary::before{content:"";width:8px;height:8px;border-right:1.6px solid #9ecbff;border-bottom:1.6px solid #9ecbff;transform:rotate(-45deg);transition:transform .18s ease;transform-origin:center}
 #range-tune[open]>summary::before{transform:rotate(45deg)}
-#range-soc{height:8px}#range-soc::-webkit-slider-thumb{width:28px;height:28px}#range-soc::-moz-range-thumb{width:28px;height:28px}#os-widget .chip,.os-mid .chip,#conn-chips .chip,#pw-chips .chip,#soc-presets .chip{min-height:44px}@media(max-width:639px){#map-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;font-size:12px}.lg-note{grid-column:1/-1}}@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}</style>
+#range-soc{height:8px}#range-soc::-webkit-slider-thumb{width:28px;height:28px}#range-soc::-moz-range-thumb{width:28px;height:28px}#os-widget .chip,.os-mid .chip,#conn-chips .chip,#pw-chips .chip,#soc-presets .chip{min-height:44px}@media(max-width:639px){#map-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;font-size:12px}.lg-note{grid-column:1/-1}}@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}
+/* ── Cockpit UI: система поверхностей/теней/отступов (адаптация под тёмную тему прода) ── */
+.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5}
+.zh-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.zh-head h1{margin:4px 0 0;font-size:clamp(22px,3.2vw,28px)}
+.zh-head-l{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#9ecbff;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.22);border-radius:999px;padding:4px 12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zh-lead-sub{font-size:13.5px;color:var(--txt-muted);margin:12px 0 0}
+.zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(77,155,245,.22)}
+.zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
+.zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.zh-label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
+.zh-grid3{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:12px;align-items:start}
+.zh-inp-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ecbff;display:flex;pointer-events:none}
+#range-tune>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:6px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);cursor:pointer;user-select:none;font-variant-numeric:tabular-nums}
+#range-tune>summary::-webkit-details-marker{display:none}
+#range-tune>summary::before{order:9;flex:none}
+.zh-caps-big{font-weight:800}
+#range-tune #range-big{font-size:19px;line-height:1.1;text-shadow:none}
+.zh-caps-badges{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:#9ecbff;background:rgba(77,155,245,.12);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.zh-caps-badges i{font-style:normal;color:#dcebff}
+.zh-pop-inner{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:500;background:rgba(10,16,28,.97);border:1px solid rgba(77,155,245,.32);border-radius:14px;box-shadow:0 20px 38px -8px rgba(2,6,16,.55);padding:16px}
+.zh-loc{display:flex;align-items:stretch;min-height:46px;box-sizing:border-box;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);overflow:hidden}
+.zh-loc:focus-within{border-color:#4d9bf5;box-shadow:0 0 0 2px rgba(77,155,245,.18)}
+.zh-loc input{flex:1;min-width:0;border:0;background:transparent;padding:10px 14px;color:var(--txt);font-size:16px}
+.zh-loc input:focus{outline:none}
+.zh-loc-btns{display:flex;align-items:stretch;border-left:1px solid rgba(77,155,245,.25)}
+#os-widget .zh-loc .chip{border:0;background:transparent;color:#9ecbff;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
+#os-widget .zh-loc .chip:hover{color:#dcebff}
+.zh-loc-div{width:1px;flex:none;background:rgba(77,155,245,.25);margin:9px 0}
+.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:16px;padding-top:14px}
+.zh-chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0}
+.zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(77,155,245,.20)}
+.zh-ribbon-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.zh-subnote{font-size:12.5px;color:var(--txt-muted);margin:8px 0 0}
+.zh-map-h{height:clamp(520px,68vh,780px)}
+.zh-bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.zh-bcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.zh-bcard h3{font-size:15px;font-weight:800;margin:10px 0 0;letter-spacing:-.01em}
+.zh-bcard p{font-size:13.5px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
+.zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
+#range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
+@media(max-width:880px){.zh-grid3{grid-template-columns:1fr}}
+@media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-chips{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}.zh-chips::-webkit-scrollbar{display:none}.zh-chips .chip{flex:none}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}}</style>
 </ZhLayout>
