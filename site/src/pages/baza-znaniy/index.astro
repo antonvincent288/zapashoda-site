@@ -15,9 +15,9 @@ const refs = [
   { t: 'PDF-гайды «Запас хода»', d: 'Интерактивные авто-гиды по М-4 «Дон», М-11 «Нева», М-12 «Восток» и зарядке на парковке ЖК.', href: '/shop/digital/' },
   { t: 'Каталог моделей', d: 'Разъёмы, мощность борта и адаптеры для каждой модели — с фильтром по марке, году и типу (BEV/EREV/PHEV).', href: '/models/' },
 ];
-const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'База знаний «Запас хода»', url: 'https://zapashoda-ev.ru/baza-znaniy/', mainEntity: { '@type': 'ItemList', itemListElement: [...src.map((g) => g.slug), ...blogSorted.map((a) => a.slug), ...painSorted.map((a) => a.slug)].map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://zapashoda-ev.ru/baza-znaniy/' + s + '/' })) } };
+const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'База знаний «Запас хода»', url: 'https://zapashoda-ev.ru/baza-znaniy/', mainEntity: { '@type': 'ItemList', itemListElement: [...src.map((g) => '/baza-znaniy/' + g.slug + '/'), ...blogSorted.map((a) => '/blog/' + a.slug + '/'), ...painSorted.map((a) => '/pain/' + a.slug + '/'), ...refs.map((r) => r.href)].map((u, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://zapashoda-ev.ru' + u })) } };
 ---
-<ZhLayout title={src[0].title} description="База знаний «Запас хода»: руководства, разборы и решения проблем зарядки электромобилей в России." jsonld={jsonld}>
+<ZhLayout title="База знаний «Запас хода»" description="База знаний «Запас хода»: руководства, разборы и решения проблем зарядки электромобилей в России." jsonld={jsonld}>
   <section class="sec"><div class="wrap">
     <div class="crumbs"><a href="/">Главная</a> / База знаний</div>
     <div class="badge">База знаний</div>
