@@ -34,7 +34,48 @@ const icos = [
             <h3>{p.name}</h3><p style="font-size:15px;color:#CBD5E1">{p.note}</p><div class="price" style={`font-size:18px;font-weight:700;${p.pop ? 'color:var(--gold,#D4AF37)' : 'color:#F8FAFC'}`}>{p.anchor}</div><ul>{p.items.map((it) =><li>{it}</li>)}</ul><a class={(p.pop ? "btn btn-gold" : "btn btn-ghost") + " zs-cta-btn"} data-mode="b2b" style="width:100%;text-align:center;text-decoration:none;cursor:pointer">{p.cta}</a></div>))}
       </div><h2>Сравнение уровней</h2><details class="cmp-spoiler"><summary>Показать подробную таблицу сравнения ▾</summary><div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="cmp"><tr><th>Фича</th><th>Старт</th><th style="background:rgba(255,255,255,.035)">Стандарт</th><th>Зимний</th></tr>{cmp.map((row) =>(
           <tr><td>{row[0]}</td>{row.slice(1).map((v: string, j: number) =>(<td style={j === 1 ? "background:rgba(255,255,255,.035)" : ""}>{v.startsWith("✓") && <span style="color:#34d399;margin-right:6px">✓</span>}{v.startsWith("✓") ? v.slice(2) : v}</td>))}</tr>))}
-      </table></div></details></div></section><section class="sec" id="b2b-cities"><div class="wrap"><h2>Один партнёр на город</h2><p style="font-size:16px;color:#CBD5E1;margin:12px 0 0;max-width:760px">Каждый город — один приоритетный партнёр. Статусы ведём вручную и подтверждаем в заявке.</p><div class="cities" style="margin-top:24px"><div class="city"><span>Москва</span><span class="st">Свободно</span></div><div class="city"><span>Санкт-Петербург</span><span class="st">Свободно</span></div><div class="city"><span>Екатеринбург</span><span class="st">Свободно</span></div><div class="city"><span>Новосибирск</span><span class="st">Свободно</span></div><div class="city"><span>Казань</span><span class="st">Свободно</span></div><div class="city"><span>Нижний Новгород</span><span class="st">Свободно</span></div><div class="city"><span>Краснодар</span><span class="st">Свободно</span></div><div class="city"><span>Ростов-на-Дону</span><span class="st">Свободно</span></div><div class="city"><span>Самара</span><span class="st">Свободно</span></div><div class="city"><span>Челябинск</span><span class="st">Свободно</span></div><div class="city"><span>Уфа</span><span class="st">Свободно</span></div><div class="city"><span>Красноярск</span><span class="st">Свободно</span></div><div class="city"><span>Пермь</span><span class="st">Свободно</span></div><div class="city"><span>Воронеж</span><span class="st">Свободно</span></div><div class="city"><span>Волгоград</span><span class="st">Свободно</span></div><div class="city"><span>Тюмень</span><span class="st">Свободно</span></div></div></div></section><section class="sec sec-tint"><div class="wrap">{c.benefits && c.benefits.length >0 && (
+      </table></div></details></div></section><style>.seo-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:26px;align-items:start;margin-top:26px}
+.seo-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px}
+.seo-row .arw{color:var(--cyan,#00E5FF);font-weight:700;flex-shrink:0}
+.seo-row a{color:var(--cyan,#00E5FF);text-decoration:none;font-size:14px;margin-left:auto;flex-shrink:0}
+.seo-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.seo-card .mc{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan,#00E5FF);font-weight:700}
+.seo-card h3{font-size:20px;margin:6px 0 12px}
+.seo-card ul{list-style:none;margin:0;padding:0}
+.seo-card li{font-size:14.5px;color:var(--txt-muted,#94A3B8);padding:7px 0;border-bottom:1px solid var(--line)}
+.seo-card li:last-child{border-bottom:none}
+.seo-card li b{color:var(--txt,#F8FAFC);font-weight:600}
+.seo-card a.seo-cta{display:inline-block;margin-top:14px;font-size:14px;color:var(--cyan,#00E5FF);text-decoration:none}
+@media(max-width:900px){.seo-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.seo-row{flex-wrap:wrap}.seo-row a{margin-left:0;width:100%}}
+</style>
+<section id="b2b-seo" style="padding:56px 0 8px">
+  <div class="wrap" style="max-width:1140px">
+    <span class="badge">SEO-архитектура</span>
+    <h2 style="font-size:30px;margin:6px 0 10px;letter-spacing:-.01em">Справочник построен под конкретные запросы</h2>
+    <p style="color:var(--txt-muted,#94A3B8);max-width:720px;margin:0">Владелец EV ищет ответ в поиске — и попадает на страницу, где рядом уже стоит ваш офферт.</p>
+    <div class="seo-grid">
+      <div style="display:grid;gap:12px">
+        <div class="seo-row"><b>«какой разъём у Zeekr 001»</b><span class="arw">→</span><a href="/models/zeekr-001-001-fr/">карточка модели</a></div>
+        <div class="seo-row"><b>«сколько стоит зарядить»</b><span class="arw">→</span><a href="/calculators/">калькуляторы зарядки</a></div>
+        <div class="seo-row"><b>«чем зарядить BYD Song Plus»</b><span class="arw">→</span><a href="/catalog/">подборка по модели</a></div>
+        <div class="seo-row"><b>«адаптер Type 2 на GB/T»</b><span class="arw">→</span><a href="/catalog/">разбор совместимости</a></div>
+      </div>
+      <aside class="seo-card">
+        <span class="mc">Карточка · образец</span>
+        <h3>Zeekr 001</h3>
+        <ul>
+          <li>АС-зарядка: <b>7 кВт (1 фаза)</b></li>
+          <li>DC: <b>до 200+ кВт через CCS2 → GB/T</b></li>
+          <li>Разъём: <b>GB/T</b>, адаптеры — 3 варианта в каталоге</li>
+          <li>Время 20→80% на АС: <b>~7.5 ч</b></li>
+        </ul>
+        <a class="seo-cta" href="/models/zeekr-001-001-fr/">Открыть карточку модели →</a>
+      </aside>
+    </div>
+  </div>
+</section>
+<section class="sec" id="b2b-cities"><div class="wrap"><h2>Один партнёр на город</h2><p style="font-size:16px;color:#CBD5E1;margin:12px 0 0;max-width:760px">Каждый город — один приоритетный партнёр. Статусы ведём вручную и подтверждаем в заявке.</p><div class="cities" style="margin-top:24px"><div class="city"><span>Москва</span><span class="st">Свободно</span></div><div class="city"><span>Санкт-Петербург</span><span class="st">Свободно</span></div><div class="city"><span>Екатеринбург</span><span class="st">Свободно</span></div><div class="city"><span>Новосибирск</span><span class="st">Свободно</span></div><div class="city"><span>Казань</span><span class="st">Свободно</span></div><div class="city"><span>Нижний Новгород</span><span class="st">Свободно</span></div><div class="city"><span>Краснодар</span><span class="st">Свободно</span></div><div class="city"><span>Ростов-на-Дону</span><span class="st">Свободно</span></div><div class="city"><span>Самара</span><span class="st">Свободно</span></div><div class="city"><span>Челябинск</span><span class="st">Свободно</span></div><div class="city"><span>Уфа</span><span class="st">Свободно</span></div><div class="city"><span>Красноярск</span><span class="st">Свободно</span></div><div class="city"><span>Пермь</span><span class="st">Свободно</span></div><div class="city"><span>Воронеж</span><span class="st">Свободно</span></div><div class="city"><span>Волгоград</span><span class="st">Свободно</span></div><div class="city"><span>Тюмень</span><span class="st">Свободно</span></div></div></div></section><section class="sec sec-tint"><div class="wrap">{c.benefits && c.benefits.length >0 && (
         <><h2>Почему автосалоны и парки выбирают нас</h2><div class="cards b3grid" style="margin-top:24px">{c.benefits.map((b: string, i: number) =>(
               <div class="card"><span class="ico" set:html={icos[i] || ''}></span><h3 style="font-size:19px;font-weight:700;margin:0 0 8px;color:#F8FAFC">{priceFix(b.split('.  ')[0])}</h3><p style="font-size:16px;line-height:1.6;color:#CBD5E1;margin:0">{priceFix(b.split('.  ').slice(1).join('.  '))}</p></div>))}
            </div>
@@ -69,7 +110,7 @@ const bpI=document.getElementById("bp-input"),bpB=document.getElementById("bp-br
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative}
 
 .step{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.12);padding-top:20px}
-.step-n{font-size:28px;font-weight:800;color:var(--accent-primary,var(--gold,#D4AF37));font-variant-numeric:tabular-nums;margin-bottom:12px;line-height:1}
+.step-n{font-size:28px;font-weight:800;color:var(--cyan,#00E5FF);font-variant-numeric:tabular-nums;margin-bottom:12px;line-height:1}
 .step p{margin:0}
 .faqbox summary{list-style:none;cursor:pointer}
 .faqbox summary::-webkit-details-marker{display:none}
@@ -85,13 +126,13 @@ const bpI=document.getElementById("bp-input"),bpB=document.getElementById("bp-br
 .hero h1{font-size:36px}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap}
 .hero-facts{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:13.5px;color:var(--txt-muted,#94A3B8)}
-.hero-facts span{padding-left:12px;border-left:1px solid color-mix(in srgb,var(--gold,#D4AF37) 35%,transparent)}
+.hero-facts span{padding-left:12px;border-left:1px solid color-mix(in srgb,var(--cyan,#00E5FF) 40%,transparent)}
 .hero-facts span:first-child{padding-left:0;border-left:none}
 .kit-card{background:rgba(255,255,255,.03);border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 30%,transparent);border-radius:20px;padding:22px}
-.kit-badge{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold,#D4AF37);margin-bottom:6px}
+.kit-badge{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan,#00E5FF);margin-bottom:6px}
 .kit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-.kit-chip{border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 35%,transparent);background:color-mix(in srgb,var(--gold,#D4AF37) 8%,transparent);border-radius:12px;padding:16px 10px;font-size:15px;font-weight:700;color:#F8FAFC;text-align:center}
+.kit-chip{border:1px solid color-mix(in srgb,var(--cyan,#00E5FF) 40%,transparent);background:color-mix(in srgb,var(--cyan,#00E5FF) 7%,transparent);border-radius:12px;padding:16px 10px;font-size:15px;font-weight:700;color:#F8FAFC;text-align:center}
 
 
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
@@ -101,7 +142,7 @@ const bpI=document.getElementById("bp-input"),bpB=document.getElementById("bp-br
 .infra3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .infra3 .card{display:flex;flex-direction:column;height:100%;box-sizing:border-box}
 .infra3 h3{font-size:19px;font-weight:700;margin:10px 0 6px;color:#F8FAFC}
-.infra3 .chip{display:inline-block;font-size:12.5px;font-weight:600;color:var(--gold,#D4AF37);border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 45%,transparent);border-radius:999px;padding:4px 10px;align-self:flex-start}
+.infra3 .chip{display:inline-block;font-size:12.5px;font-weight:600;color:var(--cyan,#00E5FF);border:1px solid color-mix(in srgb,var(--cyan,#00E5FF) 45%,transparent);border-radius:999px;padding:4px 10px;align-self:flex-start}
 .infra3 p{font-size:16px;line-height:1.6;color:#CBD5E1;margin:0 0 14px;flex-grow:1}
 .infra3 .infra-link{margin-top:auto;color:var(--gold,#D4AF37);text-decoration:none;font-size:14px}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.plans{grid-template-columns:1fr}.infra3{grid-template-columns:1fr}}
@@ -123,7 +164,7 @@ const bpI=document.getElementById("bp-input"),bpB=document.getElementById("bp-br
 .faq-right .faq-answer{padding:0 24px 22px;font-size:16px;line-height:1.65;color:#CBD5E1;text-align:left}
 @media(max-width:900px){.faq-grid{grid-template-columns:1fr}.faq-left{position:static}}
 .faq-chev{flex-shrink:0;margin-top:3px;font-size:20px;color:var(--gold,#D4AF37)}
-.cmp-spoiler summary{list-style:none;cursor:pointer;display:inline-block;border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 45%,transparent);border-radius:999px;padding:12px 28px;font-size:15px;font-weight:600;color:#F8FAFC;transition:border-color .2s ease,background .2s ease;text-align:center}.cmp-spoiler summary::-webkit-details-marker{display:none}.cmp-spoiler summary:hover{background:color-mix(in srgb,var(--gold,#D4AF37) 12%,transparent)}.steps.funnel{grid-template-columns:repeat(5,1fr)}@media(max-width:900px){.steps.funnel{grid-template-columns:1fr}}.step-me{border-top-color:var(--gold,#D4AF37);background:color-mix(in srgb,var(--gold,#D4AF37) 6%,transparent)}.me-tag{display:inline-block;vertical-align:2px;font-size:11px;font-weight:800;letter-spacing:.08em;color:#0B1018;background:var(--gold,#D4AF37);border-radius:999px;padding:2px 8px;margin-left:6px}.fun-note{margin-top:22px;padding:16px 20px;border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 22%,transparent);border-radius:14px;font-size:14.5px;line-height:1.55;color:#CBD5E1;background:color-mix(in srgb,var(--gold,#D4AF37) 3%,transparent)}.cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}.city{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;font-size:14.5px;color:#F8FAFC}.city .st{flex-shrink:0;font-size:11.5px;font-weight:700;color:#4ADE80;border:1px solid color-mix(in srgb,#4ADE80 35%,transparent);border-radius:999px;padding:2px 8px}.cmp-spoiler{margin-top:8px;text-align:center}.wrap .cmp th,.wrap .cmp td{padding:16px 20px}
+.cmp-spoiler summary{list-style:none;cursor:pointer;display:inline-block;border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 45%,transparent);border-radius:999px;padding:12px 28px;font-size:15px;font-weight:600;color:#F8FAFC;transition:border-color .2s ease,background .2s ease;text-align:center}.cmp-spoiler summary::-webkit-details-marker{display:none}.cmp-spoiler summary:hover{background:color-mix(in srgb,var(--gold,#D4AF37) 12%,transparent)}.steps.funnel{grid-template-columns:repeat(5,1fr)}@media(max-width:900px){.steps.funnel{grid-template-columns:1fr}}.step-me{border-top-color:var(--gold,#D4AF37);background:color-mix(in srgb,var(--gold,#D4AF37) 6%,transparent)}.me-tag{display:inline-block;vertical-align:2px;font-size:11px;font-weight:800;letter-spacing:.08em;color:#0B1018;background:var(--gold,#D4AF37);border-radius:999px;padding:2px 8px;margin-left:6px}.fun-note{margin-top:22px;padding:16px 20px;border:1px solid color-mix(in srgb,var(--gold,#D4AF37) 22%,transparent);border-radius:14px;font-size:14.5px;line-height:1.55;color:#CBD5E1;background:color-mix(in srgb,var(--gold,#D4AF37) 3%,transparent)}.cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}.city{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;font-size:14.5px;color:#F8FAFC}.city .st{flex-shrink:0;font-size:11.5px;font-weight:700;color:var(--cyan,#00E5FF);border:1px solid color-mix(in srgb,var(--cyan,#00E5FF) 40%,transparent);border-radius:999px;padding:2px 8px}.cmp-spoiler{margin-top:8px;text-align:center}.wrap .cmp th,.wrap .cmp td{padding:16px 20px}
 .wrap .cmp th{font-size:16px;font-weight:700}
 .wrap .cmp td{font-size:15px;line-height:1.5}
 `}</style>
