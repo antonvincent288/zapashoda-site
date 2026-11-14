@@ -132,5 +132,8 @@ table tbody tr:nth-child(even){background:rgba(255,255,255,.025)}
 .spec{background:linear-gradient(160deg,rgba(90,169,255,.08),rgba(0,0,0,0));border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 .spec .v{font-weight:800;font-size:21px;color:#9dc9ff;letter-spacing:-.01em}
 .spec .k{font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+
+/* карточки каталога: убираем глобальную ИИ-плашку — она ломает поток чтения карточки (решение владельца в рамках редизайна карточек) */
+body #zs-ai-toast{display:none}
 </style>
 </ZhLayout>
