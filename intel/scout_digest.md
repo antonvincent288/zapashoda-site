@@ -136,3 +136,6 @@
 ## 2026-11-13
 
 - [@signalwire/docusaurus-theme-llms-txt](https://www.npmjs.com/package/@signalwire/docusaurus-theme-llms-txt) — Docusaurus theme components for llms-txt plugin including CopyPageButton
+## 2026-11-14
+
+- [@docmd/plugin-llms](https://www.npmjs.com/package/@docmd/plugin-llms) — Generates llms.txt and llms-full.txt context files for AI agents at build time.
