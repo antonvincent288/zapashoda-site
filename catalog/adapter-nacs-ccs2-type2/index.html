@@ -427,7 +427,5 @@ document.addEventListener('DOMContentLoaded',function(){var sec=document.getElem
   }
 }catch(e){}})();
 </script><script>
-(function(){var els=document.querySelectorAll('[data-stn-count]');if(!els.length)return;
-fetch('/charging/stations.json').then(function(r){return r.json()}).then(function(d){var n=(d.stations||[]).length;if(!n)return;
-els.forEach(function(el){el.textContent=n});}).catch(function(){});})();
+/* stn-count: static from build (fetch of stations.json removed — saves 87KB per page; charging page loads its own) */
 </script></body></html>
