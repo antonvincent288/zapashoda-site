@@ -34,8 +34,8 @@
  "link_targets": 224,
  "links_ok": 224,
  "links_bad": [],
- "assets_count": 10,
- "assets_ok": 9,
+ "assets_count": 11,
+ "assets_ok": 10,
  "assets_bad": [
   [
    "/assets/img/plugs/zsh-'+((a=String(a||",
@@ -43,7 +43,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "14.11 18:00",
+ "checked_at_msk": "14.11 19:59",
  "failures": [
   {
    "where": "page /search.html",
