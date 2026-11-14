@@ -1,0 +1,133 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+import models from '../data/models_light.json';
+const TOP = [
+  'zeekr-001-001-fr', 'zeekr-007-007gt', 'zeekr-009-009-grand', 'zeekr-7x-x-mix',
+  'li-auto-l6-l7-l8-l9-2022-2025', 'li-auto-mega', 'moskvich-3e-6',
+  'voyah-free-ev-rannie-ofitsialnye-ru', 'voyah-dream-dreamer-phev', 'voyah-passion-passion-s',
+  'avatr-11-12-ofitsialno-ru', 'avatr-07-parallelnyy', 'mg-4-mulan',
+  'xpeng-g9-g6', 'xpeng-p7-p5-g3', 'tesla-model-3-y-eu', 'tesla-model-3-y-s-x-us',
+  'kia-ev3', 'kia-ev5', 'byd-han-ev-song-l'
+];
+const idx = Object.fromEntries(models.models.map((m) => [m.slug, m]));
+const rows = TOP.map((s) => idx[s]).filter(Boolean);
+const portName = (p) => (p === 'GB/T' ? 'GB/T (китайский)' : p === 'EU' ? 'Type 2 / CCS2 (европейский)' : p === 'Type1' ? 'Type 1 / CCS1' : p === 'JP' ? 'CHAdeMO' : p);
+const faq = [
+  { q: 'Каким разъёмом заряжается мой электромобиль в России?', a: 'Автомобили, привезённые из Китая, заряжаются разъёмом GB/T; европейские и официально поставляемые в РФ — Type 2 (переменный ток) и CCS2 (быстрая зарядка). Точный порт для 154 моделей есть в каталоге «Запас хода»: фильтр по марке и году покажет разъём вашей машины.' },
+  { q: 'Можно ли заряжать электромобиль от обычной домашней розетки?', a: 'Да, любая модель заряжается от обычной розетки 230 В через мобильный зарядный кабель, но медленно — примерно 3,3–3,5 кВт, то есть полная батарея за 15–30 часов. Для ежедневной зарядки обычно ставят стеновой кабельный бокс на 7,4–11 кВт: за ночь батарея заполняется целиком.' },
+  { q: 'Сколько стоит зарядка электромобиля от домашней розетки?', a: 'Электромобиль расходует примерно 15–20 кВт·ч на 100 км. При домашнем тарифе 6 ₽/кВт·ч это 0,9–1,2 ₽ за километр, при ночном тарифе 2–3 ₽/кВт·ч — 0,3–0,6 ₽/км. Точная цифра зависит от вашего тарифа и модели — посчитайте её в калькуляторе стоимости зарядки на сайте.' },
+  { q: 'Что нужно сделать в первую неделю после покупки электромобиля?', a: 'Четыре шага: определить разъём машины по каталогу моделей, сделать первую домашнюю зарядку (лучше в диапазоне 20–80% для сохранности батареи), посчитать стоимость километра в калькуляторе и найти ближайшие станции на карте зарядных станций «Запас хода» — в базе более 3100 станций с фильтром по разъёму.' }
+];
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  about: { '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru' }
+};
+const crumb = null;
+---
+<ZhLayout title="Вы только что купили электромобиль? 4 вещи, которые нужно знать — Запас хода" description="Первая неделя с электромобилем в России: определить разъём (GB/T или Type 2), первая зарядка, стоимость километра, станции рядом. 154 модели с портом, 3100+ станций, калькуляторы и PDF-таблица разъёмов." jsonld={jsonld}>
+  <section class="sec">
+    <div class="wrap" style="max-width:860px">
+      <div class="crumbs"><a href="/">Главная</a> / Вы только что купили электромобиль</div>
+      <h1 style="font-size:clamp(28px,4vw,40px);line-height:1.15">Вы только что купили электромобиль? 4 вещи, которые нужно знать</h1>
+      <p class="lead">Электромобиль заряжается как смартфон: встаньте на зарядку вечером — утром машина готова. В этом руководстве — четыре шага первой недели: определить разъём, сделать первую зарядку, посчитать стоимость километра и найти станции рядом. Все данные — для России: {models.models.length} моделей с точным портом и более 3100 зарядных станций в базе.</p>
+
+      <div class="pstep">
+        <div class="pnum">1</div>
+        <div>
+          <h2>Шаг 1. Какой разъём у вашей машины</h2>
+          <p>Это первое, что нужно знать: от разъёма зависит, какие станции и кабели вам подходят. Автомобили из Китая — <b>GB/T</b>, европейские и официально поставляемые в Россию — <b>Type 2 / CCS2</b>. Найдите свою модель ниже — порт указан для каждой.</p>
+          <div class="pbtns">
+            <a class="btn" href="/razemy/">Все разъёмы: что за порт у машины</a>
+            <a class="btn ghost" href="/assets/guide/tablica-razyomov-145-modeley.pdf" target="_blank" rel="noopener">Скачать PDF-таблицу разъёмов</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pstep">
+        <div class="pnum">2</div>
+        <div>
+          <h2>Шаг 2. Первая зарядка: как не ошибиться</h2>
+          <ul class="pcheck">
+            <li><b>Домой — через розетку или стеновой бокс.</b> Обычная розетка даёт 3,3–3,5 кВт (полная батарея за 15–30 часов), стеновой бокс 7,4–11 кВт — за ночь. Адаптер под ваш разъём подберём в <a href="/catalog/">каталоге</a>.</li>
+            <li><b>Держите батарею в диапазоне 20–80%.</b> Для ежедневных поездок это лучший режим сохранности; до 100% заряжайте перед дальней дорогой.</li>
+            <li><b>Быструю зарядку (DC) — не как ежедневную.</b> Она нужна в дороге, а на срок жизни батареи влияет обратная зависимость: чем чаще только быстрая — тем быстрее деградация.</li>
+            <li><b>Если зарядка не начинается</b> — это почти всегда решаемо: разъём, адаптер или станция. Ответы на частые поломки собраны в <a href="/baza-znaniy/">базе знаний</a>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pstep">
+        <div class="pnum">3</div>
+        <div>
+          <h2>Шаг 3. Сколько стоит километр</h2>
+          <p>Электромобиль расходует примерно <b>15–20 кВт·ч на 100 км</b>. Дальше простая арифметика по вашему тарифу:</p>
+          <table class="spec">
+            <tbody>
+              <tr><td>Обычный домашний тариф (≈6 ₽/кВт·ч)</td><td>≈ 0,9–1,2 ₽/км</td></tr>
+              <tr><td>Ночной тариф или дачный (≈2–3 ₽/кВт·ч)</td><td>≈ 0,3–0,6 ₽/км</td></tr>
+              <tr><td>Быстрая станция DC (≈25–40 ₽/кВт·ч)</td><td>≈ 3,8–7,8 ₽/км</td></tr>
+            </tbody>
+          </table>
+          <p>Цифры — ориентир: подставьте свой тариф и расход модели в <a href="/calculators/cost/">калькулятор стоимости зарядки</a> — покажет стоимость поездки и сравнит с бензином по вашим ценам.</p>
+        </div>
+      </div>
+
+      <div class="pstep">
+        <div class="pnum">4</div>
+        <div>
+          <h2>Шаг 4. Где заряжаться: станции рядом</h2>
+          <p>В базе «Запас хода» — <b>более 3100 станций</b> по России с фильтром по разъёму и мощности. Откройте карту, включите фильтр под свой порт — и сохраните 2–3 станции рядом с домом и работой.</p>
+          <div class="pbtns"><a class="btn" href="/charging/">Открыть карту станций</a></div>
+        </div>
+      </div>
+
+      <h2 class="ph2">Ваша модель: порт и домашняя зарядка</h2>
+      <p>Ниже — самые популярные модели рынка. Нажмите на машину: там точный разъём, мощность бортового зарядного и совместимые станции.</p>
+      <div class="pgrid">
+        {rows.map((m) => (
+          <a class="card pcard" href={'/models/' + m.slug + '/'}>
+            <h3>{m.name}</h3>
+            <p>{portName(m.port)}</p>
+            <span class="pgo">Разъём, зарядка, адаптеры →</span>
+          </a>
+        ))}
+      </div>
+      <div class="pbtns" style="margin-top:24px"><a class="btn ghost" href="/models/">Все {models.models.length} моделей с фильтром по марке и году</a></div>
+
+      <div class="card pfinal">
+        <h2>Сохраните это руководство</h2>
+        <p>Вопросы по зарядке появляются в первые же недели — подпишитесь на наш Telegram-канал: короткие разборы, обновления станций и ответы на вопросы владельцев.</p>
+        <div class="pbtns">
+          <a class="btn" href="https://t.me/zapashoda_ev" rel="nofollow" target="_blank">Telegram: @zapashoda_ev</a>
+          <a class="btn ghost" href="/catalog/">Подобрать зарядку в каталоге</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <style is:global>
+  .pstep{display:flex;gap:20px;margin:32px 0;align-items:flex-start}
+  .pnum{flex:0 0 44px;width:44px;height:44px;border-radius:999px;background:var(--gold,#5AA9FF);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .pstep h2{margin:4px 0 10px;font-size:22px;line-height:1.25}
+  .pcheck li{margin:0 0 10px;line-height:1.6;font-size:15.5px}
+  .pbtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+  .pbtns .btn{min-height:46px;display:inline-flex;align-items:center;padding:0 22px;border-radius:12px;background:var(--gold,#5AA9FF);color:#fff;font-weight:700;font-size:15px;text-decoration:none;transition:filter .2s}
+  .pbtns .btn:hover{filter:brightness(1.08)}
+  .pbtns .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .pbtns .btn.ghost:hover{border-color:var(--gold,#5AA9FF)}
+  .ph2{margin:44px 0 8px}
+  .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .pcard h3{font-size:16.5px;line-height:1.3;margin:0}
+  .pcard p{margin:6px 0 0;color:var(--txt-muted,#8a92a6);font-size:14px}
+  .pgo{display:block;margin-top:12px;color:var(--gold,#5AA9FF);font-size:13px;font-weight:600}
+  .pfinal{margin-top:44px;padding:26px 28px;border-color:var(--gold,#5AA9FF);border-width:1px}
+  .pfinal h2{margin:0 0 8px}
+  @media (max-width:900px){.pgrid{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.pgrid{grid-template-columns:1fr}.pstep{gap:14px}}
+  </style>
+<script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
+  { '@type': 'ListItem', position: 2, name: 'Вы только что купили электромобиль', item: 'https://zapashoda-ev.ru/posle-pokupki/' }
+]})} />
+</ZhLayout>
