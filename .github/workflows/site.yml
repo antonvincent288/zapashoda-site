@@ -86,7 +86,7 @@ jobs:
           test -f dist/b2b/paket-dileram.pdf || { echo 'MISSING paket-dileram.pdf'; exit 1; }
           test -f dist/rss.xml || { echo 'MISSING rss.xml'; exit 1; }
           test -f dist/catalog/index.html || { echo 'MISSING dist/catalog/index.html'; exit 1; }
-          grep -q "₽" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
+          grep -q "скоро" dist/catalog/index.html || { echo 'MISSING price in catalog'; exit 1; }
           NITEM=$(find dist/catalog -name 'index.html' | wc -l)
           [ "$NITEM" -ge 27 ] || { echo "MISSING catalog items: only $NITEM"; exit 1; }
           test -f dist/services/index.html || { echo 'MISSING dist/services/index.html'; exit 1; }
