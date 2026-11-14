@@ -80,6 +80,7 @@ export default defineConfig({
           /* keep raw */
         }
         if (/^\/catalog\/[^/]+\.html$/.test(p)) return false;
+        if (p.startsWith('/matrix/')) return false;
         if (p.startsWith('/app') || p.startsWith('/admin') || p.startsWith('/decapcms')) return false;
         if (p.endsWith('.html') && !p.endsWith('.html/')) return false;
         return true;
