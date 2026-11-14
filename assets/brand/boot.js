@@ -66,12 +66,16 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
   var t=tips[0];
   var toast=document.createElement('div');toast.id='zs-ai-toast';
-  toast.style.cssText='position:fixed;left:12px;right:12px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #0161EF;border-radius:10px;padding:8px 12px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45);display:flex;align-items:center;gap:10px';
-  toast.innerHTML='<span style="font-size:10px;letter-spacing:.08em;color:#8e8e93;white-space:nowrap">ИИ</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t[0]+'</span><a href="'+t[1]+'" id="zs-ai-go" style="flex:none;background:#0161EF;color:#fff;font-weight:700;padding:5px 10px;border-radius:8px;text-decoration:none;white-space:nowrap">Открыть</a><button id="zs-ai-x" style="flex:none;background:none;border:none;color:#8e8e93;cursor:pointer;font-size:15px;line-height:1;padding:0 2px" aria-label="Скрыть">×</button>';
-  document.body.appendChild(toast);
-  if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
-  document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
-  document.getElementById('zs-ai-x').addEventListener('click',function(){toast.remove();sessionStorage.setItem('zsai','1');});
-  setTimeout(function(){var el=document.getElementById('zs-ai-toast');if(el&&!el.dataset.closed)el.style.opacity='.0',el.style.transition='opacity .6s';},14000);
+  var compact=window.innerWidth<1024?'84px':'16px';
+  toast.style.cssText='position:fixed;left:50%;transform:translateX(-50%) translateY(8px);width:min(560px,calc(100vw - 24px));bottom:'+compact+';z-index:190;background:rgba(18,22,28,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#f5f5f7;border:1px solid rgba(90,169,255,.35);border-radius:12px;padding:9px 12px;font-size:12.5px;line-height:1.35;box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 24px rgba(90,169,255,.10);display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .45s ease,transform .45s ease';
+  toast.innerHTML='<span id="zs-ai-tag" style="flex:none;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#00E5FF;border:1px solid rgba(0,229,255,.4);border-radius:6px;padding:4px 7px;background:rgba(0,229,255,.08);white-space:nowrap">AI</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t[0]+'</span><a href="'+t[1]+'" id="zs-ai-go" style="flex:none;display:flex;align-items:center;gap:6px;color:#5AA9FF;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap;padding:6px 10px;border-radius:8px;border:1px solid rgba(90,169,255,.35);background:rgba(90,169,255,.10)">Открыть<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5AA9FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><button id="zs-ai-x" style="flex:none;background:none;border:none;color:#8e8e93;cursor:pointer;font-size:16px;line-height:1;padding:8px 6px;min-height:24px;min-width:24px" aria-label="Скрыть">×</button>';
+  setTimeout(function(){
+    document.body.appendChild(toast);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ toast.style.opacity='1'; toast.style.transform='translateX(-50%) translateY(0)'; }); });
+    if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
+    document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
+    document.getElementById('zs-ai-x').addEventListener('click',function(){toast.style.opacity='0';toast.style.transform='translateX(-50%) translateY(8px)';setTimeout(function(){toast.remove();},480);sessionStorage.setItem('zsai','1');});
+    setTimeout(function(){var el=document.getElementById('zs-ai-toast');if(el){el.style.opacity='0';el.style.transform='translateX(-50%) translateY(8px)';setTimeout(function(){if(el.parentNode)el.remove();},480);}},14000);
+  },4000);
  }catch(e){}
 })();
