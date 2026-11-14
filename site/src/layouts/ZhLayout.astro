@@ -75,7 +75,7 @@ html{color-scheme:dark}
 .dark table th,.dark table td{border:1px solid rgba(255,255,255,.12);padding:10px 12px;text-align:left;font-variant-numeric:tabular-nums}
 .dark table th{background:#1B1C23}
 .dark .card-product .justify-center{background:#1B1D24}
-html.dark body{--gold:#FF8F33;--txt-muted:rgba(229,236,246,.8)}
+html.dark body{--gold:#5AA9FF;--txt-muted:rgba(229,236,246,.8)}
 html.dark .btn-gold{color:#0B1018 !important}
 html.dark .bk-tab.on{color:#0B1018}
 html.dark .bk-tab.on b{color:rgba(11,16,24,.85)}
@@ -84,7 +84,7 @@ html.dark .vin-row button{color:#0B1018}
 html.dark a[href="/privacy/"]{color:#00E5FF !important}
 html.dark .hero{background:linear-gradient(180deg,#0E141F,#04080D)}
 html.dark .hero{position:relative;overflow:hidden}
-html.dark .hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 55% at 70% 10%,rgba(255,111,0,.10),transparent 72%)}
+html.dark .hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 55% at 70% 10%,rgba(1,97,239,.14),transparent 72%)}
 </style>
 
 
@@ -176,7 +176,7 @@ if (menubtn && mnav) {
 </script>
 <style is:global>img[src*="/assets/img/plugs/"]{filter:drop-shadow(0 0 .35px rgba(0,0,0,.55))}
 :root{
-  --ink:#1d1d1f; --navy:#001e2b; --gold:#FF6F00; --gold-soft:rgba(255,111,0,.55); --cyan:#00E5FF; --logo-accent:#0161EF;
+  --ink:#1d1d1f; --navy:#001e2b; --gold:#0161EF; --gold-soft:rgba(1,97,239,.55); --cyan:#00E5FF; --logo-accent:#0161EF;
   --bg:#ffffff; --bg2:#f8f9fa; --card:#ffffff; --line:#e5e7eb;
   --txt:#111417; --txt-muted:rgba(16,16,16,.66); --head:#001e2b;
   --radius:16px; --shadow:0 8px 30px rgba(0,0,0,.08);
@@ -207,7 +207,7 @@ nav a{padding:8px 12px;border-radius:9px;font-size:14px;font-weight:400;color:va
 nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .icon-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:8px 10px;cursor:pointer;font-size:15px}
 .btn{display:inline-block;padding:12px 22px;border-radius:11px;font-weight:700;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:.15s}
-.btn-gold{background:linear-gradient(135deg,#FF8F33,#FF6F00);color:#0B1018;box-shadow:0 4px 18px rgba(255,111,0,.3)}
+.btn-gold{background:linear-gradient(135deg,#5AA9FF,#0161EF);color:#fff;box-shadow:0 4px 18px rgba(1,97,239,.35)}
 .btn-gold:hover{transform:translateY(-1px)}
 .btn-ghost{border-color:var(--line);color:var(--txt);background:var(--bg)}
 .btn-ghost:hover{border-color:var(--gold)}
@@ -264,7 +264,7 @@ nav a:hover,nav a.on{background:var(--bg2);opacity:1;color:var(--head)}
 .faqbox details p{padding:14px 20px;font-size:14px;color:var(--txt-muted)}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
 .plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;position:relative}
-.plan.pop{border-color:rgba(255,111,0,.85);box-shadow:0 0 36px rgba(255,111,0,.2)}
+.plan.pop{border-color:rgba(1,97,239,.85);box-shadow:0 0 36px rgba(1,97,239,.24)}
 .popb{position:absolute;top:-11px;left:22px;background:var(--gold);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 12px;border-radius:999px}
 .price{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--head);margin:10px 0 2px}
 .price small{font-size:13px;font-weight:600;color:var(--txt-muted)}
@@ -659,7 +659,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .hero:not(.zh-hero-big) .wrap{display:grid;grid-template-columns:minmax(0,760px);justify-content:start;align-items:center}
 @media(max-width:960px){.hero:not(.zh-hero-big) .wrap{display:block}}
 /* свечение CTA */
-.btn-gold{box-shadow:0 4px 18px rgba(255,111,0,.3),0 0 0 rgba(255,111,0,0);transition:transform .2s,box-shadow .25s}
+.btn-gold{box-shadow:0 4px 18px rgba(1,97,239,.35),0 0 0 rgba(1,97,239,0);transition:transform .2s,box-shadow .25s}
 .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(1,97,239,.4)}
 
 /* === РЕСТРУКТУРИЗАЦИЯ ГЛАВНОЙ: роль, hero-селектор, мостик, SEO-аккордеоны === */
@@ -691,7 +691,7 @@ details.seo-faq::details-content{transition:height .3s ease,content-visibility .
 
 /* === ЕДИНАЯ СИСТЕМА СТИЛЯ (unified wave): антрацит+золото, зелёный = только статусы === */
 :root{--rad-lg:22px;--rad-md:16px;--rad-sm:12px}
-.btn-gold{background:linear-gradient(135deg,#FF8F33,#FF6F00)!important;color:#0B1018!important;font-weight:700;box-shadow:0 4px 18px rgba(255,111,0,.3);transition:transform .2s,box-shadow .25s}
+.btn-gold{background:linear-gradient(135deg,#5AA9FF,#0161EF)!important;color:#fff!important;font-weight:700;box-shadow:0 4px 18px rgba(1,97,239,.35);transition:transform .2s,box-shadow .25s}
 .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(1,97,239,.4)}
 .btn-ghost:hover{border-color:var(--gold)}
 .glass-panel .btn.lime,.article .btn.lime{background:var(--gold)!important;color:#1a1a1c!important;font-weight:700}
