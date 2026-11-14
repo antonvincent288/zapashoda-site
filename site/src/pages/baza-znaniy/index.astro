@@ -24,7 +24,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     <h1>База знаний «Запас хода»</h1>
     <p class="lead">Руководства, разборы и решения проблем — всё в одном месте. {src.length + blog.length + pain.length} материалов, обновляется каждую неделю.</p>
     <div class="card bk-card" style="border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.06)">
-      <h3 style="color:#7fb8f7">Не знаете, с чего начать?</h3>
+      <h2 style="color:#7fb8f7">Не знаете, с чего начать?</h2>
       <p>Не уверены, какой разъём у машины — начните с <a href="/matrix/" style="color:#00E5FF">матрицы совместимости</a> (одна таблица — все типы станций). Заряжаетесь на трассе — сразу к <a href="/tarify/" style="color:#00E5FF">тарифам ЭЗС</a> и <a href="/charging/" style="color:#00E5FF">карте ЗУ</a>.</p>
     </div>
     <div class="bk-tabs">
@@ -34,7 +34,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
       <button class="bk-tab" type="button" data-bk="ref">Справочники <b>{refs.length}</b></button>
     </div>
     <div class="bk-panel on" id="bk-guides">
-      {src.map((g) =>(<a class="card bk-card" href={'/baza-znaniy/' + g.slug + '/'}><h3>{g.title}</h3><p>{g.desc}</p><span class="bk-go">Читать →</span></a>))}
+      {src.map((g) =>(<a class="card bk-card" href={'/baza-znaniy/' + g.slug + '/'}><h2>{g.title}</h2><p>{g.desc}</p><span class="bk-go">Читать →</span></a>))}
     </div>
     <div class="bk-panel" id="bk-blog">
       {blogSorted.map((a) =>(<a class="card bk-card" href={'/blog/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">{a.category || 'Разбор'} · {a.read_min || '?'} мин →</span></a>))}
@@ -95,11 +95,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     .bk-panel{display:none;grid-template-columns:repeat(3,1fr);gap:20px}
     .bk-panel.on{display:grid}
     .bk-card{padding:24px 26px}
-    .bk-card h3{font-size:17.5px;line-height:1.35}
+    .bk-card h3{font-size:18px;line-height:1.35}
     .bk-card p{font-size:14px;line-height:1.55;margin-top:8px}
     .bk-go{display:block;margin-top:14px;color:#00E5FF;font-size:13px;font-weight:600}
     .bk-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
-    .bk-more{grid-column:1/-1;padding:14px;border-radius:12px;border:1px dashed rgba(0,229,255,.5);background:transparent;color:#00E5FF;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+    .bk-more{grid-column:1/-1;padding:14px;border-radius:12px;border:1px dashed rgba(0,229,255,.5);background:transparent;color:#00E5FF;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
     .bk-more:hover{border-color:#00E5FF;background:rgba(0,229,255,.08)}
     @media (max-width:960px){.bk-panel{grid-template-columns:1fr 1fr}}
     @media (max-width:640px){.bk-panel{grid-template-columns:1fr}}

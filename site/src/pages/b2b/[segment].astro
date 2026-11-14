@@ -33,11 +33,11 @@ const STEPS = [
       {s.pains.map((p: any) => (
         <div class="card">
           <b style="display:block;margin-bottom:6px">{p[0]}</b>
-          <p style="font-size:14.5px;color:var(--txt-muted)">{p[1]}</p>
+          <p style="font-size:14px;color:var(--txt-muted)">{p[1]}</p>
         </div>
       ))}
     </div>
-      {s.note && <div class="card" style="margin-top:24px"><b style="display:block;margin-bottom:6px">{s.note[0]}</b><p style="font-size:14.5px;color:var(--txt-muted)">{s.note[1]}</p></div>}
+      {s.note && <div class="card" style="margin-top:24px"><b style="display:block;margin-bottom:6px">{s.note[0]}</b><p style="font-size:14px;color:var(--txt-muted)">{s.note[1]}</p></div>}
   </div></section>
 
   <section class="sec-alt"><div class="wrap">
@@ -49,12 +49,12 @@ const STEPS = [
             <img src={`/assets/img/plugs/zsh-${r[0]}.svg`} width="26" height="26" alt="" />
             <b>{r[2]}</b>
           </div>
-          <p style="font-size:14.5px;color:var(--txt-muted)">{r[3]}</p>
-          <p style="margin-top:10px;font-size:13.5px"><a href={`/razemy/${r[1]}/`} style="color:var(--gold);text-decoration:none">Справочник разъёма →</a></p>
+          <p style="font-size:14px;color:var(--txt-muted)">{r[3]}</p>
+          <p style="margin-top:10px;font-size:14px"><a href={`/razemy/${r[1]}/`} style="color:var(--gold);text-decoration:none">Справочник разъёма →</a></p>
         </div>
       ))}
     </div>
-    <p style="margin-top:14px;font-size:13.5px;color:var(--txt-muted)">Разъёмы и совместимость — в <a href="/razemy/" style="color:var(--gold);text-decoration:none">справочнике разъёмов</a>, станции — на <a href="/charging/" style="color:var(--gold);text-decoration:none">карте ЗУ</a>.</p>
+    <p style="margin-top:14px;font-size:14px;color:var(--txt-muted)">Разъёмы и совместимость — в <a href="/razemy/" style="color:var(--gold);text-decoration:none">справочнике разъёмов</a>, станции — на <a href="/charging/" style="color:var(--gold);text-decoration:none">карте ЗУ</a>.</p>
   </div></section>
 
   <section class="sec"><div class="wrap">

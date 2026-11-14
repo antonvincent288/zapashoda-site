@@ -48,17 +48,17 @@ export function buyKitHtml(model: any): string {
   const sub = name ? ('подобрано по разъёму: ' + esc(PORT_LABEL[port] || '') + ' · оплата у дилера при получении') : 'по портам GB/T и Type 2 · оплата у дилера при получении';
   const slugs = kitFor(port);
   if (!slugs.length) {
-    return '<section class="kitblock" style="margin-top:22px;padding:20px 22px;background:var(--card);border:1px solid var(--line);border-radius:18px"><h2 style="margin:0 0 8px;font-size:20px">' + head + '</h2><p style="margin:0;font-size:14.5px;color:var(--txt-muted)">Разъём CHAdeMO: станции редки, готового комплекта нет — подберём по VIN в Telegram @zapashoda_ev_bot.</p></section>';
+    return '<section class="kitblock" style="margin-top:22px;padding:20px 22px;background:var(--card);border:1px solid var(--line);border-radius:18px"><h2 style="margin:0 0 8px;font-size:20px">' + head + '</h2><p style="margin:0;font-size:14px;color:var(--txt-muted)">Разъём CHAdeMO: станции редки, готового комплекта нет — подберём по VIN в Telegram @zapashoda_ev_bot.</p></section>';
   }
   const cards = slugs.map((s) => {
     const it = SKU_BY[s] || {};
     return '<a class="kit-card" href="' + cardUrl(s, mslug) + '" style="display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--bg);text-decoration:none;color:var(--txt)">' +
-      '<span style="font-size:14.5px;font-weight:600;line-height:1.35">' + esc(String(it.title || s)) + '</span>' +
+      '<span style="font-size:14px;font-weight:600;line-height:1.35">' + esc(String(it.title || s)) + '</span>' +
       '<span style="font-size:16px;font-weight:800;color:var(--gold)">' + esc(priceOut(it.price)) + '</span>' +
-      '<span style="font-size:12.5px;color:var(--txt-muted)">Цена фиксируется при бронировании</span></a>';
+      '<span style="font-size:13px;color:var(--txt-muted)">Цена фиксируется при бронировании</span></a>';
   }).join('');
   const note = port === 'nacs'
-    ? '<div class="kit-note" style="margin-top:12px;font-size:13.5px;color:var(--txt-muted)">Для US-Tesla остальной набор подбирается по VIN — напишите в Telegram @zapashoda_ev_bot.</div>'
+    ? '<div class="kit-note" style="margin-top:12px;font-size:14px;color:var(--txt-muted)">Для US-Tesla остальной набор подбирается по VIN — напишите в Telegram @zapashoda_ev_bot.</div>'
     : '';
   return '<section class="kitblock" style="margin-top:22px;padding:20px 22px;background:var(--card);border:1px solid var(--line);border-radius:18px">' +
     '<h2 style="margin:0 0 6px;font-size:20px">' + head + '</h2>' +
@@ -96,10 +96,10 @@ const INSETS: Record<InsetVariant, { title: string; text: string; links: Array<A
 export function insetHtml(v: InsetVariant): string {
   const d = INSETS[v];
   const links = d.links.map((l) =>
-    '<a href="' + l[0] + '" style="display:inline-block;padding:9px 14px;border:1px solid rgba(77,155,245,.45);border-radius:10px;color:#7FB8FF;text-decoration:none;font-size:13.5px;font-weight:600">' + esc(l[1]) + '</a>').join(' ');
+    '<a href="' + l[0] + '" style="display:inline-block;padding:9px 14px;border:1px solid rgba(77,155,245,.45);border-radius:10px;color:#7FB8FF;text-decoration:none;font-size:14px;font-weight:600">' + esc(l[1]) + '</a>').join(' ');
   return '<aside class="ins-inset" data-inset="' + v + '" style="margin:22px 0;padding:18px 20px;background:#14181F;border:1px solid var(--line);border-left:3px solid #4d9bf5;border-radius:14px">' +
     '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7FB8FF;margin-bottom:6px">Инженерное решение</div>' +
-    '<div style="font-size:15.5px;font-weight:700;color:var(--txt);line-height:1.4;margin-bottom:6px">' + esc(d.title) + '</div>' +
+    '<div style="font-size:16px;font-weight:700;color:var(--txt);line-height:1.4;margin-bottom:6px">' + esc(d.title) + '</div>' +
     '<p style="margin:0 0 12px;font-size:14px;color:var(--txt-muted);line-height:1.55">' + esc(d.text) + '</p>' +
     '<div style="display:flex;gap:10px;flex-wrap:wrap">' + links + '</div></aside>';
 }

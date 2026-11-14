@@ -11,14 +11,14 @@ import d from '../../data/legacy/vin_index.json';
 
 <style is:global>
 .kicker{color:#5aa9ff}
-.tw table{width:100%;border-collapse:collapse;font-size:14.5px;margin:18px 0}
-.tw th{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
+.tw table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+.tw th{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
 .tw td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--txt);vertical-align:top;line-height:1.55}
 .tw tr:hover td{background:rgba(255,255,255,.025)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media (max-width:760px){.grid2{grid-template-columns:1fr}}
 .mcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:10px 0}
-.mcard h3{font-size:16.5px;margin:0 0 8px;color:var(--head);line-height:1.35}
+.mcard h3{font-size:16px;margin:0 0 8px;color:var(--head);line-height:1.35}
 .mcard p{margin:6px 0;color:var(--txt-muted);font-size:14px;line-height:1.6}
 .mcard b{color:var(--txt)}
 .lcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:18px 0}
@@ -26,24 +26,24 @@ import d from '../../data/legacy/vin_index.json';
 /* === VIN-чекер и сервисы === */
 .vinbox{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:24px 0}
 .vinbox h2{margin:0 0 6px;font-size:clamp(22px,3.4vw,28px);color:var(--txt)}
-.vin-sub{color:var(--txt-muted);font-size:14.5px;line-height:1.6;margin:0 0 16px}
+.vin-sub{color:var(--txt-muted);font-size:14px;line-height:1.6;margin:0 0 16px}
 .vin-row{display:flex;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px}
 .vin-row input{flex:1 1 220px;background:transparent;border:none;outline:none;color:var(--txt);font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:8px 10px;min-width:0}
 .vin-row button{background:#4d9bf5;color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .vin-row button:hover{background:#3d8cf0}
-.vin-hint{color:var(--txt-muted);font-size:12.5px;margin:10px 2px 0;letter-spacing:.02em}
-.vin-out{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14.5px;line-height:1.65;color:var(--txt-muted)}
+.vin-hint{color:var(--txt-muted);font-size:13px;margin:10px 2px 0;letter-spacing:.02em}
+.vin-out{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14px;line-height:1.65;color:var(--txt-muted)}
 .vin-out ul{margin:0;padding-left:18px}
 .vin-out li{margin-bottom:6px}
 .vin-out b{color:var(--txt)}
 .vin-warn{color:#e8927f}
 .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:18px 0}
 .svc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
-.svc-tag{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(1,97,239,.14);color:#cfe2ff;margin-bottom:8px;letter-spacing:.02em}
-.svc-card h3{font-size:16.5px;color:var(--txt);margin:0 0 8px}
+.svc-tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(1,97,239,.14);color:#cfe2ff;margin-bottom:8px;letter-spacing:.02em}
+.svc-card h3{font-size:16px;color:var(--txt);margin:0 0 8px}
 .svc-card p{font-size:14px;color:var(--txt-muted);line-height:1.6;margin:0 0 12px}
 .svc-actions{display:flex;gap:8px;flex-wrap:wrap}
-.svc-actions a,.svc-actions button{display:inline-block;border-radius:999px;padding:9px 16px;font-size:13.5px;text-decoration:none;cursor:pointer;font-family:inherit}
+.svc-actions a,.svc-actions button{display:inline-block;border-radius:999px;padding:9px 16px;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit}
 .svc-actions a{background:#4d9bf5;color:#fff;border:1px solid #4d9bf5}
 .svc-actions a:hover{background:#3d8cf0}
 .svc-actions button{background:transparent;color:var(--txt-muted);border:1px solid var(--line)}
@@ -51,8 +51,8 @@ import d from '../../data/legacy/vin_index.json';
 .brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:18px 0}
 .brand-card{display:flex;justify-content:space-between;align-items:baseline;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;transition:border-color .15s}
 .brand-card:hover{border-color:rgba(77,155,245,.45)}
-.brand-card b{color:var(--txt);font-size:14.5px}
-.brand-card span{color:var(--txt-muted);font-size:12.5px;white-space:nowrap}
+.brand-card b{color:var(--txt);font-size:14px}
+.brand-card span{color:var(--txt-muted);font-size:13px;white-space:nowrap}
 .note.tip{border-left:3px solid #4d9bf5}
 .note.warn{border-left:3px solid #e06c5a}
 .tw.year-table td{width:16.6%;padding:8px 14px;font-size:14px}

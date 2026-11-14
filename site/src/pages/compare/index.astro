@@ -18,7 +18,7 @@ const cards = (pairsData.pairs || []).map((p) => {
 {cards.map((c) => (
   <a href={c.href} style="display:block;padding:20px;border:1px solid var(--line);border-radius:18px;text-decoration:none;color:var(--txt);background:var(--bg2)">
     <div style="font-size:16px;font-weight:700">{c.a} <span style="color:var(--gold)">vs</span> {c.b}</div>
-    <div style="margin-top:8px;font-size:13.5px;color:var(--txt-muted)">Порты: {c.pA} / {c.pB} · {c.tA} против {c.tB} · что докупить</div>
+    <div style="margin-top:8px;font-size:14px;color:var(--txt-muted)">Порты: {c.pA} / {c.pB} · {c.tA} против {c.tB} · что докупить</div>
   </a>
 ))}
 </div>
