@@ -92,5 +92,8 @@ body .hero p{font-size:16.5px;max-width:640px;}
 @media(max-width:960px){body .hero{max-width:100%;}body .hero .gal,body .hero .buybox,body .hero .ph{max-width:100%;}body .hero .buybox{justify-self:stretch;}}
 body .wrap{max-width:1120px;}
 body .wrap960{max-width:1120px;margin:0 auto;padding:0 24px}
+body .hero>*{min-width:0}
+@media(max-width:960px){body .hero{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){section table{display:block;overflow-x:auto}}
 </style>
 </ZhLayout>
