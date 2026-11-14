@@ -81,4 +81,15 @@ const cssCode = "\n:root{--bg:#0b0b0d;--panel:#151518;--panel2:#15161c;--card-hi
     <script is:inline set:html={rvCode} />
   </div>
   <style is:inline set:html={cssCode} />
+<style is:inline>{/* OVERRIDE: макет v7 сильнее глобального ZhLayout */}
+body .hero{max-width:1120px;margin-left:auto;margin-right:auto;}
+body .hero .gal{max-width:460px;}
+body .hero .buybox{max-width:620px;width:100%;justify-self:end;}
+body .hero .ph{max-width:460px;}
+body .hero .phscheme{max-width:460px;aspect-ratio:16/9;height:auto;}
+body .hero h1{font-size:clamp(26px,3vw,34px);letter-spacing:-.02em;line-height:1.15;}
+body .hero p{font-size:16.5px;max-width:640px;}
+@media(max-width:960px){body .hero{max-width:100%;}body .hero .gal,body .hero .buybox,body .hero .ph{max-width:100%;}body .hero .buybox{justify-self:stretch;}}
+body .wrap{max-width:1120px;}
+</style>
 </ZhLayout>
