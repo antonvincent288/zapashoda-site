@@ -1,0 +1,27 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import LeadCTA from '../../components/LeadCTA.astro';
+import pairsData from '../../data/compare_pairs.json';
+const modelGlob = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
+const bySlug = {};
+for (const mm of Object.values(modelGlob)) bySlug[mm.slug] = mm;
+const cards = (pairsData.pairs || []).map((p) => {
+  const A = bySlug[p.a], B = bySlug[p.b];
+  return { href: '/compare/' + p.slug + '/', a: A ? (A.name || A.title) : p.a, b: B ? (B.name || B.title) : p.b, tA: A ? A.type : '', tB: B ? B.type : '', pA: A ? A.port : '', pB: B ? B.port : '' };
+});
+---
+<ZhLayout title="Сравнения моделей по зарядке: разъёмы, батареи, адаптеры — Запас хода" description="Попарные сравнения популярных электромобилей и гибридов в России: разъёмы зарядки, бортовое зарядное, батареи и что докупить для домашней и дорожной зарядки." og="/assets/og/c-hub.png">
+<section class="sec"><div class="wrap" style="padding:56px 0 72px">
+<h1>Сравнения моделей: зарядка, разъёмы, батареи</h1>
+<p style="color:var(--txt-muted);font-size:16px;max-width:760px">Разъём зависит от рынка вывоза, а не от марки — поэтому сравниваем по фактам: какой порт у каждой машины, сколько принимает бортовое зарядное и что докупить для станций в России.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:28px">
+{cards.map((c) => (
+  <a href={c.href} style="display:block;padding:20px;border:1px solid var(--line);border-radius:18px;text-decoration:none;color:var(--txt);background:var(--bg2)">
+    <div style="font-size:16px;font-weight:700">{c.a} <span style="color:var(--gold)">vs</span> {c.b}</div>
+    <div style="margin-top:8px;font-size:14px;color:var(--txt-muted)">Порты: {c.pA} / {c.pB} · {c.tA} против {c.tB} · что докупить</div>
+  </a>
+))}
+</div>
+<LeadCTA />
+</div></section>
+</ZhLayout>
