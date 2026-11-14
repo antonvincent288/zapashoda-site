@@ -1,37 +1,96 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
+
+const faq: [string, string][] = [
+  ['Сколько стоит быстрая зарядка электромобиля в России?', 'Обычно 15–22 ₽ за кВт·ч. Самая дешёвая сеть в справочнике — Volt в Перми (14 ₽/кВт·ч), самая дорогая — Electro.cars в Челябинске (до 24,7 ₽/кВт·ч).'],
+  ['Сколько стоит зарядить электромобиль дома в Москве?', 'Одноставочный тариф — 7,87 ₽ за кВт·ч. На двухставочном тарифе ночная зона стоит около 4 ₽. Это в 2–4 раза дешевле публичной сети.'],
+  ['Где в России дешевле всего заряжаться на трассах?', 'На М-11 «Нева» у Punkt E — 18–19,5 ₽ за кВт·ч. Дороже всего на М-4 «Дон»: Sitronics и Электро Порт берут до 22 ₽.'],
+  ['Как проверить актуальную цену конкретной станции?', 'Тарифы сетей меняются несколько раз в год. Актуальную цену конкретной станции смотрите в приложении оператора перед поездкой.'],
+];
+
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Тарифы ЭЗС в России: сети, трассы, города', description: 'Актуальные тарифы зарядных станций России: Энергия Москвы, Sitronics, Punkt E, itCharge, Газпромнефть и другие. Цены по трассам М-4, М-1, М-9 и городам.' },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f[0], acceptedAnswer: { '@type': 'Answer', text: f[1] } })) },
+];
 ---
-<ZhLayout title="Тематика: мастер-аккаунт, SIM/eSIM и зарядка китайских EV" description="Почему китайский электромобиль в РФ теряет часть функций без мастер-аккаунта и интернета: предпрогрев батареи, удалённая зарядка, eSIM. Что делать владельцу.">
+
+<ZhLayout title="Тарифы ЭЗС в России: сети, трассы, города — ноябрь 2026" description="Актуальные тарифы зарядных станций России: Энергия Москвы, Sitronics, Punkt E, itCharge, Газпромнефть и другие. Цены по трассам М-4, М-1, М-9 и городам." jsonld={ld}>
+  <style>
+    .callout{border:1px solid var(--line);background:var(--bg2);border-radius:12px;padding:18px 20px;margin:22px 0}
+    .callout .k{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+    .callout p{font-size:15px;line-height:1.6;margin:0}
+    .callout p + p{margin-top:8px}
+    .callout a{color:#5aa9ff;text-decoration:none;border-bottom:1px solid rgba(90,169,255,.4)}
+    .k-gold{color:var(--gold)}
+    .k-green{color:#22c55e}
+    .k-blue{color:#5aa9ff}
+    .keynum{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:4px 0 6px}
+    .keynum small{font-size:16px;font-weight:600;color:var(--txt-muted);letter-spacing:0}
+    .keygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .keygrid .num{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px}
+    .keygrid .lbl{font-size:12.5px;color:var(--txt-muted);line-height:1.4;margin-top:6px}
+    @media(max-width:640px){.keygrid{grid-template-columns:1fr}}
+    table{width:100%;border-collapse:collapse;font-size:14.5px;margin:16px 0 8px}
+    th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-muted)}
+    td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+    tr:nth-child(even) td{background:rgba(255,255,255,.055)}
+    tr:hover td{background:rgba(1,97,239,.07)}
+    td:nth-child(3){font-weight:700;color:var(--gold);white-space:nowrap}
+    .srcs{font-size:13px;color:var(--txt-muted);line-height:1.6;margin-top:26px}
+    .srcs a{color:var(--txt-muted);text-decoration:underline;text-underline-offset:3px}
+  </style>
+
   <section class="sec"><div class="wrap">
-    <div class="crumbs"><a href="/">Главная</a> / Тематика</div>
-    <div class="badge">Раздел</div>
-    <h1>Тематика: телематика китайских EV в России</h1>
-    <p class="lead">Мастер-аккаунт (МА), SIM/eSIM и интернет в машине — вторая по значимости тема после разъёмов. Без неё китайский электромобиль в России живёт «усечённой» жизнью.</p>
-    <div class="cards">
-      <div class="card"><h3>Что такое мастер-аккаунт (МА)</h3><p>У китайских EV (Zeekr, Li Auto, Avatr, Voyah и других) телематика завязана на учётную запись первого владельца в китайской экосистеме. Без привязки машины к «мастер-аккаунту» часть функций недоступна: приложение не видит машину, нет удалённого управления.</p></div>
-      <div class="card"><h3>Что ломается без интернета в машине</h3><p>Главное — <b>предпрогрев батареи перед зарядкой</b> из приложения: в мороз без него быстрая зарядка идёт заметно медленнее и мощнее режется. Также не работают удалённый запуск климата, статус зарядки в приложении и часть обновлений ПО.</p></div>
-      <div class="card"><h3>SIM/eSIM в машине</h3><p>Встроенные SIM-карты китайских операторов в РФ не работают. Владельцы решают это по-разному: переносом на российскую eSIM (если платформа позволяет), физической заменой SIM-модуля или отдельным роутером с российской SIM. Конкретную схему для вашей модели уточняйте у дилера и на форуме — решение зависит от поколения телематики.</p></div>
+    <div class="crumbs"><a href="/">Главная</a> / Тарифы ЭЗС</div>
+    <div class="badge">Справочник</div>
+    <h1>Тарифы ЭЗС в России</h1>
+    <p class="lead">Сколько стоит быстрая и медленная зарядка: московские сети, федеральные трассы и регионы. Цены проверены 8 ноября 2026 года.</p>
+
+    <div class="callout">
+      <span class="k k-green">Коротко</span>
+      <p>Быстрая зарядка (DC, 150 кВт и выше) на публичных станциях стоит <strong>14–25 ₽ за кВт·ч</strong> — это примерно как 4–5 литров бензина на 100 км пути. Дома зарядка обходится в 2–4 раза дешевле публичной сети.</p>
+      <div class="keygrid">
+        <div class="num"><div class="keynum">14 ₽ <small>минимум</small></div><div class="lbl">Volt, Пермь — самая дешёвая сеть в списке</div></div>
+        <div class="num"><div class="keynum">7,87 ₽</div><div class="lbl">Дома в Москве, одноставочный тариф</div></div>
+        <div class="num"><div class="keynum">~4 ₽</div><div class="lbl">Дома в Москве ночью, двухставочный тариф</div></div>
+      </div>
     </div>
-    <div class="card" style="margin-top:20px">
-      <h3>Что делать: чек-лист владельца</h3>
-      <p style="font-size:14.5px;line-height:1.65">1. Проверьте статус МА у дилера <b>до</b> покупки и отметьте в договоре.<br>2. Проверьте, работает ли приложение с российской SIM — до первого сильного мороза.<br>3. Найдите владельцев вашей модели на форуме — телематика сильно отличается между партиями.<br>4. План Б на зиму: ручной прогрев в пути 15–20 минут до быстрой станции — приложение не критично, если продумать маршрут.</p>
+
+    <h2>Москва: что почём в городе</h2>
+    <p>Городская сеть «Энергии Москвы» — самая предсказуемая: тариф закреплён приказом и не прыгает. Коммерческие сети держатся в коридоре 16–25 ₽ за кВт·ч.</p>
+    <div class="overflow-x-auto"><table><tr><th>Сеть</th><th>Мощность</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>Энергия Москвы (городская)</td><td>AC 22–44 кВт</td><td>15 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Энергия Москвы (городская)</td><td>DC от 50 кВт</td><td>20 ₽</td><td>Официальный тариф с 23.07.2025</td></tr><tr><td>Газпромнефть</td><td>150 кВт</td><td>18 ₽</td><td>23 ЭЗС в Москве</td></tr><tr><td>itcharge</td><td>150–200 кВт</td><td>16–19 ₽</td><td>10 ЭЗС</td></tr><tr><td>ZEVS</td><td>150 кВт</td><td>17 ₽</td><td></td></tr><tr><td>Evolute</td><td>150 кВт</td><td>17–18 ₽</td><td></td></tr><tr><td>EV-Time</td><td>150 кВт</td><td>18,5–21 ₽</td><td>21 ЭЗС</td></tr><tr><td>Sitronics</td><td>150–180 кВт</td><td>19–21 ₽</td><td></td></tr><tr><td>Punkt E</td><td>150 кВт</td><td>20–21 ₽</td><td>11 ЭЗС</td></tr><tr><td>Touch</td><td>240 кВт</td><td>20 ₽</td><td></td></tr><tr><td>Electro.cars</td><td>150–240 кВт</td><td>20–24,7 ₽</td><td>Дешевле на электрохабах</td></tr></table></div>
+
+    <div class="callout">
+      <span class="k k-blue">Совет</span>
+      <p><strong>Дом дешевле городской сети в 2–4 раза.</strong> Одноставочный тариф в Москве — 7,87 ₽/кВт·ч, ночная зона двухставочного — около 4 ₽/кВт·ч.</p>
+      <p>Супербыстрые станции «Россетей» (350 кВт) уже работают в Москве и области, к 2026 году сеть планируют довести до 200–250 станций. Тариф — в приложении «Россети Электротранспорт».</p>
     </div>
-    <div class="cards" style="margin-top:30px">
-      <div style="width:100%"><h2 style="font-size:clamp(22px,3.4vw,30px);margin:0 0 4px">Разборы по маркам</h2><p style="margin:0;color:var(--txt-muted);font-size:14.5px">Что работает из коробки, что чинится сервисом, а что не работает в принципе — шесть кейсов с ценами и чек-листами.</p></div>
-      <a class="card" href="/blog/voyah-app-telematics/" style="text-decoration:none"><h3>Voyah</h3><p>Официальное приложение на русском и подключение через дилера (70–75 тыс. ₽). Плюс независимая JustVoyah для серых машин — от 900 ₽/мес.</p></a>
-      <a class="card" href="/blog/avatr-app-telematics/" style="text-decoration:none"><h3>Avatr</h3><p>Единственная марка с официальной телематикой в РФ с февраля 2025: SIM с завода, мастер-аккаунт от дилера, серверы в России.</p></a>
-      <a class="card" href="/blog/zeekr-master-account/" style="text-decoration:none"><h3>Zeekr</h3><p>Региональная блокировка машин после 15.07.2024, три пути восстановления: Family Account, полный МА через eSender, вписанная российская SIM. Цены сервисов — от 100 тыс. ₽.</p></a>
-      <a class="card" href="/blog/li-auto-master-account/" style="text-decoration:none"><h3>Li Auto</h3><p>Мастер-аккаунт на свой номер через eSender за вечер. Полный обзор функций приложения и решения частых глюков.</p></a>
-      <a class="card" href="/blog/byd-master-account/" style="text-decoration:none"><h3>BYD</h3><p>Самый хардкорный кейс: МА только на свежих прошивках, фильтр по IP весной 2026, eSIM-адаптер с гонконгским тарифом как рабочее решение.</p></a>
-      <a class="card" href="/blog/dongfeng-box-telematics/" style="text-decoration:none"><h3>Dongfeng Box</h3><p>Официального приложения нет и не будет: ADB-русификация от сообщества, инженерное меню и что стоит знать до покупки.</p></a>
-    <a class="card" href="/blog/xiaomi-su7-telematics/" style="text-decoration:none"><h3>Xiaomi SU7</h3><p>Самый закрытый кейс: МА требует китайского гражданина. Рабочая схема — «телефон-компаньон» с Family Account. Что работает без аккаунта.</p></a>
-      <a class="card" href="/blog/xpeng-app-telematics/" style="text-decoration:none"><h3>XPeng</h3><p>С 2026 года — официально: Яндекс Карты, Алиса, приложение и гарантия 8 лет. Для серых машин — китайский аккаунт и сервисная русификация.</p></a>
-      <a class="card" href="/blog/deepal-telematics/" style="text-decoration:none"><h3>Deepal</h3><p>Официальные продажи через Changan, русифицированная Sunflower — но телематика и голосовой ассистент пока слабые места.</p></a>
-    <a class="card" href="/blog/nio-app-telematics/" style="text-decoration:none"><h3>NIO</h3><p>Продвинутая экосистема в Китае, но в РФ swap-станций нет, а часть облачных функций держится на обходных схемах. Что реально работает.</p></a>
-      <a class="card" href="/blog/denza-app-telematics/" style="text-decoration:none"><h3>Denza</h3><p>Экосистема BYD: BT/NFC активируются только в китайских сетях 5G — до вывоза машины. Плюс категория прав и налог на 503 л.с.</p></a>
-    <a class="card" href="/blog/aito-app-telematics/" style="text-decoration:none"><h3>AITO</h3><p>HarmonyOS от Huawei — лучший медиацентр, но телематика: МА через китайский номер, а «приложение дистрибьютора» на практике — Pandora.</p></a>
-      <a class="card" href="/blog/leapmotor-app-telematics/" style="text-decoration:none"><h3>Leapmotor</h3><p>Глобальное приложение с европейской регистрацией: цифровой ключ, OTA, временные ключи. Регион прошивки решает всё.</p></a>
+
+    <h2>Федеральные трассы: сколько берут на дороге</h2>
+    <p>На трассах разброс цен меньше, чем в городе: почти всё крутится вокруг 18–22 ₽ за кВт·ч. Дешевле всех — Punkt E на М-11 «Нева».</p>
+    <div class="overflow-x-auto"><table><tr><th>Трасса</th><th>Сеть</th><th>Цена, ₽/кВт·ч</th><th>Комментарий</th></tr><tr><td>М-4 «Дон»</td><td>Трасса (сеть)</td><td>19,8 ₽</td><td>Быстрые 150 кВт</td></tr><tr><td>М-4 «Дон»</td><td>Punkt E</td><td>19,9 ₽</td><td></td></tr><tr><td>М-4 «Дон»</td><td>Sitronics</td><td>19–22 ₽</td><td>8 ЭЗС</td></tr><tr><td>М-4 «Дон»</td><td>Электро Порт</td><td>20–22 ₽</td><td>9 ЭЗС</td></tr><tr><td>М-1 «Беларусь»</td><td>Sitronics / Трасса</td><td>19,8–22 ₽</td><td></td></tr><tr><td>М-2 «Крым»</td><td>Трасса</td><td>19,8 ₽</td><td>Подольск</td></tr><tr><td>М-9 «Балтия»</td><td>Трасса (электрохаб)</td><td>19,8 ₽</td><td>18 колонок на 32-м км</td></tr><tr><td>М-11 «Нева» / СПб</td><td>Punkt E</td><td>18–19,5 ₽</td><td></td></tr></table></div>
+
+    <div class="callout">
+      <span class="k k-gold">Пример</span>
+      <p><strong>Быстрая зарядка на трассе — это как 4–5 литров бензина на 100 км.</strong> При тарифе 15–22 ₽/кВт·ч «заправка» тягается по деньгам с обычным автомобилем. Экономия живёт только дома — там цена ниже в 2–4 раза.</p>
     </div>
-<p style="margin-top:22px;color:var(--txt-muted)">Следующие разборы — по мере набора фактуры: IM Motors, Onvo, Fangchengbao. Следите за обновлениями в <a href="/news/" style="color:#00E5FF">новостях</a>.</p>
+
+    <h2>Регионы: где дешевле</h2>
+    <p>Самый дешёвый тариф из справочника — 14 ₽ у Volt в Перми. Самый дорогой — 24,7 ₽ у Electro.cars в Челябинске. Все станции в таблице — быстрые, 150 кВт.</p>
+    <div class="overflow-x-auto"><table><tr><th>Город</th><th>Сеть</th><th>Цена, ₽/кВт·ч</th></tr><tr><td>Пермь</td><td>Volt</td><td>14 ₽</td></tr><tr><td>Казань</td><td>Non Stop Power</td><td>15 ₽</td></tr><tr><td>Пермь</td><td>itcharge</td><td>15 ₽</td></tr><tr><td>Пермь</td><td>Sitronics</td><td>15 ₽</td></tr><tr><td>Самара</td><td>Electro.Cars</td><td>16–16,5 ₽</td></tr><tr><td>Челябинск</td><td>itcharge</td><td>16 ₽</td></tr><tr><td>Самара</td><td>itcharge</td><td>17,5 ₽</td></tr><tr><td>Екатеринбург</td><td>Electro.cars</td><td>17–20 ₽</td></tr><tr><td>Екатеринбург</td><td>Punkt E</td><td>18–19,5 ₽</td></tr><tr><td>Челябинск</td><td>Punkt E</td><td>19 ₽</td></tr><tr><td>СПб</td><td>Electro.cars</td><td>21 ₽</td></tr><tr><td>Екатеринбург</td><td>Sitronics</td><td>24 ₽</td></tr><tr><td>Челябинск</td><td>Electro.cars</td><td>24,7 ₽</td></tr></table></div>
+
+    <h2>Что делать с этими цифрами</h2>
+    <ul>
+      <li><strong>«Дешевле» не значит «лучше».</strong> У сетей разная загруженность и разные розетки. Перед длинной поездкой проверьте трассу на нашей <a href="/charging/" style="color:#5aa9ff">карте ЗУ</a>.</li>
+      <li><strong>Переводите тариф в «бензин».</strong> Тариф 15–22 ₽/кВт·ч — это примерно как 4–5 литров бензина на 100 км. Дома дешевле в 2–4 раза.</li>
+      <li><strong>Считайте свой сценарий.</strong> Возьмите расход вашей машины и тариф — <a href="/#zcalc" style="color:#5aa9ff">калькулятор</a> всё пересчитает сразу.</li>
+    </ul>
+
+    <h2>Частые вопросы</h2>
+    <div class="faqbox">
+      {faq.map((f) => <details><summary>{f[0]}</summary><div style="padding:0 20px 16px;font-size:15px;line-height:1.6;color:var(--txt-muted)">{f[1]}</div></details>)}
+    </div>
+
+    <p class="srcs">Источники: <a href="https://aetransport.ru/prices">Ассоциация развития электротранспорта</a> (aetransport.ru/prices, обновлено 05.11.2026), Департамент транспорта Москвы (via Коммерсантъ, 22.07.2025), auto.mail.ru. Тарифы периодически меняются — актуальную цену конкретной станции всегда смотрите в приложении оператора.</p>
   </div></section>
 </ZhLayout>
