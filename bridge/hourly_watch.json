@@ -1,5 +1,5 @@
 {
-  "ts_utc": "2026-11-14T10:04:34Z",
+  "ts_utc": "2026-11-14T10:59:57Z",
   "ok": false,
   "checks_total": 11,
   "fails": [
@@ -8,7 +8,7 @@
       "url": "https://zapashoda-ev.ru/b2b/",
       "status": 200,
       "ok": false,
-      "detail": "missing: Рекомендуемые розничные цены"
+      "detail": "missing: Рекомендуемые розничные цены, Mini App"
     },
     {
       "check": "Shorts-автопилот",
@@ -28,7 +28,7 @@
       "url": "https://zapashoda-ev.ru/b2b/",
       "status": 200,
       "ok": false,
-      "detail": "missing: Рекомендуемые розничные цены"
+      "detail": "missing: Рекомендуемые розничные цены, Mini App"
     },
     {
       "check": "Каталог",
