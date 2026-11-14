@@ -66,11 +66,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
   var t=tips[0];
   var toast=document.createElement('div');toast.id='zs-ai-toast';
-  toast.style.cssText='position:fixed;left:14px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #0161EF;border-radius:12px;padding:12px 14px;max-width:320px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45)';
-  toast.innerHTML='<div style="font-size:11px;letter-spacing:.08em;color:#8e8e93">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
-   +'<div style="margin:6px 0">'+t[0]+'</div>'
-   +'<a href="'+t[1]+'" style="display:inline-block;background:#0161EF;color:#fff;font-weight:700;padding:6px 12px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a> '
-   +'<button id="zs-ai-x" style="margin-left:8px;background:none;border:none;color:#8e8e93;cursor:pointer">Скрыть</button>';
+  toast.style.cssText='position:fixed;left:12px;right:12px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:#1d1d1f;color:#f5f5f7;border:1px solid #0161EF;border-radius:10px;padding:8px 12px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.45);display:flex;align-items:center;gap:10px';
+  toast.innerHTML='<span style="font-size:10px;letter-spacing:.08em;color:#8e8e93;white-space:nowrap">ИИ</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t[0]+'</span><a href="'+t[1]+'" id="zs-ai-go" style="flex:none;background:#0161EF;color:#fff;font-weight:700;padding:5px 10px;border-radius:8px;text-decoration:none;white-space:nowrap">Открыть</a><button id="zs-ai-x" style="flex:none;background:none;border:none;color:#8e8e93;cursor:pointer;font-size:15px;line-height:1;padding:0 2px" aria-label="Скрыть">×</button>';
   document.body.appendChild(toast);
   if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
   document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
