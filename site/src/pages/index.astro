@@ -156,11 +156,11 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 #zq-result .zq-back{margin-top:14px}
 @media (max-width:900px){.zh-hero-big .wrap{grid-template-columns:1fr;gap:34px;align-items:start}}
 @media (max-width:640px){.zh-quiz{padding:20px 18px 16px}.zq-chips{max-height:190px}}
-.zcalc{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;margin:18px 0 6px;padding:26px 28px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 24px 80px rgba(0,229,255,.10),0 0 0 1px rgba(0,229,255,.12) inset;position:relative;overflow:hidden}
+.zcalc{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;margin:18px 0 6px;padding:26px 28px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 24px 80px rgba(0,229,255,.10),0 0 0 1px rgba(0,229,255,.12) inset;position:relative;overflow:hidden}
 .zcalc::before{content:'';position:absolute;inset:-45%;background:radial-gradient(48% 58% at 18% 18%,rgba(0,229,255,.18),transparent 62%),radial-gradient(44% 52% at 82% 82%,rgba(0,229,255,.18),transparent 62%);animation:zcGlow 8s ease-in-out infinite alternate;pointer-events:none}
 @keyframes zcGlow{0%{opacity:.45;transform:translate(-3%,-2%) scale(1)}100%{opacity:1;transform:translate(3%,2%) scale(1.06)}}
 .zcalc>*{position:relative;z-index:1}
-.zc-scenes{display:flex;gap:8px;margin-top:10px}
+.zc-scenes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .zc-scene{padding:8px 16px;border-radius:999px;border:1px solid rgba(0,229,255,.32);background:rgba(0,229,255,.14);color:var(--cyan,#00E5FF);font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s}
 .zc-scene.on{background:#00E5FF;color:#fff;border-color:#00E5FF}
 .zc-f{margin-top:22px}
@@ -177,7 +177,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 .zc-line b{color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
 .zc-line.dim{color:rgba(233,239,246,.55)}
 .zc-sav{margin-top:14px;color:#8fc2ff;font-size:14px}
-@media (max-width:860px){.zcalc{grid-template-columns:1fr;padding:20px}.zc-right{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}.zc-big{font-size:44px}}
+@media (max-width:860px){.zcalc{grid-template-columns:minmax(0,1fr);padding:20px}.zc-right{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}.zc-big{font-size:44px}}
 .fresh .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:7px;vertical-align:1px;animation:zhDot 1.7s ease-in-out infinite}
 @keyframes zhDot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.45)}50%{opacity:.55;box-shadow:0 0 0 5px rgba(34,197,94,0)}}
 .faq-d{border-bottom:1px solid var(--line);padding:2px 0}
