@@ -1,97 +1,37 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import { PRICES_ON } from '../../lib/prices';
-import PlugIcon from '../../components/PlugIcon.astro';
-import light from '../../data/models_light.json';
-import conf from '../../data/razemy_conf.json';
-
-const models = (light as any).models as any[];
-const cnt = (g: string) => models.filter((m: any) => m.port === g).length;
-const tiles = [
-  { c: conf[0], n: cnt('EU'), sub: 'AC · 7–22 кВт' },
-  { c: conf[1], n: cnt('EU'), sub: 'DC · до 150–350 кВт' },
-  { c: conf[2], n: cnt('GB/T'), sub: 'AC 7 кВт + DC 60–120 кВт' },
-  { c: conf[3], n: cnt('JP/CHAdeMO'), sub: 'DC · обычно до 50 кВт' },
-  { c: conf[4], n: cnt('Type1/CCS1'), sub: 'AC · до 7,4 кВт' },
-  { c: conf[5], n: null, sub: '2,3–3,7 кВт' },
-  { c: conf[6], n: null, sub: 'AC+DC · только с адаптером' },
-];
-const NAMES: Record<string, string> = { type2: 'Type 2 (Mennekes)', ccs2: 'CCS2 (Combo 2)', gbt: 'GB/T (китайский)', chademo: 'CHAdeMO', type1: 'Type 1 (J1772)', schuko: 'Розетка 220 В (Schuko)', nacs: 'NACS (Tesla)' };
-const plural = (n: number) => (n === 1 ? '1 модель в каталоге' : n >= 2 && n <= 4 ? n + ' модели в каталоге' : n + ' моделей в каталоге');
-const faq = [
-  ['Какой разъём у моей машины?', 'Самый надёжный способ — открыть лючок зарядки: 7 круглых контактов и подпись GB/T — китайский стандарт, Type 2 — 7 контактов с плоским гнездом, CCS2 — Type 2 плюс два крупных контакта снизу. Быстрый способ — выбрать модель в матрице совместимости или каталоге.'],
-  ['Кабель или розетка — в чём разница?', 'Станция с витым кабелем заряжает вашу машину «из коробки». Станция-розетка (Type 2 socket или GB/T-розетка) требует своего кабеля. На карте ЗУ и в матрице мы различаем оба варианта.'],
-  ['Адаптер обязательно покупать?', 'Только если разъём станции не совпадает с портом машины. Владельцам GB/T-машин в России базовый набор — адаптер Type 2 → GB/T' + (PRICES_ON ? ' (4–9 тыс. ₽)' : '') + '; без него в городе зарядиться сложнее.'],
-];
-const ld = [
-  { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Разъёмы зарядки электромобилей: Type 2, CCS2, GB/T, CHAdeMO', description: 'Справочник разъёмов зарядки EV в России: какой порт у вашей машины, чем отличается кабель от розетки на станции и какой адаптер нужен.' },
-  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f[0], acceptedAnswer: { '@type': 'Answer', text: f[1] } })) },
-];
 ---
-<ZhLayout title="Разъёмы зарядки электромобилей: Type 2, CCS2, GB/T, CHAdeMO — Запас хода" description="Справочник разъёмов зарядки EV в России: какой порт у вашей машины, чем отличается кабель от розетки на станции и какой адаптер нужен." jsonld={ld}>
-  <section class="sec">
-    <div class="wrap" style="max-width:980px">
-      <div class="crumbs"><a href="/">Главная</a> / Разъёмы зарядки</div>
-      <div class="badge">Справочник</div>
-      <h1>Разъёмы зарядки электромобилей</h1>
-      <p class="lead">Разъём зарядки — это «вилка», через которую станция передаёт энергию в машину. В России встречаются шесть типов: Type 2, CCS2, GB/T (AC и DC), CHAdeMO, Type 1 и обычная розетка 220 В. Ниже — каждый из них: что это, кому подходит и что докупить.</p>
-
-      <div class="rz-grid">
-        {tiles.map((t) => (
-          <a class="card rz-tile" href={'/razemy/' + t.c.slug + '/'}>
-            <div class="rz-top"><PlugIcon name={t.c.icon} size={48} label={t.c.title} /><span class="rz-kind">{t.c.kindtext.split('—')[0].trim()}</span></div>
-            <h3>{NAMES[t.c.slug] || t.c.slug}</h3>
-            <p class="rz-sub">{t.sub}</p>
-            <p class="rz-n">{t.n === null ? 'Домашний вариант' : plural(t.n)}</p>
-            <span class="rz-go">Открыть →</span>
-          </a>
-        ))}
-      </div>
-
-      <div class="card" style="margin-top:34px">
-        <h3>Кабель или розетка — почему это важно</h3>
-        <p style="margin:6px 0 12px">Один и тот же стандарт на станции выглядит по-разному. Если на станции витой кабель — заряжаетесь сразу. Если только розетка — нужен свой кабель. У нас это различено в матрице и на карте:</p>
-        <div class="rz-vs">
-          <div><PlugIcon name="type2" size={44} label="Type 2 с кабелем" /><b>Type 2 с кабелем</b><span>заряжаетесь сразу, кабель на станции</span></div>
-          <div><PlugIcon name="socket" size={44} label="Type 2 розетка" /><b>Type 2 розетка</b><span>нужен свой кабель Type 2</span></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:26px; display:flex; gap:14px; align-items:center; flex-wrap:wrap">
-        <div style="flex:1; min-width:240px">
-          <h3 style="margin:0 0 6px">Скачайте таблицу разъёмов (PDF)</h3>
-          <p style="margin:0; color:var(--txt-muted)">151 модель · 82 бренда · GB/T, Type 2/CCS2, Type 1/CCS1, CHAdeMO. Возьмите с собой — пригодится на рынке подержанных машин.</p>
-        </div>
-        <a class="btn btn-gold" style="white-space:nowrap" href="/assets/guide/tablica-razyomov-151-modeley.pdf" download>Скачать PDF</a>
-      </div>
-
-      <div class="card" style="margin-top:26px">
-        <h3>Как узнать, какой разъём у вашей машины</h3>
-        <p style="margin:6px 0 10px">Откройте лючок зарядки: 7 круглых контактов и подпись GB/T — китайский стандарт; Type 2 — 7 контактов с плоским гнездом; CCS2 — Type 2 плюс два крупных контакта снизу. Ещё быстрее: выберите модель в <a href="/matrix/">матрице совместимости</a> или <a href="/models/">каталоге</a> — покажем разъём, время зарядки и адаптеры.</p>
-      </div>
-
-      <h2 style="margin-top:40px">Частые вопросы</h2>
-      <div class="rz-faq">
-        {faq.map((f) => (<details><summary>{f[0]}</summary><div class="rz-a"><p>{f[1]}</p></div></details>))}
-      </div>
+<ZhLayout title="Тематика: мастер-аккаунт, SIM/eSIM и зарядка китайских EV" description="Почему китайский электромобиль в РФ теряет часть функций без мастер-аккаунта и интернета: предпрогрев батареи, удалённая зарядка, eSIM. Что делать владельцу.">
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / Тематика</div>
+    <div class="badge">Раздел</div>
+    <h1>Тематика: телематика китайских EV в России</h1>
+    <p class="lead">Мастер-аккаунт (МА), SIM/eSIM и интернет в машине — вторая по значимости тема после разъёмов. Без неё китайский электромобиль в России живёт «усечённой» жизнью.</p>
+    <div class="cards">
+      <div class="card"><h3>Что такое мастер-аккаунт (МА)</h3><p>У китайских EV (Zeekr, Li Auto, Avatr, Voyah и других) телематика завязана на учётную запись первого владельца в китайской экосистеме. Без привязки машины к «мастер-аккаунту» часть функций недоступна: приложение не видит машину, нет удалённого управления.</p></div>
+      <div class="card"><h3>Что ломается без интернета в машине</h3><p>Главное — <b>предпрогрев батареи перед зарядкой</b> из приложения: в мороз без него быстрая зарядка идёт заметно медленнее и мощнее режется. Также не работают удалённый запуск климата, статус зарядки в приложении и часть обновлений ПО.</p></div>
+      <div class="card"><h3>SIM/eSIM в машине</h3><p>Встроенные SIM-карты китайских операторов в РФ не работают. Владельцы решают это по-разному: переносом на российскую eSIM (если платформа позволяет), физической заменой SIM-модуля или отдельным роутером с российской SIM. Конкретную схему для вашей модели уточняйте у дилера и на форуме — решение зависит от поколения телематики.</p></div>
     </div>
-  </section>
-  <style is:global>
-    .rz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:26px}
-    .rz-tile{display:flex;flex-direction:column;padding:20px;text-decoration:none;color:var(--txt)}
-    .rz-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-    .rz-kind{font-size:12px;color:var(--txt-muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
-    .rz-tile h3{margin:0 0 4px;font-size:17px;color:var(--head)}
-    .rz-sub{margin:0;font-size:13.5px;color:var(--txt-muted)}
-    .rz-n{margin:6px 0 0;font-size:13px;color:var(--txt-muted)}
-    .rz-go{margin-top:auto;padding-top:12px;font-size:13px;color:#5aa9ff}
-    .rz-vs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-    .rz-vs>div{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:14px;padding:16px}
-    .rz-vs span{font-size:13.5px;color:var(--txt-muted)}
-    .rz-faq{margin-top:14px}
-    .rz-faq details{border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:10px 0;background:var(--card)}
-    .rz-faq summary{font-weight:700;cursor:pointer;font-size:15.5px}
-    .rz-faq .rz-a{margin-top:8px;font-size:14.5px;line-height:1.55}
-    .rz-faq a,.card a{color:#5aa9ff}
-  </style>
+    <div class="card" style="margin-top:20px">
+      <h3>Что делать: чек-лист владельца</h3>
+      <p style="font-size:14.5px;line-height:1.65">1. Проверьте статус МА у дилера <b>до</b> покупки и отметьте в договоре.<br>2. Проверьте, работает ли приложение с российской SIM — до первого сильного мороза.<br>3. Найдите владельцев вашей модели на форуме — телематика сильно отличается между партиями.<br>4. План Б на зиму: ручной прогрев в пути 15–20 минут до быстрой станции — приложение не критично, если продумать маршрут.</p>
+    </div>
+    <div class="cards" style="margin-top:30px">
+      <div style="width:100%"><h2 style="font-size:clamp(22px,3.4vw,30px);margin:0 0 4px">Разборы по маркам</h2><p style="margin:0;color:var(--txt-muted);font-size:14.5px">Что работает из коробки, что чинится сервисом, а что не работает в принципе — шесть кейсов с ценами и чек-листами.</p></div>
+      <a class="card" href="/blog/voyah-app-telematics/" style="text-decoration:none"><h3>Voyah</h3><p>Официальное приложение на русском и подключение через дилера (70–75 тыс. ₽). Плюс независимая JustVoyah для серых машин — от 900 ₽/мес.</p></a>
+      <a class="card" href="/blog/avatr-app-telematics/" style="text-decoration:none"><h3>Avatr</h3><p>Единственная марка с официальной телематикой в РФ с февраля 2025: SIM с завода, мастер-аккаунт от дилера, серверы в России.</p></a>
+      <a class="card" href="/blog/zeekr-master-account/" style="text-decoration:none"><h3>Zeekr</h3><p>Региональная блокировка машин после 15.07.2024, три пути восстановления: Family Account, полный МА через eSender, вписанная российская SIM. Цены сервисов — от 100 тыс. ₽.</p></a>
+      <a class="card" href="/blog/li-auto-master-account/" style="text-decoration:none"><h3>Li Auto</h3><p>Мастер-аккаунт на свой номер через eSender за вечер. Полный обзор функций приложения и решения частых глюков.</p></a>
+      <a class="card" href="/blog/byd-master-account/" style="text-decoration:none"><h3>BYD</h3><p>Самый хардкорный кейс: МА только на свежих прошивках, фильтр по IP весной 2026, eSIM-адаптер с гонконгским тарифом как рабочее решение.</p></a>
+      <a class="card" href="/blog/dongfeng-box-telematics/" style="text-decoration:none"><h3>Dongfeng Box</h3><p>Официального приложения нет и не будет: ADB-русификация от сообщества, инженерное меню и что стоит знать до покупки.</p></a>
+    <a class="card" href="/blog/xiaomi-su7-telematics/" style="text-decoration:none"><h3>Xiaomi SU7</h3><p>Самый закрытый кейс: МА требует китайского гражданина. Рабочая схема — «телефон-компаньон» с Family Account. Что работает без аккаунта.</p></a>
+      <a class="card" href="/blog/xpeng-app-telematics/" style="text-decoration:none"><h3>XPeng</h3><p>С 2026 года — официально: Яндекс Карты, Алиса, приложение и гарантия 8 лет. Для серых машин — китайский аккаунт и сервисная русификация.</p></a>
+      <a class="card" href="/blog/deepal-telematics/" style="text-decoration:none"><h3>Deepal</h3><p>Официальные продажи через Changan, русифицированная Sunflower — но телематика и голосовой ассистент пока слабые места.</p></a>
+    <a class="card" href="/blog/nio-app-telematics/" style="text-decoration:none"><h3>NIO</h3><p>Продвинутая экосистема в Китае, но в РФ swap-станций нет, а часть облачных функций держится на обходных схемах. Что реально работает.</p></a>
+      <a class="card" href="/blog/denza-app-telematics/" style="text-decoration:none"><h3>Denza</h3><p>Экосистема BYD: BT/NFC активируются только в китайских сетях 5G — до вывоза машины. Плюс категория прав и налог на 503 л.с.</p></a>
+    <a class="card" href="/blog/aito-app-telematics/" style="text-decoration:none"><h3>AITO</h3><p>HarmonyOS от Huawei — лучший медиацентр, но телематика: МА через китайский номер, а «приложение дистрибьютора» на практике — Pandora.</p></a>
+      <a class="card" href="/blog/leapmotor-app-telematics/" style="text-decoration:none"><h3>Leapmotor</h3><p>Глобальное приложение с европейской регистрацией: цифровой ключ, OTA, временные ключи. Регион прошивки решает всё.</p></a>
+    </div>
+<p style="margin-top:22px;color:var(--txt-muted)">Следующие разборы — по мере набора фактуры: IM Motors, Onvo, Fangchengbao. Следите за обновлениями в <a href="/news/" style="color:#00E5FF">новостях</a>.</p>
+  </div></section>
 </ZhLayout>

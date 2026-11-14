@@ -1,203 +1,37 @@
 ---
-import ZhLayout from '../../../layouts/ZhLayout.astro';
-import LegacyStyles from '../../../components/LegacyStyles.astro';
-import src from '../../../data/legacy/tools.json';
-const d = src.find((x) => x.slug === 'calculator');
-const H = d.body_html;
-// хвост legacy-статьи: «Как считается» + FAQ + ссылки. Старый тяжёлый калькулятор (lcard) и блок «Цена простоя» заменены простым шаговым режимом.
-const iHow = H.indexOf('<h2>Как считается</h2>');
-const iFaq = H.indexOf('<h2>Частые вопросы</h2>');
-const iDt = H.indexOf('<div class="gbox" id="dt-calc"');
-const segHow = iHow >= 0 && iFaq > iHow ? H.slice(iHow, iFaq) : '';
-const segFaq = iFaq >= 0 && iDt > iFaq ? H.slice(iFaq, iDt) : '';
-const iLd = H.indexOf('<script type="application/ld+json"');
-const segLd = iLd >= 0 ? H.slice(iLd) : '';
-const iFaqBox = H.indexOf('<div class="calc-faq"');
-const segFaqBox = iFaqBox >= 0 ? H.slice(iFaqBox, iLd >= 0 ? iLd : H.length) : '';
+import ZhLayout from '../../layouts/ZhLayout.astro';
 ---
-
-<ZhLayout title="Сколько стоит зарядить электромобиль — калькулятор «Запас хода»" description="Простой калькулятор стоимости зарядки: выберите машину, пробег и где заряжаетесь — покажем цену за 100 км, за месяц и экономию против бензина. Три нажатия кнопок, без ввода цифр." canonical="/cost/">
+<ZhLayout title="Тематика: мастер-аккаунт, SIM/eSIM и зарядка китайских EV" description="Почему китайский электромобиль в РФ теряет часть функций без мастер-аккаунта и интернета: предпрогрев батареи, удалённая зарядка, eSIM. Что делать владельцу.">
   <section class="sec"><div class="wrap">
-    <LegacyStyles />
-    <div class="crumbs"><a href="/">Главная</a> / <a href="/calculators/">Калькуляторы</a> / Стоимость зарядки</div>
-
-    <style is:global>
-      .wz{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:26px 0}
-      .wz-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-      .wz-bar .dot{width:10px;height:10px;border-radius:99px;background:var(--line)}
-      .wz-bar .dot.on{background:#0161EF;width:26px}
-      .wz-q{font-weight:800;font-size:21px;margin:0 0 6px}
-      .wz-hint{color:var(--txt-muted);font-size:14px;margin:0 0 16px}
-      .wz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-      .wz-btn{border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;user-select:none;transition:all .15s;font-family:inherit;padding:8px}
-      .wz-btn .t{font-size:16px;font-weight:700}
-      .wz-btn .h{font-size:12px;font-weight:500;color:var(--txt-muted)}
-      .wz-btn.on{border-color:#0161EF;background:rgba(1,97,239,.08);color:#0161EF}
-      .wz-btn:hover{border-color:#0161EF}
-      .wz-back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:none;border:none;color:var(--txt-muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:10px 0;min-height:44px}
-      .wz-res{text-align:center;padding-top:6px}
-      .wz-big{font-size:clamp(44px,9vw,64px);font-weight:800;font-variant-numeric:tabular-nums;color:#0161EF;line-height:1.05}
-      .wz-big small{font-size:16px;font-weight:700;color:var(--txt-muted);display:block;margin-top:4px}
-      .wz-mid{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:14px}
-      .wz-mid small{font-size:14px;color:var(--txt-muted);font-weight:600}
-      .wz-delta{margin-top:14px;padding:14px;border-radius:14px;font-weight:700;font-size:16px}
-      .wz-delta.good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.5);color:#15803d}
-      .wz-delta.bad{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);color:#b91c1c}
-      .wz-cta{display:block;margin-top:18px;background:#0161EF;color:#fff;font-weight:800;border-radius:14px;padding:16px;min-height:56px;text-decoration:none;font-size:17px}
-      .wz-restart{display:inline-block;margin-top:12px;color:#0161EF;font-weight:700;font-size:14.5px;text-decoration:none;min-height:44px;padding:10px}
-      details.wz-note{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
-      details.wz-note summary{color:var(--txt-muted);font-size:13px;cursor:pointer}
-      details.wz-note p{color:var(--txt-muted);font-size:13px;line-height:1.55;margin:10px 0 0}
-      details.pro{margin-top:26px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
-      details.pro summary{font-weight:700;cursor:pointer;font-size:15.5px;color:var(--txt)}
-      details.pro summary .hint{color:var(--txt-muted);font-weight:400;font-size:13px;margin-left:8px}
-      .pro .p-row{margin:12px 0}
-      .pro .p-row label{display:block;font-size:13px;font-weight:600;color:var(--txt-muted);margin-bottom:4px}
-      .pro .p-row input{width:100%;box-sizing:border-box;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 14px;font-size:16px;min-height:44px}
-      .pro .p-out{font-size:26px;font-weight:800;color:#0161EF;font-variant-numeric:tabular-nums;margin-top:10px}
-    </style>
-
-    <h1>Сколько стоит зарядить электромобиль: калькулятор</h1>
-    <p class="lede">Три вопроса — и вы увидите цену. Цифры набирать не нужно, только нажимать большие кнопки.</p>
-
-    <div class="wz" id="wzc">
-      <div class="wz-bar"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
-      <div id="wzc-s1">
-        <div class="wz-q">Ваша машина?</div>
-        <div class="wz-hint">Выберите марку — дальше сами посчитаем</div>
-        <div class="wz-grid" id="wzc-m1"></div>
-      </div>
-      <div id="wzc-s2" hidden>
-        <div class="wz-q">Сколько ездите за месяц?</div>
-        <div class="wz-hint">Не знаете — берите «Обычно»</div>
-        <div class="wz-grid" id="wzc-m2"></div>
-        <button class="wz-back" type="button" data-back="1">← Назад</button>
-      </div>
-      <div id="wzc-s3" hidden>
-        <div class="wz-q">Где заряжаете?</div>
-        <div class="wz-hint">Не знаете — берите «По-разному»</div>
-        <div class="wz-grid" id="wzc-m3"></div>
-        <button class="wz-back" type="button" data-back="2">← Назад</button>
-      </div>
-      <div id="wzc-s4" hidden>
-        <div class="wz-res">
-          <div class="wz-big" id="wzc-r1">120 ₽</div>
-          <div class="wz-mid">за 100 км пути</div>
-          <div class="wz-mid"><span id="wzc-r2">1 440 ₽</span> <small>в месяц</small></div>
-          <div class="wz-delta good" id="wzc-r3">—</div>
-          <div class="wz-mid" style="font-size:17px;font-weight:700">Полная зарядка дома: <span id="wzc-r4" style="font-variant-numeric:tabular-nums">210 ₽</span></div>
-          <a class="wz-cta" href="/quiz/" onclick="window.ym&&ym('113935123','reachGoal','cost_wizard_cta')">Подобрать зарядку под себя →</a>
-          <a class="wz-cta" href="/catalog/stanciya-2v1-type2-gbt.html" style="margin-top:10px;background:linear-gradient(135deg,#4d9bf5,#0161ef)" onclick="window.ym&&ym('113935123','reachGoal','cost_install_cta')">Рассчитать установку домашней станции под ключ в моём городе →</a>
-          <a class="wz-restart" href="#" id="wzc-restart">← Начать заново</a>
-          <details class="wz-note"><summary>Откуда эти цифры?</summary>
-            <p>Считаем честно по формуле: расход машины (кВт·ч на 100 км) × цена кВт·ч там, где вы заряжаетесь × ваш пробег. Дома ночью — 3,5 ₽/кВт·ч, днём — 7,5 ₽, городская станция — 15 ₽, быстрая на трассе — 24 ₽, «по-разному» — средняя ~11 ₽. Бензин для сравнения: 8 л × 65 ₽ на 100 км. Ёмкости и расход — типовые по марке; зимой расход выше на 10–25%. Точные цифры вашей машины — на странице модели, точный тариф — в приложении оператора.</p>
-          </details>
-        </div>
-        <button class="wz-back" type="button" data-back="3">← Назад</button>
-      </div>
+    <div class="crumbs"><a href="/">Главная</a> / Тематика</div>
+    <div class="badge">Раздел</div>
+    <h1>Тематика: телематика китайских EV в России</h1>
+    <p class="lead">Мастер-аккаунт (МА), SIM/eSIM и интернет в машине — вторая по значимости тема после разъёмов. Без неё китайский электромобиль в России живёт «усечённой» жизнью.</p>
+    <div class="cards">
+      <div class="card"><h3>Что такое мастер-аккаунт (МА)</h3><p>У китайских EV (Zeekr, Li Auto, Avatr, Voyah и других) телематика завязана на учётную запись первого владельца в китайской экосистеме. Без привязки машины к «мастер-аккаунту» часть функций недоступна: приложение не видит машину, нет удалённого управления.</p></div>
+      <div class="card"><h3>Что ломается без интернета в машине</h3><p>Главное — <b>предпрогрев батареи перед зарядкой</b> из приложения: в мороз без него быстрая зарядка идёт заметно медленнее и мощнее режется. Также не работают удалённый запуск климата, статус зарядки в приложении и часть обновлений ПО.</p></div>
+      <div class="card"><h3>SIM/eSIM в машине</h3><p>Встроенные SIM-карты китайских операторов в РФ не работают. Владельцы решают это по-разному: переносом на российскую eSIM (если платформа позволяет), физической заменой SIM-модуля или отдельным роутером с российской SIM. Конкретную схему для вашей модели уточняйте у дилера и на форуме — решение зависит от поколения телематики.</p></div>
     </div>
-
-    <details class="pro" id="pro-exact">
-      <summary>Считать точнее, по своим цифрам <span class="hint">для тех, кто хочет свою цену кВт·ч и свой расход</span></summary>
-      <div class="p-row"><label>Расход машины, кВт·ч на 100 км</label><input id="pe-cons" type="number" min="5" max="40" step="0.5" value="16"></div>
-      <div class="p-row"><label>Пробег в месяц, км</label><input id="pe-km" type="number" min="50" max="30000" step="50" value="1200"></div>
-      <div class="p-row"><label>Цена кВт·ч, ₽</label><input id="pe-rate" type="number" min="0.5" max="60" step="0.5" value="3.5"></div>
-      <div class="p-out" id="pe-out">—</div>
-      <p style="font-size:13px;color:var(--txt-muted)">Формула та же: расход × цена × пробег. Тариф и расход — в характеристиках машины и в приложении оператора.</p>
-    </details>
-
-    <div class="article" set:html={segHow + segFaq} />
-    <Fragment set:html={segFaqBox} />
-
-    <Fragment set:html={segLd} />
-
-    <script is:inline>
-    (function(){
-      function el(id){return document.getElementById(id)}
-      function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
-      // ——— ШАГИ 1–3 ———
-      var M=[
-        {n:'Zeekr',cap:100,cons:16},
-        {n:'Li Auto',cap:43,cons:20},
-        {n:'BYD',cap:70,cons:15},
-        {n:'Voyah',cap:88,cons:18},
-        {n:'Avatr',cap:116,cons:17},
-        {n:'Tesla',cap:60,cons:14},
-        {n:'Другая машина',cap:60,cons:16}
-      ];
-      var KM=[
-        {n:'Мало',h:'до 500 км в месяц',v:400},
-        {n:'Обычно',h:'около 1 200 км в месяц',v:1200},
-        {n:'Много',h:'около 2 500 км в месяц',v:2500},
-        {n:'Очень много',h:'около 5 000 км в месяц',v:5000}
-      ];
-      var SC=[
-        {n:'Дома',h:'ночью из розетки',v:3.5},
-        {n:'Город',h:'станции рядом с домом',v:15},
-        {n:'Трасса',h:'быстрые станции',v:24},
-        {n:'По-разному',h:'и дома, и в городе, и на трассе',v:11}
-      ];
-      var FUEL_PER100=8*65;
-      var st={m:6,km:1,sc:3};
-      function dots(n){
-        var ds=el('wzc').querySelectorAll('.dot');
-        Array.prototype.forEach.call(ds,function(d,i){d.classList.toggle('on',i<n)});
-      }
-      function show(step){
-        [1,2,3,4].forEach(function(i){el('wzc-s'+i).hidden=(i!==step)});
-        dots(step);
-      }
-      function make(boxId,list,key){
-        var box=el(boxId);box.innerHTML='';
-        list.forEach(function(o){
-          var b=document.createElement('button');b.type='button';b.className='wz-btn';
-          b.innerHTML='<span class="t">'+o.n+'</span>'+(o.h?'<span class="h">'+o.h+'</span>':'');
-          b.addEventListener('click',function(){
-            st[key]=list.indexOf(o);
-            if(key==='m'){show(2)}
-            else if(key==='km'){show(3)}
-            else{res();show(4)}
-          });
-          box.appendChild(b);
-        });
-      }
-      function res(){
-        var m=M[st.m],k=KM[st.km],s=SC[st.sc];
-        var per100=m.cons*s.v;
-        el('wzc-r1').textContent='~'+fmt(per100)+' ₽';
-        var month=per100*k.v/100;
-        el('wzc-r2').textContent='~'+fmt(month)+' ₽';
-        el('wzc-r4').textContent='~'+fmt(m.cap*s.v)+' ₽';
-        var gas=FUEL_PER100*k.v/100;
-        var diff=gas-month;
-        var dv=el('wzc-r3');
-        if(diff>0){
-          dv.className='wz-delta good';
-          dv.textContent='Бензин на те же километры: ~'+fmt(gas)+' ₽ в месяц. Вы экономите ~'+fmt(diff)+' ₽ в месяц ('+fmt(diff*12)+' ₽ за год)';
-        }else{
-          dv.className='wz-delta bad';
-          dv.textContent='Если заряжаться только на трассе — выходит как бензин. Зарядка дома возвращает преимущество.';
-        }
-      }
-      make('wzc-m1',M,'m');
-      make('wzc-m2',KM,'km');
-      make('wzc-m3',SC,'sc');
-      Array.prototype.forEach.call(el('wzc').querySelectorAll('.wz-back'),function(b){
-        b.addEventListener('click',function(){show(parseInt(b.getAttribute('data-back'),10))});
-      });
-      el('wzc-restart').addEventListener('click',function(ev){ev.preventDefault();show(1)});
-      show(1);
-
-      // ——— ТОЧНЫЙ РАСЧЁТ ———
-      var pc=el('pe-cons'),pk=el('pe-km'),pr=el('pe-rate'),po=el('pe-out');
-      function pcalc(){
-        var a=parseFloat(pc.value),b=parseFloat(pk.value),c=parseFloat(pr.value);
-        if(a>0&&b>0&&c>0){po.textContent='~'+fmt(a*c*b/100)+' ₽ в месяц';}
-        else{po.textContent='—'}
-      }
-      [pc,pk,pr].forEach(function(x){x.addEventListener('input',pcalc);x.addEventListener('change',pcalc)});
-      pcalc();
-    })();
-    </script>
+    <div class="card" style="margin-top:20px">
+      <h3>Что делать: чек-лист владельца</h3>
+      <p style="font-size:14.5px;line-height:1.65">1. Проверьте статус МА у дилера <b>до</b> покупки и отметьте в договоре.<br>2. Проверьте, работает ли приложение с российской SIM — до первого сильного мороза.<br>3. Найдите владельцев вашей модели на форуме — телематика сильно отличается между партиями.<br>4. План Б на зиму: ручной прогрев в пути 15–20 минут до быстрой станции — приложение не критично, если продумать маршрут.</p>
+    </div>
+    <div class="cards" style="margin-top:30px">
+      <div style="width:100%"><h2 style="font-size:clamp(22px,3.4vw,30px);margin:0 0 4px">Разборы по маркам</h2><p style="margin:0;color:var(--txt-muted);font-size:14.5px">Что работает из коробки, что чинится сервисом, а что не работает в принципе — шесть кейсов с ценами и чек-листами.</p></div>
+      <a class="card" href="/blog/voyah-app-telematics/" style="text-decoration:none"><h3>Voyah</h3><p>Официальное приложение на русском и подключение через дилера (70–75 тыс. ₽). Плюс независимая JustVoyah для серых машин — от 900 ₽/мес.</p></a>
+      <a class="card" href="/blog/avatr-app-telematics/" style="text-decoration:none"><h3>Avatr</h3><p>Единственная марка с официальной телематикой в РФ с февраля 2025: SIM с завода, мастер-аккаунт от дилера, серверы в России.</p></a>
+      <a class="card" href="/blog/zeekr-master-account/" style="text-decoration:none"><h3>Zeekr</h3><p>Региональная блокировка машин после 15.07.2024, три пути восстановления: Family Account, полный МА через eSender, вписанная российская SIM. Цены сервисов — от 100 тыс. ₽.</p></a>
+      <a class="card" href="/blog/li-auto-master-account/" style="text-decoration:none"><h3>Li Auto</h3><p>Мастер-аккаунт на свой номер через eSender за вечер. Полный обзор функций приложения и решения частых глюков.</p></a>
+      <a class="card" href="/blog/byd-master-account/" style="text-decoration:none"><h3>BYD</h3><p>Самый хардкорный кейс: МА только на свежих прошивках, фильтр по IP весной 2026, eSIM-адаптер с гонконгским тарифом как рабочее решение.</p></a>
+      <a class="card" href="/blog/dongfeng-box-telematics/" style="text-decoration:none"><h3>Dongfeng Box</h3><p>Официального приложения нет и не будет: ADB-русификация от сообщества, инженерное меню и что стоит знать до покупки.</p></a>
+    <a class="card" href="/blog/xiaomi-su7-telematics/" style="text-decoration:none"><h3>Xiaomi SU7</h3><p>Самый закрытый кейс: МА требует китайского гражданина. Рабочая схема — «телефон-компаньон» с Family Account. Что работает без аккаунта.</p></a>
+      <a class="card" href="/blog/xpeng-app-telematics/" style="text-decoration:none"><h3>XPeng</h3><p>С 2026 года — официально: Яндекс Карты, Алиса, приложение и гарантия 8 лет. Для серых машин — китайский аккаунт и сервисная русификация.</p></a>
+      <a class="card" href="/blog/deepal-telematics/" style="text-decoration:none"><h3>Deepal</h3><p>Официальные продажи через Changan, русифицированная Sunflower — но телематика и голосовой ассистент пока слабые места.</p></a>
+    <a class="card" href="/blog/nio-app-telematics/" style="text-decoration:none"><h3>NIO</h3><p>Продвинутая экосистема в Китае, но в РФ swap-станций нет, а часть облачных функций держится на обходных схемах. Что реально работает.</p></a>
+      <a class="card" href="/blog/denza-app-telematics/" style="text-decoration:none"><h3>Denza</h3><p>Экосистема BYD: BT/NFC активируются только в китайских сетях 5G — до вывоза машины. Плюс категория прав и налог на 503 л.с.</p></a>
+    <a class="card" href="/blog/aito-app-telematics/" style="text-decoration:none"><h3>AITO</h3><p>HarmonyOS от Huawei — лучший медиацентр, но телематика: МА через китайский номер, а «приложение дистрибьютора» на практике — Pandora.</p></a>
+      <a class="card" href="/blog/leapmotor-app-telematics/" style="text-decoration:none"><h3>Leapmotor</h3><p>Глобальное приложение с европейской регистрацией: цифровой ключ, OTA, временные ключи. Регион прошивки решает всё.</p></a>
+    </div>
+<p style="margin-top:22px;color:var(--txt-muted)">Следующие разборы — по мере набора фактуры: IM Motors, Onvo, Fangchengbao. Следите за обновлениями в <a href="/news/" style="color:#00E5FF">новостях</a>.</p>
   </div></section>
 </ZhLayout>

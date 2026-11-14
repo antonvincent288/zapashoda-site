@@ -1,221 +1,37 @@
 ---
-import LeadCTA from '../components/LeadCTA.astro';
-import ZhLayout from '../layouts/ZhLayout.astro';
-import LegacyStyles from '../components/LegacyStyles.astro';
-const all = Object.values(import.meta.glob('../data/articles/blog/*.json', { eager: true, import: 'default' })) as any[];
-const allPain = Object.values(import.meta.glob('../data/articles/pain/*.json', { eager: true, import: 'default' })) as any[];
-import legacyBaza from '../data/legacy/baza.json';
-all.push(...allPain, ...legacyBaza);
-import fs from 'node:fs';
-let STN = 3129;
-try { const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); if (Array.isArray(rawS.stations)) STN = rawS.stations.length; } catch {}
-const MT_HOME = Object.values(import.meta.glob('../data/models/*.json', { eager: true, import: 'default' })).length;
-const BN_HOME = all.filter((a) => a && a.slug).length;
-const plh = (n, one, few, many) => { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return one; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few; return many; };
-all.sort((a, b) =>String(b.date || '').localeCompare(String(a.date || '')));
-const PINNED = ['domashnyaya-zaryadka-elektromobilya', 'kabel-dlya-zaryadki-elektromobilya'];
-const pinned = PINNED.map((s) => all.find((a) => a.slug === s)).filter(Boolean);
-const latest = [...pinned, ...all.filter((a) => !pinned.includes(a)).slice(0, 2)].slice(0, 4);
-const stats = [
-  { n: String(Object.values(import.meta.glob('../data/models/*.json', { eager: true, import: 'default' })).length), t: 'модель с разъёмами и решениями' },
-  { n: String(all.filter((a) => a && a.slug).length), t: 'материалов: статьи и разборы' },
-  { n: String(STN), t: 'станций на карте РФ' },
-];
-const pains = [
-  { ico: '', zx: 13, zy: 41, h: 'Не заряжается: первые действия', p: 'Алгоритм из 7 шагов: кабель, фильтр, BMS, станция. Что делать до звонка в сервис.', href: '/pain/ne-zaryazhaetsya/', label: 'Разбор' },
-  { ico: '', zx: 60, zy: 22, h: 'Зимняя зарядка медленнее в 1,5–2×', p: 'Почему при минусах сессия растягивается и как планировать маршрут и станции.', href: '/pain/zapas-hoda-zimoy/', label: 'Разбор' },
-  { ico: 'GB/T', zx: 24, zy: 27, h: 'Разъёмы и адаптеры', p: 'Кто конвертируется, кто нет. Проверьте свою модель в каталоге перед покупкой.', href: '/models/', label: 'Каталог' },
-];
-const faq = [
-  { q: 'У моей модели разъём GB/T — зарядиться на станции Type 2 реально?', a: 'Да, через адаптер Type 2 → GB/T. Каталог покажет вашу модель, нужный товар и сценарий. Обратная конвертация (GB/T → Type 2) — отдельным адаптером.' },
-  { q: 'Сколько реально идёт быстрая зарядка зимой?', a: 'При минусах полная сессия быстрой зарядки идёт в 1,5–2 раза дольше — планируйте запасные станции. Разбор с цифрами — в статье «Зимняя зарядка».' },
-  { q: 'Вы продаёте адаптеры или только консультируете?', a: 'Подбираем и поставляем: адаптеры, кабели, держатели. Для дилеров — партнёрский пакет на странице B2B.' },
-];
-const shortLine = (s) =>{
-  const t = String(s || '');
-  const p = t.split('. ')[0];
-  return (p.length <= 120 ? p + '.' : t.slice(0, 96).trim() + '…');
-};
-const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) =>({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
-const orgLd = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Запас хода', url: 'https://zapashoda-ev.ru', sameAs: ['https://t.me/zapashoda_ev', 'https://dzen.ru/zapashoda'],
-  contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: 'f-epshtein@yandex.ru' }], description: 'Практика зарядки электромобилей в России: подбор адаптеров и кабелей, карта станций, калькуляторы, B2B-комплекты для дилеров.' };
-const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Запас хода', url: 'https://zapashoda-ev.ru', inLanguage: 'ru-RU', description: 'Подбор зарядки и адаптеров для электромобилей в России' };
-const tools = (await import('../data/legacy/tools.json')).default;
-const calc = tools.find((x) =>x.slug === 'calculator') || {};
-const calcHtmlRaw = String(calc.body_html || '').replace(/<h1[^>]*>[\s\S]*?<\/h1>/g, '');
-let calcHtml = calcHtmlRaw;
-const hasCalc = calcHtml.indexOf('<div class="gbox" id="dt-calc"') < 0;
-{
-  const iDt = calcHtml.indexOf('<div class="gbox" id="dt-calc"');
-  if (iDt >= 0) {
-    let depth = 0, j = iDt;
-    while (j < calcHtml.length) {
-      if (calcHtml.startsWith('<div', j)) { depth++; j += 4; }
-      else if (calcHtml.startsWith('</div>', j)) { depth--; j += 6; if (!depth) break; }
-      else j++;
-    }
-    calcHtml = calcHtml.slice(0, iDt) + calcHtml.slice(j);
-  }
-  const iHow = calcHtml.indexOf('<h2>Как считается</h2>');
-  if (iHow >= 0) calcHtml = calcHtml.slice(iHow);
-  calcHtml = calcHtml.replace(/<div class="faq-q"><b>([\s\S]*?)<\/b><p>([\s\S]*?)<\/p><\/div>/g, '<details class="faq-d"><summary>$1</summary><div class="faq-a">$2</div></details>');
-}
-const calcScript = String(calc.body_script || '');
-const mlData = Object.values(import.meta.glob('../data/models_light.json', { eager: true, import: 'default' }))[0] || {};
-const POP_SLUGS = ['zeekr-001-001-fr','li-auto-l6-l7-l8-l9-2022-2025','byd-han-ev-song-l','aito-m5-m7','voyah-free-evr-gibrid','byd-seal','xpeng-g9-g6','tesla-model-3-y-eu'];
-const POP = (mlData.models || []).filter((x) => POP_SLUGS.includes(String(x.slug))).slice(0, 8);
-const ALL = (mlData.models || []).filter((m) => m.slug);
-const BRANDS = Array.from(new Set(ALL.map((m) => String(m.brand || '—')))).sort();
-const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Nissan'].filter((b) => BRANDS.includes(b));
+import ZhLayout from '../../layouts/ZhLayout.astro';
 ---
-<ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description={`Подберите зарядку и адаптеры для вашей модели в 3 шага. ${MT_HOME} ${plh(MT_HOME, 'модель', 'модели', 'моделей')}, ${BN_HOME} материалов, карта ${Math.floor(STN / 100) * 100}+ станций.`} jsonld={orgLd}><div class="hero zh-hero-big"><div class="wrap"><div class="zq-left"><div class="badge">Справочник по электромобилям</div><h1>Если тоже намучился <span>с этими зарядками&hellip;</span></h1><p>Мы упахались, собирая этот сайт, но нашли разъёмы, мощность борта, зимний сценарий и стоимость зарядки — по вашей марке и году.</p></div><div class="zh-quiz" aria-label="Подбор комплекта за 30 секунд"><div class="zq-title">Всё о твоей машине</div><div class="zq-sub">Марка → модель → болячки и решения</div><div class="zq-field"><span class="zq-label">Марка</span><span class="zq-selwrap"><select id="zq-brand-sel" class="zq-select"><option value="">Выберите марку</option><optgroup label="Популярные">{POP_BRANDS.map((b) =>(<option value={b}>{b}</option>))}</optgroup><optgroup label="Все марки">{BRANDS.filter((b) => !POP_BRANDS.includes(b)).map((b) =>(<option value={b}>{b}</option>))}</optgroup></select></span></div><div class="zq-field" id="zq-model-wrap" style="display:none"><span class="zq-label">Модель</span><span class="zq-selwrap"><select id="zq-model-sel" class="zq-select"><option value="">Выберите модель</option></select></span></div><div id="zq-result" style="display:none"><div id="zq-out"></div><a id="zq-model-btn" class="btn btn-gold" style="text-decoration:none;display:inline-block;margin-top:14px" href="/models/">Карточка модели</a><button class="zq-back" type="button">← заново</button></div></div><script define:vars={{ ALL }}>(function(){var M=(ALL||[]).filter(function(m){return m&&m.slug;});var bSel=document.getElementById('zq-brand-sel'),mSel=document.getElementById('zq-model-sel');var mWrap=document.getElementById('zq-model-wrap'),res=document.getElementById('zq-result');bSel.addEventListener('change',function(){var v=bSel.value;if(!v){mWrap.style.display='none';mSel.innerHTML='';return;}mSel.innerHTML='<option value="">Выберите модель</option>';M.filter(function(m){return m.brand===v;}).forEach(function(m){var o=document.createElement('option');o.value=m.slug;o.textContent=m.name||m.slug;mSel.appendChild(o);});mWrap.style.display='';res.style.display='none';});mSel.addEventListener('change',function(){var slug=mSel.value;var m=null;for(var i=0;i<M.length;i++)if(M[i].slug===slug){m=M[i];break;}if(m)showResult(m);});function plugSlug(p){p=String(p||'');return p.indexOf('GB/T')>=0?'gbt':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));}function plugImg(p){p=String(p||'');var k=p.indexOf('GB/T')>=0?'gbt-dc':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));return '<img src="/assets/img/plugs/zsh-'+k+'.svg" width="18" height="18" alt="" style="vertical-align:-4px;margin-right:4px">';}function showResult(m){var port=String(m.port||'');var adapters=[];if(/GB\/T/i.test(port))adapters.push('Адаптер Type 2 → GB/T (AC, 22 кВт) — ваш основной переходник');if(/CCS/i.test(port))adapters.push('Прямое подключение CCS2 на быстрых станциях');if(!adapters.length)adapters.push('Прямое подключение Type 2 — переходник не нужен');document.getElementById('zq-out').innerHTML='<b>'+(m.name||'')+'</b>'+(m.years?'<div class="zq-y">'+m.years+'</div>':'')+'<div class="zq-ports"><b>Разъёмы:</b> '+(port?plugImg(port)+' '+port+' <a href="/razemy/'+plugSlug(port)+'/" style="color:var(--cyan,#00E5FF);font-size:13.5px;text-decoration:none">что за разъём →</a>':'—')+'</div>'+'<div style="margin-top:10px"><b>Что понадобится:</b><ul>'+adapters.map(function(a){return '<li>'+a+'</li>';}).join('')+'</ul></div>';document.getElementById('zq-model-btn').href='/models/'+m.slug+'/';document.getElementById('zq-model-btn').style.display='inline-block';res.style.display='';}Array.prototype.forEach.call(document.querySelectorAll('.zq-back'),function(btn){btn.addEventListener('click',function(){res.style.display='none';mWrap.style.display='none';mSel.innerHTML='';bSel.value='';});});})();</script><script is:inline>(function(){function boot(){var s=document.querySelector(".zh-strip"),t=document.querySelector(".zh-strip-track");if(!s||!t)return;var x=0,paused=false,dragging=false,half=t.getBoundingClientRect().width/2,last=null,lastX=0,startX=0;function apply(){t.style.transform="translateX("+x+"px)";}window.addEventListener("resize",function(){half=t.getBoundingClientRect().width/2;});function step(ts){if(last==null)last=ts;var dt=Math.min(ts-last,64);last=ts;if(!paused&&!dragging){x-=dt*0.045;if(-x>=half)x=0;apply();}requestAnimationFrame(step);}requestAnimationFrame(step);s.addEventListener("mouseenter",function(){paused=true;});s.addEventListener("mouseleave",function(){paused=false;});s.addEventListener("pointerdown",function(e){dragging=true;lastX=e.clientX;startX=x;paused=true;try{s.setPointerCapture(e.pointerId);}catch(_){}});s.addEventListener("pointermove",function(e){if(!dragging)return;x=startX+(e.clientX-lastX);if(x>0)x=0;if(-x>=half)x=0;apply();});["pointerup","pointercancel","touchend","touchcancel"].forEach(function(ev){s.addEventListener(ev,function(){dragging=false;setTimeout(function(){paused=false;},700);});});s.addEventListener("wheel",function(e){if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();x+=e.deltaY;if(x>0)x=0;if(-x>=half)x=0;apply();paused=true;clearTimeout(s._t);s._t=setTimeout(function(){paused=false;},900);}},{passive:false});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();})();</script></div><div class="zh-strip" aria-label={`Все ${MT_HOME} ${plh(MT_HOME, 'модель', 'модели', 'моделей')} — переход в каталог`}><div class="zh-strip-track">{ALL.filter((m)=>m.slug).map((m)=>(<a class="zh-strip-item" href={`/models/${m.slug}/`}>{m.name}</a>))}{ALL.filter((m)=>m.slug).map((m)=>(<a class="zh-strip-item" aria-hidden="true" tabindex="-1" href={`/models/${m.slug}/`}>{m.name}</a>))}</div></div>
-        </div><section class="sec" style="padding-top:32px;padding-bottom:32px"><div class="wrap"><div class="zh-stats stats">{stats.map((s) =>(<div><b set:html={s.n} {...(String(s.t).includes('станц') ? {'data-stn-count': ''} : {})}></b><span>{s.t}</span>{String(s.t).includes('станц') ? <small class="fresh"><span class="dot"></span>Обновлено: ноябрь 2026</small> : null}</div>))}</div></div></section>
-<section class="sec sec-alt"><div class="wrap"><h2>Сколько стоит зарядить ваш электромобиль</h2><p class="lead">Ваш расход, сценарий и тариф — мгновенный расчёт за 100 км и за месяц, с сравнением с бензином.</p><LegacyStyles /><div class="ev-battery" aria-hidden="true" style="margin:18px 0 10px"><span class="shell"><span class="fill"></span></span><span>Считается живьём: ползунок — мгновенный пересчёт</span></div><div class="zcalc" id="zcalc"><div class="zc-left"><div class="zq-label">Сценарий зарядки</div><div class="zc-scenes"><button class="zc-scene on" type="button" data-tar="5.5">Дома</button><button class="zc-scene" type="button" data-tar="12">Во дворе</button><button class="zc-scene" type="button" data-tar="25">На трассе</button></div><div class="zq-label" style="margin-top:18px">Или тариф сети — проверено 08.11.2026</div><div class="zc-scenes"><button class="zc-net" type="button" data-tar="20">Энергия Москвы DC · 20 ₽</button><button class="zc-net" type="button" data-tar="15">Энергия Москвы AC · 15 ₽</button><button class="zc-net" type="button" data-tar="20">Sitronics · 19–21 ₽</button><button class="zc-net" type="button" data-tar="19.8">М-4 «Дон» · 19,8 ₽</button><a class="zc-net" href="/tarify/" style="text-decoration:none">Все тарифы →</a></div><div class="zc-f"><span class="zc-l">Расход, кВт·ч на 100 км <b id="zc-v-con">16</b></span><input type="range" id="zc-r-con" min="8" max="30" step="0.5" value="16"></div><div class="zc-f"><span class="zc-l">Пробег в месяц, км <b id="zc-v-km">1 000</b></span><input type="range" id="zc-r-km" min="200" max="5000" step="50" value="1000"></div><div class="zc-f"><span class="zc-l">Тариф, ₽ за кВт·ч <b id="zc-v-tar">5.5</b></span><input type="range" id="zc-r-tar" min="2" max="30" step="0.1" value="5.5"></div></div><div class="zc-right"><div class="zc-big"><span id="zc-month">880</span><span class="zc-cur">₽</span></div><div class="zc-cap">в месяц на зарядку</div><div class="zc-line"><span>На 100 км</span><b id="zc-100">₽ 88</b></div><div class="zc-line"><span>За год</span><b id="zc-year">₽ 10 560</b></div><div class="zc-line dim"><span>Бензин (8 л/100 км × 62 ₽)</span><b id="zc-fuel">₽ 4 960</b></div><div class="zc-sav" id="zc-save">Экономия с зарядкой от дома: ≈ ₽ 4 080/мес</div></div></div><script is:inline>(function(){function fmt(n){var s=String(Math.round(n));var out="";for(var i=0;i<s.length;i++){if(i>0&&(s.length-i)%3===0)out+=" ";out+=s[i];}return out;}function upd(){var con=+document.getElementById("zc-r-con").value,km=+document.getElementById("zc-r-km").value,tar=+document.getElementById("zc-r-tar").value;var c100=con*tar,mo=c100*km/100,yr=mo*12,fu=km/100*8*62;document.getElementById("zc-v-con").textContent=con;document.getElementById("zc-v-km").textContent=fmt(km);document.getElementById("zc-v-tar").textContent=tar;document.getElementById("zc-month").textContent=fmt(mo);document.getElementById("zc-100").textContent="₽ "+fmt(c100);document.getElementById("zc-year").textContent="₽ "+fmt(yr);document.getElementById("zc-fuel").textContent="₽ "+fmt(fu);document.getElementById("zc-save").textContent="Экономия с зарядкой от дома: ≈ ₽ "+fmt(fu-mo)+"/мес";Array.prototype.forEach.call(document.querySelectorAll(".zc-f input"),function(r){var p=(r.value-r.min)/(r.max-r.min)*100;r.style.setProperty("--p",p+"%");});}Array.prototype.forEach.call(document.querySelectorAll(".zc-scene"),function(btn){btn.addEventListener("click",function(){Array.prototype.forEach.call(document.querySelectorAll(".zc-scene,.zc-net"),function(x){x.classList.remove("on");});btn.classList.add("on");document.getElementById("zc-r-tar").value=btn.getAttribute("data-tar");upd();});});Array.prototype.forEach.call(document.querySelectorAll(".zc-f input"),function(r){r.addEventListener("input",function(){Array.prototype.forEach.call(document.querySelectorAll(".zc-scene,.zc-net"),function(x){x.classList.remove("on");});upd();});});Array.prototype.forEach.call(document.querySelectorAll(".zc-net"),function(btn){btn.addEventListener("click",function(){Array.prototype.forEach.call(document.querySelectorAll(".zc-scene,.zc-net"),function(x){x.classList.remove("on");});btn.classList.add("on");document.getElementById("zc-r-tar").value=btn.getAttribute("data-tar");upd();});});upd();})();</script><div class="article glass-panel" style="max-width:none;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 28px;margin-top:24px" set:html={calcHtml} />{calcScript && hasCalc && <script is:inline set:html={calcScript} />}
-    </div></section>
-<section class="sec sec-alt"><div class="wrap"><h2>База знаний</h2><p class="lead" style="margin-bottom:36px">Реальные кейсы и свежие разборы — без маркетинга.</p><div class="cards">{pains.map((c) =>(
-          <a class="card" href={c.href}><svg class="evicon" viewBox="0 0 120 64" aria-hidden="true"><path d="M8 46 L10 34 Q12 28 20 27 L32 26 L42 16 Q45 13 52 13 L82 13 Q89 13 94 17 L104 26 L112 28 Q116 30 116 35 L115 46" stroke="#0161EF" stroke-width="2.5" fill="rgba(1,97,239,.06)" stroke-linecap="round"/><circle cx="26" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle cx="96" cy="48" r="8" stroke="#0161EF" stroke-width="2.5" fill="none"/><circle class="zone" cx={c.zx} cy={c.zy} r="7" fill="#4A9EF0"/></svg><span class="ico">{c.ico}</span><h3>{c.h}</h3><p>{c.p}</p></a>))}
-      </div>
-        <h2 style="margin:64px 0 16px">Разборы по спросу</h2>
-        <div class="bgrid">{latest.map((a) =>(
-          <a class="bcard" href={`/blog/${a.slug}`}><span class="tag">{a.category || 'Блог'}</span><h3>{a.title}</h3><p>{shortLine(a.desc)}</p></a>))}
-        </div>
-        <div style="margin-top:20px"><a class="btn btn-ghost" href="/blog/">Все статьи</a></div>
-      </div></section>
-<section class="sec sec-alt"><div class="wrap"><h2>Гайды</h2><p class="lead">Практические PDF-гайды по зарядной инфраструктуре: карты ЭЗС, честные расчёты, чек-листы. Покупка с водяным знаком, оплата картой или СБП.</p><div class="cards"><a class="card prodcard" href="/shop/digital/"><span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19c6 0 4-7 8-12" stroke-dasharray="3 3"/></svg></span><h3>Интерактивный авто-гид: трасса М-4 «Дон»</h3><p>Карта ЭЗС маршрута, расчёт времени и бюджета, ночёвки с розеткой, сценарии «А если разрядился».</p><div class="price" style="font-size:26px;margin-top:14px;color:var(--cyan,#00E5FF)">990 ₽</div></a><a class="card prodcard" href="/shop/digital/"><span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19c6 0 4-7 8-12" stroke-dasharray="3 3"/></svg></span><h3>М-11 «Нева»: зарядка на трассе в 2026</h3><p>Планирование остановок на 700 км, бесплатный проезд и T-pass, мультифуэлинг, зимний режим, чек-лист.</p><div class="price" style="font-size:26px;margin-top:14px;color:var(--cyan,#00E5FF)">990 ₽</div></a><a class="card prodcard" href="/shop/digital/"><span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19c6 0 4-7 8-12" stroke-dasharray="3 3"/></svg></span><h3>М-12 «Восток»: Москва — Казань — Екатеринбург</h3><p>Зарядка на новой трассе М-12: планирование остановок, мультифуэлинг, резервы, зимний режим.</p><div class="price" style="font-size:26px;margin-top:14px;color:var(--cyan,#00E5FF)">990 ₽</div></a></div><div style="margin-top:22px"><a class="btn btn-gold" href="/shop/digital/">Все гайды</a></div></div></section>
-<section class="sec"><div class="wrap">
-        <h2>Популярные модели в каталоге</h2>
-        <p class="lead">{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</p>
-        <div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
-          {['Все'].concat([...new Set(POP.map((m) => m.brand))]).map((br) => (
-            <button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
-          ))}
-        </div>
-        <div class="bgrid as-slider" style="margin-top:20px" data-mcards>
-          {POP.map((mo) => (
-            <a class="card" href={'/models/' + mo.slug + '/'} data-brand={mo.brand}>
-              <span class="tag">{mo.port}</span>
-              <h3 class="bh" style="font-size:16.5px;margin:10px 0 6px">{mo.name}</h3>
-              <p style="margin:0;font-size:14px;color:var(--txt-muted)">{mo.years}</p>
-            </a>
-          ))}
-        </div>
-        
-        <div style="margin-top:20px"><a class="btn btn-ghost" href="/models/">Все {MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')}</a></div>
-      </div></section><section class="sec-alt"><div class="wrap"><h2>Справочник: развёрнутые руководства</h2><details class="seo-faq"><summary>Что такое адаптер GB/T и зачем он нужен</summary><p>Адаптер GB/T — это переходник, который соединяет китайский разъём зарядки вашего электромобиля со станциями Type 2 или CCS2, работающими в России. GB/T — стандарт разъёмов, принятый в Китае: малый (AC, до 7 кВт) и большой (DC, быстрая зарядка). Почти все электромобили, привезённые из Китая, используют именно эти разъёмы, а российские станции — европейский Type 2 и CCS2. Без адаптера такой автомобиль не зарядить на обычной станции; с адаптером — зарядка идёт на штатной мощности, кроме сверхбыстрых режимов, где нужен следующий по мощности переходник. В каталоге «Запас хода» указан разъём каждой модели и подобранный под неё комплект: адаптер, кабель и держатель. Решение для конкретной модели — на странице модели: там же таблица совместимости и сценарий зарядки.</p></details><details class="seo-faq"><summary>Как зарядить китайский электромобиль на станции Type 2?</summary><p>Алгоритм простой: определите разъём модели, возьмите адаптер GB/T → Type 2 (или GB/T → CCS2 для быстрой зарядки), подключите и запустите сессию через приложение оператора станции. Мощность ограничена узким местом цепочки: бортовым зарядом автомобиля (обычно 3–11 кВт на AC) и мощностью адаптера. Быстрые станции DC для GB/T-автомобилей работают только через большой разъём адаптера; если станция отдаёт больше 60 кВт, уточните допустимый предел переходника в его описании. Каждая страница модели на «Запас хода» содержит решение под ваш разъём: адаптер, кабель, держатель — с деталями установки и обхвата станций рядом с вами на карте.</p></details><details class="seo-faq"><summary>Сколько стоит зарядка электромобиля в России?</summary><p>Стоимость складывается из тарифа точки зарядки и расхода машины. Дома тариф электричества ваш — обычно это самый дешёвый сценарий; на общественных станциях тариф устанавливает сеть, и на трассах он выше, чем в городе. Калькулятор на сайте считает цену за 100 км и за месяц: задайте расход, пробег и сценарий — сравнение с бензином вы получите сразу же. Тарифы операторов по-разному устроены: часть берёт за кВт·ч, часть — за минуту сессии, у части есть ночные ставки. Отдельный разбор тарифов и бесплатных трасс — в статье «Бесплатные трассы и парковка для EV» и в калькуляторе, где сценарии уже свёрстаны под российские условия.</p></details></div></section><style is:global>
-/* === HERO v2: фото-фон, крупный текст, анимация (только главная) === */
-.zh-hero-big{position:relative;background:#0b0b0d;padding:96px 0 0;overflow:hidden}
-.zh-hero-big::before{content:'';position:absolute;inset:0;background-image:linear-gradient(0deg,rgba(6,10,14,.94) 0%,rgba(6,10,14,.55) 16%,rgba(6,10,14,0) 34%),linear-gradient(100deg,rgba(6,9,12,.92) 0%,rgba(6,9,12,.78) 42%,rgba(6,9,12,.38) 100%),url('/assets/img/hero-ev.webp');background-size:cover;background-position:center 30%;opacity:.92;z-index:0}
-.zh-hero-big .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.85fr);gap:56px;align-items:start}
-.zh-hero-big h1{font-size:clamp(48px,9vw,96px)!important;line-height:.92;letter-spacing:-.02em;max-width:min(1150px,96%)!important;text-wrap:balance;margin-bottom:.06em!important}
-.zh-hero-big h1 span{color:#5aa9ff;white-space:nowrap}
-.zh-hero-big p{color:rgba(233,239,246,.9);font-size:clamp(18px,2vw,24px)!important;line-height:1.2;max-width:min(780px,96%)!important;margin-top:26px!important;margin-bottom:0;text-shadow:0 1px 14px rgba(0,0,0,.45)}
-.zh-hero-big .badge{font-size:13px;letter-spacing:.12em;color:rgba(233,239,246,.6)}
-/* появление текста */
-.zh-hero-big .badge,.zh-hero-big h1,.zh-hero-big p{animation:zhRise .85s cubic-bezier(.22,.61,.36,1) both}
-.zh-hero-big .badge{animation-delay:.05s}
-.zh-hero-big h1{animation-delay:.18s}
-.zh-hero-big p{animation-delay:.4s}
-@keyframes zhRise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
-.zh-stats{display:flex;gap:44px;margin-top:6px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;width:100%;text-align:center}
-.zh-stats>div{display:flex;flex-direction:column;gap:3px;align-items:center}
-.zh-stats b{font-size:clamp(34px,3.6vw,52px);line-height:1;letter-spacing:-.02em;color:#fff}
-.zh-stats span{color:rgba(233,239,246,.72);font-size:14px;line-height:1.25;max-width:190px}
-.zh-stats .fresh{color:rgba(233,239,246,.45);font-size:11px}
-.zh-strip{position:relative;z-index:1;margin-top:52px;padding:15px 0 17px;border-top:1px solid rgba(255,255,255,.08);overflow:hidden;cursor:grab;touch-action:pan-y}
-.zh-strip-track{display:flex;align-items:center;gap:26px;width:max-content}
-.zh-strip:hover .zh-strip-track{animation-play-state:paused}
-.zh-strip-item{color:#5aa9ff;font-size:15px;letter-spacing:.01em;white-space:nowrap;text-decoration:none;text-shadow:0 1px 9px rgba(0,0,0,.8);transition:color .18s ease}
-.zh-strip-item:hover{color:#a9d2ff}
-.zh-strip-item:nth-child(even){color:#f5f5f7}
-.zh-strip-item:nth-child(even):hover{color:#fff}
-.zh-strip-item::after{content:'\00B7';display:inline-block;margin-left:26px;color:rgba(255,255,255,.18);pointer-events:none}
-@media (max-width:640px){.zh-strip{margin-top:40px}.zh-strip-item{font-size:13px}.zh-strip-item::after{margin-left:18px}.zh-strip-track{gap:18px}}
-.cards,.bgrid{grid-auto-rows:1fr}
-.cards .card,.bgrid .bcard{display:flex;flex-direction:column;align-items:flex-start;height:100%}
-.cards .card h3,.bgrid .bcard h3{margin-top:10px;margin-bottom:6px}
-.cards .card p,.bgrid .bcard p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.45;margin-bottom:0}
-.bgrid .bcard .tag{order:-1;margin-bottom:2px}
-@media (prefers-reduced-motion:reduce){.zh-strip-track{animation:none}.zh-strip-track a[aria-hidden="true"]{display:none}}
-.zq-left{min-width:0}
-.zh-quiz{background:rgba(11,12,17,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:28px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.45);align-self:start;margin-top:3px}
-.zq-title{font-weight:800;font-size:19px;color:#fff}
-.zq-sub{color:rgba(233,239,246,.6);font-size:13.5px;margin-top:6px}
-.zq-label{color:#5aa9ff;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:20px;margin-bottom:8px;font-weight:600}
-.zq-field{display:block;margin-top:18px}
-.zq-selwrap{position:relative;display:block}
-.zq-select{width:100%;appearance:none;-webkit-appearance:none;background:rgba(1,97,239,.12);border:1px solid rgba(77,155,245,.3);color:#eaf2ff;border-radius:12px;padding:14px 44px 14px 16px;font-size:14.5px;cursor:pointer;font-family:inherit}
-.zq-selwrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#5aa9ff;pointer-events:none}
-.zq-select option{background:#151518;color:#f5f5f7}
-.zq-back{background:none;border:0;color:rgba(233,239,246,.55);font-size:12.5px;cursor:pointer;padding:12px 0 0;font-family:inherit;display:block}
-#zq-out b{font-size:18.5px;color:#fff;display:block;line-height:1.25}
-#zq-out .zq-y{color:rgba(233,239,246,.55);margin-top:6px;font-size:13.5px}
-#zq-out .zq-ports{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);color:rgba(233,239,246,.9);font-size:14.5px}
-#zq-out ul{margin:10px 0 2px 20px;color:rgba(233,239,246,.78);font-size:13.5px;line-height:1.65}
-#zq-out li{margin-bottom:7px}
-#zq-result .btn{margin-top:18px}
-#zq-result .zq-back{margin-top:14px}
-@media (max-width:900px){.zh-hero-big .wrap{grid-template-columns:1fr;gap:34px;align-items:start}}
-@media (max-width:640px){.zh-quiz{padding:20px 18px 16px}.zq-chips{max-height:190px}}
-.zcalc{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;margin:18px 0 6px;padding:26px 28px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 24px 80px rgba(1,97,239,.14),0 0 0 1px rgba(77,155,245,.12) inset;position:relative;overflow:hidden}
-.zcalc::before{content:'';position:absolute;inset:-45%;background:radial-gradient(48% 58% at 18% 18%,rgba(1,97,239,.22),transparent 62%),radial-gradient(44% 52% at 82% 82%,rgba(77,155,245,.18),transparent 62%);animation:zcGlow 8s ease-in-out infinite alternate;pointer-events:none}
-@keyframes zcGlow{0%{opacity:.45;transform:translate(-3%,-2%) scale(1)}100%{opacity:1;transform:translate(3%,2%) scale(1.06)}}
-.zcalc>*{position:relative;z-index:1}
-.zc-scenes{display:flex;gap:8px;margin-top:10px}
-.zc-scene{padding:8px 16px;border-radius:999px;border:1px solid rgba(77,155,245,.32);background:rgba(1,97,239,.14);color:#cfe2ff;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s}
-.zc-scene.on{background:#4d9bf5;color:#fff;border-color:#4d9bf5}
-.zc-f{margin-top:22px}
-.zc-l{display:flex;justify-content:space-between;color:rgba(233,239,246,.75);font-size:13.5px;margin-bottom:8px}
-.zc-l b{color:#fff;font-variant-numeric:tabular-nums}
-.zc-f input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(90deg,#4d9bf5 0%,#4d9bf5 var(--p,50%),rgba(255,255,255,.14) var(--p,50%))}
-.zc-f input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(77,155,245,.35);cursor:pointer}
-.zc-f input::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(77,155,245,.35);cursor:pointer}
-.zc-right{display:flex;flex-direction:column;justify-content:center;border-left:1px solid rgba(255,255,255,.08);padding-left:28px}
-.zc-big{font-size:56px;font-weight:800;letter-spacing:-.03em;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
-.zc-cur{font-size:26px;margin-left:8px;color:#5aa9ff}
-.zc-cap{color:rgba(233,239,246,.6);font-size:14px;margin-top:6px}
-.zc-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);color:rgba(233,239,246,.8);font-size:14px}
-.zc-line b{color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
-.zc-line.dim{color:rgba(233,239,246,.55)}
-.zc-sav{margin-top:14px;color:#8fc2ff;font-size:14px}
-@media (max-width:860px){.zcalc{grid-template-columns:1fr;padding:20px}.zc-right{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}.zc-big{font-size:44px}}
-.fresh .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:7px;vertical-align:1px;animation:zhDot 1.7s ease-in-out infinite}
-@keyframes zhDot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.45)}50%{opacity:.55;box-shadow:0 0 0 5px rgba(34,197,94,0)}}
-.faq-d{border-bottom:1px solid var(--line);padding:2px 0}
-.faq-d summary{cursor:pointer;font-weight:600;padding:13px 0;list-style:none;font-size:15px;color:var(--head)}
-.faq-d summary::-webkit-details-marker{display:none}
-.faq-d summary::after{content:'+';float:right;color:#5aa9ff;font-weight:400;font-size:18px;line-height:1}
-.faq-d[open] summary::after{content:'–'}
-.faq-d .faq-a{padding:2px 0 13px;color:var(--txt-muted);font-size:14.5px;line-height:1.65}
-.faq-d .faq-a p{margin:0}
-.card.prodcard{padding:30px 28px}
-.card.prodcard h3{font-size:19px;line-height:1.35}
-.card.prodcard .price{font-size:26px;margin-top:14px}
-section.sec h2,section.sec-alt h2{font-size:clamp(26px,4.2vw,42px);letter-spacing:-.02em;line-height:1.18}
-section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
-.zc-net{padding:8px 16px;border-radius:999px;border:1px solid rgba(77,155,245,.32);background:rgba(1,97,239,.14);color:#cfe2ff;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s}
-.zc-net:hover{background:rgba(1,97,239,.22);border-color:#4d9bf5}
-.zc-net.on{background:#4d9bf5;color:#fff;border-color:#4d9bf5}
-@media (prefers-reduced-motion:reduce){.fresh .dot{animation:none}.zcalc::before{animation:none}}
-@media (prefers-reduced-motion:reduce){.zh-hero-big .badge,.zh-hero-big h1,.zh-hero-big p,.zh-hero-big h1 span{animation:none}}
-
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-.zh-hero-big h1{background-image:linear-gradient(100deg,#e9eef5 0%,#dde4ee 34%,#ffffff 47%,#9fb0c4 56%,#e9eef5 70%,#e9eef5 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:zhSheen 5.2s linear infinite}
-.zh-hero-big h1 span{background-image:linear-gradient(100deg,#4d9bf5 0%,#6db3ff 26%,#ffffff 44%,#2f7ef0 56%,#a9d2ff 72%,#4d9bf5 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 26px rgba(1,97,239,.35);animation:zhSheen 3.8s linear infinite}
-}
-@keyframes zhSheen{from{background-position:130% 0}to{background-position:-30% 0}}
-@media (max-width:640px){.zh-hero-big{padding:52px 0 0}.zh-hero-big h1 span{white-space:normal}.zh-stats{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:26px 44px;margin-top:32px}.zh-stats b{font-size:30px}.zh-stats span{max-width:150px;font-size:12.5px}}
-
-@media (max-width:760px){
-  .zh-hero-big{padding:52px 0 0}
-  .zh-hero-big::before{background-image:linear-gradient(0deg,rgba(6,10,14,.94) 0%,rgba(6,10,14,.6) 18%,rgba(6,10,14,0) 40%),linear-gradient(180deg,rgba(6,9,12,.9) 0%,rgba(6,9,12,.84) 55%,rgba(6,9,12,.55) 100%),url('/assets/img/hero-ev.webp');background-position:center 22%}
-  .zh-hero-big h1 span{white-space:normal}
-}
-
-/* Свечения важных блоков (10.11) */
-.btn-gold{box-shadow:0 0 0 1px rgba(90,169,255,.38),0 10px 34px rgba(1,97,239,.32);transition:box-shadow .22s ease,transform .22s ease}
-.btn-gold:hover{box-shadow:0 0 0 1px rgba(90,169,255,.6),0 16px 48px rgba(1,97,239,.5);transform:translateY(-1px)}
-.zh-quiz{box-shadow:0 24px 70px rgba(0,0,0,.45),0 0 80px rgba(1,97,239,.16)}
-.cards .card,.bgrid .bcard{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease}
-.cards .card:hover,.bgrid .bcard:hover{border-color:rgba(90,169,255,.5);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 44px rgba(77,155,245,.15);transform:translateY(-2px)}
-</style><LeadCTA />
+<ZhLayout title="Тематика: мастер-аккаунт, SIM/eSIM и зарядка китайских EV" description="Почему китайский электромобиль в РФ теряет часть функций без мастер-аккаунта и интернета: предпрогрев батареи, удалённая зарядка, eSIM. Что делать владельцу.">
+  <section class="sec"><div class="wrap">
+    <div class="crumbs"><a href="/">Главная</a> / Тематика</div>
+    <div class="badge">Раздел</div>
+    <h1>Тематика: телематика китайских EV в России</h1>
+    <p class="lead">Мастер-аккаунт (МА), SIM/eSIM и интернет в машине — вторая по значимости тема после разъёмов. Без неё китайский электромобиль в России живёт «усечённой» жизнью.</p>
+    <div class="cards">
+      <div class="card"><h3>Что такое мастер-аккаунт (МА)</h3><p>У китайских EV (Zeekr, Li Auto, Avatr, Voyah и других) телематика завязана на учётную запись первого владельца в китайской экосистеме. Без привязки машины к «мастер-аккаунту» часть функций недоступна: приложение не видит машину, нет удалённого управления.</p></div>
+      <div class="card"><h3>Что ломается без интернета в машине</h3><p>Главное — <b>предпрогрев батареи перед зарядкой</b> из приложения: в мороз без него быстрая зарядка идёт заметно медленнее и мощнее режется. Также не работают удалённый запуск климата, статус зарядки в приложении и часть обновлений ПО.</p></div>
+      <div class="card"><h3>SIM/eSIM в машине</h3><p>Встроенные SIM-карты китайских операторов в РФ не работают. Владельцы решают это по-разному: переносом на российскую eSIM (если платформа позволяет), физической заменой SIM-модуля или отдельным роутером с российской SIM. Конкретную схему для вашей модели уточняйте у дилера и на форуме — решение зависит от поколения телематики.</p></div>
+    </div>
+    <div class="card" style="margin-top:20px">
+      <h3>Что делать: чек-лист владельца</h3>
+      <p style="font-size:14.5px;line-height:1.65">1. Проверьте статус МА у дилера <b>до</b> покупки и отметьте в договоре.<br>2. Проверьте, работает ли приложение с российской SIM — до первого сильного мороза.<br>3. Найдите владельцев вашей модели на форуме — телематика сильно отличается между партиями.<br>4. План Б на зиму: ручной прогрев в пути 15–20 минут до быстрой станции — приложение не критично, если продумать маршрут.</p>
+    </div>
+    <div class="cards" style="margin-top:30px">
+      <div style="width:100%"><h2 style="font-size:clamp(22px,3.4vw,30px);margin:0 0 4px">Разборы по маркам</h2><p style="margin:0;color:var(--txt-muted);font-size:14.5px">Что работает из коробки, что чинится сервисом, а что не работает в принципе — шесть кейсов с ценами и чек-листами.</p></div>
+      <a class="card" href="/blog/voyah-app-telematics/" style="text-decoration:none"><h3>Voyah</h3><p>Официальное приложение на русском и подключение через дилера (70–75 тыс. ₽). Плюс независимая JustVoyah для серых машин — от 900 ₽/мес.</p></a>
+      <a class="card" href="/blog/avatr-app-telematics/" style="text-decoration:none"><h3>Avatr</h3><p>Единственная марка с официальной телематикой в РФ с февраля 2025: SIM с завода, мастер-аккаунт от дилера, серверы в России.</p></a>
+      <a class="card" href="/blog/zeekr-master-account/" style="text-decoration:none"><h3>Zeekr</h3><p>Региональная блокировка машин после 15.07.2024, три пути восстановления: Family Account, полный МА через eSender, вписанная российская SIM. Цены сервисов — от 100 тыс. ₽.</p></a>
+      <a class="card" href="/blog/li-auto-master-account/" style="text-decoration:none"><h3>Li Auto</h3><p>Мастер-аккаунт на свой номер через eSender за вечер. Полный обзор функций приложения и решения частых глюков.</p></a>
+      <a class="card" href="/blog/byd-master-account/" style="text-decoration:none"><h3>BYD</h3><p>Самый хардкорный кейс: МА только на свежих прошивках, фильтр по IP весной 2026, eSIM-адаптер с гонконгским тарифом как рабочее решение.</p></a>
+      <a class="card" href="/blog/dongfeng-box-telematics/" style="text-decoration:none"><h3>Dongfeng Box</h3><p>Официального приложения нет и не будет: ADB-русификация от сообщества, инженерное меню и что стоит знать до покупки.</p></a>
+    <a class="card" href="/blog/xiaomi-su7-telematics/" style="text-decoration:none"><h3>Xiaomi SU7</h3><p>Самый закрытый кейс: МА требует китайского гражданина. Рабочая схема — «телефон-компаньон» с Family Account. Что работает без аккаунта.</p></a>
+      <a class="card" href="/blog/xpeng-app-telematics/" style="text-decoration:none"><h3>XPeng</h3><p>С 2026 года — официально: Яндекс Карты, Алиса, приложение и гарантия 8 лет. Для серых машин — китайский аккаунт и сервисная русификация.</p></a>
+      <a class="card" href="/blog/deepal-telematics/" style="text-decoration:none"><h3>Deepal</h3><p>Официальные продажи через Changan, русифицированная Sunflower — но телематика и голосовой ассистент пока слабые места.</p></a>
+    <a class="card" href="/blog/nio-app-telematics/" style="text-decoration:none"><h3>NIO</h3><p>Продвинутая экосистема в Китае, но в РФ swap-станций нет, а часть облачных функций держится на обходных схемах. Что реально работает.</p></a>
+      <a class="card" href="/blog/denza-app-telematics/" style="text-decoration:none"><h3>Denza</h3><p>Экосистема BYD: BT/NFC активируются только в китайских сетях 5G — до вывоза машины. Плюс категория прав и налог на 503 л.с.</p></a>
+    <a class="card" href="/blog/aito-app-telematics/" style="text-decoration:none"><h3>AITO</h3><p>HarmonyOS от Huawei — лучший медиацентр, но телематика: МА через китайский номер, а «приложение дистрибьютора» на практике — Pandora.</p></a>
+      <a class="card" href="/blog/leapmotor-app-telematics/" style="text-decoration:none"><h3>Leapmotor</h3><p>Глобальное приложение с европейской регистрацией: цифровой ключ, OTA, временные ключи. Регион прошивки решает всё.</p></a>
+    </div>
+<p style="margin-top:22px;color:var(--txt-muted)">Следующие разборы — по мере набора фактуры: IM Motors, Onvo, Fangchengbao. Следите за обновлениями в <a href="/news/" style="color:#00E5FF">новостях</a>.</p>
+  </div></section>
 </ZhLayout>
