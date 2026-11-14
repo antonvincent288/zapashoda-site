@@ -34,10 +34,16 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     <script is:inline>
     (function(){
       document.querySelectorAll('.bk-more').forEach(function(btn){
+        var panel = document.getElementById(btn.dataset.more);
+        var exs = panel ? Array.prototype.slice.call(panel.querySelectorAll('.bk-extra')) : [];
+        var shown = 0;
+        var label = btn.textContent.replace(/Показать[^а-я]*все[^0-9]*/i, 'Показать ещё 24 из ').replace(/\s+$/, '') || btn.textContent;
+        function upd(){ btn.textContent = 'Показать ещё 24 из ' + exs.length; }
+        if (exs.length) upd();
         btn.addEventListener('click', function(){
-          var panel = document.getElementById(btn.dataset.more);
-          if (panel) panel.querySelectorAll('.bk-extra').forEach(function(c){ c.style.display = ''; });
-          btn.style.display = 'none';
+          exs.slice(shown, shown + 24).forEach(function(c){ c.style.display = 'block'; });
+          shown += 24;
+          if (shown >= exs.length) { btn.style.display = 'none'; }
         });
       });
     })();
@@ -49,7 +55,8 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
     
     .bk-sec h2{display:flex;align-items:center;gap:8px;margin:36px 0 14px;font-size:20px;line-height:1.2}
     .bk-sec h2 b{font-weight:700;font-size:14px;color:var(--txt-muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
-    .bk-extra{display:none}
+    body .bk-extra{display:none}
+    .bk-open .bk-extra{display:block}
     .bk-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     
     .bk-card{padding:24px 26px}
