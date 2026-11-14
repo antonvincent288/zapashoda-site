@@ -27,73 +27,31 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', na
       <h2 style="color:#7fb8f7">Не знаете, с чего начать?</h2>
       <p>Не уверены, какой разъём у машины — начните с <a href="/matrix/" style="color:#00E5FF">матрицы совместимости</a> (одна таблица — все типы станций). Заряжаетесь на трассе — сразу к <a href="/tarify/" style="color:#00E5FF">тарифам ЭЗС</a> и <a href="/charging/" style="color:#00E5FF">карте ЗУ</a>.</p>
     </div>
-    <div class="bk-tabs">
-      <button class="bk-tab on" type="button" data-bk="guides">Руководства <b>{src.length}</b></button>
-      <button class="bk-tab" type="button" data-bk="blog">Разборы <b>{blog.length}</b></button>
-      <button class="bk-tab" type="button" data-bk="pain">Проблемы и решения <b>{pain.length}</b></button>
-      <button class="bk-tab" type="button" data-bk="ref">Справочники <b>{refs.length}</b></button>
-    </div>
-    <div class="bk-panel on" id="bk-guides">
-      {src.map((g) =>(<a class="card bk-card" href={'/baza-znaniy/' + g.slug + '/'}><h2>{g.title}</h2><p>{g.desc}</p><span class="bk-go">Читать →</span></a>))}
-    </div>
-    <div class="bk-panel" id="bk-blog">
-      {blogSorted.map((a) =>(<a class="card bk-card" href={'/blog/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">{a.category || 'Разбор'} · {a.read_min || '?'} мин →</span></a>))}
-      <button class="bk-more" id="bk-more" type="button">Показать ещё 30</button>
-    </div>
-    <div class="bk-panel" id="bk-pain">
-      {painSorted.map((a) =>(<a class="card bk-card" href={'/pain/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">Решение →</span></a>))}
-    </div>
-    <div class="bk-panel" id="bk-ref">
-      {refs.map((r) =>(<a class="card bk-card" href={r.href}><h3>{r.t}</h3><p>{r.d}</p><span class="bk-go">Открыть →</span></a>))}
-    </div>
+    <div class="bk-sec"><h2>Руководства <b>{src.length}</b></h2><div class="bk-panel" id="bk-guides">{src.map((g) => (<a class="card bk-card" href={'/baza-znaniy/' + g.slug + '/'}><h3>{g.title}</h3><p>{g.desc}</p><span class="bk-go">Читать →</span></a>))}</div></div>
+    <div class="bk-sec"><h2>Разборы <b>{blog.length}</b></h2><div class="bk-panel" id="bk-blog">{blogSorted.map((a, idx) => (<a class:list={["card", "bk-card", idx >= 12 && "bk-extra"]} href={'/blog/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">{a.category || 'Разбор'} · {a.read_min || '?'} мин →</span></a>))}{blogSorted.length > 12 && <button class="bk-more" type="button" data-more="bk-blog">Показать все {blog.length}</button>}</div></div>
+    <div class="bk-sec"><h2>Проблемы и решения <b>{pain.length}</b></h2><div class="bk-panel" id="bk-pain">{painSorted.map((a, idx) => (<a class:list={["card", "bk-card", idx >= 8 && "bk-extra"]} href={'/pain/' + a.slug + '/'}><h3>{a.title}</h3><p>{a.desc}</p><span class="bk-go">Решение →</span></a>))}{painSorted.length > 8 && <button class="bk-more" type="button" data-more="bk-pain">Показать все {pain.length}</button>}</div></div>
+    <div class="bk-sec"><h2>Справочники <b>{refs.length}</b></h2><div class="bk-panel" id="bk-ref">{refs.map((r) => (<a class="card bk-card" href={r.href}><h3>{r.t}</h3><p>{r.d}</p><span class="bk-go">Открыть →</span></a>))}</div></div>
     <script is:inline>
     (function(){
-      function bind(){
-        var tabs = document.querySelectorAll('.bk-tab');
-        if (!tabs.length) return;
-        tabs.forEach(function(t){
-          t.addEventListener('click', function(){
-            tabs.forEach(function(x){ x.classList.toggle('on', x === t); });
-            document.querySelectorAll('.bk-panel').forEach(function(p){ p.classList.toggle('on', p.id === 'bk-' + t.dataset.bk); });
-            history.replaceState(null, '', '#bk-' + t.dataset.bk);
-          });
+      document.querySelectorAll('.bk-more').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var panel = document.getElementById(btn.dataset.more);
+          if (panel) panel.querySelectorAll('.bk-extra').forEach(function(c){ c.style.display = ''; });
+          btn.style.display = 'none';
         });
-        var blogCards = document.querySelectorAll('#bk-blog .bk-card');
-        var step = 30, shownN = 0;
-        var moreBtn = document.getElementById('bk-more');
-        function bkShowNext(){
-          var to = Math.min(shownN + step, blogCards.length);
-          for (var i = shownN; i < to; i++) blogCards[i].style.display = '';
-          shownN = to;
-          if (moreBtn){
-            if (shownN >= blogCards.length){ moreBtn.style.display = 'none'; }
-            else { moreBtn.textContent = 'Показать ещё 30 (осталось ' + (blogCards.length - shownN) + ')'; }
-          }
-        }
-        if (blogCards.length > step){
-          for (var i2 = step; i2 < blogCards.length; i2++) blogCards[i2].style.display = 'none';
-          if (moreBtn) moreBtn.textContent = 'Показать ещё 30 (осталось ' + (blogCards.length - step) + ')';
-          moreBtn.addEventListener('click', bkShowNext);
-        } else if (moreBtn){ moreBtn.style.display = 'none'; }
-        var h = (location.hash || '').replace('#', '');
-        if (h.indexOf('bk-') === 0) {
-          var target = document.querySelector('.bk-tab[data-bk="' + h.slice(3) + '"]');
-          if (target) target.click();
-        }
-      }
-      bind();
+      });
     })();
     </script>
   </div></section>
   <style is:global>
-    .bk-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 24px}
-    .bk-tab{padding:11px 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;font-family:inherit;transition:.15s}
-    .bk-tab b{font-weight:800;color:var(--txt-muted);margin-left:4px}
-    .bk-tab.on{background:#00E5FF;border-color:#00E5FF;color:#fff}
-    .bk-tab.on b{color:rgba(255,255,255,.85)}
-    .bk-tab:hover:not(.on){border-color:rgba(0,229,255,.4)}
-    .bk-panel{display:none;grid-template-columns:repeat(3,1fr);gap:20px}
-    .bk-panel.on{display:grid}
+    
+    
+    
+    .bk-sec h2{display:flex;align-items:center;gap:8px;margin:36px 0 14px;font-size:20px;line-height:1.2}
+    .bk-sec h2 b{font-weight:700;font-size:14px;color:var(--txt-muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+    .bk-extra{display:none}
+    .bk-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    
     .bk-card{padding:24px 26px}
     .bk-card h3{font-size:18px;line-height:1.35}
     .bk-card p{font-size:14px;line-height:1.55;margin-top:8px}
