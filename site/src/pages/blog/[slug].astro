@@ -57,6 +57,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
             <div class="faqbox"><h2>Частые вопросы</h2>{a.faq.map((f) =>(
                 <details><summary>{f.q}</summary><p set:html={f.a} /></details>))}
             </div>)}
+          {<script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' }, { '@type': 'ListItem', position: 2, name: 'Блог', item: 'https://zapashoda-ev.ru/blog/' }, { '@type': 'ListItem', position: 3, name: a.title, item: 'https://zapashoda-ev.ru/blog/' + a.slug + '/' }] })} />}
           {a.faq && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faq.map((f) =>({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: String(f.a).replace(/<[^>]*>/g,'') } })) })} />}
 <div class="share"><a href={`https://t.me/share/url?url=https://zapashoda-ev.ru/blog/${a.slug}/`} target="_blank" rel="nofollow">Telegram</a><a href="https://t.me/zapashoda_ev" rel="nofollow">Наш канал</a><a href={`https://wa.me/?text=${encodeURIComponent('https://zapashoda-ev.ru/blog/' + a.slug + '/')}`} target="_blank" rel="nofollow">WhatsApp</a><a href="#" data-copy={`https://zapashoda-ev.ru/blog/${a.slug}/`} id="copylink">Скопировать ссылку</a></div><script>var cl = document.getElementById('copylink');
   if (cl) cl.addEventListener('click', function (e) {

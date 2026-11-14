@@ -65,7 +65,7 @@ window.YM_ID=113935123;
 html{color-scheme:dark}
 /* ФИКС МОБИЛЬНОЙ ШАПКИ 13.11: поиск в шапке был без стилей (input дефолтной ширины) и выталкивал бургер за правый край экрана; body overflow-x:clip его резал */
 .hsearch { align-items:center; min-width:0; display:flex; flex-shrink:1 }
-.hsearch input { width:100%; min-width:0; background:var(--card,#15161C); border:1px solid var(--line,#262a33); border-radius:10px; height:38px; padding:0 12px; color:var(--txt,#f5f5f7); font-size:14px; outline:none }
+.hsearch input { width:100%; min-width:0; background:var(--card,#15161C); border:1px solid var(--line,#262a33); border-radius:10px; height:44px; padding:0 12px; color:var(--txt,#f5f5f7); font-size:16px; outline:none }
 .hsearch input::placeholder { color:#8b95a5 }
 .hsearch input:focus { border-color:#00E5FF; box-shadow:0 0 0 2px rgba(90,169,255,.15) }
 @media (max-width:640px) { .hsearch { flex:1 1 auto } .hwrap { gap:10px } }
@@ -151,7 +151,7 @@ html.dark .hero::after{content:'';position:absolute;inset:0;pointer-events:none;
   <div class="wrap">
     <div class="fgrid">
       <div><a class="logo" style="color:#fff" href="/"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></b><span>Запас хода</span></a><p style="margin-top:14px;font-size:13.5px">Практика зарядки EV в России: разъёмы, адаптеры, станции, деньги. {ML.length} {plz(ML.length, 'модель', 'модели', 'моделей')}, {BLOG_N} {plz(BLOG_N, 'разбор', 'разбора', 'разборов')}, <span data-stn-count>{STN_Z}</span> {plz(STN_Z, 'станция', 'станции', 'станций')}.</p></div>
-      <div><h4>Модели</h4><a href="/models/">Каталог {ML.length} {plz(ML.length, 'модель', 'модели', 'моделей')}</a><a href="/models/zeekr-001-001-fr/">Zeekr 001</a><a href="/models/">Разъёмы GB/T</a><a href="/catalog/">Каталог товаров</a></div>
+      <div><h4>Модели</h4><a href="/models/">Каталог {ML.length} {plz(ML.length, 'модель', 'модели', 'моделей')}</a><a href="/models/zeekr-001-001-fr/">Zeekr 001</a><a href="/razemy/">Разъёмы GB/T</a><a href="/catalog/">Каталог товаров</a></div>
       <div><h4>База знаний</h4><a href="/blog/">Блог</a><a href="/pain/">Проблемы</a><a href="https://zapashoda-ev.ru/vin/" rel="nofollow">VIN-справочник</a></div>
       <div><h4>Связь</h4><a href="https://t.me/zapashoda_ev" rel="noopener">Telegram-канал</a><a href="mailto:f-epshtein@yandex.ru" rel="noopener">Написать нам</a><a href="/privacy/">Политика конфиденциальности</a><a href="https://dzen.ru/zapashoda" rel="noopener">Дзен</a><a href="https://t.me/zapashoda_ev_bot/app" rel="noopener">Мини-приложение</a><a href="/partners/">Партнёрам</a></div>
     </div>
