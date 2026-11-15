@@ -621,10 +621,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     /* v10.5: закреплённая мобильная CTA — только mobile, оранжевая палитра прода */
     #mcta{position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(10,14,22,.97);border-top:1px solid var(--line)}
     .faqHidden{display:none}
-    .faqMoreBtn{display:inline-block;margin:10px 0 0;padding:9px 16px;border:1px solid rgba(255,111,0,.4);background:rgba(255,111,0,.05);color:var(--gold);font-weight:700;font-size:13px;border-radius:10px;cursor:pointer;font-family:inherit}
+    .faqMoreBtn{display:inline-block;margin:12px 0 0;padding:11px 18px;border:1px solid rgba(255,111,0,.4);background:rgba(255,111,0,.05);color:var(--gold);font-weight:800;font-size:14px;border-radius:10px;cursor:pointer;font-family:inherit}
     .faqMoreBtn:active{background:rgba(255,111,0,.12)}
     #mcta.on{display:block}
     @media (min-width:1025px){#mcta{display:none!important}}
+    .mcta-note{display:block;text-align:center;font-size:11px;color:var(--txt-muted);margin-bottom:6px;letter-spacing:.01em}
     #mcta a{display:block;text-align:center;background:linear-gradient(135deg,#FF8F33,#FF6F00);color:#0B1018;font-weight:800;border-radius:12px;padding:14px 16px;text-decoration:none;font-size:16px}
     /* v10.4: тарифная таблица калькулятора — JS-таблица без вёрстки, шапки выпадали из ячеек (МОЩНОСТЬ 95/86px, СТОИМОСТЬ 102/83px) */
     #cc-out table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;margin:0 0 8px}
@@ -761,7 +762,8 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     </div>
   </section>
   <div id="mcta" aria-hidden="true">
-    <a href="#order-form" data-goal="cta_mobile_click">Подобрать зарядку под разъёмы этой модели →</a>
+    <span class="mcta-note">Без лишних адаптеров — комплект под эту модель</span>
+    <a href="#order-form" data-goal="cta_mobile_click">Подобрать зарядку под разъёмы →</a>
   </div>
   <script is:inline>
   (function(){
@@ -775,7 +777,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       var ths = t.querySelectorAll('th');
       for (var i = 0; i < ths.length; i++){
         var th = ths[i];
-        th.style.fontSize = '12px'; th.style.fontWeight = '700'; th.style.textTransform = 'none';
+        th.style.fontSize = '12px'; th.style.fontWeight = '800'; th.style.textTransform = 'none'; th.style.color = 'var(--head)';
         th.style.letterSpacing = '0'; th.style.padding = '6px 8px';
         th.style.textAlign = (th.cellIndex > 0 ? 'right' : 'left');
         th.style.borderBottom = '1px solid var(--line)'; th.style.overflowWrap = 'break-word';
@@ -783,8 +785,8 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       var tds = t.querySelectorAll('td');
       for (var j = 0; j < tds.length; j++){
         var td = tds[j];
-        td.style.padding = '8px'; td.style.borderBottom = '1px solid var(--line)';
-        td.style.overflowWrap = 'break-word'; td.style.lineHeight = '1.45';
+        td.style.padding = '10px 8px'; td.style.borderBottom = '1px solid var(--line)';
+        td.style.overflowWrap = 'break-word'; td.style.lineHeight = '1.5';
         td.style.textAlign = (td.cellIndex > 0 ? 'right' : 'left');
       }
     }
@@ -814,7 +816,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         var moreBtn = document.createElement('button');
         moreBtn.type = 'button';
         moreBtn.className = 'faqMoreBtn';
-        moreBtn.textContent = 'Ещё ' + (faqs.length - 3) + ' вопросов';
+        moreBtn.textContent = 'Ещё ' + (faqs.length - 3) + ' вопросов ▾';
         moreBtn.addEventListener('click', function(){
           var hidden = faqWrap.querySelectorAll('.faqHidden');
           for (var h = 0; h < hidden.length; h++) hidden[h].classList.remove('faqHidden');
