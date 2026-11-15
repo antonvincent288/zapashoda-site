@@ -226,5 +226,71 @@
   "artist": "Alexander-93",
   "license": "CC BY-SA 4.0",
   "alt": "Polestar 2 на выставке в Цюрихе"
+ },
+ "fiat-500e": {
+  "page": "https://commons.wikimedia.org/wiki/File:Fiat_500e_(2020)_Auto_Zuerich_2021_IMG_0604.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Fiat 500e на выставке в Цюрихе"
+ },
+ "dacia-spring": {
+  "page": "https://commons.wikimedia.org/wiki/File:2024_Dacia_Spring_Extreme_GIMS_2024_1X7A2020.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Dacia Spring Extreme на выставке в Женеве"
+ },
+ "opel-corsa-e-mokka-e": {
+  "page": "https://commons.wikimedia.org/wiki/File:2025_Opel_Mokka-e_Auto_Zuerich_2024_DSC_6132.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Opel Mokka-e на выставке в Цюрихе"
+ },
+ "cupra-born": {
+  "page": "https://commons.wikimedia.org/wiki/File:Cupra_Born_Auto_Zuerich_2021_IMG_0512.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Cupra Born на выставке в Цюрихе"
+ },
+ "jaguar-i-pace": {
+  "page": "https://commons.wikimedia.org/wiki/File:2023_Jaguar_I-Pace_Auto_Zuerich_2023_1X7A1238.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Jaguar I-Pace на выставке в Цюрихе"
+ },
+ "smart-eq-fortwo-1": {
+  "page": "https://commons.wikimedia.org/wiki/File:Smart_EQ_Genf_2019_1Y7A5176.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Smart EQ на автосалоне в Женеве"
+ },
+ "bmw-i3-i4-ix-ix1": {
+  "page": "https://commons.wikimedia.org/wiki/File:BMW_i4_M50_Auto_Zuerich_2021_IMG_0290.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "BMW i4 M50 на выставке в Цюрихе"
+ },
+ "audi-e-tron-q4-e-tron-q8-e-tron": {
+  "page": "https://commons.wikimedia.org/wiki/File:Audi_Q4_e-tron_at_the_auto_show_(side).jpg",
+  "artist": "GZrex",
+  "license": "CC BY-SA 4.0",
+  "alt": "Audi Q4 e-tron на выставке, боковой ракурс"
+ },
+ "mercedes-eqc-eqa-eqb-eqe-eqs": {
+  "page": "https://commons.wikimedia.org/wiki/File:2022_Mercedes-Benz_EQS_at_NYIAS_2022,_front_right.jpg",
+  "artist": "Mr.choppers",
+  "license": "CC BY-SA 3.0",
+  "alt": "Mercedes-Benz EQS на автосалоне в Нью-Йорке"
+ },
+ "mg-4-mulan": {
+  "page": "https://commons.wikimedia.org/wiki/File:MG4_EV_XPower_GIMS_2024_1X7A2361.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "MG4 EV XPower на выставке в Женеве"
+ },
+ "mini-cooper-se": {
+  "page": "https://commons.wikimedia.org/wiki/File:2024_Mini_Electric_JCW.jpg",
+  "artist": "Calreyn88",
+  "license": "CC BY-SA 4.0",
+  "alt": "Mini Electric JCW на выставке"
  }
 }
