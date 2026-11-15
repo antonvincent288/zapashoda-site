@@ -370,7 +370,7 @@ footer a{display:inline-block;padding:7px 0}
 .share a:hover svg{color:var(--cyan,#00e5ff)}
 
 footer{background:var(--bg);color:rgba(229,236,246,.66);padding:56px 0 28px;font-size:14px}
-.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:36px;align-items:start}
+.fgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:36px;align-items:start}
 @media (max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
 @media (max-width:520px){.fgrid{grid-template-columns:1fr}}
 .fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
