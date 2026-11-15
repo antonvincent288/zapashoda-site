@@ -54,6 +54,15 @@ except Exception as e:
     print('send failed:', type(e).__name__, str(e)[:200])
     sys.exit(1)
 
+try:
+    msg_id = r.get('result', {}).get('message_id')
+    ids = pub.setdefault('ids', {})
+    ids[str(idx)] = msg_id
+    if msg_id:
+        print('tracked msg_id', msg_id, 'for idx', idx)
+except Exception:
+    pass
+
 pub['next'] = idx + 1
 json.dump(pub, open(pub_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print('progress saved: next =', pub['next'])
