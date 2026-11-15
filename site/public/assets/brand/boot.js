@@ -52,7 +52,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
  }catch(e){}
 })();
 
-/* ---- R-08: Нейро-ассистент «Бортовой ИИ» (проактивный совет, MVP) ---- */
+/* ---- R-08: Нейро-ассистент «Бортовой ИИ» — форма «как было» + новые правила показа (15.11) ---- */
 (function(){
  try{
   if(sessionStorage.getItem('zsai'))return;
@@ -65,17 +65,26 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   if(path.indexOf('/pain')!==-1||path.indexOf('/blog')!==-1){tips.push(['Хотите разбор под вашу модель? Карточки моделей: разъёмы, адаптеры, совместимость.','/catalog/']);}
   if(!tips.length){tips.push(['Не знаешь, что заряжать и сколько это стоит? Посчитай свой сценарий за минуту.','/calculator/']);}
   var t=tips[0];
-  var toast=document.createElement('div');toast.id='zs-ai-toast';
-  var compact=window.innerWidth<1024?'84px':'16px';
-  toast.style.cssText='position:fixed;left:50%;transform:translateX(-50%) translateY(8px);width:min(560px,calc(100vw - 24px));bottom:'+compact+';z-index:190;background:rgba(18,22,28,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#f5f5f7;border:1px solid rgba(90,169,255,.35);border-radius:12px;padding:9px 12px;font-size:12.5px;line-height:1.35;box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 24px rgba(90,169,255,.10);display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .45s ease,transform .45s ease';
-  toast.innerHTML='<span id="zs-ai-tag" style="flex:none;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#00E5FF;border:1px solid rgba(0,229,255,.4);border-radius:6px;padding:4px 7px;background:rgba(0,229,255,.08);white-space:nowrap">AI</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t[0]+'</span><a href="'+t[1]+'" id="zs-ai-go" style="flex:none;display:flex;align-items:center;gap:6px;color:#5AA9FF;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap;padding:6px 10px;border-radius:8px;border:1px solid rgba(90,169,255,.35);background:rgba(90,169,255,.10)">Открыть<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5AA9FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><button id="zs-ai-x" style="flex:none;background:none;border:none;color:#8e8e93;cursor:pointer;font-size:16px;line-height:1;padding:8px 6px;min-height:24px;min-width:24px" aria-label="Скрыть">×</button>';
-  setTimeout(function(){
-    document.body.appendChild(toast);
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ toast.style.opacity='1'; toast.style.transform='translateX(-50%) translateY(0)'; }); });
-    if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
-    document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
-    document.getElementById('zs-ai-x').addEventListener('click',function(){toast.style.opacity='0';toast.style.transform='translateX(-50%) translateY(8px)';setTimeout(function(){toast.remove();},480);sessionStorage.setItem('zsai','1');});
-    setTimeout(function(){var el=document.getElementById('zs-ai-toast');if(el){el.style.opacity='0';el.style.transform='translateX(-50%) translateY(8px)';setTimeout(function(){if(el.parentNode)el.remove();},480);}},14000);
-  },4000);
+  var shown=false;
+  function dismiss(){var el=document.getElementById('zs-ai-toast');if(el)el.remove();sessionStorage.setItem('zsai','1');}
+  function show(){
+   if(shown)return;shown=true;
+   var toast=document.createElement('div');toast.id='zs-ai-toast';
+   toast.style.cssText='position:fixed;left:14px;right:14px;max-width:340px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:rgba(24,27,33,.96);color:#f5f5f7;border:1px solid rgba(255,111,0,.45);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;box-shadow:0 8px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease';
+   toast.innerHTML='<div style="font-size:10px;letter-spacing:.1em;color:#9aa0a6;font-weight:700">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
+    +'<div style="margin:6px 0">'+t[0]+'</div>'
+    +'<a href="'+t[1]+'" style="display:inline-flex;align-items:center;min-height:34px;background:linear-gradient(135deg,#FF8F33,#FF6F00);color:#0B1018;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a>'
+    +'<button id="zs-ai-x" style="margin-left:6px;background:none;border:none;color:#9aa0a6;cursor:pointer;font-size:13px;padding:10px 8px" aria-label="Скрыть">Скрыть</button>';
+   document.body.appendChild(toast);
+   requestAnimationFrame(function(){requestAnimationFrame(function(){toast.style.opacity='1';toast.style.transform='translateY(0)';});});
+   if(window.ym){try{ym('113935123','reachGoal','ai_toast_shown');}catch(e){}}
+   document.getElementById('zs-ai-go').addEventListener('click',function(){if(window.ym){try{ym('113935123','reachGoal','ai_toast_click');}catch(e){}}sessionStorage.setItem('zsai','1');});
+   document.getElementById('zs-ai-x').addEventListener('click',function(){dismiss();});
+   setTimeout(function(){dismiss();},16000);
+  }
+  /* новые правила: не вылезает сразу — ждёт вовлечения (скролл >600px) либо 7с, показ 1 раз за сессию, автоудаление через 16с (remove, не opacity) */
+  var timer=setTimeout(show,7000);
+  var onScroll=function(){ if(window.scrollY>600){clearTimeout(timer);show();} };
+  window.addEventListener('scroll',onScroll,{passive:true});
  }catch(e){}
 })();
