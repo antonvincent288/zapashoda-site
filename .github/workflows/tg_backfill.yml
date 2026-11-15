@@ -1,0 +1,30 @@
+name: TG backfill tags
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: tg-backfill
+  cancel-in-progress: false
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Edit old posts (add tags + bold title)
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: '108142888'
+          CHANNEL_ID: '-1002316192115'
+        run: python scripts/tg_backfill.py
+      - name: Commit done-list
+        run: |
+          git config user.name "zapashoda-bot"
+          git config user.email "bot@zapashoda-ev.ru"
+          git add scripts/backfill_done.json
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "[skip ci] backfill progress"
+          git push
