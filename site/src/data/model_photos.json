@@ -82,5 +82,41 @@
   "artist": "JustAnotherCarDesigner",
   "license": "CC0",
   "alt": "Xiaomi SU7 на выставке"
+ },
+ "tank-500-hi4-t": {
+  "page": "https://commons.wikimedia.org/wiki/File:Tank_500_PHEV_For_Guangzhou_International_Auto_Show_2022.jpg",
+  "artist": "Nissangeniss",
+  "license": "CC BY-SA 4.0",
+  "alt": "Tank 500 PHEV на автошоу в Гуанчжоу"
+ },
+ "hongqi-eh7-hs3-ev-hs3-ev": {
+  "page": "https://commons.wikimedia.org/wiki/File:Hongqi_EH7_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Hongqi EH7 на выставке"
+ },
+ "leapmotor-c10-c11-c01-b10-a05": {
+  "page": "https://commons.wikimedia.org/wiki/File:Leapmotor_C10_IAA_2023_1X7A0247.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Leapmotor C10 на выставке IAA"
+ },
+ "leapmotor-t03": {
+  "page": "https://commons.wikimedia.org/wiki/File:Leapmotor_T03_Auto_Zuerich_2024_DSC_6327.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Leapmotor T03 на выставке в Цюрихе"
+ },
+ "jetour-t1-t2-phev": {
+  "page": "https://commons.wikimedia.org/wiki/File:Jetour_Traveller_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC BY-SA 4.0",
+  "alt": "Jetour T2 (Traveller) на выставке"
+ },
+ "im-motors-ls6-l7": {
+  "page": "https://commons.wikimedia.org/wiki/File:IM_LS6_GIMS_2024_1X7A2002.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "IM LS6 на выставке в Женеве"
  }
 }
