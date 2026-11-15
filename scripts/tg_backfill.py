@@ -31,9 +31,13 @@ for e in entries:
         else:
             fail += 1
             print('FAIL msg', e['msg_id'], r.get('description', '')[:80])
-    except Exception as ex:
+    except urllib.error.HTTPError as ex:
         fail += 1
-        print('ERR msg', e['msg_id'], type(ex).__name__, str(ex)[:100])
+        try:
+            desc = json.loads(ex.read().decode()).get('description', '')[:120]
+        except Exception:
+            desc = str(ex)[:120]
+        print('ERR msg', e['msg_id'], desc)
 
 json.dump(done, open(DONE_PATH, 'w', encoding='utf-8'))
 print('done:', ok, 'fail:', fail, 'skip:', skip)
