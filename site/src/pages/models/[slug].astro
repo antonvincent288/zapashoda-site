@@ -167,7 +167,7 @@ const battStr = String(battLabel || '').trim();
 if (battStr) {
   modelQas.push({ q: `Какая батарея у ${modelName}?`, a: `Ёмкость батареи — ${battStr}. Точный запас хода зависит от версии и комплектации; полная спецификация — в таблице выше.` });
 }
-const modelFaq = modelQas.length ? `<div class="card" style="margin-top:26px">\n        <h3>Частые вопросы: зарядка ${modelName}</h3>\n        ${modelQas.map(qa => `<details class="mfaq"><summary>${qa.q}</summary><p>${qa.a}</p></details>`).join('')}\n      </div>` : '';
+const modelFaq = modelQas.length ? '<div class="card" style="margin-top:26px"><h3>Частые вопросы: зарядка ' + modelName + '</h3>' + modelQas.map(qa => '<details class="mfaq"><summary>' + qa.q + '</summary><p>' + qa.a + '</p></details>').join('') + '</div>' : '';
 const faqLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
