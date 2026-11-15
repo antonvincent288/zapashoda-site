@@ -613,7 +613,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .mmain .card h3{font-size:18px;font-weight:800;color:var(--head);margin:0 0 12px}
     /* v10.3 «до идеала»: референсы carwow/Car&Driver — spec-числа крупным акцентом; NN/g «пятнистый» сканер ищет цифры */
     /* WCAG fix: светл. тема #B85C00 (4.60 на белом), тёмная #FF8F33 (7.93 на #0E131F/#1E293B) через токен --gold-text (:root/.dark в ZhLayout); откат в одну строку: color:#B85C00 */
-    .meta > span{font-weight:700;color:var(--gold-text);font-size:14px}
+    .meta > span{font-weight:700;color:var(--gold-text);font-size:14px;font-variant-numeric:tabular-nums;animation:kpiIn .45s ease-out both}
+    .meta > span:nth-child(2){animation-delay:.07s}
+    .meta > span:nth-child(3){animation-delay:.14s}
+    @keyframes kpiIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){.meta > span{animation:none}}
     .meta > span.mstamp{font-weight:400;color:var(--txt-muted);font-size:11px}
     .mmain .card{padding:22px 20px}
     @media (width<=640px){.mmain .card{padding:18px 16px}}
