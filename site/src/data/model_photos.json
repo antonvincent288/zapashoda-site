@@ -166,5 +166,65 @@
   "artist": "Jengtingchen",
   "license": "CC BY-SA 4.0",
   "alt": "Neta U на выставочной площадке"
+ },
+ "porsche-taycan": {
+  "page": "https://commons.wikimedia.org/wiki/File:Chicago_Auto_Show_2020._Porsche_Taycan_Turbo_S_(49505166858).jpg",
+  "artist": "Kontinent Media",
+  "license": "CC BY 2.0",
+  "alt": "Porsche Taycan на автошоу в Чикаго"
+ },
+ "hyundai-ioniq-5-ioniq-6-kr": {
+  "page": "https://commons.wikimedia.org/wiki/File:Hyundai_Ioniq_5_N_Line_Auto_Zuerich_2024_DSC_6752.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Hyundai Ioniq 5 на выставке в Цюрихе"
+ },
+ "kia-ev6-kr": {
+  "page": "https://commons.wikimedia.org/wiki/File:Kia_EV6_Auto_Zuerich_2021_IMG_0434.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Kia EV6 на выставке в Цюрихе"
+ },
+ "kia-ev9-kr": {
+  "page": "https://commons.wikimedia.org/wiki/File:Kia_EV9,_BAS_24,_Brussels_(P1170541-RR).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Kia EV9 на автосалоне в Брюсселе"
+ },
+ "volvo-xc40-recharge-c40-ex40": {
+  "page": "https://commons.wikimedia.org/wiki/File:2022_Cleveland_Auto_Show_(51938153922).jpg",
+  "artist": "Erik Drost",
+  "license": "CC BY 2.0",
+  "alt": "Volvo C40 Recharge на автошоу в Кливленде"
+ },
+ "vw-id-3-id-4-id-5-id-buzz": {
+  "page": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID._Buzz_LWB,_Auto_2024,_Zurich_(PANA0873).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Volkswagen ID. Buzz на выставке в Цюрихе"
+ },
+ "skoda-enyaq": {
+  "page": "https://commons.wikimedia.org/wiki/File:%C5%A0koda_Enyaq_Coup%C3%A9_RS_Auto_Zuerich_2023_1X7A1348.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Škoda Enyaq Coupé RS на выставке в Цюрихе"
+ },
+ "nissan-leaf-ze1-jp-eu": {
+  "page": "https://commons.wikimedia.org/wiki/File:MIAS_2024_-_2024_Nissan_Leaf_ZE1_EV.jpg",
+  "artist": "Ethan Llamas",
+  "license": "CC BY-SA 4.0",
+  "alt": "Nissan Leaf на автосалоне MIAS"
+ },
+ "renault-megane-e-tech-kangoo-e-tech": {
+  "page": "https://commons.wikimedia.org/wiki/File:Renault_M%C3%A9gane_E-Tech_GIMS_2024_1X7A2161.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Renault Megane E-Tech на выставке в Женеве"
+ },
+ "polestar-2-3-4": {
+  "page": "https://commons.wikimedia.org/wiki/File:Polestar_2_BST_Edition_230_Auto_Zuerich_2023_1X7A1303.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Polestar 2 на выставке в Цюрихе"
  }
 }
