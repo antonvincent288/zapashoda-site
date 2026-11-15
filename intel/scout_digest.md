@@ -139,3 +139,6 @@
 ## 2026-11-14
 
 - [@docmd/plugin-llms](https://www.npmjs.com/package/@docmd/plugin-llms) — Generates llms.txt and llms-full.txt context files for AI agents at build time.
+## 2026-11-15
+
+Новых находок нет - все уже в базе.
