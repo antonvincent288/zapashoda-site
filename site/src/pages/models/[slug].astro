@@ -167,7 +167,8 @@ const battStr = String(battLabel || '').trim();
 if (battStr) {
   modelQas.push({ q: `Какая батарея у ${modelName}?`, a: `Ёмкость батареи — ${battStr}. Точный запас хода зависит от версии и комплектации; полная спецификация — в таблице выше.` });
 }
-const modelFaq = modelQas.length ? '<div class="card" style="margin-top:26px"><h3>Частые вопросы: зарядка ' + modelName + '</h3>' + modelQas.map(qa => '<details class="mfaq"><summary>' + qa.q + '</summary><p>' + qa.a + '</p></details>').join('') + '</div>' : '';
+const modelDetails = modelQas.map(qa => '<details class="mfaq"><summary>' + qa.q + '</summary><p>' + qa.a + '</p></details>').join('');
+const faqCombined = faqPort ? faqPort.replace('<h3>Частые вопросы про разъём</h3>', '<h3>Частые вопросы: зарядка ' + modelName + '</h3>' + modelDetails) : '';
 const faqLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -593,8 +594,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <div class="mmain">
       {isGBT && (<p style="margin-top:16px;font-size:14px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#00E5FF">в разделе «Телематика»</a>.</p>)}
 
-      {modelFaq && <Fragment set:html={modelFaq} />}
-              {faqPort && <Fragment set:html={faqPort} />}
+      {faqCombined && <Fragment set:html={faqCombined} />}
             {bodyClean && <div class="article" style="margin-top:8px" set:html={bodyClean} />}
         </div>
         <aside class="mside">
