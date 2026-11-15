@@ -6,8 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Backfill hashtags on old posts
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-        run: python3 scripts/tg_backfill.py
+          CHAT_ID: '108142888'
+          CHANNEL_ID: '-1002316192115'
+        run: python scripts/tg_backfill.py
