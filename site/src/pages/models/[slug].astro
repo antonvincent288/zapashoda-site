@@ -582,6 +582,13 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     @media (width<=1024px){.mgrid.mgrid-wide{grid-template-columns:1fr}}
     .mmain .card{max-width:none}
     .mmain .card h3{font-size:18px;font-weight:800;color:var(--head);margin:0 0 12px}
+    /* v10.3 «до идеала»: референсы carwow/Car&Driver — spec-числа крупным акцентом; NN/g «пятнистый» сканер ищет цифры */
+    .meta > span{font-weight:700;color:var(--gold);font-size:14px}
+    .meta > span.mstamp{font-weight:400;color:var(--txt-muted);font-size:11px}
+    .mmain .card{padding:22px 20px}
+    @media (width<=640px){.mmain .card{padding:18px 16px}}
+    .mfaq{padding:12px 16px}
+    .pain-acc.pdf-acc{border:1px solid rgba(255,111,0,.4);background:rgba(255,111,0,.05)}
   </style>
   <section class="sec">
     <div class="wrap" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'} data-mtype={m.type || ''}>
@@ -592,7 +599,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <a href={`/razemy/${portSlug(String(m.port || ''))}/`} style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit" title="Справочник разъёма"><PlugIcon name={portIcon(String(m.port || ''))} size={16} label={String(m.port || '')} /> {m.port || '—'} <span style="font-size:11px;color:var(--txt-muted)">что за разъём →</span></a>
         {spec.obc && <span>{spec.obc}</span>}
         {dcpowClean && <span>DC {dcShort}</span>}
-        <span>Обновлено: ноябрь 2026</span>
+        <span class="mstamp">Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {descFix}</p>}
       <div class="mgrid mgrid-wide">
