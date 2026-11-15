@@ -5,6 +5,7 @@ import PlugIcon from '../../components/PlugIcon.astro';
 import BATTERY from '../../data/models_battery.json';
 import { priceFix as pf, fmtRub as fmtR, PRICES_ON } from '../../lib/prices';
 import { buyKitHtml } from '../../lib/interlink';
+import PHOTOS_META from '../../data/model_photos.json';
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../data/models/*.json', { eager: true, import: 'default' });
   const models = Object.values(modules) as any[];
@@ -619,7 +620,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     @keyframes kpiIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
     @media (prefers-reduced-motion:reduce){.meta > span{animation:none}}
     .meta > span.mstamp{font-weight:400;color:var(--txt-muted);font-size:11px}
-    .mmain .card{padding:22px 20px}
+    .mmain .card{padding:22px 20px}.mphoto-wrap{margin:14px 0 4px}.mphoto{width:100%;border-radius:16px;display:block}.mphoto-cap{font-size:11.5px;color:var(--txt-muted);margin-top:6px}.mphoto-cap a{color:#5aa9ff}
     @media (width<=640px){.mmain .card{padding:18px 16px}}
     .mfaq{padding:12px 16px}
     .pain-acc.pdf-acc{border:1px solid rgba(255,111,0,.4);background:rgba(255,111,0,.05)}
@@ -654,6 +655,12 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <span class="mstamp">Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {descFix}</p>}
+      {PHOTOS_META[m.slug] && (
+        <div class="mphoto-wrap">
+          <img class="mphoto" src={`/assets/photos/${m.slug}.jpg`} alt={PHOTOS_META[m.slug].alt || `${m.name} — фото модели, Wikimedia Commons`} loading="lazy" />
+          <div class="mphoto-cap">Фото: <a href={PHOTOS_META[m.slug].page} target="_blank" rel="noopener">{PHOTOS_META[m.slug].artist}</a> · Wikimedia Commons · {PHOTOS_META[m.slug].license}</div>
+        </div>
+      )}
       <div class="mgrid mgrid-wide">
         <div class="mmain">
       {isGBT && (<p style="margin-top:16px;font-size:14px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#00E5FF">в разделе «Телематика»</a>.</p>)}
