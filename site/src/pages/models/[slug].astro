@@ -491,6 +491,7 @@ try {
 try {
   bodyClean = bodyClean.replace(/<script type="application\/ld\+json"[^>]*>(?:(?!<\/script>)[\s\S])*?FAQPage(?:(?!<\/script>)[\s\S])*?<\/script>/g, '');
 } catch (e) {}
+let faqQsAll: { q: string; a: string }[] = [];
 faqQsAll = [
   ...modelQas.slice(0, 4).map(qa => ({ q: qa.q, a: qa.a })),
   ...seoQas.map(x => ({ q: x.q, a: x.a }))
