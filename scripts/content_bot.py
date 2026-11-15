@@ -1,41 +1,29 @@
 #!/usr/bin/env python3
-"""Постит один текстовый пост из очереди в канал Telegram. Прогресс — в published_content.json.
-v2: автопостроение хэштегов — 2 тематических тега по содержимому поста + бренд-тег #запасхода.
-Если в элементе очереди есть поле "tags" — используются только оно. Хэштеги не дублируются."""
+"""Постит один пост из очереди в канал Telegram (HTML-формат по скиллу telegram-growth-expert).
+Прогресс — в published_content.json."""
 import json, os, sys, urllib.request, urllib.parse
 
 TOKEN = os.environ['TELEGRAM_TOKEN']
 CHANNEL = os.environ['CHANNEL_ID']
 OWNER = os.environ['CHAT_ID']
 
-BRAND_TAG = '#запасхода'
-TAG_MAP = [
-    (('разъём', 'разъем', 'gbt', 'gb/t', 'ccs2', 'type 2', 'type2'), '#разъёмы'),
-    (('адаптер',), '#адаптеры'),
-    (('зим', 'мороз'), '#зима'),
-    (('батаре',), '#батарея'),
-    (('домаш', 'розетка', 'удлинит'), '#домашняязарядка'),
-    (('миф',), '#мифы'),
-    (('простой', 'проста'), '#простой'),
-    (('м-11', 'м-12', 'трасс', 'дальня', 'маршрут'), '#маршруты'),
-    (('квиз', 'подбор', 'проверь', 'посмотри'), '#подбор'),
-    (('эконом', 'дешев', '₽', 'стоит', 'копейки'), '#экономия'),
-    (('станци', 'эзс'), '#станции'),
-]
 
-def tags_for(text, override=None):
-    if override:
-        return ' '.join(override[:3])
-    low = text.lower()
-    tags = []
-    for keys, tag in TAG_MAP:
-        if tag not in tags and any(k in low for k in keys):
-            tags.append(tag)
-        if len(tags) >= 2:
-            break
-    if BRAND_TAG in text[-100:].lower():
-        return ''
-    return ' '.join(tags + [BRAND_TAG])
+def esc(s: str) -> str:
+    return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+
+def fmt(post: dict) -> str:
+    """Оформление поста: жирный заголовок, хук ≤2 строк, пункты, хэштеги."""
+    lines = post['text'].split('\n')
+    html = '<b>%s</b>' % esc(lines[0].strip())
+    rest = '\n'.join(lines[1:]).strip()
+    if rest:
+        html += '\n\n' + esc(rest)
+    tags = post.get('tags') or []
+    if tags:
+        html += '\n\n' + ' '.join(esc(t) for t in tags)
+    return html
+
 
 queue = json.load(open('scripts/content_queue.json', encoding='utf-8'))
 pub_path = 'scripts/published_content.json'
@@ -50,12 +38,9 @@ if idx >= len(queue):
     sys.exit(0)
 
 post = queue[idx]
-text = post['text'].rstrip()
-tags_line = tags_for(post['text'], post.get('tags'))
-if tags_line:
-    text = text + '\n\n' + tags_line
-
-data = {'chat_id': CHANNEL, 'text': text,
+data = {'chat_id': CHANNEL,
+        'text': fmt(post),
+        'parse_mode': 'HTML',
         'reply_markup': json.dumps({'inline_keyboard': post.get('buttons', [])}, ensure_ascii=False),
         'disable_web_page_preview': 'true'}
 req = urllib.request.Request('https://api.telegram.org/bot%s/sendMessage' % TOKEN,
