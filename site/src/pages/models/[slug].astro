@@ -488,9 +488,7 @@ try {
     } catch (e) {}
   }
 } catch (e) {}
-try {
-  bodyClean = bodyClean.replace(/<script type="application\/ld\+json"[^>]*>(?:(?!<\/script>)[\s\S])*?FAQPage(?:(?!<\/script>)[\s\S])*?<\/script>/g, '');
-} catch (e) {}
+const bodyFinal = bodyClean.replace(/<script type="application\/ld\+json"[^>]*>(?:(?!<\/script>)[\s\S])*?FAQPage(?:(?!<\/script>)[\s\S])*?<\/script>/g, '');
 let faqQsAll: { q: string; a: string }[] = [];
 faqQsAll = [
   ...modelQas.slice(0, 4).map(qa => ({ q: qa.q, a: qa.a })),
@@ -649,7 +647,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       {isGBT && (<p style="margin-top:16px;font-size:14px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#00E5FF">в разделе «Телематика»</a>.</p>)}
 
       {faqCombined && <Fragment set:html={faqCombined} />}
-            {bodyClean && <div class="article" style="margin-top:8px" set:html={bodyClean} />}
+            {bodyClean && <div class="article" style="margin-top:8px" set:html={bodyFinal} />}
         </div>
         <aside class="mside">
           <div class="pp-cap">Паспорт модели</div>
