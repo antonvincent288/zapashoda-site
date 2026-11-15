@@ -49,7 +49,7 @@ const isOn = (href) => href === "/" ? path === "" : path === href.replace(/\/$/,
 {publishedTime && <meta property="article:published_time" content={publishedTime} />}
 {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 <meta name="author" content="Запас хода" />
-{jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+{jsonld && (Array.isArray(jsonld) ? jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />) : <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />)}
 <script is:inline>
 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
 m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return;}
