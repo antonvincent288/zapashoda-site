@@ -39,7 +39,7 @@ if idx >= len(queue):
 
 post = queue[idx]
 data = {'chat_id': CHANNEL,
-        'text': fmt(post),
+        'text': post.get('html') or fmt(post),
         'parse_mode': 'HTML',
         'reply_markup': json.dumps({'inline_keyboard': post.get('buttons', [])}, ensure_ascii=False),
         'disable_web_page_preview': 'true'}
