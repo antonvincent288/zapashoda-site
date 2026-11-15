@@ -577,6 +577,11 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     @media (max-width:1024px){.mgrid{grid-template-columns:1fr}.mside{position:static;order:-1;max-height:none;overflow:visible}}
     .mfaq summary{font-weight:700;cursor:pointer;font-size:14px}
     .mfaq p{margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--txt-muted)}
+    /* v10.2: фикс сжатой контентной колонки — легаси .mgrid из ZhLayout.CSS (repeat(3,1fr), без media) перебивал раскладку модели; специфичность 0,2,0 перебивает всё .mgrid */
+    .mgrid.mgrid-wide{grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;display:grid}
+    @media (width<=1024px){.mgrid.mgrid-wide{grid-template-columns:1fr}}
+    .mmain .card{max-width:none}
+    .mmain .card h3{font-size:18px;font-weight:800;color:var(--head);margin:0 0 12px}
   </style>
   <section class="sec">
     <div class="wrap" data-mbrand={m.brand || ''} data-mname={m.name || ''} data-mport={String(m.port || '').includes('GB/T') ? 'GBT' : 'EU'} data-mtype={m.type || ''}>
@@ -590,7 +595,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
         <span>Обновлено: ноябрь 2026</span>
       </div>
       {m.desc && <p class="article" style="font-size:18px;color:var(--txt-muted)">Коротко: {descFix}</p>}
-      <div class="mgrid">
+      <div class="mgrid mgrid-wide">
         <div class="mmain">
       {isGBT && (<p style="margin-top:16px;font-size:14px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#00E5FF">в разделе «Телематика»</a>.</p>)}
 
