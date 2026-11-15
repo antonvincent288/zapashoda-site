@@ -231,9 +231,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           chipsBox.appendChild(b);
         });
         if (!map) {
-          map = L.map('map').setView([55.75, 37.62], 5);
+          map = L.map('map',{attributionControl:false}).setView([55.75, 37.62], 5);
           // тач-страховка снята по решению владельца: стандартные жесты Leaflet — один палец двигает карту, щипок — зум
-          var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(map);});
+          var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);try{map.addControl(L.control.attribution({prefix:false}).addAttribution('&copy; OpenStreetMap'))}catch(e){}});
           cluster = L.markerClusterGroup();
           st.forEach(function (s) {
             if (typeof s.lat !== 'number' || typeof s.lon !== 'number') return;
@@ -841,7 +841,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       try { if (location.hash.indexOf('#view=ya') === 0) setTab(true); } catch (e) {}
     })();
   </script>
-<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}
+<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}.leaflet-container a.leaflet-logo,.leaflet-container .leaflet-control-attribution{display:none!important}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}
 #os-widget{position:relative;border:1px solid rgba(77,155,245,.22);background:linear-gradient(135deg,rgba(77,155,245,.13),rgba(77,155,245,.03) 45%,rgba(201,162,39,.10));box-shadow:0 20px 70px rgba(2,6,16,.45),0 0 0 1px rgba(77,155,245,.07),inset 0 1px 0 rgba(255,255,255,.06)}
 #os-widget::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,155,245,.75) 30%,rgba(201,162,39,.55) 60%,transparent);pointer-events:none}
 #os-widget::after{content:"";position:absolute;right:-120px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(77,155,245,.14),transparent 65%);pointer-events:none}
