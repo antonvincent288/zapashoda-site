@@ -89,12 +89,6 @@
   "license": "CC BY-SA 4.0",
   "alt": "Tank 500 PHEV на автошоу в Гуанчжоу"
  },
- "hongqi-eh7-hs3-ev-hs3-ev": {
-  "page": "https://commons.wikimedia.org/wiki/File:Hongqi_EH7_001.jpg",
-  "artist": "JustAnotherCarDesigner",
-  "license": "CC0",
-  "alt": "Hongqi EH7 на выставке"
- },
  "leapmotor-c10-c11-c01-b10-a05": {
   "page": "https://commons.wikimedia.org/wiki/File:Leapmotor_C10_IAA_2023_1X7A0247.jpg",
   "artist": "Alexander-93",
@@ -118,5 +112,11 @@
   "artist": "Alexander-93",
   "license": "CC BY-SA 4.0",
   "alt": "IM LS6 на выставке в Женеве"
+ },
+ "hongqi-eh7-hs7-ev-hs3-ev": {
+  "page": "https://commons.wikimedia.org/wiki/File:Hongqi_EH7_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Hongqi EH7 на выставке"
  }
 }
