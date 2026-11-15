@@ -1,9 +1,9 @@
 {
  "aito-m9": {
-  "page": "https://commons.wikimedia.org/wiki/File:Aito_M9_003.jpg",
-  "artist": "JustAnotherCarDesigner",
-  "license": "CC0",
-  "alt": "Aito M9 на городской улице"
+  "page": "https://commons.wikimedia.org/wiki/File:AITO_M9_in_Grandview_Mall,_Guangzhou_20240214-A.jpg",
+  "artist": "Tim Wu",
+  "license": "CC BY-SA 4.0",
+  "alt": "AITO M9 в шоуруме ТЦ Guangzhou"
  },
  "byd-seal": {
   "page": "https://commons.wikimedia.org/wiki/File:BYD_Seal_IAA_2023_1X7A0026.jpg",
@@ -18,10 +18,10 @@
   "alt": "Voyah Free у зарядной станции"
  },
  "zeekr-001-001-fr": {
-  "page": "https://commons.wikimedia.org/wiki/File:Zeekr_001_facelift_002.jpg",
-  "artist": "JustAnotherCarDesigner",
-  "license": "CC0",
-  "alt": "Zeekr 001 на вечерней городской улице"
+  "page": "https://commons.wikimedia.org/wiki/File:Mobileye_Zeekr_001,_IAA_Summit_2023,_Munich_(P1120233-RR).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Zeekr 001 на выставке IAA 2023 в Мюнхене"
  },
  "li-auto-l6-l7-l8-l9-2022-2025": {
   "page": "https://commons.wikimedia.org/wiki/File:Li_Auto_L9_II_001.jpg",
@@ -30,15 +30,15 @@
   "alt": "Li Auto L9 в демонстрационном зале"
  },
  "tesla-model-3-y-eu": {
-  "page": "https://commons.wikimedia.org/wiki/File:Tesla_Model_Y_(2025)_MYLE_Festival_2025_DSC_9565.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Tesla_Model_Y_Auto_Zuerich_2021_IMG_0089.jpg",
   "artist": "Alexander Migl",
   "license": "CC BY-SA 4.0",
-  "alt": "Tesla Model Y (2025)"
+  "alt": "Tesla Model Y на выставке в Цюрихе"
  },
  "avatr-11-12-ofitsialno-ru": {
-  "page": "https://commons.wikimedia.org/wiki/File:2022_Avatr_11_(front).jpg",
-  "artist": "User3204",
+  "page": "https://commons.wikimedia.org/wiki/File:AVATR_11_001.jpg",
+  "artist": "Elizbeth smith",
   "license": "CC BY-SA 4.0",
-  "alt": "Avatr 11 спереди"
+  "alt": "Avatr 11 на выставочной площадке"
  }
 }
