@@ -594,7 +594,7 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
       {isGBT && (<p style="margin-top:16px;font-size:14px;color:var(--txt-muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 16px"><b style="color:var(--head)">Телематика:</b> у китайских EV в РФ важно, чтобы работали мастер-аккаунт и SIM/eSIM — без интернета в машине недоступны предпрогрев батареи перед зарядкой и удалённый контроль из приложения. Разбор темы — <a href="/telematika/" style="color:#00E5FF">в разделе «Телематика»</a>.</p>)}
 
       {modelFaq && <Fragment set:html={modelFaq} />}
-              <script is:inline type="application/ld+json" set:html={faqJsonld} />
+              <Fragment set:html={'<script type="application/ld+json">' + faqJsonld + '</script>'} />
               {faqPort && <Fragment set:html={faqPort} />}
             {bodyClean && <div class="article" style="margin-top:8px" set:html={bodyClean} />}
         </div>
