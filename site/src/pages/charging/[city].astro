@@ -58,7 +58,7 @@ const ld = {
         <tbody>
           {top.map((t) => (
             <tr>
-              <td>{STNMAP[t.a] ? (<a href={`https://yandex.ru/maps/?pt=${STNMAP[t.a][0]},${STNMAP[t.a][1]}&z=17&l=map`} target="_blank" rel="noopener nofollow">{t.a}</a>) : t.a}</td>
+              <td>{STNMAP[t.a] ? (<><a href={`https://yandex.ru/maps/?pt=${STNMAP[t.a][0]},${STNMAP[t.a][1]}&z=17&l=map`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в Яндекс.Картах`}>{t.a}</a><a class="zrc-g2" href={`https://2gis.ru/geo/${STNMAP[t.a][0]}%2C${STNMAP[t.a][1]}`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в 2ГИС`} title="Открыть в 2ГИС"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg></a></>) : t.a}</td>
               <td>{t.n}</td>
               <td>{t.c ?? '—'}</td>
               <td>{(t.s || []).join(', ')}</td>
@@ -89,6 +89,8 @@ const ld = {
 @media(max-width:880px){.zrc-grid{grid-template-columns:minmax(0,1fr)}}
 .zrc-scroll td a{color:#FF8F33;text-decoration:underline;text-underline-offset:2px}
 .zrc-scroll td a:hover{text-decoration:none}
+.zrc-g2{color:#9aa4b2;text-decoration:none;display:inline-block;vertical-align:-1px;margin-left:7px;opacity:.75}
+.zrc-g2:hover{color:#FF8F33;opacity:1}
 .zrc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .zrc-h2{font-size:17px;font-weight:800;letter-spacing:-.01em}
 .zrc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
