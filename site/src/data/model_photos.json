@@ -634,5 +634,53 @@
   "artist": "JustAnotherCarDesigner",
   "license": "CC BY-SA 4.0",
   "alt": "Volkswagen ID.6 X на выставке"
+ },
+ "avatr-07-parallelnyy": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=155675823",
+  "artist": null,
+  "license": "BY-4.0",
+  "alt": "Avatr 07 выставочный образец (Шанхай)"
+ },
+ "hongqi-e-hs9": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=104061036",
+  "artist": null,
+  "license": "BY-SA-4.0",
+  "alt": "Hongqi E-HS9 на выставке"
+ },
+ "zeekr-007-007gt": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=141579328",
+  "artist": null,
+  "license": "BY-SA-4.0",
+  "alt": "Zeekr 007 на автосалоне в Гуанчжоу"
+ },
+ "voyah-passion-passion-s": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=180441673",
+  "artist": null,
+  "license": "BY-4.0",
+  "alt": "Voyah Passion выставочный образец (Шанхай)"
+ },
+ "chevrolet-bolt-ev-euv": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=48189515",
+  "artist": null,
+  "license": "BY-SA-2.0",
+  "alt": "Chevrolet Bolt EV на автосалоне NAIAS 2015"
+ },
+ "mazda-mx-30": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=100329543",
+  "artist": null,
+  "license": "BY-SA-4.0",
+  "alt": "Mazda MX-30 на автосалоне"
+ },
+ "kia-soul-ev-rannie": {
+  "page": "https://commons.wikimedia.org/w/index.php?curid=36592937",
+  "artist": null,
+  "license": "BY-SA-4.0",
+  "alt": "Kia Soul EV на автосалоне"
+ },
+ "hiphi-x-z": {
+  "page": "https://commons.wikimedia.org/wiki/File:HiPhi_X_006.jpg",
+  "artist": "Jengtingchen",
+  "license": "CC BY-SA 4.0",
+  "alt": "HiPhi X на выставке"
  }
 }
