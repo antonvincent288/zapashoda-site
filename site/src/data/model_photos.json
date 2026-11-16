@@ -292,5 +292,65 @@
   "artist": "Calreyn88",
   "license": "CC BY-SA 4.0",
   "alt": "Mini Electric JCW на выставке"
+ },
+ "toyota-bz4x-jp": {
+  "page": "https://commons.wikimedia.org/wiki/File:Toyota_bZ4X,_Auto_2024,_Zurich_(PANA0765).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Toyota bZ4X на выставке в Цюрихе"
+ },
+ "nissan-ariya-jp": {
+  "page": "https://commons.wikimedia.org/wiki/File:Nissan_Ariya_Nismo_Auto_Zuerich_2024_DSC_6166.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Nissan Ariya Nismo на выставке в Цюрихе"
+ },
+ "hyundai-kona-electric-kr": {
+  "page": "https://commons.wikimedia.org/wiki/File:Hyundai_Kona_Electric_(SX2)_Auto_Zuerich_2023_1X7A1152.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Hyundai Kona Electric на выставке в Цюрихе"
+ },
+ "kia-niro-ev-e-niro": {
+  "page": "https://commons.wikimedia.org/wiki/File:Kia_Niro_VE_2023_au_salon_auto_%C3%A9lectrique_et_hybride_r%C3%A9chargeable_de_Montr%C3%A9al_2023.png",
+  "artist": "Bull-Doser",
+  "license": "Public domain",
+  "alt": "Kia Niro EV на автосалоне в Монреале"
+ },
+ "genesis-gv60-electrified-g80-gv70": {
+  "page": "https://commons.wikimedia.org/wiki/File:Genesis_GV60_Auto_Zuerich_2023_1X7A1140.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Genesis GV60 на выставке в Цюрихе"
+ },
+ "ford-mustang-mach-e-us-f-150-lightning": {
+  "page": "https://commons.wikimedia.org/wiki/File:2023_Denver_Auto_Show_Ford_Mustang_Mach-E_front_left_quarter.jpg",
+  "artist": "Corqe",
+  "license": "CC0",
+  "alt": "Ford Mustang Mach-E на автошоу в Денвере"
+ },
+ "lucid-air": {
+  "page": "https://commons.wikimedia.org/wiki/File:Lucid_Air_Pure_GIMS_2024_1X7A2255.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Lucid Air Pure на выставке в Женеве"
+ },
+ "rivian-r1t-r1s": {
+  "page": "https://commons.wikimedia.org/wiki/File:Newly_Open_Rivian_Showroom_Brickell,_Miami_Florida_Sept_2025_-_Blue_pickup_in_room.jpg",
+  "artist": "Phillip Pessar",
+  "license": "CC BY 4.0",
+  "alt": "Rivian R1S в фирменном шоуруме в Майами"
+ },
+ "lotus-eletre-emeya": {
+  "page": "https://commons.wikimedia.org/wiki/File:2025_Lotus_Eletre_-_01.jpg",
+  "artist": "This picture has been taken by Oleg Yunakov. Contact e-mail: yunakovgmail.com. Image can be used in accordance with the terms of the СС-BY-SA license. Other photos can be seen here.",
+  "license": "CC BY-SA 4.0",
+  "alt": "Lotus Eletre на автосалоне"
+ },
+ "lexus-rz-jp": {
+  "page": "https://commons.wikimedia.org/wiki/File:Lexus_RZ_450e_(XEBM15)_Auto_Zuerich_2023_1X7A1248.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Lexus RZ 450e на выставке в Цюрихе"
  }
 }
