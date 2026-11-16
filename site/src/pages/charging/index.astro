@@ -776,6 +776,21 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           ? ('Паспортный запас ' + summer + ' км · ' + parts.join(' · ') + '. Оценка по среднему расходу 16 кВт·ч/100 км.')
           : ('Паспортный запас ' + summer + ' км — погода и сценарий его не режут.');
       }
+      function weatherRefresh() {
+        var chip = document.getElementById('weather-chip');
+        if (!chip || curTemp === null || curTemp === undefined || isNaN(curTemp)) return;
+        var tF = tempFactor(curTemp), extra = '';
+        if (carSel && carEntry && carEntry.cap) {
+          var rng = Math.round(carEntry.cap * 6.2 * tF);
+          var lose = Math.round((1 - tF) * 100);
+          if (curTemp <= 15) extra = ' · холод: запас ~' + rng + ' км (−' + lose + '%)';
+          else if (curTemp >= 25) extra = ' · жара: кондей съест ещё ~' + lose + '% запаса';
+          else extra = ' · запас ~' + rng + ' км';
+        } else {
+          extra = ' · выберите модель — покажем прогноз запаса';
+        }
+        chip.innerHTML = chipHTML((curTemp > 0 ? '+' : '') + curTemp + ' °C · рядом с вами' + extra);
+      }
       function fetchTemp(lat, lon, label) {
         var chip = document.getElementById('weather-chip');
         if (!chip) return;
@@ -813,6 +828,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var info = document.getElementById('car-info');
         if (carSel && carEntry) {
           classifyAll();
+          weatherRefresh();
           // сброс чипов, чтобы показать весь совместимый набор
           active = {};
           document.querySelectorAll('.cchip').forEach(function (x) { x.classList.remove('on'); });
