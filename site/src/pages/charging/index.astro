@@ -193,7 +193,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['schuko', 'Розетка 220 В', 'zsh-schuko'],
       ];
       var active = {};
-      var zhGeo = null, zhRangeCircle = null, viewMode = 'map', listLimit = 30;
+      var zhGeo = null, zhCity = null, zhRangeCircle = null, viewMode = 'map', listLimit = 30;
       var zhVisibleStations = [];
       var PW_PREDS = {
         pw100: function (s) { return (Number(s.pw) || 0) >= 100; },
@@ -250,7 +250,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             if (pts.length) {
               var lat = pts.reduce(function (a, p) { return a + p[0]; }, 0) / pts.length;
               var lon = pts.reduce(function (a, p) { return a + p[1]; }, 0) / pts.length;
-              setGeo(lat, lon);
+              setGeo(lat, lon, pair[0]);
               fetchTemp(lat, lon, pair[0]);
             }
           });
@@ -520,8 +520,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         return 2 * R * Math.asin(Math.sqrt(x * x + Math.cos(a[0] * d) * Math.cos(b[0] * d) * y * y));
       }
       function distOf(s) { return zhGeo ? havKm(zhGeo, [s.lat, s.lon]) : null; }
-      function setGeo(lat, lon) {
+      function setGeo(lat, lon, city) {
         zhGeo = [lat, lon];
+        zhCity = city || null;
         try {
           if (map && typeof L !== 'undefined') {
             if (zhRangeCircle) zhRangeCircle.setLatLng([lat, lon]);
@@ -550,10 +551,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!body) return;
         var q = String((document.getElementById('list-search') || {}).value || '').trim().toLowerCase();
         var items = (zhVisibleStations || []).slice();
+        if (zhCity) items = items.filter(function (s) { return String(s.a || '').split(',')[0].trim() === zhCity; });
         if (q) items = items.filter(function (s) { return ((s.n || '') + ' ' + (s.op || '') + ' ' + (s.a || '')).toLowerCase().indexOf(q) >= 0; });
         if (zhGeo) items.sort(function (a, b) { var da = distOf(a) || 1e9, db = distOf(b) || 1e9; return da - db; });
         var info = document.getElementById('lst-info');
-        if (info) info.textContent = items.length + ' ' + plural(items.length, 'станция', 'станции', 'станций') + (zhGeo ? ' · по расстоянию' : '');
+        if (info) info.textContent = (zhCity ? 'в ' + zhCity + ': ' : '') + items.length + ' ' + plural(items.length, 'станция', 'станции', 'станций') + (zhGeo ? ' · по расстоянию' : '');
         body.innerHTML = '';
         items.slice(0, listLimit).forEach(function (s) {
           var color = cardColor(s);
@@ -592,7 +594,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!items.length) {
           var emp = document.createElement('div');
           emp.style.cssText = 'padding:26px;text-align:center;color:var(--txt-muted);font-size:14px';
-          emp.innerHTML = 'Ничего не найдено. <button type="button" class="chip" id="list-reset" style="cursor:pointer;margin-left:6px">Сбросить фильтры</button>';
+          emp.innerHTML = (zhCity ? 'В ' + escH(zhCity) + ' по фильтрам пусто — в городе есть станции без активных фильтров. ' : 'Ничего не найдено. ') + '<button type="button" class="chip" id="list-reset" style="cursor:pointer;margin-left:6px">Сбросить фильтры</button>';
           body.appendChild(emp);
           var lr = document.getElementById('list-reset');
           if (lr) lr.addEventListener('click', function () {
