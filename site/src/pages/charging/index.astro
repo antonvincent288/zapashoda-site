@@ -844,14 +844,28 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!chip) return;
         chip.style.display = '';
         chip.innerHTML = chipHTML('погода…');
+        var done = false;
+        var timer = setTimeout(function () { showFail(); }, 5000);
+        function showFail() {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          var cached = null;
+          try { cached = JSON.parse(localStorage.getItem('zh-weather') || 'null'); } catch (e) {}
+          if (cached && typeof cached.t === 'number') chip.innerHTML = chipHTML((cached.t > 0 ? '+' : '') + cached.t + ' °C · кэш' + (cached.label ? ' · ' + cached.label : ''));
+          else chip.innerHTML = chipHTML('погода недоступна · VPN/блокировщик?');
+        }
         try {
           fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&current=temperature_2m')
             .then(function (r) { return r.json(); })
             .then(function (d) {
               var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
-              if (t === null) { chip.innerHTML = chipHTML('погода недоступна'); return; }
+              if (t === null) { showFail(); return; }
+              done = true;
+              clearTimeout(timer);
               curTemp = t;
               if (label) weatherLabel = label;
+              try { localStorage.setItem('zh-weather', JSON.stringify({ t: t, label: weatherLabel || null, ts: Date.now() })); } catch (e) {}
               var tF = tempFactor(t), extra = '';
               if (carSel && carEntry && carEntry.cap) {
                 var rng = Math.round(carEntry.cap * 6.2 * tF);
@@ -865,8 +879,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами') + extra);
               updateRange();
             })
-            .catch(function () { chip.innerHTML = chipHTML('погода недоступна'); });
-        } catch (e) { chip.innerHTML = chipHTML('погода недоступна'); }
+            .catch(function () { showFail(); });
+        } catch (e) { showFail(); }
       }
       function setModel(slug) {
         carEntry = null; carSel = slug || null; carPort = null;
