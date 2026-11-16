@@ -839,15 +839,15 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         }
         chip.innerHTML = chipHTML((curTemp > 0 ? '+' : '') + curTemp + ' °C' + (weatherLabel ? ' · ' + weatherLabel : ' · рядом с вами') + extra);
       }
-            function fetchTemp(lat, lon, label) {
+                  function fetchTemp(lat, lon, label) {
         var chip = document.getElementById('weather-chip');
         if (!chip) return;
         chip.style.display = '';
         chip.innerHTML = chipHTML('погода…');
         var done = false, t2 = null;
-        function showTemp(t) {
+        function showTemp(t, lab, tag) {
           curTemp = t;
-          if (label) weatherLabel = label;
+          if (lab) weatherLabel = lab;
           try { localStorage.setItem('zh-weather', JSON.stringify({ t: t, label: weatherLabel || null, ts: Date.now() })); } catch (e) {}
           var tF = tempFactor(t), extra = '';
           if (carSel && carEntry && carEntry.cap) {
@@ -859,7 +859,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           } else {
             extra = ' · выберите модель — покажем прогноз запаса';
           }
-          chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами') + extra);
+          chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (lab ? ' · ' + lab : ' · рядом с вами') + (tag ? ' · ' + tag : '') + extra);
           updateRange();
         }
         function showFail() {
@@ -871,6 +871,24 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           if (cached && typeof cached.t === 'number') chip.innerHTML = chipHTML((cached.t > 0 ? '+' : '') + cached.t + ' °C · кэш' + (cached.label ? ' · ' + cached.label : ''));
           else chip.style.display = 'none';
         }
+        function fetchOwn() {
+          if (done) return;
+          clearTimeout(t2);
+          t2 = setTimeout(showFail, 4000);
+          try {
+            fetch('/charging/weather.json')
+              .then(function (r) { return r.json(); })
+              .then(function (d) {
+                var c = d && d.cities || {};
+                var name = null;
+                if (weatherLabel) { for (var k in c) { if (weatherLabel.indexOf(k) === 0) { name = k; break; } } }
+                var e = c[name || 'Москва'];
+                if (!e || typeof e.t !== 'number') { showFail(); return; }
+                done = true; clearTimeout(t2); showTemp(e.t, name || 'Москва', 'база');
+              })
+              .catch(function () { showFail(); });
+          } catch (e) { showFail(); }
+        }
         function fetchWttr() {
           if (done) return;
           clearTimeout(t2);
@@ -881,11 +899,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               .then(function (d) {
                 var c = d && d.current_condition && d.current_condition[0];
                 var t = c ? parseInt(c.temp_C, 10) : null;
-                if (t === null || isNaN(t)) { showFail(); return; }
-                done = true; clearTimeout(t2); showTemp(t);
+                if (t === null || isNaN(t)) { fetchOwn(); return; }
+                done = true; clearTimeout(t2); showTemp(t, label, null);
               })
-              .catch(function () { showFail(); });
-          } catch (e) { showFail(); }
+              .catch(function () { fetchOwn(); });
+          } catch (e) { fetchOwn(); }
         }
         try {
           fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&current=temperature_2m')
@@ -893,7 +911,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             .then(function (d) {
               var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
               if (t === null) { fetchWttr(); return; }
-              done = true; clearTimeout(t2); showTemp(t);
+              done = true; clearTimeout(t2); showTemp(t, label, null);
             })
             .catch(function () { fetchWttr(); });
         } catch (e) { fetchWttr(); }
