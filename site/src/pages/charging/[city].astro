@@ -2,8 +2,25 @@
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import citiesData from '../../data/charging/cities.json';
 import fs from 'node:fs';
-let STNMAP: Record<string, [number, number]> = {};
-try { const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); for (const s of (rawS.stations || [])) if (s.lat && s.lon) STNMAP[s.a] = [s.lon, s.lat]; } catch {}
+type XY = Record<string, [number, number]>;
+const CITYXY: XY = {};
+try {
+  const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
+  for (const s of (rawS.stations || [])) {
+    if (!s.a) continue;
+    const nm = String(s.a).split(',')[0].trim();
+    if (!CITYXY[nm]) CITYXY[nm] = [0, 0, 0];
+    if (s.lat && s.lon) { CITYXY[nm][0] += s.lat; CITYXY[nm][1] += s.lon; CITYXY[nm][2] += 1; }
+  }
+  for (const k of Object.keys(CITYXY)) { if (CITYXY[k][2] > 0) { CITYXY[k] = [CITYXY[k][0] / CITYXY[k][2], CITYXY[k][1] / CITYXY[k][2]] as [number, number]; } }
+} catch {}
+function distKm(a?: [number, number], b?: [number, number]) {
+  if (!a || !b) return null;
+  const R = 6371, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * Math.PI / 180) * Math.cos(b[0] * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(h)));
+}
+const LABELS: Record<string, string> = { gb_dc: 'GB/T', type2_combo: 'CCS2', chademo: 'CHAdeMO', type2: 'Type 2', 'Type 2': 'Type 2', 'Type 1': 'Type 1', ccs2: 'CCS2', 'CCS2': 'CCS2', chademo: 'CHAdeMO', gb_ac: 'GB/T AC' };
 export function getStaticPaths() {
   return citiesData.cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
 }
@@ -11,15 +28,42 @@ const { c } = Astro.props;
 const { name, count, brands, sockets, top } = c;
 const sockItems = Object.entries(sockets);
 const brList = brands.slice(0, 8);
-const others = citiesData.cities.filter((x) => x.slug !== c.slug).slice(0, 12);
+// соседи по расстоянию
+const xySelf = CITYXY[name];
+const near = citiesData.cities
+  .filter((x) => x.slug !== c.slug)
+  .map((x) => ({ ...x, km: distKm(xySelf, CITYXY[x.name]) }))
+  .filter((x) => x.km !== null)
+  .sort((a, b) => (a.km as number) - (b.km as number))
+  .slice(0, 5);
+const nearSlugs = new Set(near.map((x) => x.slug));
+const others = citiesData.cities.filter((x) => x.slug !== c.slug && !nearSlugs.has(x.slug)).slice(0, 12);
+// разъёмы
+const connCounts: Record<string, number> = {};
+for (const [k, v] of sockItems) { const lbl = LABELS[k] || k; connCounts[lbl] = (connCounts[lbl] || 0) + (v as number); }
+const connList = Object.entries(connCounts).sort((a, b) => b[1] - a[1]);
+const dcCount = (connCounts['GB/T'] || 0) + (connCounts['CCS2'] || 0) + (connCounts['CHAdeMO'] || 0);
+const gbCount = connCounts['GB/T'] || 0;
+const acCount = (connCounts['Type 2'] || 0) + (connCounts['Type 1'] || 0);
+const hasConn = top.some((t) => t.s && t.s.length);
 const title = `Зарядные станции в ${name}: ${count} точек, бренды и разъёмы`;
-const desc = `В ${name} ${count} зарядных станций для электромобилей: ${brands.length} операторов, разъёмы ${Object.keys(sockets).slice(0, 3).join(', ')}. Список точек, мощности и советы по выбору.`;
+const desc = `В ${name} ${count} зарядных станций для электромобилей: ${brands.length} операторов, разъёмы ${connList.slice(0, 3).map(([k]) => k).join(', ')}. Список точек с картами, частые вопросы и советы.`;
+const faq = [
+  { q: `Какие разъёмы есть у зарядных станций в ${name}?`, a: `Чаще всего в базе: ${connList.slice(0, 3).map(([k, v]) => `${k} (${v})`).join(', ')}. Быстрых DC-точек (GB/T, CCS2, CHAdeMO) в базе — ${dcCount}, медленных AC (Type 2, Type 1) — ${acCount}.` },
+  { q: `Можно ли зарядить китайский электромобиль (GB/T) в ${name}?`, a: gbCount > 0 ? `Да: в базе ${name} — ${gbCount} точек с разъёмом GB/T (DC). Дома таких машинам подойдёт станция или кабель GB/T 7 кВт — смотрите каталог.` : `DC-точек с разъёмом GB/T в базе ${name} пока нет. Для дома подойдёт станция или кабель GB/T 7 кВт — смотрите каталог; на быстрой станции используйте адаптер и следуйте правилам безопасной зарядки.` },
+  { q: `Сколько стоит зарядка в ${name}?`, a: `Тариф зависит от оператора: в ${name} работают ${brands.slice(0, 3).map((b) => b.n).join(', ')}. Цены различаются в разы, кВт·ч дороже всего на быстрых магистральных точках. Разбор тарифов и калькулятор — в разделе «Тарифы ЭЗС».` },
+  { q: `Как найти ближайшую свободную станцию в ${name}?`, a: `На карте «Зарядные станции» выберите свою модель — покажем только совместимые с ней точки, статус занятости видно по меткам карты.` }
+];
 const ld = {
-  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
-    { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
-    { '@type': 'ListItem', position: 3, name: `Зарядные станции в ${name}` }
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
+      { '@type': 'ListItem', position: 3, name: `Зарядные станции в ${name}` }
+    ]},
+    { '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+    { '@type': 'ItemList', name: `Зарядные станции в ${name}`, itemListElement: top.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: `${t.n} — ${t.a}` })) }
   ]
 };
 ---
@@ -33,7 +77,7 @@ const ld = {
           <span class="zh-badge">{count} точек · {brands.length} операторов</span>
         </div>
       </div>
-      <p class="zh-lead-sub">В базе Zapashoda <b>{count}</b> зарядных точек в {name}: основные операторы — {brList.slice(0, 3).map((b) => b.n).join(', ')}; чаще всего встречаются разъёмы {sockItems.slice(0, 3).map(([k]) => k).join(', ')}. Ниже — сводка по операторам, список точек с портами и советы по зарядке без сюрпризов.</p>
+      <p class="zh-lead-sub">В базе Zapashoda <b>{count}</b> зарядных точек в {name}: основные операторы — {brList.slice(0, 3).map((b) => b.n).join(', ')}; чаще всего встречаются разъёмы {connList.slice(0, 3).map(([k]) => k).join(', ')}. Ниже — сводка по операторам, список точек с картами и советы по зарядке без сюрпризов.</p>
       <div class="zrc-grid">
         <div class="zrc-card">
           <h2 class="zrc-h2">Операторы: {name}</h2>
@@ -47,34 +91,59 @@ const ld = {
         <div class="zrc-card">
           <h2 class="zrc-h2">Разъёмы</h2>
           <div class="zrc-chips">
-            {sockItems.map(([k, v]) => (<span class="zrc-chip"><b>{k}</b> · {v}</span>))}
+            {sockItems.map(([k, v]) => (<span class="zrc-chip"><b>{LABELS[k] || k}</b> · {v}</span>))}
           </div>
           <p class="zrc-note">Полная карта с фильтрами по разъёмам и мощности — на <a href="/charging/">странице «Зарядные станции»</a>: выберите свою модель, и мы покажем только совместимые станции.</p>
         </div>
       </div>
       <h2 class="zrc-h2" style="margin-top:28px">Точки в {name}</h2>
-      <div class="zrc-scroll"><table>
+      {hasConn && (
+        <div class="zrc-fchips" role="group" aria-label="Фильтр по разъёмам">
+          <button class="zrc-fchip is-on" data-f="all">Все</button>
+          {connList.map(([k]) => (<button class="zrc-fchip" data-f={k}>{k}</button>))}
+        </div>
+      )}
+      <div class="zrc-scroll"><table id="zrc-tbl">
         <thead><tr><th>Адрес</th><th>Название</th><th>Порты</th><th>Разъёмы</th></tr></thead>
         <tbody>
           {top.map((t) => (
-            <tr>
-              <td>{STNMAP[t.a] ? (<><a href={`https://yandex.ru/maps/?pt=${STNMAP[t.a][0]},${STNMAP[t.a][1]}&z=17&l=map`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в Яндекс.Картах`}>{t.a}</a><a class="zrc-g2" href={`https://2gis.ru/geo/${STNMAP[t.a][0]}%2C${STNMAP[t.a][1]}`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в 2ГИС`} title="Открыть в 2ГИС"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg></a></>) : t.a}</td>
+            <tr data-conn={(t.s || []).map((x) => LABELS[x] || x).join('|')}>
+              <td class="zrc-ad">
+                <span class="zrc-adr">{t.a}</span>
+                {STNMAP[t.a] && (
+                  <span class="zrc-geo">
+                    <a href={`https://yandex.ru/maps/?pt=${STNMAP[t.a][0]},${STNMAP[t.a][1]}&z=17&l=map`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в Яндекс.Картах`}>Яндекс</a><span aria-hidden="true"> · </span><a href={`https://2gis.ru/geo/${STNMAP[t.a][0]}%2C${STNMAP[t.a][1]}`} target="_blank" rel="noopener nofollow" aria-label={`${t.a} — открыть в 2ГИС`}>2ГИС</a>
+                  </span>
+                )}
+              </td>
               <td>{t.n}</td>
               <td>{t.c ?? '—'}</td>
-              <td>{(t.s || []).join(', ')}</td>
+              <td>{(t.s || []).map((x) => LABELS[x] || x).join(', ') || '—'}</td>
             </tr>
           ))}
         </tbody>
       </table></div>
-      <p class="zrc-note">Подборка из базы Zapashoda; статус занятости смотрите на карте. Данные обновляются вместе с базой станций.</p>
+      <p class="zrc-note">Подборка из базы Zapashoda. Адрес — обычный текст: «Яндекс» и «2ГИС» открывают точку в одноимённом навигаторе. Статус занятости смотрите на карте. Данные обновляются вместе с базой станций.</p>
+      <h2 class="zrc-h2" style="margin-top:28px">Частые вопросы про зарядку в {name}</h2>
+      <div class="zrc-faq">
+        {faq.map((f) => (<details><summary>{f.q}</summary><div class="zrc-faq-a">{f.a}</div></details>))}
+      </div>
       <h2 class="zrc-h2" style="margin-top:28px">Как заряжаться в {name}: короткие правила</h2>
       <p>Проверьте разъём своей модели до выезда: карточка модели в <a href="/catalog/">каталоге</a> покажет порт и совместимые кабели. Для GB/T-машин переходник — обязательный предмет дальних поездок; для Type 2 / CCS2 в городе обычно достаточно родного кабеля.</p>
       <p>Планируйте сессии по мощности: точки на 50–60 кВт — для быстрого долива по маршруту, 120 кВт и выше — для полноценного километра за чашку кофе. Вечером пиковые парковки заняты: если сессия нужна срочно, держите в уме второй ближайший адрес из списка выше.</p>
       <div class="zrc-cta">
-        <a class="zrc-btn zrc-btn-gold" href="/charging/">Открыть карту ЗУ</a>
+        <a class="zrc-btn zrc-btn-gold" href="/charging/">Открыть карту станций</a>
         <a class="zrc-btn" href="/catalog/">Каталог моделей</a>
         <a class="zrc-btn" href="/assets/guide/tablica-razyomov-145-modeley.pdf">Памятка по разъёмам (PDF)</a>
       </div>
+      {near.length > 0 && (
+        <>
+          <h2 class="zrc-h2" style="margin-top:28px">Зарядки рядом с {name}</h2>
+          <div class="zrc-chips">
+            {near.map((o) => (<a class="zrc-chip zrc-link" href={`/charging/${o.slug}/`}>{o.name}<span class="zrc-km">· {o.km} км</span></a>))}
+          </div>
+        </>
+      )}
       <h2 class="zrc-h2" style="margin-top:28px">Зарядки в других городах</h2>
       <div class="zrc-chips">
         {others.map((o) => (<a class="zrc-chip zrc-link" href={`/charging/${o.slug}/`}>{o.name}</a>))}
@@ -83,25 +152,53 @@ const ld = {
     </div>
   </section>
 </ZhLayout>
+<script>
+  (function () {
+    const tbl = document.getElementById('zrc-tbl');
+    const chips = document.querySelectorAll('.zrc-fchip');
+    if (!tbl || !chips.length) return;
+    chips.forEach((ch) => ch.addEventListener('click', () => {
+      const f = ch.getAttribute('data-f');
+      chips.forEach((c) => c.classList.toggle('is-on', c === ch));
+      tbl.querySelectorAll('tbody tr').forEach((tr) => {
+        const conn = (tr.getAttribute('data-conn') || '').split('|').filter(Boolean);
+        tr.style.display = (f === 'all' || conn.includes(f)) ? '' : 'none';
+      });
+    }));
+  })();
+</script>
 <style>
 .zh-cockpit-page{padding-top:8px}
 .zrc-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px}
 @media(max-width:880px){.zrc-grid{grid-template-columns:minmax(0,1fr)}}
-.zrc-scroll td a{color:#FF8F33;text-decoration:underline;text-underline-offset:2px}
-.zrc-scroll td a:hover{text-decoration:none}
-.zrc-g2{color:#9aa4b2;text-decoration:none;display:inline-block;vertical-align:-1px;margin-left:7px;opacity:.75}
-.zrc-g2:hover{color:#FF8F33;opacity:1}
+.zrc-adr{color:var(--txt)}
+.zrc-geo{display:inline-flex;gap:2px;margin-left:6px;font-size:12px;vertical-align:baseline}
+.zrc-geo a{color:#9aa4b2;text-decoration:underline;text-underline-offset:2px;padding:2px 4px}
+.zrc-geo a:hover{color:#FF8F33}
+.zrc-fchips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.zrc-fchip{cursor:pointer;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt-muted);font-size:13px;font-weight:600;font-family:inherit}
+.zrc-fchip:hover{border-color:rgba(255,111,0,.6);color:var(--txt)}
+.zrc-fchip.is-on{background:linear-gradient(135deg,#FF8F33,#FF6F00);border-color:transparent;color:#0B1018}
+.zrc-faq{margin-top:12px}
+.zrc-faq details{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin-top:8px;background:rgba(255,255,255,.03)}
+.zrc-faq summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:14px;list-style:none}
+.zrc-faq summary::-webkit-details-marker{display:none}
+.zrc-faq summary::after{content:'+';float:right;color:var(--txt-muted);font-weight:400}
+.zrc-faq details[open] summary::after{content:'–'}
+.zrc-faq-a{padding:0 0 12px;color:var(--txt-muted);font-size:14px;line-height:1.65}
 .zrc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .zrc-h2{font-size:17px;font-weight:800;letter-spacing:-.01em}
 .zrc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
 .zrc-scroll table{width:100%;border-collapse:collapse;font-size:14px}
 .zrc-scroll th,.zrc-scroll td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.zrc-scroll td.zrc-ad{white-space:normal;min-width:180px}
 .zrc-scroll th{color:var(--txt-muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
 .zrc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.zrc-chip{flex:none;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:13px;color:var(--txt-muted)}
+.zrc-chip{flex:none;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:13px;color:var(--txt-muted);text-decoration:none}
 .zrc-chip b{color:var(--txt)}
 .zrc-chip.zrc-link{color:#4d9bf5;text-decoration:none}
 .zrc-chip.zrc-link:hover{border-color:rgba(77,155,245,.5)}
+.zrc-km{color:var(--txt-muted);font-size:12px}
 .zrc-note{font-size:13px;color:var(--txt-muted);margin-top:10px;line-height:1.6}
 .zrc-note a{color:#4d9bf5}
 .zrc-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
