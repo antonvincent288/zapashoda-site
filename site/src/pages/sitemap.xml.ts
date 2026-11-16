@@ -3,10 +3,11 @@ import type { APIRoute } from 'astro';
 
 const models = Object.values(import.meta.glob('../data/models/*.json', { eager: true, import: 'default' })) as any[];
 const articles = Object.values(import.meta.glob('../data/articles/**/*.json', { eager: true, import: 'default' })) as any[];
+const cities = (await import('../data/charging/cities.json')).default.cities as any[];
 const publicPages = import.meta.glob('../../public/**/*.html', { eager: false }) as Record<string, unknown>;
 
 const SITE = 'https://zapashoda-ev.ru';
-const LASTMOD = '2026-11-13';
+const LASTMOD = '2026-11-16';
 type U = { loc: string; pri: string };
 const urls: U[] = [{ loc: SITE + '/', pri: '1.0' }];
 for (const p of ['models','blog','pain','safety','tools','b2b','about','services','catalog','shop/digital','charging','news','quiz','privacy','compare','partner','sovmestimost','razemy','calculators','tarify']) {
