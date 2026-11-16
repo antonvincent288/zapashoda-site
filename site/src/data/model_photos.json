@@ -312,10 +312,10 @@
   "alt": "Hyundai Kona Electric на выставке в Цюрихе"
  },
  "kia-niro-ev-e-niro": {
-  "page": "https://commons.wikimedia.org/wiki/File:Kia_Niro_VE_2023_au_salon_auto_%C3%A9lectrique_et_hybride_r%C3%A9chargeable_de_Montr%C3%A9al_2023.png",
-  "artist": "Bull-Doser",
-  "license": "Public domain",
-  "alt": "Kia Niro EV на автосалоне в Монреале"
+  "page": "https://commons.wikimedia.org/wiki/File:Geneva_International_Motor_Show_2018,_Le_Grand-Saconnex_(1X7A1902).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Kia Niro EV (e-Niro) на Женевском автосалоне 2018"
  },
  "genesis-gv60-electrified-g80-gv70": {
   "page": "https://commons.wikimedia.org/wiki/File:Genesis_GV60_Auto_Zuerich_2023_1X7A1140.jpg",
@@ -336,7 +336,7 @@
   "alt": "Lucid Air Pure на выставке в Женеве"
  },
  "rivian-r1t-r1s": {
-  "page": "https://commons.wikimedia.org/wiki/File:Newly_Open_Rivian_Showroom_Brickell,_Miami_Florida_Sept_2025_-_Blue_pickup_in_room.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Newly_Open_Rivian_Showroom_Brickell,_Miami_Florida_Sept_2025_-_blue_pickup_side.jpg",
   "artist": "Phillip Pessar",
   "license": "CC BY 4.0",
   "alt": "Rivian R1S в фирменном шоуруме в Майами"
@@ -352,5 +352,119 @@
   "artist": "Alexander-93",
   "license": "CC BY-SA 4.0",
   "alt": "Lexus RZ 450e на выставке в Цюрихе"
+ },
+ "livan-x3-pro-s6-pro": {
+  "page": "https://commons.wikimedia.org/wiki/File:2025_Livan_S6PRO_grey_front.jpg",
+  "artist": "Throwawayacc222",
+  "license": "CC0",
+  "alt": "Livan S6 Pro на выставке"
+ },
+ "citron-c4-spacetourer": {
+  "page": "https://commons.wikimedia.org/wiki/File:Citro%C3%ABn_%C3%AB-C4_X_01.png",
+  "artist": "AutoGids",
+  "license": "CC BY 3.0",
+  "alt": "Citroen e-C4 X на автосалоне"
+ },
+ "toyota-bz3x": {
+  "page": "https://commons.wikimedia.org/wiki/File:Toyota_bZ3X_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Toyota bZ3X на выставке"
+ },
+ "nissan-sakura": {
+  "page": "https://commons.wikimedia.org/wiki/File:0_Nissan_Sakura_1.jpg",
+  "artist": "Benespit",
+  "license": "CC BY-SA 4.0",
+  "alt": "Nissan Sakura на автосалоне"
+ },
+ "kia-pv5": {
+  "page": "https://commons.wikimedia.org/wiki/File:2027_Kia_PV5_au_SIAM_2026.JPG",
+  "artist": "Bull-Doser",
+  "license": "Public domain",
+  "alt": "Kia PV5 на автосалоне SIAM 2026"
+ },
+ "voyah-courage": {
+  "page": "https://commons.wikimedia.org/wiki/File:Voyah_Zhuiguang_001.jpg",
+  "artist": "Zoerides",
+  "license": "CC BY-SA 4.0",
+  "alt": "Voyah Courage (Zhuiguang) на выставке"
+ },
+ "voyah-dream-dreamer-phev": {
+  "page": "https://commons.wikimedia.org/wiki/File:Voyah_Dream,_Auto_2024,_Zurich_(PANA0847).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Voyah Dream на выставке в Цюрихе"
+ },
+ "voyah-free-evr-gibrid": {
+  "page": "https://commons.wikimedia.org/wiki/File:Voyah_Free_Auto_Zuerich_2023_1X7A1191.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Voyah Free на выставке в Цюрихе"
+ },
+ "voyah-taishan": {
+  "page": "https://commons.wikimedia.org/wiki/File:Voyah_Taishan_003.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Voyah Taishan на выставке"
+ },
+ "li-auto-i6-i8": {
+  "page": "https://commons.wikimedia.org/wiki/File:Li_Auto_i8_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Li Auto i8 на выставке"
+ },
+ "byd-dolphin": {
+  "page": "https://commons.wikimedia.org/wiki/File:GIMS_24,_Le_Grand-Saconnex_(GIMS0082).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "BYD Dolphin на Женевском автосалоне 2024"
+ },
+ "byd-seagull": {
+  "page": "https://commons.wikimedia.org/wiki/File:Front_look_of_BYD_Atto_1_during_GIIAS_2026_in_Bandung_20260913_183505.jpg",
+  "artist": "M Raisfath",
+  "license": "CC BY 4.0",
+  "alt": "BYD Seagull (Atto 1) на выставке GIIAS в Бандунге"
+ },
+ "byd-han-ev-song-l": {
+  "page": "https://commons.wikimedia.org/wiki/File:BYD_Song_L_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC BY-SA 4.0",
+  "alt": "BYD Song L на выставке"
+ },
+ "byd-tang-ev-tang-dm-i": {
+  "page": "https://commons.wikimedia.org/wiki/File:2024_BYD_Tang_GIMS_2024_1X7A2258.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "BYD Tang на Женевском автосалоне 2024"
+ },
+ "byd-yuan-plus-atto-3-yuan-up-pro": {
+  "page": "https://commons.wikimedia.org/wiki/File:BYD_booth_at_the_2023_Bangkok_International_Motor_Show.png",
+  "artist": "iMoD Official",
+  "license": "CC BY 3.0",
+  "alt": "BYD Atto 3 (Yuan Plus) на автосалоне в Бангкоке"
+ },
+ "byd-song-plus-dm-i-sealion-05": {
+  "page": "https://commons.wikimedia.org/wiki/File:2025_BYD_Seal_05_DM-i_front_view.png",
+  "artist": "Get Auto China",
+  "license": "CC BY 3.0",
+  "alt": "BYD Seal 05 DM-i на выставке"
+ },
+ "byd-fangchengbao-bao-5-bao-8": {
+  "page": "https://commons.wikimedia.org/wiki/File:2024_Fangchengbao_Bao_5.jpg",
+  "artist": "User3204",
+  "license": "CC BY-SA 4.0",
+  "alt": "Fangchengbao Bao 5 на выставке"
+ },
+ "byd-yangwang-u8-u9": {
+  "page": "https://commons.wikimedia.org/wiki/File:Yangwang_U8_GIMS_2024_1X7A2388.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Yangwang U8 на Женевском автосалоне 2024"
+ },
+ "jac-e-js1-e-js4-ievs4": {
+  "page": "https://commons.wikimedia.org/wiki/File:JAC_e-JS4_Auto_Zuerich_2023_1X7A1035.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "JAC e-JS4 на выставке в Цюрихе"
  }
 }
