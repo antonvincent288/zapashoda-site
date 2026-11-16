@@ -38,6 +38,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           <button id="tab-own" class="zh-seg-btn on" type="button">Наша база</button>
           <button id="tab-ya" class="zh-seg-btn" type="button">Яндекс.Карты</button>
         </div>
+        <div id="view-tabs" class="zh-seg" role="tablist" aria-label="Режим отображения">
+          <button id="tab-map" class="zh-seg-btn on" type="button" aria-pressed="true">🗺 Карта</button>
+          <button id="tab-split" class="zh-seg-btn" type="button" aria-pressed="false">⧉ Сплит</button>
+          <button id="tab-list" class="zh-seg-btn" type="button" aria-pressed="false">📋 Список</button>
+        </div>
       </div>
       <p class="zh-lead-sub">База обновлена <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
 <div id="os-widget" style="margin-top:10px;border-radius:20px;padding:16px;overflow:hidden">
@@ -113,7 +118,16 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="map-ya" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-top:14px;display:none"></div>
-      <div style="position:relative;margin-top:8px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line)"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      <div id="split-wrap"><div class="zh-map-col"><div style="position:relative;margin-top:8px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line)"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      </div>
+        <aside id="stn-list" class="zh-list-h" style="display:none" aria-label="Список станций">
+          <div class="zh-lst-bar">
+            <input id="list-search" type="text" autocomplete="off" enterkeyhint="search" placeholder="Поиск по названию, оператору или адресу" aria-label="Поиск в списке станций" />
+            <span id="lst-info" class="zh-lst-info"></span>
+            <button id="sheet-close" class="chip" type="button" aria-label="Свернуть список">Свернуть</button>
+          </div>
+          <div id="stn-list-body" class="zh-lst-body"></div>
+        </aside></div>
       <p style="font-size:14px;color:var(--txt-muted);margin-top:8px">Нажмите на точку на карте — адрес, коннекторы, мощность и кнопки: маршрут в Яндекс.Картах, памятка для себя, ссылка кому-то.</p>
       <div style="margin-top:34px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
@@ -178,6 +192,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['schuko', 'Розетка 220 В', 'zsh-schuko'],
       ];
       var active = {};
+      var zhGeo = null, zhRangeCircle = null, viewMode = 'map', listLimit = 30;
       var zhVisibleStations = [];
       var PW_PREDS = {
         pw100: function (s) { return (Number(s.pw) || 0) >= 100; },
@@ -269,7 +284,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 + '</div>'
 + '<div id="memo-body" style="display:none;margin-top:9px;padding:10px;border:1px dashed var(--line);border-radius:10px;font-size:13px;line-height:1.55"></div>'
               ; });
-            m.__s = s;
+            m.__s = s; s.__marker = m;
             ALL.push(m);
           });
           map.addLayer(cluster);
@@ -367,6 +382,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             cluster.clearLayers();
             hits.forEach(function (m) { cluster.addLayer(m); });
             map.fitBounds(L.latLngBounds(hits.map(function (m) { return [m.__s.lat, m.__s.lon]; })).pad(0.3), { maxZoom: 12 });
+            setGeo(hits.reduce(function (a, m) { return a + m.__s.lat; }, 0) / hits.length, hits.reduce(function (a, m) { return a + m.__s.lon; }, 0) / hits.length);
             if (note) note.textContent = 'Найдено ' + hits.length + ' ' + plural(hits.length, 'станция', 'станции', 'станций') + ' по запросу «' + q + '». Кликните по фильтру разъёмов, чтобы сбросить поиск.';
             var h0 = hits[0].__s; if (h0) fetchTemp(h0.lat, h0.lon, q);
           } else if (note) {
@@ -379,6 +395,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           if (!navigator.geolocation) { if (note) note.textContent = 'Браузер не поддерживает геолокацию — воспользуйтесь поиском города.'; return; }
           navigator.geolocation.getCurrentPosition(function (pos) {
             var lat = pos.coords.latitude, lon = pos.coords.longitude, R = 6371;
+            setGeo(lat, lon);
             function hav(a) { var d = Math.PI / 180; var x = Math.sin((a[0]-lat)*d/2), y = Math.sin((a[1]-lon)*d/2); return 2*R*Math.asin(Math.sqrt(x*x + Math.cos(a[0]*d)*Math.cos(lat*d)*y*y)); }
             var near = ALL.filter(function (m) { return m.__s.lat && m.__s.lon && hav([m.__s.lat, m.__s.lon]) <= 50; });
             if (near.length) {
@@ -418,6 +435,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (typeof checkEmpty === 'function') checkEmpty();
         var note = document.getElementById('conn-note');
         if (note) note.textContent = keys.length ? ('Показано ' + shown + ' из ' + ALL.length + ' станций') : '';
+        updateChipCounts();
+        renderList();
         try {
           var hk = keys.filter(function (k) { return k === '__dc' || FILTERS.some(function (f) { return f[0] === k; }) || PW_PREDS[k]; }).join(',');
           history.replaceState(null, '', hk ? '#f=' + hk : location.pathname + location.search);
@@ -489,6 +508,194 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           }
         } catch (e) {}
       }
+
+
+      // ===== Виджет v3: сплит-вид, список станций, счётчики чипов, bottom-sheet, радиус доезжаемости =====
+      function escH(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+      function havKm(a, b) {
+        var d = Math.PI / 180, R = 6371;
+        var x = Math.sin((a[0] - b[0]) * d / 2), y = Math.sin((a[1] - b[1]) * d / 2);
+        return 2 * R * Math.asin(Math.sqrt(x * x + Math.cos(a[0] * d) * Math.cos(b[0] * d) * y * y));
+      }
+      function distOf(s) { return zhGeo ? havKm(zhGeo, [s.lat, s.lon]) : null; }
+      function setGeo(lat, lon) {
+        zhGeo = [lat, lon];
+        try {
+          if (map && typeof L !== 'undefined') {
+            if (zhRangeCircle) zhRangeCircle.setLatLng([lat, lon]);
+            else { zhRangeCircle = L.circle([lat, lon], { radius: 50000, color: '#4d9bf5', weight: 1.4, dashArray: '6 8', fillColor: '#4d9bf5', fillOpacity: 0.05, interactive: false }); zhRangeCircle.addTo(map); }
+          }
+        } catch (e) {}
+        renderList();
+      }
+      function cardColor(s) {
+        if (carSel) return s.__fit === 'direct' ? (s.__dc ? '#2563eb' : '#16a34a') : s.__fit === 'adapt' ? (s.__dc ? '#f97316' : '#eab308') : '#8a8f98';
+        return s.__dc ? '#2563eb' : '#16a34a';
+      }
+      function fitTag(s) {
+        if (!carSel) return '';
+        if (s.__fit === 'direct') return '<span class="zh-lst-tag" style="color:#16a34a;border-color:rgba(22,163,74,.4)">✓ прямое</span>';
+        if (s.__fit === 'adapt') return '<span class="zh-lst-tag" style="color:#f59e0b;border-color:rgba(245,158,11,.4)">через адаптер</span>';
+        return '<span class="zh-lst-tag" style="color:#8a8f98">не подтверждён</span>';
+      }
+      function connTags(s) {
+        var seen = {}, out = [];
+        (s.s || []).forEach(function (raw) { var k = normConn(raw); if (k && !seen[k]) { seen[k] = 1; out.push(k); } });
+        return out.map(function (k) { return '<span class="zh-lst-tag">' + escH(k) + '</span>'; }).join('');
+      }
+      function renderList() {
+        var body = document.getElementById('stn-list-body');
+        if (!body) return;
+        var q = String((document.getElementById('list-search') || {}).value || '').trim().toLowerCase();
+        var items = (zhVisibleStations || []).slice();
+        if (q) items = items.filter(function (s) { return ((s.n || '') + ' ' + (s.op || '') + ' ' + (s.a || '')).toLowerCase().indexOf(q) >= 0; });
+        if (zhGeo) items.sort(function (a, b) { var da = distOf(a) || 1e9, db = distOf(b) || 1e9; return da - db; });
+        var info = document.getElementById('lst-info');
+        if (info) info.textContent = items.length + ' ' + plural(items.length, 'станция', 'станции', 'станций') + (zhGeo ? ' · по расстоянию' : '');
+        body.innerHTML = '';
+        items.slice(0, listLimit).forEach(function (s) {
+          var color = cardColor(s);
+          var d = distOf(s);
+          var card = document.createElement('div');
+          card.className = 'zh-lst-card';
+          card.setAttribute('tabindex', '0');
+          card.innerHTML =
+            '<div class="zh-lst-row"><span class="zh-lst-dot" style="background:' + color + '"></span>' +
+            '<div class="zh-lst-main"><h4>' + escH(s.n || 'Станция') + '</h4>' +
+            '<div class="zh-lst-sub">' + (s.op ? escH(s.op) + ' · ' : '') + escH(s.a || '') + '</div></div>' +
+            '<div class="zh-lst-kw">' + (s.pw ? s.pw + '<i>кВт</i>' : '') + '</div></div>' +
+            '<div class="zh-lst-tags">' + connTags(s) + fitTag(s) + (d !== null ? '<span class="zh-lst-tag">' + (d < 1 ? d.toFixed(1) : Math.round(d)) + ' км</span>' : '') +
+            (carSel && carEntry && carEntry.cap && s.pw ? '<span class="zh-lst-tag" style="color:#9ecbff;border-color:rgba(77,155,245,.4)">~' + sessMin(carEntry, Number(s.pw)) + ' мин 20→80%</span>' : '') + '</div>' +
+            '<div class="zh-lst-cta">' +
+            '<a href="https://yandex.ru/maps/?rtext=~' + s.lon + ',' + s.lat + '&rtt=auto&z=17" target="_blank" rel="noopener" class="chip zh-cta">Маршрут</a>' +
+            '<button type="button" class="chip" data-copy="' + s.lat.toFixed(5) + ',' + s.lon.toFixed(5) + '" style="cursor:pointer">Ссылка</button>' +
+            '<a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" class="chip">В картах</a>' +
+            '<a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + ((s.s || []).join(', ') || '—') + '. Отметка: ') + '" target="_blank" rel="noopener" class="chip">Статус</a>' +
+            (carSel && s.__fit !== 'direct' ? '<a href="/catalog/?model=' + encodeURIComponent(carSel) + '" class="chip">Адаптер</a>' : '') +
+            '</div>';
+          card.addEventListener('click', function (ev) { if (ev.target.closest('a,button')) return; focusStation(s); });
+          card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') focusStation(s); });
+          card.addEventListener('mouseenter', function () { if (s.__marker) { s.__marker.setStyle({ radius: 11, weight: 3 }); } });
+          card.addEventListener('mouseleave', function () { if (s.__marker) { var pw0 = Number(s.pw) || 0; s.__marker.setStyle({ radius: 7, weight: 1 }); } });
+          body.appendChild(card);
+        });
+        if (items.length > listLimit) {
+          var more = document.createElement('button');
+          more.type = 'button';
+          more.className = 'zh-lst-more';
+          more.textContent = 'Показать ещё ' + Math.min(30, items.length - listLimit) + ' из ' + (items.length - listLimit);
+          more.addEventListener('click', function () { listLimit += 30; renderList(); });
+          body.appendChild(more);
+        }
+        if (!items.length) {
+          var emp = document.createElement('div');
+          emp.style.cssText = 'padding:26px;text-align:center;color:var(--txt-muted);font-size:14px';
+          emp.innerHTML = 'Ничего не найдено. <button type="button" class="chip" id="list-reset" style="cursor:pointer;margin-left:6px">Сбросить фильтры</button>';
+          body.appendChild(emp);
+          var lr = document.getElementById('list-reset');
+          if (lr) lr.addEventListener('click', function () {
+            active = {};
+            document.querySelectorAll('.cchip').forEach(function (x) { x.classList.toggle('on', x.id === 'all-chip'); });
+            applyFilter();
+          });
+        }
+      }
+      function focusStation(s) {
+        try {
+          if (isMobileView()) closeSheet();
+          var m = s.__marker;
+          if (m && cluster) cluster.zoomToShowLayer(m, function () { m.openPopup(); });
+          else if (map) map.setView([s.lat, s.lon], Math.max(13, map.getZoom()));
+        } catch (e) {}
+      }
+      function chipsCountFor(key) {
+        var keys = Object.keys(active).filter(function (k) { return active[k]; });
+        var others = keys.filter(function (k) { return k !== key; });
+        var n = 0;
+        ALL.forEach(function (m) {
+          var s = m.__s;
+          if (!fitOk(s)) return;
+          if (!others.length) { n++; return; }
+          for (var i = 0; i < others.length; i++) {
+            var k = others[i];
+            if (PW_PREDS[k]) { if (PW_PREDS[k](s)) { n++; return; } }
+            else if (k === '__dc') { if (s.__c && (s.__c.ccs2 || s.__c.chademo || s.__c.gbt_dc) && (!carSel || s.__fit !== 'unknown')) { n++; return; } }
+            else if (s.__c && s.__c[k]) { n++; return; }
+          }
+        });
+        return n;
+      }
+      function updateChipCounts() {
+        document.querySelectorAll('.cchip').forEach(function (b) {
+          var k = b.dataset.k;
+          if (!k) return;
+          var c = b.querySelector('.cnt');
+          if (!c) { c = document.createElement('span'); c.className = 'cnt'; b.appendChild(c); }
+          c.textContent = chipsCountFor(k);
+        });
+      }
+      var isMobileView = function () { return window.innerWidth < 640; };
+      function syncMapVisibility() {
+        var showMap = viewMode !== 'list';
+        var mapEl = document.getElementById('map'), yaEl = document.getElementById('map-ya');
+        if (mapEl) mapEl.style.display = showMap ? '' : 'none';
+        if (yaEl) yaEl.style.display = (showMap && yaActive) ? '' : 'none';
+        if (showMap && !yaActive) setTimeout(function () { try { map.invalidateSize(); } catch (e) {} }, 60);
+      }
+      function openSheet() {
+        var list = document.getElementById('stn-list');
+        if (!list || list.classList.contains('sheet-open')) return;
+        list.classList.add('sheet-open');
+        var bd = document.getElementById('sheet-backdrop');
+        if (!bd) { bd = document.createElement('div'); bd.id = 'sheet-backdrop'; bd.className = 'sheet-backdrop'; bd.addEventListener('click', closeSheet); document.body.appendChild(bd); }
+        document.body.style.overflow = 'hidden';
+        renderList();
+      }
+      function closeSheetDom() {
+        var list = document.getElementById('stn-list');
+        if (list) list.classList.remove('sheet-open');
+        var bd = document.getElementById('sheet-backdrop'); if (bd) bd.remove();
+        document.body.style.overflow = '';
+      }
+      function closeSheet() {
+        closeSheetDom();
+        if (isMobileView() && (viewMode === 'list' || viewMode === 'split')) setViewMode('map');
+      }
+      function setViewMode(mode) {
+        var list = document.getElementById('stn-list');
+        if (!list) return;
+        viewMode = mode;
+        document.querySelectorAll('#view-tabs .zh-seg-btn').forEach(function (b) {
+          var on = b.id === 'tab-' + mode;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        var wrap = document.getElementById('split-wrap');
+        if (isMobileView()) {
+          if (wrap) wrap.classList.remove('split');
+          syncMapVisibility();
+          if (mode === 'map') closeSheetDom();
+          else openSheet();
+        } else {
+          closeSheetDom();
+          if (wrap) wrap.classList.toggle('split', mode === 'split');
+          list.style.display = mode === 'map' ? 'none' : '';
+          syncMapVisibility();
+          if (mode !== 'map') renderList();
+        }
+        try { history.replaceState(null, '', '#view=' + mode); } catch (e) {}
+      }
+      var tMapBtn = document.getElementById('tab-map'), tSplitBtn = document.getElementById('tab-split'), tListBtn = document.getElementById('tab-list');
+      if (tMapBtn) tMapBtn.addEventListener('click', function () { setViewMode('map'); });
+      if (tSplitBtn) tSplitBtn.addEventListener('click', function () { setViewMode('split'); });
+      if (tListBtn) tListBtn.addEventListener('click', function () { setViewMode('list'); });
+      var lSearch = document.getElementById('list-search');
+      if (lSearch) {
+        var lDeb = null;
+        lSearch.addEventListener('input', function () { if (lDeb) clearTimeout(lDeb); lDeb = setTimeout(renderList, 180); });
+      }
+      var lClose = document.getElementById('sheet-close');
+      if (lClose) lClose.addEventListener('click', closeSheet);
 
       // ===== Карта твоей машины + погода + запас хода =====
       var MODELS = [];
@@ -920,7 +1127,47 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 @media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
-#range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
+#range-tune.zh-nocar .zh-caps-badges{opacity:.6}
+/* ── Виджет v3: сплит-вид, список станций, счётчики чипов, bottom-sheet ── */
+#split-wrap{display:block}
+#split-wrap.split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 14px;align-items:start}
+#split-wrap.split .zh-map-col{position:sticky;top:8px}
+#split-wrap.split #stn-list{margin-top:8px;height:clamp(520px,68vh,780px)}
+#stn-list{border:1px solid rgba(77,155,245,.22);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(10,16,28,.72),rgba(10,16,28,.55));box-shadow:0 18px 44px rgba(2,6,16,.45)}
+.zh-list-h{height:clamp(520px,68vh,780px)}
+.zh-lst-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(77,155,245,.18);background:rgba(10,16,28,.55);flex-wrap:wrap}
+.zh-lst-bar input{flex:1;min-width:0;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;font-family:inherit}
+.zh-lst-bar input:focus{outline:none;border-color:#4d9bf5;box-shadow:0 0 0 2px rgba(77,155,245,.18)}
+.zh-lst-info{font-size:13px;color:var(--txt-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+#sheet-close{display:none;min-height:44px}
+.zh-lst-body{overflow-y:auto;max-height:calc(100% - 66px);-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(77,155,245,.35) transparent}
+.zh-lst-body::-webkit-scrollbar{width:8px}
+.zh-lst-body::-webkit-scrollbar-thumb{background:rgba(77,155,245,.30);border-radius:8px}
+.zh-lst-card{padding:13px 16px;border-bottom:1px solid rgba(148,163,184,.10);cursor:pointer;transition:background .15s ease}
+.zh-lst-card:hover,.zh-lst-card:focus-visible{background:rgba(77,155,245,.10)}
+.zh-lst-row{display:flex;gap:10px;align-items:flex-start}
+.zh-lst-dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.zh-lst-main{flex:1;min-width:0}
+.zh-lst-card h4{margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zh-lst-sub{font-size:13px;color:var(--txt-muted);margin-top:2px;line-height:1.45;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.zh-lst-kw{flex:none;font-weight:700;font-size:15px;color:#e8f2ff;font-variant-numeric:tabular-nums;text-align:right}
+.zh-lst-kw i{display:block;font-style:normal;font-weight:400;font-size:12px;color:var(--txt-muted)}
+.zh-lst-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.zh-lst-tag{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid rgba(148,163,184,.22);color:var(--txt-muted);white-space:nowrap}
+.zh-lst-cta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.zh-lst-cta .chip{padding:6px 10px;font-size:13px;text-decoration:none;min-height:0}
+.zh-lst-cta .zh-cta{background:linear-gradient(180deg,#5aa9ff,#3d8af0);border-color:transparent;color:#06121f;font-weight:700}
+.zh-lst-more{display:block;margin:12px auto;padding:10px 18px;min-height:44px;border-radius:12px;border:1px solid rgba(77,155,245,.35);background:rgba(77,155,245,.10);color:#dcebff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.chip .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;margin-left:2px;border-radius:999px;background:rgba(77,155,245,.14);color:#9ecbff;font-size:12px;font-variant-numeric:tabular-nums}
+.zh-hl{outline:3px solid rgba(77,155,245,.45);outline-offset:-3px;border-radius:12px}
+@media(max-width:639px){
+  #tab-split{display:none}
+  #stn-list.sheet-open{position:fixed;left:8px;right:8px;bottom:8px;z-index:1002;height:auto;max-height:76vh;background:#0d1117;border-radius:18px;box-shadow:0 24px 60px rgba(2,6,16,.65);border-color:rgba(77,155,245,.35)}
+  #stn-list.sheet-open::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:44px;height:4px;border-radius:2px;background:rgba(148,163,184,.4)}
+  #stn-list.sheet-open .zh-lst-body{max-height:calc(76vh - 120px)}
+  #stn-list.sheet-open #sheet-close{display:inline-flex}
+  .sheet-backdrop{position:fixed;inset:0;background:rgba(2,6,16,.55);backdrop-filter:blur(2px);z-index:1001}
+}</style>
 
 <style>
 .zrc-cities .zrc-city{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);font-size:13px;text-decoration:none;font-weight:600}
