@@ -1,6 +1,9 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import citiesData from '../../data/charging/cities.json';
+import fs from 'node:fs';
+let STNMAP: Record<string, [number, number]> = {};
+try { const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); for (const s of (rawS.stations || [])) if (s.lat && s.lon) STNMAP[s.a] = [s.lon, s.lat]; } catch {}
 export function getStaticPaths() {
   return citiesData.cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
 }
@@ -15,7 +18,7 @@ const ld = {
   '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
-    { '@type': 'ListItem', position: 2, name: 'Карта ЗУ', item: 'https://zapashoda-ev.ru/charging/' },
+    { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
     { '@type': 'ListItem', position: 3, name: `Зарядные станции в ${name}` }
   ]
 };
@@ -23,7 +26,7 @@ const ld = {
 <ZhLayout title={title} description={desc} jsonld={ld}>
   <section class="sec zh-cockpit-page">
     <div class="wrap">
-      <div class="crumbs"><a href="/">Главная</a> / <a href="/charging/">Карта ЗУ</a> / {name}</div>
+      <div class="crumbs"><a href="/">Главная</a> / <a href="/charging/">Зарядные станции</a> / {name}</div>
       <div class="zh-head">
         <div class="zh-head-l">
           <h1>Зарядные станции в {name}</h1>
@@ -46,7 +49,7 @@ const ld = {
           <div class="zrc-chips">
             {sockItems.map(([k, v]) => (<span class="zrc-chip"><b>{k}</b> · {v}</span>))}
           </div>
-          <p class="zrc-note">Полная карта с фильтрами по разъёмам и мощности — на <a href="/charging/">странице «Карта ЗУ»</a>: выберите свою модель, и мы покажем только совместимые станции.</p>
+          <p class="zrc-note">Полная карта с фильтрами по разъёмам и мощности — на <a href="/charging/">странице «Зарядные станции»</a>: выберите свою модель, и мы покажем только совместимые станции.</p>
         </div>
       </div>
       <h2 class="zrc-h2" style="margin-top:28px">Точки в {name}</h2>
@@ -55,7 +58,7 @@ const ld = {
         <tbody>
           {top.map((t) => (
             <tr>
-              <td>{t.a}</td>
+              <td>{STNMAP[t.a] ? (<a href={`https://yandex.ru/maps/?pt=${STNMAP[t.a][0]},${STNMAP[t.a][1]}&z=17&l=map`} target="_blank" rel="noopener nofollow">{t.a}</a>) : t.a}</td>
               <td>{t.n}</td>
               <td>{t.c ?? '—'}</td>
               <td>{(t.s || []).join(', ')}</td>
@@ -84,6 +87,8 @@ const ld = {
 .zh-cockpit-page{padding-top:8px}
 .zrc-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px}
 @media(max-width:880px){.zrc-grid{grid-template-columns:minmax(0,1fr)}}
+.zrc-scroll td a{color:#FF8F33;text-decoration:underline;text-underline-offset:2px}
+.zrc-scroll td a:hover{text-decoration:none}
 .zrc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .zrc-h2{font-size:17px;font-weight:800;letter-spacing:-.01em}
 .zrc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
