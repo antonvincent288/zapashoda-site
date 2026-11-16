@@ -1,0 +1,104 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import cities from '../../data/charging/cities.json';
+export function getStaticPaths() {
+  return cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
+}
+const { c } = Astro.props;
+const { name, count, brands, sockets, top } = c;
+const sockItems = Object.entries(sockets);
+const brList = brands.slice(0, 8);
+const others = cities.filter((x) => x.slug !== c.slug).slice(0, 12);
+const title = `Зарядные станции в ${name}: ${count} точек, бренды и разъёмы`;
+const desc = `В ${name} ${count} зарядных станций для электромобилей: ${brands.length} операторов, разъёмы ${Object.keys(sockets).slice(0, 3).join(', ')}. Список точек, мощности и советы по выбору.`;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
+    { '@type': 'ListItem', position: 2, name: 'Карта ЗУ', item: 'https://zapashoda-ev.ru/charging/' },
+    { '@type': 'ListItem', position: 3, name: `Зарядные станции в ${name}` }
+  ]
+};
+---
+<ZhLayout title={title} description={desc} jsonld={ld}>
+  <section class="sec zh-cockpit-page">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / <a href="/charging/">Карта ЗУ</a> / {name}</div>
+      <div class="zh-head">
+        <div class="zh-head-l">
+          <h1>Зарядные станции в {name}</h1>
+          <span class="zh-badge">{count} точек · {brands.length} операторов</span>
+        </div>
+      </div>
+      <p class="zh-lead-sub">В базе Zapashoda <b>{count}</b> зарядных точек в {name}: основные операторы — {brList.slice(0, 3).map((b) => b.n).join(', ')}; чаще всего встречаются разъёмы {sockItems.slice(0, 3).map(([k]) => k).join(', ')}. Ниже — сводка по операторам, список точек с портами и советы по зарядке без сюрпризов.</p>
+      <div class="zrc-grid">
+        <div class="zrc-card">
+          <h2 class="zrc-h2">Операторы: {name}</h2>
+          <div class="zrc-scroll"><table>
+            <thead><tr><th>Оператор</th><th>Точек</th><th>Доля</th></tr></thead>
+            <tbody>
+              {brList.map((b) => (<tr><td>{b.n}</td><td>{b.c}</td><td>{Math.round(100 * b.c / count)}%</td></tr>))}
+            </tbody>
+          </table></div>
+        </div>
+        <div class="zrc-card">
+          <h2 class="zrc-h2">Разъёмы</h2>
+          <div class="zrc-chips">
+            {sockItems.map(([k, v]) => (<span class="zrc-chip"><b>{k}</b> · {v}</span>))}
+          </div>
+          <p class="zrc-note">Полная карта с фильтрами по разъёмам и мощности — на <a href="/charging/">странице «Карта ЗУ»</a>: выберите свою модель, и мы покажем только совместимые станции.</p>
+        </div>
+      </div>
+      <h2 class="zrc-h2" style="margin-top:28px">Точки в {name}</h2>
+      <div class="zrc-scroll"><table>
+        <thead><tr><th>Адрес</th><th>Название</th><th>Порты</th><th>Разъёмы</th></tr></thead>
+        <tbody>
+          {top.map((t) => (
+            <tr>
+              <td>{t.a}</td>
+              <td>{t.n}</td>
+              <td>{t.c ?? '—'}</td>
+              <td>{(t.s || []).join(', ')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table></div>
+      <p class="zrc-note">Подборка из базы Zapashoda; статус занятости смотрите на карте. Данные обновляются вместе с базой станций.</p>
+      <h2 class="zrc-h2" style="margin-top:28px">Как заряжаться в {name}: короткие правила</h2>
+      <p>Проверьте разъём своей модели до выезда: карточка модели в <a href="/catalog/">каталоге</a> покажет порт и совместимые кабели. Для GB/T-машин переходник — обязательный предмет дальних поездок; для Type 2 / CCS2 в городе обычно достаточно родного кабеля.</p>
+      <p>Планируйте сессии по мощности: точки на 50–60 кВт — для быстрого долива по маршруту, 120 кВт и выше — для полноценного километра за чашку кофе. Вечером пиковые парковки заняты: если сессия нужна срочно, держите в уме второй ближайший адрес из списка выше.</p>
+      <div class="zrc-cta">
+        <a class="zrc-btn zrc-btn-gold" href="/charging/">Открыть карту ЗУ</a>
+        <a class="zrc-btn" href="/catalog/">Каталог моделей</a>
+        <a class="zrc-btn" href="/assets/guide/tablica-razyomov-145-modeley.pdf">Памятка по разъёмам (PDF)</a>
+      </div>
+      <h2 class="zrc-h2" style="margin-top:28px">Зарядки в других городах</h2>
+      <div class="zrc-chips">
+        {others.map((o) => (<a class="zrc-chip zrc-link" href={`/charging/${o.slug}/`}>{o.name}</a>))}
+        <a class="zrc-chip zrc-link" href="/charging/">Вся карта</a>
+      </div>
+    </div>
+  </section>
+</ZhLayout>
+<style>
+.zh-cockpit-page{padding-top:8px}
+.zrc-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px}
+@media(max-width:880px){.zrc-grid{grid-template-columns:minmax(0,1fr)}}
+.zrc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.zrc-h2{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.zrc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
+.zrc-scroll table{width:100%;border-collapse:collapse;font-size:14px}
+.zrc-scroll th,.zrc-scroll td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.zrc-scroll th{color:var(--txt-muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.zrc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.zrc-chip{flex:none;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:13px;color:var(--txt-muted)}
+.zrc-chip b{color:var(--txt)}
+.zrc-chip.zrc-link{color:#4d9bf5;text-decoration:none}
+.zrc-chip.zrc-link:hover{border-color:rgba(77,155,245,.5)}
+.zrc-note{font-size:13px;color:var(--txt-muted);margin-top:10px;line-height:1.6}
+.zrc-note a{color:#4d9bf5}
+.zrc-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.zrc-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);color:var(--txt);text-decoration:none;font-weight:700;font-size:14px;background:rgba(255,255,255,.05)}
+.zrc-btn:hover{border-color:rgba(255,111,0,.6)}
+.zrc-btn-gold{background:linear-gradient(135deg,#FF8F33,#FF6F00);color:#0B1018;border:0}
+</style>
