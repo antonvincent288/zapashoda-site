@@ -614,7 +614,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       }
       function chipsCountFor(key) {
         var keys = Object.keys(active).filter(function (k) { return active[k]; });
-        var others = keys.filter(function (k) { return k !== key; });
+        var base = keys.filter(function (k) { return k !== key; });
+        var others = active[key] ? base : base.concat([key]);
         var n = 0;
         ALL.forEach(function (m) {
           var s = m.__s;
