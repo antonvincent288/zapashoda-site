@@ -4,7 +4,7 @@
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
-  "/models/": 200,
+  "/models/": null,
   "/catalog/": 200,
   "/app/": 200,
   "/blog/": 200,
@@ -43,8 +43,13 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "16.11 20:35",
+ "checked_at_msk": "16.11 22:25",
  "failures": [
+  {
+   "where": "page /models/",
+   "what": "HTTP None",
+   "crit": true
+  },
   {
    "where": "page /search.html",
    "what": "HTTP 404",
@@ -81,6 +86,6 @@
    "crit": false
   }
  ],
- "failures_count": 7,
- "crit_count": 3
+ "failures_count": 8,
+ "crit_count": 4
 }
