@@ -604,12 +604,12 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
     .sc-t{font-size:16px;font-weight:700;color:var(--txt);margin-top:4px}
     .sc-p{font-size:14px;color:var(--gold-text);margin-top:6px;font-weight:600}
     .pc-more .pa-body{max-width:none}
-    @media (max-width:1024px){.mgrid{grid-template-columns:1fr}.mside{position:static;order:-1;max-height:none;overflow:visible}}
+    @media (max-width:1024px){.mgrid{grid-template-columns:minmax(0,1fr)}.mside{position:static;order:-1;max-height:none;overflow:visible}}
     .mfaq summary{font-weight:700;cursor:pointer;font-size:14px}
     .mfaq p{margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--txt-muted)}
     /* v10.2: фикс сжатой контентной колонки — легаси .mgrid из ZhLayout.CSS (repeat(3,1fr), без media) перебивал раскладку модели; специфичность 0,2,0 перебивает всё .mgrid */
     .mgrid.mgrid-wide{grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;display:grid}
-    @media (width<=1024px){.mphoto-wrap{max-width:100%}.mgrid.mgrid-wide{grid-template-columns:1fr}}
+    @media (width<=1024px){.mphoto-wrap{max-width:100%}.mgrid.mgrid-wide{grid-template-columns:minmax(0,1fr)}}
     .mmain .card{max-width:none}
     .mmain .card h3{font-size:18px;font-weight:800;color:var(--head);margin:0 0 12px}
     /* v10.3 «до идеала»: референсы carwow/Car&Driver — spec-числа крупным акцентом; NN/g «пятнистый» сканер ищет цифры */
@@ -847,4 +847,5 @@ const jsonld = { '@context': 'https://schema.org', '@type': 'Article', headline:
 </ZhLayout>
 
 <style>@media (min-width:1025px){.mphoto-wrap{max-width:calc(100% - 332px)}}
-  </style>
+  .mmain .article table{display:block;width:100%;overflow-x:auto}
+</style>
