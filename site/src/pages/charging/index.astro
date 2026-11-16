@@ -730,7 +730,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       var PORT_DIRECT = { 'gb/t': ['gbt_dc', 'gbt_ac'], 'eu': ['type2', 'type2_socket', 'ccs2'], 'type1/ccs1': ['type1'], 'jp/chademo': ['chademo'] };
       var PORT_ADAPT = { 'gb/t': ['type2', 'type2_socket', 'ccs2'], 'eu': ['gbt_dc', 'gbt_ac'], 'type1/ccs1': ['type2', 'type2_socket'], 'jp/chademo': ['type2', 'type1'] };
       var ADAPTER_LABEL = { 'gb/t': 'GB/T → Type 2', 'eu': 'Type 2 → GB/T', 'type1/ccs1': 'Type 1 → Type 2', 'jp/chademo': 'Type 2 → CHAdeMO (где есть)' };
-      var carSel = null, carPort = null, carEntry = null, curTemp = null;
+      var carSel = null, carPort = null, carEntry = null, curTemp = null, weatherLabel = null;
       function fitOk(s) { return !carSel || !!s.__fit; }
       function classifyAll() {
         ALL.forEach(function (m) {
@@ -789,7 +789,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         } else {
           extra = ' · выберите модель — покажем прогноз запаса';
         }
-        chip.innerHTML = chipHTML((curTemp > 0 ? '+' : '') + curTemp + ' °C · рядом с вами' + extra);
+        chip.innerHTML = chipHTML((curTemp > 0 ? '+' : '') + curTemp + ' °C' + (weatherLabel ? ' · ' + weatherLabel : ' · рядом с вами') + extra);
       }
       function fetchTemp(lat, lon, label) {
         var chip = document.getElementById('weather-chip');
@@ -803,6 +803,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
               if (t === null) { chip.innerHTML = chipHTML('погода недоступна'); return; }
               curTemp = t;
+              if (label) weatherLabel = label;
               var tF = tempFactor(t), extra = '';
               if (carSel && carEntry && carEntry.cap) {
                 var rng = Math.round(carEntry.cap * 6.2 * tF);
