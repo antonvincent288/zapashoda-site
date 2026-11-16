@@ -79,14 +79,14 @@ const ld = {
       <div class="crumbs"><a href="/">Главная</a> / <a href="/charging/">Зарядные станции</a> / {name}</div>
       <div class="zh-head">
         <div class="zh-head-l">
-          <h1>Зарядные станции в {name}</h1>
+          <h1>Зарядные станции в {cityIn}</h1>
           <span class="zh-badge">{count} точек · {brands.length} операторов</span>
         </div>
       </div>
-      <p class="zh-lead-sub">В базе Zapashoda <b>{count}</b> зарядных точек в {name}: основные операторы — {brList.slice(0, 3).map((b) => b.n).join(', ')}; чаще всего встречаются разъёмы {connList.slice(0, 3).map(([k]) => k).join(', ')}. Ниже — сводка по операторам, список точек с картами и советы по зарядке без сюрпризов.</p>
+      <p class="zh-lead-sub">В базе Zapashoda <b>{count}</b> зарядных точек в {cityIn}: основные операторы — {brList.slice(0, 3).map((b) => b.n).join(', ')}; чаще всего встречаются разъёмы {connList.slice(0, 3).map(([k]) => k).join(', ')}. Ниже — сводка по операторам, список точек с картами и советы по зарядке без сюрпризов.</p>
       <div class="zrc-grid">
         <div class="zrc-card">
-          <h2 class="zrc-h2">Операторы: {cityIn}</h2>
+          <h2 class="zrc-h2">Операторы: {name}</h2>
           <div class="zrc-scroll"><table>
             <thead><tr><th>Оператор</th><th>Точек</th><th>Доля</th></tr></thead>
             <tbody>
@@ -102,7 +102,7 @@ const ld = {
           <p class="zrc-note">Полная карта с фильтрами по разъёмам и мощности — на <a href="/charging/">странице «Зарядные станции»</a>: выберите свою модель, и мы покажем только совместимые станции.</p>
         </div>
       </div>
-      <h2 class="zrc-h2" style="margin-top:28px">Точки в {name}</h2>
+      <h2 class="zrc-h2" style="margin-top:28px">Точки в {cityIn}</h2>
       {hasConn && (
         <div class="zrc-fchips" role="group" aria-label="Фильтр по разъёмам">
           <button class="zrc-fchip is-on" data-f="all">Все</button>
