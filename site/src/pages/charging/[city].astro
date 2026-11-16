@@ -1,14 +1,14 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
-import cities from '../../data/charging/cities.json';
+import citiesData from '../../data/charging/cities.json';
 export function getStaticPaths() {
-  return cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
+  return citiesData.cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
 }
 const { c } = Astro.props;
 const { name, count, brands, sockets, top } = c;
 const sockItems = Object.entries(sockets);
 const brList = brands.slice(0, 8);
-const others = cities.filter((x) => x.slug !== c.slug).slice(0, 12);
+const others = citiesData.cities.filter((x) => x.slug !== c.slug).slice(0, 12);
 const title = `Зарядные станции в ${name}: ${count} точек, бренды и разъёмы`;
 const desc = `В ${name} ${count} зарядных станций для электромобилей: ${brands.length} операторов, разъёмы ${Object.keys(sockets).slice(0, 3).join(', ')}. Список точек, мощности и советы по выбору.`;
 const ld = {
