@@ -41,7 +41,7 @@ post = queue[idx]
 data = {'chat_id': CHANNEL,
         'text': post.get('html') or fmt(post),
         'parse_mode': 'HTML',
-        'reply_markup': json.dumps({'inline_keyboard': post.get('buttons', [])}, ensure_ascii=False),
+        'reply_markup': json.dumps({'inline_keyboard': (lambda b: ([[{'text': '📖 Читать статью', 'url': post['link']}]] + [x for x in b if x]) if post.get('link') and not any(post['link'] in r[0].get('url','') for r in b) else b)(post.get('buttons', []))}, ensure_ascii=False),
         'disable_web_page_preview': 'true'}
 req = urllib.request.Request('https://api.telegram.org/bot%s/sendMessage' % TOKEN,
     data=urllib.parse.urlencode(data).encode(), headers={'User-Agent': 'zapashoda-bot'})
