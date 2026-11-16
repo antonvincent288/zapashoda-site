@@ -18,6 +18,7 @@ for (const r of ['type2','ccs2','gbt','chademo','type1','schuko']) urls.push({ l
 for (const c2 of ['cost','time']) urls.push({ loc: `${SITE}/calculators/${c2}/`, pri: '0.7' });
 for (const s2 of ['taksi','avtopark','azs','jk','salony','predlozh-mesto']) urls.push({ loc: `${SITE}/b2b/${s2}/`, pri: '0.6' });
 for (const s5 of ['ustanovka-stancii','ustanovka-stancii-v-garazhe','uvelichenie-moshchnosti','stanciya-gbt','stanciya-type2','stanciya-2v1','tehobsluzhivanie','tehobsluzhivanie-stanciy','moschnost-stancii','oshibki-ustanovki']) urls.push({ loc: `${SITE}/services/${s5}.html`, pri: '0.6' });
+for (const ct of cities) urls.push({ loc: `${SITE}/charging/${ct.slug}/`, pri: '0.7' });
 const cmpPairs = (await import('../data/compare_pairs.json')).default as any;
 for (const cp of (cmpPairs.pairs || [])) urls.push({ loc: `${SITE}/compare/${cp.slug}/`, pri: '0.6' });
 for (const a of articles) if (a && a.slug && ['blog','pain','safety'].includes(String(a.section))) urls.push({ loc: `${SITE}/${a.section}/${a.slug}/`, pri: '0.7' });
