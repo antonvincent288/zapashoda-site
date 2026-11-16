@@ -97,6 +97,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             </div>
           </div>
         </div>
+                <div id="os-kpis" aria-label="Ключевые показатели базы">
+          <div class="osk"><div class="osk-t">Станций в базе</div><div class="osk-v num" id="kpi-total">0</div><div class="osk-s">все города</div></div>
+          <div class="osk"><div class="osk-t">В городе</div><div class="osk-v num" id="kpi-city">0</div><div class="osk-s" id="kpi-city-label">по всей базе</div></div>
+          <div class="osk"><div class="osk-t">Совместимость</div><div class="osk-v num" id="kpi-fit">—</div><div class="osk-s" id="kpi-fit-sub">выберите модель</div></div>
+          <div class="osk"><div class="osk-t">Погода · запас</div><div class="osk-v num" id="kpi-weather">—</div><div class="osk-s" id="kpi-weather-sub">уточняется</div></div>
+        </div>
         <div id="car-kpi" style="margin-top:8px;font-size:14px;color:var(--txt-muted);line-height:1.6">
           <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
         <div id="fit-ring" aria-live="polite">
@@ -546,6 +552,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         } catch (e) {}
         renderList();
         updateRing();
+        updateKpis();
       }
       function cardColor(s) {
         if (carSel) return s.__fit === 'direct' ? (s.__dc ? '#2563eb' : '#16a34a') : s.__fit === 'adapt' ? (s.__dc ? '#f97316' : '#eab308') : '#8a8f98';
@@ -824,6 +831,51 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var dPct = Math.round(direct / total * 100), aPct = Math.round(adapt / total * 100);
         ringSet(pct, zhCity || 'вся база', 'напрямую <b>' + dPct + '%</b> · через адаптер <b>' + aPct + '%</b> · всего ' + total + ' станций');
       }
+      function kpiCount(el, target, suf) {
+        if (!el) return;
+        var from = parseInt(el.dataset.v || '0', 10) || 0;
+        el.dataset.v = String(target);
+        var t0 = null;
+        function st(ts) {
+          if (!t0) t0 = ts;
+          var k = Math.min(1, (ts - t0) / 1200);
+          k = 1 - Math.pow(1 - k, 3);
+          var v = from + (target - from) * k;
+          el.textContent = Math.round(v) + (suf || '');
+          if (k < 1) requestAnimationFrame(st);
+        }
+        requestAnimationFrame(st);
+      }
+      function updateKpis() {
+        kpiCount(document.getElementById('kpi-total'), ALL.length, '');
+        var pool = ALL.map(function (m) { return m.__s; });
+        if (zhCity) pool = pool.filter(function (s) { return String(s.a || '').split(',')[0].trim() === zhCity; });
+        kpiCount(document.getElementById('kpi-city'), pool.length, '');
+        var cl = document.getElementById('kpi-city-label');
+        if (cl) cl.textContent = zhCity || 'по всей базе';
+        if (carSel && carEntry) {
+          var d = 0, ad = 0;
+          pool.forEach(function (s) { if (s.__fit === 'direct') d++; else if (s.__fit === 'adapt') ad++; });
+          var pct = pool.length ? Math.round((d + ad) / pool.length * 100) : 0;
+          kpiCount(document.getElementById('kpi-fit'), pct, '%');
+          var fs = document.getElementById('kpi-fit-sub');
+          if (fs) fs.textContent = pool.length ? ('напрямую ' + Math.round(d / pool.length * 100) + '% · адаптер ' + Math.round(ad / pool.length * 100) + '%') : '—';
+        } else {
+          var f = document.getElementById('kpi-fit');
+          if (f) { f.textContent = '—'; f.dataset.v = '0'; }
+          var fs2 = document.getElementById('kpi-fit-sub');
+          if (fs2) fs2.textContent = 'выберите модель';
+        }
+        var w = document.getElementById('kpi-weather');
+        var ws = document.getElementById('kpi-weather-sub');
+        if (w && typeof curTemp === 'number') {
+          w.textContent = (curTemp > 0 ? '+' : '') + curTemp + ' °C';
+          if (ws) ws.textContent = (weatherLabel || 'рядом с вами') + (carSel && carEntry && carEntry.cap ? ' · ~' + Math.round(carEntry.cap * 6.2 * tempFactor(curTemp)) + ' км' : '');
+        } else if (w) {
+          w.textContent = '—';
+          if (ws) ws.textContent = 'уточняется';
+        }
+      }
       function weatherRefresh() {
         var chip = document.getElementById('weather-chip');
         if (!chip || curTemp === null || curTemp === undefined || isNaN(curTemp)) return;
@@ -861,6 +913,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           }
           chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (lab ? ' · ' + lab : ' · рядом с вами') + (tag ? ' · ' + tag : '') + extra);
           updateRange();
+          updateKpis();
         }
         function showFail() {
           if (done) return;
@@ -928,6 +981,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           classifyAll();
           weatherRefresh();
           updateRing();
+          updateKpis();
           // сброс чипов, чтобы показать весь совместимый набор
           active = {};
           document.querySelectorAll('.cchip').forEach(function (x) { x.classList.remove('on'); });
@@ -1264,6 +1318,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 /* ── Виджет v3: сплит-вид, список станций, счётчики чипов, bottom-sheet ── */
 #split-wrap{display:block}
 #split-wrap .zh-map-col{min-width:0}
+#os-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.osk{padding:12px 14px;border:1px solid rgba(148,163,184,.14);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;min-width:0}
+.osk-t{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-muted);font-weight:700}
+.osk-v{font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--txt);margin-top:4px}
+.osk-s{font-size:12px;color:var(--txt-muted);margin-top:2px}
+@media(max-width:880px){#os-kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:639px){.osk-v{font-size:22px}}
 #fit-ring{display:none;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border:1px solid rgba(255,111,0,.28);border-radius:16px;background:linear-gradient(180deg,rgba(255,111,0,.10),rgba(10,16,28,.35))}
 #fit-ring.show{display:flex}
 #fr-val{transition:stroke-dashoffset .9s cubic-bezier(.22,.9,.35,1)}
