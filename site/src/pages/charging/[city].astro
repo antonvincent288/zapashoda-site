@@ -3,6 +3,7 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import citiesData from '../../data/charging/cities.json';
 import fs from 'node:fs';
 type XY = Record<string, [number, number]>;
+const STNMAP: Record<string, [number, number]> = {};
 const CITYXY: XY = {};
 try {
   const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
@@ -11,6 +12,7 @@ try {
     const nm = String(s.a).split(',')[0].trim();
     if (!CITYXY[nm]) CITYXY[nm] = [0, 0, 0];
     if (s.lat && s.lon) { CITYXY[nm][0] += s.lat; CITYXY[nm][1] += s.lon; CITYXY[nm][2] += 1; }
+    if (s.lat && s.lon) STNMAP[s.a] = [s.lon, s.lat];
   }
   for (const k of Object.keys(CITYXY)) { if (CITYXY[k][2] > 0) { CITYXY[k] = [CITYXY[k][0] / CITYXY[k][2], CITYXY[k][1] / CITYXY[k][2]] as [number, number]; } }
 } catch {}
