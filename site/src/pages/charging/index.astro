@@ -14,7 +14,7 @@ const MODELS = (modelsLight.models || [])
   .sort((a, b2) => { const ca = /[\u0400-\u04FF]/.test(a.brand) ? 1 : 0; const cb = /[\u0400-\u04FF]/.test(b2.brand) ? 1 : 0; if (ca !== cb) return ca - cb; const na = a.name.startsWith(a.brand + ' ') ? a.name.slice(a.brand.length + 1) : a.name; const nb = b2.name.startsWith(b2.brand + ' ') ? b2.name.slice(b2.brand.length + 1) : b2.name; return (a.brand + na).localeCompare(b2.brand + nb, 'ru'); });
 const MODELS_JSON = JSON.stringify(MODELS).replace(/<\//g, '<\\/');
 const MODEL_TOTAL = (modelsLight.models || []).filter((m) => m && m.slug).length;
-const CITIES = (await import('../data/charging/cities.json')).default.cities as any[];
+const CITIES = (await import('../../data/charging/cities.json')).default.cities as any[];
 let STN = 3129; let STN_UPD = '12 ноября'; let STN_UPD_FULL = '12 ноября 2026';
 try { const rawS = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); if (Array.isArray(rawS.stations)) STN = rawS.stations.length;
 const mmo = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(rawS.updated || ''));
