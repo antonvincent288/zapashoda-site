@@ -580,5 +580,59 @@
   "artist": "Matti Blume",
   "license": "CC BY-SA 4.0",
   "alt": "BYD Seal U (Song Plus) на выставке IAA Summit 2023 в Мюнхене"
+ },
+ "byd-qin-plus-dm-i": {
+  "page": "https://commons.wikimedia.org/wiki/File:BYD_Qin_Plus_006.jpg",
+  "artist": "Jengtingchen",
+  "license": "CC BY-SA 4.0",
+  "alt": "BYD Qin Plus DM-i на выставке"
+ },
+ "changan-qiyuan-a05-a06-a07": {
+  "page": "https://commons.wikimedia.org/wiki/File:Nevo_A07_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC0",
+  "alt": "Changan Qiyuan (Nevo) A07 на выставке"
+ },
+ "kia-ev2": {
+  "page": "https://commons.wikimedia.org/wiki/File:Kia_EV2_Concept_IAA_2025_DSC_2073.jpg",
+  "artist": "Alexander-93",
+  "license": "CC BY-SA 4.0",
+  "alt": "Kia EV2 (концепт) на выставке IAA 2025"
+ },
+ "luxeed-chery-huawei-r7": {
+  "page": "https://commons.wikimedia.org/wiki/File:(CHN-Hubei)_Showcar_Luxeed_R7_No-plate_2024-12-04.jpg",
+  "artist": "S5A-0043",
+  "license": "CC BY 4.0",
+  "alt": "Luxeed R7 (Chery-Huawei) выставочный образец"
+ },
+ "ora-r1-black-cat-07": {
+  "page": "https://commons.wikimedia.org/wiki/File:Ora_R1_001.jpg",
+  "artist": "Jengtingchen",
+  "license": "CC BY-SA 4.0",
+  "alt": "Ora R1 (Black Cat) на выставке"
+ },
+ "roewe-d7-i-dr": {
+  "page": "https://commons.wikimedia.org/wiki/File:Roewe_D7_EV_001.jpg",
+  "artist": "Zoerides",
+  "license": "CC BY-SA 4.0",
+  "alt": "Roewe D7 EV на выставке"
+ },
+ "seres-5-sf5": {
+  "page": "https://commons.wikimedia.org/wiki/File:Seres,_IAA_Summit_2023,_Munich_(P1110661).jpg",
+  "artist": "Matti Blume",
+  "license": "CC BY-SA 4.0",
+  "alt": "Seres 5 на выставке IAA 2023 в Мюнхене"
+ },
+ "tesla-model-3-y-s-x-us": {
+  "page": "https://commons.wikimedia.org/wiki/File:Tesla_Model_Y_Auto_Zuerich_2021_IMG_0391.jpg",
+  "artist": "Alexander Migl",
+  "license": "CC BY-SA 4.0",
+  "alt": "Tesla Model Y на выставке в Цюрихе 2021"
+ },
+ "vw-id-6-cn-versiya": {
+  "page": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID.6_X_001.jpg",
+  "artist": "JustAnotherCarDesigner",
+  "license": "CC BY-SA 4.0",
+  "alt": "Volkswagen ID.6 X на выставке"
  }
 }
