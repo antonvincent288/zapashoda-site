@@ -143,12 +143,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       </div>
     </div>
   
-      <div class="zrc-cities" style="margin-top:30px">
+      <div class="wrap"><div class="zrc-cities" style="margin-top:30px">
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Зарядные станции по городам</h2>
         <p style="font-size:14px;color:var(--txt-muted);margin:8px 0 12px">Собрали по нашей базе: операторы, разъёмы и список точек для крупных городов. Откройте свой — там же ссылка на карту с фильтром.</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
           {CITIES.map((ct) => (<a class="zrc-city" href={`/charging/${ct.slug}/`}>{ct.name}<span>{ct.count}</span></a>))}
         </div>
+      </div>
       </div>
 </section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
@@ -523,6 +524,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       function setGeo(lat, lon, city) {
         zhGeo = [lat, lon];
         zhCity = city || null;
+        try {
+          document.querySelectorAll('#city-chips .chip').forEach(function (b) { b.classList.toggle('on', !!zhCity && b.textContent.indexOf(zhCity) === 0); });
+        } catch (e) {}
         try {
           if (map && typeof L !== 'undefined') {
             if (zhRangeCircle) zhRangeCircle.setLatLng([lat, lon]);
@@ -1135,6 +1139,10 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 /* ── Виджет v3: сплит-вид, список станций, счётчики чипов, bottom-sheet ── */
 #split-wrap{display:block}
 #split-wrap .zh-map-col{min-width:0}
+#city-chips .chip.on{border-color:#4d9bf5;background:rgba(77,155,245,.18);color:#dcebff;box-shadow:0 0 12px rgba(77,155,245,.20)}
+#view-tabs{background:rgba(77,155,245,.08)}
+#view-tabs .zh-seg-btn.on{background:linear-gradient(180deg,rgba(77,155,245,.32),rgba(77,155,245,.14));color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.zrc-city span{font-variant-numeric:tabular-nums}
 #split-wrap.split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 14px;align-items:start}
 #split-wrap.split .zh-map-col{position:sticky;top:8px}
 #split-wrap.split #stn-list{margin-top:8px;height:clamp(520px,68vh,780px)}
