@@ -126,7 +126,15 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
       </div>
     </div>
-  </section>
+  
+      <div class="zrc-cities" style="margin-top:30px">
+        <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Зарядные станции по городам</h2>
+        <p style="font-size:14px;color:var(--txt-muted);margin:8px 0 12px">Собрали по нашей базе: операторы, разъёмы и список точек для крупных городов. Откройте свой — там же ссылка на карту с фильтром.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          {CITIES.map((ct) => (<a class="zrc-city" href={`/charging/${ct.slug}/`}>{ct.name}<span>{ct.count}</span></a>))}
+        </div>
+      </div>
+</section>
   <link rel="stylesheet" href="/assets/leaflet/leaflet.css" />
   <link rel="stylesheet" href="/assets/leaflet/MarkerCluster.css" />
   <link rel="stylesheet" href="/assets/leaflet/MarkerCluster.Default.css" />
@@ -912,4 +920,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 @media(max-width:639px){.zh-seg{width:100%}.zh-seg-btn{flex:1}.zh-pop-inner{position:static;padding:12px 0 0;border:0;box-shadow:none;background:transparent}.zh-map-h{height:62vh;min-height:440px}.zh-bento-grid{grid-template-columns:1fr}#geo-btn span{display:none}#geo-btn{min-width:44px;justify-content:center;gap:0}}
 #range-tune.zh-nocar #range-big{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--txt-muted);text-shadow:none}
 #range-tune.zh-nocar .zh-caps-badges{opacity:.6}</style>
+
+<style>
+.zrc-cities .zrc-city{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);font-size:13px;text-decoration:none;font-weight:600}
+.zrc-cities .zrc-city span{color:var(--txt-muted);font-weight:500}
+.zrc-cities .zrc-city:hover{border-color:rgba(255,111,0,.6)}
+</style>
+
 </ZhLayout>
