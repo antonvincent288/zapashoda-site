@@ -15,7 +15,7 @@ const { title = "Запас хода — зарядка EV в России", des
 const canonical = canonicalOverride || new URL(Astro.url.pathname, Astro.site ?? 'https://zapashoda-ev.ru').href;
 const path = Astro.url.pathname.replace(/\/$/, "");
 const navGroups = [
-  { g: null, items: [["/models/", "Модели"], ["/catalog/", "Каталог"], ["/charging/", "Карта ЗУ"], ["/shop/digital/", "Гайды"]] },
+  { g: null, items: [["/models/", "Модели"], ["/catalog/", "Каталог"], ["/charging/", "Зарядные станции"], ["/shop/digital/", "Гайды"]] },
   { g: "Инструменты", items: [["/quiz/", "Всё о твоей машине"], ["/calculator/", "Калькуляторы"], ["/vin/", "VIN-справочник"], ["/search/", "Поиск"]] },
   { g: null, items: [["/blog/", "Блог"], ["/baza-znaniy/", "База знаний"], ["/safety/", "Безопасность"], ["/services/", "Услуги"]] },
 ];
@@ -113,7 +113,21 @@ html.dark .hero::after{content:'';position:absolute;inset:0;pointer-events:none;
         </span>
       </span>
       <a href="/catalog/" class={isOn("/catalog/") ? "on" : ""}>Каталог</a>
-      <a href="/charging/" class={isOn("/charging/") ? "on" : ""}>Карта ЗУ</a>
+      <span class="nav-more" tabindex="0" role="button" aria-label="Зарядные станции по городам">Зарядные станции <span aria-hidden="true">▾</span>
+        <span class="dd">
+          <a href="/charging/" class={isOn("/charging/") ? "on" : ""}>Карта и станции — все города</a>
+          <a href="/charging/moskva/">Москва</a>
+          <a href="/charging/kazan/">Казань</a>
+          <a href="/charging/sankt-peterburg/">Санкт-Петербург</a>
+          <a href="/charging/nizhniy-novgorod/">Нижний Новгород</a>
+          <a href="/charging/chelyabinsk/">Челябинск</a>
+          <a href="/charging/ivanovo/">Иваново</a>
+          <a href="/charging/krasnoyarsk/">Красноярск</a>
+          <a href="/charging/samara/">Самара</a>
+          <a href="/charging/tyumen/">Тюмень</a>
+          <a href="/charging/vladimir/">Владимир</a>
+        </span>
+      </span>
       <a href="/shop/digital/" class={isOn("/shop/digital/") ? "on" : ""}>Гайды</a>
       <span class="nav-more" tabindex="0" role="button" aria-label="Ещё разделы">Ещё <span aria-hidden="true">▾</span>
         <span class="dd">
