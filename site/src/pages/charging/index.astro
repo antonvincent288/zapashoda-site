@@ -839,48 +839,65 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         }
         chip.innerHTML = chipHTML((curTemp > 0 ? '+' : '') + curTemp + ' °C' + (weatherLabel ? ' · ' + weatherLabel : ' · рядом с вами') + extra);
       }
-      function fetchTemp(lat, lon, label) {
+            function fetchTemp(lat, lon, label) {
         var chip = document.getElementById('weather-chip');
         if (!chip) return;
         chip.style.display = '';
         chip.innerHTML = chipHTML('погода…');
-        var done = false;
-        var timer = setTimeout(function () { showFail(); }, 5000);
+        var done = false, t2 = null;
+        function showTemp(t) {
+          curTemp = t;
+          if (label) weatherLabel = label;
+          try { localStorage.setItem('zh-weather', JSON.stringify({ t: t, label: weatherLabel || null, ts: Date.now() })); } catch (e) {}
+          var tF = tempFactor(t), extra = '';
+          if (carSel && carEntry && carEntry.cap) {
+            var rng = Math.round(carEntry.cap * 6.2 * tF);
+            var lose = Math.round((1 - tF) * 100);
+            if (t <= 15) extra = ' · холод: запас ~' + rng + ' км (−' + lose + '%)';
+            else if (t >= 25) extra = ' · жара: кондей съест ещё ~' + lose + '% запаса';
+            else extra = ' · запас ~' + rng + ' км';
+          } else {
+            extra = ' · выберите модель — покажем прогноз запаса';
+          }
+          chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами') + extra);
+          updateRange();
+        }
         function showFail() {
           if (done) return;
           done = true;
-          clearTimeout(timer);
+          clearTimeout(t2);
           var cached = null;
           try { cached = JSON.parse(localStorage.getItem('zh-weather') || 'null'); } catch (e) {}
           if (cached && typeof cached.t === 'number') chip.innerHTML = chipHTML((cached.t > 0 ? '+' : '') + cached.t + ' °C · кэш' + (cached.label ? ' · ' + cached.label : ''));
-          else chip.innerHTML = chipHTML('погода недоступна · VPN/блокировщик?');
+          else chip.style.display = 'none';
+        }
+        function fetchWttr() {
+          if (done) return;
+          clearTimeout(t2);
+          t2 = setTimeout(showFail, 5000);
+          try {
+            fetch('https://wttr.in/' + lat.toFixed(2) + ',' + lon.toFixed(2) + '?format=j1')
+              .then(function (r) { return r.json(); })
+              .then(function (d) {
+                var c = d && d.current_condition && d.current_condition[0];
+                var t = c ? parseInt(c.temp_C, 10) : null;
+                if (t === null || isNaN(t)) { showFail(); return; }
+                done = true; clearTimeout(t2); showTemp(t);
+              })
+              .catch(function () { showFail(); });
+          } catch (e) { showFail(); }
         }
         try {
           fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&current=temperature_2m')
             .then(function (r) { return r.json(); })
             .then(function (d) {
               var t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
-              if (t === null) { showFail(); return; }
-              done = true;
-              clearTimeout(timer);
-              curTemp = t;
-              if (label) weatherLabel = label;
-              try { localStorage.setItem('zh-weather', JSON.stringify({ t: t, label: weatherLabel || null, ts: Date.now() })); } catch (e) {}
-              var tF = tempFactor(t), extra = '';
-              if (carSel && carEntry && carEntry.cap) {
-                var rng = Math.round(carEntry.cap * 6.2 * tF);
-                var lose = Math.round((1 - tF) * 100);
-                if (t <= 15) extra = ' · холод: запас ~' + rng + ' км (−' + lose + '%)';
-                else if (t >= 25) extra = ' · жара: кондей съест ещё ~' + lose + '% запаса';
-                else extra = ' · запас ~' + rng + ' км';
-              } else {
-                extra = ' · выберите модель — покажем прогноз запаса';
-              }
-              chip.innerHTML = chipHTML((t > 0 ? '+' : '') + t + ' °C' + (label ? ' · ' + label : ' · рядом с вами') + extra);
-              updateRange();
+              if (t === null) { fetchWttr(); return; }
+              done = true; clearTimeout(t2); showTemp(t);
             })
-            .catch(function () { showFail(); });
-        } catch (e) { showFail(); }
+            .catch(function () { fetchWttr(); });
+        } catch (e) { fetchWttr(); }
+        var t1 = setTimeout(function () { fetchWttr(); }, 4500);
       }
       function setModel(slug) {
         carEntry = null; carSel = slug || null; carPort = null;
