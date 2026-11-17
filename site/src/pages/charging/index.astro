@@ -917,7 +917,19 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         updateCab();
         updateTempChart();
       }
-      function initAnalytics() { renderConnBars(); updateCab(); updateTempChart(); renderCityTable(); }
+      function initAnalytics() {
+        updateCab();
+        updateTempChart();
+        var seen = { c: false, t: false };
+        function tryRender() {
+          if (!seen.c && document.querySelector('#conn-chips .cchip')) { seen.c = true; renderConnBars(); }
+          if (!seen.t && document.querySelector('#city-chips .chip')) { seen.t = true; renderCityTable(); }
+          if (seen.c && seen.t) { mo.disconnect(); return; }
+        }
+        var mo = new MutationObserver(function () { requestAnimationFrame(tryRender); });
+        mo.observe(document.body, { childList: true, subtree: true });
+        tryRender();
+      }
       function renderConnBars() {
         var host = document.getElementById('conn-bars');
         if (!host) return;
