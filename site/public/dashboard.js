@@ -103,14 +103,14 @@
 
     let mult = 1.0;
 
-    const state = { baseKm: 540, pct: 80, mult: 1.0, city: 'Москва' };
+    const state = { baseKm: 540, pct: 80, mult: 1.0, city: 'Москва', roundTrip: false };
 
     function recalc() {
       const soc = parseInt(document.getElementById('socSlider').value, 10);
-      const km = Math.round(state.baseKm * (soc / 100) * state.mult);
+      const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
       document.getElementById('kmDisplay').textContent = km;
       document.getElementById('pctDisplay').textContent = soc + '%';
-      document.getElementById('heroFormula').textContent = state.baseKm + ' паспорт × ' + soc + '% заряд × ' + Math.round(state.mult * 100) + '% погода';
+      document.getElementById('heroFormula').textContent = state.baseKm + ' паспорт × ' + soc + '% заряд × ' + Math.round(state.mult * 100) + '% погода' + (state.roundTrip ? ' × туда-обратно' : '');
       rangeCircle.setRadius(km * 1000);
       updateIsoLabel(km);
       scheduleFit();
@@ -259,6 +259,40 @@
 
     function locateUser() {
       map.flyTo(userPos, 13);
+    }
+
+    function tempNow() {
+      const part = document.getElementById('weatherBadge').textContent.split('·')[0].trim();
+      return /\d/.test(part) ? part : '+20°C';
+    }
+
+    function toggleReturn() {
+      state.roundTrip = !state.roundTrip;
+      const btn = document.getElementById('returnToggle');
+      if (btn) btn.classList.toggle('active', state.roundTrip);
+      recalc();
+      showToast(state.roundTrip ? 'Возврат учтён: зона доезда и обратно' : 'Возврат отключён: только до станции');
+    }
+
+    function openShare() {
+      const km = document.getElementById('kmDisplay').textContent;
+      const soc = document.getElementById('socSlider').value;
+      const model = document.getElementById('carModelTitle').textContent.split('·')[0].trim();
+      const t = tempNow();
+      document.getElementById('shareTitle').textContent = model + ' в ' + t;
+      document.getElementById('shareKm').textContent = km + ' км';
+      document.getElementById('shareNote').textContent = 'реальный пробег при ' + t + ' и заряде ' + soc + '%' + (state.roundTrip ? ' (туда-обратно)' : '');
+      document.getElementById('shareModal').classList.add('show');
+    }
+
+    function closeShare() {
+      document.getElementById('shareModal').classList.remove('show');
+    }
+
+    function copyShare() {
+      const text = 'Запас хода EV — ' + document.getElementById('shareTitle').textContent + ': ' + document.getElementById('shareKm').textContent + ' (' + document.getElementById('shareNote').textContent + ') → zapashoda-ev.ru/dashboard/';
+      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+      showToast('Текст скопирован');
     }
 
     let toastTimer = null;
@@ -419,7 +453,7 @@
     function openRoute(i) {
       const st = stations[i];
       const url = 'https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + st.coords[0] + ',' + st.coords[1]) + '&rtt=auto';
-      showToast('route-open');
+      showToast('Открываем маршрут в Яндекс.Картах');
       window.open(url, '_blank');
     }
 
