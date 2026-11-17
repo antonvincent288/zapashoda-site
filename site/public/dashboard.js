@@ -2,14 +2,14 @@
     // Инициализация карты: тёмная Esri Dark Gray — стабильная подложка без ключей
     const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      updateWhenIdle: true,
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
     }).addTo(map);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      opacity: 0.75
-    }).addTo(map);
+    
 
     // Изохрона реального пробега вокруг машины
     let userPos = [55.785, 37.535];
@@ -45,6 +45,7 @@
 
     // Тап по карте — переставить центр зоны доезда (как на проде)
     map.on('click', (e) => {
+      if (introMode) introMode = false;
       userPos = [e.latlng.lat, e.latlng.lng];
       rangeCircle.setLatLng(userPos);
       meMarker.setLatLng(userPos);
@@ -126,6 +127,19 @@
     const state = { baseKm: 540, pct: 80, mult: 1.0, city: 'Москва', roundTrip: false };
 
     function recalc(fit) {
+      if (introMode) {
+        // Стартовый вид: кольцо 2 км, карта — центр города в радиусе 10 км.
+        // Крупные события (fit=true) выводят из интро; слайдер — только цифры.
+        if (fit) {
+          introMode = false;
+        } else {
+          const soc = parseInt(document.getElementById('socSlider').value, 10);
+          const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
+          document.getElementById('kmDisplay').textContent = km;
+          document.getElementById('pctDisplay').textContent = soc + '%';
+          return;
+        }
+      }
       const soc = parseInt(document.getElementById('socSlider').value, 10);
       const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
       document.getElementById('kmDisplay').textContent = km;
@@ -138,8 +152,9 @@
       if (fit) scheduleFit();
     }
 
-    function onChargeInput() {
-      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        function onChargeInput() {
+      if (introMode) exitIntro();
+   document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       recalc();
     }
 
@@ -399,9 +414,30 @@
         const r3 = await fetch('/charging/weather.json', { cache: 'no-cache' });
         const d3 = await r3.json();
         const cities = (d3 && d3.cities) || {};
-        const hit = cities[state.city];
-        if (hit && typeof hit.t === 'number') { weatherDone = true; applyWeatherTemp(Math.round(hit.t), 'кэш сетей'); return; }
+        let bestName = null, bestD = 1e9;
+        if (userPos) {
+          (CITY_LIST || []).forEach(c => {
+            if (!cities[c.n]) return;
+            const dx = (c.lat - userPos[0]) * 111;
+            const dy = (c.lng - userPos[1]) * 111 * Math.cos(userPos[0] * Math.PI / 180);
+            const d = Math.hypot(dx, dy);
+            if (d < bestD) { bestD = d; bestName = c.n; }
+          });
+        }
+        if (!bestName) bestName = (state.city && cities[state.city]) ? state.city : 'Москва';
+        const hit = cities[bestName];
+        if (hit && typeof hit.t === 'number') {
+          weatherDone = true;
+          applyWeatherTemp(Math.round(hit.t), bestD < 1e8 ? 'ближайший: ' + bestName : 'кэш: ' + bestName);
+          return;
+        }
       } catch (e) {}
+      showToast('Погода недоступна — показана база +20°C. Тап по бейджу погоды — повторим');
+    }
+
+    function retryWeather() {
+      weatherDone = false;
+      loadWeather();
     }
 
     function saveWeatherCache(t) {
@@ -508,6 +544,7 @@
       const gtChip = document.getElementById('barGeoText');
       if (gtChip) gtChip.textContent = name;
       showToast('Город: ' + name);
+      enterIntro();
       if (STATIONS_DB) renderNearby();
     }
 
@@ -584,6 +621,30 @@
     // === Реальная база станций с прода: ближайшие к выбранной точке ===
     let STATIONS_DB = null;
     let weatherDone = false;
+    let introMode = true;
+    let introDone = false;
+
+    function enterIntro() {
+      if (!userPos || introDone) return;
+      introDone = true;
+      introMode = true;
+      try {
+        rangeCircle.setRadius(2000);
+        isoLabel.setLatLng(userPos);
+        isoLabel.setIcon(L.divIcon({ className: 'iso-label', html: '<span>2 км · стартовая зона</span>', iconSize: [0, 0], iconAnchor: [0, 0] }));
+        map.flyToBounds(L.latLngBounds([userPos[0] - 0.045, userPos[1] - 0.072], [userPos[0] + 0.045, userPos[1] + 0.072]), { duration: 0.8 });
+        showToast('Стартовая зона 2 км · сценарий выберется сам при взаимодействии');
+      } catch (e) {}
+    }
+
+    function exitIntro() {
+      if (!introMode) return;
+      introMode = false;
+      try {
+        isoLabel.setLatLng(userPos);
+        recalc(true);
+      } catch (e) {}
+    }
 
     function haversine(a, b) {
       const R = 6371, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
