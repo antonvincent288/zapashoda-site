@@ -45,7 +45,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
       </div>
       <p class="zh-lead-sub">База обновлена <span id="stn-upd">{STN_UPD}</span>. По умолчанию — наша карта с фильтрами по разъёмам (GB/T, Type 1, CCS2, CHAdeMO) и мощности — без рекламы. Нужен полный индекс с живым статусом — вкладка Яндекс.Карт.</p>
-<div id="os-widget" style="margin-top:10px;border-radius:20px;padding:16px;overflow:hidden">
+<div id="os-widget" style="margin-top:14px"><div class="zhd-head"><div class="zhd-logo">Z</div><div><b>Зарядная станция · доска</b><div class="zhd-s">карта, совместимость и запас хода — как в кабине электромобиля</div></div><div class="zhd-status"><span class="zhd-dot"></span><span>данные живые · обновлено {STN_UPD}</span></div></div>
         <div class="zh-grid3">
           <div class="zh-cell">
             <label for="car-search" class="zh-label">Ваша машина</label>
@@ -103,7 +103,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           <div class="osk"><div class="osk-t">Совместимость</div><div class="osk-v num" id="kpi-fit">—</div><div class="osk-s" id="kpi-fit-sub">выберите модель</div></div>
           <div class="osk"><div class="osk-t">Погода · запас</div><div class="osk-v num" id="kpi-weather">—</div><div class="osk-s" id="kpi-weather-sub">уточняется</div></div>
         </div>
-        <div id="car-kpi" style="margin-top:8px;font-size:14px;color:var(--txt-muted);line-height:1.6">
+        <div id="car-kpi" style="margin-top:12px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:16px;font-size:14px;color:var(--txt-muted);line-height:1.6">
           <div id="car-info">Выберите модель — покажем совместимость, запас хода и адаптеры. Цвета точек — в легенде над картой.</div>
         <div id="fit-ring" aria-live="polite">
           <svg width="76" height="76" viewBox="0 0 76 76" role="img" aria-label="Доля совместимых станций">
@@ -1245,9 +1245,15 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
     })();
   </script>
 <style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}.leaflet-container a.leaflet-logo,.leaflet-container .leaflet-control-attribution{display:none!important}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}
-#os-widget{position:relative;border:1px solid rgba(77,155,245,.22);background:linear-gradient(135deg,rgba(77,155,245,.13),rgba(77,155,245,.03) 45%,rgba(201,162,39,.10));box-shadow:0 20px 70px rgba(2,6,16,.45),0 0 0 1px rgba(77,155,245,.07),inset 0 1px 0 rgba(255,255,255,.06)}
-#os-widget::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,155,245,.75) 30%,rgba(201,162,39,.55) 60%,transparent);pointer-events:none}
-#os-widget::after{content:"";position:absolute;right:-120px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(77,155,245,.14),transparent 65%);pointer-events:none}
+#os-widget{position:relative;border:0;background:transparent;box-shadow:none}
+.zhd-head{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.14);border-radius:14px;padding:12px 16px;margin-bottom:12px;flex-wrap:wrap}
+.zhd-logo{width:34px;height:34px;flex:none;border-radius:9px;background:#0161EF;color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center}
+.zhd-head b{font-size:15px;letter-spacing:-.01em;color:var(--txt)}
+.zhd-s{font-size:12px;color:var(--txt-muted)}
+.zhd-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;display:inline-block;margin-right:7px;box-shadow:0 0 8px rgba(34,197,94,.8)}
+.zhd-status{margin-left:auto;font-size:12px;color:var(--txt-muted);display:flex;align-items:center}
+#os-widget::before{display:none}
+#os-widget::after{display:none}
 #range-big{background:linear-gradient(92deg,#e8f2ff 0%,#9ecbff 55%,#4d9bf5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 46px rgba(77,155,245,.32)}
 .os-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
 #weather-chip{background:rgba(77,155,245,.13);border-color:rgba(77,155,245,.32);backdrop-filter:blur(6px)}
@@ -1274,8 +1280,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(77,155,245,.22)}
 .zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:14px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
 .zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
-.zh-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
-.zh-grid3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.2fr);gap:12px;align-items:start}.zh-cell{min-width:0}
+.zh-label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-muted);font-weight:700}
+.zh-grid3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.2fr);gap:12px;align-items:start}.zh-cell{min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:16px}
 .zh-inp-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ecbff;display:flex;pointer-events:none}
 #range-tune>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:6px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);cursor:pointer;user-select:none;font-variant-numeric:tabular-nums}
 #range-tune>summary::-webkit-details-marker{display:none}
@@ -1293,7 +1299,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #os-widget .zh-loc .chip{border:0;background:transparent;color:#9ecbff;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
 #os-widget .zh-loc .chip:hover{color:#dcebff}
 .zh-loc-div{width:1px;flex:none;background:rgba(77,155,245,.25);margin:9px 0}
-.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(77,155,245,.18);margin-top:10px;padding-top:10px}
+.zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;margin-top:12px;padding:12px 16px}
 .zh-chips{display:flex;gap:10px;align-items:center;flex:1 1 100%;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .zh-chips::-webkit-scrollbar{display:none}
 .zh-chips .chip{flex:none}
