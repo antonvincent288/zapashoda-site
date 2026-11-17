@@ -393,7 +393,9 @@
 
     // === Погода по гео: open-meteo ===
     async function loadWeather() {
-      if (!userPos || weatherDone) return;
+      if (weatherDone) return;
+      const noGeo = !userPos;
+      if (noGeo) showToast('Не определили ваш город — погода по Москве. Тап по бейджу погоды — повторим');
       try {
         const cached = JSON.parse(localStorage.getItem('zh-weather-dash') || 'null');
         if (cached && cached.city === state.city && typeof cached.t === 'number' && Date.now() - cached.ts < 30 * 60 * 1000) {
@@ -403,13 +405,13 @@
         }
       } catch (e) {}
       try {
-        const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' });
+        const r = noGeo ? null : await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' });
         const d = await r.json();
         const t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
         if (t !== null) { weatherDone = true; saveWeatherCache(t); applyWeatherTemp(t, 'open-meteo'); return; }
       } catch (e) {}
       try {
-        const r2 = await fetch('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' });
+        const r2 = noGeo ? null : await fetch('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' });
         const d2 = await r2.json();
         const tc = d2 && d2.current_condition && d2.current_condition[0] ? parseInt(d2.current_condition[0].temp_C, 10) : null;
         if (tc !== null && !isNaN(tc)) { weatherDone = true; saveWeatherCache(tc); applyWeatherTemp(tc, 'wttr.in'); return; }
@@ -614,7 +616,10 @@
           if (d && d.city) g = { city: d.city, lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) };
         } catch (e) {}
       }
-      if (!g || geoApplied) return;
+      if (!g || geoApplied) {
+        showToast('Не определили ваш город — выберите его в панели снизу');
+        return;
+      }
       geoApplied = true;
       const hit = CITY_LIST.find(c => c.n.toLowerCase() === g.city.toLowerCase());
       if (hit) pickCity(hit);
@@ -673,7 +678,38 @@
         const d = await r.json();
         STATIONS_DB = d.stations || [];
         renderNearby();
+        renderAllStations();
       } catch (e) {}
+    }
+
+    let stCluster = null;
+
+    function renderAllStations() {
+      if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
+      if (stCluster) { map.removeLayer(stCluster); stCluster = null; }
+      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: false, maxClusterRadius: 42, disableClusteringAtZoom: 14 });
+      const pts = [];
+      STATIONS_DB.forEach((x) => {
+        if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
+        const pw = Number(x.pw) || 0;
+        const st = L.circleMarker([x.lat, x.lon], {
+          radius: pw >= 50 ? 4.5 : 3,
+          color: '#E85002',
+          weight: 0,
+          fillColor: pw >= 50 ? '#E85002' : 'rgba(232,80,2,.7)',
+          fillOpacity: 0.9
+        });
+        st.bindPopup('<div class="st-pop">'
+          + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + (x.src === 'ya' ? ' · Я' : '') + '</div>'
+          + '<div class="st-pop-addr">' + (x.a || '') + '</div>'
+          + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(pw) + '</b></div><div><span>Порты</span><b>' + (x.s && x.s.length ? x.s.join(', ') : '—') + '</b></div></div>'
+          + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + x.lat + ',' + x.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
+          + '</div>', { maxWidth: 250 });
+        pts.push(st);
+      });
+      stCluster.addLayers(pts);
+      map.addLayer(stCluster);
+      showToast('На карте все ' + pts.length.toLocaleString('ru-RU') + ' станций — кластеры, зум ближе до точек');
     }
 
     function renderNearby() {
