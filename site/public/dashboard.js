@@ -736,6 +736,7 @@
     }
 
     let stCluster = null;
+    let baseMode = 'all';
 
     function renderAllStations() {
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
@@ -744,13 +745,16 @@
       const pts = [];
       STATIONS_DB.forEach((x) => {
         if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
+        if (baseMode === 'base' && x.src === 'yandex') return;
+        if (baseMode === 'yandex' && x.src !== 'yandex') return;
         const pw = Number(x.pw) || 0;
+        const isYa = x.src === 'yandex';
         const st = L.circleMarker([x.lat, x.lon], {
           radius: pw >= 50 ? 4.5 : 3,
-          color: '#E85002',
+          color: isYa ? '#3FA9F5' : '#E85002',
           weight: 0,
-          fillColor: pw >= 50 ? '#E85002' : 'rgba(232,80,2,.7)',
-          fillOpacity: 0.9
+          fillColor: isYa ? '#3FA9F5' : '#E85002',
+          fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
         });
         st.bindPopup('<div class="st-pop">'
           + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + (x.src === 'ya' ? ' · Я' : '') + '</div>'
@@ -762,7 +766,24 @@
       });
       stCluster.addLayers(pts);
       map.addLayer(stCluster);
+      const sw = document.getElementById('baseSwitch');
+      if (sw) {
+        const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
+        const q = (sel, txt) => { const el = sw.querySelector(sel); if (el) el.textContent = txt; };
+        q('[data-mode=all]', 'Всё · ' + STATIONS_DB.length.toLocaleString('ru-RU'));
+        q('[data-mode=base]', 'Наши · ' + (STATIONS_DB.length - nb).toLocaleString('ru-RU'));
+        q('[data-mode=yandex]', 'Яндекс · ' + nb.toLocaleString('ru-RU'));
+      }
       showToast('Все ' + pts.length.toLocaleString('ru-RU') + ' станций на карте');
+    }
+
+    function setBaseMode(m) {
+      baseMode = m;
+      document.querySelectorAll('.base-switch button').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+      renderAllStations();
+      const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
+      const label = m === 'yandex' ? ('Яндекс · ' + nb) : m === 'base' ? ('Наша база · ' + (STATIONS_DB.length - nb)) : ('Все базы · ' + STATIONS_DB.length);
+      showToast('На карте: ' + label);
     }
 
     function renderNearby() {
