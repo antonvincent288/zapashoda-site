@@ -745,7 +745,25 @@
         STATIONS_DB = d.stations || [];
         renderNearby();
         renderAllStations();
+        loadOsmIndex();
       } catch (e) {}
+    }
+
+    function loadOsmIndex() {
+      fetch('/charging/osm_full.json').then(r => r.ok ? r.json() : null).then(d => {
+        if (!d || !d.stations || !d.stations.length) return;
+        const have = new Set(STATIONS_DB.map(x => (x.src || 'base') + '|' + x.lat.toFixed(4) + '|' + x.lon.toFixed(4)));
+        let add = 0;
+        d.stations.forEach(s => {
+          const k = (s.src || 'base') + '|' + s.lat.toFixed(4) + '|' + s.lon.toFixed(4);
+          if (have.has(k)) return;
+          have.add(k);
+          STATIONS_DB.push(s);
+          add++;
+        });
+        if (!add) return;
+        renderAllStations();
+      }).catch(() => {});
     }
 
     let stCluster = null;
@@ -758,8 +776,9 @@
       const pts = [];
       STATIONS_DB.forEach((x) => {
         if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
-        if (baseMode === 'base' && x.src === 'yandex') return;
+        if (baseMode === 'base' && (x.src === 'yandex' || x.src === 'osm')) return;
         if (baseMode === 'yandex' && x.src !== 'yandex') return;
+        if (baseMode === 'osm' && x.src !== 'osm') return;
         const pw = Number(x.pw) || 0;
         const isYa = x.src === 'yandex';
         const st = L.circleMarker([x.lat, x.lon], {
