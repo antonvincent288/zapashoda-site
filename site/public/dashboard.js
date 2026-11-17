@@ -461,7 +461,7 @@
       const ib = document.getElementById('impactBadge');
       if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
       setChartActive(idx);
-      recalc(true);
+      recalc(false);
       const gt = document.getElementById('barGeoText');
       if (gt) gt.textContent = (state.city || '') + ' · ' + lbl + '°';
       showToast('Вы в ' + (state.city || 'этом городе') + '? Погода: ' + lbl + '°C' + (src ? ' · ' + src : ''));
@@ -622,11 +622,9 @@
     let STATIONS_DB = null;
     let weatherDone = false;
     let introMode = true;
-    let introDone = false;
 
     function enterIntro() {
-      if (!userPos || introDone) return;
-      introDone = true;
+      if (!userPos || !introMode) return;
       introMode = true;
       try {
         rangeCircle.setRadius(2000);
