@@ -1,6 +1,6 @@
 
     // Инициализация карты: тёмная Esri Dark Gray — стабильная подложка без ключей
-    const map = L.map('map', { zoomControl: false }).setView([55.775, 37.56], 12);
+    const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19
@@ -125,7 +125,7 @@
 
     const state = { baseKm: 540, pct: 80, mult: 1.0, city: 'Москва', roundTrip: false };
 
-    function recalc() {
+    function recalc(fit) {
       const soc = parseInt(document.getElementById('socSlider').value, 10);
       const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
       document.getElementById('kmDisplay').textContent = km;
@@ -133,7 +133,9 @@
       document.getElementById('heroFormula').textContent = state.baseKm + ' паспорт × ' + soc + '% заряд × ' + Math.round(state.mult * 100) + '% погода' + (state.roundTrip ? ' × туда-обратно' : '');
       rangeCircle.setRadius(km * 1000);
       updateIsoLabel(km);
-      scheduleFit();
+      // Авто-подгонка обзора — только по крупным событиям (точка кривой, сценарий, модель, погода).
+      // При движении слайдера карту НЕ дёргаем: это давало непрерывную перерисовку и тормоза.
+      if (fit) scheduleFit();
     }
 
     function onChargeInput() {
@@ -197,7 +199,7 @@
       document.getElementById('weatherBadge').textContent = CHART_TEMPS[idx] + ' · кривая';
       setChartActive(idx);
       showTip(idx);
-      recalc();
+      recalc(true);
     }
 
     // Тултип точки кривой
@@ -232,7 +234,7 @@
       document.getElementById('impactBadge').textContent = impact;
       document.getElementById('weatherBadge').textContent = el.textContent + ' · ' + temp;
       setChartActive(idx);
-      recalc();
+      recalc(true);
     }
 
 
@@ -297,8 +299,13 @@
     const KBD = {q:'й', w:'ц', e:'у', r:'к', t:'е', y:'н', u:'г', i:'ш', o:'щ', p:'з', a:'ф', s:'ы', d:'в', f:'а', g:'п', h:'р', j:'о', k:'л', l:'д', z:'я', x:'ч', c:'с', v:'м', b:'и', n:'т', m:'ь'};
     const TRANSL = {a:'а', b:'б', v:'в', g:'г', d:'д', e:'е', z:'з', i:'и', k:'к', l:'л', m:'м', n:'н', o:'о', p:'п', r:'р', s:'с', t:'т', u:'у', f:'ф', h:'х', c:'ц', y:'ы', j:'й', w:'в', q:'к', x:'кс'};
 
+    const KBD_REV = {}; Object.keys(KBD).forEach(k => { if (!KBD_REV[KBD[k]]) KBD_REV[KBD[k]] = k; });
+    const TRANSL_REV = {}; Object.keys(TRANSL).forEach(k => { if (!TRANSL_REV[TRANSL[k]]) TRANSL_REV[TRANSL[k]] = k; });
+
     function layoutTo(str) { return [...str].map(ch => KBD[ch] || ch).join(''); }
+    function layoutFrom(str) { return [...str].map(ch => KBD_REV[ch] || ch).join(''); }
     function translit(str) { return [...str].map(ch => TRANSL[ch] || ch).join(''); }
+    function translitFrom(str) { return [...str].map(ch => TRANSL_REV[ch] || ch).join(''); }
 
     function hammingLE1(a, b) {
       if (!a || a.length !== b.length) return false;
@@ -314,7 +321,7 @@
       if (!nq) return 1;
       const nm = normStr(m.name || ''), nb = normStr(m.brand || '');
       let best = 0;
-      new Set([nq, layoutTo(nq), translit(nq)]).forEach(qq => {
+      new Set([nq, layoutTo(nq), layoutFrom(nq), translit(nq), translitFrom(nq)]).forEach(qq => {
         if (nm.includes(qq)) best = Math.max(best, 100 - Math.min(20, nm.length - qq.length));
         if (nm.startsWith(qq)) best = Math.max(best, 95);
         if (nb && nb.includes(qq)) best = Math.max(best, 80);
@@ -379,7 +386,12 @@
 
     function applyWeatherTemp(t) {
       let idx = 4, best = 1e9;
-      CHART_TEMPS.forEach((ct, i) => { const d = Math.abs(ct - t); if (d < best) { best = d; idx = i; } });
+      CHART_TEMPS.forEach((ct, i) => {
+        const num = parseFloat(String(ct).replace('+', '').replace('°', ''));
+        if (!isFinite(num)) return;
+        const d = Math.abs(num - t);
+        if (d < best) { best = d; idx = i; }
+      });
       const pct = CHART_PCTS[idx];
       state.mult = pct / 100;
       const lbl = t > 0 ? '+' + t : String(t);
@@ -389,7 +401,7 @@
       const ib = document.getElementById('impactBadge');
       if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
       setChartActive(idx);
-      recalc();
+      recalc(true);
       showToast('Погода' + (state.city ? ' (' + state.city + ')' : '') + ': ' + lbl + '°C');
     }
 
@@ -455,7 +467,7 @@
       const ib = document.getElementById('impactBadge');
       if (ib) ib.textContent = '100% от нормы';
       setChartActive(4);
-      recalc();
+      recalc(true);
       showToast('Сброшено: Zeekr 001');
     }
 
@@ -616,7 +628,7 @@
       state.roundTrip = !state.roundTrip;
       const btn = document.getElementById('returnToggle');
       if (btn) btn.classList.toggle('active', state.roundTrip);
-      recalc();
+      recalc(true);
       showToast(state.roundTrip ? 'Возврат учтён: зона доезда и обратно' : 'Возврат отключён: только до станции');
     }
 
@@ -751,7 +763,9 @@
       document.getElementById('carModal').classList.remove('open');
     }
 
-    // filterModels объявлен выше (фаззи-поиск с транслитерацией)
+    function filterModels(q) {
+      renderModels(MODELS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())));
+    }
 
     function chooseModel(name, base, port, direct, est) {
       state.baseKm = base;
@@ -761,7 +775,7 @@
       document.getElementById('compatText').textContent = direct ? 'Напрямую DC' : 'Через адаптер';
       updateChart(base);
       closeCarModal();
-      recalc();
+      recalc(true);
     }
 
     const WICON = {
