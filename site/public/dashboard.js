@@ -68,7 +68,7 @@
     const stLayer = L.layerGroup().addTo(map);
 
     function stCls(t) {
-      return t === 'dc' ? 'ev-marker-dc' : (t === 'adp' ? 'ev-marker-adp' : 'ev-marker-ac');
+      return t === 'dc' ? 'ev-marker-dc' : (t === 'adp' ? 'ev-marker-adp' : (t === 'ac' ? 'ev-marker-ac' : 'ev-marker-na'));
     }
 
     function addStationMarkers() {
@@ -81,7 +81,18 @@
           iconAnchor: [15, 15]
         });
         const m = L.marker(st.coords, { icon }).addTo(stLayer);
-        m.bindPopup(`<b>${st.name}</b>`);
+        m.bindPopup(`<div class="st-pop">
+          <div class="st-pop-name">${st.name}</div>
+          <div class="st-pop-addr">${st.addr}</div>
+          <div class="st-pop-grid">
+            <div><span>Расстояние</span><b>${st.km} км</b></div>
+            <div><span>Мощность</span><b>${kwLabel(st.kw)}</b></div>
+            <div><span>0→80%</span><b>${st.t80}</b></div>
+            <div><span>Тариф</span><b>${st.tariff || tariffLabel(st)}</b></div>
+          </div>
+          <div class="st-pop-row">Порты: ${st.port}</div>
+          <a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=${encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + st.coords[0] + ',' + st.coords[1])}&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>
+        </div>`, { maxWidth: 250 });
         m.on('click', () => { const i = stations.indexOf(st); if (i >= 0) focusStation(i); });
       });
     }
@@ -265,6 +276,50 @@
       map.flyTo(userPos, 13);
     }
 
+    function kwLabel(v) {
+      return (v != null && v !== '') ? (v + ' кВт') : '—';
+    }
+
+    function typeColor(t) {
+      return t === 'dc' ? 'var(--orange)' : (t === 'adp' ? 'var(--sand-gold)' : (t === 'ac' ? 'var(--green)' : 'var(--text-dim)'));
+    }
+
+    function typeBg(t) {
+      return t === 'dc' ? 'rgba(232, 80, 2, 0.14)' : (t === 'adp' ? 'rgba(217, 195, 171, 0.14)' : (t === 'ac' ? 'rgba(16, 185, 129, 0.14)' : 'rgba(148, 163, 184, 0.12)'));
+    }
+
+    // === Мобильная навигация как в приложении ===
+    function setActiveTab(id) {
+      document.querySelectorAll('.mobile-tabbar .tab').forEach(t => t.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    }
+
+    function mView(view) {
+      if (view === 'map') {
+        document.querySelector('.hud-left').classList.remove('open');
+        switchView('map');
+        setActiveTab('tabMapM');
+      } else if (view === 'stations') {
+        switchView('list');
+        setActiveTab('tabStationsM');
+      } else if (view === 'car') {
+        switchView('map');
+        document.querySelector('.hud-left').classList.add('open');
+        setActiveTab('tabCarM');
+      }
+    }
+
+    function openSideMenu() {
+      document.getElementById('sideMenu').classList.add('show');
+      document.getElementById('sideOverlay').classList.add('show');
+    }
+
+    function closeSideMenu() {
+      document.getElementById('sideMenu').classList.remove('show');
+      document.getElementById('sideOverlay').classList.remove('show');
+    }
+
     function resetCar() {
       chooseModel('Zeekr 001 · 100 кВт·ч', 540, 'GB/T DC · 200 кВт', true);
       state.mult = 1.0;
@@ -414,7 +469,7 @@
           name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'ya' ? ' · Я' : ''),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
-          type: (v.x.pw || 0) >= 50 ? 'dc' : 'ac',
+          type: (v.x.pw || 0) >= 50 ? 'dc' : (v.x.pw ? 'ac' : 'na'),
           label: v.x.pw ? String(v.x.pw) : '—',
           kw: v.x.pw,
           port: portLabel(v.x.s),
@@ -663,12 +718,12 @@
               <div class="st-name">${s.name}</div>
               <div class="st-addr">${s.addr} · ${s.km} км</div>
             </div>
-            <div class="st-kw"${s.type === 'adp' ? ' style="color: var(--sand-gold);"' : (s.type === 'ac' ? ' style="color: var(--green);"' : '')}>${s.kw} кВт</div>
+            <div class="st-kw" style="color: ${typeColor(s.type)};">${kwLabel(s.kw)}</div>
           </div>
           <div class="st-metrics">
             <div>
               <div class="st-m-label">Разъем</div>
-              <div class="st-m-val" style="color: ${s.type === 'dc' ? 'var(--orange)' : (s.type === 'adp' ? 'var(--sand-gold)' : 'var(--green)')};">${s.port}</div>
+              <div class="st-m-val" style="color: ${typeColor(s.type)};">${s.port}</div>
             </div>
             <div>
               <div class="st-m-label">До 80%</div>
@@ -695,7 +750,7 @@
           <div class="r-col">Порт<b>${s.port}</b></div>
           <div class="r-col">До 80%<b>${s.t80}</b></div>
           <div class="r-col">Тариф<b>${tariffLabel(s)}</b></div>
-          <span class="st-kw-mini"${s.type === 'adp' ? ' style="color: var(--sand-gold);"' : (s.type === 'ac' ? ' style="color: var(--green);"' : '')}>${s.kw} кВт</span>
+          <span class="st-kw-mini" style="color: ${typeColor(s.type)}; background: ${typeBg(s.type)};">${kwLabel(s.kw)}</span>
         </div>`).join('');
       updateTableFade();
     }
@@ -718,4 +773,17 @@
       if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); citySearch(); }
     });
     document.getElementById('cityInput').addEventListener('change', citySearch);
+
+    // Свайп по хендлу шита: вверх — развернуть, вниз — свернуть
+    const sheetEl = document.querySelector('.hud-left');
+    const sheetHandle = document.querySelector('.stack-handle');
+    let sheetTouchY = null;
+    sheetHandle.addEventListener('touchstart', (e) => { sheetTouchY = e.touches[0].clientY; }, { passive: true });
+    sheetHandle.addEventListener('touchend', (e) => {
+      if (sheetTouchY == null) return;
+      const dy = e.changedTouches[0].clientY - sheetTouchY;
+      if (dy > 36) sheetEl.classList.remove('open');
+      else if (dy < -36) sheetEl.classList.add('open');
+      sheetTouchY = null;
+    }, { passive: true });
   
