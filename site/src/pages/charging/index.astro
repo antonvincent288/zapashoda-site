@@ -159,7 +159,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           </div>
           <div class="zh-ribbon-right">
             <div id="weather-wrap"><span id="weather-chip" class="chip" style="display:none;gap:7px" title="Онлайн-погода в точке карты"></span></div>
-            <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#FF6F00"></span>DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#eab308"></span>через переходник</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>Не проверено</span></div>
+            <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#FF6F00"></span>DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;background:#0B0F16;border:2px solid #FF6F00"></span>через переходник</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>Не проверено</span></div>
           </div>
         </div>
         <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
@@ -252,7 +252,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         ['schuko', 'Розетка 220 В', 'zsh-schuko'],
       ];
       var active = {};
-      var zhGeo = null, zhCity = null, zhRangeCircle = null, viewMode = 'map', listLimit = 30;
+      var zhGeo = null, zhCity = null, zhRangeCircle = null, zhRangeKm = null, viewMode = 'map', listLimit = 30;
       var zhVisibleStations = [];
       var PW_PREDS = {
         pw100: function (s) { return (Number(s.pw) || 0) >= 100; },
@@ -333,7 +333,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               else if (s.__cab2) cab = '<br><span style="color:#16a34a">Кабель Type 2 закреплён — свой не нужен</span>';
               else cab = '<br><span style="color:#8a8f98">Тип Type 2 не уточнён — возьмите свой кабель на случай, если на станции только розетка</span> <a href="' + cabUrl + '" style="color:#FF8F33">Кабели и адаптеры →</a>';
             }
-            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#FF6F00' : '#16a34a', fillColor: dc ? '#FF6F00' : '#16a34a', fillOpacity: 0.85 });
+            var m = L.marker([s.lat, s.lon], { icon: mkIcon(s, dc, carSel ? s.__fit : null) });
             m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (cab || '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
               + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
 + (carSel && carEntry && carEntry.cap && s.pw ? '<br><span style="font-size:13px;color:#FFD9B3">Сессия 20 → 80%: ~' + sessMin(carEntry, Number(s.pw)) + ' мин</span>' : '')
@@ -588,12 +588,20 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         try {
           if (map && typeof L !== 'undefined') {
             if (zhRangeCircle) zhRangeCircle.setLatLng([lat, lon]);
-            else { zhRangeCircle = L.circle([lat, lon], { radius: 50000, color: '#FF8F33', weight: 1.4, dashArray: '6 8', fillColor: '#FF8F33', fillOpacity: 0.05, interactive: false }); zhRangeCircle.addTo(map); }
+            else { zhRangeCircle = L.circle([lat, lon], { radius: (typeof zhRangeKm === 'number' ? Math.max(20000, Math.min(400000, zhRangeKm * 1000)) : 50000), color: '#FF8F33', weight: 1.8, dashArray: '8 12', fillColor: '#FF8F33', fillOpacity: 0.05, interactive: false, className: 'zh-iso-path' }); zhRangeCircle.addTo(map); }
           }
         } catch (e) {}
         renderList();
         updateRing();
         updateKpis();
+      }
+      function mkIcon(s, dc, fit) {
+        var html, size;
+        if (fit === 'adapt') { html = '<div class="zh-pin zh-pin-ring"></div>'; size = 22; }
+        else if (fit === 'unknown') { html = '<div class="zh-pin zh-pin-unk"></div>'; size = 13; }
+        else if (fit === 'direct' && !s.__dc) { html = '<div class="zh-pin zh-pin-ac"></div>'; size = 15; }
+        else { var pw = Math.round(Number(s.pw) || 0); html = '<div class="zh-pin zh-pin-dc"><b>' + (pw ? pw : 'DC') + '</b></div>'; size = 30; }
+        return L.divIcon({ className: 'zh-pin-wrap', html: html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
       }
       function cardColor(s) {
         if (carSel) return s.__fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : s.__fit === 'adapt' ? '#eab308' : '#8a8f98';
@@ -643,8 +651,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             '</div>';
           card.addEventListener('click', function (ev) { if (ev.target.closest('a,button')) return; focusStation(s); });
           card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') focusStation(s); });
-          card.addEventListener('mouseenter', function () { if (s.__marker) { s.__marker.setStyle({ radius: 11, weight: 3 }); } });
-          card.addEventListener('mouseleave', function () { if (s.__marker) { s.__marker.setStyle({ radius: 7, weight: 1 }); } });
+          card.addEventListener('mouseenter', function () { if (s.__marker && s.__marker.getElement) { var pe = s.__marker.getElement(); if (pe) pe.classList.add('on'); } });
+          card.addEventListener('mouseleave', function () { if (s.__marker && s.__marker.getElement) { var pe2 = s.__marker.getElement(); if (pe2) pe2.classList.remove('on'); } });
           body.appendChild(card);
         });
         if (items.length > listLimit) {
@@ -801,11 +809,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           else if (adapt.some(function (k) { return c[k]; })) fit = 'adapt';
           else fit = 'unknown';
           s.__fit = fit;
-          if (carSel && m.setStyle) {
-            m.setStyle({ color: (fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : fit === 'adapt' ? '#eab308' : '#8a8f98'), fillColor: (fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : fit === 'adapt' ? '#eab308' : '#8a8f98') });
-          } else if (!carSel && m.setStyle) {
-            m.setStyle({ color: s.__dc ? '#FF6F00' : '#16a34a', fillColor: s.__dc ? '#FF6F00' : '#16a34a' });
-          }
+          m.setIcon(mkIcon(s, s.__dc, fit));
         });
       }
       function tempFactor(t) {
@@ -827,6 +831,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var tF = tempFactor(curTemp), sF = SCN_FACTORS[scnCur] || 1;
         var real = Math.round(summer * tF * sF);
         big.textContent = '~' + real + ' км';
+        zhRangeKm = real;
+        try { if (zhRangeCircle) zhRangeCircle.setRadius(Math.max(20000, Math.min(400000, real * 1000))); } catch (e) {}
         var rtY = document.getElementById('range-tune'); if (rtY) rtY.classList.remove('zh-nocar');
         capl.textContent = 'реальный запас сейчас · при заряде ' + soc + '%';
         var parts = [];
@@ -923,7 +929,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var col = document.querySelector('.zh-map-col');
         if (!col || document.getElementById('zh-legend')) return;
         col.style.position = 'relative';
-        col.insertAdjacentHTML('afterbegin', '<div id="zh-legend" aria-hidden="true" style="position:absolute;top:22px;left:12px;z-index:4;pointer-events:none;background:rgba(10,14,21,.85);border:1px solid rgba(148,163,184,.18);border-radius:12px;padding:9px 12px;font-size:11.5px;line-height:1.9;color:#EDF2F9;backdrop-filter:blur(6px)"><span style="display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8B96A5;font-weight:700;margin-bottom:2px">Цвета станций</span><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF6F00;margin-right:6px;vertical-align:-1px"></i>быстрый DC — напрямую</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:-1px"></i>AC — напрямую<br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:6px;vertical-align:-1px"></i>через переходник</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8a8f98;margin-right:6px;vertical-align:-1px"></i>не подтверждено</span></div>');
+        col.insertAdjacentHTML('afterbegin', '<div id="zh-legend" aria-hidden="true" style="position:absolute;top:22px;left:12px;z-index:4;pointer-events:none;background:rgba(10,14,21,.85);border:1px solid rgba(148,163,184,.18);border-radius:12px;padding:9px 12px;font-size:11.5px;line-height:1.9;color:#EDF2F9;backdrop-filter:blur(6px)"><span style="display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8B96A5;font-weight:700;margin-bottom:2px">Цвета станций</span><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF6F00;margin-right:6px;vertical-align:-1px"></i>быстрый DC — напрямую</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:-1px"></i>AC — напрямую<br><span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#0B0F16;border:2px solid #FF6F00;margin-right:5px;vertical-align:-2px"></i>через переходник</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8a8f98;margin-right:6px;vertical-align:-1px"></i>не подтверждено</span></div>');
       }
       function initAnalytics() {
         addMapLegend();
@@ -1138,7 +1144,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">' +
             '<div>Оранжевые — быстрые DC напрямую: <b style="color:#FF6F00">' + ddc + '</b></div>' +
             '<div>Зелёные — AC напрямую: <b style="color:#16a34a">' + (direct - ddc) + '</b></div>' +
-            '<div>Жёлтые — через переходник: <b style="color:#eab308">' + adapt + '</b></div>' +
+            '<div>Через переходник (оранжевое кольцо): <b style="color:#FF8F33">' + adapt + '</b></div>' +
             '<div>Серые — разъём не подтверждён: <b style="color:#8a8f98">' + unk + '</b> (остаются в списке)</div>' +
             '</div><a href="/catalog/?model=' + encodeURIComponent(slug) + '" style="color:#FF8F33;text-decoration:underline;display:inline-block;margin-top:10px">' + (adapt > 0 && ADAPTER_LABEL[carPort] ? 'Нужен адаптер ' + ADAPTER_LABEL[carPort] + ' — подобрать в каталоге' : 'Адаптеры и кабели для вашей модели') + '</a>';
           applyFilter();
@@ -1588,6 +1594,25 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   button#empty-ya.chip, button#empty-reset.chip { background:#FF6F00 !important; color:#0B1018 !important; border-color:#FF6F00 !important; font-weight:700 !important; }
   input[type="search"], input[type="text"], select { background:#111722 !important; border:1px solid rgba(148,163,184,.16) !important; color:#EDF2F9 !important; }
   ::selection { background:rgba(255,111,0,.35); }
+  /* === Polestar HMI skin === */
+  body { background:#050507 !important; color:#F9F9F9 !important; }
+  header { background:rgba(5,5,7,.9) !important; }
+  footer { background:#0A0A0C !important; }
+  .zhd-tile2, .zh-cell, .zhd-head, .zh-ribbon, .osk { background:rgba(13,14,18,.92) !important; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,.08) !important; border-top-color:rgba(255,255,255,.16) !important; border-radius:20px !important; box-shadow:0 10px 40px rgba(0,0,0,.55); }
+  .zh-bcard { border-radius:20px !important; }
+  #range-tune>summary { background:radial-gradient(circle at 80% 120%, rgba(255,111,0,.24), transparent 70%) !important; }
+  #range-big { background:linear-gradient(92deg,#F9F9F9 0%,#FF6F00 45%,#C10801 100%) !important; -webkit-background-clip:text !important; background-clip:text !important; color:transparent !important; text-shadow:none !important; }
+  .zhd-tile2 b, .zhd-tile2 .n { font-variant-numeric:tabular-nums; }
+  .zh-pin-wrap { background:none !important; border:none !important; box-shadow:none !important; }
+  .zh-pin { display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.5); transition:transform .15s ease, box-shadow .15s ease; }
+  .zh-pin-dc { width:30px; height:30px; border-radius:50%; background:#FF6F00; color:#0B1018; font-weight:800; font-size:11px; font-variant-numeric:tabular-nums; border:1px solid rgba(255,255,255,.22); }
+  .zh-pin-ring { width:22px; height:22px; border-radius:50%; background:#0B0F16; border:2.5px solid #FF6F00; }
+  .zh-pin-ac { width:15px; height:15px; border-radius:50%; background:#16a34a; border:1px solid rgba(255,255,255,.25); }
+  .zh-pin-unk { width:13px; height:13px; border-radius:50%; background:#8a8f98; opacity:.85; }
+  .zh-pin-wrap.on .zh-pin-dc { transform:scale(1.18); box-shadow:0 0 0 4px rgba(255,111,0,.35), 0 4px 14px rgba(0,0,0,.5); }
+  .zh-pin-wrap.on .zh-pin-ring { box-shadow:0 0 0 4px rgba(255,111,0,.35); }
+  .zh-iso-path { stroke-dasharray:8 12 !important; animation:zhIso 2.4s linear infinite; filter:drop-shadow(0 0 6px rgba(255,111,0,.55)); }
+  @keyframes zhIso { to { stroke-dashoffset:-80; } }
   span.dd, #car-list, #ztop { background:#111722 !important; border-color:rgba(148,163,184,.14) !important; }
   #zs-lead-ov { background:rgba(4,8,13,.72) !important; }
   header .hsearch input:focus, #os-widget select:focus, #os-widget input[type=text]:focus { border-color:rgba(255,111,0,.55) !important; outline:none !important; }
