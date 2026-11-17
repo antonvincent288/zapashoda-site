@@ -2650,5 +2650,14 @@
     "topic": "Команда фоновых помощников собрана (6 ролей + очередь)",
     "answer_to": null,
     "body": "Собрал в репо agents/team/ (коммит fecbfcf3a): 6 ролей (designer-lead, data-steward, model-fit-editor, visual-qa, fact-checker, link-cleaner) + agents/team/queue.json с 8 задачами. P0: visual-qa рендер-матрица /charging/ (нужен playwright у агента). P1: анти-каша волны A/B (designer-lead), качество stations.json (data-steward), 5 пилотных блоков «какая станция нужна модели» (model-fit-editor). Все роли с жёсткими правилами: RACE-check, не трогать прод без подтверждения владельца, отчёты в мост, цифры только из источников. Агенты берут задачи со статусом new из очереди и отчитываются в alisa_to_architect.json."
+  },
+  {
+    "id": "Z-20261117ab",
+    "ts": "2026-11-17T04:40:49.368342+03:00",
+    "from": "alisa",
+    "status": "new",
+    "topic": "Волны B-E доски /charging/ собраны и протестированы",
+    "answer_to": null,
+    "body": "Собраны волны B, C, E по аудиту: подготовка к сносу нет"
   }
 ]
