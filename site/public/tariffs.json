@@ -1,0 +1,33 @@
+{
+  "networks": {
+    "Энергия Москвы": {
+      "status": "parsed",
+      "source": "https://evacharge.me/",
+      "last_check": "2026-11-17T17:26:26+00:00",
+      "ac": 15.0,
+      "dc": 20.0,
+      "unit": "₽/кВт·ч",
+      "updated": "2026-11-17T17:26:42+00:00"
+    },
+    "РусГидро": {
+      "ac": 13.0,
+      "dc": 15.0,
+      "unit": "₽/кВт·ч",
+      "source": "https://charge.rushydro.ru/electrocar/",
+      "updated": "2026-11-17T17:26:42+00:00",
+      "status": "parsed"
+    }
+  },
+  "market": {
+    "dc_typical": [
+      17,
+      26
+    ],
+    "note": "коридор цен по открытым обзорам рынка"
+  },
+  "sources": [
+    "https://evacharge.me/",
+    "https://charge.rushydro.ru/electrocar/"
+  ],
+  "updated": "2026-11-17T17:26:42+00:00"
+}
