@@ -55,7 +55,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
                 <option value="">— выберите модель —</option>
                 {MODELS.map((m) => { const n = (m.brand && m.name.toLowerCase().startsWith(m.brand.toLowerCase())) ? m.name.slice(m.brand.length).replace(/^\s+/, '') : m.name; return (<option value={m.slug}>{m.brand ? m.brand + ' · ' : ''}{n}</option>); })}
               </select>
-              <span class="zh-inp-ic" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></span><input id="car-search" type="text" autocomplete="off" enterkeyhint="search" placeholder="Найдите машину: Zeekr, зик, тесла…" aria-label="Поиск модели автомобиля" style="width:100%;padding:11px 38px;border-radius:12px;border:1px solid rgba(77,155,245,.30);background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;min-height:46px;box-sizing:border-box" />
+              <span class="zh-inp-ic" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></span><input id="car-search" type="text" autocomplete="off" enterkeyhint="search" placeholder="Найдите машину: Zeekr, зик, тесла…" aria-label="Поиск модели автомобиля" style="width:100%;padding:11px 38px;border-radius:12px;border:1px solid rgba(255,111,0,.30);background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;min-height:46px;box-sizing:border-box" />
               <button id="car-clear" type="button" aria-label="Очистить выбор модели" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:0;background:transparent;color:var(--txt-muted);font-size:20px;line-height:1;cursor:pointer;display:none">×</button>
               <div id="car-list" role="listbox" aria-label="Список моделей" style="display:none;position:absolute;z-index:60;top:calc(100% + 6px);left:0;right:0;max-height:280px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.4);padding:6px"></div>
               </div>
@@ -69,7 +69,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
                 <span class="zh-caps-badges"><b id="soc-val">80%</b><i id="scn-name">База</i></span>
               </summary>
               <div class="zh-pop-inner">
-                <div id="range-cap" style="font-size:13px;color:#9ecbff;margin-bottom:10px">выберите модель — покажем реальный запас</div>
+                <div id="range-cap" style="font-size:13px;color:#FFD9B3;margin-bottom:10px">выберите модель — покажем реальный запас</div>
                 <div style="max-width:380px">
                   <label for="range-soc" style="font-size:13px;color:var(--txt-muted)">Заряд сейчас</label>
                   <input id="range-soc" type="range" min="10" max="100" step="5" value="80" style="width:100%" />
@@ -159,7 +159,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           </div>
           <div class="zh-ribbon-right">
             <div id="weather-wrap"><span id="weather-chip" class="chip" style="display:none;gap:7px" title="Онлайн-погода в точке карты"></span></div>
-            <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#2563eb"></span>DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#f97316"></span>DC адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#eab308"></span>AC адаптер</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>Не проверено</span></div>
+            <div id="map-legend" aria-label="Легенда цветов карты" style="display:flex;gap:7px 12px;flex-wrap:wrap;align-items:center;margin:4px 0 0;font-size:13px;color:var(--txt-muted)"><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#FF6F00"></span>DC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#16a34a"></span>AC</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#eab308"></span>через переходник</span><span class="lg-item" style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:#8a8f98"></span>Не проверено</span></div>
           </div>
         </div>
         <p id="conn-note" style="font-size:13px;color:var(--txt-muted);margin:10px 0 0"></p>
@@ -168,7 +168,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       <script is:inline type="application/json" id="car-models-json" set:html={MODELS_JSON}></script>
       <div id="split-wrap"><div class="zh-map-col">
       <div id="map-ya" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-top:14px;display:none"></div>
-      <div style="position:relative;margin-top:8px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line)"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(77,155,245,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#0161EF;color:#fff;border-color:#0161EF;font-weight:700">Сбросить фильтры</button></div></div>
+      <div style="position:relative;margin-top:8px"><div id="map" class="zh-map-h" style="border-radius:16px;overflow:hidden;border:1px solid var(--line)"></div><div id="empty-note" role="status" style="display:none;position:absolute;z-index:850;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,111,0,.30);border-radius:14px;padding:16px;max-width:300px;box-shadow:0 20px 38px -8px rgba(0,0,0,.55)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div id="empty-title" style="font-weight:700;font-size:14px">В нашей проверенной базе здесь пока пусто</div><button id="empty-x" type="button" aria-label="Закрыть" style="border:0;background:transparent;color:var(--txt-muted);font-size:18px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;flex:none">×</button></div><p id="empty-text-base" style="font-size:13px;color:var(--txt-muted);margin:8px 0 0">В этой области нет точек из нашей базы (<b id="empty-stn">{STN}</b> подтверждённых станций по всей России). Полный индекс — на Яндекс.Картах.</p><p id="empty-text-filter" style="display:none;font-size:13px;color:var(--txt-muted);margin:8px 0 0">В районе есть станции нашей базы, но они не проходят по активным фильтрам. Сбросьте фильтры, чтобы их увидеть.</p><button id="empty-ya" type="button" class="chip" style="margin-top:10px;background:#FF6F00;color:#0B1018;border-color:#FF6F00;font-weight:700">Показать станции на Яндекс.Картах</button><button id="empty-reset" type="button" class="chip" style="display:none;margin-top:10px;background:#FF6F00;color:#0B1018;border-color:#FF6F00;font-weight:700">Сбросить фильтры</button></div></div>
       </div>
         <aside id="stn-list" class="zh-list-h" style="display:none" aria-label="Список станций">
           <div class="zh-lst-bar">
@@ -191,11 +191,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         </div>
         <h2 style="font-size:20px;font-weight:800;letter-spacing:-.01em">Как пользоваться картой зарядных станций</h2>
         <div class="zh-bento-grid">
-        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="9" r="2.6"/><circle cx="15" cy="7" r="2.6"/><circle cx="11" cy="15" r="2.6"/></svg></div><h3>Как читать цвета станций</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (синие — быстрые DC, зелёные — AC), и станции, где понадобится переходник (оранжевые — быстрые DC, жёлтые — AC). Серые точки — разъём станции пока не подтверждён: перед поездкой уточните тип коннектора в приложении оператора или напишите нам — <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, проверим и обновим базу.</p>
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="9" r="2.6"/><circle cx="15" cy="7" r="2.6"/><circle cx="11" cy="15" r="2.6"/></svg></div><h3>Как читать цвета станций</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Выберите вашу модель в списке — карта сразу подсветит станции, которые она заряжает напрямую (оранжевые — быстрые DC, зелёные — AC) и станции, где понадобится переходник (жёлтые). Серые точки — разъём станции пока не подтверждён: перед поездкой уточните тип коннектора в приложении оператора или напишите нам — <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#FF8F33;text-decoration:underline">Telegram</a>, проверим и обновим базу.</p>
         </div>
-        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6l4 2v6l-4 2-4-2v-6l4-2"/><path d="M17 5.5a5.5 5.5 0 0 1 0 6"/></svg></div><h3>Совместимость и модели</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#4d9bf5;text-decoration:underline">каталога {MODEL_TOTAL} {modelGen(MODEL_TOTAL)}</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Зарядные станции GB/T в Москве, точка зарядки для Zeekr 001 или CCS2-коннектор рядом с трассой — такие вопросы решаются одним выбором в фильтрах выше. Фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6l4 2v6l-4 2-4-2v-6l4-2"/><path d="M17 5.5a5.5 5.5 0 0 1 0 6"/></svg></div><h3>Совместимость и модели</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:10px">Если вашей модели в списке нет — откройте страницу модели из <a href="/models/" style="color:#FF8F33;text-decoration:underline">каталога {MODEL_TOTAL} {modelGen(MODEL_TOTAL)}</a>: там таблица разъёмов, инструкция по подключению и список подходящих адаптеров. Зарядные станции GB/T в Москве, точка зарядки для Zeekr 001 или CCS2-коннектор рядом с трассой — такие вопросы решаются одним выбором в фильтрах выше. Фильтр сохраняется в адресе страницы, ссылку удобно переслать.</p>
         </div>
-        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="17" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></svg></div><h3>Актуальность базы и трассы</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: {STN} {stnWord(STN)} на {STN_UPD_FULL} — это выбранная база, где у каждой станции указаны коннекторы и совместимость с моделями. Полный индекс публичных ЭЗС (около 9 900) — в обзоре <a href="/blog/karta-elektrozapravok/" style="color:#4d9bf5;text-decoration:underline">«Карта электрозаправок России 2026»</a>. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#4d9bf5;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам М-4, М-11 и М-12 — в <a href="/blog/zaryadka-na-trasse/" style="color:#4d9bf5;text-decoration:underline">разборе трасс</a>, правила аренды жилья с зарядкой и другие сценарии — в <a href="/blog/" style="color:#4d9bf5;text-decoration:underline">блоге</a>.</p>
+        <div class="zh-bcard"><div class="zh-bcard-ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="17" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></svg></div><h3>Актуальность базы и трассы</h3><p style="font-size:14px;color:var(--txt-muted);margin-top:8px">База обновляется вручную и по открытым источникам: {STN} {stnWord(STN)} на {STN_UPD_FULL} — это выбранная база, где у каждой станции указаны коннекторы и совместимость с моделями. Полный индекс публичных ЭЗС (около 9 900) — в обзоре <a href="/blog/karta-elektrozapravok/" style="color:#FF8F33;text-decoration:underline">«Карта электрозаправок России 2026»</a>. О неточности — напишите в <a href="https://t.me/zapashoda_ev" rel="noopener" style="color:#FF8F33;text-decoration:underline">Telegram</a>, поправим в течение суток. Гайды по трассам М-4, М-11 и М-12 — в <a href="/blog/zaryadka-na-trasse/" style="color:#FF8F33;text-decoration:underline">разборе трасс</a>, правила аренды жилья с зарядкой и другие сценарии — в <a href="/blog/" style="color:#FF8F33;text-decoration:underline">блоге</a>.</p>
         </div>
         </div>
       </div>
@@ -331,12 +331,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               var cabUrl = '/catalog/' + (carSel && carSel.slug ? '?model=' + encodeURIComponent(carSel.slug) : '');
               if (s.__c.type2_socket) cab = '<br><span style="color:#eab308">Розетка Type 2 без кабеля — нужен свой кабель Type 2</span>';
               else if (s.__cab2) cab = '<br><span style="color:#16a34a">Кабель Type 2 закреплён — свой не нужен</span>';
-              else cab = '<br><span style="color:#8a8f98">Тип Type 2 не уточнён — возьмите свой кабель на случай, если на станции только розетка</span> <a href="' + cabUrl + '" style="color:#4d9bf5">Кабели и адаптеры →</a>';
+              else cab = '<br><span style="color:#8a8f98">Тип Type 2 не уточнён — возьмите свой кабель на случай, если на станции только розетка</span> <a href="' + cabUrl + '" style="color:#FF8F33">Кабели и адаптеры →</a>';
             }
-            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#2563eb' : '#16a34a', fillColor: dc ? '#2563eb' : '#16a34a', fillOpacity: 0.85 });
-            m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (cab || '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#4d9bf5;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
+            var m = L.circleMarker([s.lat, s.lon], { radius: 7, color: dc ? '#FF6F00' : '#16a34a', fillColor: dc ? '#FF6F00' : '#16a34a', fillOpacity: 0.85 });
+            m.bindPopup(function () { return '<b>' + (s.n || 'Станция') + '</b>' + (s.op ? ' · ' + s.op : '') + '<br>' + (s.a || '') + '<br>' + (conn || '') + (pw ? ' · ' + pw + ' кВт' : '') + (cab || '') + (s.src === 'osm' ? '<br><span style="font-size:11px;color:#888">данные OSM (ODbL)</span>' : '') + '<br><a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Открыть в Яндекс.Картах →</a> | <a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Статус в 2Chargers →</a>' + '<br><a href="https://t.me/zapashoda_ev_bot?text=' + encodeURIComponent('Статус станции: ' + (s.n || '') + (s.a ? ' — ' + s.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ') + '" target="_blank" rel="noopener" style="color:#FF8F33;font-size:13px;text-decoration:underline">Сообщить статус станции →</a>'
               + (carSel ? (s.__fit === 'direct' ? '<br><span style="color:#16a34a;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Прямое подключение для вашей модели</span>' : s.__fit === 'adapt' ? '<br><span style="color:#f59e0b;font-weight:600;display:inline-flex;align-items:center;gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Через адаптер — подходит для вашей модели</span>' : '<br><span style="color:#8a8f98">Разъём не подтверждён — уточните по ссылке выше</span>') : '')
-+ (carSel && carEntry && carEntry.cap && s.pw ? '<br><span style="font-size:13px;color:#9ecbff">Сессия 20 → 80%: ~' + sessMin(carEntry, Number(s.pw)) + ' мин</span>' : '')
++ (carSel && carEntry && carEntry.cap && s.pw ? '<br><span style="font-size:13px;color:#FFD9B3">Сессия 20 → 80%: ~' + sessMin(carEntry, Number(s.pw)) + ' мин</span>' : '')
 + '<br><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">'
 + '<a href="https://yandex.ru/maps/?rtext=~' + s.lon + ',' + s.lat + '&rtt=auto&z=17" target="_blank" rel="noopener" class="chip" style="padding:6px 10px;font-size:13px;text-decoration:none">Маршрут</a>'
 + '<button type="button" class="chip" style="padding:6px 10px;font-size:13px;cursor:pointer" data-memo="' + s.lat.toFixed(5) + ',' + s.lon.toFixed(5) + '">Памятка</button>'
@@ -588,7 +588,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         try {
           if (map && typeof L !== 'undefined') {
             if (zhRangeCircle) zhRangeCircle.setLatLng([lat, lon]);
-            else { zhRangeCircle = L.circle([lat, lon], { radius: 50000, color: '#4d9bf5', weight: 1.4, dashArray: '6 8', fillColor: '#4d9bf5', fillOpacity: 0.05, interactive: false }); zhRangeCircle.addTo(map); }
+            else { zhRangeCircle = L.circle([lat, lon], { radius: 50000, color: '#FF8F33', weight: 1.4, dashArray: '6 8', fillColor: '#FF8F33', fillOpacity: 0.05, interactive: false }); zhRangeCircle.addTo(map); }
           }
         } catch (e) {}
         renderList();
@@ -596,8 +596,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         updateKpis();
       }
       function cardColor(s) {
-        if (carSel) return s.__fit === 'direct' ? (s.__dc ? '#2563eb' : '#16a34a') : s.__fit === 'adapt' ? (s.__dc ? '#f97316' : '#eab308') : '#8a8f98';
-        return s.__dc ? '#2563eb' : '#16a34a';
+        if (carSel) return s.__fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : s.__fit === 'adapt' ? '#eab308' : '#8a8f98';
+        return s.__dc ? '#FF6F00' : '#16a34a';
       }
       function fitTag(s) {
         if (!carSel) return '';
@@ -633,7 +633,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             '<div class="zh-lst-sub">' + (s.op ? escH(s.op) + ' · ' : '') + escH(s.a || '') + '</div></div>' +
             '<div class="zh-lst-kw">' + (s.pw ? s.pw + '<i>кВт</i>' : '') + '</div></div>' +
             '<div class="zh-lst-tags">' + connTags(s) + fitTag(s) + (d !== null ? '<span class="zh-lst-tag">' + (d < 1 ? d.toFixed(1) : Math.round(d)) + ' км</span>' : '') +
-            (carSel && carEntry && carEntry.cap && s.pw ? '<span class="zh-lst-tag" style="color:#9ecbff;border-color:rgba(77,155,245,.4)">~' + sessMin(carEntry, Number(s.pw)) + ' мин 20→80%</span>' : '') + '</div>' +
+            (carSel && carEntry && carEntry.cap && s.pw ? '<span class="zh-lst-tag" style="color:#FFD9B3;border-color:rgba(255,111,0,.4)">~' + sessMin(carEntry, Number(s.pw)) + ' мин 20→80%</span>' : '') + '</div>' +
             '<div class="zh-lst-cta">' +
             '<a href="https://yandex.ru/maps/?rtext=~' + s.lon + ',' + s.lat + '&rtt=auto&z=17" target="_blank" rel="noopener" class="chip zh-cta">Маршрут</a>' +
             '<button type="button" class="chip" data-copy="' + s.lat.toFixed(5) + ',' + s.lon.toFixed(5) + '" style="cursor:pointer">Ссылка</button>' +
@@ -802,9 +802,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           else fit = 'unknown';
           s.__fit = fit;
           if (carSel && m.setStyle) {
-            m.setStyle({ color: (fit === 'direct' ? (s.__dc ? '#2563eb' : '#16a34a') : fit === 'adapt' ? (s.__dc ? '#f97316' : '#eab308') : '#8a8f98'), fillColor: (fit === 'direct' ? (s.__dc ? '#2563eb' : '#16a34a') : fit === 'adapt' ? (s.__dc ? '#f97316' : '#eab308') : '#8a8f98') });
+            m.setStyle({ color: (fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : fit === 'adapt' ? '#eab308' : '#8a8f98'), fillColor: (fit === 'direct' ? (s.__dc ? '#FF6F00' : '#16a34a') : fit === 'adapt' ? '#eab308' : '#8a8f98') });
           } else if (!carSel && m.setStyle) {
-            m.setStyle({ color: s.__dc ? '#2563eb' : '#16a34a', fillColor: s.__dc ? '#2563eb' : '#16a34a' });
+            m.setStyle({ color: s.__dc ? '#FF6F00' : '#16a34a', fillColor: s.__dc ? '#FF6F00' : '#16a34a' });
           }
         });
       }
@@ -923,7 +923,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         var col = document.querySelector('.zh-map-col');
         if (!col || document.getElementById('zh-legend')) return;
         col.style.position = 'relative';
-        col.insertAdjacentHTML('afterbegin', '<div id="zh-legend" aria-hidden="true" style="position:absolute;top:22px;left:12px;z-index:4;pointer-events:none;background:rgba(10,14,21,.85);border:1px solid rgba(148,163,184,.18);border-radius:12px;padding:9px 12px;font-size:11.5px;line-height:1.9;color:#EDF2F9;backdrop-filter:blur(6px)"><span style="display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8B96A5;font-weight:700;margin-bottom:2px">Цвета станций</span><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2563eb;margin-right:6px;vertical-align:-1px"></i>быстрый DC — напрямую</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:-1px"></i>AC — напрямую</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:6px;vertical-align:-1px"></i>быстрый DC — через адаптер</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:6px;vertical-align:-1px"></i>AC — через адаптер</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8a8f98;margin-right:6px;vertical-align:-1px"></i>не подтверждено</span></div>');
+        col.insertAdjacentHTML('afterbegin', '<div id="zh-legend" aria-hidden="true" style="position:absolute;top:22px;left:12px;z-index:4;pointer-events:none;background:rgba(10,14,21,.85);border:1px solid rgba(148,163,184,.18);border-radius:12px;padding:9px 12px;font-size:11.5px;line-height:1.9;color:#EDF2F9;backdrop-filter:blur(6px)"><span style="display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8B96A5;font-weight:700;margin-bottom:2px">Цвета станций</span><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF6F00;margin-right:6px;vertical-align:-1px"></i>быстрый DC — напрямую</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:-1px"></i>AC — напрямую<br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:6px;vertical-align:-1px"></i>через переходник</span><br><span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8a8f98;margin-right:6px;vertical-align:-1px"></i>не подтверждено</span></div>');
       }
       function initAnalytics() {
         addMapLegend();
@@ -1136,12 +1136,11 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             (carEntry.type ? ' · ' + carEntry.type : '') +
             (carEntry.cap ? ' · ' + carEntry.cap + ' кВт·ч' : '') +
             '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">' +
-            '<div>Синие — быстрые DC напрямую: <b style="color:#2563eb">' + ddc + '</b></div>' +
+            '<div>Оранжевые — быстрые DC напрямую: <b style="color:#FF6F00">' + ddc + '</b></div>' +
             '<div>Зелёные — AC напрямую: <b style="color:#16a34a">' + (direct - ddc) + '</b></div>' +
-            '<div>Оранжевые — быстрые DC через адаптер: <b style="color:#f97316">' + adc + '</b></div>' +
-            '<div>Жёлтые — AC через адаптер: <b style="color:#eab308">' + (adapt - adc) + '</b></div>' +
+            '<div>Жёлтые — через переходник: <b style="color:#eab308">' + adapt + '</b></div>' +
             '<div>Серые — разъём не подтверждён: <b style="color:#8a8f98">' + unk + '</b> (остаются в списке)</div>' +
-            '</div><a href="/catalog/?model=' + encodeURIComponent(slug) + '" style="color:#4d9bf5;text-decoration:underline;display:inline-block;margin-top:10px">' + (adapt > 0 && ADAPTER_LABEL[carPort] ? 'Нужен адаптер ' + ADAPTER_LABEL[carPort] + ' — подобрать в каталоге' : 'Адаптеры и кабели для вашей модели') + '</a>';
+            '</div><a href="/catalog/?model=' + encodeURIComponent(slug) + '" style="color:#FF8F33;text-decoration:underline;display:inline-block;margin-top:10px">' + (adapt > 0 && ADAPTER_LABEL[carPort] ? 'Нужен адаптер ' + ADAPTER_LABEL[carPort] + ' — подобрать в каталоге' : 'Адаптеры и кабели для вашей модели') + '</a>';
           applyFilter();
         } else {
           classifyAll();
@@ -1173,7 +1172,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             b.style.cssText = 'display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:8px;background:transparent;color:var(--txt);font-size:15px;cursor:pointer;min-height:44px;font-family:inherit';
             b.textContent = it.label;
             b.addEventListener('click', function () { pickCar(it); });
-            b.addEventListener('mouseenter', function () { b.style.background = 'rgba(77,155,245,.12)'; });
+            b.addEventListener('mouseenter', function () { b.style.background = 'rgba(255,111,0,.12)'; });
             b.addEventListener('mouseleave', function () { b.style.background = 'transparent'; });
             carList.appendChild(b);
           });
@@ -1281,7 +1280,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (s.pw && carEntry && carEntry.cap) rows.push('Сессия 20 → 80%: <b>~' + sessMin(carEntry, Number(s.pw)) + ' мин</b>');
         var link = memoLink();
         return rows.map(function (r) { return '<div style="margin-bottom:4px">' + r + '</div>'; }).join('') +
-          '<div style="margin-top:8px;word-break:break-all"><a href="' + link + '" style="color:#4d9bf5;text-decoration:underline">' + link + '</a></div>' +
+          '<div style="margin-top:8px;word-break:break-all"><a href="' + link + '" style="color:#FF8F33;text-decoration:underline">' + link + '</a></div>' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">' +
           '<button type="button" class="chip" style="padding:6px 10px;font-size:13px;cursor:pointer" data-copytext="' + memoKey + '">Скопировать текст</button>' +
           '<a class="chip" style="padding:6px 10px;font-size:13px;text-decoration:none" href="https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(memoText(s)) + '" target="_blank" rel="noopener">В Telegram</a>' +
@@ -1386,7 +1385,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       try { if (location.hash.indexOf('#view=ya') === 0) setTab(true); } catch (e) {}
     })();
   </script>
-<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}.leaflet-container a.leaflet-logo,.leaflet-container .leaflet-control-attribution{display:none!important}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#4d9bf5;background:rgba(77,155,245,.12);color:#9ecbff}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#4d9bf5;outline:none}
+<style is:global>.cchip{display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}.cchip.on{border-color:#FF8F33;background:rgba(255,111,0,.12);color:#FFD9B3}.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.95) contrast(1.05) saturate(.75)}.leaflet-container a.leaflet-logo,.leaflet-container .leaflet-control-attribution{display:none!important}#map{background:#0b0b0d}.os-row{display:grid;grid-template-columns:61.8fr 38.2fr;gap:21px;align-items:start}.os-mid{align-items:center}@media(max-width:880px){.os-row{grid-template-columns:1fr;gap:13px}.os-mid{gap:8px}.os-mid>div:last-child{justify-content:flex-start}}.scn{cursor:pointer}.scn.on{border-color:#FF8F33;background:rgba(255,111,0,.12);color:#FFD9B3}#os-widget select:focus,#os-widget input[type=text]:focus{border-color:#FF8F33;outline:none}
 #os-widget{position:relative;border:0;background:transparent;box-shadow:none}
 .zhd-head{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.14);border-radius:14px;padding:12px 16px;margin-bottom:12px;flex-wrap:wrap}
 .zhd-logo{width:34px;height:34px;flex:none;border-radius:9px;background:#0161EF;color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center}
@@ -1406,7 +1405,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zbar-name{color:var(--txt-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .zbar-track{height:14px;border-radius:7px;background:rgba(148,163,184,.10);position:relative;overflow:hidden}
 .zbar-fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:7px;background:linear-gradient(90deg,#FF8F33,#FF6F00);transition:width 1.1s cubic-bezier(.22,.9,.35,1)}
-.zbar.dim .zbar-fill{background:linear-gradient(90deg,rgba(77,155,245,.75),rgba(77,155,245,.45))}
+.zbar.dim .zbar-fill{background:linear-gradient(90deg,rgba(255,111,0,.75),rgba(255,111,0,.45))}
 .zbar-num{text-align:right;font-variant-numeric:tabular-nums;color:var(--txt);font-weight:700}
 #temp-chart{width:100%;height:150px;margin-top:10px;display:block}
 #temp-chart text{fill:#8B96A5;font-size:11px}
@@ -1431,51 +1430,51 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zrow-more b{color:#FF8F33}
 #os-widget::before{display:none}
 #os-widget::after{display:none}
-#range-big{background:linear-gradient(92deg,#e8f2ff 0%,#9ecbff 55%,#4d9bf5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 46px rgba(77,155,245,.32)}
-.os-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fa8d9}
-#weather-chip{background:rgba(77,155,245,.13);border-color:rgba(77,155,245,.32);backdrop-filter:blur(6px)}
-#weather-chip svg{color:#4d9bf5}
+#range-big{background:linear-gradient(92deg,#FFD9B3 0%,#FFD9B3 55%,#FF8F33 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 46px rgba(255,111,0,.32)}
+.os-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#FFD9B3}
+#weather-chip{background:rgba(255,111,0,.13);border-color:rgba(255,111,0,.32);backdrop-filter:blur(6px)}
+#weather-chip svg{color:#FF8F33}
 .scn{transition:all .18s ease}
-.scn:hover{border-color:#4d9bf5}
-.scn.on{border-color:#4d9bf5;background:linear-gradient(180deg,rgba(77,155,245,.30),rgba(77,155,245,.10));color:#dcebff;box-shadow:0 0 18px rgba(77,155,245,.32),inset 0 1px 0 rgba(255,255,255,.12)}
-.cchip.on{border-color:#4d9bf5;background:linear-gradient(180deg,rgba(77,155,245,.26),rgba(77,155,245,.08));color:#dcebff;box-shadow:0 0 14px rgba(77,155,245,.26)}
-#car-model{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
-#city-search{border-color:rgba(77,155,245,.30);background:rgba(10,16,28,.65)}
+.scn:hover{border-color:#FF8F33}
+.scn.on{border-color:#FF8F33;background:linear-gradient(180deg,rgba(255,111,0,.30),rgba(255,111,0,.10));color:#FFD9B3;box-shadow:0 0 18px rgba(255,111,0,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+.cchip.on{border-color:#FF8F33;background:linear-gradient(180deg,rgba(255,111,0,.26),rgba(255,111,0,.08));color:#FFD9B3;box-shadow:0 0 14px rgba(255,111,0,.26)}
+#car-model{border-color:rgba(255,111,0,.30);background:rgba(10,16,28,.65)}
+#city-search{border-color:rgba(255,111,0,.30);background:rgba(10,16,28,.65)}
 #os-widget .chip{background:rgba(10,16,28,.55);backdrop-filter:blur(4px)}
-#range-tune>summary{list-style:none;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid rgba(77,155,245,.25);border-radius:10px;background:rgba(10,16,28,.45)}
+#range-tune>summary{list-style:none;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid rgba(255,111,0,.25);border-radius:10px;background:rgba(10,16,28,.45)}
 #range-tune>summary::-webkit-details-marker{display:none}
-#range-tune>summary::before{content:"";width:8px;height:8px;border-right:1.6px solid #9ecbff;border-bottom:1.6px solid #9ecbff;transform:rotate(-45deg);transition:transform .18s ease;transform-origin:center}
+#range-tune>summary::before{content:"";width:8px;height:8px;border-right:1.6px solid #FFD9B3;border-bottom:1.6px solid #FFD9B3;transform:rotate(-45deg);transition:transform .18s ease;transform-origin:center}
 #range-tune[open]>summary::before{transform:rotate(45deg)}
 #range-soc{height:8px}#range-soc::-webkit-slider-thumb{width:28px;height:28px}#range-soc::-moz-range-thumb{width:28px;height:28px}#os-widget .chip,.os-mid .chip,#conn-chips .chip,#pw-chips .chip,#soc-presets .chip{min-height:44px}@media(max-width:639px){#map-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;font-size:12px}.lg-note{grid-column:1/-1}}@media(max-width:880px){#os-widget::after{width:220px;height:220px;right:-90px;top:-90px}}
 /* ── Cockpit UI: система поверхностей/теней/отступов (адаптация под тёмную тему прода) ── */
-.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#4d9bf5;padding-top:20px;padding-bottom:40px}
+.zh-cockpit-page{--border-hairline:1px solid rgba(148,163,184,.14);--shadow-cockpit:0 8px 24px -4px rgba(2,6,16,.5);--shadow-popover:0 20px 38px -8px rgba(2,6,16,.55);--radius-card:16px;--radius-control:12px;--accent-primary:#FF8F33;padding-top:20px;padding-bottom:40px}
 .zh-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .zh-head h1{margin:2px 0 0;font-size:clamp(36px,5.2vw,60px)}
 .zh-head-l{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#9ecbff;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.22);border-radius:999px;padding:3px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zh-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#FFD9B3;background:rgba(255,111,0,.13);border:1px solid rgba(255,111,0,.22);border-radius:999px;padding:3px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .zh-lead-sub{font-size:13px;color:var(--txt-muted);margin:6px 0 0}
-.zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(77,155,245,.22)}
+.zh-seg{display:flex;gap:2px;background:rgba(10,16,28,.55);padding:3px;border-radius:10px;border:1px solid rgba(255,111,0,.22)}
 .zh-seg-btn{border:1px solid transparent;background:transparent;color:var(--txt-muted);font-family:inherit;font-size:14px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box;transition:background .18s ease}
-.zh-seg-btn.on{background:rgba(77,155,245,.18);color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.zh-seg-btn.on{background:rgba(255,111,0,.18);color:#FFD9B3;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .zh-label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-muted);font-weight:700}
 .zh-grid3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.2fr);gap:12px;align-items:start}.zh-cell{min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:16px}
-.zh-inp-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ecbff;display:flex;pointer-events:none}
-#range-tune>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:6px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);cursor:pointer;user-select:none;font-variant-numeric:tabular-nums}
+.zh-inp-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#FFD9B3;display:flex;pointer-events:none}
+#range-tune>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:6px 14px;border:1px solid rgba(255,111,0,.30);border-radius:12px;background:rgba(10,16,28,.65);cursor:pointer;user-select:none;font-variant-numeric:tabular-nums}
 #range-tune>summary::-webkit-details-marker{display:none}
 #range-tune>summary::before{order:9;flex:none}
 .zh-caps-big{font-weight:800}
 #range-tune #range-big{font-size:19px;line-height:1.1;text-shadow:none}
-.zh-caps-badges{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;color:#9ecbff;background:rgba(77,155,245,.12);border-radius:999px;padding:3px 10px;white-space:nowrap}
-.zh-caps-badges i{font-style:normal;color:#dcebff}
-.zh-pop-inner{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:500;background:rgba(10,16,28,.97);border:1px solid rgba(77,155,245,.32);border-radius:14px;box-shadow:0 20px 38px -8px rgba(2,6,16,.55);padding:16px}
-.zh-loc{display:flex;align-items:stretch;min-height:46px;box-sizing:border-box;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);overflow:hidden}
-.zh-loc:focus-within{border-color:#4d9bf5;box-shadow:0 0 0 2px rgba(77,155,245,.18)}
+.zh-caps-badges{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;color:#FFD9B3;background:rgba(255,111,0,.12);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.zh-caps-badges i{font-style:normal;color:#FFD9B3}
+.zh-pop-inner{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:500;background:rgba(10,16,28,.97);border:1px solid rgba(255,111,0,.32);border-radius:14px;box-shadow:0 20px 38px -8px rgba(2,6,16,.55);padding:16px}
+.zh-loc{display:flex;align-items:stretch;min-height:46px;box-sizing:border-box;border:1px solid rgba(255,111,0,.30);border-radius:12px;background:rgba(10,16,28,.65);overflow:hidden}
+.zh-loc:focus-within{border-color:#FF8F33;box-shadow:0 0 0 2px rgba(255,111,0,.18)}
 .zh-loc input{flex:1;min-width:0;border:0;background:transparent;padding:10px 14px;color:var(--txt);font-size:16px}
 .zh-loc input:focus{outline:none}
-.zh-loc-btns{display:flex;align-items:stretch;border-left:1px solid rgba(77,155,245,.25)}
-#os-widget .zh-loc .chip{border:0;background:transparent;color:#9ecbff;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
-#os-widget .zh-loc .chip:hover{color:#dcebff}
-.zh-loc-div{width:1px;flex:none;background:rgba(77,155,245,.25);margin:9px 0}
+.zh-loc-btns{display:flex;align-items:stretch;border-left:1px solid rgba(255,111,0,.25)}
+#os-widget .zh-loc .chip{border:0;background:transparent;color:#FFD9B3;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap}
+#os-widget .zh-loc .chip:hover{color:#FFD9B3}
+.zh-loc-div{width:1px;flex:none;background:rgba(255,111,0,.25);margin:9px 0}
 .zh-ribbon{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;margin-top:12px;padding:12px 16px}
 .zh-chips{display:flex;gap:10px;align-items:center;flex:1 1 100%;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .zh-chips::-webkit-scrollbar{display:none}
@@ -1483,7 +1482,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #city-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
 #city-chips::-webkit-scrollbar{display:none}
 #city-chips .chip{flex:none}
-.zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(77,155,245,.20)}
+.zh-chips-div{width:1px;align-self:stretch;flex:none;background:rgba(255,111,0,.20)}
 .zh-ribbon-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .zh-subnote{font-size:13px;color:var(--txt-muted);margin:6px 0 0}
 .zh-map-h{height:clamp(520px,68vh,780px)}#empty-note{width:calc(100% - 28px)}
@@ -1491,7 +1490,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zh-bcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
 .zh-bcard h3{font-size:15px;font-weight:800;margin:10px 0 0;letter-spacing:-.01em}
 .zh-bcard p{font-size:14px;color:var(--txt-muted);margin:8px 0 0;line-height:1.65}
-.zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(77,155,245,.13);border:1px solid rgba(77,155,245,.25);display:flex;align-items:center;justify-content:center;color:#4d9bf5}
+.zh-bcard-ic{width:34px;height:34px;border-radius:10px;background:rgba(255,111,0,.13);border:1px solid rgba(255,111,0,.25);display:flex;align-items:center;justify-content:center;color:#FF8F33}
 #range-big,#soc-val,#stn-count{font-variant-numeric:tabular-nums}
 @media(min-width:640px){#city-chips .chip{min-height:32px;padding:3px 10px;font-size:13px}}
 @media(max-width:880px){.zh-grid3{grid-template-columns:minmax(0,1fr)}}
@@ -1512,42 +1511,42 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 #fit-ring.show{display:flex}
 #fr-val{transition:stroke-dashoffset .9s cubic-bezier(.22,.9,.35,1)}
 #fr-sub b{color:#FF8F33}
-#city-chips .chip.on{border-color:#4d9bf5;background:rgba(77,155,245,.18);color:#dcebff;box-shadow:0 0 12px rgba(77,155,245,.20)}
-#view-tabs{background:rgba(77,155,245,.08)}
-#view-tabs .zh-seg-btn.on{background:linear-gradient(180deg,rgba(77,155,245,.32),rgba(77,155,245,.14));color:#e8f2ff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+#city-chips .chip.on{border-color:#FF8F33;background:rgba(255,111,0,.18);color:#FFD9B3;box-shadow:0 0 12px rgba(255,111,0,.20)}
+#view-tabs{background:rgba(255,111,0,.08)}
+#view-tabs .zh-seg-btn.on{background:linear-gradient(180deg,rgba(255,111,0,.32),rgba(255,111,0,.14));color:#FFD9B3;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .zrc-city span{font-variant-numeric:tabular-nums}
 #split-wrap.split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 14px;align-items:start}
 #split-wrap.split .zh-map-col{position:sticky;top:8px}
 #split-wrap.split #stn-list{margin-top:8px;height:clamp(520px,68vh,780px)}
-#stn-list{border:1px solid rgba(77,155,245,.22);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(10,16,28,.72),rgba(10,16,28,.55));box-shadow:0 18px 44px rgba(2,6,16,.45)}
+#stn-list{border:1px solid rgba(255,111,0,.22);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(10,16,28,.72),rgba(10,16,28,.55));box-shadow:0 18px 44px rgba(2,6,16,.45)}
 .zh-list-h{height:clamp(520px,68vh,780px)}
-.zh-lst-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(77,155,245,.18);background:rgba(10,16,28,.55);flex-wrap:wrap}
-.zh-lst-bar input{flex:1;min-width:0;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(77,155,245,.30);border-radius:12px;background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;font-family:inherit}
-.zh-lst-bar input:focus{outline:none;border-color:#4d9bf5;box-shadow:0 0 0 2px rgba(77,155,245,.18)}
+.zh-lst-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,111,0,.18);background:rgba(10,16,28,.55);flex-wrap:wrap}
+.zh-lst-bar input{flex:1;min-width:0;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(255,111,0,.30);border-radius:12px;background:rgba(10,16,28,.65);color:var(--txt);font-size:16px;font-family:inherit}
+.zh-lst-bar input:focus{outline:none;border-color:#FF8F33;box-shadow:0 0 0 2px rgba(255,111,0,.18)}
 .zh-lst-info{font-size:13px;color:var(--txt-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 #sheet-close{display:none;min-height:44px}
-.zh-lst-body{overflow-y:auto;max-height:calc(100% - 66px);-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(77,155,245,.35) transparent}
+.zh-lst-body{overflow-y:auto;max-height:calc(100% - 66px);-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(255,111,0,.35) transparent}
 .zh-lst-body::-webkit-scrollbar{width:8px}
-.zh-lst-body::-webkit-scrollbar-thumb{background:rgba(77,155,245,.30);border-radius:8px}
+.zh-lst-body::-webkit-scrollbar-thumb{background:rgba(255,111,0,.30);border-radius:8px}
 .zh-lst-card{padding:13px 16px;border-bottom:1px solid rgba(148,163,184,.10);cursor:pointer;transition:background .15s ease}
-.zh-lst-card:hover,.zh-lst-card:focus-visible{background:rgba(77,155,245,.10)}
+.zh-lst-card:hover,.zh-lst-card:focus-visible{background:rgba(255,111,0,.10)}
 .zh-lst-row{display:flex;gap:10px;align-items:flex-start}
 .zh-lst-dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
 .zh-lst-main{flex:1;min-width:0}
 .zh-lst-card h4{margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .zh-lst-sub{font-size:13px;color:var(--txt-muted);margin-top:2px;line-height:1.45;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.zh-lst-kw{flex:none;font-weight:700;font-size:15px;color:#e8f2ff;font-variant-numeric:tabular-nums;text-align:right}
+.zh-lst-kw{flex:none;font-weight:700;font-size:15px;color:#FFD9B3;font-variant-numeric:tabular-nums;text-align:right}
 .zh-lst-kw i{display:block;font-style:normal;font-weight:400;font-size:12px;color:var(--txt-muted)}
 .zh-lst-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .zh-lst-tag{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid rgba(148,163,184,.22);color:var(--txt-muted);white-space:nowrap}
 .zh-lst-cta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .zh-lst-cta .chip{padding:6px 10px;font-size:13px;text-decoration:none;min-height:0}
-.zh-lst-cta .zh-cta{background:linear-gradient(180deg,#5aa9ff,#3d8af0);border-color:transparent;color:#06121f;font-weight:700}
-.zh-lst-more{display:block;margin:12px auto;padding:10px 18px;min-height:44px;border-radius:12px;border:1px solid rgba(77,155,245,.35);background:rgba(77,155,245,.10);color:#dcebff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.chip .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;margin-left:2px;border-radius:999px;background:rgba(77,155,245,.14);color:#9ecbff;font-size:12px;font-variant-numeric:tabular-nums}
+.zh-lst-cta .zh-cta{background:linear-gradient(180deg,#FF8F33,#FF6F00);border-color:transparent;color:#0B1018;font-weight:700}
+.zh-lst-more{display:block;margin:12px auto;padding:10px 18px;min-height:44px;border-radius:12px;border:1px solid rgba(255,111,0,.35);background:rgba(255,111,0,.10);color:#FFD9B3;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.chip .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;margin-left:2px;border-radius:999px;background:rgba(255,111,0,.14);color:#FFD9B3;font-size:12px;font-variant-numeric:tabular-nums}
 @media(max-width:639px){
   #tab-split{display:none}
-  #stn-list.sheet-open{position:fixed;left:8px;right:8px;bottom:8px;z-index:1002;height:auto;max-height:76vh;background:#0d1117;border-radius:18px;box-shadow:0 24px 60px rgba(2,6,16,.65);border-color:rgba(77,155,245,.35)}
+  #stn-list.sheet-open{position:fixed;left:8px;right:8px;bottom:8px;z-index:1002;height:auto;max-height:76vh;background:#0d1117;border-radius:18px;box-shadow:0 24px 60px rgba(2,6,16,.65);border-color:rgba(255,111,0,.35)}
   #stn-list.sheet-open::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:44px;height:4px;border-radius:2px;background:rgba(148,163,184,.4)}
   #stn-list.sheet-open .zh-lst-body{max-height:calc(76vh - 120px)}
   #stn-list.sheet-open #sheet-close{display:inline-flex}
@@ -1580,7 +1579,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
   footer .logo span { color:#EDF2F9 !important; }
   h1 { letter-spacing:-.02em; font-weight:800; }
   h2 { letter-spacing:-.01em; }
-  main a { color:#4d9bf5; }
+  main a { color:#FF8F33; }
   main a:hover { color:#9ECBFF; }
   .zh-bcard { background:#111722 !important; border:1px solid rgba(148,163,184,.12) !important; box-shadow:0 1px 2px rgba(0,0,0,.28); }
   .zh-bcard h3 { color:#EDF2F9 !important; }
