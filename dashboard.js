@@ -2,11 +2,15 @@
     // Инициализация карты: тёмная Esri Dark Gray — стабильная подложка без ключей
     const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19,
-      subdomains: 'abcd',
-      updateWhenIdle: true,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      updateWhenIdle: true
+    }).addTo(map);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      opacity: 0.75,
+      updateWhenIdle: true
     }).addTo(map);
 
     
