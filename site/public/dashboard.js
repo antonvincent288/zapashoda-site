@@ -450,6 +450,22 @@
       try { localStorage.setItem('zh-weather-dash', JSON.stringify({ city: state.city, t: t, ts: Date.now() })); } catch (e) {}
     }
 
+    // PWA: установка одним тапом
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const b = document.getElementById('pwaInstall');
+      if (b) b.style.display = 'flex';
+    });
+    function pwaInstall() {
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+      else showToast('Установка уже доступна через меню браузера: «На экран „Домой“»');
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
     function applyWeatherTemp(t, src) {
       let idx = 4, best = 1e9;
       CHART_TEMPS.forEach((ct, i) => {
@@ -620,6 +636,21 @@
         showToast('Не определили ваш город — выберите его в панели снизу');
         return;
       }
+      if (g) {
+        const hitCity = CITY_LIST.find(c => c.n === g.city || String(c.n).toLowerCase() === String(g.city).toLowerCase());
+        if (hitCity) {
+          g.city = hitCity.n;
+        } else {
+          let best = null, bestD = 1e9;
+          CITY_LIST.forEach((c) => {
+            const dx = (c.lat - g.lat) * 111;
+            const dy = (c.lng - g.lng) * 111 * Math.cos(g.lat * Math.PI / 180);
+            const d = Math.hypot(dx, dy);
+            if (d < bestD) { bestD = d; best = c; }
+          });
+          if (best) g.city = best.n;
+        }
+      }
       geoApplied = true;
       const hit = CITY_LIST.find(c => c.n.toLowerCase() === g.city.toLowerCase());
       if (hit) pickCity(hit);
@@ -640,7 +671,7 @@
         isoLabel.setLatLng(userPos);
         isoLabel.setIcon(L.divIcon({ className: 'iso-label', html: '<span>2 км · стартовая зона</span>', iconSize: [0, 0], iconAnchor: [0, 0] }));
         map.flyToBounds(L.latLngBounds([userPos[0] - 0.09, userPos[1] - 0.144], [userPos[0] + 0.09, userPos[1] + 0.144]), { duration: 0.8 });
-        showToast('Стартовая зона 2 км · сценарий выберется сам при взаимодействии');
+        showToast('Стартовая зона 2 км');
       } catch (e) {}
     }
 
@@ -687,7 +718,7 @@
     function renderAllStations() {
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { map.removeLayer(stCluster); stCluster = null; }
-      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: false, maxClusterRadius: 42, disableClusteringAtZoom: 14 });
+      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: false, maxClusterRadius: 64, disableClusteringAtZoom: 14 });
       const pts = [];
       STATIONS_DB.forEach((x) => {
         if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
@@ -709,7 +740,7 @@
       });
       stCluster.addLayers(pts);
       map.addLayer(stCluster);
-      showToast('На карте все ' + pts.length.toLocaleString('ru-RU') + ' станций — кластеры, зум ближе до точек');
+      showToast('Все ' + pts.length.toLocaleString('ru-RU') + ' станций на карте');
     }
 
     function renderNearby() {
