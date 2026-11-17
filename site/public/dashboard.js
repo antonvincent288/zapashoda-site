@@ -102,8 +102,8 @@
       stLayer.clearLayers();
       stations.forEach((st) => {
         const icon = st.type === 'na'
-          ? L.divIcon({ className: '', html: '<div class="ev-marker-na"></div>', iconSize: [12, 12], iconAnchor: [6, 6] })
-          : L.divIcon({ className: '', html: `<div class="${stCls(st.type)}">${st.label}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+          ? L.divIcon({ className: '', html: '<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center"><div class="ev-marker-na"></div></div>', iconSize: [28, 28], iconAnchor: [14, 14] })
+          : L.divIcon({ className: '', html: `<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><div class="${stCls(st.type)}">${st.label}</div></div>`, iconSize: [44, 44], iconAnchor: [22, 22] });
         const m = L.marker(st.coords, { icon }).addTo(stLayer);
         m.bindPopup(`<div class="st-pop">
           <div class="st-pop-name">${st.name}</div>
@@ -750,9 +750,10 @@
         const pw = Number(x.pw) || 0;
         const isYa = x.src === 'yandex';
         const st = L.circleMarker([x.lat, x.lon], {
-          radius: pw >= 50 ? 4.5 : 3,
+          radius: pw >= 50 ? 6.5 : 5.5,
           color: isYa ? '#3FA9F5' : '#E85002',
-          weight: 0,
+          weight: 18,
+          opacity: 0,
           fillColor: isYa ? '#3FA9F5' : '#E85002',
           fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
         });
