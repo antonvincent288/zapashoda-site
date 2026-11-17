@@ -74,12 +74,9 @@
     function addStationMarkers() {
       stLayer.clearLayers();
       stations.forEach((st) => {
-        const icon = L.divIcon({
-          className: '',
-          html: `<div class="${stCls(st.type)}">${st.label}</div>`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
-        });
+        const icon = st.type === 'na'
+          ? L.divIcon({ className: '', html: '<div class="ev-marker-na"></div>', iconSize: [12, 12], iconAnchor: [6, 6] })
+          : L.divIcon({ className: '', html: `<div class="${stCls(st.type)}">${st.label}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
         const m = L.marker(st.coords, { icon }).addTo(stLayer);
         m.bindPopup(`<div class="st-pop">
           <div class="st-pop-name">${st.name}</div>
@@ -276,6 +273,126 @@
       map.flyTo(userPos, 13);
     }
 
+    // === Полный каталог моделей с прода (154) + умный поиск ===
+    let MODELS_ALL = null;
+
+    async function loadModelsCatalog() {
+      try {
+        const r = await fetch('/models.json', { cache: 'no-cache' });
+        if (!r.ok) return;
+        const d = await r.json();
+        MODELS_ALL = (d.models || []).map(m => ({
+          name: m.name, slug: m.slug, brand: m.brand, url: m.url,
+          base: m.base, cap: m.cap,
+          port: (m.direct ? 'GB/T DC' : (m.port || '') + ' (адаптер)').trim(),
+          d: !!m.direct, est: m.base != null
+        }));
+      } catch (e) {}
+    }
+
+    function normStr(str) {
+      return (str || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, '');
+    }
+
+    const KBD = {q:'й', w:'ц', e:'у', r:'к', t:'е', y:'н', u:'г', i:'ш', o:'щ', p:'з', a:'ф', s:'ы', d:'в', f:'а', g:'п', h:'р', j:'о', k:'л', l:'д', z:'я', x:'ч', c:'с', v:'м', b:'и', n:'т', m:'ь'};
+    const TRANSL = {a:'а', b:'б', v:'в', g:'г', d:'д', e:'е', z:'з', i:'и', k:'к', l:'л', m:'м', n:'н', o:'о', p:'п', r:'р', s:'с', t:'т', u:'у', f:'ф', h:'х', c:'ц', y:'ы', j:'й', w:'в', q:'к', x:'кс'};
+
+    function layoutTo(str) { return [...str].map(ch => KBD[ch] || ch).join(''); }
+    function translit(str) { return [...str].map(ch => TRANSL[ch] || ch).join(''); }
+
+    function hammingLE1(a, b) {
+      if (!a || a.length !== b.length) return false;
+      let diff = 0;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) { diff++; if (diff > 1) return false; }
+      }
+      return true;
+    }
+
+    function modelScore(m, q) {
+      const nq = normStr(q);
+      if (!nq) return 1;
+      const nm = normStr(m.name || ''), nb = normStr(m.brand || '');
+      let best = 0;
+      new Set([nq, layoutTo(nq), translit(nq)]).forEach(qq => {
+        if (nm.includes(qq)) best = Math.max(best, 100 - Math.min(20, nm.length - qq.length));
+        if (nm.startsWith(qq)) best = Math.max(best, 95);
+        if (nb && nb.includes(qq)) best = Math.max(best, 80);
+        if (qq.length >= 3 && hammingLE1(nm.slice(0, qq.length), qq)) best = Math.max(best, 70);
+      });
+      return best;
+    }
+
+    function filterModels(q) {
+      const list = MODELS_ALL || MODELS;
+      if (!q || !q.trim()) { renderModels(list.slice(0, 60)); return; }
+      const scored = list
+        .map(m => ({ m: m, s: modelScore(m, q) }))
+        .filter(x => x.s > 0)
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 60);
+      renderModels(scored.map(x => x.m));
+    }
+
+    function renderModels(list) {
+      const cnt = document.getElementById('modelCount');
+      if (cnt) cnt.textContent = (MODELS_ALL ? MODELS_ALL.length : list.length) + ' моделей';
+      document.getElementById('modelList').innerHTML = list.map(m => {
+        const base = m.base;
+        const baseTxt = base
+          ? (m.est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'Паспортный запас: ' + base + ' км')
+          : 'Ёмкость батареи не указана — см. карточку модели';
+        const click = base
+          ? `chooseModelModel('${(m.name || '').replace(/'/g, "\'")}', ${base}, '${(m.port || '').replace(/'/g, "\'")}', ${m.d ? 'true' : 'false'}, ${m.est ? 'true' : 'false'})`
+          : `window.open('${m.url}', '_blank')`;
+        return `
+        <div class="model-option ${base ? '' : 'model-option-na'}" onclick="${click}">
+          <div style="min-width: 0;">
+            <div class="model-name">${m.name}</div>
+            <div class="model-base">${baseTxt}</div>
+          </div>
+          <span class="port-tag">${m.port || '—'}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function chooseModelModel(name, base, port, direct, est) {
+      chooseModel(name, base, port, direct, est);
+    }
+
+    function openCarModal() {
+      filterModels('');
+      document.getElementById('carModal').classList.add('open');
+    }
+
+    // === Погода по гео: open-meteo ===
+    async function loadWeather() {
+      if (!userPos) return;
+      try {
+        const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0] + '&longitude=' + userPos[1] + '&current=temperature_2m', { cache: 'no-store' });
+        const d = await r.json();
+        const t = d && d.current && d.current.temperature_2m;
+        if (typeof t !== 'number') return;
+        applyWeatherTemp(Math.round(t));
+      } catch (e) {}
+    }
+
+    function applyWeatherTemp(t) {
+      let idx = 4, best = 1e9;
+      CHART_TEMPS.forEach((ct, i) => { const d = Math.abs(ct - t); if (d < best) { best = d; idx = i; } });
+      const pct = CHART_PCTS[idx];
+      state.mult = pct / 100;
+      const lbl = t > 0 ? '+' + t : String(t);
+      const wi = document.getElementById('weatherIcon');
+      if (wi) wi.innerHTML = t <= 0 ? WICON.snow : WICON.sun;
+      document.getElementById('weatherBadge').textContent = lbl + '° · погода';
+      const ib = document.getElementById('impactBadge');
+      if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
+      setChartActive(idx);
+      recalc();
+      showToast('Погода' + (state.city ? ' (' + state.city + ')' : '') + ': ' + lbl + '°C');
+    }
+
     function kwLabel(v) {
       return (v != null && v !== '') ? (v + ' кВт') : '—';
     }
@@ -321,6 +438,11 @@
     }
 
     function resetCar() {
+      const cur = document.getElementById('carModelTitle').textContent;
+      if (cur === 'Zeekr 001 · 100 кВт·ч') {
+        showToast('Уже стоит базовая модель: Zeekr 001');
+        return;
+      }
       chooseModel('Zeekr 001 · 100 кВт·ч', 540, 'GB/T DC · 200 кВт', true);
       state.mult = 1.0;
       if (state.roundTrip) {
@@ -425,6 +547,7 @@
       const hit = CITY_LIST.find(c => c.n.toLowerCase() === g.city.toLowerCase());
       if (hit) pickCity(hit);
       else { activeCity = g.city; setCityView(g.city, g.lat, g.lng); }
+      loadWeather();
     }
 
     // === Реальная база станций с прода: ближайшие к выбранной точке ===
@@ -620,35 +743,21 @@
       { name: 'Evolute i-Pro', base: 340, port: 'GB/T DC · 60 кВт', d: true }
     ];
 
-    function renderModels(list) {
-      document.getElementById('modelList').innerHTML = list.map(m => `
-        <div class="model-option" onclick="chooseModel('${m.name}', ${m.base}, '${m.port}', ${m.d})">
-          <div style="min-width: 0;">
-            <div class="model-name">${m.name}</div>
-            <div class="model-base">Паспортный запас: ${m.base} км</div>
-          </div>
-          <span class="port-tag">${m.port}</span>
-        </div>`).join('');
-    }
+    // renderModels объявлен выше (полный каталог 154)
 
-    function openCarModal() {
-      renderModels(MODELS);
-      document.getElementById('carModal').classList.add('open');
-    }
+    // openCarModal объявлен выше (полный каталог 154)
 
     function closeCarModal() {
       document.getElementById('carModal').classList.remove('open');
     }
 
-    function filterModels(q) {
-      renderModels(MODELS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())));
-    }
+    // filterModels объявлен выше (фаззи-поиск с транслитерацией)
 
-    function chooseModel(name, base, port, direct) {
+    function chooseModel(name, base, port, direct, est) {
       state.baseKm = base;
       document.getElementById('carModelTitle').textContent = name;
-      document.getElementById('carPortTag').textContent = port;
-      document.getElementById('carBaseKm').textContent = 'Паспортный запас: ' + base + ' км';
+      document.getElementById('carPortTag').textContent = port || '—';
+      document.getElementById('carBaseKm').textContent = est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'Паспортный запас: ' + base + ' км';
       document.getElementById('compatText').textContent = direct ? 'Напрямую DC' : 'Через адаптер';
       updateChart(base);
       closeCarModal();
@@ -767,6 +876,7 @@
     document.getElementById('weatherIcon').innerHTML = WICON.sun;
     recalc();
     loadTariffs();
+    loadModelsCatalog();
     loadStationDB();
     loadGeoCity();
     document.getElementById('cityInput').addEventListener('keydown', (e) => {
