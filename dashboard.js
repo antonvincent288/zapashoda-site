@@ -374,17 +374,41 @@
 
     // === Погода по гео: open-meteo ===
     async function loadWeather() {
-      if (!userPos) return;
+      if (!userPos || weatherDone) return;
       try {
-        const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0] + '&longitude=' + userPos[1] + '&current=temperature_2m', { cache: 'no-store' });
+        const cached = JSON.parse(localStorage.getItem('zh-weather-dash') || 'null');
+        if (cached && cached.city === state.city && typeof cached.t === 'number' && Date.now() - cached.ts < 30 * 60 * 1000) {
+          weatherDone = true;
+          applyWeatherTemp(cached.t, 'кэш');
+          return;
+        }
+      } catch (e) {}
+      try {
+        const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' });
         const d = await r.json();
-        const t = d && d.current && d.current.temperature_2m;
-        if (typeof t !== 'number') return;
-        applyWeatherTemp(Math.round(t));
+        const t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
+        if (t !== null) { weatherDone = true; saveWeatherCache(t); applyWeatherTemp(t, 'open-meteo'); return; }
+      } catch (e) {}
+      try {
+        const r2 = await fetch('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' });
+        const d2 = await r2.json();
+        const tc = d2 && d2.current_condition && d2.current_condition[0] ? parseInt(d2.current_condition[0].temp_C, 10) : null;
+        if (tc !== null && !isNaN(tc)) { weatherDone = true; saveWeatherCache(tc); applyWeatherTemp(tc, 'wttr.in'); return; }
+      } catch (e) {}
+      try {
+        const r3 = await fetch('/charging/weather.json', { cache: 'no-cache' });
+        const d3 = await r3.json();
+        const cities = (d3 && d3.cities) || {};
+        const hit = cities[state.city];
+        if (hit && typeof hit.t === 'number') { weatherDone = true; applyWeatherTemp(Math.round(hit.t), 'кэш сетей'); return; }
       } catch (e) {}
     }
 
-    function applyWeatherTemp(t) {
+    function saveWeatherCache(t) {
+      try { localStorage.setItem('zh-weather-dash', JSON.stringify({ city: state.city, t: t, ts: Date.now() })); } catch (e) {}
+    }
+
+    function applyWeatherTemp(t, src) {
       let idx = 4, best = 1e9;
       CHART_TEMPS.forEach((ct, i) => {
         const num = parseFloat(String(ct).replace('+', '').replace('°', ''));
@@ -402,7 +426,9 @@
       if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
       setChartActive(idx);
       recalc(true);
-      showToast('Погода' + (state.city ? ' (' + state.city + ')' : '') + ': ' + lbl + '°C');
+      const gt = document.getElementById('barGeoText');
+      if (gt) gt.textContent = (state.city || '') + ' · ' + lbl + '°';
+      showToast('Вы в ' + (state.city || 'этом городе') + '? Погода: ' + lbl + '°C' + (src ? ' · ' + src : ''));
     }
 
     function kwLabel(v) {
@@ -450,25 +476,16 @@
     }
 
     function resetCar() {
-      const cur = document.getElementById('carModelTitle').textContent;
-      if (cur === 'Zeekr 001 · 100 кВт·ч') {
-        showToast('Уже стоит базовая модель: Zeekr 001');
+      const title = document.getElementById('carModelTitle');
+      if (title.textContent === 'Выберите модель') {
+        showToast('Поле уже чистое — выберите модель из каталога');
         return;
       }
-      chooseModel('Zeekr 001 · 100 кВт·ч', 540, 'GB/T DC · 200 кВт', true);
-      state.mult = 1.0;
-      if (state.roundTrip) {
-        state.roundTrip = false;
-        const rtBtn = document.getElementById('returnToggle');
-        if (rtBtn) rtBtn.classList.remove('active');
-      }
-      document.getElementById('weatherIcon').innerHTML = WICON.sun;
-      document.getElementById('weatherBadge').textContent = 'База · +20°C';
-      const ib = document.getElementById('impactBadge');
-      if (ib) ib.textContent = '100% от нормы';
-      setChartActive(4);
-      recalc(true);
-      showToast('Сброшено: Zeekr 001');
+      title.textContent = 'Выберите модель';
+      document.getElementById('carPortTag').textContent = '—';
+      document.getElementById('carBaseKm').textContent = 'Расчёт держится по последней выбранной модели';
+      document.getElementById('compatText').textContent = '—';
+      showToast('Сброшено — поле чистое. Модели: каталог 154');
     }
 
     function toggleStack() {
@@ -488,6 +505,8 @@
       rangeCircle.setLatLng(userPos);
       meMarker.setLatLng(userPos);
       isoLabel.setLatLng(userPos);
+      const gtChip = document.getElementById('barGeoText');
+      if (gtChip) gtChip.textContent = name;
       showToast('Город: ' + name);
       if (STATIONS_DB) renderNearby();
     }
@@ -564,6 +583,7 @@
 
     // === Реальная база станций с прода: ближайшие к выбранной точке ===
     let STATIONS_DB = null;
+    let weatherDone = false;
 
     function haversine(a, b) {
       const R = 6371, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
