@@ -7,11 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Запас хода EV — живой дашборд запаса и карта ЭЗС</title>
   <meta name="robots" content="noindex,nofollow" />
-  <meta name="description" content="Живой расчёт запаса хода вашего электромобиля с учётом заряда и температуры, карта ЭЗС с зоной доезда, реальными тарифами сетей и маршрутами." />
+  <meta name="description" content="Живой расчёт запаса хода вашего электромобиля с учётом заряда, погоды и температуры, карта ЭЗС с зоной доезда, реальными тарифами и маршрутами." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Запас хода EV" />
   <meta property="og:title" content="Сколько проедет ваш электромобиль зимой? Живой расчёт + карта ЭЗС" />
-  <meta property="og:description" content="Выберите модель, заряд и температуру — дашборд покажет честный пробег, зону доезда и ближайшие зарядные станции." />
+  <meta property="og:description" content="Выберите модель, заряд и погоду — дашборд покажет честный пробег, зону доезда и ближайшие зарядные станции." />
   <meta property="og:url" content="https://zapashoda-ev.ru/dashboard/" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -362,7 +362,7 @@
 
     .card {
       background: rgba(11, 11, 13, 0.92);
-      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      /* без blur: фон почти непрозрачный — дешевле в рендере */
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 16px;
@@ -445,7 +445,9 @@
       align-items: center;
       gap: 8px;
       min-width: 0;
-    }
+    
+
+    .car-model-meta .change-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }}
 
     .car-base-note { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
@@ -858,7 +860,13 @@
 
       .bottom-legend { display: none !important; }
 
-      .hud-left { z-index: 20; bottom: calc(58px + env(safe-area-inset-bottom)); }
+      .hud-left { z-index: 20; bottom: calc(58px + env(safe-area-inset-bottom)); transform: translateY(calc(100% - 210px)); }
+      .hud-left.open { transform: translateY(0); }
+      .left-vignette { display: none; }
+      .seg-group { display: none; }
+      #btnNearby { display: none; }
+      .btn-label { display: none; }
+      .btn-primary { padding: 8px 11px; gap: 0; }
 
       .mobile-tabbar { display: flex; }
       .menu-btn { display: flex; }
@@ -948,7 +956,7 @@
       position: sticky;
       top: 0;
       background: rgba(11, 11, 13, 0.96);
-      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      /* без blur: фон почти непрозрачный — дешевле в рендере */
       padding: 14px 16px 10px;
       border-bottom: 1px solid var(--border-hairline);
       display: flex;
@@ -1229,7 +1237,7 @@
 
     .station-item {
       background: rgba(11, 11, 13, 0.94);
-      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      /* без blur: фон почти непрозрачный — дешевле в рендере */
       border: 1px solid var(--border-hairline);
       border-radius: 16px;
       padding: 15px;
@@ -1388,17 +1396,12 @@
     }
 
     .ev-marker-na {
-      width: 26px;
-      height: 26px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: var(--bg-card);
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px dashed var(--border-focus);
+      background: #3A3A40;
+      border: 1.5px solid #55555C;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
 
     .ev-marker-ac {
@@ -1868,7 +1871,7 @@
     .st-pop-grid span { font-size: 9.5px; color: var(--text-dim); display: block; letter-spacing: 0.02em; }
     .st-pop-grid b { font-size: 12px; font-variant-numeric: tabular-nums; }
     .st-pop-row { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
-    .st-pop-btn { display: block; margin-top: 10px; text-align: center; padding: 8px 10px; border-radius: 9px; background: var(--orange); color: #FFF; font-size: 12px; font-weight: 600; text-decoration: none; }
+    .st-pop-btn { display: block; margin-top: 10px; text-align: center; padding: 8px 10px; border-radius: 9px; background: var(--orange); color: #FFFFFF !important; font-size: 12px; font-weight: 600; text-decoration: none !important; }
     .st-pop-btn:active { filter: brightness(1.12); }
 
     /* === Мобильная оболочка как в приложении === */
@@ -2059,10 +2062,10 @@
           <div class="seg-btn active" id="viewSplit" onclick="switchView('split')">Сплит</div>
           <div class="seg-btn" id="viewList" onclick="switchView('list')">Список</div>
         </div>
-        <button class="btn-ghost" onclick="locateUser()">
+        <button class="btn-ghost" id="btnNearby" onclick="locateUser()">
           <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22"/></svg>Рядом
         </button>
-        <button class="btn-primary" onclick="copyShareUrl()">Поделиться URL</button>
+        <button class="btn-primary" onclick="copyShareUrl()"><span class="btn-label">Поделиться URL</span></button>
       </div>
     </div>
   </header>
@@ -2083,11 +2086,11 @@
         <div style="min-width: 0;">
           <div class="car-title-row">
             <div id="carModelTitle" class="car-model-title">Zeekr 001 · 100 кВт·ч</div>
-            <div class="change-pill">Сменить <svg class="ic" viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M6 9l6 6 6-6"/></svg></div>
           </div>
           <div class="car-model-meta">
             <span id="carPortTag" class="port-tag">GB/T DC · 200 кВт</span>
             <span id="carBaseKm" class="car-base-note">Паспортный запас: 540 км</span>
+            <span class="change-pill">Сменить <svg class="ic" viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M6 9l6 6 6-6"/></svg></span>
           </div>
         </div>
         <button class="car-reset" onclick="event.stopPropagation(); resetCar()" title="Сбросить выбор машины" aria-label="Сбросить выбор машины">
@@ -2341,7 +2344,7 @@
   <div id="carModal" class="modal-backdrop" onclick="if(event.target===this) closeCarModal()">
     <div class="modal-box">
       <div class="modal-head">
-        <div class="modal-title">Выберите электромобиль (154 модели)</div>
+        <div class="modal-title">Выберите электромобиль <span id="modelCount" style="color: var(--text-dim); font-weight: 500;"></span></div>
         <button class="btn-ghost" style="padding: 6px 12px;" onclick="closeCarModal()">✕</button>
       </div>
       <input id="carFilterInput" class="city-search-input" style="width: 100%;" placeholder="Поиск: Zeekr, BYD, Tesla, Li Auto, Evolute..." oninput="filterModels(this.value)" />
