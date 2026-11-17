@@ -55,7 +55,7 @@
     });
 
     // Точки ЭЗС в Москве
-    const stations = [
+    let stations = [
       { name: 'Россети · ТЦ Авиапарк', addr: 'Ходынский б-р, 4', km: 1.4, type: 'dc', label: '150', kw: 150, port: 'GB/T (прямой)', t80: '~24 мин', tariff: '18 ₽/кВт·ч', coords: [55.7902, 37.5312] },
       { name: 'Punkt E · Ленинградский пр-т', addr: 'Ленинградский пр-т, 36', km: 2.8, type: 'dc', label: '120', kw: 120, port: 'GB/T (прямой)', t80: '~31 мин', tariff: '19.5 ₽/кВт·ч', coords: [55.7915, 37.5582] },
       { name: 'Энергия Москвы · Пресня', addr: 'Пресненская наб., 8', km: 4.1, type: 'adp', label: 'CCS', kw: 90, port: 'CCS2 (адаптер)', t80: '~42 мин', tariff: 'Бесплатно', coords: [55.7495, 37.5395] },
@@ -65,16 +65,28 @@
       { name: 'Hyper · Ленинградский', addr: 'Ленинградское ш., 5', km: 8.1, type: 'dc', label: '150', kw: 150, port: 'GB/T (прямой)', t80: '~24 мин', tariff: '20 ₽/кВт·ч', coords: [55.7990, 37.5400] }
     ];
 
-    stations.forEach((st) => {
-      const cls = st.type === 'dc' ? 'ev-marker-dc' : (st.type === 'adp' ? 'ev-marker-adp' : 'ev-marker-ac');
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="${cls}">${st.label}</div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
+    const stLayer = L.layerGroup().addTo(map);
+
+    function stCls(t) {
+      return t === 'dc' ? 'ev-marker-dc' : (t === 'adp' ? 'ev-marker-adp' : 'ev-marker-ac');
+    }
+
+    function addStationMarkers() {
+      stLayer.clearLayers();
+      stations.forEach((st) => {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="${stCls(st.type)}">${st.label}</div>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15]
+        });
+        const m = L.marker(st.coords, { icon }).addTo(stLayer);
+        m.bindPopup(`<b>${st.name}</b>`);
+        m.on('click', () => { const i = stations.indexOf(st); if (i >= 0) focusStation(i); });
       });
-      L.marker(st.coords, { icon }).addTo(map).bindPopup(`<b>${st.name}</b>`);
-    });
+    }
+
+    addStationMarkers();
 
     // Пульсирующий маячок авто (изохрона — вокруг него)
     const meIcon = L.divIcon({
@@ -215,15 +227,7 @@
       recalc();
     }
 
-    function pickCityChip(el, name, count) {
-      state.city = name;
-      activeCity = name;
-      document.getElementById('cityInput').value = name;
-      document.getElementById('cityCountBadge').textContent = count + ' ЭЗС в базе';
-      document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
-      document.querySelectorAll('#cityChips .city-pill').forEach(c => c.classList.remove('active'));
-      el.classList.add('active');
-    }
+
 
     function switchDb(mode) {
       const yandex = mode === 'yandex';
@@ -259,6 +263,170 @@
 
     function locateUser() {
       map.flyTo(userPos, 13);
+    }
+
+    function resetCar() {
+      chooseModel('Zeekr 001 · 100 кВт·ч', 540, 'GB/T DC · 200 кВт', true);
+      state.mult = 1.0;
+      if (state.roundTrip) {
+        state.roundTrip = false;
+        const rtBtn = document.getElementById('returnToggle');
+        if (rtBtn) rtBtn.classList.remove('active');
+      }
+      document.getElementById('weatherIcon').innerHTML = WICON.sun;
+      document.getElementById('weatherBadge').textContent = 'База · +20°C';
+      const ib = document.getElementById('impactBadge');
+      if (ib) ib.textContent = '100% от нормы';
+      setChartActive(4);
+      recalc();
+      showToast('Сброшено: Zeekr 001');
+    }
+
+    function toggleStack() {
+      const el = document.querySelector('.hud-left');
+      if (el) el.classList.toggle('open');
+    }
+
+    // === Единая смена города: карта, метка, кольцо, подписи ===
+    function setCityView(name, lat, lng, count) {
+      state.city = name;
+      const inp = document.getElementById('cityInput');
+      if (inp && document.activeElement !== inp) inp.value = name;
+      if (count != null) document.getElementById('cityCountBadge').textContent = count + ' ЭЗС в базе';
+      document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
+      userPos = [lat, lng];
+      map.flyTo(userPos, 12);
+      rangeCircle.setLatLng(userPos);
+      meMarker.setLatLng(userPos);
+      isoLabel.setLatLng(userPos);
+      showToast('Город: ' + name);
+      if (STATIONS_DB) renderNearby();
+    }
+
+    function pickCity(city) {
+      activeCity = city.n;
+      document.querySelectorAll('.city-pill').forEach(c => c.classList.remove('active'));
+      setCityView(city.n, city.lat, city.lng, city.c);
+      closeCitySheet();
+      renderCityGrid();
+    }
+
+    function pickCityChip(el, name, count) {
+      activeCity = name;
+      document.querySelectorAll('#cityChips .city-pill').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      const hit = CITY_LIST.find(c => c.n === name);
+      if (hit) setCityView(name, hit.lat, hit.lng, count);
+      else {
+        document.getElementById('cityInput').value = name;
+        document.getElementById('cityCountBadge').textContent = count + ' ЭЗС в базе';
+        document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
+      }
+    }
+
+    function citySearch() {
+      const q = (document.getElementById('cityInput').value || '').trim();
+      if (!q) return;
+      const hit = CITY_LIST.find(c => c.n.toLowerCase() === q.toLowerCase());
+      if (hit) { pickCity(hit); return; }
+      geocodeCity(q);
+    }
+
+    async function geocodeCity(q) {
+      try {
+        const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ru&q=' + encodeURIComponent(q + ', Россия'));
+        const d = await r.json();
+        if (d && d[0]) {
+          const lat = parseFloat(d[0].lat), lon = parseFloat(d[0].lon);
+          activeCity = q;
+          setCityView(q, lat, lon);
+        } else {
+          showToast('Город не найден в геокодере');
+        }
+      } catch (e) {
+        showToast('Геокодер недоступен — попробуйте ещё раз');
+      }
+    }
+
+    // === Гео по IP при первом заходе ===
+    let geoApplied = false;
+    async function loadGeoCity() {
+      if (geoApplied) return;
+      let g = null;
+      try {
+        const r = await fetch('https://ipwho.is/', { cache: 'no-store' });
+        const d = await r.json();
+        if (d && d.success !== false && d.city && isFinite(d.latitude)) g = { city: d.city, lat: d.latitude, lng: d.longitude };
+      } catch (e) {}
+      if (!g) {
+        try {
+          const r = await fetch('https://get.geojs.io/v1/ip/geo.json', { cache: 'no-store' });
+          const d = await r.json();
+          if (d && d.city) g = { city: d.city, lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) };
+        } catch (e) {}
+      }
+      if (!g || geoApplied) return;
+      geoApplied = true;
+      const hit = CITY_LIST.find(c => c.n.toLowerCase() === g.city.toLowerCase());
+      if (hit) pickCity(hit);
+      else { activeCity = g.city; setCityView(g.city, g.lat, g.lng); }
+    }
+
+    // === Реальная база станций с прода: ближайшие к выбранной точке ===
+    let STATIONS_DB = null;
+
+    function haversine(a, b) {
+      const R = 6371, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
+      const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * Math.PI / 180) * Math.cos(b[0] * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(x));
+    }
+
+    function fmtT80(pw) {
+      const mins = Math.round(64 / (pw * 0.8) * 60);
+      if (!isFinite(mins) || mins <= 0) return '—';
+      if (mins < 60) return '~' + mins + ' мин';
+      return '~' + Math.floor(mins / 60) + ' ч ' + (mins % 60 ? (mins % 60) + ' мин' : '');
+    }
+
+    function portLabel(arr) {
+      if (!arr || !arr.length) return '—';
+      return arr.map(p => p === 'type2' ? 'Type 2' : p).slice(0, 2).join(' + ');
+    }
+
+    async function loadStationDB() {
+      try {
+        const r = await fetch('/charging/stations.json', { cache: 'no-cache' });
+        if (!r.ok) return;
+        const d = await r.json();
+        STATIONS_DB = d.stations || [];
+        renderNearby();
+      } catch (e) {}
+    }
+
+    function renderNearby() {
+      if (!STATIONS_DB || !STATIONS_DB.length) return;
+      const near = STATIONS_DB
+        .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
+        .filter(v => v.d <= 30)
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 10)
+        .map(v => ({
+          name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'ya' ? ' · Я' : ''),
+          addr: v.x.a || '',
+          km: Math.max(0.1, Math.round(v.d * 10) / 10),
+          type: (v.x.pw || 0) >= 50 ? 'dc' : 'ac',
+          label: v.x.pw ? String(v.x.pw) : '—',
+          kw: v.x.pw,
+          port: portLabel(v.x.s),
+          t80: v.x.pw ? fmtT80(v.x.pw) : '—',
+          tariff: '',
+          coords: [v.x.lat, v.x.lon]
+        }));
+      if (!near.length) return;
+      stations = near;
+      addStationMarkers();
+      renderCards();
+      renderTable();
     }
 
     function tempNow() {
@@ -366,18 +534,7 @@
 
     let activeCity = 'Москва';
 
-    function pickCity(city) {
-      activeCity = city.n;
-      state.city = city.n;
-      document.getElementById('cityInput').value = city.n;
-      document.getElementById('cityCountBadge').textContent = city.c + ' ЭЗС в базе';
-      document.getElementById('weatherCity').textContent = city.n + ' · Живой прогноз';
-      document.querySelectorAll('.city-pill').forEach(c => c.classList.remove('active'));
-      map.flyTo([city.lat, city.lng], 12);
-      rangeCircle.setLatLng([city.lat, city.lng]);
-      closeCitySheet();
-      renderCityGrid();
-    }
+    // pickCity и pickCityChip объявлены ниже (единая setCityView)
 
     function renderCityGrid() {
       document.getElementById('cityGrid').innerHTML = CITY_LIST.map(c => `
@@ -476,8 +633,7 @@
       const v = tariffFor(s);
       if (v) return v;
       if (TARIFFS && TARIFFS.market && TARIFFS.market.dc_typical) {
-        const m = TARIFFS.market.dc_typical;
-        return m[0] + '–' + m[1] + ' ₽ (рынок)';
+        return 'от ' + TARIFFS.market.dc_typical[0] + ' ₽/кВт·ч';
       }
       return s.tariff;
     }
@@ -556,4 +712,10 @@
     document.getElementById('weatherIcon').innerHTML = WICON.sun;
     recalc();
     loadTariffs();
+    loadStationDB();
+    loadGeoCity();
+    document.getElementById('cityInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); citySearch(); }
+    });
+    document.getElementById('cityInput').addEventListener('change', citySearch);
   
