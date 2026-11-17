@@ -92,7 +92,7 @@
     .glass-pill {
       pointer-events: auto;
       background: rgba(11, 11, 13, 0.92);
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       border: 1px solid var(--border-hairline);
       border-radius: 12px;
       height: 46px;
@@ -176,7 +176,7 @@
       transform: translateX(-50%) translateY(-6px);
       min-width: 196px;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 14px;
@@ -362,7 +362,7 @@
 
     .card {
       background: rgba(11, 11, 13, 0.92);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 16px;
@@ -501,6 +501,10 @@
 
     .car-reset:hover { opacity: 1; color: var(--text-white); border-color: var(--border-focus); }
 
+    .car-trigger { position: relative; padding-right: 34px; cursor: pointer; }
+
+    .car-reset { top: 9px; right: 9px; }
+
     .car-trigger:hover .change-pill {
       color: var(--text-white);
       border-color: var(--border-focus);
@@ -624,7 +628,7 @@
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       z-index: 50;
       display: none;
       align-items: center;
@@ -752,7 +756,7 @@
       transform: translateX(-50%) translateY(-4px);
       min-width: 200px;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 12px;
@@ -831,7 +835,7 @@
         margin: -16px -16px 0;
         cursor: pointer;
         background: rgba(11, 11, 13, 0.97);
-        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       }
 
@@ -854,7 +858,28 @@
 
       .bottom-legend { display: none !important; }
 
-      .hud-left { z-index: 20; }
+      .hud-left { z-index: 20; bottom: calc(58px + env(safe-area-inset-bottom)); }
+
+      .mobile-tabbar { display: flex; }
+      .menu-btn { display: flex; }
+      .st-close-btn { display: flex; }
+
+      /* Перф-режим: на телефонах отказываемся от blur — плотный фон вместо стекла */
+      .glass-pill, .card, .dd, .dropdown, .station-table-wrap, .st-table-head, .station-item, .city-sheet, .toast, .stack-handle, .share-card {
+        backdrop-filter: none !important;
+        background: rgba(11, 11, 13, 0.97);
+      }
+
+      .station-table-wrap {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        max-height: none;
+        border-radius: 0;
+        z-index: 80;
+      }
+
+      .toast { bottom: calc(66px + env(safe-area-inset-bottom)); }
 
       .hud-right { display: none !important; }
 
@@ -884,7 +909,7 @@
       max-height: min(404px, calc(100vh - 134px));
       z-index: 10;
       background: rgba(11, 11, 13, 0.94);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 16px;
@@ -923,7 +948,7 @@
       position: sticky;
       top: 0;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       padding: 14px 16px 10px;
       border-bottom: 1px solid var(--border-hairline);
       display: flex;
@@ -1204,7 +1229,7 @@
 
     .station-item {
       background: rgba(11, 11, 13, 0.94);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-radius: 16px;
       padding: 15px;
@@ -1309,7 +1334,7 @@
       transform: translateX(-50%);
       z-index: 10;
       background: rgba(11, 11, 13, 0.92);
-      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-radius: 10px;
       padding: 7px 16px;
@@ -1360,6 +1385,20 @@
       justify-content: center;
       border: 2.5px solid var(--orange);
       box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    }
+
+    .ev-marker-na {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--border-focus);
     }
 
     .ev-marker-ac {
@@ -1518,7 +1557,7 @@
       inset: 0;
       z-index: 400;
       background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -1721,7 +1760,7 @@
       bottom: 0;
       z-index: 30;
       background: rgba(11, 11, 13, 0.97);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.12);
       border-radius: 20px 20px 0 0;
@@ -1797,7 +1836,7 @@
       width: max-content;
       max-width: calc(100% - 32px);
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.09);
       border-left: 2px solid var(--orange);
       color: var(--text-white);
@@ -1813,6 +1852,136 @@
     }
 
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* === Попап станции на карте === */
+    .leaflet-popup-content-wrapper {
+      background: rgba(11, 11, 13, 0.96) !important;
+      color: var(--text-white) !important;
+      border: 1px solid var(--border-focus);
+      border-radius: 14px !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7) !important;
+    }
+    .leaflet-popup-content { margin: 12px 14px !important; font-family: inherit; }
+    .leaflet-popup-tip { background: rgba(11, 11, 13, 0.96) !important; border: 1px solid var(--border-focus); }
+    .st-pop-name { font-weight: 700; font-size: 13px; letter-spacing: -0.01em; }
+    .st-pop-addr { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .st-pop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-top: 9px; }
+    .st-pop-grid span { font-size: 9.5px; color: var(--text-dim); display: block; letter-spacing: 0.02em; }
+    .st-pop-grid b { font-size: 12px; font-variant-numeric: tabular-nums; }
+    .st-pop-row { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+    .st-pop-btn { display: block; margin-top: 10px; text-align: center; padding: 8px 10px; border-radius: 9px; background: var(--orange); color: #FFF; font-size: 12px; font-weight: 600; text-decoration: none; }
+    .st-pop-btn:active { filter: brightness(1.12); }
+
+    /* === Мобильная оболочка как в приложении === */
+    .mobile-tabbar, .side-menu, .side-overlay, .menu-btn, .st-close-btn { display: none; }
+
+    .side-menu {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(320px, 86vw);
+      z-index: 120;
+      background: rgba(11, 11, 13, 0.985);
+      border-left: 1px solid var(--border-hairline);
+      transform: translateX(105%);
+      transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.3, 1);
+      overflow-y: auto;
+      padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
+      will-change: transform;
+    }
+    .side-menu.show { transform: translateX(0); }
+    .side-menu-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--border-hairline); margin-bottom: 10px; }
+    .side-menu-title { font-size: 13px; font-weight: 700; letter-spacing: 0.02em; }
+    .side-close { background: none; border: 1px solid var(--border-hairline); color: var(--text-dim); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    .side-link { display: flex; align-items: center; justify-content: space-between; padding: 11px 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-white); text-decoration: none; font-size: 14px; -webkit-tap-highlight-color: transparent; }
+    .side-link .go { color: var(--text-dim); font-size: 12px; }
+    .side-link:active { background: rgba(232, 80, 2, 0.12); }
+    .side-overlay {
+      position: fixed; inset: 0; z-index: 110;
+      background: rgba(0, 0, 0, 0.62);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .side-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .mobile-tabbar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 60;
+      display: flex;
+      background: rgba(11, 11, 13, 0.97);
+      border-top: 1px solid var(--border-hairline);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .mobile-tabbar .tab {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 8px 0 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-tabbar .tab svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .mobile-tabbar .tab.active { color: var(--orange); }
+    .mobile-tabbar .tab:active { color: var(--orange-bright); }
+
+    .st-close-btn {
+      background: none;
+      border: 1px solid var(--border-hairline);
+      color: var(--text-dim);
+      border-radius: 8px;
+      width: 30px; height: 30px;
+      cursor: pointer;
+      align-items: center; justify-content: center;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+    .menu-btn { white-space: nowrap; }
+    /* === ФИНАЛЬНЫЙ МОБАЙЛ-БЛОК: перекрывает всё выше по каскаду === */
+    @media (max-width: 820px) {
+      .hud-left {
+        position: fixed;
+        left: 0; right: 0; bottom: calc(58px + env(safe-area-inset-bottom));
+        top: auto;
+        width: auto;
+        max-height: 62vh;
+        border-radius: 16px 16px 0 0;
+        border-bottom: none;
+        transform: translateY(calc(100% - 44px));
+        transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
+        overflow-y: auto;
+        z-index: 20;
+      }
+      .hud-left.open { transform: translateY(0); }
+      .hud-right { display: none !important; }
+      .seg-btn#viewSplit { display: none; }
+      .bottom-legend { display: none !important; }
+      .station-table-wrap {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        max-height: none;
+        border-radius: 0;
+        z-index: 80;
+      }
+      .glass-pill, .card, .dd, .dropdown, .station-table-wrap, .st-table-head, .station-item, .city-sheet, .toast, .stack-handle, .share-card {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(11, 11, 13, 0.97);
+      }
+      .mobile-tabbar { display: flex; }
+      .menu-btn { display: flex; }
+      .st-close-btn { display: flex; }
+      .side-menu { display: block; }
+      .side-overlay { display: block; }
+      .toast { bottom: calc(66px + env(safe-area-inset-bottom)); }
+    }
+
   </style>
 </head>
 <body>
@@ -1882,6 +2051,9 @@
         </div>
       </nav>
       <div class="bar-side">
+        <button class="btn-ghost menu-btn" onclick="openSideMenu()" aria-label="Меню">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Меню
+        </button>
         <div class="vline"></div>
         <div class="seg-group">
           <div class="seg-btn" id="viewMap" onclick="switchView('map')">Карта</div>
@@ -1908,7 +2080,7 @@
         <span>1. Ваш электромобиль</span>
         <span id="compatText" style="color: var(--orange);">Напрямую DC</span>
       </div>
-      <button class="car-trigger" onclick="openCarModal()">
+      <div class="car-trigger" role="button" tabindex="0" onclick="openCarModal()" onkeydown="if(event.key==='Enter')openCarModal()">
         <div style="min-width: 0;">
           <div class="car-title-row">
             <div id="carModelTitle" class="car-model-title">Zeekr 001 · 100 кВт·ч</div>
@@ -1919,10 +2091,10 @@
             <span id="carBaseKm" class="car-base-note">Паспортный запас: 540 км</span>
           </div>
         </div>
-      </button>
-      <button class="car-reset" onclick="event.stopPropagation(); resetCar()" title="Сбросить выбор машины" aria-label="Сбросить выбор машины">
-        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
+        <button class="car-reset" onclick="event.stopPropagation(); resetCar()" title="Сбросить выбор машины" aria-label="Сбросить выбор машины">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
       <div id="yandexNote" class="yandex-banner">
         Показан слой Яндекс.Карт поверх нашей базы — серые маркеры с бейджем «Я». У них нет наших полей (разъемы, совместимость), фильтры применяются только к нашей базе.
       </div>
@@ -2074,6 +2246,7 @@
   <div id="stationTable" class="station-table-wrap">
     <div class="st-table-head">
       <div class="st-table-title">Список ЭЗС рядом</div>
+      <button class="st-close-btn" onclick="mView('map')" aria-label="Закрыть список">✕</button>
       <button class="btn-ghost" style="padding: 6px 12px;" onclick="switchView('map')">
         <svg class="ic" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>К карте
       </button>
@@ -2120,6 +2293,49 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <!-- Мобильная навигация как в приложении -->
+  <nav class="mobile-tabbar" id="mobileTabbar">
+    <button class="tab active" id="tabMapM" onclick="mView('map')">
+      <svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Карта
+    </button>
+    <button class="tab" id="tabStationsM" onclick="mView('stations')">
+      <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Станции
+    </button>
+    <button class="tab" id="tabCarM" onclick="mView('car')">
+      <svg viewBox="0 0 24 24"><path d="M5 16l1.5-4.5A2 2 0 0 1 8.4 10h7.2a2 2 0 0 1 1.9 1.5L19 16"/><path d="M4 16h16v4h-2l-1-2H7l-1 2H4z"/></svg>Машина
+    </button>
+    <button class="tab" id="tabMenuM" onclick="openSideMenu()">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Меню
+    </button>
+  </nav>
+  <div class="side-overlay" id="sideOverlay" onclick="closeSideMenu()"></div>
+  <aside class="side-menu" id="sideMenu">
+    <div class="side-menu-head">
+      <div class="side-menu-title">Запас хода EV</div>
+      <button class="side-close" onclick="closeSideMenu()" aria-label="Закрыть меню">✕</button>
+    </div>
+    <a class="side-link" href="/catalog/">Каталог ЭЗС и оборудования<span class="go">→</span></a>
+    <a class="side-link" href="/models/">Модели электромобилей<span class="go">→</span></a>
+    <a class="side-link" href="/sovmestimost/">Совместимость<span class="go">→</span></a>
+    <a class="side-link" href="/razemy/">Разъёмы и стандарты<span class="go">→</span></a>
+    <a class="side-link" href="/charging/">Карта ЭЗС<span class="go">→</span></a>
+    <a class="side-link" href="/calculators/">Калькуляторы<span class="go">→</span></a>
+    <a class="side-link" href="/tarify/">Тарифы<span class="go">→</span></a>
+    <a class="side-link" href="/compare/">Сравнение<span class="go">→</span></a>
+    <a class="side-link" href="/blog/">Блог<span class="go">→</span></a>
+    <a class="side-link" href="/pain/">Боли владельцев<span class="go">→</span></a>
+    <a class="side-link" href="/safety/">Безопасность<span class="go">→</span></a>
+    <a class="side-link" href="/b2b/">Дилерам и B2B<span class="go">→</span></a>
+    <a class="side-link" href="/services/">Услуги<span class="go">→</span></a>
+    <a class="side-link" href="/about/">О проекте<span class="go">→</span></a>
+    <a class="side-link" href="/news/">Новости<span class="go">→</span></a>
+    <a class="side-link" href="/shop/digital/">Гайды<span class="go">→</span></a>
+    <a class="side-link" href="/quiz/">Квиз<span class="go">→</span></a>
+    <a class="side-link" href="/partner/">Партнёрам<span class="go">→</span></a>
+    <a class="side-link" href="/tools/">Инструменты<span class="go">→</span></a>
+    <a class="side-link" href="/privacy/">Приватность<span class="go">→</span></a>
+  </aside>
 
   <script is:inline src="/dashboard.js"></script>
 
