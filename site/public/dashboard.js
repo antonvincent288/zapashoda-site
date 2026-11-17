@@ -630,7 +630,7 @@
         rangeCircle.setRadius(2000);
         isoLabel.setLatLng(userPos);
         isoLabel.setIcon(L.divIcon({ className: 'iso-label', html: '<span>2 км · стартовая зона</span>', iconSize: [0, 0], iconAnchor: [0, 0] }));
-        map.flyToBounds(L.latLngBounds([userPos[0] - 0.045, userPos[1] - 0.072], [userPos[0] + 0.045, userPos[1] + 0.072]), { duration: 0.8 });
+        map.flyToBounds(L.latLngBounds([userPos[0] - 0.09, userPos[1] - 0.144], [userPos[0] + 0.09, userPos[1] + 0.144]), { duration: 0.8 });
         showToast('Стартовая зона 2 км · сценарий выберется сам при взаимодействии');
       } catch (e) {}
     }
