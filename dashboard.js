@@ -49,6 +49,28 @@
 
     // Тап по карте — переставить центр зоны доезда (как на проде)
     map.on('click', (e) => {
+      // Тач-зона: тап в радиусе ~48px от станции открывает её карточку, а не переставляет зону
+      if (STATIONS_DB && STATIONS_DB.length) {
+        try {
+          const pt = map.latLngToLayerPoint(e.latlng);
+          let best = null, bestD = 24;
+          STATIONS_DB.forEach((x) => {
+            if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
+            const p = map.latLngToLayerPoint([x.lat, x.lon]);
+            const d = Math.hypot(p.x - pt.x, p.y - pt.y);
+            if (d < bestD) { bestD = d; best = x; }
+          });
+          if (best) {
+            L.popup().setLatLng([best.lat, best.lon]).setContent('<div class="st-pop">'
+              + '<div class="st-pop-name">' + (best.op || best.n || 'ЭЗС') + (best.src === 'ya' ? ' · Я' : '') + '</div>'
+              + '<div class="st-pop-addr">' + (best.a || '') + '</div>'
+              + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(Number(best.pw) || 0) + '</b></div><div><span>Порты</span><b>' + (best.s && best.s.length ? best.s.join(', ') : '—') + '</b></div></div>'
+              + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + best.lat + ',' + best.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
+              + '</div>').openOn(map);
+            return;
+          }
+        } catch (err) {}
+      }
       if (introMode) introMode = false;
       userPos = [e.latlng.lat, e.latlng.lng];
       rangeCircle.setLatLng(userPos);
