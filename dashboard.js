@@ -744,7 +744,7 @@
     }
 
     function loadOsmIndex() {
-      fetch('/charging/osm_full.json').then(r => r.ok ? r.json() : null).then(d => {
+      fetch('/charging/osm-full.json').then(r => r.ok ? r.json() : null).then(d => {
         if (!d || !d.stations || !d.stations.length) return;
         const have = new Set(STATIONS_DB.map(x => (x.src || 'base') + '|' + x.lat.toFixed(4) + '|' + x.lon.toFixed(4)));
         let add = 0;
@@ -787,7 +787,7 @@
           fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
         });
         st.bindPopup('<div class="st-pop">'
-          + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + (x.src === 'ya' ? ' · Я' : '') + '</div>'
+          + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + (x.src === 'yandex' ? ' · Я' : '') + '</div>'
           + '<div class="st-pop-addr">' + (x.a || '') + '</div>'
           + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(pw) + '</b></div><div><span>Порты</span><b>' + (x.s && x.s.length ? x.s.join(', ') : '—') + '</b></div></div>'
           + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + x.lat + ',' + x.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
