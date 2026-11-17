@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Запас хода EV — живой дашборд запаса и карта ЭЗС</title>
   <meta name="robots" content="noindex,nofollow" />
-  <meta name="description" content="Живой расчёт запаса хода вашего электромобиля с учётом заряда и температуры, карта ЭЗС с зоной доезда и маршрутами." />
+  <meta name="description" content="Живой расчёт запаса хода вашего электромобиля с учётом заряда и температуры, карта ЭЗС с зоной доезда, реальными тарифами сетей и маршрутами." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Запас хода EV" />
   <meta property="og:title" content="Сколько проедет ваш электромобиль зимой? Живой расчёт + карта ЭЗС" />
@@ -92,7 +92,7 @@
     .glass-pill {
       pointer-events: auto;
       background: rgba(11, 11, 13, 0.92);
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-hairline);
       border-radius: 12px;
       height: 46px;
@@ -176,7 +176,7 @@
       transform: translateX(-50%) translateY(-6px);
       min-width: 196px;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 14px;
@@ -362,7 +362,7 @@
 
     .card {
       background: rgba(11, 11, 13, 0.92);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 16px;
@@ -474,6 +474,32 @@
       align-items: center;
       gap: 5px;
     }
+
+    .card-car { position: relative; }
+
+    .car-reset {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      background: rgba(11, 11, 13, 0.7);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-dim);
+      cursor: pointer;
+      opacity: 0.65;
+      transition: 0.2s;
+      z-index: 2;
+    }
+
+    .car-reset svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.4; fill: none; }
+
+    .car-reset:hover { opacity: 1; color: var(--text-white); border-color: var(--border-focus); }
 
     .car-trigger:hover .change-pill {
       color: var(--text-white);
@@ -726,7 +752,7 @@
       transform: translateX(-50%) translateY(-4px);
       min-width: 200px;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 12px;
@@ -805,7 +831,7 @@
         margin: -16px -16px 0;
         cursor: pointer;
         background: rgba(11, 11, 13, 0.97);
-        backdrop-filter: blur(24px);
+        backdrop-filter: blur(14px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       }
 
@@ -824,7 +850,9 @@
         color: var(--text-dim);
       }
 
-      .hud-right { display: none; }
+      .seg-btn#viewSplit { display: none; }
+
+      .hud-right { display: none !important; }
 
       .station-table-wrap {
         left: 16px;
@@ -852,7 +880,7 @@
       max-height: min(404px, calc(100vh - 134px));
       z-index: 10;
       background: rgba(11, 11, 13, 0.94);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.09);
       border-radius: 16px;
@@ -891,7 +919,7 @@
       position: sticky;
       top: 0;
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       padding: 14px 16px 10px;
       border-bottom: 1px solid var(--border-hairline);
       display: flex;
@@ -1172,7 +1200,7 @@
 
     .station-item {
       background: rgba(11, 11, 13, 0.94);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-radius: 16px;
       padding: 15px;
@@ -1601,13 +1629,8 @@
     }
 
     /* === Живые анимации карты === */
-    @keyframes zhIso {
-      to { stroke-dashoffset: -70; }
-    }
-
     .zh-iso {
-      animation: zhIso 2.6s linear infinite;
-      filter: drop-shadow(0 0 6px rgba(232, 80, 2, 0.35));
+      transition: stroke 0.3s, fill 0.3s;
     }
 
     @keyframes pulseRingDom {
@@ -1694,7 +1717,7 @@
       bottom: 0;
       z-index: 30;
       background: rgba(11, 11, 13, 0.97);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--border-hairline);
       border-top-color: rgba(255, 255, 255, 0.12);
       border-radius: 20px 20px 0 0;
@@ -1770,7 +1793,7 @@
       width: max-content;
       max-width: calc(100% - 32px);
       background: rgba(11, 11, 13, 0.96);
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.09);
       border-left: 2px solid var(--orange);
       color: var(--text-white);
@@ -1871,6 +1894,10 @@
 
   <!-- Левый инженерный стек: машина → город → погода → запас → кривая -->
   <aside class="hud-left">
+    <div class="stack-handle" onclick="toggleStack()">
+      <span class="handle-bar"></span>
+      <span class="handle-label">Панель управления</span>
+    </div>
     <!-- 1. Электромобиль -->
     <div class="card card-car">
       <div class="card-label">
@@ -1888,6 +1915,9 @@
             <span id="carBaseKm" class="car-base-note">Паспортный запас: 540 км</span>
           </div>
         </div>
+      </button>
+      <button class="car-reset" onclick="event.stopPropagation(); resetCar()" title="Сбросить выбор машины" aria-label="Сбросить выбор машины">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
       <div id="yandexNote" class="yandex-banner">
         Показан слой Яндекс.Карт поверх нашей базы — серые маркеры с бейджем «Я». У них нет наших полей (разъемы, совместимость), фильтры применяются только к нашей базе.
