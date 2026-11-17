@@ -317,7 +317,7 @@
       setTimeout(() => {
         try {
           L.popup().setLatLng(s.coords).setContent('<div class="st-pop">'
-            + '<div class="st-pop-name">' + (s.op || s.n || 'ЭЗС') + '</div>'
+            + '<div class="st-pop-name">' + (s.op || s.n || s.name || 'ЭЗС') + '</div>'
             + '<div class="st-pop-addr">' + (s.a || s.addr || '') + '</div>'
             + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + (s.tariff ? s.tariff : (Number(s.pw) ? Number(s.pw) + ' кВт' : '—')) + '</b></div><div><span>Порты</span><b>' + (s.port || (s.s && s.s.length ? s.s.join(', ') : '—')) + '</b></div></div>'
             + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + s.coords[0] + ',' + s.coords[1]) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
