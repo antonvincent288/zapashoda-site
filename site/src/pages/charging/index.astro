@@ -124,6 +124,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
             <div class="zhd-tile2 zhd-cab">
               <div class="zc-h">Погода · статус кабины</div>
               <div class="zc-t" id="zc-temp">—</div>
+              <div class="zc-range" id="zc-range"></div>
               <div class="zc-s" id="zc-sub">уточняется</div>
             </div>
             <div class="zhd-tile2 zhd-conn">
@@ -138,7 +139,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
               <path d="M0,74 L50,74 L100,74 L150,63.2 L200,52.4 L250,41.6 L300,30.8 L350,20 L400,20 L450,20 L500,24.2 L550,28.4 L600,28.4 L600,140 L0,140 Z" fill="rgba(255,111,0,.09)"/>
               <path d="M0,74 L50,74 L100,74 L150,63.2 L200,52.4 L250,41.6 L300,30.8 L350,20 L400,20 L450,20 L500,24.2 L550,28.4 L600,28.4" fill="none" stroke="#FF6F00" stroke-width="2.5" stroke-linejoin="round"/>
               <g id="tc-marker" style="display:none">
-                <line id="tc-line" y1="8" y2="140" stroke="#FF8F33" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line id="tc-line" y1="8" y2="140" stroke="#FF8F33" stroke-width="1.5" stroke-dasharray="5 4"/><circle id="tc-dot" r="4.5" fill="#FF8F33" stroke="#0B1018" stroke-width="1.5" cx="0" cy="20"/>
                 <text id="tc-text" class="tc-now" y="16"></text>
               </g>
             </svg>
@@ -955,11 +956,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!t) return;
         if (typeof curTemp === 'number') {
           t.textContent = (curTemp > 0 ? '+' : '') + curTemp + ' °C';
+          var rngEl = document.getElementById('zc-range');
           var parts = [weatherLabel || 'у вас на карте'];
           if (carSel && carEntry && carEntry.cap) {
             var rng = Math.round(carEntry.cap * 6.2 * tempFactor(curTemp));
-            parts.push('запас ~' + rng + ' км' + (tempFactor(curTemp) < 1 ? ' (' + Math.round(tempFactor(curTemp) * 100) + '% от паспорта)' : ''));
-          }
+            if (rngEl) rngEl.textContent = 'запас ~' + rng + ' км';
+            if (tempFactor(curTemp) < 1) parts.push(Math.round(tempFactor(curTemp) * 100) + '% от паспорта');
+          } else if (rngEl) { rngEl.textContent = ''; }
           s.textContent = parts.join(' · ');
         } else { t.textContent = '—'; s.textContent = 'уточняется'; }
       }
@@ -970,6 +973,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           var x = Math.max(0, Math.min(600, (curTemp + 25) / 60 * 600));
           g.style.display = '';
           lt.setAttribute('x1', x); lt.setAttribute('x2', x);
+          var dot = document.getElementById('tc-dot');
+          if (dot) { dot.setAttribute('cx', x); dot.setAttribute('cy', 140 - tempFactor(curTemp) * 120); }
           tx.setAttribute('x', x + 7);
           tx.textContent = 'сейчас ' + (curTemp > 0 ? '+' : '') + curTemp + '° · ' + Math.round(tempFactor(curTemp) * 100) + '%';
         } else { g.style.display = 'none'; }
@@ -1378,6 +1383,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
 .zhd-tile2{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#111722;border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:16px;min-width:0}
 .zc-h{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-muted);font-weight:700}
 .zc-t{font-size:34px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:6px;color:var(--txt)}
+.zc-range{font-size:22px;font-weight:800;color:#FF8F33;font-variant-numeric:tabular-nums;margin-top:4px}
 .zc-s{font-size:12px;color:var(--txt-muted);margin-top:3px}
 #conn-bars{margin-top:12px;display:grid;gap:7px}
 .zbar{display:grid;grid-template-columns:86px minmax(0,1fr) 44px;align-items:center;gap:10px;font-size:12.5px}
