@@ -607,9 +607,11 @@
     }
 
     function pickCity(city) {
-      activeCity = city.n;
-      document.querySelectorAll('.city-pill').forEach(c => c.classList.remove('active'));
-      setCityView(city.n, city.lat, city.lng, city.c);
+      const c = (typeof city === 'number') ? CITY_LIST[city] : city;
+      if (!c || c.lat == null || c.lng == null) { showToast('Город недоступен'); return; }
+      activeCity = c.n;
+      document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
+      setCityView(c.n, c.lat, c.lng, c.c);
       closeCitySheet();
       renderCityGrid();
     }
