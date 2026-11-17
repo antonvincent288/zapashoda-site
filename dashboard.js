@@ -752,7 +752,7 @@
         const st = L.circleMarker([x.lat, x.lon], {
           radius: pw >= 50 ? 6.5 : 5.5,
           color: isYa ? '#3FA9F5' : '#E85002',
-          weight: 18,
+          weight: 34,
           opacity: 0,
           fillColor: isYa ? '#3FA9F5' : '#E85002',
           fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
