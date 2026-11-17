@@ -64,7 +64,8 @@
             L.popup().setLatLng([best.lat, best.lon]).setContent('<div class="st-pop">'
               + '<div class="st-pop-name">' + (best.op || best.n || 'ЭЗС') + (best.src === 'ya' ? ' · Я' : '') + '</div>'
               + '<div class="st-pop-addr">' + (best.a || '') + '</div>'
-              + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(Number(best.pw) || 0) + '</b></div><div><span>Порты</span><b>' + (best.s && best.s.length ? best.s.join(', ') : '—') + '</b></div></div>'
+              + (best.src === 'yandex' ? '<div class="st-pop-src">Источник: Яндекс.Карты — мощность и порты могут отсутствовать</div>' : (best.src === 'osm' ? '<div class="st-pop-src">Источник: OpenStreetMap — мощность и порты могут отсутствовать</div>' : ''))
+              + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(best.pw) + '</b></div><div><span>Порты</span><b>' + (best.s && best.s.length ? best.s.join(', ') : '—') + '</b></div></div>'
               + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + best.lat + ',' + best.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
               + '</div>').openOn(map);
             return;
@@ -521,7 +522,7 @@
       recalc(false);
       const gt = document.getElementById('barGeoText');
       if (gt) gt.textContent = (state.city || '') + ' · ' + lbl + '°';
-      showToast('Вы в ' + (state.city || 'этом городе') + '? Погода: ' + lbl + '°C' + (src ? ' · ' + src : ''));
+      // тост погоды убран: чип «город · °C» уже живёт в шапке
     }
 
     function kwLabel(v) {
@@ -676,14 +677,7 @@
         if (hitCity) {
           g.city = hitCity.n;
         } else {
-          let best = null, bestD = 1e9;
-          CITY_LIST.forEach((c) => {
-            const dx = (c.lat - g.lat) * 111;
-            const dy = (c.lng - g.lng) * 111 * Math.cos(g.lat * Math.PI / 180);
-            const d = Math.hypot(dx, dy);
-            if (d < bestD) { bestD = d; best = c; }
-          });
-          if (best) g.city = best.n;
+          /* имя города из гео не подменяем: показываем как определилось (Шереметьево, аэропорт и т.п.) */
         }
       }
       geoApplied = true;
@@ -768,13 +762,16 @@
 
     let stCluster = null;
     let baseMode = 'all';
+    let OSM_FULL = null;
+    let osmLoading = false;
 
     function renderAllStations() {
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { map.removeLayer(stCluster); stCluster = null; }
       stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: false, maxClusterRadius: 64, disableClusteringAtZoom: 14 });
       const pts = [];
-      STATIONS_DB.forEach((x) => {
+      const srcList = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
+      srcList.forEach((x) => {
         if (typeof x.lat !== 'number' || typeof x.lon !== 'number') return;
         if (baseMode === 'base' && (x.src === 'yandex' || x.src === 'osm')) return;
         if (baseMode === 'yandex' && x.src !== 'yandex') return;
@@ -804,20 +801,24 @@
         const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
         const no = STATIONS_DB.filter(x => x.src === 'osm').length;
         const q = (sel, txt) => { const el = sw.querySelector(sel); if (el) el.textContent = txt; };
-        q('[data-mode=all]', 'Всё · ' + STATIONS_DB.length.toLocaleString('ru-RU'));
+        q('[data-mode=all]', 'Всё · ' + (STATIONS_DB.length + (OSM_FULL ? OSM_FULL.length : 0)).toLocaleString('ru-RU'));
         q('[data-mode=base]', 'Наши · ' + (STATIONS_DB.length - nb - no).toLocaleString('ru-RU'));
         q('[data-mode=yandex]', 'Яндекс · ' + nb.toLocaleString('ru-RU'));
-        q('[data-mode=osm]', 'OSM · ' + no.toLocaleString('ru-RU'));
+        q('[data-mode=osm]', 'OSM · ' + ((OSM_FULL && OSM_FULL.length) || no).toLocaleString('ru-RU'));
       }
       showToast('Все ' + pts.length.toLocaleString('ru-RU') + ' станций на карте');
     }
 
     function setBaseMode(m) {
       baseMode = m;
+      if (m === 'osm' && !OSM_FULL && !osmLoading) {
+        osmLoading = true;
+        fetch('/charging/osm-full.json', { cache: 'no-store' }).then(r => r.json()).then(d => { OSM_FULL = (d && d.stations) || []; osmLoading = false; renderAllStations(); }).catch(() => { osmLoading = false; showToast('Полная OSM-база пока недоступна'); });
+      }
       document.querySelectorAll('.base-switch button').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
       renderAllStations();
       const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
-      const label = m === 'yandex' ? ('Яндекс · ' + nb) : m === 'base' ? ('Наша база · ' + (STATIONS_DB.length - nb)) : ('Все базы · ' + STATIONS_DB.length);
+      const label = m === 'yandex' ? ('Яндекс · ' + nb) : m === 'base' ? ('Наша база · ' + (STATIONS_DB.length - nb)) : m === 'osm' ? ('OSM · ' + ((OSM_FULL && OSM_FULL.length) || 0)) : ('Все базы · ' + (STATIONS_DB.length + (OSM_FULL ? OSM_FULL.length : 0)));
       showToast('На карте: ' + label);
     }
 
