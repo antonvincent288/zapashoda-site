@@ -933,19 +933,17 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
       function renderConnBars() {
         var host = document.getElementById('conn-bars');
         if (!host) return;
-        var chips = document.querySelectorAll('#conn-chips .cchip');
-        var rows = [];
-        chips.forEach(function (b) {
-          var cnt = b.querySelector('.cnt');
-          var label = (b.childNodes[0] && b.childNodes[0].textContent || '').trim();
-          var n = cnt ? parseInt(cnt.textContent.replace(/\D/g, ''), 10) || 0 : 0;
-          if (label) rows.push({ label: label, n: n });
+        var CONN_LABELS = [['ccs2', 'CCS2'], ['gbt_dc', 'GB/T DC'], ['gbt_ac', 'GB/T AC'], ['type2', 'Type 2'], ['type2_socket', 'Type 2 розетка'], ['chademo', 'CHAdeMO'], ['type1', 'Type 1'], ['schuko', 'Розетка 220 В']];
+        var rows = CONN_LABELS.map(function (f) {
+          var n = 0;
+          ALL.forEach(function (m) { var s = m.__s; if (s.__c && s.__c[f[0]]) n++; });
+          return { label: f[1], n: n };
         });
         rows.sort(function (a, b) { return b.n - a.n; });
         var max = rows.length ? rows[0].n : 1;
         host.innerHTML = rows.map(function (r) {
           var w = max ? Math.max(4, Math.round(r.n / max * 100)) : 0;
-          var dim = r.label.toUpperCase().indexOf('CCS2') < 0 ? ' dim' : '';
+          var dim = r.label !== 'CCS2' ? ' dim' : '';
           return '<div class="zbar' + dim + '"><span class="zbar-name">' + r.label + '</span><span class="zbar-track"><span class="zbar-fill" data-w="' + w + '"></span></span><span class="zbar-num">' + r.n + '</span></div>';
         }).join('');
         requestAnimationFrame(function () {
@@ -985,7 +983,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
           var label = (b.childNodes[0] && b.childNodes[0].textContent || '').trim();
           var n = cnt ? parseInt(cnt.textContent.replace(/\D/g, ''), 10) || 0 : 0;
           return { label: label, n: n, el: b };
-        }).filter(function (r) { return r.label; });
+        }).map(function (r) { r.n = parseInt((r.label.match(/\((\d+)\)/) || [])[1], 10) || 0; r.label = r.label.replace(/\s*\(\d+\)$/, ''); return r; }).filter(function (r) { return r.label; });
         rows.sort(function (a, b) { return b.n - a.n; });
         var max = rows.length ? rows[0].n : 1;
         host.innerHTML = '<div class="zrow zrow-head"><span>Город</span><span class="n">Станций</span><span class="p">Доля</span></div>' +
