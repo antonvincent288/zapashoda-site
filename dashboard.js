@@ -457,8 +457,50 @@
       window.open(url, '_blank');
     }
 
+    // === Тарифы из источников (site/public/tariffs.json, обновляется Actions) ===
+    let TARIFFS = null;
+
+    function tariffFor(s) {
+      if (!TARIFFS || !TARIFFS.networks) return null;
+      const name = s.name || '';
+      for (const [net, t] of Object.entries(TARIFFS.networks)) {
+        if (name.includes(net)) {
+          const v = s.type === 'ac' ? t.ac : t.dc;
+          return (v != null) ? (v + ' ₽/кВт·ч') : null;
+        }
+      }
+      return null;
+    }
+
+    function tariffLabel(s) {
+      const v = tariffFor(s);
+      if (v) return v;
+      if (TARIFFS && TARIFFS.market && TARIFFS.market.dc_typical) {
+        const m = TARIFFS.market.dc_typical;
+        return m[0] + '–' + m[1] + ' ₽ (рынок)';
+      }
+      return s.tariff;
+    }
+
+    function tariffStampHtml() {
+      if (!TARIFFS) return '';
+      const d = (TARIFFS.updated || '').slice(0, 10).split('-').reverse().join('.');
+      const failed = Object.values(TARIFFS.networks || {}).some(t => t.status === 'parse_failed');
+      return '<div style="font-size:10px;color:var(--text-dim);padding:0 4px 10px;font-variant-numeric:tabular-nums;">Тарифы сетей · обновлено ' + d + (failed ? ' · часть источников недоступна' : '') + '</div>';
+    }
+
+    async function loadTariffs() {
+      try {
+        const r = await fetch('/tariffs.json', { cache: 'no-cache' });
+        if (!r.ok) return;
+        TARIFFS = await r.json();
+        renderCards();
+        renderTable();
+      } catch (e) { /* молча: остаётся прежний тариф */ }
+    }
+
     function renderCards() {
-      document.getElementById('rightDrawer').innerHTML = stations.map((s, i) => `
+      document.getElementById('rightDrawer').innerHTML = tariffStampHtml() + stations.map((s, i) => `
         <div class="station-item ${i === 0 ? 'selected' : ''}" id="stCard${i}" onclick="focusStation(${i})">
           <div class="st-top">
             <div style="min-width: 0;">
@@ -478,7 +520,7 @@
             </div>
             <div>
               <div class="st-m-label">Тариф</div>
-              <div class="st-m-val"${s.tariff === 'Бесплатно' ? ' style="color: var(--green);"' : ''}>${s.tariff}</div>
+              <div class="st-m-val"${s.type === 'ac' ? '' : ''}>${tariffLabel(s)}</div>
             </div>
           </div>
           <div class="st-actions">
@@ -496,7 +538,7 @@
           <div class="r-col">Расстояние<b>${s.km} км</b></div>
           <div class="r-col">Порт<b>${s.port}</b></div>
           <div class="r-col">До 80%<b>${s.t80}</b></div>
-          <div class="r-col">Тариф<b>${s.tariff}</b></div>
+          <div class="r-col">Тариф<b>${tariffLabel(s)}</b></div>
           <span class="st-kw-mini"${s.type === 'adp' ? ' style="color: var(--sand-gold);"' : (s.type === 'ac' ? ' style="color: var(--green);"' : '')}>${s.kw} кВт</span>
         </div>`).join('');
       updateTableFade();
@@ -513,4 +555,5 @@
     renderTable();
     document.getElementById('weatherIcon').innerHTML = WICON.sun;
     recalc();
+    loadTariffs();
   
