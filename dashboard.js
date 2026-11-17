@@ -763,9 +763,7 @@
       document.getElementById('carModal').classList.remove('open');
     }
 
-    function filterModels(q) {
-      renderModels(MODELS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())));
-    }
+    // filterModels объявлен выше (фаззи-поиск с транслитерацией)
 
     function chooseModel(name, base, port, direct, est) {
       state.baseKm = base;
