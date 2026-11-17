@@ -830,7 +830,7 @@
         .sort((a, b) => a.d - b.d)
         .slice(0, 10)
         .map(v => ({
-          name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'ya' ? ' · Я' : ''),
+          name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'yandex' ? ' · Я' : ''),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
           type: (v.x.pw || 0) >= 50 ? 'dc' : (v.x.pw ? 'ac' : 'na'),
