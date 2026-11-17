@@ -145,3 +145,6 @@
 ## 2026-11-16
 
 Новых находок нет - все уже в базе.
+## 2026-11-17
+
+- [@equationalapplications/schema-org-llm-wiki](https://www.npmjs.com/package/@equationalapplications/schema-org-llm-wiki) — Curated schema.org warm-agent ontology manifest for Core LLM Wiki: 9 node types, 28 edges, fully schema.org-standard. Da
