@@ -43,7 +43,7 @@
     }).addTo(map);
     // Затемнение СНАРУЖИ зоны доезда (внутри кольца — чистая карта), панель под маркерами
     const shadePane = map.createPane('zhShade'); shadePane.style.zIndex = 350; shadePane.style.pointerEvents = 'none';
-    const shadeLayer = L.polygon([], { fillColor: '#050507', fillOpacity: 0.32, stroke: false, interactive: false, pane: 'zhShade' }).addTo(map);
+    const shadeLayer = L.polygon([], { fillColor: '#050507', fillOpacity: 0.2, stroke: false, interactive: false, pane: 'zhShade' }).addTo(map);
     function updateShade() {
       try {
         const c = rangeCircle.getLatLng(), r = rangeCircle.getRadius();
@@ -995,7 +995,7 @@
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { stCluster.clearLayers(); }
       else {
-        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 80, disableClusteringAtZoom: 14,
+        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14,
           polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
         map.addLayer(stCluster);
       }
