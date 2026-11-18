@@ -704,6 +704,28 @@
       }
     }
 
+    // Тап по кластеру на тач-экранах: нативный click Leaflet тут не отрабатывает — дублируем зум вручную
+    let _clTapTs = 0;
+    map.on('click', function (e) {
+      try {
+        const oe = e.originalEvent;
+        const isTouch = oe && (oe.pointerType === 'touch' || oe.type === 'touchend');
+        if (!isTouch || Date.now() - _clTapTs < 600) return;
+        if (!stCluster || typeof stCluster.eachLayer !== 'function') return;
+        let best = null, bd = 1e9;
+        stCluster.eachLayer(function (c) {
+          if (!c.getLatLng || !c.getChildCount) return;
+          const lp = map.latLngToLayerPoint(c.getLatLng());
+          const d = lp.distanceTo(e.layerPoint);
+          if (d < bd) { bd = d; best = c; }
+        });
+        if (best && bd <= 90) {
+          _clTapTs = Date.now();
+          if (typeof best.zoomToBounds === 'function') best.zoomToBounds({ animate: true });
+        }
+      } catch (err) {}
+    });
+
     function openSideMenu() {
       document.getElementById('sideMenu').classList.add('show');
       document.getElementById('sideOverlay').classList.add('show');
