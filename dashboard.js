@@ -553,7 +553,10 @@
           return;
         }
       } catch (e) {}
-      showToast('Погода недоступна — показана база +20°C. Тап по бейджу погоды — повторим');
+      const nav = (navigator.onLine === false) ? 'нет сети' : 'сеть есть';
+      const reason = (navigator.onLine === false) ? 'нет сети' : 'сервисы погоды не ответили';
+      try { localStorage.setItem('zh-wx-diag', JSON.stringify({ at: new Date().toISOString(), online: navigator.onLine, ua: navigator.userAgent.slice(0, 60), d: navigator.userAgent.includes('Mobi') })); } catch (e) {}
+      showToast('Погода недоступна (' + reason + ') — тап по бейджу погоды — повторим');
     }
 
     function retryWeather() {
@@ -579,6 +582,15 @@
     }
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+    async function pwaRefresh() {
+      try {
+        if ('caches' in window) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+        if ('serviceWorker' in navigator) { const rs = await navigator.serviceWorker.getRegistrations(); rs.forEach(r => { try { r.update(); } catch (e) {} }); }
+        try { localStorage.setItem('zh-pwa-refresh', String(Date.now())); } catch (e) {}
+        showToast('Обновляем приложение…');
+        setTimeout(() => location.replace(location.href.split('#')[0]), 700);
+      } catch (e) { showToast('Не удалось обновить: ' + e.message); }
     }
 
     function applyWeatherTemp(t, src) {
@@ -685,9 +697,10 @@
         switchView('list');
         setActiveTab('tabStationsM');
       } else if (view === 'car') {
-        switchView('map');
-        document.querySelector('.hud-left').classList.add('open');
-        setActiveTab('tabCarM');
+        const hud = document.querySelector('.hud-left');
+        const wasOpen = hud.classList.contains('open');
+        if (wasOpen) { hud.classList.remove('open'); setActiveTab('tabMapM'); switchView('map'); }
+        else { switchView('map'); hud.classList.add('open'); setActiveTab('tabCarM'); }
       }
     }
 
@@ -1076,6 +1089,11 @@
           .slice(0, 10);
       }
       if (!near.length) return;
+      try {
+        const maxKm = near[0].km;
+        const ttl = document.querySelector('.st-table-title');
+        if (ttl) ttl.textContent = 'Рядом с вами · ' + near.length + ' ' + pluralSt(near.length) + ' до ' + (Math.round(maxKm * 10) / 10) + ' км';
+      } catch (e) {}
       near = near.map(v => ({
           name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'yandex' ? ' · Я' : ''),
           addr: v.x.a || '',
