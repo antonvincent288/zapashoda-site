@@ -1172,6 +1172,7 @@
 
     let activeCity = 'Москва';
     let _ccCache = null;
+    const R_BY_CITY = {'Москва': 35, 'Санкт-Петербург': 25, 'Красноярск': 15, 'Казань': 15, 'Нижний Новгород': 15, 'Челябинск': 15, 'Самара': 15, 'Тюмень': 15, 'Волгоград': 15, 'Тула': 15, 'Липецк': 15, 'Новосибирск': 15, 'Набережные Челны': 15, 'Ростов-на-Дону': 15, 'Кемерово': 15, 'Ярославль': 15, 'Иркутск': 15, 'Екатеринбург': 15, 'Пермь': 15, 'Хабаровск': 15, 'Краснодар': 15, 'Томск': 15, 'Сочи': 15, 'Ульяновск': 15, 'Оренбург': 15, 'Иваново': 15, 'Чебоксары': 15, 'Калининград': 15, 'Химки': 6, 'Реутов': 6, 'Нижнекамск': 8, 'Севастополь': 12, 'Калуга': 10, 'Йошкар-Ола': 10, 'Владимир': 10};
     function cityCountFor(c) {
       if (!STATIONS_DB || !STATIONS_DB.length) return (c.c != null ? c.c : null);
       if (!_ccCache) _ccCache = {};
@@ -1181,7 +1182,7 @@
           const s = STATIONS_DB[i];
           if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
           if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
-          if (haversine([c.lat, c.lng], [s.lat, s.lon]) <= 30) n++;
+          if (haversine([c.lat, c.lng], [s.lat, s.lon]) <= (R_BY_CITY[c.n] || 10)) n++;
         }
         _ccCache[c.n] = n;
       }
@@ -1196,7 +1197,7 @@
         const s = STATIONS_DB[i];
         if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
         if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
-        if (haversine([c.lat, c.lng], [s.lat, s.lon]) > 30) continue;
+        if (haversine([c.lat, c.lng], [s.lat, s.lon]) > (R_BY_CITY[c.n] || 10)) continue;
         if ((s.s || []).some(x => (x || '').toLowerCase().indexOf(t) >= 0)) n++;
       }
       return n;
