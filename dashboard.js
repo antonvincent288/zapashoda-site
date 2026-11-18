@@ -1,3 +1,4 @@
+var ZH_BUILD = 1846;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -546,10 +547,11 @@
         if (!bestName) bestName = (state.city && cities[state.city]) ? state.city : 'Москва';
         const hit = cities[bestName];
         const wts = hit && hit.ts ? Date.parse(hit.ts) : 0;
-        const fresh = wts && (Date.now() - wts) < 3 * 3600 * 1000;
+        const fresh = wts && (Date.now() - wts) < 48 * 3600 * 1000;
+        const ageH = wts ? Math.round((Date.now() - wts) / 3600000) : 999;
         if (hit && typeof hit.t === 'number' && fresh) {
           weatherDone = true;
-          applyWeatherTemp(Math.round(hit.t), bestD < 1e8 ? 'ближайший: ' + bestName : 'кэш: ' + bestName);
+          applyWeatherTemp(Math.round(hit.t), (bestD < 1e8 ? bestName : 'резерв') + ' · ' + ageH + ' ч назад');
           return;
         }
       } catch (e) {}
@@ -721,11 +723,34 @@
         });
         if (best && bd <= 90) {
           _clTapTs = Date.now();
-          if (typeof best.zoomToBounds === 'function') best.zoomToBounds({ animate: true });
+          try {
+            if (typeof best.zoomToBounds === 'function') best.zoomToBounds({ animate: true });
+            else throw new Error('no zoomToBounds');
+          } catch (err) {
+            const z = Math.min(map.getZoom() + 2, 13);
+            map.flyTo(best.getLatLng(), z, { animate: true });
+          }
         }
       } catch (err) {}
     });
 
+
+    // Контроль сборки: если прод уже новее — мягкий авто-reload
+    (function () {
+      if (sessionStorage.getItem('zh-reloaded') === '1') return;
+      try {
+        fetchTO('/charging/app-version.json?cb=' + Date.now(), { cache: 'no-store' }, 4000).then(function (r) {
+          if (!r) return;
+          return r.json();
+        }).then(function (d) {
+          if (d && typeof d.v === 'number' && d.v > ZH_BUILD) {
+            sessionStorage.setItem('zh-reloaded', '1');
+            try { showToast('Обновляю приложение…'); } catch (e) {}
+            setTimeout(function () { location.replace(location.href.split('#')[0]); }, 1200);
+          }
+        }).catch(function () {});
+      } catch (e) {}
+    })();
     function openSideMenu() {
       document.getElementById('sideMenu').classList.add('show');
       document.getElementById('sideOverlay').classList.add('show');
