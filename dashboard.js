@@ -705,7 +705,13 @@
       const inp = document.getElementById('cityInput');
       if (inp && document.activeElement !== inp) inp.value = name;
       if (STATIONS_DB && STATIONS_DB.length) {
-        const _ref = CITY_LIST.find(x => x.n === name) || { n: name, lat: lat, lng: lng, c: null };
+        let _ref = CITY_LIST.find(x => x.n === name) || null;
+        if (!_ref && typeof lat === 'number') {
+          let _b = null, _bd = 1e9;
+          for (let i = 0; i < CITY_LIST.length; i++) { const _d = haversine([lat, lng], [CITY_LIST[i].lat, CITY_LIST[i].lng]); if (_d < _bd) { _bd = _d; _b = CITY_LIST[i]; } }
+          if (_b && _bd < 50) _ref = _b;
+        }
+        if (!_ref) _ref = { n: name, lat: lat, lng: lng, c: null };
         document.getElementById('cityCountBadge').textContent = cityCountFor(_ref) + ' ЭЗС в базе';
       }
       document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
@@ -1119,10 +1125,10 @@
         route: 'Открываем маршрут в Яндекс.Картах',
         memo: 'Памятка сохранена',
         link: 'Ссылка на ЭЗС скопирована',
-        'filter-gbt': () => 'Фильтр: GB/T DC — ' + N('gb/t') + ' в ' + activeCity,
-        'filter-ccs': () => 'Фильтр: CCS2 через переходник — ' + N('ccs') + ' в ' + activeCity,
-        'filter-ac': () => 'Фильтр: Type 2 AC — ' + N('type 2') + ' в ' + activeCity,
-        'filter-chademo': () => 'Фильтр: CHAdeMO — ' + N('chademo') + ' в ' + activeCity
+        'filter-gbt': () => 'Фильтр: GB/T DC — ' + N('gb/t') + ' в ' + displayCity(),
+        'filter-ccs': () => 'Фильтр: CCS2 через переходник — ' + N('ccs') + ' в ' + displayCity(),
+        'filter-ac': () => 'Фильтр: Type 2 AC — ' + N('type 2') + ' в ' + displayCity(),
+        'filter-chademo': () => 'Фильтр: CHAdeMO — ' + N('chademo') + ' в ' + displayCity()
       };
       showToast(typeof M[key] === 'function' ? M[key]() : M[key]);
     }
