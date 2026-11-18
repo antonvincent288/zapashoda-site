@@ -1081,10 +1081,11 @@ var ZH_BUILD = 1846;
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { stCluster.clearLayers(); }
       else {
-        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14,
+        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14, zoomToBoundsOnClick: false,
           polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
         map.addLayer(stCluster);
       }
+        stCluster.on('clusterclick', function (e) { try { openClusterModal(e.layer); } catch (err) {} });
       const pts = [];
       const srcList = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
       srcList.forEach((x) => {
