@@ -32,6 +32,7 @@
 
     // Изохрона реального пробега вокруг машины
     let userPos = [55.785, 37.535]; let userPosGeo = true;
+    updateBarGeo();
     const rangeCircle = L.circle(userPos, {
       color: '#E85002',
       weight: 1.5,
@@ -576,10 +577,11 @@
       recalc(false);
       updateWinterBox();
       const gt = document.getElementById('barGeoText');
-      if (gt) gt.textContent = state.city || '';
+      if (gt) gt.textContent = displayCity();
       // тост погоды убран: чип «город · °C» уже живёт в шапке
     }
 
+    function updateBarGeo(){try{const gt=document.getElementById('barGeoText');if(gt)gt.textContent=displayCity();}catch(e){}}
     function kwLabel(v) {
       return (v != null && v !== '') ? (v + ' кВт') : '—';
     }
