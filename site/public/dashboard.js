@@ -585,6 +585,8 @@
 
     function driveOn(){
       document.body.classList.add('drive');
+      try{document.querySelectorAll('.zh-ask').forEach(x=>x.style.display='none');}catch(e){}
+      try{introMode=false;}catch(e){}
       try{history.replaceState(null,'',location.pathname+'?mode=drive');}catch(e){}
       const t=document.getElementById('driveToggle');
       if(t) t.textContent='Выйти из режима за рулём';
@@ -601,13 +603,23 @@
     function toggleDrive(){ document.body.classList.contains('drive') ? driveOff() : driveOn(); }
     function driveNearest(){
       if(!STATIONS_DB || !STATIONS_DB.length){ showToast('База ещё загружается — секунду'); return; }
-      if(!userPos){ showToast('Точка не определена'); return; }
-      let best=null,bd=1e9;
-      STATIONS_DB.forEach(x=>{ const d=haversine(userPos,[x.lat,x.lon]); if(d<bd){bd=d;best=x;} });
-      if(!best){ showToast('Станций не найдено'); return; }
-      try{ map.flyTo([best.lat,best.lon], 15); }catch(e){}
-      buildRoute(best.lat,best.lon);
-      showToast('Маршрут до ближайшей ЭЗС · '+bd.toFixed(1)+' км');
+      const go = (pos) => {
+        if(!pos){ showToast('Точка не определена'); return; }
+        let best=null,bd=1e9;
+        STATIONS_DB.forEach(x=>{ try{ const d=haversine(pos,[x.lat,x.lon]); if(d<bd){bd=d;best=x;} }catch(e){} });
+        if(!best){ showToast('Станций не найдено'); return; }
+        try{ map.flyTo([best.lat,best.lon], 15); }catch(e){}
+        buildRoute(best.lat,best.lon);
+        showToast('Маршрут до ближайшей ЭЗС · '+bd.toFixed(1)+' км');
+      };
+      if(navigator.geolocation && navigator.geolocation.getCurrentPosition){
+        showToast('Определяю ваше место…');
+        navigator.geolocation.getCurrentPosition(
+          p => go([p.coords.latitude, p.coords.longitude]),
+          () => go(userPos),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+        );
+      } else { go(userPos); }
     }
     try{ if(new URLSearchParams(location.search).get('mode')==='drive'){ document.body.classList.add('drive'); } }catch(e){}
 
