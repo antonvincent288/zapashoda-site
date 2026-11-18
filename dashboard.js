@@ -82,7 +82,12 @@
         } catch (err) {}
       }
       if (introMode) introMode = false;
-      buildRoute(e.latlng.lat, e.latlng.lng);
+      userPos = [e.latlng.lat, e.latlng.lng]; userPosGeo = false;
+      rangeCircle.setLatLng(userPos);
+      if (typeof meMarker !== 'undefined') meMarker.setLatLng(userPos);
+      if (typeof isoLabel !== 'undefined') isoLabel.setLatLng(userPos);
+      recalc(false);
+      showToast('Точка установлена · маршрут — тап по станции → «Маршрут от меня»');
     });
 
     // Точки ЭЗС в Москве
@@ -134,7 +139,17 @@
       iconSize: [12, 12],
       iconAnchor: [6, 6]
     });
-    const meMarker = L.marker(userPos, { icon: meIcon, interactive: false }).addTo(map);
+    const meMarker = L.marker(userPos, { icon: meIcon, interactive: true, draggable: true, keyboard: false, zIndexOffset: 500 }).addTo(map);
+    meMarker.on('dragend', function () {
+      try {
+        const p = meMarker.getLatLng();
+        userPos = [p.lat, p.lng]; userPosGeo = false;
+        rangeCircle.setLatLng(userPos);
+        if (typeof isoLabel !== 'undefined') isoLabel.setLatLng(userPos);
+        recalc(false);
+        showToast('Точка переставлена');
+      } catch (e) {}
+    });
 
     // Слой Яндекса: точки поверх нашей базы, помечены бейджем «Я» — без переключения карт
     const YSTATIONS = [
@@ -272,14 +287,16 @@
     });
 
     function setScenario(el, m, temp, icon, desc, impact, idx) {
-      state.mult = m;
+      state.scenMult = m;
+      state.mult = ((state.tempPct !== undefined && state.tempPct !== null) ? state.tempPct : 1) * m;
       document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
       el.classList.add('active');
-      document.getElementById('weatherTemp').textContent = temp;
-      document.getElementById('weatherIcon').innerHTML = WICON[icon] || '';
+      const rt = (typeof state.temp === 'number') ? ((state.temp > 0 ? '+' + state.temp : state.temp) + '°') : temp;
+      document.getElementById('weatherTemp').textContent = rt;
+      document.getElementById('weatherIcon').innerHTML = (typeof state.temp === 'number' && state.temp <= 0) ? WICON.snow : (WICON[icon] || '');
       document.getElementById('weatherCity').textContent = state.city + ' · ' + desc;
       document.getElementById('impactBadge').textContent = impact;
-      document.getElementById('weatherBadge').textContent = el.textContent + ' · ' + temp;
+      document.getElementById('weatherBadge').textContent = el.textContent + ' · ' + rt;
       setChartActive(idx);
       recalc(true);
     }
@@ -523,7 +540,8 @@
         if (d < best) { best = d; idx = i; }
       });
       const pct = CHART_PCTS[idx];
-      state.mult = pct / 100;
+      state.tempPct = pct / 100;
+      state.mult = state.tempPct * (state.scenMult || 1);
       const lbl = t > 0 ? '+' + t : String(t);
       state.temp = t;
       const w3t = document.getElementById('weatherTemp');
@@ -534,7 +552,8 @@
       if (wi) wi.innerHTML = t <= 0 ? WICON.snow : WICON.sun;
       document.getElementById('weatherBadge').textContent = lbl + '° · погода';
       const ib = document.getElementById('impactBadge');
-      if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
+      const eff = Math.round(state.mult * 100);
+      if (ib) ib.textContent = (eff < 100 ? '−' + (100 - eff) : '100') + '% от нормы';
       setChartActive(idx);
       recalc(false);
       updateWinterBox();
@@ -833,7 +852,8 @@
     function renderAllStations() {
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { map.removeLayer(stCluster); stCluster = null; }
-      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: false, maxClusterRadius: 64, disableClusteringAtZoom: 14 });
+      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14,
+        polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
       const pts = [];
       const srcList = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
       srcList.forEach((x) => {
@@ -1276,16 +1296,22 @@
       const cur = Math.round(full * soc / 100);
       const lbl = t === null ? '−15°' : ((t > 0 ? '+' + t : String(t)) + '°');
       const slug = window.__zhModelSlug || null;
-      const modelLine = slug
-        ? '<a href="/models/' + slug + '/" style="color:var(--orange);font-size:11.5px;text-decoration:none">Зимние болячки и решения по вашей модели →</a>'
-        : '<a href="/models/" style="color:var(--orange);font-size:11.5px;text-decoration:none">154 модели: зимние болячки и решения →</a>';
-      box.innerHTML =
-        '<div class="wb-now">При ' + lbl + ': полный заряд ≈ ' + full + ' км · на вашем заряде (' + soc + '%) ≈ <b style="color:var(--text-white)">' + cur + ' км</b></div>' +
-        '<ul class="wb-tips">' +
-        '<li>Салон прогрейте, пока машина на зарядке — сохраните до 10–15% пробега</li>' +
-        '<li>Климат 18–20° вместо максимума: минус 5–8% к расходу</li>' +
-        '<li>На трассе 90–100 км/ч вместо 110: плюс 10–15% к пробегу</li>' +
-        '</ul>' + modelLine;
+      if (!box.firstChild) {
+        const modelLine = slug
+          ? '<a id="wbLink" href="/models/' + slug + '/" style="color:var(--orange);font-size:11.5px;text-decoration:none">Зимние болячки и решения по вашей модели →</a>'
+          : '<a id="wbLink" href="/models/" style="color:var(--orange);font-size:11.5px;text-decoration:none">154 модели: зимние болячки и решения →</a>';
+        box.innerHTML =
+          '<div class="wb-now" id="wbNow"></div>' +
+          '<ul class="wb-tips">' +
+          '<li>Салон прогрейте, пока машина на зарядке — сохраните до 10–15% пробега</li>' +
+          '<li>Климат 18–20° вместо максимума: минус 5–8% к расходу</li>' +
+          '<li>На трассе 90–100 км/ч вместо 110: плюс 10–15% к пробегу</li>' +
+          '</ul>' + modelLine;
+      }
+      const now = document.getElementById('wbNow');
+      if (now) now.innerHTML = 'При ' + lbl + ': полный заряд ≈ ' + full + ' км · на вашем заряде (' + soc + '%) ≈ <b style="color:var(--text-white)">' + cur + ' км</b>';
+      const link = document.getElementById('wbLink');
+      if (link && slug) link.setAttribute('href', '/models/' + slug + '/');
     }
     (function zhInitWave2() {
       // Виджет 4: имя про заряд
@@ -1465,7 +1491,7 @@
       }
       const css = document.createElement('style');
       css.id = 'zh-route-css';
-      css.textContent = '#routePanel{position:fixed;left:12px;right:12px;bottom:calc(64px + env(safe-area-inset-bottom));z-index:70;background:rgba(11,11,13,.97);border:1px solid rgba(255,255,255,.09);border-left:3px solid #00E5FF;border-radius:14px;padding:12px 14px;display:none;font-variant-numeric:tabular-nums;box-shadow:0 16px 40px rgba(0,0,0,.65)}#routePanel.show{display:block}.rp-line{color:var(--text-white);font-weight:600;font-size:13.5px}.rp-sub{color:var(--text-dim);font-size:12px;margin-top:3px}.rp-st{margin-top:8px;display:flex;flex-direction:column;gap:4px}.rp-st-item{font-size:12px;color:var(--text-white);background:rgba(255,255,255,.05);border-radius:8px;padding:11px 10px;cursor:pointer}.rp-st-item small{color:var(--text-dim);display:block;margin-top:1px}.rp-btns{margin-top:10px;display:flex;gap:8px}.rp-btns button{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text-white);border-radius:10px;padding:13px 8px;font-size:12px;cursor:pointer}';
+      css.textContent = '.st-pop button.st-pop-btn{border:0;background:rgba(232,80,2,.16);color:#FF8F33;font:inherit}#routePanel{position:fixed;left:50%;transform:translateX(-50%);width:min(92vw,460px);bottom:calc(64px + env(safe-area-inset-bottom));z-index:70;background:rgba(11,11,13,.97);border:1px solid rgba(255,255,255,.09);border-left:3px solid #00E5FF;border-radius:14px;padding:12px 14px;display:none;font-variant-numeric:tabular-nums;box-shadow:0 16px 40px rgba(0,0,0,.65)}#routePanel.show{display:block}.rp-line{color:var(--text-white);font-weight:600;font-size:13.5px}.rp-sub{color:var(--text-dim);font-size:12px;margin-top:3px}.rp-st{margin-top:8px;display:flex;flex-direction:column;gap:4px}.rp-st-item{font-size:12px;color:var(--text-white);background:rgba(255,255,255,.05);border-radius:8px;padding:11px 10px;cursor:pointer}.rp-st-item small{color:var(--text-dim);display:block;margin-top:1px}.rp-btns{margin-top:10px;display:flex;gap:8px}.rp-btns button{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text-white);border-radius:10px;padding:13px 8px;font-size:12px;cursor:pointer}';
       document.head.appendChild(css);
     })();
   
