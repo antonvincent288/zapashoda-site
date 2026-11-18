@@ -957,7 +957,9 @@
         const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
         const no = STATIONS_DB.filter(x => x.src === 'osm').length;
         const q = (sel, txt) => { const el = sw.querySelector(sel); if (el) el.textContent = txt; };
-        q('[data-mode=all]', 'Всё · ' + (STATIONS_DB.length + (OSM_FULL ? OSM_FULL.length : 0)).toLocaleString('ru-RU'));
+        const _obc = document.getElementById('ourBaseCount');
+      if (_obc) _obc.textContent = STATIONS_DB.length.toLocaleString('ru-RU');
+      q('[data-mode=all]', 'Всё · ' + (STATIONS_DB.length + (OSM_FULL ? OSM_FULL.length : 0)).toLocaleString('ru-RU'));
         q('[data-mode=base]', 'Наши · ' + (STATIONS_DB.length - nb - no).toLocaleString('ru-RU'));
         q('[data-mode=yandex]', 'Яндекс · ' + nb.toLocaleString('ru-RU'));
         q('[data-mode=osm]', 'OSM · ' + ((OSM_FULL && OSM_FULL.length) || no).toLocaleString('ru-RU'));
