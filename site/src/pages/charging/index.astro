@@ -318,7 +318,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Кар
         if (!map) {
           map = L.map('map',{attributionControl:false}).setView([55.75, 37.62], 5);
           // тач-страховка снята по решению владельца: стандартные жесты Leaflet — один палец двигает карту, щипок — зум
-          var _tl=L.tileLayer('https://core-renderer-tile.maps.yandex.net/2.0/tiles?l=map&x={x}&y={y}&z={z}&scale=1&v=2024.06.03.16.17-4',{maxZoom:18}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);try{map.addControl(L.control.attribution({prefix:false}).addAttribution('&copy; OpenStreetMap'))}catch(e){}});
+          var _tl=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);var _mapFb=false;_tl.on('tileerror',function(){if(_mapFb)return;_mapFb=true;_tl.remove();try{map.addControl(L.control.attribution({prefix:false}).addAttribution('&copy; OpenStreetMap'))}catch(e){}});
           cluster = L.markerClusterGroup();
           st.forEach(function (s) {
             if (typeof s.lat !== 'number' || typeof s.lon !== 'number') return;
