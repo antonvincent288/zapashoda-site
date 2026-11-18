@@ -355,6 +355,21 @@
     // === Полный каталог моделей с прода (154) + умный поиск ===
     let MODELS_ALL = null;
 
+    function restoreCar() {
+      try {
+        const raw = localStorage.getItem('zh-car');
+        if (!raw) return;
+        const c = JSON.parse(raw);
+        if (!c || !c.name) return;
+        window.__zhModelSlug = null;
+        chooseModel(c.name, c.base, c.port, c.direct, c.est);
+        const mm = (MODELS_ALL || []).find(m => m.name === c.name);
+        window.__zhModelSlug = mm ? mm.slug : null;
+        if (c.base != null) { introMode = false; recalc(false); }
+        updateWinterBox();
+      } catch (e) {}
+    }
+
     async function loadModelsCatalog() {
       try {
         const r = await fetch('/models.json', { cache: 'no-cache' });
@@ -366,6 +381,7 @@
           port: (m.direct ? 'GB/T DC' : (m.port || '') + ' (адаптер)').trim(),
           d: !!m.direct, est: m.base != null
         }));
+        restoreCar();
       } catch (e) {}
     }
 
@@ -1122,6 +1138,7 @@
     // filterModels объявлен выше (фаззи-поиск с транслитерацией)
 
     function chooseModel(name, base, port, direct, est) {
+      try { localStorage.setItem('zh-car', JSON.stringify({ name: name, base: base, port: port, direct: direct, est: est })); } catch (e) {}
       if (base == null) {
         document.getElementById('carModelTitle').textContent = name;
         document.getElementById('carPortTag').textContent = port || '—';
