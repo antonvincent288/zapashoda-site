@@ -61,13 +61,7 @@
             if (d < bestD) { bestD = d; best = x; }
           });
           if (best) {
-            L.popup().setLatLng([best.lat, best.lon]).setContent('<div class="st-pop">'
-              + '<div class="st-pop-name">' + (best.op || best.n || 'ЭЗС') + (best.src === 'ya' ? ' · Я' : '') + '</div>'
-              + '<div class="st-pop-addr">' + (best.a || '') + '</div>'
-              + (best.src === 'yandex' ? '<div class="st-pop-src">Источник: Яндекс.Карты — мощность и порты могут отсутствовать</div>' : (best.src === 'osm' ? '<div class="st-pop-src">Источник: OpenStreetMap — мощность и порты могут отсутствовать</div>' : ''))
-              + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(best.pw) + '</b></div><div><span>Порты</span><b>' + (best.s && best.s.length ? best.s.join(', ') : '—') + '</b></div></div>'
-              + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + best.lat + ',' + best.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
-              + '</div>').openOn(map);
+            L.popup().setLatLng([best.lat, best.lon]).setContent(function () { return buildRichPopup(best); }).openOn(map);
             return;
           }
         } catch (err) {}
@@ -830,12 +824,7 @@
           fillColor: isYa ? '#3FA9F5' : '#E85002',
           fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
         });
-        st.bindPopup('<div class="st-pop">'
-          + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + (x.src === 'yandex' ? ' · Я' : '') + '</div>'
-          + '<div class="st-pop-addr">' + (x.a || '') + '</div>'
-          + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(pw) + '</b></div><div><span>Порты</span><b>' + (x.s && x.s.length ? x.s.join(', ') : '—') + '</b></div></div>'
-          + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + x.lat + ',' + x.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
-          + '</div>', { maxWidth: 250 });
+        st.bindPopup(function () { return buildRichPopup(x); }, { maxWidth: 260 });
         pts.push(st);
       });
       stCluster.addLayers(pts);
@@ -851,6 +840,52 @@
         q('[data-mode=osm]', 'OSM · ' + ((OSM_FULL && OSM_FULL.length) || no).toLocaleString('ru-RU'));
       }
       showToast('Все ' + pts.length.toLocaleString('ru-RU') + ' станций на карте');
+    }
+
+
+    function buildRichPopup(x) {
+      const conn = (x.s || []).join(', ');
+      const pw = Number(x.pw) || 0;
+      const lowConn = conn.toLowerCase();
+      const srcNote = x.src === 'yandex' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: Яндекс.Карты — мощность и порты могут отсутствовать</div>'
+        : (x.src === 'osm' || x.src === 'osm2' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: OpenStreetMap (ODbL) — мощность и порты могут отсутствовать</div>' : '');
+      const carTitle = (document.getElementById('carModelTitle') || {}).textContent || '';
+      const portLine = (document.getElementById('carPortTag') || {}).textContent || '';
+      const mdl = (typeof MODELS_ALL !== 'undefined' && MODELS_ALL) ? MODELS_ALL.find(m => m.name === carTitle) : null;
+      const carPort = (portLine.split('·')[0] || '').trim().toLowerCase();
+      let fitLine = '';
+      if (carPort) {
+        if (conn && lowConn.replace(/\s/g, '').indexOf(carPort.replace(/\s/g, '')) >= 0) {
+          fitLine = '<div style="margin-top:7px;font-size:12px;color:#16a34a;font-weight:600">Прямое подключение для вашей модели</div>';
+        } else if (carPort.indexOf('gb/t') >= 0 && /ccs|type2/.test(lowConn.replace(/\s/g, ''))) {
+          fitLine = '<div style="margin-top:7px;font-size:12px;color:#f59e0b;font-weight:600">Через адаптер — подходит для вашей модели</div>'
+            + '<div style="margin-top:3px"><a href="/razemy/" style="color:#FF8F33;font-size:12px;text-decoration:underline">Адаптер в каталоге →</a></div>';
+        }
+      }
+      let cabLine = '';
+      if (/type\s*2/i.test(conn) && !/ccs|gb\/t|gb_dc|type2_combo/i.test(conn) && !/кабел|socket/i.test(conn)) {
+        cabLine = '<div style="margin-top:6px;font-size:11px;color:#8a8f98">Тип Type 2 не уточнён — возьмите свой кабель на случай, если на станции только розетка <a href="/razemy/" style="color:#FF8F33">Кабели и адаптеры →</a></div>';
+      }
+      let sessLine = '';
+      if (mdl && mdl.cap && pw) {
+        const mins = Math.max(10, Math.round((0.6 * mdl.cap) / (pw * 0.8) * 60));
+        sessLine = '<div style="margin-top:6px;font-size:12px;color:#D9C3AB">Сессия 20 → 80%: ~' + mins + ' мин</div>';
+      }
+      const tgText = encodeURIComponent('Статус станции: ' + (x.op || x.n || '') + (x.a ? ' — ' + x.a : '') + '. Разъёмы: ' + (conn || '—') + (pw ? ', ' + pw + ' кВт' : '') + '. Отметка: ');
+      const routeHref = 'https://yandex.ru/maps/?rtext=' + encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + x.lat + ',' + x.lon) + '&rtt=auto';
+      const srcBadge = x.src === 'yandex' ? ' · Я' : (x.src === 'osm' || x.src === 'osm2' ? ' · OSM' : '');
+      return '<div class="st-pop">'
+        + '<div class="st-pop-name">' + (x.op || x.n || 'ЭЗС') + srcBadge + '</div>'
+        + '<div class="st-pop-addr">' + (x.a && x.a !== 'Адрес не указан' ? x.a : '') + '</div>'
+        + srcNote
+        + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(pw) + '</b></div><div><span>Порты</span><b>' + (x.s && x.s.length ? x.s.join(', ') : '—') + '</b></div></div>'
+        + cabLine + fitLine + sessLine
+        + '<a class="st-pop-btn" href="' + routeHref + '" target="_blank" rel="noopener" style="margin-top:10px">Маршрут в Яндекс.Карты</a>'
+        + '<div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">'
+        + '<a href="https://yandex.ru/maps/?pt=' + x.lon + ',' + x.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#FF8F33;font-size:12px">Открыть в Яндекс.Картах →</a>'
+        + '<a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#FF8F33;font-size:12px">Статус в 2Chargers →</a>'
+        + '<a href="https://t.me/zapashoda_ev_bot?text=' + tgText + '" target="_blank" rel="noopener" style="color:#FF8F33;font-size:12px">Сообщить статус станции →</a>'
+        + '</div></div>';
     }
 
     function setBaseMode(m) {
@@ -1163,6 +1198,7 @@
     loadTariffs();
     loadModelsCatalog();
     loadStationDB();
+    try { const _bs = document.getElementById('baseSwitch'); if (_bs) _bs.remove(); } catch (e) {}
     loadGeoCity();
     document.getElementById('cityInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); citySearch(); }
