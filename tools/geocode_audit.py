@@ -64,13 +64,15 @@ def is_real_address(addr):
 def main():
     data = json.loads(get(BASE + 'site/public/charging/stations.json'))
     stations = data.get('stations', [])
-    report = {'updated': None, 'total': len(stations), 'checked': 0, 'fixed': 0, 'flagged': 0,
+    report = {'updated': None, 'total': len(stations), 'offset': offset, 'batch_end': end, 'checked': 0, 'fixed': 0, 'flagged': 0,
               'non_address': 0, 'geocoder_blocked': False, 'fixes': [], 'flagged_items': []}
     limit = int(os.environ.get('AUDIT_LIMIT', '0') or 0)
-    n = len(stations) if not limit else min(limit, len(stations))
+    offset = int(os.environ.get('AUDIT_OFFSET', '0') or 0)
+    start = offset
+    end = min(len(stations), start + limit) if limit else len(stations)
     snap_usage = {}
     staged = []
-    for i in range(n):
+    for i in range(start, end):
         x = stations[i]
         addr = (x.get('a') or '').strip()
         if not addr or addr == 'Адрес не указан':
