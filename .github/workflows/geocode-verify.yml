@@ -37,7 +37,11 @@ jobs:
           git config user.name "geo-verify-bot"
           git config user.email "actions@users.noreply.github.com"
           git add geo_verify.json stations_fixed.json
-          if git diff --cached --quiet; then echo "no changes"; else git commit -m "geocode verify v2: batch offset $AUDIT_OFFSET" && git push origin astrowind-migration; fi
+          if git diff --cached --quiet; then echo "no changes"; else
+            git pull --rebase origin astrowind-migration || (git fetch origin astrowind-migration && git rebase origin/astrowind-migration)
+            git commit -m "geocode verify v2: batch offset $AUDIT_OFFSET"
+            for i in 1 2 3; do git push origin astrowind-migration && break || sleep 10; done
+          fi
 
       - name: Chain next batch
         if: success()
