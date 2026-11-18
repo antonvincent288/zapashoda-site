@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   audit:
@@ -40,3 +41,15 @@ jobs:
           git fetch origin astrowind-migration
           git rebase origin/astrowind-migration
           git push origin HEAD:astrowind-migration
+      - name: Next batch
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TOTAL=$(python3 -c "import json;print(len(json.load(open('site/public/charging/stations.json'))['stations']))")
+          NEXT=$(( ${{ github.event.inputs.offset || 0 }} + ${{ github.event.inputs.limit || 400 }} ))
+          if [ "$NEXT" -lt "$TOTAL" ]; then
+            curl -s -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/geocode-audit.yml/dispatches" \
+              -d "{\"ref\":\"main\",\"inputs\":{\"limit\":\"400\",\"offset\":\"$NEXT\"}}"
+          fi
