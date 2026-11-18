@@ -582,6 +582,35 @@
     }
 
     function updateBarGeo(){try{const gt=document.getElementById('barGeoText');if(gt)gt.textContent=displayCity();}catch(e){}}
+
+    function driveOn(){
+      document.body.classList.add('drive');
+      try{history.replaceState(null,'',location.pathname+'?mode=drive');}catch(e){}
+      const t=document.getElementById('driveToggle');
+      if(t) t.textContent='Выйти из режима за рулём';
+      closeSideMenu();
+      showToast('Режим за рулём: карта на весь экран, одна кнопка — ближайшая ЭЗС');
+    }
+    function driveOff(){
+      document.body.classList.remove('drive');
+      try{history.replaceState(null,'',location.pathname);}catch(e){}
+      const t=document.getElementById('driveToggle');
+      if(t) t.textContent='Режим за рулём';
+      showToast('Режим за рулём выключен');
+    }
+    function toggleDrive(){ document.body.classList.contains('drive') ? driveOff() : driveOn(); }
+    function driveNearest(){
+      if(!STATIONS_DB || !STATIONS_DB.length){ showToast('База ещё загружается — секунду'); return; }
+      if(!userPos){ showToast('Точка не определена'); return; }
+      let best=null,bd=1e9;
+      STATIONS_DB.forEach(x=>{ const d=haversine(userPos,[x.lat,x.lon]); if(d<bd){bd=d;best=x;} });
+      if(!best){ showToast('Станций не найдено'); return; }
+      try{ map.flyTo([best.lat,best.lon], 15); }catch(e){}
+      buildRoute(best.lat,best.lon);
+      showToast('Маршрут до ближайшей ЭЗС · '+bd.toFixed(1)+' км');
+    }
+    try{ if(new URLSearchParams(location.search).get('mode')==='drive'){ document.body.classList.add('drive'); } }catch(e){}
+
     function kwLabel(v) {
       return (v != null && v !== '') ? (v + ' кВт') : '—';
     }
