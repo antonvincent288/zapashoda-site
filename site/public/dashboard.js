@@ -22,7 +22,8 @@
         map.eachLayer(l => {
           if (l instanceof L.TileLayer) map.removeLayer(l);
         });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', updateWhenIdle: true }).addTo(map);
+        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
         showToast('Подложка карты переключена на резервный источник');
       }
     });
@@ -185,6 +186,7 @@
       // Авто-подгонка обзора — только по крупным событиям (точка кривой, сценарий, модель, погода).
       // При движении слайдера карту НЕ дёргаем: это давало непрерывную перерисовку и тормоза.
       if (fit) scheduleFit();
+      updateWinterBox();
     }
 
         function onChargeInput() {
@@ -426,6 +428,7 @@
     }
 
     function chooseModelModel(name, base, port, direct, est) {
+      try { const mm = (MODELS_ALL || []).find(m => m.name === name); window.__zhModelSlug = mm ? mm.slug : null; } catch (e) {}
       chooseModel(name, base, port, direct, est);
     }
 
@@ -527,6 +530,11 @@
       const pct = CHART_PCTS[idx];
       state.mult = pct / 100;
       const lbl = t > 0 ? '+' + t : String(t);
+      state.temp = t;
+      const w3t = document.getElementById('weatherTemp');
+      if (w3t) w3t.textContent = lbl + '°';
+      const w3c = document.getElementById('weatherCity');
+      if (w3c) w3c.textContent = (state.city || 'Ваш город') + ' · живой прогноз';
       const wi = document.getElementById('weatherIcon');
       if (wi) wi.innerHTML = t <= 0 ? WICON.snow : WICON.sun;
       document.getElementById('weatherBadge').textContent = lbl + '° · погода';
@@ -1246,4 +1254,78 @@
       else if (dy < -36) sheetEl.classList.add('open');
       sheetTouchY = null;
     }, { passive: true });
+
+    // === Волна 18.11 #2: погода в виджете 3, зимний блок виджета 5, память заряда, мобильные фиксы ===
+    function nearestTempIdx(t) {
+      let idx = 4, best = 1e9;
+      CHART_TEMPS.forEach((ct, i) => {
+        const num = parseFloat(String(ct).replace('+', '').replace('°', ''));
+        if (!isFinite(num)) return;
+        const d = Math.abs(num - t);
+        if (d < best) { best = d; idx = i; }
+      });
+      return idx;
+    }
+    function updateWinterBox() {
+      const box = document.getElementById('winterBox');
+      if (!box) return;
+      let soc = parseInt(document.getElementById('socSlider').value, 10) || 80;
+      const t = (typeof state.temp === 'number') ? state.temp : null;
+      const pct = t === null ? 72 : CHART_PCTS[nearestTempIdx(t)];
+      const full = Math.round(state.baseKm * pct / 100);
+      const cur = Math.round(full * soc / 100);
+      const lbl = t === null ? '−15°' : ((t > 0 ? '+' + t : String(t)) + '°');
+      const slug = window.__zhModelSlug || null;
+      const modelLine = slug
+        ? '<a href="/models/' + slug + '/" style="color:var(--orange);font-size:11.5px;text-decoration:none">Зимние болячки и решения по вашей модели →</a>'
+        : '<a href="/models/" style="color:var(--orange);font-size:11.5px;text-decoration:none">154 модели: зимние болячки и решения →</a>';
+      box.innerHTML =
+        '<div class="wb-now">При ' + lbl + ': полный заряд ≈ ' + full + ' км · на вашем заряде (' + soc + '%) ≈ <b style="color:var(--text-white)">' + cur + ' км</b></div>' +
+        '<ul class="wb-tips">' +
+        '<li>Салон прогрейте, пока машина на зарядке — сохраните до 10–15% пробега</li>' +
+        '<li>Климат 18–20° вместо максимума: минус 5–8% к расходу</li>' +
+        '<li>На трассе 90–100 км/ч вместо 110: плюс 10–15% к пробегу</li>' +
+        '</ul>' + modelLine;
+    }
+    (function zhInitWave2() {
+      // Виджет 4: имя про заряд
+      document.querySelectorAll('.card-label span').forEach(function(sp) {
+        const tx = (sp.textContent || '').trim();
+        if (tx.indexOf('4. Сколько проеду сейчас') === 0) sp.textContent = '4. Сколько проеду на вашем заряде';
+      });
+      // Подсказка под формулой
+      const hf = document.getElementById('heroFormula');
+      if (hf && !document.getElementById('socHint')) {
+        const d = document.createElement('div');
+        d.id = 'socHint';
+        d.style.cssText = 'font-size:11px;color:var(--text-dim);margin-top:6px';
+        d.textContent = 'Поставьте фактический уровень заряда — пересчитаем с учётом погоды за окном';
+        hf.insertAdjacentElement('afterend', d);
+      }
+      // Память уровня заряда между сессиями PWA
+      try { const sv = parseInt(localStorage.getItem('zh-soc-dash') || '', 10); if (sv >= 10 && sv <= 100) setSoc(sv); } catch (e) {}
+      const sl = document.getElementById('socSlider');
+      if (sl) sl.addEventListener('input', function() { try { localStorage.setItem('zh-soc-dash', sl.value); } catch (e) {} });
+      // Мобильные фиксы: пустая оранжевая кнопка в шапке + дубль «К карте» под крестиком списка
+      const st = document.createElement('style');
+      st.id = 'zh-mob-fix';
+      st.textContent = '@media(max-width:820px){.glass-pill .btn-primary{display:none!important}.st-table-head .btn-ghost{display:none!important}}';
+      document.head.appendChild(st);
+      // Зимний блок в карточке 5
+      const pl = document.getElementById('passportLabel');
+      if (pl) {
+        const card = pl.closest('.card');
+        if (card && !document.getElementById('winterBox')) {
+          const d = document.createElement('div');
+          d.id = 'winterBox';
+          d.className = 'winter-box';
+          card.appendChild(d);
+        }
+      }
+      const css = document.createElement('style');
+      css.id = 'zh-winter-css';
+      css.textContent = '.winter-box{margin-top:10px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;font-size:11.5px;color:var(--text-dim);display:flex;flex-direction:column;gap:6px}.wb-now{color:var(--text-white);font-weight:600;font-size:12.5px;line-height:1.35}.wb-tips{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:3px}.wb-tips li::marker{color:var(--orange)}';
+      document.head.appendChild(css);
+      updateWinterBox();
+    })();
   
