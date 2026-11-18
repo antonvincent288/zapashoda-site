@@ -190,6 +190,10 @@
       const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
       document.getElementById('kmDisplay').textContent = km;
       document.getElementById('pctDisplay').textContent = soc + '%';
+      const _ck = document.getElementById('carLiveKm');
+      if (_ck) _ck.textContent = km.toLocaleString('ru-RU') + ' км';
+      const _cp = document.getElementById('carLivePct');
+      if (_cp) _cp.textContent = soc + '% заряда';
       const _t = (typeof state.temp === 'number') ? state.temp : null;
       document.getElementById('heroFormula').textContent = 'При заряде ' + soc + '%' + (_t === null ? '' : ' и ' + (_t > 0 ? '+' + _t : _t) + '° за окном') + ' проедете ≈ ' + km + ' км' + (state.roundTrip ? ' (туда-обратно)' : '');
       rangeCircle.setRadius(km * 1000);
