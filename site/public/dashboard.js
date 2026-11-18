@@ -2,14 +2,9 @@
     // Инициализация карты: тёмная Esri Dark Gray — стабильная подложка без ключей
     const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      updateWhenIdle: true
-    }).addTo(map);
-
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      opacity: 0.75,
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 20,
+      subdomains: 'abcd',
       updateWhenIdle: true
     }).addTo(map);
 
@@ -436,13 +431,13 @@
       } catch (e) {}
       try {
         const r = noGeo ? null : await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' });
-        const d = await r.json();
+        const d = r ? await r.json() : null;
         const t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
         if (t !== null) { weatherDone = true; saveWeatherCache(t); applyWeatherTemp(t, 'open-meteo'); return; }
       } catch (e) {}
       try {
         const r2 = noGeo ? null : await fetch('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' });
-        const d2 = await r2.json();
+        const d2 = r2 ? await r2.json() : null;
         const tc = d2 && d2.current_condition && d2.current_condition[0] ? parseInt(d2.current_condition[0].temp_C, 10) : null;
         if (tc !== null && !isNaN(tc)) { weatherDone = true; saveWeatherCache(tc); applyWeatherTemp(tc, 'wttr.in'); return; }
       } catch (e) {}
