@@ -542,6 +542,7 @@
       if (ib) ib.textContent = (pct < 100 ? '−' + Math.round(100 - pct) : '100') + '% от нормы';
       setChartActive(idx);
       recalc(false);
+      updateWinterBox();
       const gt = document.getElementById('barGeoText');
       if (gt) gt.textContent = (state.city || '') + ' · ' + lbl + '°';
       // тост погоды убран: чип «город · °C» уже живёт в шапке
@@ -1302,8 +1303,13 @@
         d.textContent = 'Поставьте фактический уровень заряда — пересчитаем с учётом погоды за окном';
         hf.insertAdjacentElement('afterend', d);
       }
-      // Память уровня заряда между сессиями PWA
-      try { const sv = parseInt(localStorage.getItem('zh-soc-dash') || '', 10); if (sv >= 10 && sv <= 100) setSoc(sv); } catch (e) {}
+      // Память уровня заряда между сессиями PWA (обёртка над setSoc — программные установки тоже пишем)
+      if (!window.__zhSocPatched && typeof window.setSoc === 'function') {
+        window.__zhSocPatched = true;
+        const _prevSetSoc = window.setSoc;
+        window.setSoc = function(v) { _prevSetSoc(v); try { localStorage.setItem('zh-soc-dash', v); } catch (e) {} };
+      }
+      try { const sv = parseInt(localStorage.getItem('zh-soc-dash') || '', 10); if (sv >= 10 && sv <= 100) window.setSoc(sv); } catch (e) {}
       const sl = document.getElementById('socSlider');
       if (sl) sl.addEventListener('input', function() { try { localStorage.setItem('zh-soc-dash', sl.value); } catch (e) {} });
       // Мобильные фиксы: пустая оранжевая кнопка в шапке + дубль «К карте» под крестиком списка
