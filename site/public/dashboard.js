@@ -971,7 +971,8 @@
       const pw = Number(x.pw) || 0;
       const lowConn = conn.toLowerCase();
       const srcNote = x.src === 'yandex' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: Яндекс.Карты — мощность и порты могут отсутствовать</div>'
-        : (x.src === 'osm' || x.src === 'osm2' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: OpenStreetMap (ODbL) — мощность и порты могут отсутствовать</div>' : '');
+        : (x.src === 'ocm' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: Open Charge Map' + (x.u ? ' — по этой станции мало данных</div><div class="st-pop-src" style="margin-top:3px;font-size:11px;color:#f59e0b;font-weight:600">⚠ Нет информации: мощность и разъёмы не подтверждены' : '</div>')
+        : (x.src === 'osm' || x.src === 'osm2' ? '<div class="st-pop-src" style="margin-top:5px;font-size:11px;color:#8a8f98">Источник: OpenStreetMap (ODbL) — мощность и порты могут отсутствовать</div>' : ''));
       const carTitle = (document.getElementById('carModelTitle') || {}).textContent || '';
       const portLine = (document.getElementById('carPortTag') || {}).textContent || '';
       const mdl = (typeof MODELS_ALL !== 'undefined' && MODELS_ALL) ? MODELS_ALL.find(m => m.name === carTitle) : null;
