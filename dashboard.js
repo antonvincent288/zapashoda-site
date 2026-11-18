@@ -1,12 +1,31 @@
 
-    // Инициализация карты: тёмная Esri Dark Gray — стабильная подложка без ключей
+    // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
+    // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
     const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      subdomains: 'abcd',
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      maxNativeZoom: 19,
       updateWhenIdle: true
     }).addTo(map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      maxNativeZoom: 19,
+      opacity: 0.85,
+      updateWhenIdle: true
+    }).addTo(map);
+    let _tileErrCount = 0, _tileFallbackDone = false;
+    map.on('tileerror', () => {
+      if (_tileFallbackDone) return;
+      if (++_tileErrCount >= 4) {
+        _tileFallbackDone = true;
+        map.eachLayer(l => {
+          if (l instanceof L.TileLayer) map.removeLayer(l);
+        });
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', updateWhenIdle: true }).addTo(map);
+        showToast('Подложка карты переключена на резервный источник');
+      }
+    });
 
     
 
@@ -392,10 +411,9 @@
         const base = m.base;
         const baseTxt = base
           ? (m.est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'Паспортный запас: ' + base + ' км')
-          : 'Ёмкость батареи не указана — см. карточку модели';
-        const click = base
-          ? `chooseModelModel('${(m.name || '').replace(/'/g, "\'")}', ${base}, '${(m.port || '').replace(/'/g, "\'")}', ${m.d ? 'true' : 'false'}, ${m.est ? 'true' : 'false'})`
-          : `window.open('${m.url}', '_blank')`;
+          : 'Паспортный запас не указан — расчёт по последней выбранной модели';
+        const escN = (m.name || '').replace(/'/g, "\\'"), escP = (m.port || '').replace(/'/g, "\\'");
+        const click = `chooseModelModel('${escN}', ${base || 'null'}, '${escP}', ${m.d ? 'true' : 'false'}, ${m.est ? 'true' : 'false'})`;
         return `
         <div class="model-option ${base ? '' : 'model-option-na'}" onclick="${click}">
           <div style="min-width: 0;">
@@ -417,6 +435,13 @@
     }
 
     // === Погода по гео: open-meteo ===
+    // fetch с таймаутом: зависший внешний API больше не блокирует бейдж погоды
+    function fetchTO(url, opts, ms) {
+      const c = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const id = c ? setTimeout(() => c.abort(), ms || 6000) : null;
+      const p = fetch(url, (opts && c) ? Object.assign({}, opts, { signal: c.signal }) : opts);
+      return p.finally(() => { if (id) clearTimeout(id); });
+    }
     async function loadWeather() {
       if (weatherDone) return;
       const noGeo = !userPos;
@@ -430,19 +455,19 @@
         }
       } catch (e) {}
       try {
-        const r = noGeo ? null : await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' });
+        const r = noGeo ? null : await fetchTO('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' }, 6000);
         const d = r ? await r.json() : null;
         const t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
         if (t !== null) { weatherDone = true; saveWeatherCache(t); applyWeatherTemp(t, 'open-meteo'); return; }
       } catch (e) {}
       try {
-        const r2 = noGeo ? null : await fetch('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' });
+        const r2 = noGeo ? null : await fetchTO('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' }, 6000);
         const d2 = r2 ? await r2.json() : null;
         const tc = d2 && d2.current_condition && d2.current_condition[0] ? parseInt(d2.current_condition[0].temp_C, 10) : null;
         if (tc !== null && !isNaN(tc)) { weatherDone = true; saveWeatherCache(tc); applyWeatherTemp(tc, 'wttr.in'); return; }
       } catch (e) {}
       try {
-        const r3 = await fetch('/charging/weather.json', { cache: 'no-cache' });
+        const r3 = await fetchTO('/charging/weather.json', { cache: 'no-cache' }, 6000);
         const d3 = await r3.json();
         const cities = (d3 && d3.cities) || {};
         let bestName = null, bestD = 1e9;
@@ -648,13 +673,13 @@
       if (geoApplied) return;
       let g = null;
       try {
-        const r = await fetch('https://ipwho.is/', { cache: 'no-store' });
+        const r = await fetchTO('https://ipwho.is/', { cache: 'no-store' }, 4000);
         const d = await r.json();
         if (d && d.success !== false && d.city && isFinite(d.latitude)) g = { city: d.city, lat: d.latitude, lng: d.longitude };
       } catch (e) {}
       if (!g) {
         try {
-          const r = await fetch('https://get.geojs.io/v1/ip/geo.json', { cache: 'no-store' });
+          const r = await fetchTO('https://get.geojs.io/v1/ip/geo.json', { cache: 'no-store' }, 4000);
           const d = await r.json();
           if (d && d.city) g = { city: d.city, lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) };
         } catch (e) {}
@@ -1069,6 +1094,15 @@
     // filterModels объявлен выше (фаззи-поиск с транслитерацией)
 
     function chooseModel(name, base, port, direct, est) {
+      if (base == null) {
+        document.getElementById('carModelTitle').textContent = name;
+        document.getElementById('carPortTag').textContent = port || '—';
+        document.getElementById('carBaseKm').textContent = 'Паспортный запас не указан — расчёт по последней модели: ' + state.baseKm + ' км';
+        document.getElementById('compatText').textContent = direct ? 'Напрямую DC' : 'Через адаптер';
+        closeCarModal();
+        showToast('Модель выбрана: ' + name);
+        return;
+      }
       state.baseKm = base;
       document.getElementById('carModelTitle').textContent = name;
       document.getElementById('carPortTag').textContent = port || '—';
