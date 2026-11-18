@@ -1090,7 +1090,7 @@
       }
       if (!near.length) return;
       try {
-        const maxKm = near[0].km;
+        const maxKm = (typeof near[0].d === 'number') ? (Math.round(near[0].d * 10) / 10) : 0;
         const ttl = document.querySelector('.st-table-title');
         if (ttl) ttl.textContent = 'Рядом с вами · ' + near.length + ' ' + pluralSt(near.length) + ' до ' + (Math.round(maxKm * 10) / 10) + ' км';
       } catch (e) {}
