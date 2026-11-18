@@ -1,0 +1,57 @@
+name: Geocode verify (v2)
+
+on:
+  schedule:
+    - cron: "50 */12 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Сколько точек проверять (0 = все)"
+        required: false
+        default: "200"
+      offset:
+        description: "Индекс первой точки батча"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: astrowind-migration
+
+      - name: Run verify
+        env:
+          AUDIT_LIMIT: ${{ github.event.inputs.limit || '200' }}
+          AUDIT_OFFSET: ${{ github.event.inputs.offset || '0' }}
+        run: python3 tools/geocode_verify.py
+
+      - name: Commit results
+        run: |
+          git config user.name "geo-verify-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add geo_verify.json stations_fixed.json
+          if git diff --cached --quiet; then echo "no changes"; else git commit -m "geocode verify v2: batch offset $AUDIT_OFFSET" && git push origin astrowind-migration; fi
+
+      - name: Chain next batch
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUDIT_LIMIT: ${{ github.event.inputs.limit || '200' }}
+          AUDIT_OFFSET: ${{ github.event.inputs.offset || '0' }}
+        run: |
+          LIMIT=${AUDIT_LIMIT:-200}
+          NEXT=$((AUDIT_OFFSET + LIMIT))
+          if [ "$NEXT" -lt 5337 ]; then
+            sleep 15
+            gh api repos/antonvincent288/zapashoda-site/actions/workflows/geocode-verify.yml/dispatches \
+              -f ref=main -f "inputs[limit]=$LIMIT" -f "inputs[offset]=$NEXT" || echo "dispatch failed"
+          else
+            echo "verify complete"
+          fi
