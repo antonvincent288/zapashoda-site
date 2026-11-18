@@ -82,13 +82,7 @@
         } catch (err) {}
       }
       if (introMode) introMode = false;
-      userPos = [e.latlng.lat, e.latlng.lng]; userPosGeo = false;
-      rangeCircle.setLatLng(userPos);
-      meMarker.setLatLng(userPos);
-      isoLabel.setLatLng(userPos);
-      const soc = parseInt(document.getElementById('socSlider').value, 10);
-      const km = Math.round(state.baseKm * (soc / 100) * state.mult);
-      showToast('zone-moved');
+      buildRoute(e.latlng.lat, e.latlng.lng);
     });
 
     // Точки ЭЗС в Москве
@@ -180,7 +174,8 @@
       const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
       document.getElementById('kmDisplay').textContent = km;
       document.getElementById('pctDisplay').textContent = soc + '%';
-      document.getElementById('heroFormula').textContent = state.baseKm + ' паспорт × ' + soc + '% заряд × ' + Math.round(state.mult * 100) + '% погода' + (state.roundTrip ? ' × туда-обратно' : '');
+      const _t = (typeof state.temp === 'number') ? state.temp : null;
+      document.getElementById('heroFormula').textContent = 'При заряде ' + soc + '%' + (_t === null ? '' : ' и ' + (_t > 0 ? '+' + _t : _t) + '° за окном') + ' проедете ≈ ' + km + ' км' + (state.roundTrip ? ' (туда-обратно)' : '');
       rangeCircle.setRadius(km * 1000);
       updateIsoLabel(km);
       // Авто-подгонка обзора — только по крупным событиям (точка кривой, сценарий, модель, погода).
@@ -534,7 +529,7 @@
       const w3t = document.getElementById('weatherTemp');
       if (w3t) w3t.textContent = lbl + '°';
       const w3c = document.getElementById('weatherCity');
-      if (w3c) w3c.textContent = (state.city || 'Ваш город') + ' · живой прогноз';
+      if (w3c) w3c.textContent = displayCity() + ' · живой прогноз';
       const wi = document.getElementById('weatherIcon');
       if (wi) wi.innerHTML = t <= 0 ? WICON.snow : WICON.sun;
       document.getElementById('weatherBadge').textContent = lbl + '° · погода';
@@ -625,7 +620,10 @@
       const gtChip = document.getElementById('barGeoText');
       if (gtChip) gtChip.textContent = name;
       showToast('Город: ' + name);
+      weatherDone = false;
+      resetRoute();
       enterIntro();
+      loadWeather();
       if (STATIONS_DB) renderNearby();
     }
 
@@ -909,7 +907,8 @@
         + srcNote
         + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(pw) + '</b></div><div><span>Порты</span><b>' + (x.s && x.s.length ? x.s.join(', ') : '—') + '</b></div></div>'
         + cabLine + fitLine + sessLine
-        + '<a class="st-pop-btn" href="' + routeHref + '" target="_blank" rel="noopener" style="margin-top:10px">Маршрут в Яндекс.Карты</a>'
+        + '<button class="st-pop-btn" onclick="buildRoute(' + x.lat + ',' + x.lon + ')" style="margin-top:10px;width:100%">Маршрут от меня · хватит ли</button>'
+        + '<a class="st-pop-btn" href="' + routeHref + '" target="_blank" rel="noopener" style="margin-top:6px">Маршрут в Яндекс.Карты</a>'
         + '<div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">'
         + '<a href="https://yandex.ru/maps/?pt=' + x.lon + ',' + x.lat + '&z=17&l=map" target="_blank" rel="noopener" style="color:#FF8F33;font-size:12px">Открыть в Яндекс.Картах →</a>'
         + '<a href="https://2chargers.ru/" target="_blank" rel="noopener" style="color:#FF8F33;font-size:12px">Статус в 2Chargers →</a>'
@@ -1292,7 +1291,7 @@
       // Виджет 4: имя про заряд
       document.querySelectorAll('.card-label span').forEach(function(sp) {
         const tx = (sp.textContent || '').trim();
-        if (tx.indexOf('4. Сколько проеду сейчас') === 0) sp.textContent = '4. Сколько проеду на вашем заряде';
+        if (tx.indexOf('4. Сколько проеду сейчас') === 0) sp.textContent = '4. Реальный запас хода';
       });
       // Подсказка под формулой
       const hf = document.getElementById('heroFormula');
@@ -1333,5 +1332,140 @@
       css.textContent = '.winter-box{margin-top:10px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;font-size:11.5px;color:var(--text-dim);display:flex;flex-direction:column;gap:6px}.wb-now{color:var(--text-white);font-weight:600;font-size:12.5px;line-height:1.35}.wb-tips{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:3px}.wb-tips li::marker{color:var(--orange)}';
       document.head.appendChild(css);
       updateWinterBox();
+    })();
+
+    // === Волна 18.11 #3: маршрут на карте с расчётом запаса ===
+    let routeLine = null, routeEnd = null;
+    window.__routeSt = [];
+    function resetRoute() {
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+      if (routeEnd) { map.removeLayer(routeEnd); routeEnd = null; }
+      const p = document.getElementById('routePanel');
+      if (p) p.classList.remove('show');
+    }
+    function makeStartHere() {
+      if (routeEnd && routeEnd._latlng) {
+        userPos = [routeEnd._latlng.lat, routeEnd._latlng.lng];
+        userPosGeo = false;
+        rangeCircle.setLatLng(userPos);
+        if (typeof meMarker !== 'undefined') meMarker.setLatLng(userPos);
+        if (typeof isoLabel !== 'undefined') isoLabel.setLatLng(userPos);
+        recalc(false);
+      }
+      resetRoute();
+    }
+    function displayCity() {
+      if (CITY_LIST && CITY_LIST.some(c => c.n === state.city)) return state.city;
+      if (userPos && CITY_LIST && CITY_LIST.length) {
+        let best = null, bd = 1e18;
+        CITY_LIST.forEach(c => {
+          if (typeof c.lat !== 'number') return;
+          const dx = (c.lat - userPos[0]) * 111, dy = (c.lng - userPos[1]) * 111 * Math.cos(userPos[0] * Math.PI / 180);
+          const d = dx * dx + dy * dy;
+          if (d < bd) { bd = d; best = c; }
+        });
+        if (best) return best.n;
+      }
+      return state.city || 'Ваш город';
+    }
+    function distToSegM(p, a, b) {
+      const kx = Math.cos(p[0] * Math.PI / 180);
+      const ax = a[0], ay = a[1] * kx, bx = b[0], by = b[1] * kx, px = p[0], py = p[1] * kx;
+      const dx = bx - ax, dy = by - ay;
+      const L2 = dx * dx + dy * dy;
+      let t = L2 ? ((px - ax) * dx + (py - ay) * dy) / L2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const qx = ax + t * dx, qy = ay + t * dy;
+      return Math.hypot((px - qx) * 111000, (py - qy) * 111000);
+    }
+    function stationsAlongRoute(geom, maxDevM) {
+      let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+      geom.forEach(c => { minLat = Math.min(minLat, c[0]); maxLat = Math.max(maxLat, c[0]); minLon = Math.min(minLon, c[1]); maxLon = Math.max(maxLon, c[1]); });
+      const cand = (STATIONS_DB || []).filter(x => typeof x.lat === 'number' && typeof x.lon === 'number' &&
+        x.lat > minLat - 0.05 && x.lat < maxLat + 0.05 && x.lon > minLon - 0.05 && x.lon < maxLon + 0.05);
+      const out = [];
+      cand.forEach(x => {
+        const p = [x.lat, x.lon];
+        let best = 1e12, prog = 0;
+        for (let i = 1; i < geom.length; i++) {
+          const d = distToSegM(p, geom[i - 1], geom[i]);
+          if (d < best) { best = d; prog = i / geom.length; }
+        }
+        if (best <= maxDevM) out.push({ x: x, prog: prog });
+      });
+      out.sort((a, b) => a.prog - b.prog);
+      return out.slice(0, 3).map(o => o.x);
+    }
+    function focusRouteStation(i) {
+      const x = (window.__routeSt || [])[i];
+      if (!x) return;
+      try { L.popup().setLatLng([x.lat, x.lon]).setContent(function () { return buildRichPopup(x); }).openOn(map); map.flyTo([x.lat, x.lon], 14); } catch (e) {}
+    }
+    function showRoutePanel(ok, distKm, rest, durTxt, src, along) {
+      const p = document.getElementById('routePanel');
+      if (!p) return;
+      const dm = String(distKm).replace('.', ',');
+      let html = '<div class="rp-line">Маршрут: ' + dm + ' км' + durTxt + ' <span style="color:var(--text-dim);font-weight:500">(' + src + ')</span></div>';
+      html += ok
+        ? '<div class="rp-sub" style="color:#00E5FF">Хватит с запасом: останется ≈ ' + rest + ' км</div>'
+        : '<div class="rp-sub" style="color:#FF6F6F">Не хватит ≈ ' + Math.abs(rest) + ' км — зарядки по пути:</div>';
+      if (along && along.length) {
+        window.__routeSt = along;
+        html += '<div class="rp-st">' + along.map((x, i) => {
+          const nm = x.op || x.n || 'ЭЗС';
+          const pw = x.pw ? (Number(x.pw) ? Number(x.pw) + ' кВт' : '') : '';
+          return '<div class="rp-st-item" onclick="focusRouteStation(' + i + ')"><b>' + (i + 1) + '. ' + escN(nm) + '</b><small>' + (x.a || '') + (pw ? ' · ' + pw : '') + '</small></div>';
+        }).join('') + '</div>';
+      } else window.__routeSt = [];
+      html += '<div class="rp-btns"><button onclick="resetRoute()">Сбросить</button><button onclick="makeStartHere()">Сделать точкой старта</button></div>';
+      p.innerHTML = html;
+      p.style.borderLeftColor = ok ? '#00E5FF' : '#FF3B30';
+      p.classList.add('show');
+    }
+    async function buildRoute(dlat, dlon) {
+      try {
+        if (!userPos) return;
+        resetRoute();
+        routeEnd = L.circleMarker([dlat, dlon], { radius: 6, color: '#fff', weight: 2, fillColor: '#00E5FF', fillOpacity: 1 }).addTo(map);
+        let dist = null, dur = null, geom = null, src = 'по дорогам';
+        try {
+          const r = await fetchTO('https://router.project-osrm.org/route/v1/driving/' + userPos[1].toFixed(5) + ',' + userPos[0].toFixed(5) + ';' + dlon.toFixed(5) + ',' + dlat.toFixed(5) + '?overview=full&geometries=geojson', { cache: 'no-store' }, 7000);
+          if (r && r.ok) {
+            const d = await r.json();
+            if (d && d.code === 'Ok' && d.routes && d.routes[0]) {
+              dist = d.routes[0].distance; dur = d.routes[0].duration;
+              geom = (d.routes[0].geometry.coordinates || []).map(c => [c[1], c[0]]);
+            }
+          }
+        } catch (e) {}
+        if (dist === null) { dist = haversine(userPos, [dlat, dlon]) * 1.25; src = 'по прямой ×1,25'; }
+        const distKm = Math.round(dist / 100) / 10;
+        const soc = parseInt(document.getElementById('socSlider').value, 10) || 80;
+        const km = Math.round(state.baseKm * (soc / 100) * state.mult);
+        const rest = Math.round(km - distKm);
+        const ok = rest >= 0;
+        const durTxt = dur ? ' · ~' + Math.round(dur / 60) + ' мин' : '';
+        const co = ok ? '#00E5FF' : '#FF3B30';
+        if (geom && geom.length > 1) {
+          routeLine = L.polyline(geom, { color: co, weight: 4, opacity: 0.9 }).addTo(map);
+        } else {
+          routeLine = L.polyline([userPos, [dlat, dlon]], { color: co, weight: 4, dashArray: '6,8', opacity: 0.85 }).addTo(map);
+        }
+        try { map.fitBounds(routeLine.getBounds(), { padding: [40, 40] }); } catch (e) {}
+        let along = [];
+        if (!ok) along = stationsAlongRoute(geom || [userPos, [dlat, dlon]], 4000);
+        showRoutePanel(ok, distKm, rest, durTxt, src, along);
+      } catch (err) { showToast('Маршрут не построился — тапните ещё раз'); }
+    }
+    (function zhInitRoute() {
+      if (!document.getElementById('routePanel')) {
+        const p = document.createElement('div');
+        p.id = 'routePanel';
+        document.body.appendChild(p);
+      }
+      const css = document.createElement('style');
+      css.id = 'zh-route-css';
+      css.textContent = '#routePanel{position:fixed;left:12px;right:12px;bottom:calc(64px + env(safe-area-inset-bottom));z-index:70;background:rgba(11,11,13,.97);border:1px solid rgba(255,255,255,.09);border-left:3px solid #00E5FF;border-radius:14px;padding:12px 14px;display:none;font-variant-numeric:tabular-nums;box-shadow:0 16px 40px rgba(0,0,0,.65)}#routePanel.show{display:block}.rp-line{color:var(--text-white);font-weight:600;font-size:13.5px}.rp-sub{color:var(--text-dim);font-size:12px;margin-top:3px}.rp-st{margin-top:8px;display:flex;flex-direction:column;gap:4px}.rp-st-item{font-size:12px;color:var(--text-white);background:rgba(255,255,255,.05);border-radius:8px;padding:11px 10px;cursor:pointer}.rp-st-item small{color:var(--text-dim);display:block;margin-top:1px}.rp-btns{margin-top:10px;display:flex;gap:8px}.rp-btns button{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text-white);border-radius:10px;padding:13px 8px;font-size:12px;cursor:pointer}';
+      document.head.appendChild(css);
     })();
   
