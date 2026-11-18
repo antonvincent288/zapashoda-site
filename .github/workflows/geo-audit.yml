@@ -1,0 +1,27 @@
+name: geo audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: run audit
+        run: |
+          pip install requests
+          python agents/scripts/geo_audit.py
+      - name: commit report
+        run: |
+          git config user.name "geo-audit-bot"
+          git config user.email "actions@github.com"
+          git add site/public/charging/geo_audit.json
+          git commit -m "geo audit: report $(date -u +%Y-%m-%d)" || echo "no changes"
+          git push
