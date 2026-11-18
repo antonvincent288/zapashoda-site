@@ -567,6 +567,8 @@
       const wi = document.getElementById('weatherIcon');
       if (wi) wi.innerHTML = t <= 0 ? WICON.snow : WICON.sun;
       document.getElementById('weatherBadge').textContent = lbl + '° · погода';
+      const bw = document.getElementById('barWeatherChip');
+      if (bw) { bw.style.display = 'inline-flex'; const bt = document.getElementById('barTemp'); if (bt) bt.textContent = lbl + '°'; const bi = document.getElementById('barWIcon'); if (bi) bi.innerHTML = t <= 0 ? WICON.snow : WICON.sun; }
       const ib = document.getElementById('impactBadge');
       const eff = Math.round(state.mult * 100);
       if (ib) ib.textContent = (eff < 100 ? '−' + (100 - eff) : '100') + '% от нормы';
