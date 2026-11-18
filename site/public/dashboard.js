@@ -1438,7 +1438,7 @@
             }
           }
         } catch (e) {}
-        if (dist === null) { dist = haversine(userPos, [dlat, dlon]) * 1.25; src = 'по прямой ×1,25'; }
+        if (dist === null || dist < 150) { dist = haversine(userPos, [dlat, dlon]) * 1.25; src = 'по прямой ×1,25'; }
         const distKm = Math.round(dist / 100) / 10;
         const soc = parseInt(document.getElementById('socSlider').value, 10) || 80;
         const km = Math.round(state.baseKm * (soc / 100) * state.mult);
