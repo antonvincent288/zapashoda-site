@@ -802,6 +802,7 @@
 
     // === Первый запуск: подтверждение города ===
     function askCity(g) {
+      if (document.body.classList.contains('drive')) return;
       const sh = document.createElement('div');
       sh.className = 'zh-ask';
       sh.innerHTML = '<div class="zh-ask-card">'
