@@ -704,7 +704,7 @@
       state.city = name;
       const inp = document.getElementById('cityInput');
       if (inp && document.activeElement !== inp) inp.value = name;
-      if (count != null) document.getElementById('cityCountBadge').textContent = count + ' ЭЗС в базе';
+      if (STATIONS_DB && STATIONS_DB.length) document.getElementById('cityCountBadge').textContent = cityCountFor({ n: name, lat: lat, lng: lng, c: null }) + ' ЭЗС в базе';
       document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
       userPos = [lat, lng]; userPosGeo = true;
       map.flyTo(userPos, 12);
@@ -899,6 +899,7 @@
         STATIONS_DB = d.stations || [];
         renderNearby();
         renderAllStations();
+        try { refreshCityCounts(); } catch (e) {}
         loadOsmIndex();
       } catch (e) {}
     }
@@ -917,6 +918,7 @@
         });
         if (!add) return;
         renderAllStations();
+        try { refreshCityCounts(); } catch (e) {}
       }).catch(() => {});
     }
 
@@ -1109,16 +1111,17 @@
     }
 
     function toastMsg(key) {
+      const N = (t) => { const n = countTypeInCity(t); return n + ' ' + pluralSt(n); };
       const M = {
         route: 'Открываем маршрут в Яндекс.Картах',
         memo: 'Памятка сохранена',
         link: 'Ссылка на ЭЗС скопирована',
-        'filter-gbt': 'Фильтр: GB/T DC — 148 станций в Москве',
-        'filter-ccs': 'Фильтр: CCS2 через переходник — 112 станций',
-        'filter-ac': 'Фильтр: Type 2 AC — 58 станций',
-        'filter-chademo': 'Фильтр: CHAdeMO — 4 станции'
+        'filter-gbt': () => 'Фильтр: GB/T DC — ' + N('gb/t') + ' в ' + activeCity,
+        'filter-ccs': () => 'Фильтр: CCS2 через переходник — ' + N('ccs') + ' в ' + activeCity,
+        'filter-ac': () => 'Фильтр: Type 2 AC — ' + N('type 2') + ' в ' + activeCity,
+        'filter-chademo': () => 'Фильтр: CHAdeMO — ' + N('chademo') + ' в ' + activeCity
       };
-      showToast(M[key]);
+      showToast(typeof M[key] === 'function' ? M[key]() : M[key]);
     }
 
     function copyShareUrl() {
@@ -1168,13 +1171,58 @@
     ];
 
     let activeCity = 'Москва';
+    let _ccCache = null;
+    function cityCountFor(c) {
+      if (!STATIONS_DB || !STATIONS_DB.length) return (c.c != null ? c.c : null);
+      if (!_ccCache) _ccCache = {};
+      if (_ccCache[c.n] == null) {
+        let n = 0;
+        for (let i = 0; i < STATIONS_DB.length; i++) {
+          const s = STATIONS_DB[i];
+          if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
+          if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
+          if (haversine([c.lat, c.lng], [s.lat, s.lon]) <= 30) n++;
+        }
+        _ccCache[c.n] = n;
+      }
+      return _ccCache[c.n];
+    }
+    function pluralSt(n) { n = Number(n) || 0; return (n % 10 === 1 && n % 100 !== 11) ? 'станция' : ([2,3,4].indexOf(n % 10) >= 0 && [12,13,14].indexOf(n % 100) < 0) ? 'станции' : 'станций'; }
+    function activeCityRef() { const c = CITY_LIST.find(x => x.n === activeCity); return c || (userPos ? { n: activeCity, lat: userPos[0], lng: userPos[1] } : null); }
+    function countTypeInCity(t) {
+      const c = activeCityRef(); if (!c || !STATIONS_DB || !STATIONS_DB.length) return 0;
+      let n = 0;
+      for (let i = 0; i < STATIONS_DB.length; i++) {
+        const s = STATIONS_DB[i];
+        if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
+        if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
+        if (haversine([c.lat, c.lng], [s.lat, s.lon]) > 30) continue;
+        if ((s.s || []).some(x => (x || '').toLowerCase().indexOf(t) >= 0)) n++;
+      }
+      return n;
+    }
+    const _CHIP_ALIAS = { 'СПб': 'Санкт-Петербург', 'Н. Новгород': 'Нижний Новгород' };
+    function refreshCityCounts() {
+      _ccCache = null;
+      const c = activeCityRef();
+      if (c) { const el = document.getElementById('cityCountBadge'); if (el) el.textContent = cityCountFor(c) + ' ЭЗС в базе'; }
+      document.querySelectorAll('#cityChips .city-pill').forEach(p => {
+        const t = p.textContent.split('·');
+        if (t.length < 2) return;
+        const nm = _CHIP_ALIAS[t[0].trim()] || t[0].trim();
+        const hit = CITY_LIST.find(x => x.n === nm);
+        if (hit) p.textContent = t[0].trim() + ' · ' + cityCountFor(hit);
+      });
+      renderCityGrid();
+    }
+
 
     // pickCity и pickCityChip объявлены ниже (единая setCityView)
 
     function renderCityGrid() {
       document.getElementById('cityGrid').innerHTML = CITY_LIST.map(c => `
         <div class="city-cell ${c.n === activeCity ? 'active' : ''}" onclick="pickCity(${CITY_LIST.indexOf(c)})">
-          ${c.n} <b>${c.c}</b>
+          ${c.n} <b>${cityCountFor(c)}</b>
         </div>`).join('');
     }
 
