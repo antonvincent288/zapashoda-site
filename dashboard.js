@@ -927,9 +927,12 @@
 
     function renderAllStations() {
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
-      if (stCluster) { map.removeLayer(stCluster); stCluster = null; }
-      stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14,
-        polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
+      if (stCluster) { stCluster.clearLayers(); }
+      else {
+        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 80, disableClusteringAtZoom: 14,
+          polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
+        map.addLayer(stCluster);
+      }
       const pts = [];
       const srcList = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
       srcList.forEach((x) => {
@@ -951,7 +954,6 @@
         pts.push(st);
       });
       stCluster.addLayers(pts);
-      map.addLayer(stCluster);
       const sw = document.getElementById('baseSwitch');
       if (sw) {
         const nb = STATIONS_DB.filter(x => x.src === 'yandex').length;
