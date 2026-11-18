@@ -704,7 +704,10 @@
       state.city = name;
       const inp = document.getElementById('cityInput');
       if (inp && document.activeElement !== inp) inp.value = name;
-      if (STATIONS_DB && STATIONS_DB.length) document.getElementById('cityCountBadge').textContent = cityCountFor({ n: name, lat: lat, lng: lng, c: null }) + ' ЭЗС в базе';
+      if (STATIONS_DB && STATIONS_DB.length) {
+        const _ref = CITY_LIST.find(x => x.n === name) || { n: name, lat: lat, lng: lng, c: null };
+        document.getElementById('cityCountBadge').textContent = cityCountFor(_ref) + ' ЭЗС в базе';
+      }
       document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
       userPos = [lat, lng]; userPosGeo = true;
       map.flyTo(userPos, 12);
@@ -1172,7 +1175,6 @@
 
     let activeCity = 'Москва';
     let _ccCache = null;
-    const R_BY_CITY = {'Москва': 35, 'Санкт-Петербург': 25, 'Красноярск': 15, 'Казань': 15, 'Нижний Новгород': 15, 'Челябинск': 15, 'Самара': 15, 'Тюмень': 15, 'Волгоград': 15, 'Тула': 15, 'Липецк': 15, 'Новосибирск': 15, 'Набережные Челны': 15, 'Ростов-на-Дону': 15, 'Кемерово': 15, 'Ярославль': 15, 'Иркутск': 15, 'Екатеринбург': 15, 'Пермь': 15, 'Хабаровск': 15, 'Краснодар': 15, 'Томск': 15, 'Сочи': 15, 'Ульяновск': 15, 'Оренбург': 15, 'Иваново': 15, 'Чебоксары': 15, 'Калининград': 15, 'Химки': 6, 'Реутов': 6, 'Нижнекамск': 8, 'Севастополь': 12, 'Калуга': 10, 'Йошкар-Ола': 10, 'Владимир': 10};
     function cityCountFor(c) {
       if (!STATIONS_DB || !STATIONS_DB.length) return (c.c != null ? c.c : null);
       if (!_ccCache) _ccCache = {};
@@ -1182,14 +1184,22 @@
           const s = STATIONS_DB[i];
           if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
           if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
-          if (haversine([c.lat, c.lng], [s.lat, s.lon]) <= (R_BY_CITY[c.n] || 10)) n++;
+          if (haversine([c.lat, c.lng], [s.lat, s.lon]) <= 30) n++;
         }
         _ccCache[c.n] = n;
       }
       return _ccCache[c.n];
     }
     function pluralSt(n) { n = Number(n) || 0; return (n % 10 === 1 && n % 100 !== 11) ? 'станция' : ([2,3,4].indexOf(n % 10) >= 0 && [12,13,14].indexOf(n % 100) < 0) ? 'станции' : 'станций'; }
-    function activeCityRef() { const c = CITY_LIST.find(x => x.n === activeCity); return c || (userPos ? { n: activeCity, lat: userPos[0], lng: userPos[1] } : null); }
+    function activeCityRef() {
+      let c = CITY_LIST.find(x => x.n === activeCity);
+      if (!c && userPos) {
+        let best = null, bd = 1e9;
+        for (let i = 0; i < CITY_LIST.length; i++) { const d = haversine(userPos, [CITY_LIST[i].lat, CITY_LIST[i].lng]); if (d < bd) { bd = d; best = CITY_LIST[i]; } }
+        if (best && bd < 50) c = best;
+      }
+      return c || (userPos ? { n: activeCity, lat: userPos[0], lng: userPos[1] } : null);
+    }
     function countTypeInCity(t) {
       const c = activeCityRef(); if (!c || !STATIONS_DB || !STATIONS_DB.length) return 0;
       let n = 0;
@@ -1197,7 +1207,7 @@
         const s = STATIONS_DB[i];
         if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
         if (Math.abs(s.lat - c.lat) > 0.6 || Math.abs(s.lon - c.lng) > 0.9) continue;
-        if (haversine([c.lat, c.lng], [s.lat, s.lon]) > (R_BY_CITY[c.n] || 10)) continue;
+        if (haversine([c.lat, c.lng], [s.lat, s.lon]) > 30) continue;
         if ((s.s || []).some(x => (x || '').toLowerCase().indexOf(t) >= 0)) n++;
       }
       return n;
