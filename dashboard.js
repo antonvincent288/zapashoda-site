@@ -38,10 +38,30 @@
       weight: 1.5,
       dashArray: '8, 12',
       className: 'zh-iso',
-      fillColor: '#E85002',
-      fillOpacity: 0.08,
+      fillOpacity: 0,
       radius: 4320
     }).addTo(map);
+    // Затемнение СНАРУЖИ зоны доезда (внутри кольца — чистая карта), панель под маркерами
+    const shadePane = map.createPane('zhShade'); shadePane.style.zIndex = 350; shadePane.style.pointerEvents = 'none';
+    const shadeLayer = L.polygon([], { fillColor: '#050507', fillOpacity: 0.32, stroke: false, interactive: false, pane: 'zhShade' }).addTo(map);
+    function updateShade() {
+      try {
+        const c = rangeCircle.getLatLng(), r = rangeCircle.getRadius();
+        if (!c || !r) { shadeLayer.setLatLngs([]); return; }
+        const pts = [];
+        for (let i = 0; i <= 64; i++) {
+          const a = i / 64 * 2 * Math.PI;
+          pts.push([c.lat + (r / 111320) * Math.cos(a), c.lng + (r / (111320 * Math.cos(c.lat * Math.PI / 180) || 1)) * Math.sin(a)]);
+        }
+        const big = [[c.lat - 8, c.lng - 14], [c.lat - 8, c.lng + 14], [c.lat + 8, c.lng + 14], [c.lat + 8, c.lng - 14]];
+        shadeLayer.setLatLngs([big, pts]);
+      } catch (e) {}
+    }
+    updateShade();
+    const _rcSL = rangeCircle.setLatLng.bind(rangeCircle);
+    rangeCircle.setLatLng = function (ll) { const v = _rcSL(ll); updateShade(); return v; };
+    const _rcSR = rangeCircle.setRadius.bind(rangeCircle);
+    rangeCircle.setRadius = function (r) { const v = _rcSR(r); updateShade(); return v; };
 
     // Подпись зоны доезда у метки машины (видна всегда, даже когда кольцо больше экрана)
     const isoLabel = L.marker(userPos, {
