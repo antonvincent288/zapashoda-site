@@ -16,7 +16,7 @@
     
 
     // Изохрона реального пробега вокруг машины
-    let userPos = [55.785, 37.535];
+    let userPos = [55.785, 37.535]; let userPosGeo = true;
     const rangeCircle = L.circle(userPos, {
       color: '#E85002',
       weight: 1.5,
@@ -66,14 +66,14 @@
               + '<div class="st-pop-addr">' + (best.a || '') + '</div>'
               + (best.src === 'yandex' ? '<div class="st-pop-src">Источник: Яндекс.Карты — мощность и порты могут отсутствовать</div>' : (best.src === 'osm' ? '<div class="st-pop-src">Источник: OpenStreetMap — мощность и порты могут отсутствовать</div>' : ''))
               + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + kwLabel(best.pw) + '</b></div><div><span>Порты</span><b>' + (best.s && best.s.length ? best.s.join(', ') : '—') + '</b></div></div>'
-              + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + best.lat + ',' + best.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
+              + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + best.lat + ',' + best.lon) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
               + '</div>').openOn(map);
             return;
           }
         } catch (err) {}
       }
       if (introMode) introMode = false;
-      userPos = [e.latlng.lat, e.latlng.lng];
+      userPos = [e.latlng.lat, e.latlng.lng]; userPosGeo = false;
       rangeCircle.setLatLng(userPos);
       meMarker.setLatLng(userPos);
       isoLabel.setLatLng(userPos);
@@ -116,7 +116,7 @@
             <div><span>Тариф</span><b>${st.tariff || tariffLabel(st)}</b></div>
           </div>
           <div class="st-pop-row">Порты: ${st.port}</div>
-          <a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=${encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + st.coords[0] + ',' + st.coords[1])}&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>
+          <a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=${encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + st.coords[0] + ',' + st.coords[1])}&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>
         </div>`, { maxWidth: 250 });
         m.on('click', () => { const i = stations.indexOf(st); if (i >= 0) focusStation(i); });
       });
@@ -320,7 +320,7 @@
             + '<div class="st-pop-name">' + (s.op || s.n || s.name || 'ЭЗС') + '</div>'
             + '<div class="st-pop-addr">' + (s.a || s.addr || '') + '</div>'
             + '<div class="st-pop-grid"><div><span>Мощность</span><b>' + (s.tariff ? s.tariff : (Number(s.pw) ? Number(s.pw) + ' кВт' : '—')) + '</b></div><div><span>Порты</span><b>' + (s.port || (s.s && s.s.length ? s.s.join(', ') : '—')) + '</b></div></div>'
-            + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + s.coords[0] + ',' + s.coords[1]) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
+            + '<a class="st-pop-btn" href="https://yandex.ru/maps/?rtext=' + encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + s.coords[0] + ',' + s.coords[1]) + '&rtt=auto" target="_blank" rel="noopener">Маршрут в Яндекс.Карты</a>'
             + '</div>').openOn(map);
         } catch (e) {}
       }, 950);
@@ -594,7 +594,7 @@
       if (inp && document.activeElement !== inp) inp.value = name;
       if (count != null) document.getElementById('cityCountBadge').textContent = count + ' ЭЗС в базе';
       document.getElementById('weatherCity').textContent = name + ' · Живой прогноз';
-      userPos = [lat, lng];
+      userPos = [lat, lng]; userPosGeo = true;
       map.flyTo(userPos, 12);
       rangeCircle.setLatLng(userPos);
       meMarker.setLatLng(userPos);
@@ -672,6 +672,9 @@
       }
       if (!g || geoApplied) {
         showToast('Не определили ваш город — выберите его в панели снизу');
+        try { cityStyleInject(); } catch (e) {}
+        try { openCitySheet(); } catch (e) {}
+        loadWeather();
         return;
       }
       if (g) {
@@ -683,10 +686,49 @@
         }
       }
       geoApplied = true;
-      const hit = CITY_LIST.find(c => c.n.toLowerCase() === g.city.toLowerCase());
-      if (hit) pickCity(hit);
-      else { activeCity = g.city; setCityView(g.city, g.lat, g.lng); }
+      try {
+        const saved = localStorage.getItem('zh-city');
+        if (saved) {
+          const hitSaved = CITY_LIST.find(c => c.n === saved);
+          if (hitSaved) { pickCity(hitSaved); loadWeather(); return; }
+        }
+      } catch (e) {}
+      cityStyleInject();
+      askCity(g);
       loadWeather();
+    }
+
+    // === Первый запуск: подтверждение города ===
+    function askCity(g) {
+      const sh = document.createElement('div');
+      sh.className = 'zh-ask';
+      sh.innerHTML = '<div class="zh-ask-card">'
+        + '<div class="zh-ask-q">Вы сейчас в «' + g.city + '»?</div>'
+        + '<div class="zh-ask-sub">Откроем карту города, ближайшие ЭЗС и живую погоду</div>'
+        + '<div class="zh-ask-btns"><button class="zh-ask-yes" id="askYes">Да, показать</button><button class="zh-ask-no" id="askNo">Выбрать другой</button></div>'
+        + '</div>';
+      document.body.appendChild(sh);
+      try { sh.querySelector('#askYes').onclick = () => {
+        try { localStorage.setItem('zh-city', g.city); } catch (e) {}
+        sh.remove();
+        const hit = CITY_LIST.find(c => c.n === g.city);
+        if (hit) pickCity(hit);
+        else { activeCity = g.city; setCityView(g.city, g.lat, g.lng); }
+        loadWeather();
+      }; sh.querySelector('#askNo').onclick = () => { sh.remove(); openCitySheet(); loadWeather(); }; } catch (e) {}
+    }
+    function cityStyleInject() {
+      if (document.getElementById('zh-ask-style')) return;
+      const s = document.createElement('style'); s.id = 'zh-ask-style';
+      s.textContent = '.zh-ask{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:0 10px calc(96px + env(safe-area-inset-bottom))}'
+        + '.zh-ask-card{background:#111114;border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:18px 16px;max-width:340px;width:100%;box-shadow:0 -12px 60px rgba(0,0,0,.6)}'
+        + '.zh-ask-q{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.02em}'
+        + '.zh-ask-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:6px}'
+        + '.zh-ask-btns{display:flex;gap:8px;margin-top:14px}'
+        + '.zh-ask-yes{flex:1.4;background:#E85002;color:#fff;border:none;border-radius:12px;padding:13px 10px;font-size:13px;font-weight:700;cursor:pointer}'
+        + '.zh-ask-no{flex:1;background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:13px 8px;font-size:12px;cursor:pointer}'
+        + '@media(min-width:821px){.zh-ask{align-items:center}}';
+      document.head.appendChild(s);
     }
 
     // === Реальная база станций с прода: ближайшие к выбранной точке ===
@@ -1016,7 +1058,7 @@
 
     function openRoute(i) {
       const st = stations[i];
-      const url = 'https://yandex.ru/maps/?rtext=' + encodeURIComponent(userPos[0] + ',' + userPos[1] + '~' + st.coords[0] + ',' + st.coords[1]) + '&rtt=auto';
+      const url = 'https://yandex.ru/maps/?rtext=' + encodeURIComponent((userPosGeo ? '~' : userPos[0] + ',' + userPos[1] + '~') + st.coords[0] + ',' + st.coords[1]) + '&rtt=auto';
       showToast('Открываем маршрут в Яндекс.Картах');
       window.open(url, '_blank');
     }
