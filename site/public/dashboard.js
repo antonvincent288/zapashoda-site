@@ -477,7 +477,10 @@
     async function loadWeather() {
       if (weatherDone) return;
       const noGeo = !userPos;
-      if (noGeo) showToast('Не определили ваш город — погода по Москве. Тап по бейджу погоды — повторим');
+      const refCity = noGeo ? (CITY_LIST.find(c => c.n === state.city) || CITY_LIST[0]) : null;
+      const wLat = noGeo ? refCity.lat : userPos[0];
+      const wLon = noGeo ? refCity.lng : userPos[1];
+      if (noGeo) showToast('Не определили ваш город — погода по «' + (refCity ? refCity.n : 'Москве') + '»');
       try {
         const cached = JSON.parse(localStorage.getItem('zh-weather-dash') || 'null');
         if (cached && cached.city === state.city && typeof cached.t === 'number' && Date.now() - cached.ts < 30 * 60 * 1000) {
@@ -487,13 +490,13 @@
         }
       } catch (e) {}
       try {
-        const r = noGeo ? null : await fetchTO('https://api.open-meteo.com/v1/forecast?latitude=' + userPos[0].toFixed(3) + '&longitude=' + userPos[1].toFixed(3) + '&current=temperature_2m', { cache: 'no-store' }, 6000);
+        const r = await fetchTO('https://api.open-meteo.com/v1/forecast?latitude=' + wLat.toFixed(3) + '&longitude=' + wLon.toFixed(3) + '&current=temperature_2m', { cache: 'no-store' }, 6000);
         const d = r ? await r.json() : null;
         const t = d && d.current && typeof d.current.temperature_2m === 'number' ? Math.round(d.current.temperature_2m) : null;
         if (t !== null) { weatherDone = true; saveWeatherCache(t); applyWeatherTemp(t, 'open-meteo'); return; }
       } catch (e) {}
       try {
-        const r2 = noGeo ? null : await fetchTO('https://wttr.in/' + userPos[1].toFixed(2) + ',' + userPos[0].toFixed(2) + '?format=j1', { cache: 'no-store' }, 6000);
+        const r2 = await fetchTO('https://wttr.in/' + wLon.toFixed(2) + ',' + wLat.toFixed(2) + '?format=j1', { cache: 'no-store' }, 6000);
         const d2 = r2 ? await r2.json() : null;
         const tc = d2 && d2.current_condition && d2.current_condition[0] ? parseInt(d2.current_condition[0].temp_C, 10) : null;
         if (tc !== null && !isNaN(tc)) { weatherDone = true; saveWeatherCache(tc); applyWeatherTemp(tc, 'wttr.in'); return; }
@@ -514,7 +517,9 @@
         }
         if (!bestName) bestName = (state.city && cities[state.city]) ? state.city : 'Москва';
         const hit = cities[bestName];
-        if (hit && typeof hit.t === 'number') {
+        const wts = hit && hit.ts ? Date.parse(hit.ts) : 0;
+        const fresh = wts && (Date.now() - wts) < 3 * 3600 * 1000;
+        if (hit && typeof hit.t === 'number' && fresh) {
           weatherDone = true;
           applyWeatherTemp(Math.round(hit.t), bestD < 1e8 ? 'ближайший: ' + bestName : 'кэш: ' + bestName);
           return;
