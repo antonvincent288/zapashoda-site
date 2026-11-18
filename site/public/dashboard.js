@@ -576,7 +576,7 @@
       recalc(false);
       updateWinterBox();
       const gt = document.getElementById('barGeoText');
-      if (gt) gt.textContent = (state.city || '') + ' · ' + lbl + '°';
+      if (gt) gt.textContent = state.city || '';
       // тост погоды убран: чип «город · °C» уже живёт в шапке
     }
 
