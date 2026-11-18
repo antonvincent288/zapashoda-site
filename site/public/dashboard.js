@@ -183,6 +183,10 @@
           const km = Math.round(state.baseKm * (soc / 100) * state.mult * (state.roundTrip ? 0.5 : 1));
           document.getElementById('kmDisplay').textContent = km;
           document.getElementById('pctDisplay').textContent = soc + '%';
+          const _ck = document.getElementById('carLiveKm');
+          if (_ck) _ck.textContent = km.toLocaleString('ru-RU') + ' км';
+          const _cp = document.getElementById('carLivePct');
+          if (_cp) _cp.textContent = soc + '% заряда';
           return;
         }
       }
