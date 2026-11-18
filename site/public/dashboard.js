@@ -1125,10 +1125,10 @@
         route: 'Открываем маршрут в Яндекс.Картах',
         memo: 'Памятка сохранена',
         link: 'Ссылка на ЭЗС скопирована',
-        'filter-gbt': () => 'Фильтр: GB/T DC — ' + N('gb/t') + ' в ' + displayCity(),
-        'filter-ccs': () => 'Фильтр: CCS2 через переходник — ' + N('ccs') + ' в ' + displayCity(),
-        'filter-ac': () => 'Фильтр: Type 2 AC — ' + N('type 2') + ' в ' + displayCity(),
-        'filter-chademo': () => 'Фильтр: CHAdeMO — ' + N('chademo') + ' в ' + displayCity()
+        'filter-gbt': () => 'Фильтр: GB/T DC — ' + N('gb/t') + ' в ' + cityIn(),
+        'filter-ccs': () => 'Фильтр: CCS2 через переходник — ' + N('ccs') + ' в ' + cityIn(),
+        'filter-ac': () => 'Фильтр: Type 2 AC — ' + N('type 2') + ' в ' + cityIn(),
+        'filter-chademo': () => 'Фильтр: CHAdeMO — ' + N('chademo') + ' в ' + cityIn()
       };
       showToast(typeof M[key] === 'function' ? M[key]() : M[key]);
     }
@@ -1219,6 +1219,20 @@
       return n;
     }
     const _CHIP_ALIAS = { 'СПб': 'Санкт-Петербург', 'Н. Новгород': 'Нижний Новгород' };
+    function cityIn() {
+      const n = displayCity(); if (!n) return 'городе';
+      const map = { 'Нижний Новгород':'Нижнем Новгороде', 'Санкт-Петербург':'Санкт-Петербурге', 'Ростов-на-Дону':'Ростове-на-Дону', 'Великий Новгород':'Великом Новгороде' };
+      if (map[n]) return map[n];
+      const parts = n.split(' ');
+      let last = parts[parts.length - 1];
+      if (/(ово|ево|ино|ыно)$/i.test(last)) return n;
+      if (last.endsWith('ь')) last = last.slice(0, -1) + 'и';
+      else if (last.endsWith('а')) last = last.slice(0, -1) + 'е';
+      else if (last.endsWith('я')) last = last.slice(0, -1) + 'и';
+      else last = last + 'е';
+      parts[parts.length - 1] = last;
+      return parts.join(' ');
+    }
     function refreshCityCounts() {
       _ccCache = null;
       const c = activeCityRef();
