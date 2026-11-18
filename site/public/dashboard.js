@@ -706,48 +706,44 @@ var ZH_BUILD = 1846;
       }
     }
 
-    // Тап по кластеру на тач-экранах: нативный click Leaflet тут не отрабатывает — дублируем зум вручную
+    // Тап по кластеру: DOM-обработчик (нативный Leaflet на тач-экранах клик по кластеру теряет)
     let _clTapTs = 0;
-    map.on('click', function (e) {
-      try {
-        const oe = e.originalEvent;
-        const isTouch = oe && (oe.pointerType === 'touch' || oe.type === 'touchend');
-        if (!isTouch || Date.now() - _clTapTs < 600) return;
-        if (!stCluster || typeof stCluster.eachLayer !== 'function') return;
-        let best = null, bd = 1e9;
-        stCluster.eachLayer(function (c) {
-          if (!c.getLatLng || !c.getChildCount) return;
-          const lp = map.latLngToLayerPoint(c.getLatLng());
-          const d = lp.distanceTo(e.layerPoint);
-          if (d < bd) { bd = d; best = c; }
-        });
-        if (best && bd <= 90) {
-          _clTapTs = Date.now();
-          openClusterModal(best);
-        }
-      } catch (err) {}
-    });
+    document.addEventListener('click', function (e) {
+      const el = e.target && e.target.closest ? e.target.closest('.marker-cluster') : null;
+      if (!el || Date.now() - _clTapTs < 600) return;
+      _clTapTs = Date.now();
+      try { e.stopPropagation(); } catch (err) {}
+      openClusterModalAt(el);
+    }, true);
 
     // Модал кластера: список станций + «Приблизить» (как на старой карте)
-    function openClusterModal(cl) {
-      let kids = [];
-      try { if (typeof cl.getAllChildMarkers === 'function') kids = cl.getAllChildMarkers(); } catch (e) {}
-      const items = kids.map(m => m && m.zhData).filter(Boolean);
-      if (!items.length) {
-        try {
-          const ll = cl.getLatLng();
-          const z = map.getZoom();
-          items.push(...STATIONS_DB
-            .map(x => ({ x, d: Math.abs(x.lat - ll.lat) + Math.abs(x.lon - ll.lng) }))
-            .sort((a, b) => a.d - b.d).slice(0, Math.max(cl.getChildCount ? cl.getChildCount() : 8, 8))
-            .map(o => o.x));
-        } catch (e) {}
+    function openClusterModalAt(el) {
+      const r = el.getBoundingClientRect();
+      const cx = r.x + r.width / 2, cy = r.y + r.height / 2;
+      const ll = map.containerPointToLatLng(L.point(cx, cy));
+      const declared = parseInt((el.textContent || '').replace(/[^\d]/g, ''), 10) || 0;
+      const zoom = map.getZoom();
+      const mpp = 156543.03392 * Math.cos(ll.lat * Math.PI / 180) / Math.pow(2, zoom); // метров на пиксель
+      const radiusM = Math.max(64, 64) * mpp * 1.45;
+      const items = [];
+      const src = STATIONS_DB && STATIONS_DB.length ? STATIONS_DB : (OSM_FULL || []);
+      for (let k = 0; k < src.length; k++) {
+        const x = src[k];
+        if (typeof x.lat !== 'number' || typeof x.lon !== 'number') continue;
+        const dx = (x.lon - ll.lng) * Math.cos(ll.lat * Math.PI / 180) * 111320;
+        const dy = (x.lat - ll.lat) * 110540;
+        if (dx * dx + dy * dy <= radiusM * radiusM) items.push(x);
       }
       if (!items.length) {
-        try { cl.zoomToBounds({ animate: true }); } catch (e2) {}
+        const z = Math.min(zoom + 2, 13);
+        try { map.flyTo(ll, z, { animate: true }); } catch (e) { map.setView(ll, z); }
         return;
       }
-      const n = cl.getChildCount ? cl.getChildCount() : items.length;
+      openClusterModalView(items, declared || items.length, ll);
+    }
+    // Модал кластера: список станций + «Приблизить» (как на старой карте)
+    function openClusterModalView(items, declared, ll) {
+      const n = declared || items.length;
       items.sort((a, b) => (Number(b.pw) || 0) - (Number(a.pw) || 0));
       window.__clItems = items;
       let ov = document.getElementById('clModal');
@@ -764,13 +760,13 @@ var ZH_BUILD = 1846;
       const maxpw = pws.length ? Math.max(...pws) : 0;
       sub.textContent = (maxpw >= 50 ? 'До ' + maxpw + ' кВт' : 'Обычные станции') + ' · тап по станции — показать на карте';
       const list = document.getElementById('clList');
-      list.innerHTML = items.slice(0, 15).map((x, i) =>
-        '<div class="cl-item" onclick="clusterItem(' + i + ')">' +
+      list.innerHTML = items.slice(0, 15).map((x, i2) =>
+        '<div class="cl-item" onclick="clusterItem(' + i2 + ')">' +
         '<div class="cl-item-main"><div class="cl-item-name">' + ((x.name || x.addr || 'ЭЗС') + '').slice(0, 60) + '</div>' +
         '<div class="cl-item-meta">' + (x.pw ? x.pw + ' кВт' : 'мощность н/д') + ' · ' + ((x.addr || '').slice(0, 40)) + '</div></div>' +
         '<div class="cl-item-go">→</div></div>').join('') +
         (items.length > 15 ? '<div class="cl-more">и ещё ' + (items.length - 15) + ' станций в этом месте</div>' : '');
-      ov.dataset.zoom = cl.getLatLng().lat + ',' + cl.getLatLng().lng;
+      ov.dataset.zoom = ll.lat + ',' + ll.lng;
       ov.style.display = 'flex';
     }
     function closeClusterModal() { const ov = document.getElementById('clModal'); if (ov) ov.style.display = 'none'; }
@@ -1085,7 +1081,6 @@ var ZH_BUILD = 1846;
           polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
         map.addLayer(stCluster);
       }
-        stCluster.on('clusterclick', function (e) { try { openClusterModal(e.layer); } catch (err) {} });
       const pts = [];
       const srcList = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
       srcList.forEach((x) => {
