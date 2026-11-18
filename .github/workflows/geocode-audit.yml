@@ -35,8 +35,8 @@ jobs:
         run: |
           git config user.name "geo-audit-bot"
           git config user.email "actions@users.noreply.github.com"
-          git fetch origin astrowind-migration
-          git rebase origin/astrowind-migration || true
           git add -A
           git diff --cached --quiet || git commit -m "geocode audit: сверка координат ЭЗС (batch)"
+          git fetch origin astrowind-migration
+          git rebase origin/astrowind-migration
           git push origin HEAD:astrowind-migration
