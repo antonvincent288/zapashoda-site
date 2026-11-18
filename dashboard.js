@@ -723,16 +723,77 @@ var ZH_BUILD = 1846;
         });
         if (best && bd <= 90) {
           _clTapTs = Date.now();
-          try {
-            if (typeof best.zoomToBounds === 'function') best.zoomToBounds({ animate: true });
-            else throw new Error('no zoomToBounds');
-          } catch (err) {
-            const z = Math.min(map.getZoom() + 2, 13);
-            map.flyTo(best.getLatLng(), z, { animate: true });
-          }
+          openClusterModal(best);
         }
       } catch (err) {}
     });
+
+    // Модал кластера: список станций + «Приблизить» (как на старой карте)
+    function openClusterModal(cl) {
+      let kids = [];
+      try { if (typeof cl.getAllChildMarkers === 'function') kids = cl.getAllChildMarkers(); } catch (e) {}
+      const items = kids.map(m => m && m.zhData).filter(Boolean);
+      if (!items.length) {
+        try {
+          const ll = cl.getLatLng();
+          const z = map.getZoom();
+          items.push(...STATIONS_DB
+            .map(x => ({ x, d: Math.abs(x.lat - ll.lat) + Math.abs(x.lon - ll.lng) }))
+            .sort((a, b) => a.d - b.d).slice(0, Math.max(cl.getChildCount ? cl.getChildCount() : 8, 8))
+            .map(o => o.x));
+        } catch (e) {}
+      }
+      if (!items.length) {
+        try { cl.zoomToBounds({ animate: true }); } catch (e2) {}
+        return;
+      }
+      const n = cl.getChildCount ? cl.getChildCount() : items.length;
+      items.sort((a, b) => (Number(b.pw) || 0) - (Number(a.pw) || 0));
+      window.__clItems = items;
+      let ov = document.getElementById('clModal');
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'clModal';
+        ov.className = 'cl-modal-overlay';
+        ov.innerHTML = '<div class="cl-modal"><div class="cl-head"><div class="cl-title" id="clTitle">Кластер</div><button class="cl-close" onclick="closeClusterModal()" aria-label="Закрыть">✕</button></div><div class="cl-sub" id="clSub"></div><div class="cl-list" id="clList"></div><button class="cl-zoom" onclick="clusterZoom()">Приблизить карту</button></div>';
+        document.body.appendChild(ov);
+      }
+      document.getElementById('clTitle').textContent = 'Кластер · ' + n;
+      const sub = document.getElementById('clSub');
+      const pws = items.map(x => Number(x.pw) || 0);
+      const maxpw = pws.length ? Math.max(...pws) : 0;
+      sub.textContent = (maxpw >= 50 ? 'До ' + maxpw + ' кВт' : 'Обычные станции') + ' · тап по станции — показать на карте';
+      const list = document.getElementById('clList');
+      list.innerHTML = items.slice(0, 15).map((x, i) =>
+        '<div class="cl-item" onclick="clusterItem(' + i + ')">' +
+        '<div class="cl-item-main"><div class="cl-item-name">' + ((x.name || x.addr || 'ЭЗС') + '').slice(0, 60) + '</div>' +
+        '<div class="cl-item-meta">' + (x.pw ? x.pw + ' кВт' : 'мощность н/д') + ' · ' + ((x.addr || '').slice(0, 40)) + '</div></div>' +
+        '<div class="cl-item-go">→</div></div>').join('') +
+        (items.length > 15 ? '<div class="cl-more">и ещё ' + (items.length - 15) + ' станций в этом месте</div>' : '');
+      ov.dataset.zoom = cl.getLatLng().lat + ',' + cl.getLatLng().lng;
+      ov.style.display = 'flex';
+    }
+    function closeClusterModal() { const ov = document.getElementById('clModal'); if (ov) ov.style.display = 'none'; }
+    function clusterZoom() {
+      const ov = document.getElementById('clModal');
+      if (!ov || !ov.dataset.zoom) return;
+      const [la, ln] = ov.dataset.zoom.split(',').map(Number);
+      closeClusterModal();
+      const z = Math.min(map.getZoom() + 2, 13);
+      try { map.flyTo([la, ln], z, { animate: true }); } catch (e) { map.setView([la, ln], z); }
+    }
+    function clusterItem(i) {
+      const ov = document.getElementById('clModal');
+      if (!ov || !ov.dataset.zoom) return;
+      const [la, ln] = ov.dataset.zoom.split(',').map(Number);
+      closeClusterModal();
+      try {
+        const x = (window.__clItems || [])[i];
+        if (!x) return;
+        map.flyTo([x.lat, x.lon], Math.max(map.getZoom(), 14), { animate: true });
+        map.openPopup(L.popup({ maxWidth: 260 }).setLatLng([x.lat, x.lon]).setContent(buildRichPopup(x)));
+      } catch (e) {}
+    }
 
 
     // Контроль сборки: если прод уже новее — мягкий авто-reload
@@ -1041,6 +1102,7 @@ var ZH_BUILD = 1846;
           fillColor: isYa ? '#3FA9F5' : '#E85002',
           fillOpacity: (pw >= 50 || isYa) ? 0.95 : 0.7
         });
+        st.zhData = x;
         st.bindPopup(function () { return buildRichPopup(x); }, { maxWidth: 260 });
         pts.push(st);
       });
