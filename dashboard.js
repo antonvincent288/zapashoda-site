@@ -603,6 +603,7 @@
         switchView('map');
         setActiveTab('tabMapM');
       } else if (view === 'stations') {
+        renderNearby();
         switchView('list');
         setActiveTab('tabStationsM');
       } else if (view === 'car') {
@@ -967,12 +968,20 @@
 
     function renderNearby() {
       if (!STATIONS_DB || !STATIONS_DB.length) return;
-      const near = STATIONS_DB
+      let near = STATIONS_DB
         .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
         .filter(v => v.d <= 30)
         .sort((a, b) => a.d - b.d)
-        .slice(0, 10)
-        .map(v => ({
+        .slice(0, 10);
+      if (!near.length) {
+        near = STATIONS_DB
+          .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
+          .filter(v => v.d <= 150)
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 10);
+      }
+      if (!near.length) return;
+      near = near.map(v => ({
           name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'yandex' ? ' · Я' : ''),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
