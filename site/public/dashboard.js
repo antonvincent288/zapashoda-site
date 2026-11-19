@@ -1,4 +1,4 @@
-var ZH_BUILD = 1861;
+var ZH_BUILD = 1862;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -763,8 +763,8 @@ var ZH_BUILD = 1861;
       const list = document.getElementById('clList');
       list.innerHTML = items.slice(0, 15).map((x, i2) =>
         '<div class="cl-item" onclick="clusterItem(' + i2 + ')">' +
-        '<div class="cl-item-main"><div class="cl-item-name">' + ((x.name || x.addr || 'ЭЗС') + '').slice(0, 60) + '</div>' +
-        '<div class="cl-item-meta">' + (x.pw ? x.pw + ' кВт' : 'мощность н/д') + ' · ' + ((x.addr || '').slice(0, 40)) + '</div></div>' +
+        '<div class="cl-item-main"><div class="cl-item-name">' + ((x.n || x.name || x.a || 'ЭЗС') + '').slice(0, 60) + '</div>' +
+        '<div class="cl-item-meta">' + (x.pw ? x.pw + ' кВт' : 'мощность н/д') + ' · ' + ((x.a || x.addr || '').slice(0, 40)) + '</div></div>' +
         '<div class="cl-item-go">→</div></div>').join('') +
         (items.length > 15 ? '<div class="cl-more">и ещё ' + (items.length - 15) + ' станций в этом месте</div>' : '');
       ov.dataset.zoom = ll.lat + ',' + ll.lng;
@@ -1200,7 +1200,7 @@ var ZH_BUILD = 1861;
         if (ttl) ttl.textContent = 'Рядом с вами · ' + near.length + ' ' + pluralSt(near.length) + ' до ' + (Math.round(maxKm * 10) / 10) + ' км';
       } catch (e) {}
       near = near.map(v => ({
-          name: (v.x.op || v.x.n || 'ЭЗС') + (v.x.src === 'yandex' ? ' · Я' : ''),
+          name: (v.x.op || v.x.n || 'ЭЗС'),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
           type: (v.x.pw || 0) >= 50 ? 'dc' : (v.x.pw ? 'ac' : 'na'),
