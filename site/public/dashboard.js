@@ -1,4 +1,4 @@
-var ZH_BUILD = 1857;
+var ZH_BUILD = 1858;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -693,12 +693,7 @@ var ZH_BUILD = 1857;
     // Машина: полноэкранный вид (полноценные вью, крупные тап-цели)
     function openCarView() {
       const cv = document.getElementById('carView');
-      if (!cv) {
-        const hud = document.querySelector('.hud-left');
-        if (hud) hud.classList.add('open');
-        setActiveTab('tabCarM');
-        return;
-      }
+      if (!cv) return;
       let name = null, base = null;
       try { const c = JSON.parse(localStorage.getItem('zh-car') || 'null'); if (c && c.name) { name = c.name; base = c.base; } } catch (e) {}
       const modelEl = document.getElementById('carViewModel');
@@ -831,7 +826,7 @@ var ZH_BUILD = 1857;
     (function () {
       if (sessionStorage.getItem('zh-reloaded') === '1') return;
       try {
-        fetchTO('/charging/app-version.json?cb=' + Date.now(), { cache: 'no-store' }, 4000).then(function (r) {
+        fetchTO('/app-version.json?cb=' + Date.now(), { cache: 'no-store' }, 4000).then(function (r) {
           if (!r) return;
           return r.json();
         }).then(function (d) {
