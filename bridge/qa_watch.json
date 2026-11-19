@@ -1,6 +1,6 @@
 {
- "sitemap_count": 503,
- "sitemap_ok": 503,
+ "sitemap_count": 506,
+ "sitemap_ok": 506,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -43,12 +43,17 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "19.11 06:14",
+ "checked_at_msk": "19.11 10:45",
  "failures": [
   {
    "where": "page /search.html",
    "what": "HTTP 404",
    "crit": true
+  },
+  {
+   "where": "/",
+   "what": "нет счётчика 145 моделей",
+   "crit": false
   },
   {
    "where": "/models/",
@@ -76,6 +81,6 @@
    "crit": false
   }
  ],
- "failures_count": 6,
+ "failures_count": 7,
  "crit_count": 3
 }
