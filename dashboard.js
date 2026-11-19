@@ -863,6 +863,7 @@ var ZH_BUILD = 1867;
       } catch (e) {}
     })();
     function openSideMenu() {
+      var za = document.querySelector('.zh-ask'); if (za) za.remove();
       document.getElementById('sideMenu').classList.add('show');
       document.getElementById('sideOverlay').classList.add('show');
     }
