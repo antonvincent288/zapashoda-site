@@ -1,4 +1,4 @@
-var ZH_BUILD = 1862;
+var ZH_BUILD = 1864;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -317,6 +317,54 @@ var ZH_BUILD = 1862;
       d.addEventListener('mouseleave', hideTip);
     });
 
+    function nearestChartIdx(t) {
+      let best = 0, bd = 1e9;
+      CHART_TEMPS.forEach(function (s, i) {
+        var v = parseFloat(String(s).replace('−', '-').replace('+', ''));
+        var d = Math.abs(v - t);
+        if (d < bd) { bd = d; best = i; }
+      });
+      return best;
+    }
+    function catOf(x) {
+      if (x.src === 'yandex') return 'ya';
+      var s = ((x.s || []).join(' ') || '').toLowerCase();
+      var pw = Number(x.pw) || 0;
+      if (x.u || !s) return 'unv';
+      if (s.indexOf('gb_dc') >= 0 || (s.indexOf('gb/t') >= 0 && pw >= 50)) return 'dc';
+      if (s.indexOf('ccs') >= 0 || s.indexOf('type2_combo') >= 0) return 'adp';
+      return 'ac';
+    }
+    function legName(cat) {
+      return { dc: 'Быстрая DC (напрямую)', adp: 'Через переходник (CCS2)', ac: 'Медленная AC', unv: 'Не проверено', ya: 'Точка Яндекса' }[cat] || cat;
+    }
+    function countCat(cat) {
+      var c = 0;
+      var src = (baseMode === 'osm') ? (OSM_FULL || []) : STATIONS_DB.concat(((baseMode === 'all' && OSM_FULL) ? OSM_FULL : []));
+      src.forEach(function (x) { if (catOf(x) === cat) c++; });
+      return c;
+    }
+    function legClick(cat) {
+      mapFilterCat = (mapFilterCat === cat) ? null : cat;
+      document.querySelectorAll('.leg-chip').forEach(function (b) { b.classList.toggle('active', b.dataset.f === mapFilterCat); });
+      renderAllStations();
+      if (mapFilterCat) {
+        var n = countCat(cat);
+        var w = (n % 10 === 1 && n % 100 !== 11) ? 'точка' : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 'точки' : 'точек');
+        showToast('Показаны: ' + legName(cat) + ' — ' + n + ' ' + w);
+      } else { showToast('Фильтр снят — вся база'); }
+    }
+    function zhHelpToggle(e) {
+      var tip = document.getElementById('zhHelpTip');
+      if (!tip) return;
+      if (e) e.stopPropagation();
+      tip.classList.toggle('open');
+    }
+    document.addEventListener('click', function (e) {
+      var tip = document.getElementById('zhHelpTip');
+      if (tip && tip.classList.contains('open') && !(e.target.closest && e.target.closest('.zh-help'))) tip.classList.remove('open');
+    });
+
     function setScenario(el, m, temp, icon, desc, impact, idx) {
       state.scenMult = m;
       state.mult = ((state.tempPct !== undefined && state.tempPct !== null) ? state.tempPct : 1) * m;
@@ -328,7 +376,11 @@ var ZH_BUILD = 1862;
       document.getElementById('weatherCity').textContent = state.city + ' · ' + desc;
       document.getElementById('impactBadge').textContent = impact;
       document.getElementById('weatherBadge').textContent = el.textContent + ' · ' + rt;
-      setChartActive(idx);
+      let ci = (typeof chartActive === 'number') ? chartActive : idx;
+      if (m === .72) ci = 0;
+      else if (m === .88) ci = 5;
+      else if (m === 1) { if (typeof state.temp === 'number') ci = nearestChartIdx(state.temp); }
+      setChartActive(ci);
       recalc(true);
     }
 
@@ -337,12 +389,12 @@ var ZH_BUILD = 1862;
     function switchDb(mode) {
       const yandex = mode === 'yandex';
       document.getElementById('tabOurBase').classList.toggle('active', !yandex);
-      document.getElementById('tabYandex').classList.toggle('active', yandex);
+      var _ty = document.getElementById('tabYandex'); if (_ty) _ty.classList.toggle('active', yandex);
       // Яндекс-слой накладывается поверх нашей базы, а не заменяет ее
       if (yandex) yanLayer.addTo(map); else map.removeLayer(yanLayer);
       const fa = document.getElementById('filterArea');
       if (fa) fa.style.opacity = yandex ? '0.45' : '1';
-      document.getElementById('yandexNote').style.display = yandex ? 'block' : 'none';
+      var _yn = document.getElementById('yandexNote'); if (_yn) _yn.style.display = yandex ? 'block' : 'none';
       showToast(yandex ? 'Слой Яндекс.Карт наложен на нашу карту' : 'Показана только наша база');
     }
 
@@ -1068,7 +1120,7 @@ var ZH_BUILD = 1862;
       }).catch(() => {});
     }
 
-    let stCluster = null;
+    let stCluster = null; let mapFilterCat = null;
     let baseMode = 'all';
     let OSM_FULL = null;
     let osmLoading = false;
@@ -1077,7 +1129,7 @@ var ZH_BUILD = 1862;
       if (!STATIONS_DB || !STATIONS_DB.length || typeof L.markerClusterGroup !== 'function') return;
       if (stCluster) { stCluster.clearLayers(); }
       else {
-        stCluster = L.markerClusterGroup({ chunkedLoading: true, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14, zoomToBoundsOnClick: false,
+        stCluster = L.markerClusterGroup({ chunkedLoading: true, animate: false, showCoverageOnHover: true, maxClusterRadius: 64, disableClusteringAtZoom: 14, zoomToBoundsOnClick: false,
           polygonOptions: { color: '#00E5FF', weight: 1.2, fillColor: '#00E5FF', fillOpacity: 0.06, dashArray: '4,6', interactive: false } });
         map.addLayer(stCluster);
       }
@@ -1088,6 +1140,7 @@ var ZH_BUILD = 1862;
         if (baseMode === 'base' && (x.src === 'yandex' || x.src === 'osm')) return;
         if (baseMode === 'yandex' && x.src !== 'yandex') return;
         if (baseMode === 'osm' && x.src !== 'osm') return;
+        if (mapFilterCat) { if (catOf(x) !== mapFilterCat) return; }
         const pw = Number(x.pw) || 0;
         const isYa = x.src === 'yandex';
         const st = L.circleMarker([x.lat, x.lon], {
