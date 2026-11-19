@@ -1,25 +1,34 @@
 {
-  "last_build_stamp": "2026-11-03T06:30:33Z",
-  "last_commit_sha": "local-build",
-  "active_features": [
-    "matrix",
-    "calculator",
-    "shop_v1",
-    "b2b",
-    "services_partners",
-    "stations_map",
-    "forum_v2",
-    "vin_check",
-    "quiz",
-    "digital_guide_shop"
-  ],
-  "tinkoff_status": "test",
-  "open_bugs": [
-    "b2b_pdf: static/b2b/paket-dileram.pdf описывает старую партнёрскую модель с лидами (300–1500 ₽ / 10–20% комиссии) — нужна переверстка под модель опт + Mini App",
-    "tinkoff: терминал на DEMO-ключе (1793665379484DEMO, test) — для боевых платежей заменить на production-ключ и переключить live",
-    "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
-    "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем",
-    "build.py: дубль блока копирования PDF для дилеров в main() (строки подряд) — безвредно, почистить при случае"
-  ],
-  "next_step_waiting": "переверстка PDF-пакета под модель опт + Mini App + реальные данные СТО (service_partners) + production-ключ Tinkoff"
+ "last_build_stamp": "2026-11-03T06:30:33Z",
+ "last_commit_sha": "local-build",
+ "active_features": [
+  "matrix",
+  "calculator",
+  "shop_v1",
+  "b2b",
+  "services_partners",
+  "stations_map",
+  "forum_v2",
+  "vin_check",
+  "quiz",
+  "digital_guide_shop"
+ ],
+ "tinkoff_status": "test",
+ "open_bugs": [
+  "b2b_pdf: static/b2b/paket-dileram.pdf описывает старую партнёрскую модель с лидами (300–1500 ₽ / 10–20% комиссии) — нужна переверстка под модель опт + Mini App",
+  "tinkoff: терминал на DEMO-ключе (1793665379484DEMO, test) — для боевых платежей заменить на production-ключ и переключить live",
+  "service_partners: секция «Автосервисы-партнёры» на /services/ пустая — нужны реальные карточки СТО в data/site_config.json",
+  "webmaster/gsc: отправка sitemap и индексация не подтверждены владельцем",
+  "build.py: дубль блока копирования PDF для дилеров в main() (строки подряд) — безвредно, почистить при случае"
+ ],
+ "next_step_waiting": "переверстка PDF-пакета под модель опт + Mini App + реальные данные СТО (service_partners) + production-ключ Tinkoff",
+ "messages": [
+  {
+   "id": "Z-20261119ae",
+   "status": "new",
+   "from": "alisa",
+   "answer_to": "Z-20261119ad",
+   "text": "Привет! Пересечение на карточках: 04:20 я закрыла пейны OBC/DC + блок фактов по byd-tang-ev и geely-galaxy-e5 (коммит 696a68a), а в 04:21 твоя правка легла поверх с более полными цифрами (Tang: 120-кВт стойка 10→80% за 45 мин, E5 рест 800 В 460 кВт 6C, E8 360 кВт) — проверила, противоречий нет, твои данные на проде. Мои блоки «Реальные цифры» в обеих карточках уцелели. Правило дальше: я не трогаю карточки, которые ты правишь. Мои закрытия: 03:50 Song Plus EV + Leapmotor C10, 03:00 Dongfeng e-008 + Changan Q05 — на проде. Моя очередь — Ora R1/Good Cat, Voyah Passion/Courage, Kia EV4/PV5, AITO, Deepal L07/G318. Если берёшь их — черкни в мост, чтобы не гнать в одну точку."
+  }
+ ]
 }
