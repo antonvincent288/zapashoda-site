@@ -1,4 +1,4 @@
-var ZH_BUILD = 1858;
+var ZH_BUILD = 1859;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -66,13 +66,13 @@ var ZH_BUILD = 1858;
 
     // Подпись зоны доезда у метки машины (видна всегда, даже когда кольцо больше экрана)
     const isoLabel = L.marker(userPos, {
-      icon: L.divIcon({ className: 'iso-label', html: '<span>432 км · куда доеду</span>', iconSize: [0, 0], iconAnchor: [0, 0] }),
+      icon: L.divIcon({ className: 'iso-label', html: '<span>432 км · запас хода</span>', iconSize: [0, 0], iconAnchor: [0, 0] }),
       interactive: false
     }).addTo(map);
 
     function updateIsoLabel(km) {
       isoLabel.setLatLng(userPos);
-      isoLabel.setIcon(L.divIcon({ className: 'iso-label', html: '<span>' + km + ' км · куда доеду</span>', iconSize: [0, 0], iconAnchor: [0, 0] }));
+      isoLabel.setIcon(L.divIcon({ className: 'iso-label', html: '<span>' + km + ' км · запас хода</span>', iconSize: [0, 0], iconAnchor: [0, 0] }));
     }
 
     // Авто-подгонка обзора под кольцо (чтобы зона доезда влезла в экран)
@@ -700,7 +700,7 @@ var ZH_BUILD = 1858;
       if (modelEl) modelEl.textContent = name || 'Модель не выбрана';
       const fEl = document.getElementById('carViewFormula');
       const hf = document.getElementById('heroFormula');
-      if (fEl) fEl.textContent = (hf && hf.textContent && hf.textContent.indexOf('При заряде') === 0) ? hf.textContent : (name ? 'Задайте заряд — покажу, куда хватит хода' : 'Выберите модель и заряд — покажу, куда доедете');
+      if (fEl) fEl.textContent = (hf && hf.textContent && hf.textContent.indexOf('При заряде') === 0) ? hf.textContent : (name ? 'Задайте заряд — покажем запас хода' : 'Выберите модель и заряд — покажем запас хода');
       cv.classList.add('show');
       setActiveTab('tabCarM');
     }
@@ -713,9 +713,14 @@ var ZH_BUILD = 1858;
       closeCarView();
       try { if (typeof driveNearest === 'function') driveNearest(); } catch (e) {}
     }
+    function carViewModelPick() {
+      closeCarView();
+      try { if (typeof openCarModal === 'function') openCarModal(); } catch (e) {}
+    }
+
     function carViewRange() {
       closeCarView();
-      try { if (userPos) { map.flyTo(userPos, 11); showToast('Кольцо показывает, куда хватит хода'); } } catch (e) {}
+      try { if (userPos) { map.flyTo(userPos, 11); showToast('Запас хода показан на карте'); } } catch (e) {}
     }
 
     function mView(view) {
