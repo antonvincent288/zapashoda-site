@@ -690,39 +690,6 @@ var ZH_BUILD = 1860;
       if (el) el.classList.add('active');
     }
 
-    // Машина: полноэкранный вид (полноценные вью, крупные тап-цели)
-    function openCarView() {
-      const cv = document.getElementById('carView');
-      if (!cv) return;
-      let name = null, base = null;
-      try { const c = JSON.parse(localStorage.getItem('zh-car') || 'null'); if (c && c.name) { name = c.name; base = c.base; } } catch (e) {}
-      const modelEl = document.getElementById('carViewModel');
-      if (modelEl) modelEl.textContent = name || 'Модель не выбрана';
-      const fEl = document.getElementById('carViewFormula');
-      const hf = document.getElementById('heroFormula');
-      if (fEl) fEl.textContent = (hf && hf.textContent && hf.textContent.indexOf('При заряде') === 0) ? hf.textContent : (name ? 'Задайте заряд — покажем запас хода' : 'Выберите модель и заряд — покажем запас хода');
-      cv.classList.add('show');
-      setActiveTab('tabCarM');
-    }
-    function closeCarView() {
-      const cv = document.getElementById('carView');
-      if (cv) cv.classList.remove('show');
-      setActiveTab('tabMapM');
-    }
-    function carViewNearest() {
-      closeCarView();
-      try { if (typeof driveNearest === 'function') driveNearest(); } catch (e) {}
-    }
-    function carViewModelPick() {
-      closeCarView();
-      try { if (typeof openCarModal === 'function') openCarModal(); } catch (e) {}
-    }
-
-    function carViewRange() {
-      closeCarView();
-      try { if (userPos) { map.flyTo(userPos, 11); showToast('Запас хода показан на карте'); } } catch (e) {}
-    }
-
     function mView(view) {
       if (view === 'map') {
         document.querySelector('.hud-left').classList.remove('open');
@@ -966,9 +933,8 @@ var ZH_BUILD = 1860;
         } catch (e) {}
       }
       if (!g || geoApplied) {
-        showToast('Не определили ваш город — выберите его в панели снизу');
+        showToast('Не определили ваш город — выберите его в чипах сверху');
         try { cityStyleInject(); } catch (e) {}
-        try { openCitySheet(); } catch (e) {}
         loadWeather();
         return;
       }
@@ -1549,7 +1515,7 @@ var ZH_BUILD = 1860;
           <div class="st-top">
             <div style="min-width: 0;">
               <div class="st-name">${s.name}</div>
-              <div class="st-addr">${s.addr} · ${s.km} км</div>
+              <div class="st-addr">${s.addr}&nbsp;·&nbsp;${s.km} км</div>
             </div>
             <div class="st-kw" style="color: ${typeColor(s.type)};">${kwLabel(s.kw)}</div>
           </div>
