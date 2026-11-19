@@ -360,11 +360,14 @@ var ZH_BUILD = 1867;
       renderAllStations();
       showToast('Вся база — ' + (STATIONS_DB ? STATIONS_DB.length : 0) + ' точек');
     }
+    var zhTipTimer = null;
     function zhHelpToggle(e) {
       var tip = document.getElementById('zhHelpTip');
       if (!tip) return;
       if (e) e.stopPropagation();
       tip.classList.toggle('open');
+      if (zhTipTimer) { clearTimeout(zhTipTimer); zhTipTimer = null; }
+      if (tip.classList.contains('open')) { zhTipTimer = setTimeout(function(){ tip.classList.remove('open'); }, 6000); }
     }
     document.addEventListener('click', function (e) {
       var tip = document.getElementById('zhHelpTip');
