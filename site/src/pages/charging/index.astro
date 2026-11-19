@@ -58,7 +58,6 @@
       .glass-pill{max-height:44px}
       .drive-chip{height:29px;padding:0 9px}
     }
-        }
     /* zh-polish: бар — кнопки одной высоты, без переносов */
     .nav-tab,.seg-btn,.menu-link,.menu-btn,.btn-ghost,.btn-primary,.badge-count{white-space:nowrap}
     .top-bar .btn-ghost,.top-bar .btn-primary{min-height:0!important;min-width:0!important;height:30px;display:inline-flex;align-items:center;justify-content:center}
@@ -114,14 +113,4 @@
       .leg-chip{height:26px;padding:0 7px;font-size:10.5px;gap:4px}
       .leg-chip .cnt{display:none}
     }
-    </style>function legAll(){
-      try{
-        mapFilterCat = null;
-        document.querySelectorAll('.leg-chip').forEach(function(b){ b.classList.toggle('active', b.dataset.f === 'all'); });
-        renderAllStations();
-        var n = (typeof STATIONS_DB !== 'undefined') ? STATIONS_DB.length : 0;
-        showToast('Вся база — ' + n + ' точек');
-      }catch(e){}
-    }
-    (function(){ try{ var _lc = legClick; window.legClick = function(cat){ try{ _lc(cat); }finally{ var al = document.querySelector('.leg-chip.leg-all'); if(al) al.classList.toggle('active', !mapFilterCat); } }; }catch(e){} })();
-    
+    </style>
