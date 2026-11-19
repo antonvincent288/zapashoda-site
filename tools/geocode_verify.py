@@ -81,12 +81,16 @@ def main():
         if not is_real_address(addr):
             report['non_address'] += 1
             continue
-        res = geocode_photon(addr)
-        if res is None:
-            res = geocode_nominatim(addr)
+        res = None
+        for attempt in range(4):
+            res = geocode_photon(addr)
+            if res is None:
+                res = geocode_nominatim(addr)
+            if res is not None:
+                break
+            time.sleep(3 + attempt * 8)   # 3, 11, 19 c — пережидаем лимиты геокодеров
         if res is None:
             report['geocoder_blocked'] = True
-            time.sleep(2.0)
             continue
         lat, lon, typ, disp = res
         d = haversine((x['lat'], x['lon']), (lat, lon))
