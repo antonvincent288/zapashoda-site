@@ -13,6 +13,10 @@ on:
         description: "Индекс первой точки батча"
         required: false
         default: "0"
+      chain:
+        description: "1 = продолжать цепочку батчей, 0 = один батч"
+        required: false
+        default: "0"
 
 permissions:
   contents: write
@@ -49,10 +53,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUDIT_LIMIT: ${{ github.event.inputs.limit || '200' }}
           AUDIT_OFFSET: ${{ github.event.inputs.offset || '0' }}
+          CHAIN: ${{ github.event.inputs.chain || '0' }}
         run: |
           LIMIT=${AUDIT_LIMIT:-200}
           NEXT=$((AUDIT_OFFSET + LIMIT))
-          if [ "$NEXT" -lt 5337 ]; then
+          if [ "$CHAIN" = "1" ] && [ "$NEXT" -lt 5337 ]; then
             sleep 15
             gh api repos/antonvincent288/zapashoda-site/actions/workflows/geocode-verify.yml/dispatches \
               -f ref=main -f "inputs[limit]=$LIMIT" -f "inputs[offset]=$NEXT" || echo "dispatch failed"
