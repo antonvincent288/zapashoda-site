@@ -396,6 +396,7 @@ var ZH_BUILD = 1867;
       if (fa) fa.style.opacity = yandex ? '0.45' : '1';
       var _yn = document.getElementById('yandexNote'); if (_yn) _yn.style.display = yandex ? 'block' : 'none';
       showToast(yandex ? 'Слой Яндекс.Карт наложен на нашу карту' : 'Показана только наша база');
+      try { updateChipCounts(); } catch (e) {}
     }
 
     function switchView(view) {
