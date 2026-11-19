@@ -2,21 +2,42 @@
 <title>Админка — Запас хода</title>
 <link rel="stylesheet" href="/style.css">
 <style>
-.ahero{max-width:820px;margin:26px auto;padding:0 18px}
+.ahero{max-width:1000px;margin:26px auto;padding:0 18px}
 .acard{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:20px;margin-bottom:14px}
 .acard h2{margin:0 0 12px;font-size:17px}
 .acard label{display:block;font-size:13px;color:#6e6e73;margin:12px 0 4px}
-.acard input[type=text],.acard textarea{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit}
+.acard input[type=text],.acard input[type=password],.acard textarea,.acard select{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit}
 .acard textarea{min-height:70px;resize:vertical}
+.acard textarea.big{min-height:340px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.5}
 .arow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .abtn{background:#0071e3;color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer}
 .abtn.gray{background:#f2f2f7;color:#1d1d1f}
+.abtn.red{background:#c0392b;color:#fff}
 .abtn:disabled{opacity:.5;cursor:default}
-#amsg{font-size:13px;margin-left:8px}
+#amsg,#cmsg{font-size:13px;margin-left:8px}
 .hint{font-size:12.5px;color:#6e6e73;line-height:1.5}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid rgba(0,0,0,.12);background:#f2f2f7;color:#1d1d1f;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.tab.on{background:#0071e3;color:#fff;border-color:#0071e3}
+.pane{display:none}
+.pane.on{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.badge{display:inline-block;background:#eef6ff;color:#0369a1;border-radius:8px;padding:2px 8px;font-size:11.5px;margin-left:6px}
 </style></head><body>
 <header><div class="hwrap"><a class="brand" href="/index.html" title="Запас хода">⚡<span>Запас хода</span></a><nav></nav></div></header>
 <main><div class="ahero">
+
+<div class="tabs">
+ <button class="tab on" data-p="p-settings">Настройки</button>
+ <button class="tab" data-p="p-blog">Статьи</button>
+ <button class="tab" data-p="p-pain">Pain-гайды</button>
+ <button class="tab" data-p="p-models">Карточки моделей</button>
+ <button class="tab" data-p="p-help">Справка</button>
+</div>
+
+<!-- ================= НАСТРОЙКИ ================= -->
+<div class="pane on" id="p-settings">
 <div class="acard"><h2>Вход</h2>
 <label>Токен GitHub (fine-grained, права Contents: Read+Write на репо zapashoda-site). Хранится только в этом браузере.</label>
 <input type="password" id="pat" placeholder="github_pat_...">
@@ -33,7 +54,7 @@
 <input type="text" id="phone" placeholder="+7 ...">
 <label>Свой заголовок главной (пусто — стандартный «Как зарядить и чем лечить ваш электромобиль»)</label>
 <input type="text" id="htitle" placeholder="">
-<label>Свой подзаголовок главной (пусто — стандартный)</label>
+<label>Свой подзоловок главной (пусто — стандартный)</label>
 <textarea id="hsub" placeholder=""></textarea>
 <label>Токен Telegram-бота для заявок (создайте ОТДЕЛЬНОГО бота в @BotFather для лидов — не используйте основного; формат 1234567890:AA...)</label>
 <input type="password" id="tgtoken" placeholder="1234567890:AA...">
@@ -41,36 +62,242 @@
 <input type="text" id="tgchat" placeholder="-100...">
 <div class="arow"><button class="abtn" id="saveBtn">Сохранить и опубликовать</button><button class="abtn gray" id="reloadBtn">Перечитать</button></div>
 <p class="hint">После сохранения сайт пересоберётся автоматически за 1–2 минуты (GitHub Actions). Обновите страницу сайта с очисткой кэша (Ctrl+F5).</p></div>
-<div class="acard"><h2>Справка</h2>
-<p class="hint">Токен создаётся на github.com → Settings → Developer settings → Fine-grained tokens: выбрать репозиторий antonvincent288/zapashoda-site, права Contents: Read and write. Токен живёт до срока, указанного при создании. Токен не отправляется никуда, кроме api.github.com, и хранится в localStorage вашего браузера.</p></div>
-</div></main></body>
+</div>
+
+<!-- ================= РЕДАКТОР КОНТЕНТА ================= -->
+<div class="pane" id="p-blog"><div class="acard" id="c-editor"><h2>Статьи блога <span class="badge">ветка astrowind-migration</span></h2></div></div>
+<div class="pane" id="p-pain"><div class="acard" id="c-editor2"><h2>Pain-гайды <span class="badge">ветка astrowind-migration</span></h2></div></div>
+<div class="pane" id="p-models"><div class="acard" id="c-editor3"><h2>Карточки моделей <span class="badge">ветка astrowind-migration</span></h2></div></div>
+
+<!-- ================= СПРАВКА ================= -->
+<div class="pane" id="p-help"><div class="acard"><h2>Как войти</h2>
+<p class="hint">Токен создаётся на github.com → Settings → Developer settings → Fine-grained tokens: выбрать репозиторий antonvincent288/zapashoda-site, права Contents: Read and write. Токен живёт до срока, указанного при создании. Токен не отправляется никуда, кроме api.github.com, и хранится в localStorage вашего браузера. Один токен — для всех вкладок.</p>
+<h2 style="margin-top:14px">Статьи и pain-гайды</h2>
+<p class="hint">Тело статьи (body_html) — HTML. Обязательная структура: начинается с &lt;div class="art-body"&gt;, разделы — &lt;h2 id="s1"&gt;Заголовок&lt;/h2&gt;, s2, s3... Первый раздел обычно «Коротко» с абзацем, начинающимся с &lt;b&gt;Прямой ответ.&lt;/b&gt; — именно его цитируют ИИ-поисковики. Внутри абзацев уместны обращения «вы». FAQ вводится построчно в формате «Вопрос? :: Ответ» (два двоеточия с пробелами). «Заголовки» — построчно «s1 :: Коротко». Поле og оставляйте пустым — единая фирменная карта подставится сама. Сохранение = один коммит в ветку astrowind-migration, сайт пересоберётся за 2–5 минут. Если соседний бот сейчас пишет в репо, кнопка сохранения подождёт — следуйте подсказке.</p>
+<h2 style="margin-top:14px">Карточки моделей</h2>
+<p class="hint">body_html карточки — большой монолитный HTML. Меняйте аккуратно или только заголовок/описание. Числа в факт-таблицу и блок «Реальные цифры из практики» лучше доверить конвейеру — они сверяются с форумными источниками. Удаление карточек запрещено.</p>
+<h2 style="margin-top:14px">Настройки</h2>
+<p class="hint">Вкладка «Настройки» пишет конфиг на ветку main — как и раньше. Баннер, Метрика, заголовок главной, телефон, бот заявок.</p>
+</div></div>
+
+</div></main>
 <script>
+/* ---------- TABS ---------- */
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
+  document.querySelectorAll('.pane').forEach(function(x){x.classList.remove('on')});
+  t.classList.add('on');document.getElementById(t.dataset.p).classList.add('on');
+};});
+
+/* ---------- AUTH ---------- */
+var PAT=localStorage.getItem('zap_admin_pat')||'',USER=localStorage.getItem('zap_admin_user')||'antonvincent288';
+function boot(){
+  document.getElementById('pat').value=PAT;document.getElementById('user').value=USER;
+  if(PAT){setTimeout(function(){try{document.getElementById('loadBtn').onclick();}catch(e){}},50);}
+}
+function saveAuth(){
+  PAT=document.getElementById('pat').value.trim();USER=document.getElementById('user').value.trim()||'antonvincent288';
+  localStorage.setItem('zap_admin_pat',PAT);localStorage.setItem('zap_admin_user',USER);
+}
+function H(){return {'Authorization':'Bearer '+PAT,'Accept':'application/vnd.github+json','User-Agent':'admin'}}
+function b64(s){return btoa(unescape(encodeURIComponent(s)))}
+function unb64(s){return decodeURIComponent(escape(atob(s.replace(/\s/g,''))))}
+
+/* ---------- WINDOW CHECK (соседка) ---------- */
+function windowCheck(cb){
+  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/actions/runs?branch=astrowind-migration&per_page=5',{headers:H()})
+  .then(function(r){return r.json()}).then(function(j){
+    var busy=(j.workflow_runs||[]).filter(function(r){return ['in_progress','queued','waiting'].indexOf(r.status)>=0});
+    if(busy.length){if(!confirm('Соседний бот сейчас пишет в репо (ран '+busy[0].head_sha.slice(0,7)+'). Подождать и повторить через минуту?\n\nOK — проверить снова, Отмена — отказаться.')){cb('busy');}else{setTimeout(function(){windowCheck(cb)},60000);}}
+    else cb('ok');
+  }).catch(function(e){cb('err',e.message)});
+}
+
+/* ---------- Настройки (как было) ---------- */
 var FIELDS=['metrika_id','banner_text','banner_link','phone','hero_title','hero_sub','tg_lead_bot_token','tg_lead_chat_id'];
 var MAP={metrika:'metrika_id',banner:'banner_text',blink:'banner_link',phone:'phone',htitle:'hero_title',hsub:'hero_sub',tgtoken:'tg_lead_bot_token',tgchat:'tg_lead_chat_id'};
-var PAT='',USER='';
 function msg(t){document.getElementById('amsg').textContent=t;}
 document.getElementById('loadBtn').onclick=function(){
-  PAT=document.getElementById('pat').value.trim();USER=document.getElementById('user').value.trim()||'antonvincent288';
-  if(!PAT){msg('Введите токен');return;}
-  msg('Загрузка…');
-  var h={'Authorization':'Bearer '+PAT,'Accept':'application/vnd.github+json'};
-  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/data/site_config.json?ref=main',{headers:h})
+  saveAuth();if(!PAT){msg('Введите токен');return;}
+  msg('Загрузка...');
+  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/data/site_config.json?ref=main',{headers:H()})
   .then(function(r){if(r.status===404){document.getElementById('editor').style.display='block';msg('Файла настроек нет — будут значения по умолчанию');return null;}
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.json();})
-  .then(function(j){if(!j)return;var cfg=JSON.parse(atob(j.content.replace(/\s/g,'')));FIELDS.forEach(function(f){var el=document.getElementById(f in MAP?Object.keys(MAP).find(function(k){return MAP[k]===f}):f);if(el)el.value=cfg[f]!==undefined?cfg[f]:'';});document.getElementById('editor').style.display='block';msg('Загружено');})
+    if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+  .then(function(j){if(!j)return;var cfg=JSON.parse(unb64(j.content));FIELDS.forEach(function(f){var el=document.getElementById(Object.keys(MAP).find(function(k){return MAP[k]===f})||f);if(el)el.value=cfg[f]!==undefined?cfg[f]:'';});document.getElementById('editor').style.display='block';msg('Загружено');})
   .catch(function(e){msg('Ошибка: '+e.message)});
 };
 document.getElementById('reloadBtn').onclick=function(){document.getElementById('loadBtn').onclick();};
 document.getElementById('saveBtn').onclick=function(){
   var cfg={};FIELDS.forEach(function(f){cfg[f]=document.getElementById(Object.keys(MAP).find(function(k){return MAP[k]===f})).value.trim();});
   cfg.metrika_id=parseInt(cfg.metrika_id||'0',10)||0;
-  msg('Сохранение…');
-  var h={'Authorization':'Bearer '+PAT,'Accept':'application/vnd.github+json'};
-  var body={message:'Config from admin: banner/metrika/hero/phone',content:btoa(unescape(encodeURIComponent(JSON.stringify(cfg,null,2)))),branch:'main'};
-  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/data/site_config.json',{method:'PUT',headers:h,body:JSON.stringify(body)})
-  .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error(e.message||('HTTP '+r.status))});return r.json();})
-  .then(function(){msg('Сохранено! Сайт пересобирается — обновите страницу через 2 минуты (Ctrl+F5)');})
-  .catch(function(e){msg('Ошибка: '+e.message)});
+  msg('Сохранение...');
+  windowCheck(function(st){
+    if(st!=='ok'){msg(st==='busy'?'Отложено: соседка пишет':'Ошибка проверки окна');return;}
+    fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/data/site_config.json',{method:'PUT',headers:H(),body:JSON.stringify({message:'Config from admin: banner/metrika/hero/phone',content:b64(JSON.stringify(cfg,null,2)),branch:'main'})})
+    .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error(e.message||('HTTP '+r.status))});return r.json();})
+    .then(function(){msg('Сохранено! Сайт пересобирается — обновите страницу через 2 минуты (Ctrl+F5)');})
+    .catch(function(e){msg('Ошибка: '+e.message)});
+  });
 };
-</script></html>
+
+/* ---------- Общий редактор контента ---------- */
+var DIRS={blog:{dir:'site/src/data/articles/blog',kind:'article',base:'/blog/'},pain:{dir:'site/src/data/articles/pain',kind:'article',base:'/pain/'},models:{dir:'site/src/data/models',kind:'model',base:'/models/'}};
+var CUR={}; // pane -> state {path, sha, data}
+function cmsg(pane,t){document.getElementById('cmsg-'+pane).textContent=t;}
+function buildEditor(pane,kind,label){
+  var c=document.getElementById('c-editor-'+pane);
+  c.innerHTML='<h2>'+label+' <span class="badge">ветка astrowind-migration</span></h2>'
+   +'<label>Токен GitHub (тот же, что для настроек)</label><input type="password" id="cpat-'+pane+'" placeholder="github_pat_...">'
+   +'<div class="arow"><select id="clist-'+pane+'" style="flex:1"></select>'
+   +'<button class="abtn" id="cload-'+pane+'">Открыть</button><button class="abtn gray" id="cnew-'+pane+'">Новый</button><button class="abtn gray" id="creload-'+pane+'">Обновить список</button><span id="cmsg-'+pane+'" class="hint"></span></div>'
+   +'<div id="cform-'+pane+'" style="display:none"><div class="grid2">'
+   +'<div><label>Slug (адрес, латиница и дефис)</label><input type="text" id="f_slug-'+pane+'" placeholder="kia-ev9-zaryadka"></div>'
+   +'<div><label>Заголовок (title)</label><input type="text" id="f_title-'+pane+'"></div>'
+   +'<div><label>Описание (desc) — 1–2 предложения с ключами</label><textarea id="f_desc-'+pane+'"></textarea></div>'
+   +'<div><label>Категория</label><input type="text" id="f_cat-'+pane+'" list="cats-'+pane+'"><datalist id="cats-'+pane+'"><option>Гайд</option><option>Разбор</option><option>Руководство</option><option>Рынок</option><option>Зарядка</option><option>ЭЗС</option><option>Бизнес</option><option>Инфраструктура</option><option>Новости</option></datalist></div>'
+   +'<div><label>Время чтения, мин</label><input type="text" id="f_min-'+pane+'" value="6"></div>'
+   +'<div><label>Дата (YYYY-MM-DD)</label><input type="text" id="f_date-'+pane+'" value="'+new Date().toISOString().slice(0,10)+'"></div>'
+   +'</div>'
+   +'<label>OG-картинка (пусто — фирменная по умолчанию)</label><input type="text" id="f_og-'+pane+'" placeholder="/assets/og/default.png">'
+   +'<label>Заголовки разделов — построчно «s1 :: Коротко» (для карточек оставьте пусто)</label><textarea id="f_head-'+pane+'"></textarea>'
+   +'<label>FAQ — построчно «Вопрос? :: Ответ»</label><textarea id="f_faq-'+pane+'"></textarea>'
+   +'<label>Тело (body_html) — HTML. Начало: &lt;div class="art-body"&gt;</label><textarea id="f_body-'+pane+'" class="big"></textarea>'
+   +'<label>«Читайте также» (extra_html) — HTML со ссылками; пусто — ок</label><textarea id="f_extra-'+pane+'"></textarea>'
+   +'<div class="arow"><button class="abtn" id="csave-'+pane+'">Сохранить и опубликовать</button><button class="abtn gray" id="cdel-'+pane+'">Удалить</button><button class="abtn gray" id="cprev-'+pane+'">Показать JSON</button><a id="clink-'+pane+'" class="hint" style="align-self:center" target="_blank"></a></div>'
+   +'<label id="cjwrap-'+pane+'" style="display:none"><label>JSON предпросмотр:</label><textarea class="big" id="cjson-'+pane+'"></textarea></label>'
+   +'</div>';
+  document.getElementById('cpat-'+pane).value=PAT;
+  document.getElementById('cload-'+pane).onclick=function(){loadContent(pane)};
+  document.getElementById('creload-'+pane).onclick=function(){fillList(pane)};
+  document.getElementById('cnew-'+pane).onclick=function(){newContent(pane)};
+  document.getElementById('csave-'+pane).onclick=function(){saveContent(pane)};
+  document.getElementById('cdel-'+pane).onclick=function(){delContent(pane)};
+  document.getElementById('cprev-'+pane).onclick=function(){
+    var w=document.getElementById('cjwrap-'+pane);w.style.display=w.style.display==='none'?'block':'none';
+    try{document.getElementById('cjson-'+pane).value=collect(pane);}catch(e){cmsg(pane,'Ошибка сборки: '+e.message)}
+  };
+}
+buildEditor('blog','article','Статьи блога');buildEditor('pain','article','Pain-гайды');buildEditor('models','model','Карточки моделей');
+function fillList(pane){
+  saveAuth();if(!PAT){cmsg(pane,'Введите токен');return;}
+  document.getElementById('cpat-'+pane).value=PAT;
+  cmsg(pane,'Список...');
+  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/'+DIRS[pane].dir+'?ref=astrowind-migration&per_page=100',{headers:H()})
+  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(function(arr){var sel=document.getElementById('clist-'+pane);sel.innerHTML='';
+    var names=arr.filter(function(x){return x.name.endsWith('.json')}).map(function(x){return x.name.slice(0,-5)});
+    if(document.getElementById('cnew-'+pane)&&names.length===100){/* ок */}
+    names.sort().forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+    cmsg(pane,'Всего: '+names.length);
+  }).catch(function(e){cmsg(pane,'Ошибка списка: '+e.message)});
+}
+fillList('blog');fillList('pain');fillList('models');
+function fetchFile(path,cb){
+  fetch('https://api.github.com/repos/'+USER+'/zapashoda-site/contents/'+path+'?ref=astrowind-migration',{headers:H()})
+  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(function(j){cb(JSON.parse(unb64(j.content)),j.sha)}).catch(function(e){alert('Ошибка загрузки: '+e.message)});
+}
+function loadContent(pane){
+  var slug=document.getElementById('clist-'+pane).value;if(!slug){cmsg(pane,'Выберите файл');return;}
+  fetchFile(DIRS[pane].dir+'/'+slug+'.json',function(d,sha){
+    CUR[pane]={path:DIRS[pane].dir+'/'+slug+'.json',sha:sha,data:d,isNew:false};
+    document.getElementById('f_slug-'+pane).value=slug;document.getElementById('f_slug-'+pane).disabled=true;
+    document.getElementById('f_title-'+pane).value=d.title||'';
+    document.getElementById('f_desc-'+pane).value=d.desc||'';
+    document.getElementById('f_cat-'+pane).value=d.category||'';
+    document.getElementById('f_min-'+pane).value=d.read_min||'';
+    document.getElementById('f_date-'+pane).value=d.date||'';
+    document.getElementById('f_og-'+pane).value=d.og||'';
+    document.getElementById('f_head-'+pane).value=(d.headings||[]).map(function(h){return h.id+' :: '+h.text}).join('\n');
+    document.getElementById('f_faq-'+pane).value=(d.faq||[]).map(function(f){return f.q+' :: '+f.a}).join('\n');
+    document.getElementById('f_body-'+pane).value=d.body_html||'';
+    document.getElementById('f_extra-'+pane).value=d.extra_html||'';
+    document.getElementById('cform-'+pane).style.display='block';
+    document.getElementById('clink-'+pane).href=DIRS[pane].base+slug+'/';document.getElementById('clink-'+pane).textContent='Открыть на проде ↗';
+    cmsg(pane,'Загружено: '+slug);
+  });
+}
+function newContent(pane){
+  CUR[pane]={path:null,sha:null,data:null,isNew:true};
+  ['f_slug-'+pane,'f_title-'+pane,'f_desc-'+pane,'f_og-'+pane,'f_head-'+pane,'f_faq-'+pane,'f_body-'+pane,'f_extra-'+pane].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('f_slug-'+pane).disabled=false;
+  document.getElementById('f_cat-'+pane).value='Гайд';
+  document.getElementById('f_min-'+pane).value='6';
+  document.getElementById('f_date-'+pane).value=new Date().toISOString().slice(0,10);
+  document.getElementById('f_body-'+pane).value='<div class="art-body">\n<h2 id="s1">Коротко</h2>\n<p><b>Прямой ответ.</b> Один-два предложения с сутью — этот абзац цитируют ИИ-поисковики.</p>\n<h2 id="s2">Раздел 2</h2>\n<p>Текст...</p>\n</div>';
+  document.getElementById('cform-'+pane).style.display='block';
+  document.getElementById('clink-'+pane).textContent='';document.getElementById('clink-'+pane).removeAttribute('href');
+  cmsg(pane,'Новый файл — заполните и сохраните');
+}
+function parsePairs(txt){
+  return (txt||'').split('\n').map(function(l){return l.trim()}).filter(Boolean).map(function(l){
+    var i=l.indexOf('::');if(i<0)throw new Error('Строка FAQ/заголовков без «::»: '+l.slice(0,40));
+    return l.slice(0,i).trim()+'||'+l.slice(i+2).trim();
+  });
+}
+function collect(pane){
+  var d=DIRS[pane],st=CUR[pane]||{data:{}};
+  var slug=document.getElementById('f_slug-'+pane).value.trim();
+  if(!slug)throw new Error('Пустой slug');
+  if(!/^[a-z0-9-]+$/.test(slug))throw new Error('Slug: только латиница, цифры и дефис');
+  var body=document.getElementById('f_body-'+pane).value;
+  if(d.kind==='article'&&!body.trim().startsWith('<div class="art-body">'))throw new Error('body_html должен начинаться с <div class="art-body">');
+  var faq=parsePairs(document.getElementById('f_faq-'+pane).value).map(function(x){var p=x.split('||');return {q:p[0],a:p[1]}});
+  var heads=parsePairs(document.getElementById('f_head-'+pane).value).map(function(x){var p=x.split('||');return {id:p[0],text:p[1]}});
+  var obj;
+  if(d.kind==='model'){
+    obj=JSON.parse(JSON.stringify(st.data||{}));
+    obj.title=document.getElementById('f_title-'+pane).value.trim();
+    obj.desc=document.getElementById('f_desc-'+pane).value.trim();
+    obj.body_html=body;
+  } else {
+    obj={section:'blog',slug:slug,title:document.getElementById('f_title-'+pane).value.trim(),
+      desc:document.getElementById('f_desc-'+pane).value.trim(),
+      category:document.getElementById('f_cat-'+pane).value.trim()||'Гайд',
+      read_min:parseInt(document.getElementById('f_min-'+pane).value,10)||6,
+      date:document.getElementById('f_date-'+pane).value.trim(),
+      body_html:body,extra_html:document.getElementById('f_extra-'+pane).value.trim(),
+      headings:heads,faq:faq};
+    var og=document.getElementById('f_og-'+pane).value.trim();if(og)obj.og=og;
+  }
+  if(!obj.title||!obj.desc)throw new Error('Заполните title и desc');
+  return JSON.stringify(obj,null,1);
+}
+function postSaveHandler(pane,slug){return function(r){
+  if(!r.ok)return r.json().then(function(e){throw new Error(e.message||('HTTP '+r.status))});
+  return r.json().then(function(j){
+    CUR[pane].isNew=false;CUR[pane].sha=j.content.sha;
+    document.getElementById('f_slug-'+pane).disabled=true;
+    cmsg(pane,'Сохранено! Сборка идёт 2-5 минут - проверьте /'+DIRS[pane].dir.replace("site/src/data/articles/","blog/").replace("site/src/data/models","models")+slug+'/ через Ctrl+F5');
+    document.getElementById('clink-'+pane).href=DIRS[pane].base+slug+'/';document.getElementById('clink-'+pane).textContent='Открыть на проде ↗';
+  });
+}}
+function saveContent(pane){
+  var slug=document.getElementById('f_slug-'+pane).value.trim();
+  var json;
+  try{json=collect(pane)}catch(e){cmsg(pane,'Ошибка: '+e.message);return}
+  saveAuth();if(!PAT){cmsg(pane,'Введите токен');return}
+  if(!confirm('Опубликовать "'+slug+'"? Сайт пересоберётся.'))return;
+  cmsg(pane,'Проверяю окно...');
+  windowCheck(function(st){
+    if(st!=='ok'){cmsg(pane,st==='busy'?'Отложено: соседка пишет, нажмите ещё раз позже':'Ошибка проверки окна');return}
+    var body={message:(CUR[pane].isNew?'New':'Update')+' via admin: '+DIRS[pane].dir.split('/').pop()+'/'+slug,content:b64(json),branch:'astrowind-migration'};
+    var url='https://api.github.com/repos/'+USER+'/zapashoda-site/contents/'+(CUR[pane].isNew?DIRS[pane].dir+'/'+slug+'.json':CUR[pane].path);
+    var go=function(){fetch(url,{method:'PUT',headers:H(),body:JSON.stringify(body)}).then(postSaveHandler(pane,slug)).catch(function(e){cmsg(pane,'Ошибка: '+(e.message||e))})};
+    if(CUR[pane].isNew){
+      /* проверка занятости слага */
+      fetch(url+'?ref=astrowind-migration',{headers:H()}).then(function(r){
+        if(r.status===404){go();return}
+        if(r.ok){cmsg(pane,'SLUG ЗАНЯТ - выберите другой или откройте существующий');return null}
+        throw new Error('HTTP '+r.status);
+      }).catch(function(e){cmsg(pane,'Ошибка: '+e.message)});
+    } else {
+      /* актуальный sha перед сохранением */
+      fetch(url+'?ref=astrowind-migration',{headers:H()}).then(function(r){return r.json()}).then(function(j){
+        if(j.sha)body.sha=j.sha; go();
+      }).catch(function(e){cmsg(pane,'Ошибка: '+e.message)});
+    }
+  });
+}
+</script>
+</body></html>
