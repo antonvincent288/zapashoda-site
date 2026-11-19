@@ -151,3 +151,6 @@
 ## 2026-11-18
 
 - [@instructor-ai/instructor](https://www.npmjs.com/package/@instructor-ai/instructor) — structured outputs for llms
+## 2026-11-19
+
+Новых находок нет - все уже в базе.
