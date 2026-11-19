@@ -1,29 +1,13 @@
 {
- "updated": "2026-11-19T06:39:58.014362+00:00",
+ "updated": "2026-11-19T06:40:25.484309+00:00",
  "total": 5337,
- "checked": 9,
+ "checked": 1,
  "fixed": 0,
- "flag2": 1,
+ "flag2": 0,
  "non_address": 0,
  "geocoder_blocked": false,
  "fixes": [],
- "flag2_items": [
-  {
-   "i": 1399,
-   "n": "Зарядная станция",
-   "a": "Московская область, Минское шоссе (дублёр)",
-   "old": [
-    55.578614,
-    36.81358
-   ],
-   "new": [
-    55.710623,
-    37.369623
-   ],
-   "d_m": 37853,
-   "type": "unclassified"
-  }
- ],
- "offset": 1391,
- "batch_end": 1400
+ "flag2_items": [],
+ "offset": 1599,
+ "batch_end": 1600
 }
