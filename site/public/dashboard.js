@@ -1,4 +1,4 @@
-var ZH_BUILD = 1854;
+var ZH_BUILD = 1855;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -690,6 +690,34 @@ var ZH_BUILD = 1854;
       if (el) el.classList.add('active');
     }
 
+    // Машина: полноэкранный вид (полноценные вью, крупные тап-цели)
+    function openCarView() {
+      const cv = document.getElementById('carView');
+      if (!cv) return;
+      let name = null, base = null;
+      try { const c = JSON.parse(localStorage.getItem('zh-car') || 'null'); if (c && c.name) { name = c.name; base = c.base; } } catch (e) {}
+      const modelEl = document.getElementById('carViewModel');
+      if (modelEl) modelEl.textContent = name || 'Модель не выбрана';
+      const fEl = document.getElementById('carViewFormula');
+      const hf = document.getElementById('heroFormula');
+      if (fEl) fEl.textContent = (hf && hf.textContent && hf.textContent.indexOf('При заряде') === 0) ? hf.textContent : (name ? 'Задайте заряд — зона доезда покажется на карте' : 'Выберите модель и заряд — зона доезда на карте');
+      cv.classList.add('show');
+      setActiveTab('tabCarM');
+    }
+    function closeCarView() {
+      const cv = document.getElementById('carView');
+      if (cv) cv.classList.remove('show');
+      setActiveTab('tabMapM');
+    }
+    function carViewNearest() {
+      closeCarView();
+      try { if (typeof driveNearest === 'function') driveNearest(); } catch (e) {}
+    }
+    function carViewRange() {
+      closeCarView();
+      try { if (userPos) { map.flyTo(userPos, 11); showToast('Зона доезда видна на карте'); } } catch (e) {}
+    }
+
     function mView(view) {
       if (view === 'map') {
         document.querySelector('.hud-left').classList.remove('open');
@@ -700,10 +728,11 @@ var ZH_BUILD = 1854;
         switchView('list');
         setActiveTab('tabStationsM');
       } else if (view === 'car') {
-        const hud = document.querySelector('.hud-left');
-        const wasOpen = hud.classList.contains('open');
-        if (wasOpen) { hud.classList.remove('open'); setActiveTab('tabMapM'); switchView('map'); }
-        else { switchView('map'); hud.classList.add('open'); setActiveTab('tabCarM'); }
+        const cv = document.getElementById('carView');
+        if (cv && cv.classList.contains('show')) { closeCarView(); return; }
+        document.querySelector('.hud-left').classList.remove('open');
+        switchView('map');
+        openCarView();
       }
     }
 
