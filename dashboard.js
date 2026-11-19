@@ -346,13 +346,19 @@ var ZH_BUILD = 1867;
     }
     function legClick(cat) {
       mapFilterCat = (mapFilterCat === cat) ? null : cat;
-      document.querySelectorAll('.leg-chip').forEach(function (b) { b.classList.toggle('active', b.dataset.f === mapFilterCat); });
+      document.querySelectorAll('.leg-chip').forEach(function (b) { b.classList.toggle('active', b.dataset.f === mapFilterCat || (!mapFilterCat && b.dataset.f === 'all')); });
       renderAllStations();
       if (mapFilterCat) {
         var n = countCat(cat);
         var w = (n % 10 === 1 && n % 100 !== 11) ? 'точка' : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 'точки' : 'точек');
         showToast('Показаны: ' + legName(cat) + ' — ' + n + ' ' + w);
       } else { showToast('Фильтр снят — вся база'); }
+    }
+    function legAll() {
+      mapFilterCat = null;
+      document.querySelectorAll('.leg-chip').forEach(function (b) { b.classList.toggle('active', b.dataset.f === 'all'); });
+      renderAllStations();
+      showToast('Вся база — ' + (STATIONS_DB ? STATIONS_DB.length : 0) + ' точек');
     }
     function zhHelpToggle(e) {
       var tip = document.getElementById('zhHelpTip');
