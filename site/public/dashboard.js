@@ -1,4 +1,4 @@
-var ZH_BUILD = 1864;
+var ZH_BUILD = 1867;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -677,11 +677,11 @@ var ZH_BUILD = 1864;
       recalc(false);
       updateWinterBox();
       const gt = document.getElementById('barGeoText');
-      if (gt) gt.textContent = displayCity();
+      if (gt) gt.textContent = geoShort(displayCity());
       // тост погоды убран: чип «город · °C» уже живёт в шапке
     }
 
-    function updateBarGeo(){try{const gt=document.getElementById('barGeoText');if(gt)gt.textContent=displayCity();}catch(e){}}
+    function geoShort(n){try{if(n==='Москва'&&innerWidth<=820)return 'МСК'}catch(e){}return n}      function updateBarGeo(){try{const gt=document.getElementById('barGeoText');if(gt)gt.textContent=geoShort(displayCity());}catch(e){}}      function updateChipCounts(){try{['dc','adp','ac','unv','ya'].forEach(function(c){var el=document.querySelector('.leg-chip[data-f="'+c+'"] .cnt');if(el)el.textContent=countCat(c);});}catch(e){}}
 
     function driveOn(){
       document.body.classList.add('drive');
@@ -911,7 +911,7 @@ var ZH_BUILD = 1864;
       meMarker.setLatLng(userPos);
       isoLabel.setLatLng(userPos);
       const gtChip = document.getElementById('barGeoText');
-      if (gtChip) gtChip.textContent = name;
+      if (gtChip) gtChip.textContent = geoShort(name);
       showToast('Город: ' + name);
       weatherDone = false;
       resetRoute();
@@ -1097,6 +1097,7 @@ var ZH_BUILD = 1864;
         STATIONS_DB = d.stations || [];
         renderNearby();
         renderAllStations();
+        updateChipCounts();
         try { refreshCityCounts(); } catch (e) {}
         loadOsmIndex();
       } catch (e) {}
