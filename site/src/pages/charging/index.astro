@@ -146,6 +146,12 @@
       .share-actions{flex-direction:column!important}
       .share-actions>*{width:100%!important}
     }
+    /* zh-drive-d: на десктопе панель «За рулём» — компактная по центру, не на всю ширину */
+    @media(min-width:821px){
+      .drive-bar{left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;max-width:620px!important;gap:10px}
+      .drive-bar .db-btn{flex:1 1 auto!important;min-width:230px!important;padding:0 26px!important;font-size:15px!important}
+    }
+    body.drive .hud-right{display:none!important}
         /* zh-perf: отключаем blur во время драга/зума карты */
     body.map-drag .glass-pill, body.map-drag .bottom-legend, body.map-drag .city-sheet, body.map-drag .hud-left .card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:none!important}
     body.map-drag .bottom-legend{opacity:.92}
