@@ -1,0 +1,160 @@
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import citiesData from '../../data/charging/cities.json';
+import fs from 'node:fs';
+const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
+const stations = (raw.stations || []).filter((s) => s.lat && s.lon);
+const count = stations.length;
+const updated = raw.updated || '';
+const OPS_ALIAS = { 'Зарядная станция': null, '': null };
+const opCount = {};
+for (const s of stations) {
+  const op = (s.op && String(s.op).trim()) || 'Прочие';
+  opCount[op] = (opCount[op] || 0) + 1;
+}
+const opList = Object.entries(opCount).map(([n, c]) => ({ n, c })).sort((a, b) => b.c - a.c);
+const LABELS = { gb_dc: 'GB/T', type2_combo: 'CCS2', chademo: 'CHAdeMO', type2: 'Type 2', 'Type 2': 'Type 2', 'Type 1': 'Type 1', ccs2: 'CCS2', 'CCS2': 'CCS2', gb_ac: 'GB/T AC' };
+const sockCount = {};
+let dc = 0, ac = 0;
+for (const s of stations) {
+  const pw = s.pw || 0;
+  if (pw >= 50) dc++; else if (pw) ac++;
+  for (const k of s.s || []) sockCount[k] = (sockCount[k] || 0) + 1;
+}
+const sockList = Object.entries(sockCount).sort((a, b) => b[1] - a[1]);
+const cities = (citiesData.cities || []).slice().sort((a, b) => (b.c || 0) - (a.c || 0));
+const title = `Индекс зарядных станций России: ${count} ЭЗС с адресами и картами`;
+const desc = `Полный открытый индекс зарядных станций России: ${count} точек, ${opList.length} операторов, разъёмы ${sockList.slice(0, 3).map(([k]) => LABELS[k] || k).join(', ')}. Поиск по оператору и адресу, быстрые точки на карте.`;
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
+      { '@type': 'ListItem', position: 3, name: 'Индекс зарядных станций России' }
+    ]},
+    { '@type': 'Dataset', name: 'Индекс зарядных станций России', description: `Сводный индекс ${count} зарядных станций РФ: координаты, операторы, разъёмы, мощность.`, url: 'https://zapashoda-ev.ru/charging/ezs-index/', creator: { '@type': 'Organization', name: 'Запас хода EV' }, license: 'https://zapashoda-ev.ru/open-data' },
+    { '@type': 'FAQPage', mainEntity: [
+      { '@type': 'Question', name: 'Сколько зарядных станций в России?', acceptedAnswer: { '@type': 'Answer', text: `В сводном открытом индексе Zapashoda — ${count} точек от ${opList.length} операторов. Ориентир Яндекс.Карт — около 9 900, разница в том, что часть точек — дома и частные парковки, которые не публикуются как публичные станции.` } },
+      { '@type': 'Question', name: 'Как найти ближайшую зарядную станцию?', acceptedAnswer: { '@type': 'Answer', text: 'Откройте живую карту: она определит ваш город и покажет ближайшие точки с расстоянием и временем до 80%.' } },
+      { '@type': 'Question', name: 'Какие данные есть для каждой точки?', acceptedAnswer: { '@type': 'Answer', text: 'Оператор, адрес, координаты, разъёмы и максимальная мощность. Быстрые точки (50 кВт и выше) удобно искать на карте.' } }
+    ]}
+  ]
+};
+<ZhLayout title={title} description={desc} jsonld={ld}>
+  <section class="sec zh-cockpit-page">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Главная</a> / <a href="/charging/">Зарядные станции</a> / Индекс</div>
+      <div class="zh-head">
+        <div class="zh-head-l">
+          <h1>Индекс зарядных станций России</h1>
+          <span class="zh-badge">{count} точек · {opList.length} операторов · обновлено {updated.slice(0, 10)}</span>
+        </div>
+      </div>
+      <p class="zh-lead-sub">Сводный открытый индекс ЭЗС России: <b>{count}</b> зарядных точек от {opList.slice(0, 4).map((b) => b.n).join(', ')} и ещё {Math.max(0, opList.length - 4)} операторов. Чаще всего встречаются разъёмы {sockList.slice(0, 3).map(([k]) => LABELS[k] || k).join(', ')}. Быстрых DC-точек (50 кВт и выше) — <b>{dc}</b>, медленных AC — <b>{ac}</b>. Ниже — сводка по операторам, поиск по всем точкам и ссылки на карты городов.</p>
+      <div class="zrc-grid">
+        <div class="zrc-card">
+          <h2 class="zrc-h2">Операторы: {opList.length} сетей</h2>
+          <div class="zrc-scroll"><table>
+            <thead><tr><th>Оператор</th><th>Точек</th><th>Доля</th></tr></thead>
+            <tbody>
+              {opList.map((b) => (<tr><td>{b.n}</td><td>{b.c}</td><td>{(100 * b.c / count).toFixed(1)}%</td></tr>))}
+            </tbody>
+          </table></div>
+        </div>
+        <div class="zrc-card">
+          <h2 class="zrc-h2">Разъёмы</h2>
+          <div class="zrc-chips">
+            {sockList.map(([k, v]) => (<span class="zrc-chip"><b>{LABELS[k] || k}</b> · {v}</span>))}
+          </div>
+          <p class="zrc-note">Индекс собирается из открытых источников и нашей проверки адресов: база операторов РФ, Яндекс.Заправки и OSM. Обновление — вместе с базой карты. Поиск ниже работает по оператору, названию и адресу.</p>
+          <p class="zrc-note">Живая карта с фильтрами, запасом хода и маршрутом — на <a href="/charging/">странице «Зарядные станции»</a>.</p>
+        </div>
+      </div>
+      <h2 class="zrc-h2" style="margin-top:28px">Все точки индекса: поиск и список</h2>
+      <div class="ezs-tools">
+        <input id="ezsSearch" type="search" placeholder="Поиск: оператор, название или адрес" aria-label="Поиск по индексу зарядных станций" autocomplete="off" />
+        <div class="ezs-fchips" role="group" aria-label="Фильтр по типу">
+          <button class="zrc-fchip is-on" data-ezs="all">Все</button>
+          <button class="zrc-fchip" data-ezs="dc">Быстрые DC</button>
+          <button class="zrc-fchip" data-ezs="ac">Медленные AC</button>
+        </div>
+      </div>
+      <div class="ezs-meta"><span id="ezsCount">Загрузка индекса…</span></div>
+      <div class="zrc-scroll"><table id="ezs-tbl">
+        <thead><tr><th>Оператор / название</th><th>Адрес</th><th>Мощность</th><th>Разъёмы</th><th>Карты</th></tr></thead>
+        <tbody id="ezsRows"></tbody>
+      </table></div>
+      <button class="near-more-btn" id="ezsMore" style="display:none">Показать ещё 50</button>
+      <h2 class="zrc-h2" style="margin-top:28px">Карта по городам</h2>
+      <div class="ezs-city-grid">
+        {cities.map((c) => (<a class="ezs-city" href={`/charging/${c.slug}/`}><b>{c.name}</b><span>{c.count} точек</span></a>))}
+      </div>
+      <h2 class="zrc-h2" style="margin-top:28px">Частые вопросы</h2>
+      <div class="zrc-faq">
+        <details><summary>Сколько всего зарядных станций в России?</summary><div class="zrc-faq-a">В сводном открытом индексе Zapashoda — {count} публичных точек от {opList.length} операторов. Ориентир Яндекс.Карт — около 9 900: разница в том, что туда входят частные и закрытые точки, которые не публикуются как общедоступные станции.</div></details>
+        <details><summary>Как найти ближайшую станцию и построить маршрут?</summary><div class="zrc-faq-a">Откройте <a href="/charging/">живую карту</a>: она определит ваш город и покажет ближайшие ЭЗС с расстоянием, разъёмами и временем до 80% для вашей модели. Кнопка «Ближайшая ЭЗС» в режиме «За рулём» строит маршрут в Яндекс.Картах.</div></details>
+        <details><summary>Какие данные есть для каждой точки?</summary><div class="zrc-faq-a">Оператор, название, адрес, координаты, разъёмы и максимальная мощность в кВт. Кнопки «Яндекс» и «2ГИС» открывают точку в навигаторе.</div></details>
+        <details><summary>Как часто обновляется индекс?</summary><div class="zrc-faq-a">Вместе с базой карты: новые точки добавляются из открытых источников, адреса сверяются автоматически. Дату последнего обновления смотрите на странице <a href="/open-data">открытых данных</a>.</div></details>
+      </div>
+      <p class="zrc-note">Индекс — справочник, а не навигатор: перед поездкой статус точки проверяйте на карте или в приложении оператора.</p>
+    </div>
+  </section>
+</ZhLayout>
+<style>
+  .ezs-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .ezs-tools input{flex:1 1 260px;min-width:220px;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#F9F9F9;padding:0 14px;font-size:14px;font-family:inherit;outline:none}
+  .ezs-tools input:focus{border-color:rgba(232,80,2,.55)}
+  .ezs-fchips{display:flex;gap:8px;flex-wrap:wrap}
+  .ezs-meta{margin:10px 0 8px;color:#646464;font-size:13px}
+  .ezs-city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:12px}
+  .ezs-city{display:flex;flex-direction:column;gap:3px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#F9F9F9;text-decoration:none}
+  .ezs-city span{color:#646464;font-size:12.5px}
+  .ezs-city:hover{border-color:rgba(232,80,2,.45)}
+</style>
+<script>
+  (function () {
+    let db = [], q = '', kind = 'all', limit = 50;
+    const rows = document.getElementById('ezsRows');
+    const meta = document.getElementById('ezsCount');
+    const more = document.getElementById('ezsMore');
+    const search = document.getElementById('ezsSearch');
+    function norm(v) { return (v || '').toLowerCase(); }
+    function kindOf(s) { return (s.pw || 0) >= 50 ? 'dc' : (s.pw ? 'ac' : 'na'); }
+    function filtered() {
+      return db.filter(function (s) {
+        if (kind === 'dc' && kindOf(s) !== 'dc') return false;
+        if (kind === 'ac' && kindOf(s) === 'dc') return false;
+        if (!q) return true;
+        return (norm(s.op) + ' ' + norm(s.n) + ' ' + norm(s.a)).indexOf(q) >= 0;
+      });
+    }
+    function render() {
+      const list = filtered();
+      meta.textContent = list.length ? ('Найдено: ' + list.length + ' из ' + db.length) : ('Ничего не найдено из ' + db.length);
+      const cut = list.slice(0, limit);
+      rows.innerHTML = cut.map(function (s) {
+        const label = { gb_dc: 'GB/T', type2_combo: 'CCS2', chademo: 'CHAdeMO', type2: 'Type 2', gb_ac: 'GB/T AC' };
+        const socks = (s.s || []).map(function (x) { return label[x] || x; }).join(', ') || '—';
+        const maps = (s.lat && s.lon)
+          ? '<a href="https://yandex.ru/maps/?pt=' + s.lon + ',' + s.lat + '&z=17&l=map" target="_blank" rel="noopener nofollow">Яндекс</a> · <a href="https://2gis.ru/geo/' + s.lon + '%2C' + s.lat + '" target="_blank" rel="noopener nofollow">2ГИС</a>'
+          : '—';
+        return '<tr><td>' + (s.op || s.n || 'ЭЗС') + '</td><td class="zrc-ad"><span class="zrc-adr">' + (s.a || 'Адрес не указан') + '</span></td><td>' + (s.pw ? s.pw + ' кВт' : '—') + '</td><td>' + socks + '</td><td>' + maps + '</td></tr>';
+      }).join('');
+      more.style.display = list.length > limit ? 'block' : 'none';
+      more.textContent = 'Показать ещё ' + Math.min(50, list.length - limit) + ' из ' + (list.length - limit);
+    }
+    more.addEventListener('click', function () { limit += 50; render(); });
+    search.addEventListener('input', function () { q = norm(search.value.trim()); limit = 50; render(); });
+    document.querySelectorAll('[data-ezs]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('[data-ezs]').forEach(function (x) { x.classList.remove('is-on'); });
+        b.classList.add('is-on'); kind = b.dataset.ezs; limit = 50; render();
+      });
+    });
+    fetch('/charging/stations.json', { cache: 'no-cache' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { db = (d.stations || []).filter(function (s) { return s.lat && s.lon; }); render(); })
+      .catch(function () { meta.textContent = 'Индекс временно недоступен — обновите страницу'; });
+  })();
+</script>

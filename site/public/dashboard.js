@@ -1,4 +1,4 @@
-var ZH_BUILD = 1879;
+var ZH_BUILD = 1880;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1253,27 +1253,22 @@ var ZH_BUILD = 1879;
       showToast('На карте: ' + label);
     }
 
+    /* zh-near: полноценный экран «Рядом» — фильтры, сортировка по расстоянию, «Показать ещё» */
+    let nearListAll = [], nearLimit = 20, nearFilter = 'all';
     function renderNearby() {
       if (!STATIONS_DB || !STATIONS_DB.length) return;
-      let near = STATIONS_DB
+      const all = STATIONS_DB
         .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
         .filter(v => v.d <= 30)
-        .sort((a, b) => a.d - b.d)
-        .slice(0, 10);
-      if (!near.length) {
-        near = STATIONS_DB
+        .sort((a, b) => a.d - b.d);
+      let src = all;
+      if (!src.length) {
+        src = STATIONS_DB
           .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
           .filter(v => v.d <= 150)
-          .sort((a, b) => a.d - b.d)
-          .slice(0, 10);
+          .sort((a, b) => a.d - b.d);
       }
-      if (!near.length) return;
-      try {
-        const maxKm = (typeof near[0].d === 'number') ? (Math.round(near[0].d * 10) / 10) : 0;
-        const ttl = document.querySelector('.st-table-title');
-        if (ttl) ttl.textContent = 'Рядом с вами · ' + near.length + ' ' + pluralSt(near.length) + ' до ' + (Math.round(maxKm * 10) / 10) + ' км';
-      } catch (e) {}
-      near = near.map(v => ({
+      nearListAll = src.slice(0, 80).map(v => ({
           name: (v.x.op || v.x.n || 'ЭЗС'),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
@@ -1285,11 +1280,78 @@ var ZH_BUILD = 1879;
           tariff: '',
           coords: [v.x.lat, v.x.lon]
         }));
-      if (!near.length) return;
-      stations = near;
+      nearLimit = 20;
+      renderNearTable();
+    }
+
+    function nearTools() {
+      const wrap = document.getElementById('stationTable');
+      if (!wrap) return;
+      let tools = document.getElementById('zhNearTools');
+      if (!tools) {
+        tools = document.createElement('div');
+        tools.id = 'zhNearTools';
+        tools.className = 'zh-near-tools';
+        const rows = document.getElementById('stationRows');
+        if (rows && rows.parentNode === wrap) wrap.insertBefore(tools, rows);
+        else wrap.appendChild(tools);
+      }
+      const counts = { all: nearListAll.length, dc: nearListAll.filter(s => s.type === 'dc').length, ac: nearListAll.filter(s => s.type === 'ac' || s.type === 'na').length };
+      tools.innerHTML = [
+        ['all', 'Все · ' + counts.all],
+        ['dc', 'Быстрые · ' + counts.dc],
+        ['ac', 'Медленные · ' + counts.ac]
+      ].map(p => '<button class="zh-near-chip ' + (nearFilter === p[0] ? 'active' : '') + '" onclick="setNearFilter(\'' + p[0] + '\')">' + p[1] + '</button>').join('');
+    }
+
+    function setNearFilter(f) {
+      nearFilter = (f === 'dc' || f === 'ac') ? f : 'all';
+      nearLimit = 20;
+      renderNearTable();
+    }
+
+    function moreNear() {
+      nearLimit += 20;
+      renderNearTable();
+    }
+
+    function renderNearTable() {
+      if (!nearListAll.length) return;
+      const filtered = nearListAll.filter(s => {
+        if (nearFilter === 'all') return true;
+        if (nearFilter === 'dc') return s.type === 'dc';
+        return s.type === 'ac' || s.type === 'na';
+      });
+      const rows = filtered.slice(0, nearLimit);
+      try {
+        const ttl = document.querySelector('.st-table-title');
+        const maxKm = rows.length ? rows[rows.length - 1].km : 0;
+        if (ttl) ttl.textContent = 'Рядом с вами · ' + filtered.length + ' ' + pluralSt(filtered.length) + (rows.length ? ' до ' + maxKm + ' км' : '');
+      } catch (e) {}
+      if (!rows.length) {
+        const rw = document.getElementById('stationRows');
+        if (rw) rw.innerHTML = '<div class="near-empty">В этом радиусе нет станций такого типа. Проверьте фильтр или вернитесь к карте.</div>';
+        nearTools();
+        return;
+      }
+      stations = rows;
       addStationMarkers();
       renderCards();
       renderTable();
+      nearTools();
+      const rw = document.getElementById('stationRows');
+      if (rw) {
+        const old = document.getElementById('zhNearMore');
+        if (old) old.remove();
+        if (filtered.length > nearLimit) {
+          const more = document.createElement('button');
+          more.id = 'zhNearMore';
+          more.className = 'near-more-btn';
+          more.textContent = 'Показать ещё ' + Math.min(20, filtered.length - nearLimit);
+          more.onclick = moreNear;
+          rw.appendChild(more);
+        }
+      }
     }
 
     function tempNow() {
