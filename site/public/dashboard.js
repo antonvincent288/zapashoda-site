@@ -1,4 +1,4 @@
-var ZH_BUILD = 1867;
+var ZH_BUILD = 1868;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1097,7 +1097,8 @@ var ZH_BUILD = 1867;
 
     function portLabel(arr) {
       if (!arr || !arr.length) return '—';
-      return arr.map(p => p === 'type2' ? 'Type 2' : p).slice(0, 2).join(' + ');
+      var PM = {type2:'Type 2','type2_combo':'Type 2 (Combo)',type2_ccs:'Type 2 + CCS',gb:'GB/T',gb_dc:'GB/T DC','gb_dc:output':'GB/T DC',ccs:'CCS',ccs2:'CCS2',chademo:'CHAdeMO',ac:'AC',dc:'DC'};
+      return arr.map(p => { if (!p) return '—'; return PM[p] || String(p).replace(/_/g,' ').replace(/type2/ig,'Type 2').replace(/:output$/i,''); }).slice(0, 2).join(' + ');
     }
 
     async function loadStationDB() {
