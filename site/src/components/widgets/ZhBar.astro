@@ -1,0 +1,124 @@
+---
+import fs from 'node:fs';
+let N = 5337;
+try { const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')); if (Array.isArray(raw.stations)) N = raw.stations.length; } catch {}
+const path = Astro.url.pathname.replace(/\/$/, '');
+const isOn = (href) => href === '/' ? path === '' : path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
+const NAV = [
+  { g: 'Каталог', items: [['/catalog/', 'Зарядные станции'], ['/shop/digital/', 'Цифровые товары']] },
+  { g: 'Машины', items: [['/models/', 'Справочник моделей'], ['/sovmestimost/', 'Совместимость'], ['/razemy/', 'Разъёмы']] },
+  { g: 'Инструменты', items: [['/calculators/', 'Калькуляторы'], ['/tarify/', 'Тарифы сетей'], ['/compare/', 'Сравнение моделей'], ['/vin/', 'VIN-справочник'], ['/search/', 'Поиск']] },
+  { g: 'Гайды', items: [['/blog/', 'Блог'], ['/pain/', 'Болячки моделей'], ['/safety/', 'Безопасность'], ['/news/', 'Новости'], ['/baza-znaniy/', 'База знаний']] },
+  { g: 'Компания', items: [['/b2b/', 'B2B дилерам'], ['/services/', 'Услуги'], ['/about/', 'О проекте'], ['/partners/', 'Партнёрам']] },
+];
+const fmt = (n) => n.toLocaleString('ru-RU');
+---
+
+<header class="zh-bar">
+  <div class="glass-pill">
+    <div class="bar-side">
+      <a class="brand" href="/" aria-label="Запас хода EV — на главную">
+        <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M13.2 2.2 5.4 13.1h4.9l-1.5 8.7 7.9-11.6h-4.9z"></path></svg></div>
+        <span>Запас хода EV</span>
+      </a>
+      <div class="vline"></div>
+      <div class="nav-tabs">
+        <div class="nav-tab active">Наша база <span class="badge-count">{fmt(N)}</span></div>
+      </div>
+      <div class="zh-help" aria-label="О счётчике базы">?</div>
+      <div class="zh-help-tip">Живая база: наши точки + Open Charge Map. Слой Яндекс.Карт — в переключателе баз на карте.</div>
+    </div>
+    <nav class="bar-mid">
+      <div class="vline"></div>
+      {NAV.map((m) => (
+        <div class="menu-item">
+          <a class={`menu-link${m.items.some((i) => isOn(i[0])) ? ' on' : ''}`} href={m.items[0][0]}>{m.g}<svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6"></path></svg></a>
+          <div class="dropdown">
+            {m.items.map((i) => (
+              <a class={`dd-item${isOn(i[0]) ? ' on' : ''}`} href={i[0]}>{i[1]}<svg viewBox="0 0 24 24" class="dd-arrow"><path d="M9 6l6 6-6 6"></path></svg></a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </nav>
+    <div class="bar-side zh-right">
+      <a class="zh-cta" href="/charging/">Карта ЭЗС</a>
+      <button class="zh-menu-btn" onclick="document.getElementById('zhNav').classList.add('show')" aria-label="Меню">Меню</button>
+    </div>
+  </div>
+</header>
+<div class="zh-bar-space"></div>
+<div class="zh-nav" id="zhNav" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="zh-nav-box">
+    <div class="zh-nav-head"><span>Запас хода EV</span><button onclick="document.getElementById('zhNav').classList.remove('show')" aria-label="Закрыть меню">✕</button></div>
+    <a class="zh-nav-link" href="/">Главная</a>
+    {NAV.map((m) => (
+      <div class="zh-nav-group">{m.g}</div>
+    ))}
+    <div class="zh-nav-cols">
+      {NAV.map((m) => (
+        <div class="zh-nav-col">
+          <div class="zh-nav-group">{m.g}</div>
+          {m.items.map((i) => (<a class="zh-nav-link" href={i[0]}>{i[1]}</a>))}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style is:global>
+:root{--zh-bg-card:#0B0B0D;--zh-border:#1E1E22;--zh-orange:#E85002;--zh-red:#C10801;--zh-obr:#F16001;--zh-sand:#D9C3AB;--zh-white:#F9F9F9;--zh-muted:#A7A7A7;--zh-dim:#646464}
+.zh-bar{position:fixed;top:calc(16px + env(safe-area-inset-top));left:16px;right:16px;height:48px;z-index:100;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.zh-bar .glass-pill{pointer-events:auto;width:100%;justify-content:space-between;background:rgba(11,11,13,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--zh-border);border-radius:12px;height:46px;display:flex;align-items:center;padding:0 14px;gap:14px;box-shadow:0 12px 32px rgba(0,0,0,.65);position:relative;max-width:1440px;margin:0 auto}
+.zh-bar .bar-side{display:flex;align-items:center;gap:14px}
+.zh-bar .vline{width:1px;height:20px;background:var(--zh-border);flex-shrink:0}
+.zh-bar .bar-mid{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:2px;height:100%}
+.zh-bar .menu-link{display:flex;align-items:center;gap:6px;height:100%;font-size:13px;color:var(--zh-muted);padding:0 11px;cursor:pointer;transition:.15s;text-decoration:none;white-space:nowrap}
+.zh-bar .menu-link:hover,.zh-bar .menu-link.on{color:var(--zh-white)}
+.zh-bar .menu-link .chev{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.5;transition:transform .2s}
+.zh-bar .menu-item{position:relative;height:100%;display:flex;align-items:center}
+.zh-bar .menu-item:hover .menu-link .chev{transform:rotate(180deg)}
+.zh-bar .dropdown{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(-6px);min-width:196px;background:rgba(11,11,13,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--zh-border);border-top-color:rgba(255,255,255,.09);border-radius:14px;box-shadow:0 24px 56px rgba(0,0,0,.75);padding:6px;opacity:0;visibility:hidden;transition:opacity .2s,transform .2s,visibility .2s;z-index:30}
+.zh-bar .menu-item:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.zh-bar .dd-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12.5px;color:var(--zh-muted);text-decoration:none;transition:.12s;white-space:nowrap}
+.zh-bar .dd-item:hover,.zh-bar .dd-item.on{color:var(--zh-white);background:rgba(232,80,2,.1)}
+.zh-bar .dd-item .dd-arrow{width:8px;height:8px;stroke:var(--zh-orange);fill:none;stroke-width:2.5;opacity:0;transition:.12s}
+.zh-bar .dd-item:hover .dd-arrow,.zh-bar .dd-item.on .dd-arrow{opacity:1}
+.zh-bar .brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0;text-decoration:none;color:var(--zh-white)}
+.zh-bar .brand-icon{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--zh-red),var(--zh-orange),var(--zh-sand));color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.zh-bar .brand-icon svg{width:17px;height:17px;fill:currentColor;stroke:none}
+.zh-bar .nav-tabs{display:flex;align-items:center;gap:18px;height:100%}
+.zh-bar .nav-tab{height:100%;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--zh-muted);border-bottom:2px solid transparent;user-select:none;white-space:nowrap}
+.zh-bar .nav-tab.active{color:var(--zh-white);font-weight:600;border-bottom-color:var(--zh-orange)}
+.zh-bar .badge-count{font-size:11px;color:var(--zh-dim);font-variant-numeric:tabular-nums}
+.zh-bar .nav-tab.active .badge-count{color:var(--zh-orange)}
+.zh-bar .zh-help{position:relative;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1px solid rgba(255,255,255,.28);color:rgba(249,249,249,.75);font-size:10.5px;font-weight:700;flex-shrink:0;margin-left:6px;font-family:inherit;background:transparent}
+.zh-help:hover{border-color:var(--zh-orange);color:var(--zh-white)}
+.zh-help-tip{position:fixed;top:56px;left:50%;transform:translateX(-50%);width:min(440px,92vw);background:rgba(11,11,13,.97);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:11.5px;line-height:1.5;color:var(--zh-muted);display:none;z-index:120;box-shadow:0 14px 36px rgba(0,0,0,.6);text-align:left}
+.zh-help:hover + .zh-help-tip,.zh-help-tip:hover{display:block}
+.zh-cta{background:linear-gradient(135deg,#ff8f33,#e85002);color:#fff;border-radius:9px;height:30px;padding:0 14px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;text-decoration:none;box-shadow:0 6px 18px rgba(232,80,2,.3)}
+.zh-menu-btn{display:none;font-size:13px;color:var(--zh-muted);background:transparent;border:none;cursor:pointer;padding:7px 10px;border-radius:8px;transition:.15s;white-space:nowrap}
+.zh-menu-btn:hover{color:var(--zh-white);background:rgba(232,80,2,.1)}
+.zh-nav{position:fixed;inset:0;z-index:140;display:none;background:rgba(5,5,7,.97);overflow:auto;padding:24px 18px 44px;-webkit-overflow-scrolling:touch}
+.zh-nav.show{display:block}
+.zh-nav-box{max-width:760px;margin:0 auto}
+.zh-nav-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 18px;color:var(--zh-white);font-weight:700;font-size:16px}
+.zh-nav-head button{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);color:var(--zh-muted);border-radius:9px;width:34px;height:34px;font-size:14px;cursor:pointer}
+.zh-nav-cols{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px}
+.zh-nav-group{margin:14px 0 4px;color:var(--zh-dim);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.zh-nav-link{display:block;padding:11px 4px;color:#E7E7E7;font-size:16px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05)}
+.zh-nav-link:active,.zh-nav-link:hover{color:#FF8F33}
+.zh-bar-space{height:66px}
+@media(max-width:820px){
+  .zh-bar{left:10px;right:10px}
+  .zh-bar .glass-pill{height:44px;padding:0 9px;gap:8px}
+  .zh-bar .brand{gap:6px}
+  .zh-bar .brand-icon{width:22px;height:22px;font-size:12px}
+  .zh-bar .brand span{font-size:12.5px}
+  .zh-bar .bar-mid,.zh-bar .nav-tabs,.zh-bar .vline{display:none!important}
+  .zh-help{margin-left:2px;width:15px;height:15px;font-size:9.5px}
+  .zh-menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  .zh-cta{height:32px;padding:0 12px;font-size:12px}
+  .zh-bar-space{height:60px}
+}
+</style>
