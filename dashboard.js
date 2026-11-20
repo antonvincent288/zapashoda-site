@@ -1,4 +1,4 @@
-var ZH_BUILD = 1881;
+var ZH_BUILD = 1882;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -15,19 +15,25 @@ var ZH_BUILD = 1881;
       opacity: 0.85,
       updateWhenIdle: true
     }).addTo(map);
-    let _tileErrCount = 0, _tileFallbackDone = false;
+    let _tileErrCount = 0, _tileFallbackDone = false, _tileSeen = false;
+    map.on('tileload', () => { _tileSeen = true; });
+    function zhTileFallback(reason) {
+      if (_tileFallbackDone) return;
+      _tileFallbackDone = true;
+      map.eachLayer(l => {
+        if (l instanceof L.TileLayer) map.removeLayer(l);
+      });
+      if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
+      showToast('Подложка карты переключена на резервный источник');
+      try { if (window.plausible) plausible('tile-fallback', {props: {reason: reason}}); } catch (e) {}
+    }
     map.on('tileerror', () => {
       if (_tileFallbackDone) return;
-      if (++_tileErrCount >= 4) {
-        _tileFallbackDone = true;
-        map.eachLayer(l => {
-          if (l instanceof L.TileLayer) map.removeLayer(l);
-        });
-        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
-        showToast('Подложка карты переключена на резервный источник');
-      }
+      if (++_tileErrCount >= 4) zhTileFallback('error4');
     });
+    // Страховка: если базовые тайлы 5 секунд не загрузились ни разу (сеть/CDN молчит) — переключаемся сами
+    setTimeout(() => { if (!_tileSeen) zhTileFallback('silent5s'); }, 5000);
 
     
 
