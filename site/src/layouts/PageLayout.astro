@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import ZhBar from '~/components/widgets/ZhBar.astro';
+import ZhBgMap from '~/components/widgets/ZhBgMap.astro';
 import Footer from '~/components/widgets/Footer.astro';
 import Announcement from '~/components/widgets/Announcement.astro';
 
@@ -17,6 +18,7 @@ const { metadata } = Astro.props;
 
 <Layout metadata={metadata}>
   <slot name="head" slot="head" />
+  <ZhBgMap />
   {
     /*
     Slot fallbacks are rendered explicitly. With `<slot name="x">fallback</slot>`
