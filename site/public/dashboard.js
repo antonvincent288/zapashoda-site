@@ -1,4 +1,4 @@
-var ZH_BUILD = 1875;
+var ZH_BUILD = 1876;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1343,7 +1343,7 @@ var ZH_BUILD = 1875;
     }
 
     function copyShare() {
-      const text = 'Запас хода EV — ' + document.getElementById('shareTitle').textContent + ': ' + document.getElementById('shareKm').textContent + ' (' + document.getElementById('shareNote').textContent + ') → zapashoda-ev.ru/dashboard/';
+      const text = 'Запас хода EV — ' + document.getElementById('shareTitle').textContent + ': ' + document.getElementById('shareKm').textContent + ' (' + document.getElementById('shareNote').textContent + ') → zapashoda-ev.ru/charging/';
       copyText(text, 'Текст скопирован');
     }
 
@@ -1379,7 +1379,7 @@ var ZH_BUILD = 1875;
         q.set('soc', document.getElementById('socSlider').value);
         if (state.city) q.set('city', state.city);
         if (state.roundTrip) q.set('rt','1');
-        const url='https://zapashoda-ev.ru/dashboard/?'+q.toString();
+        const url='https://zapashoda-ev.ru/charging/?'+q.toString();
         copyText(url, 'Ссылка с параметрами скопирована');
       }catch(e){ showToast('Не удалось собрать ссылку'); }
     }
