@@ -1,4 +1,4 @@
-var ZH_BUILD = 1869;
+var ZH_BUILD = 1871;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1343,10 +1343,60 @@ var ZH_BUILD = 1869;
     }
 
     function copyShareUrl() {
-      const car = encodeURIComponent(document.getElementById('carModelTitle').textContent);
-      const soc = document.getElementById('socSlider').value;
-      const url = `https://zapashoda-ev.ru/charging/?car=${car}&soc=${soc}`;
-      showToast('Ссылка с состоянием скопирована: ' + url);
+      openShare();
+    }
+
+    /* zh-share: карточка в PNG (canvas-рендер) — отправка через шэринговое меню, иначе скачивание */
+    function sharePng() {
+      try{
+        const title = (document.getElementById('shareTitle').textContent||'').trim();
+        const km = (document.getElementById('shareKm').textContent||'').trim();
+        const note = (document.getElementById('shareNote').textContent||'').trim();
+        const W=1440,H=960;
+        const c=document.createElement('canvas'); c.width=W; c.height=H;
+        const x=c.getContext('2d');
+        const g=x.createLinearGradient(0,0,W,H);
+        g.addColorStop(0,'#1c110a'); g.addColorStop(.55,'#0b0b0d'); g.addColorStop(1,'#050507');
+        x.fillStyle=g; x.fillRect(0,0,W,H);
+        function rr(px,py,pw,ph,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+pw,py,px+pw,py+ph,r); x.arcTo(px+pw,py+ph,px,py+ph,r); x.arcTo(px,py+ph,px,py,r); x.arcTo(px,py,px+pw,py,r); x.closePath(); }
+        x.strokeStyle='rgba(232,80,2,.38)'; x.lineWidth=5; rr(14,14,W-28,H-28,40); x.stroke();
+        x.fillStyle='#e85002'; rr(76,74,84,84,22); x.fill();
+        x.fillStyle='#fff'; x.font='800 56px -apple-system,Segoe UI,Roboto,Arial,sans-serif'; x.textAlign='center'; x.textBaseline='middle';
+        x.fillText('\u26A1',118,118);
+        x.textAlign='left';
+        x.fillStyle='#ffffff'; x.font='800 34px -apple-system,Segoe UI,Roboto,Arial,sans-serif'; x.fillText('ЗАПАС ХОДА EV',190,98);
+        x.fillStyle='#8a8f98'; x.font='500 26px -apple-system,Segoe UI,Roboto,Arial,sans-serif'; x.fillText('zapashoda-ev.ru',192,134);
+        x.fillStyle='#ffffff'; x.font='700 46px -apple-system,Segoe UI,Roboto,Arial,sans-serif'; x.fillText(title,76,236);
+        x.fillStyle='#ff8a3c'; x.font='800 168px -apple-system,Segoe UI,Roboto,Arial,sans-serif'; x.fillText(km,70,420);
+        x.fillStyle='#b6bac2'; x.font='500 32px -apple-system,Segoe UI,Roboto,Arial,sans-serif';
+        let line='', ly=520;
+        for (const w of note.split(' ')) {
+          const test=line?line+' '+w:w;
+          if (x.measureText(test).width > (W-150) && line) { x.fillText(line,76,ly); ly+=46; line=w; }
+          else line=test;
+        }
+        if (line) x.fillText(line,76,ly);
+        x.fillStyle='#6b7078'; x.font='500 26px -apple-system,Segoe UI,Roboto,Arial,sans-serif';
+        x.fillText('zapashoda-ev.ru — сколько проедет ваш электромобиль',76,H-96);
+        c.toBlob(function(blob){
+          if(!blob) return;
+          const file=new File([blob],'zapashoda-ev.png',{type:'image/png'});
+          let shared=false;
+          try{
+            if (navigator.canShare && navigator.canShare({files:[file]})) {
+              navigator.share({files:[file], title:'Запас хода EV', text:title+' — '+km}).then(()=>{showToast('Карточка отправлена');}).catch(()=>{});
+              shared=true;
+            }
+          }catch(e){}
+          if(!shared){
+            const a=document.createElement('a');
+            a.href=URL.createObjectURL(blob);
+            a.download='zapashoda-ev-'+km.replace(/[^0-9]/g,'')+'km.png';
+            document.body.appendChild(a); a.click(); a.remove();
+            showToast('Карточка скачана в PNG');
+          }
+        },'image/png');
+      }catch(e){ showToast('Не удалось собрать карточку'); }
     }
 
     const CITY_LIST = [
@@ -1893,4 +1943,15 @@ var ZH_BUILD = 1869;
     mo.observe(document.documentElement, {subtree:true, attributes:true, attributeFilter:['class','style'], childList:true});
   }catch(e){}
   zhPlateUpd();
+})();
+
+/* zh-perf: во время движения карты отключаем blur/тени (главный источник тормозов на слабых GPU) */
+(function(){
+  if (window.__zhPerfDrag) return; window.__zhPerfDrag = true;
+  function on(){ document.body.classList.add('map-drag'); }
+  function off(){ document.body.classList.remove('map-drag'); }
+  function bind(){
+    try{ if (window.map){ map.on('movestart', on); map.on('moveend', off); map.on('zoomstart', on); map.on('zoomend', off); } }catch(e){}
+  }
+  bind(); document.addEventListener('DOMContentLoaded', bind);
 })();
