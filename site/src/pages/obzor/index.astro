@@ -1,0 +1,77 @@
+---
+import ZhLayout from '../layouts/ZhLayout.astro';
+import fs from 'node:fs';
+
+let stations = []; let updated = null;
+try {
+  const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
+  stations = raw.stations || [];
+  updated = raw.updated;
+} catch (e) {}
+
+const groups = [];
+const byName = new Map();
+for (const s of stations) {
+  const a = (s.a || '').trim();
+  let city = a ? a.split(',')[0].trim() : '';
+  if (!city || /^адрес не указан$/i.test(city)) city = 'Адрес уточняется';
+  if (city.length > 56) city = 'Другие адреса';
+  if (!byName.has(city)) byName.set(city, []);
+  byName.get(city).push(s);
+}
+for (const [name, arr] of byName) groups.push({ name, items: arr, count: arr.length });
+groups.sort((x, y) => y.count - x.count);
+const total = stations.length;
+const plz = (n, one, few, many) => { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return one; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few; return many; };
+const upd = updated ? new Date(updated).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+const topCities = groups.filter(g => g.name !== 'Адрес уточняется' && g.name !== 'Другие адреса').slice(0, 60);
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Полный индекс электрозаправок по городам',
+  description: 'Полный список электрозаправок из живой базы Запас хода EV по городам и регионам.'
+};
+---
+<ZhLayout title="Электрозаправки: полный индекс по городам и регионам 2026 — Запас хода EV" description={`Полный индекс электрозаправок: ${total.toLocaleString('ru-RU')} станций по городам и регионам — операторы, адреса, мощности. Живая база Запас хода EV, обновлено ${upd}.`} canonical="/obzor/" jsonld={jsonld}>
+<main class="obz">
+  <style is:global>
+    .obz{background:#050507;color:#E7E7E7;min-height:100vh;padding:28px 16px 60px;max-width:920px;margin:0 auto;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+    .obz h1{font-size:30px;font-weight:800;line-height:1.15;margin:0 0 12px;color:#fff}
+    .obz .obz-sub{color:#A7A7A7;font-size:15px;line-height:1.55;margin:0 0 20px}
+    .obz .obz-note{background:rgba(232,80,2,.09);border:1px solid rgba(232,80,2,.28);border-radius:14px;padding:14px 16px;color:#E7C9B8;font-size:13.5px;line-height:1.5;margin:0 0 24px}
+    .obz .obz-toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:0 0 30px;padding:0;list-style:none}
+    .obz .obz-toc a{display:flex;justify-content:space-between;gap:6px;color:#FF8F33;text-decoration:none;font-size:13px;padding:8px 10px;background:#121214;border-radius:10px;border:1px solid rgba(148,163,184,.10)}
+    .obz .obz-toc a span{color:#646464;font-size:12px}
+    .obz h2{font-size:20px;font-weight:700;color:#fff;margin:34px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(148,163,184,.12)}
+    .obz h2 small{color:#FF8F33;font-size:14px;font-weight:600;margin-left:8px}
+    .obz ul.obz-list{list-style:none;margin:0 0 8px;padding:0}
+    .obz ul.obz-list li{padding:10px 12px;border-radius:10px;background:#0C0C0F;border:1px solid rgba(148,163,184,.07);margin-bottom:6px;font-size:13.5px;line-height:1.45;color:#CFCFCF}
+    .obz ul.obz-list li b{color:#fff;font-weight:600}
+    .obz ul.obz-list li .pw{color:#FF8F33;font-weight:600;white-space:nowrap}
+    .obz ul.obz-list li .cnt{color:#646464;font-size:12px}
+    .obz .obz-foot{margin-top:34px;padding-top:18px;border-top:1px solid rgba(148,163,184,.12);color:#646464;font-size:12.5px;line-height:1.6}
+    .obz .obz-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#C10801,#E85002);color:#fff;text-decoration:none;font-weight:700;font-size:14.5px;padding:13px 20px;border-radius:13px;margin:0 0 26px}
+  </style>
+  <h1>Электрозаправки России: полный индекс по городам</h1>
+  <p class="obz-sub">{total.toLocaleString('ru-RU')} зарядных станций в живой базе «Запас хода EV», сгруппированы по {groups.length} городам и регионам. Данные обновлены: <b>{upd}</b>. В индексе — станции операторов: Пункт Е, РусГидро, Россети, Энергия Москвы, Яндекс.Заправки, Open Charge Map и другие.</p>
+  <a class="obz-cta" href="/charging/">Живая карта ЭЗС →</a>
+  <div class="obz-note"><b>Про «9 900 станций».</b> По данным 2Chargers, к апрелю 2026 в России было 9 889 публичных ЭЗС — это верхняя оценка всего парка с учётом региональных сетей и частных точек. Наш индекс растёт по мере пополнения базы: сейчас в нём {total.toLocaleString('ru-RU')} станций с адресами и мощностями — это самая крупная открытая сводка по городам.</div>
+  <h2 id="toc">Содержание индекса</h2>
+  <ul class="obz-toc">
+    {topCities.map((g, i) => (
+      <li><a href={'#g' + i}>{g.name}<span>{g.count}</span></a></li>
+    ))}
+  </ul>
+  {groups.map((g, i) => (
+    <section>
+      <h2 id={'g' + i}>{g.name}<small>{g.count} {plz(g.count, 'станция', 'станции', 'станций')}</small></h2>
+      <ul class="obz-list">
+        {g.items.map((s) => (
+          <li><b>{(s.op || s.n || 'Электрозаправка')}</b> — {s.a || 'адрес уточняется'}{s.pw ? <span class="pw"> · {s.pw} кВт</span> : ''}{s.c ? <span class="cnt"> · {s.c} {plz(s.c, 'порт', 'порта', 'портов')}</span> : ''}</li>
+        ))}
+      </ul>
+    </section>
+  ))}
+  <div class="obz-foot">Индекс формируется автоматически из живой базы «Запас хода EV» (zapashoda-ev.ru/charging/) и обновляется вместе с ней. Типы разъёмов, мощность и наличие порта стоит проверять на месте — данные собираются из открытых источников.</div>
+</main>
+</ZhLayout>
