@@ -1,6 +1,7 @@
 ---
 import ZhLayout from '../../layouts/ZhLayout.astro';
 import fs from 'node:fs';
+import citiesRaw from '../../data/cities_index.json';
 
 let stations = []; let updated = null;
 try {
@@ -9,22 +10,60 @@ try {
   updated = raw.updated;
 } catch (e) {}
 
-const groups = [];
-const byName = new Map();
-stations.forEach((s) => {
-  const a = (s.a || '').trim();
-  let city = a ? a.split(',')[0].trim() : '';
-  if (!city || /^адрес не указан$/i.test(city)) city = 'Адрес уточняется';
-  if (city.length > 56) city = 'Другие адреса';
-  if (!byName.has(city)) byName.set(city, []);
-  byName.get(city).push(s);
+// Привязка станций к городам: точное имя в адресе → частичное → регион → ближайший город ≤60 км → «Прочие»
+const norm = (s) => (s || '').toLowerCase().replace(/ё/g, 'е').trim();
+const CITIES = (citiesRaw.cities || []);
+const byName = new Map(CITIES.map((c) => [norm(c.n), c]));
+const regionIndex = new Map();
+CITIES.forEach((c) => {
+  const r = norm(c.reg || '');
+  if (r.length > 4 && (!regionIndex.has(r) || (c.pop || 0) > (regionIndex.get(r).pop || 0))) regionIndex.set(r, c);
 });
-for (const [name, arr] of byName) groups.push({ name, items: arr, count: arr.length });
-groups.sort((x, y) => y.count - x.count);
+const hav = (lat1, lon1, lat2, lon2) => {
+  const R = 6371, p = Math.PI / 180;
+  const a = Math.sin((lat2 - lat1) * p / 2) ** 2 + Math.cos(lat1 * p) * Math.cos(lat2 * p) * Math.sin((lon2 - lon1) * p / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+};
+const RADIUS = 60;
+const byMap = new Map();
+for (const s of stations) {
+  const a = (s.a || '').trim();
+  const frags = a.split(',').map(norm);
+  let city = null;
+  for (const f of frags) {
+    const f2 = f.replace(/\bг\.?\s*/, '').trim();
+    if (f2 && byName.has(f2)) { city = byName.get(f2); break; }
+  }
+  if (!city) outer: for (const f of frags) {
+    for (const [name, c] of byName) {
+      if (f === name || f.startsWith(name + ' ')) { city = c; break outer; }
+    }
+  }
+  if (!city) outer2: for (const f of frags) {
+    for (const [r, c] of regionIndex) {
+      if (f.includes(r)) { city = c; break outer2; }
+    }
+  }
+  if (!city) {
+    let bd = Infinity;
+    for (const c of CITIES) {
+      const d = hav(s.lat, s.lon, c.lat, c.lon);
+      if (d < bd) { bd = d; city = c; if (bd <= RADIUS) break; }
+    }
+    if (bd > RADIUS) city = null;
+  }
+  const key = city ? city.n : 'Прочие регионы';
+  if (!byMap.has(key)) byMap.set(key, []);
+  byMap.get(key).push(s);
+}
+const groups = [...byMap.entries()].map(([name, items]) => ({ name, items, count: items.length }));
+const other = groups.filter((g) => g.name === 'Прочие регионы');
+const real = groups.filter((g) => g.name !== 'Прочие регионы').sort((x, y) => y.count - x.count);
+const all = [...real, ...other];
 const total = stations.length;
 const plz = (n, one, few, many) => { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return one; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few; return many; };
 const upd = updated ? new Date(updated).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-const topCities = groups.filter(g => g.name !== 'Адрес уточняется' && g.name !== 'Другие адреса').slice(0, 60);
+const topCities = real.slice(0, 60);
 const jsonld = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -32,7 +71,7 @@ const jsonld = {
   description: 'Полный список электрозаправок из живой базы Запас хода EV по городам и регионам.'
 };
 ---
-<ZhLayout title="Электрозаправки: полный индекс по городам и регионам 2026 — Запас хода EV" description={`Полный индекс электрозаправок: ${total.toLocaleString('ru-RU')} станций по городам и регионам — операторы, адреса, мощности. Живая база Запас хода EV, обновлено ${upd}.`} canonical="/obzor/" jsonld={jsonld}>
+<ZhLayout title="Электрозаправки: полный индекс по городам и регионам 2026 — Запас хода EV" description={`Полный индекс электрозаправок: ${total.toLocaleString('ru-RU')} станций по ${all.length} городам и регионам — операторы, адреса, мощности. Живая база Запас хода EV, обновлено ${upd}.`} canonical="/obzor/" jsonld={jsonld}>
 <main class="obz">
   <style is:global>
     .obz{background:#050507;color:#E7E7E7;min-height:100vh;padding:28px 16px 60px;max-width:920px;margin:0 auto;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
@@ -53,7 +92,7 @@ const jsonld = {
     .obz .obz-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#C10801,#E85002);color:#fff;text-decoration:none;font-weight:700;font-size:14.5px;padding:13px 20px;border-radius:13px;margin:0 0 26px}
   </style>
   <h1>Электрозаправки России: полный индекс по городам</h1>
-  <p class="obz-sub">{total.toLocaleString('ru-RU')} зарядных станций в живой базе «Запас хода EV», сгруппированы по {groups.length} городам и регионам. Данные обновлены: <b>{upd}</b>. В индексе — станции операторов: Пункт Е, РусГидро, Россети, Энергия Москвы, Яндекс.Заправки, Open Charge Map и другие.</p>
+  <p class="obz-sub">{total.toLocaleString('ru-RU')} зарядных станций в живой базе «Запас хода EV», сгруппированы по {real.length} городам. Данные обновлены: <b>{upd}</b>. В индексе — станции операторов: Пункт Е, РусГидро, Россети, Энергия Москвы, Яндекс.Заправки, Open Charge Map и другие.</p>
   <a class="obz-cta" href="/charging/">Живая карта ЭЗС →</a>
   <div class="obz-note"><b>Про «9 900 станций».</b> По данным 2Chargers, к апрелю 2026 в России было 9 889 публичных ЭЗС — это верхняя оценка всего парка с учётом региональных сетей и частных точек. Наш индекс растёт по мере пополнения базы: сейчас в нём {total.toLocaleString('ru-RU')} станций с адресами и мощностями — это самая крупная открытая сводка по городам.</div>
   <h2 id="toc">Содержание индекса</h2>
@@ -61,8 +100,11 @@ const jsonld = {
     {topCities.map((g, i) => (
       <li><a href={'#g' + i}>{g.name}<span>{g.count}</span></a></li>
     ))}
+    {other.map((g) => (
+      <li><a href="#gother">Прочие регионы<span>{g.count}</span></a></li>
+    ))}
   </ul>
-  {groups.map((g, i) => (
+  {real.map((g, i) => (
     <section>
       <h2 id={'g' + i}>{g.name}<small>{g.count} {plz(g.count, 'станция', 'станции', 'станций')}</small></h2>
       <ul class="obz-list">
@@ -72,6 +114,16 @@ const jsonld = {
       </ul>
     </section>
   ))}
-  <div class="obz-foot">Индекс формируется автоматически из живой базы «Запас хода EV» (zapashoda-ev.ru/charging/) и обновляется вместе с ней. Типы разъёмов, мощность и наличие порта стоит проверять на месте — данные собираются из открытых источников.</div>
+  {other.map((g) => (
+    <section>
+      <h2 id="gother">Прочие регионы<small>{g.count} {plz(g.count, 'станция', 'станции', 'станций')}</small></h2>
+      <ul class="obz-list">
+        {g.items.map((s) => (
+          <li><b>{(s.op || s.n || 'Электрозаправка')}</b> — {s.a || 'адрес уточняется'}{s.pw ? <span class="pw"> · {s.pw} кВт</span> : ''}{s.c ? <span class="cnt"> · {s.c} {plz(s.c, 'порт', 'порта', 'портов')}</span> : ''}</li>
+        ))}
+      </ul>
+    </section>
+  ))}
+  <div class="obz-foot">Индекс формируется автоматически из живой базы «Запас хода EV» (zapashoda-ev.ru/charging/) и обновляется вместе с ней. Станция привязывается к городу по точному совпадению в адресе, а если адрес неполный — по ближайшему крупному городу (до 60 км). Типы разъёмов, мощность и наличие порта стоит проверять на месте — данные собираются из открытых источников.</div>
 </main>
 </ZhLayout>
