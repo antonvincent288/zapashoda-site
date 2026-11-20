@@ -1,4 +1,10 @@
-var ZH_BUILD = 1883;
+var ZH_BUILD = 1884;
+    // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
+    (async () => { try {
+      const r = await fetch('/app-version.json', { cache: 'no-store' });
+      const j = await r.json();
+      if (j && j.v && j.v > ZH_BUILD) { setTimeout(() => { try { location.replace(location.pathname + '?fresh=' + Date.now()); } catch (e) { location.reload(); } }, 1200); }
+    } catch (e) {} })();
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -116,6 +122,7 @@ var ZH_BUILD = 1883;
       if (typeof isoLabel !== 'undefined') isoLabel.setLatLng(userPos);
       recalc(false);
       showToast('Точка установлена · маршрут — тап по станции → «Маршрут от меня»');
+      if (typeof zhNearestGo === 'function') { const f = zhNearestGo; zhNearestGo = null; f([e.latlng.lat, e.latlng.lng]); }
     });
 
     // Точки ЭЗС в Москве
@@ -717,25 +724,54 @@ var ZH_BUILD = 1883;
       showToast('Режим за рулём выключен');
     }
     function toggleDrive(){ document.body.classList.contains('drive') ? driveOff() : driveOn(); }
+    let zhNearestGo = null, zhOriginAskOpen = false;
+    function zhNearestByPos(pos, from) {
+      let best = null, bd = 1e9;
+      STATIONS_DB.forEach(x => { try { const d = haversine(pos, [x.lat, x.lon]); if (d < bd) { bd = d; best = x; } } catch (e) {} });
+      if (!best) { showToast('Станций не найдено'); return; }
+      try { map.flyTo([best.lat, best.lon], 15); } catch (e) {}
+      buildRoute(best.lat, best.lon);
+      showToast('Маршрут до ближайшей ЭЗС · ' + bd.toFixed(1) + ' км' + (from ? ' · от: ' + from : ''));
+    }
+    function zhAskOrigin(cityName) {
+      if (zhOriginAskOpen) return;
+      zhOriginAskOpen = true;
+      const old = document.getElementById('zh-origin-ask'); if (old) old.remove();
+      const w = document.createElement('div');
+      w.id = 'zh-origin-ask';
+      w.style.cssText = 'position:fixed;inset:0;z-index:960;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);padding:14px calc(12px) calc(14px + env(safe-area-inset-bottom))';
+      w.innerHTML = '<div style="background:#141416;border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:14px 16px;width:min(430px,96vw);color:#E7E7E7;box-shadow:0 12px 40px rgba(0,0,0,.5)">'
+        + '<div style="font-weight:700;font-size:16px;color:#fff">Где вы сейчас?</div>'
+        + '<div style="font-size:12.5px;color:#A7A7A7;margin-top:4px">GPS не отвечает. Выберите точку отправления — маршрут поедет от неё.</div>'
+        + '<button id="zhOriginGeo" style="margin-top:12px;width:100%;padding:11px 14px;border-radius:12px;border:0;background:#E85002;color:#fff;font-weight:600;font-size:14px">Попробовать моё место ещё раз</button>'
+        + '<button id="zhOriginTap" style="margin-top:8px;width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.25);background:#1B1B1E;color:#fff;font-weight:600;font-size:14px">Укажу точку на карте</button>'
+        + '<button id="zhOriginCity" style="margin-top:8px;width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:transparent;color:#A7A7A7;font-size:13px">Старт от центра ' + (cityName || 'города') + '</button>'
+        + '</div>';
+      document.body.appendChild(w);
+      w.addEventListener('click', e => { if (e.target === w) { w.remove(); zhOriginAskOpen = false; } });
+      const done = () => { w.remove(); zhOriginAskOpen = false; };
+      w.querySelector('#zhOriginGeo').onclick = () => { done(); tryGeoAgain(); };
+      w.querySelector('#zhOriginTap').onclick = () => { done(); zhNearestGo = (p) => zhNearestByPos(p, 'ваша точка'); showToast('Тапните по карте — поставлю точку старта и найду ближайшую ЭЗС'); };
+      w.querySelector('#zhOriginCity').onclick = () => { done(); zhNearestByPos(userPos, 'центр ' + (cityName || 'города')); };
+    }
+    function tryGeoAgain() {
+      showToast('Определяю ваше место…');
+      navigator.geolocation.getCurrentPosition(
+        p => zhNearestByPos([p.coords.latitude, p.coords.longitude], 'ваше место'),
+        () => { zhOriginAskOpen = false; zhAskOrigin((typeof displayCity === 'function' ? displayCity() : '')); showToast('GPS не отвечает — выберите точку отправления'); },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      );
+    }
     function driveNearest(){
       if(!STATIONS_DB || !STATIONS_DB.length){ showToast('База ещё загружается — секунду'); return; }
-      const go = (pos) => {
-        if(!pos){ showToast('Точка не определена'); return; }
-        let best=null,bd=1e9;
-        STATIONS_DB.forEach(x=>{ try{ const d=haversine(pos,[x.lat,x.lon]); if(d<bd){bd=d;best=x;} }catch(e){} });
-        if(!best){ showToast('Станций не найдено'); return; }
-        try{ map.flyTo([best.lat,best.lon], 15); }catch(e){}
-        buildRoute(best.lat,best.lon);
-        showToast('Маршрут до ближайшей ЭЗС · '+bd.toFixed(1)+' км');
-      };
       if(navigator.geolocation && navigator.geolocation.getCurrentPosition){
         showToast('Определяю ваше место…');
         navigator.geolocation.getCurrentPosition(
-          p => go([p.coords.latitude, p.coords.longitude]),
-          () => { showToast(userPosGeo ? 'Место не определилось — старт от центра города. Точно: разрешите геолокацию или тапните по карте' : 'Старт: ваша точка на карте'); go(userPos); },
+          p => zhNearestByPos([p.coords.latitude, p.coords.longitude], 'ваше место'),
+          () => { if (userPosGeo) zhAskOrigin((typeof displayCity === 'function' ? displayCity() : '')); else zhNearestByPos(userPos, 'ваша точка'); },
           { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
         );
-      } else { showToast(userPosGeo ? 'Место не определилось — старт от центра города. Точно: разрешите геолокацию или тапните по карте' : 'Старт: ваша точка на карте'); go(userPos); }
+      } else { zhAskOrigin((typeof displayCity === 'function' ? displayCity() : '')); }
     }
     try{ if(new URLSearchParams(location.search).get('mode')==='drive'){ document.body.classList.add('drive'); } }catch(e){}
 
