@@ -1,4 +1,4 @@
-var ZH_BUILD = 1887;
+var ZH_BUILD = 1888;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -10,36 +10,51 @@ var ZH_BUILD = 1887;
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
     const map = L.map('map', { zoomControl: false, keepBuffer: 1, updateWhenZooming: false, preferCanvas: true }).setView([55.775, 37.56], 12);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      maxNativeZoom: 19,
-      updateWhenIdle: true
-    }).addTo(map);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      maxNativeZoom: 19,
-      opacity: 0.85,
-      updateWhenIdle: true
-    }).addTo(map);
-    let _tileErrCount = 0, _tileFallbackDone = false, _tileSeen = false;
-    map.on('tileload', () => { _tileSeen = true; });
-    function zhTileFallback(reason) {
-      if (_tileFallbackDone) return;
-      _tileFallbackDone = true;
-      map.eachLayer(l => {
-        if (l instanceof L.TileLayer) map.removeLayer(l);
-      });
-      if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}'; document.head.appendChild(st); }
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
-      showToast('Подложка карты переключена на резервный источник');
-      try { if (window.plausible) plausible('tile-fallback', {props: {reason: reason}}); } catch (e) {}
+    // ПОДЛОЖКА «РАЗ И НАВСЕГДА»: цепочка живых источников с быстрым (4 с) перебором и памятью
+    const ZH_SOURCES = [
+      { id: 'arcgis', layers: () => [
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, updateWhenIdle: true }),
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
+      ], attr: 'Esri · © OpenStreetMap' },
+      { id: 'carto', layers: () => [
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', className: 'zh-osm-dark', updateWhenIdle: true, attribution: '© OpenStreetMap © CARTO' })
+      ], attr: '© OpenStreetMap © CARTO' },
+      { id: 'osm', layers: () => [
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true })
+      ], attr: '© OpenStreetMap contributors' }
+    ];
+    let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
+    const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
+    if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
+    function zhTileLoad(idx) {
+      _zhSrcIdx = idx; _tileSeen = false;
+      map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
+      ZH_SOURCES[idx].layers().forEach(l => l.addTo(map));
+      if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
+      _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, 4000);
     }
-    map.on('tileerror', () => {
-      if (_tileFallbackDone) return;
-      if (++_tileErrCount >= 8) zhTileFallback('errors8');
+    function zhTileNext(reason) {
+      const next = _zhSrcIdx + 1;
+      if (next >= ZH_SOURCES.length) {
+        // все источники мертвы: карта живёт на офлайн-кэше SW + маркерах
+        showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше');
+        try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
+        return;
+      }
+      zhTileLoad(next);
+      _zhSwitched = true;
+      showToast('Подложка карты переключена на резервный источник');
+      try { if (window.plausible) plausible('tile-fallback', { props: { reason: reason, to: ZH_SOURCES[next].id } }); } catch (e) {}
+    }
+    map.on('tileload', () => {
+      _tileSeen = true;
+      if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
+      try { localStorage.setItem('zhTileSrc', ZH_SOURCES[_zhSrcIdx].id); } catch (e) {}
     });
-    // Страховка: если базовые тайлы 5 секунд не загрузились ни разу (сеть/CDN молчит) — переключаемся сами
-    setTimeout(() => { if (!_tileSeen) zhTileFallback('silent12s'); }, 12000);
+    map.on('tileerror', () => {
+      if (!_tileSeen) { const errs = (map._zhErrs = (map._zhErrs || 0) + 1); if (errs >= 6) zhTileNext('errors6'); }
+    });
+    zhTileLoad(_zhSrcIdx);
 
     
 
