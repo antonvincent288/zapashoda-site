@@ -1,4 +1,4 @@
-var ZH_BUILD = 1886;
+var ZH_BUILD = 1887;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
