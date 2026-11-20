@@ -1,4 +1,4 @@
-var ZH_BUILD = 1885;
+var ZH_BUILD = 1886;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -36,10 +36,10 @@ var ZH_BUILD = 1885;
     }
     map.on('tileerror', () => {
       if (_tileFallbackDone) return;
-      if (++_tileErrCount >= 4) zhTileFallback('error4');
+      if (++_tileErrCount >= 8) zhTileFallback('errors8');
     });
     // Страховка: если базовые тайлы 5 секунд не загрузились ни разу (сеть/CDN молчит) — переключаемся сами
-    setTimeout(() => { if (!_tileSeen) zhTileFallback('silent5s'); }, 5000);
+    setTimeout(() => { if (!_tileSeen) zhTileFallback('silent12s'); }, 12000);
 
     
 
