@@ -1,4 +1,4 @@
-var ZH_BUILD = 1872;
+var ZH_BUILD = 1873;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1346,55 +1346,58 @@ var ZH_BUILD = 1872;
       openShare();
     }
 
-    /* zh-share v2: PNG карточки 1:1 с продовой (портрет, 2x, градиент числа как на карточке) */
+    /* zh-share v3: PNG карточки — идеальная копия продовой (клип по скруглениям, свечение сверху, бренд по центру) */
     function sharePng() {
       try{
         const title=(document.getElementById('shareTitle').textContent||'').trim();
         const km=(document.getElementById('shareKm').textContent||'').trim();
         const note=(document.getElementById('shareNote').textContent||'').trim();
-        const S=2;                       /* retina 2x */
-        const CW=340*S, MARGIN=28*S;
+        const S=2;
+        const CW=340*S;
         const F='"-apple-system","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        const H=(22 + 20 + 16 + 16 + 4 + 62 + 2 + 14 + 16 + (12 + 14 + 14) + 18) * S;
-        const c=document.createElement('canvas'); c.width=CW+2*MARGIN; c.height=H+2*MARGIN;
+        const H=(22 + 20 + 16 + 16 + 4 + 62 + 2 + 14 + 16 + (12 + 14) + 18)*S;
+        const c=document.createElement('canvas'); c.width=CW; c.height=H;
         const x=c.getContext('2d');
-        x.fillStyle='#050507'; x.fillRect(0,0,c.width,c.height);
-        const glow=x.createRadialGradient(c.width/2,H/2+MARGIN,10,c.width/2,H/2+MARGIN,CW*0.8);
-        glow.addColorStop(0,'rgba(232,80,2,.16)'); glow.addColorStop(1,'rgba(232,80,2,0)');
-        x.fillStyle=glow; x.fillRect(0,0,c.width,c.height);
-        const X=MARGIN, Y=MARGIN;
-        const g=x.createLinearGradient(X, Y, X+CW, Y+H);
-        g.addColorStop(0,'rgba(26,15,10,0.96)'); g.addColorStop(0.7,'rgba(5,5,7,0.98)'); g.addColorStop(1,'rgba(5,5,7,0.99)');
-        x.fillStyle=g;
         function rr(px,py,pw,ph,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+pw,py,px+pw,py+ph,r); x.arcTo(px+pw,py+ph,px,py+ph,r); x.arcTo(px,py+ph,px,py,r); x.arcTo(px,py,px+pw,py,r); x.closePath(); }
-        rr(X,Y,CW,H,20*S); x.fill();
-        x.lineWidth=1.5*S; x.strokeStyle='rgba(232,80,2,.35)'; x.stroke();
-        x.strokeStyle='rgba(255,255,255,.06)'; x.lineWidth=1*S;
-        x.beginPath(); x.moveTo(X+20*S,Y+1.5*S); x.lineTo(X+CW-20*S,Y+1.5*S); x.stroke();
-        const bw=20*S, bx=X+(CW-bw)/2, by=Y+22*S-2*S;
+        rr(0,0,CW,H,20*S); x.save(); x.clip();
+        const g=x.createLinearGradient(0,0,CW,H);
+        g.addColorStop(0,'rgba(26,15,10,0.97)'); g.addColorStop(0.7,'rgba(5,5,7,0.99)'); g.addColorStop(1,'rgba(5,5,7,1)');
+        x.fillStyle=g; x.fillRect(0,0,CW,H);
+        const glowX=CW/2, glowY=-40*S, glowR=190*S;
+        const glow=x.createRadialGradient(glowX,glowY,0,glowX,glowY,glowR);
+        glow.addColorStop(0,'rgba(232,80,2,.30)'); glow.addColorStop(1,'rgba(232,80,2,0)');
+        x.fillStyle=glow; x.fillRect(0,0,CW,H);
+        const bw=20*S, gap=8*S, by=22*S;
+        x.font='600 '+Math.round(11*S)+'px '+F;
+        const brandText='ЗАПАС ХОДА EV';
+        const tw=x.measureText(brandText).width;
+        const total=bw+gap+tw;
+        const bx=CW/2-total/2;
         const bi=x.createLinearGradient(bx,by,bx+bw,by+bw);
         bi.addColorStop(0,'#C10801'); bi.addColorStop(.5,'#E85002'); bi.addColorStop(1,'#D9C3AB');
         x.fillStyle=bi; rr(bx,by,bw,bw,7*S); x.fill();
         x.fillStyle='#fff'; x.font='800 '+Math.round(13*S)+'px '+F; x.textAlign='center'; x.textBaseline='middle';
         x.fillText('\u26A1', bx+bw/2, by+bw/2+1*S);
-        x.fillStyle='#A7A7A7'; x.font='600 '+Math.round(11*S)+'px '+F;
-        x.fillText('ЗАПАС ХОДА EV', bx+bw+8*S, by+bw/2);
+        x.fillStyle='#A7A7A7'; x.font='600 '+Math.round(11*S)+'px '+F; x.textAlign='left';
+        x.fillText(brandText, bx+bw+gap, by+bw/2);
+        const titleY=by+bw+16*S+13*S;
         x.fillStyle='#A7A7A7'; x.font='400 '+Math.round(13*S)+'px '+F; x.textAlign='center'; x.textBaseline='alphabetic';
-        x.fillText(title, X+CW/2, by+bw+16*S+13*S);
-        const kmY=by+bw+16*S+13*S+4*S+54*S*0.92;
-        const kx=X+CW/2;
+        x.fillText(title, CW/2, titleY);
+        const kmY=titleY+4*S+54*S*0.92;
         x.font='700 '+Math.round(54*S)+'px '+F;
-        const kt=x.createLinearGradient(kx-140*S, 0, kx+140*S, 0);
+        const kt=x.createLinearGradient(CW/2-140*S, 0, CW/2+140*S, 0);
         kt.addColorStop(0,'#C10801'); kt.addColorStop(.45,'#E85002'); kt.addColorStop(.78,'#FF8F33'); kt.addColorStop(1,'#D9C3AB');
-        x.fillStyle=kt; x.textAlign='center'; x.textBaseline='alphabetic';
-        x.fillText(km, kx, kmY);
+        x.fillStyle=kt; x.textAlign='center';
+        x.fillText(km, CW/2, kmY);
         x.fillStyle='#A7A7A7'; x.font='400 '+Math.round(12*S)+'px '+F;
-        x.fillText(note, X+CW/2, kmY+2*S+16*S);
-        const ftY=Y+H-18*S-2*S-14*S;
+        x.fillText(note, CW/2, kmY+2*S+16*S);
+        const ftY=H-18*S;
         x.strokeStyle='rgba(148,163,184,.12)'; x.lineWidth=1*S;
-        x.beginPath(); x.moveTo(X+22*S, ftY-12*S); x.lineTo(X+CW-22*S, ftY-12*S); x.stroke();
+        x.beginPath(); x.moveTo(22*S, ftY-12*S); x.lineTo(CW-22*S, ftY-12*S); x.stroke();
         x.fillStyle='#646464'; x.font='400 '+Math.round(10.5*S)+'px '+F;
-        x.fillText('zapashoda-ev.ru — сколько проедет ваш электромобиль', X+CW/2, ftY);
+        x.fillText('zapashoda-ev.ru — сколько проедет ваш электромобиль', CW/2, ftY);
+        x.restore();
+        x.lineWidth=1.5*S; x.strokeStyle='rgba(232,80,2,.35)'; rr(0.75*S,0.75*S,CW-1.5*S,H-1.5*S,19.25*S); x.stroke();
         c.toBlob(function(blob){
           if(!blob) return;
           const file=new File([blob],'zapashoda-ev.png',{type:'image/png'});
