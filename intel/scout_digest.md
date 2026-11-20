@@ -154,3 +154,6 @@
 ## 2026-11-19
 
 Новых находок нет - все уже в базе.
+## 2026-11-20
+
+- [langchain-ai/mcpdoc](https://github.com/langchain-ai/mcpdoc) (star 1029) — Expose llms-txt to IDEs for development
