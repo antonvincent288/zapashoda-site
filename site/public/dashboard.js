@@ -1,4 +1,4 @@
-var ZH_BUILD = 1874;
+var ZH_BUILD = 1875;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1312,10 +1312,39 @@ var ZH_BUILD = 1874;
       document.getElementById('shareModal').classList.remove('show');
     }
 
+    /* zh-copy: надёжное копирование с честным подтверждением (toast + фидбек на кнопке) */
+    function copyText(text, okMsg) {
+      function ok(){ showToast(okMsg); flashCopyBtn(); }
+      function fail(){ showToast('Скопировать не удалось — выделите текст вручную'); }
+      function fallback(){
+        try{
+          const ta=document.createElement('textarea');
+          ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='-1000px';
+          document.body.appendChild(ta); ta.select();
+          const okRes=document.execCommand('copy'); ta.remove();
+          okRes ? ok() : fail();
+        }catch(e){ fail(); }
+      }
+      try{
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(ok, fallback);
+        } else fallback();
+      }catch(e){ fallback(); }
+    }
+    function flashCopyBtn(){
+      const b=document.querySelector('.share-actions .btn-ghost');
+      if(!b) return;
+      if(b.dataset.zhBusy) return;
+      b.dataset.zhBusy='1';
+      const old=b.innerHTML;
+      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15" stroke-linecap="round"><path d="M20 6 9 17l-5-5"></path></svg> Скопировано';
+      b.classList.add('zh-copied');
+      setTimeout(function(){ b.innerHTML=old; b.classList.remove('zh-copied'); delete b.dataset.zhBusy; }, 1900);
+    }
+
     function copyShare() {
       const text = 'Запас хода EV — ' + document.getElementById('shareTitle').textContent + ': ' + document.getElementById('shareKm').textContent + ' (' + document.getElementById('shareNote').textContent + ') → zapashoda-ev.ru/dashboard/';
-      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
-      showToast('Текст скопирован');
+      copyText(text, 'Текст скопирован');
     }
 
     let toastTimer = null;
@@ -1342,8 +1371,17 @@ var ZH_BUILD = 1874;
       showToast(typeof M[key] === 'function' ? M[key]() : M[key]);
     }
 
+    /* zh-deeplink: бар-кнопка копирует ссылку дашборда со всеми выбранными параметрами */
     function copyShareUrl() {
-      openShare();
+      try{
+        const q=new URLSearchParams();
+        q.set('car', (document.getElementById('carModelTitle').textContent||'').trim());
+        q.set('soc', document.getElementById('socSlider').value);
+        if (state.city) q.set('city', state.city);
+        if (state.roundTrip) q.set('rt','1');
+        const url='https://zapashoda-ev.ru/dashboard/?'+q.toString();
+        copyText(url, 'Ссылка с параметрами скопирована');
+      }catch(e){ showToast('Не удалось собрать ссылку'); }
     }
 
     /* zh-share v3: PNG карточки — идеальная копия продовой (клип по скруглениям, свечение сверху, бренд по центру) */
@@ -1980,4 +2018,37 @@ var ZH_BUILD = 1874;
     try{ if (window.map){ map.on('movestart', on); map.on('moveend', off); map.on('zoomstart', on); map.on('zoomend', off); } }catch(e){}
   }
   bind(); document.addEventListener('DOMContentLoaded', bind);
+})();
+
+/* zh-deeplink: применяем параметры из URL (?car=&soc=&city=&rt=1) после загрузки каталога моделей */
+(function(){
+  function applyDeepLink(){
+    try{
+      const q=new URLSearchParams(location.search);
+      if(!q.has('car') && !q.has('soc') && !q.has('city') && !q.has('rt')) return;
+      const car=q.get('car');
+      if(car && window.MODELS_ALL && MODELS_ALL.length){
+        const norm=(window.normStr?normStr(car):car.toLowerCase());
+        const m=(MODELS_ALL||[]).find(function(mm){ return normStr(mm.name)===norm; });
+        if(m && chooseModelModel){ chooseModelModel(m.name, (m.base!=null?m.base:null), (m.port||'—'), !!m.d, !!m.est); }
+      }
+      const soc=parseInt(q.get('soc'),10);
+      if(!isNaN(soc) && soc>=5 && soc<=100 && window.setSoc){ setSoc(soc); }
+      const city=q.get('city');
+      if(city && window.CITY_LIST && CITY_LIST.length && window.setCityView){
+        const c=CITY_LIST.find(function(x){ return x.n===city; });
+        if(c){ setCityView(c.n, c.lat, c.lng, c.c); }
+      }
+      if(q.get('rt')==='1' && !state.roundTrip && window.toggleReturn){ toggleReturn(); }
+    }catch(e){}
+  }
+  if(window.MODELS_ALL && MODELS_ALL.length){ applyDeepLink(); }
+  else{
+    let tries=0;
+    const tmr=setInterval(function(){
+      tries++;
+      if(window.MODELS_ALL && MODELS_ALL.length){ clearInterval(tmr); applyDeepLink(); }
+      else if(tries>50){ clearInterval(tmr); }
+    },150);
+  }
 })();
