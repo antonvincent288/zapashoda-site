@@ -1,4 +1,4 @@
-var ZH_BUILD = 1877;
+var ZH_BUILD = 1878;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -2035,7 +2035,7 @@ var ZH_BUILD = 1877;
       const soc=parseInt(q.get('soc'),10);
       if(!isNaN(soc) && soc>=5 && soc<=100 && window.setSoc){ setSoc(soc); }
       const city=q.get('city');
-      if(city && window.CITY_LIST && CITY_LIST.length && window.setCityView){
+      if(city && CITY_LIST && CITY_LIST.length && setCityView){
         const c=CITY_LIST.find(function(x){ return x.n===city; });
         if(c){ setCityView(c.n, c.lat, c.lng, c.c); }
       }
