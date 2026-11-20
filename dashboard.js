@@ -1,4 +1,4 @@
-var ZH_BUILD = 1882;
+var ZH_BUILD = 1883;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -732,10 +732,10 @@ var ZH_BUILD = 1882;
         showToast('Определяю ваше место…');
         navigator.geolocation.getCurrentPosition(
           p => go([p.coords.latitude, p.coords.longitude]),
-          () => go(userPos),
+          () => { showToast(userPosGeo ? 'Место не определилось — старт от центра города. Точно: разрешите геолокацию или тапните по карте' : 'Старт: ваша точка на карте'); go(userPos); },
           { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
         );
-      } else { go(userPos); }
+      } else { showToast(userPosGeo ? 'Место не определилось — старт от центра города. Точно: разрешите геолокацию или тапните по карте' : 'Старт: ваша точка на карте'); go(userPos); }
     }
     try{ if(new URLSearchParams(location.search).get('mode')==='drive'){ document.body.classList.add('drive'); } }catch(e){}
 
