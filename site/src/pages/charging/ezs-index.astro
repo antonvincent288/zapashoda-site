@@ -6,7 +6,6 @@ const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8')
 const stations = (raw.stations || []).filter((s) => s.lat && s.lon);
 const count = stations.length;
 const updated = raw.updated || '';
-const OPS_ALIAS = { 'Зарядная станция': null, '': null };
 const opCount = {};
 for (const s of stations) {
   const op = (s.op && String(s.op).trim()) || 'Прочие';
