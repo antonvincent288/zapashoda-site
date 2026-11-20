@@ -102,6 +102,10 @@
     @media(max-width:820px){
       .bottom-legend{bottom:calc(96px + env(safe-area-inset-bottom))!important}
     }
+    /* zh-pwa: крестик списка ниже топ-бара (в PWA env-top ≈47px — крестик ложился на бар) */
+    @media(max-width:820px){
+      .st-close-btn{top:calc(70px + env(safe-area-inset-top))!important}
+    }
     @media(min-width:821px){
       .station-table-wrap{position:absolute!important;top:76px!important;right:16px!important;left:auto!important;bottom:auto!important;width:680px!important;max-height:min(404px,calc(100vh - 134px))!important;border-radius:16px!important;overflow-y:auto!important}
       .station-row{min-width:0}
