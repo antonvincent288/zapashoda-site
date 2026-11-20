@@ -1,4 +1,4 @@
-var ZH_BUILD = 1873;
+var ZH_BUILD = 1874;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1363,10 +1363,13 @@ var ZH_BUILD = 1873;
         const g=x.createLinearGradient(0,0,CW,H);
         g.addColorStop(0,'rgba(26,15,10,0.97)'); g.addColorStop(0.7,'rgba(5,5,7,0.99)'); g.addColorStop(1,'rgba(5,5,7,1)');
         x.fillStyle=g; x.fillRect(0,0,CW,H);
-        const glowX=CW/2, glowY=-40*S, glowR=190*S;
+        const glowX=CW/2, glowY=-10*S, glowR=220*S;
         const glow=x.createRadialGradient(glowX,glowY,0,glowX,glowY,glowR);
-        glow.addColorStop(0,'rgba(232,80,2,.30)'); glow.addColorStop(1,'rgba(232,80,2,0)');
+        glow.addColorStop(0,'rgba(232,80,2,.42)'); glow.addColorStop(.35,'rgba(232,80,2,.18)'); glow.addColorStop(1,'rgba(232,80,2,0)');
         x.fillStyle=glow; x.fillRect(0,0,CW,H);
+        const topGlow=x.createLinearGradient(0,0,0,90*S);
+        topGlow.addColorStop(0,'rgba(232,80,2,.10)'); topGlow.addColorStop(1,'rgba(232,80,2,0)');
+        x.fillStyle=topGlow; x.fillRect(0,0,CW,90*S);
         const bw=20*S, gap=8*S, by=22*S;
         x.font='600 '+Math.round(11*S)+'px '+F;
         const brandText='ЗАПАС ХОДА EV';
