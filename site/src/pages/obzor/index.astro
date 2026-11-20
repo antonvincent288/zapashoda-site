@@ -48,7 +48,7 @@ for (const s of stations) {
     let bd = Infinity;
     for (const c of CITIES) {
       const d = hav(s.lat, s.lon, c.lat, c.lon);
-      if (d < bd) { bd = d; city = c; if (bd <= RADIUS) break; }
+      if (d < bd) { bd = d; city = c; }
     }
     if (bd > RADIUS) city = null;
   }
