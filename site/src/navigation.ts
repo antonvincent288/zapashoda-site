@@ -117,52 +117,49 @@ export const headerData = {
 export const footerData = {
   links: [
     {
-      title: 'Product',
+      title: 'Модели',
       links: [
-        { text: 'Features', href: getPermalink('/#features') },
-        { text: 'Pricing', href: getPermalink('/pricing') },
-        { text: 'Services', href: getPermalink('/services') },
-        { text: 'Blog', href: getBlogPermalink() },
+        { text: 'Каталог моделей', href: getPermalink('/models/') },
+        { text: 'Zeekr 001', href: getPermalink('/models/zeekr-001-001-fr/') },
+        { text: 'Разъёмы GB/T', href: getPermalink('/razemy/') },
+        { text: 'Каталог товаров', href: getPermalink('/catalog/') },
       ],
     },
     {
-      title: 'Demos',
+      title: 'База знаний',
       links: [
-        { text: 'SaaS', href: getPermalink('/homes/saas') },
-        { text: 'Startup', href: getPermalink('/homes/startup') },
-        { text: 'Mobile App', href: getPermalink('/homes/mobile-app') },
-        { text: 'Personal', href: getPermalink('/homes/personal') },
-        { text: 'Landing pages', href: getPermalink('/landing/lead-generation') },
+        { text: 'Блог', href: getBlogPermalink() },
+        { text: 'Проблемы', href: getPermalink('/pain/') },
+        { text: 'VIN-справочник', href: getPermalink('/vin/') },
+        { text: 'Гайды', href: getPermalink('/shop/digital/') },
       ],
     },
     {
-      title: 'Resources',
+      title: 'Инструменты',
       links: [
-        { text: 'Documentation', href: 'https://github.com/arthelokyo/astrowind#readme' },
-        { text: 'Skills for AI agents', href: 'https://github.com/arthelokyo/astrowind/tree/main/.agents/skills' },
-        { text: 'Releases', href: 'https://github.com/arthelokyo/astrowind/releases' },
-        { text: 'Discussions', href: 'https://github.com/arthelokyo/astrowind/discussions' },
+        { text: 'Калькуляторы', href: getPermalink('/calculator/') },
+        { text: 'Всё о твоей машине', href: getPermalink('/quiz/') },
+        { text: 'Поиск', href: getPermalink('/search/') },
+        { text: 'Зарядные станции', href: getPermalink('/charging/') },
       ],
     },
     {
-      title: 'Company',
+      title: 'Связь',
       links: [
-        { text: 'About', href: getPermalink('/about') },
-        { text: 'Contact', href: getPermalink('/contact') },
-        { text: 'Report an issue', href: 'https://github.com/arthelokyo/astrowind/issues' },
-        { text: 'License', href: 'https://github.com/arthelokyo/astrowind/blob/main/LICENSE.md' },
+        { text: 'Telegram-канал', href: 'https://t.me/zapashoda_ev', target: '_blank' },
+        { text: 'Написать нам', href: 'mailto:f-epshtein@yandex.ru' },
+        { text: 'Мини-приложение', href: 'https://t.me/zapashoda_ev_bot/app', target: '_blank' },
+        { text: 'Партнёрам', href: getPermalink('/partners/') },
       ],
     },
   ],
   secondaryLinks: [
-    { text: 'Terms', href: getPermalink('/terms') },
-    { text: 'Privacy Policy', href: getPermalink('/privacy') },
+    { text: 'Политика конфиденциальности', href: getPermalink('/privacy') },
+    { text: 'О проекте', href: getPermalink('/about') },
   ],
   socialLinks: [
-    { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/arthelokyo/astrowind' },
+    { ariaLabel: 'Telegram', icon: 'tabler:brand-telegram', href: 'https://t.me/zapashoda_ev' },
+    { ariaLabel: 'Дзен', icon: 'tabler:brand-dzen', href: 'https://dzen.ru/zapashoda' },
   ],
-  footNote: `
-    Made by <a class="text-blue-600 underline dark:text-muted" href="https://arthelokyo.com"> Arthelokyo</a> · All rights reserved.
-  `,
+  footNote: `© 2026 Запас хода — практика зарядки EV в России`,
 };
