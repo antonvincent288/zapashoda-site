@@ -20,13 +20,13 @@ var ZH_BUILD = 1889;
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, attribution: '© OpenStreetMap © CARTO' })
       ], attr: '© OpenStreetMap © CARTO' },
       { id: 'osm', layers: () => [
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true })
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true })
       ], attr: '© OpenStreetMap contributors' }
     ];
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
     const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
     if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
-        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
+        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}.zh-osm-inv{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
     function zhTileLoad(idx) {
       _zhSrcIdx = idx; _tileSeen = false;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
