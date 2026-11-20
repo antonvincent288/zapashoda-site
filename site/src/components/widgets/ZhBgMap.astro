@@ -1,0 +1,16 @@
+---
+// Фон-карта сайта (п.2 редизайна): тонированная тёмная карта под контентом, затемнение 0.71, без молнии.
+// Fixed-слой за контентом: не мешает скроллу и кликам, не грузит JS.
+---
+<div class="zh-bg-map" aria-hidden="true">
+  <img src="/bg-map.jpg" alt="" loading="lazy" decoding="async" width="1440" height="8640" />
+  <div class="zh-bg-shade"></div>
+</div>
+<style>
+  .zh-bg-map{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#0B0B0D}
+  .zh-bg-map img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.84) saturate(.9)}
+  .zh-bg-shade{position:absolute;inset:0;background:linear-gradient(180deg, rgba(5,5,7,.62) 0%, rgba(5,5,7,.71) 55%, rgba(5,5,7,.78) 100%)}
+  @media (prefers-reduced-motion: no-preference){
+    .zh-bg-map img{transform:translateZ(0)}
+  }
+</style>
