@@ -1,6 +1,6 @@
 ---
 import PageLayout from '~/layouts/PageLayout.astro';
-import Header from '~/components/widgets/Header.astro';
+import ZhBar from '~/components/widgets/ZhBar.astro';
 
 import { headerData } from '~/navigation';
 import type { MetaData } from '~/types';
@@ -22,17 +22,7 @@ const landingMenu = headerData?.links?.find((link) => link.text === 'Landing');
   </Fragment>
   <Fragment slot="header">
     <slot name="header">
-      <Header
-        links={landingMenu ? [landingMenu] : undefined}
-        actions={[
-          {
-            text: 'Download',
-            href: 'https://github.com/arthelokyo/astrowind',
-          },
-        ]}
-        showToggleTheme
-        position="right"
-      />
+      <ZhBar />
     </slot>
   </Fragment>
   <slot />
