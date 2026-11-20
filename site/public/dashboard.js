@@ -752,21 +752,152 @@ var ZH_BUILD = 1880;
       if (el) el.classList.add('active');
     }
 
+    /* zh-mv: мобильная оболочка — полноэкранные вью «Рядом» и «Машина» (v1) */
     function mView(view) {
-      if (view === 'map') {
-        document.querySelector('.hud-left').classList.remove('open');
-        switchView('map');
-        setActiveTab('tabMapM');
-      } else if (view === 'stations') {
-        renderNearby();
-        switchView('list');
-        setActiveTab('tabStationsM');
-      } else if (view === 'car') {
-        const hud = document.querySelector('.hud-left');
-        const wasOpen = hud.classList.contains('open');
-        if (wasOpen) { hud.classList.remove('open'); setActiveTab('tabMapM'); switchView('map'); }
-        else { switchView('map'); hud.classList.add('open'); setActiveTab('tabCarM'); }
+      if (view === 'map') { closeMv(); return; }
+      if (view === 'stations') { openNearView(); return; }
+      if (view === 'car') { openCarView(); return; }
+    }
+    function mvStyle() {
+      if (document.getElementById('zh-mv-style')) return;
+      const s = document.createElement('style');
+      s.id = 'zh-mv-style';
+      s.textContent = [
+        '@media(max-width:820px){',
+        '  body.mv-open{overflow:hidden}',
+        '  body.mv-open .top-bar, body.mv-open .hud-left, body.mv-open .glass-pill, body.mv-open .bottom-legend, body.mv-open .station-table-wrap, body.mv-open #routePanel{display:none!important}',
+        '  body.mv-open .side-menu{z-index:930!important}',
+        '  body.mv-open .side-overlay{z-index:920!important}',
+        '  .mv-view{display:none;position:fixed;inset:0;z-index:840;background:#050507;color:#E7E7E7;flex-direction:column}',
+        '  body.mv-open .mv-view.open{display:flex}',
+        '  .mv-head{display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:#050507;border-bottom:1px solid rgba(148,163,184,.10);flex-shrink:0}',
+        '  .mv-head .mv-t{flex:1;min-width:0}',
+        '  .mv-title{font-size:19px;font-weight:700;color:#fff}',
+        '  .mv-sub{font-size:12px;color:#A7A7A7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+        '  .mv-ibtn{width:38px;height:38px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:#121214;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}',
+        '  .mv-body{flex:1;overflow-y:auto;padding:12px 14px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}',
+        '  .mv-card{background:#121214;border:1px solid rgba(148,163,184,.10);border-radius:16px;padding:14px 16px;cursor:pointer}',
+        '  .mv-card:active{background:#1B1B20}',
+        '  .mv-card-top{display:flex;align-items:flex-start;gap:10px}',
+        '  .mv-name{font-size:15px;font-weight:600;color:#fff;flex:1;min-width:0;overflow-wrap:break-word;word-break:break-word}',
+        '  .mv-km{color:#FF8F33;font-weight:700;font-size:14px;white-space:nowrap;flex-shrink:0}',
+        '  .mv-addr{margin-top:4px;color:#A7A7A7;font-size:12.5px;line-height:1.4;overflow-wrap:break-word;word-break:break-word}',
+        '  .mv-meta{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}',
+        '  .mv-badge{font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;white-space:nowrap}',
+        '  .mv-badge.dc{background:rgba(232,80,2,.16);color:#FF8F33}',
+        '  .mv-badge.ac{background:rgba(16,185,129,.14);color:#10B981}',
+        '  .mv-badge.na{background:rgba(148,163,184,.12);color:#A7A7A7}',
+        '  .mv-ports{color:#646464;font-size:12px}',
+        '  .mv-route{margin-top:10px;width:100%;height:44px;border-radius:12px;border:0;background:rgba(232,80,2,.16);color:#FFB36E;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}',
+        '  .mv-empty{color:#646464;font-size:13.5px;line-height:1.6;padding:20px 6px;text-align:center}',
+        '}'
+      ].join('\n');
+      document.head.appendChild(s);
+    }
+    function mvEnsure() {
+      mvStyle();
+      if (!document.getElementById('mvNear')) {
+        const near = document.createElement('div');
+        near.className = 'mv-view'; near.id = 'mvNear';
+        near.innerHTML = '<div class="mv-head"><div class="mv-t"><div class="mv-title">Рядом</div><div class="mv-sub" id="mvNearSub"></div></div><button class="mv-ibtn" onclick="renderNearView(1)" aria-label="Обновить"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 3v6h-6"/></svg></button><button class="mv-ibtn" onclick="closeMv()" aria-label="К карте"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="mv-body" id="mvNearBody"></div>';
+        const car = document.createElement('div');
+        car.className = 'mv-view'; car.id = 'mvCar';
+        car.innerHTML = '<div class="mv-head"><div class="mv-t"><div class="mv-title">Машина</div><div class="mv-sub" id="mvCarSub"></div></div><button class="mv-ibtn" onclick="closeMv()" aria-label="К карте"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="mv-body" id="mvCarBody"></div>';
+        const tb = document.getElementById('mobileTabbar');
+        (tb && tb.parentNode) ? tb.parentNode.insertBefore(near, tb) : document.body.appendChild(near);
+        (tb && tb.parentNode) ? tb.parentNode.insertBefore(car, tb) : document.body.appendChild(car);
       }
+    }
+    let _mvCarMoved = null;
+    function openNearView() {
+      mvEnsure();
+      renderNearView(0);
+      document.getElementById('mvCar').classList.remove('open');
+      document.getElementById('mvNear').classList.add('open');
+      document.body.classList.add('mv-open');
+      setActiveTab('tabStationsM');
+    }
+    function openCarView() {
+      mvEnsure();
+      const hud = document.querySelector('.hud-left');
+      const body = document.getElementById('mvCarBody');
+      if (hud && body && !_mvCarMoved) {
+        _mvCarMoved = [];
+        Array.prototype.forEach.call(hud.children, function (n) {
+          if (!n.classList.contains('stack-handle')) _mvCarMoved.push(n);
+        });
+        _mvCarMoved.forEach(function (n) { body.appendChild(n); });
+      }
+      const ct = (document.getElementById('carModelTitle') || {}).textContent || '';
+      const cs = document.getElementById('mvCarSub');
+      if (cs) cs.textContent = ct ? ct.trim() : 'Модель не выбрана';
+      document.getElementById('mvNear').classList.remove('open');
+      document.getElementById('mvCar').classList.add('open');
+      document.body.classList.add('mv-open');
+      setActiveTab('tabCarM');
+    }
+    function closeMv() {
+      const car = document.getElementById('mvCar');
+      if (car) car.classList.remove('open');
+      const near = document.getElementById('mvNear');
+      if (near) near.classList.remove('open');
+      document.body.classList.remove('mv-open');
+      if (_mvCarMoved) {
+        const hud = document.querySelector('.hud-left');
+        if (hud) _mvCarMoved.forEach(function (n) { hud.appendChild(n); });
+        _mvCarMoved = null;
+      }
+      setActiveTab('tabMapM');
+    }
+    function renderNearView(refresh) {
+      mvEnsure();
+      if (!STATIONS_DB || !STATIONS_DB.length) return;
+      const base = (typeof userPos === 'object' && userPos) ? userPos : null;
+      if (!base) return;
+      let near = STATIONS_DB
+        .map(x => ({ x: x, d: haversine(base, [x.lat, x.lon]) }))
+        .filter(v => v.d <= (refresh ? 40 : 30))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, refresh ? 15 : 12);
+      if (!near.length) {
+        near = STATIONS_DB
+          .map(x => ({ x: x, d: haversine(base, [x.lat, x.lon]) }))
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 12);
+      }
+      const list = document.getElementById('mvNearBody');
+      const sub = document.getElementById('mvNearSub');
+      if (sub) sub.textContent = (typeof displayCity === 'function' ? displayCity() : (state.city || '')) + ' · обновлено сейчас';
+      if (!list) return;
+      const plz = (n, one, few, many) => { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return one; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few; return many; };
+      if (!near.length) {
+        list.innerHTML = '<div class="mv-empty">Поблизости станций не нашлось.<br>Смените город в чипах сверху или проверьте геолокацию.</div>';
+        return;
+      }
+      list.innerHTML = near.map((v, i) => {
+        const name = (v.x.op || v.x.n || 'Электрозаправка');
+        const addr = v.x.a || '';
+        const km = (Math.round(v.d * 10) / 10).toFixed(1).replace('.', ',');
+        const pw = v.x.pw || 0;
+        const kind = pw >= 50 ? 'dc' : (pw ? 'ac' : 'na');
+        const kindTxt = kind === 'dc' ? 'DC' : (kind === 'ac' ? 'AC' : 'мощность —');
+        const t80 = pw ? fmtT80(pw) : '';
+        const ports = portLabel(v.x.s);
+        return '<div class="mv-card" data-i="' + i + '" onclick="mvRoute(' + v.x.lat + ',' + v.x.lon + ')">'
+          + '<div class="mv-card-top"><div class="mv-name">' + escapeHtml(String(name)) + '</div><div class="mv-km">' + km + ' км</div></div>'
+          + (addr ? '<div class="mv-addr">' + escapeHtml(addr) + '</div>' : '')
+          + '<div class="mv-meta"><span class="mv-badge ' + kind + '">' + kindTxt + (pw ? ' · ' + pw + ' кВт' : '') + '</span>'
+          + (ports && ports !== '—' ? '<span class="mv-ports">' + escapeHtml(ports) + '</span>' : '')
+          + (t80 && t80 !== '—' ? '<span class="mv-ports">20→80% ' + escapeHtml(t80) + '</span>' : '') + '</div>'
+          + '</div>';
+      }).join('');
+    }
+    function mvRoute(lat, lon) {
+      closeMv();
+      try { buildRoute(lat, lon); showToast('Маршрут построен'); } catch (e) {}
+    }
+    if (typeof escapeHtml !== 'function') {
+      window.escapeHtml = function (s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); };
     }
 
     // Тап по кластеру: DOM-обработчик (нативный Leaflet на тач-экранах клик по кластеру теряет)
@@ -1253,22 +1384,27 @@ var ZH_BUILD = 1880;
       showToast('На карте: ' + label);
     }
 
-    /* zh-near: полноценный экран «Рядом» — фильтры, сортировка по расстоянию, «Показать ещё» */
-    let nearListAll = [], nearLimit = 20, nearFilter = 'all';
     function renderNearby() {
       if (!STATIONS_DB || !STATIONS_DB.length) return;
-      const all = STATIONS_DB
+      let near = STATIONS_DB
         .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
         .filter(v => v.d <= 30)
-        .sort((a, b) => a.d - b.d);
-      let src = all;
-      if (!src.length) {
-        src = STATIONS_DB
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 10);
+      if (!near.length) {
+        near = STATIONS_DB
           .map(x => ({ x: x, d: haversine(userPos, [x.lat, x.lon]) }))
           .filter(v => v.d <= 150)
-          .sort((a, b) => a.d - b.d);
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 10);
       }
-      nearListAll = src.slice(0, 80).map(v => ({
+      if (!near.length) return;
+      try {
+        const maxKm = (typeof near[0].d === 'number') ? (Math.round(near[0].d * 10) / 10) : 0;
+        const ttl = document.querySelector('.st-table-title');
+        if (ttl) ttl.textContent = 'Рядом с вами · ' + near.length + ' ' + pluralSt(near.length) + ' до ' + (Math.round(maxKm * 10) / 10) + ' км';
+      } catch (e) {}
+      near = near.map(v => ({
           name: (v.x.op || v.x.n || 'ЭЗС'),
           addr: v.x.a || '',
           km: Math.max(0.1, Math.round(v.d * 10) / 10),
@@ -1280,78 +1416,11 @@ var ZH_BUILD = 1880;
           tariff: '',
           coords: [v.x.lat, v.x.lon]
         }));
-      nearLimit = 20;
-      renderNearTable();
-    }
-
-    function nearTools() {
-      const wrap = document.getElementById('stationTable');
-      if (!wrap) return;
-      let tools = document.getElementById('zhNearTools');
-      if (!tools) {
-        tools = document.createElement('div');
-        tools.id = 'zhNearTools';
-        tools.className = 'zh-near-tools';
-        const rows = document.getElementById('stationRows');
-        if (rows && rows.parentNode === wrap) wrap.insertBefore(tools, rows);
-        else wrap.appendChild(tools);
-      }
-      const counts = { all: nearListAll.length, dc: nearListAll.filter(s => s.type === 'dc').length, ac: nearListAll.filter(s => s.type === 'ac' || s.type === 'na').length };
-      tools.innerHTML = [
-        ['all', 'Все · ' + counts.all],
-        ['dc', 'Быстрые · ' + counts.dc],
-        ['ac', 'Медленные · ' + counts.ac]
-      ].map(p => '<button class="zh-near-chip ' + (nearFilter === p[0] ? 'active' : '') + '" onclick="setNearFilter(\'' + p[0] + '\')">' + p[1] + '</button>').join('');
-    }
-
-    function setNearFilter(f) {
-      nearFilter = (f === 'dc' || f === 'ac') ? f : 'all';
-      nearLimit = 20;
-      renderNearTable();
-    }
-
-    function moreNear() {
-      nearLimit += 20;
-      renderNearTable();
-    }
-
-    function renderNearTable() {
-      if (!nearListAll.length) return;
-      const filtered = nearListAll.filter(s => {
-        if (nearFilter === 'all') return true;
-        if (nearFilter === 'dc') return s.type === 'dc';
-        return s.type === 'ac' || s.type === 'na';
-      });
-      const rows = filtered.slice(0, nearLimit);
-      try {
-        const ttl = document.querySelector('.st-table-title');
-        const maxKm = rows.length ? rows[rows.length - 1].km : 0;
-        if (ttl) ttl.textContent = 'Рядом с вами · ' + filtered.length + ' ' + pluralSt(filtered.length) + (rows.length ? ' до ' + maxKm + ' км' : '');
-      } catch (e) {}
-      if (!rows.length) {
-        const rw = document.getElementById('stationRows');
-        if (rw) rw.innerHTML = '<div class="near-empty">В этом радиусе нет станций такого типа. Проверьте фильтр или вернитесь к карте.</div>';
-        nearTools();
-        return;
-      }
-      stations = rows;
+      if (!near.length) return;
+      stations = near;
       addStationMarkers();
       renderCards();
       renderTable();
-      nearTools();
-      const rw = document.getElementById('stationRows');
-      if (rw) {
-        const old = document.getElementById('zhNearMore');
-        if (old) old.remove();
-        if (filtered.length > nearLimit) {
-          const more = document.createElement('button');
-          more.id = 'zhNearMore';
-          more.className = 'near-more-btn';
-          more.textContent = 'Показать ещё ' + Math.min(20, filtered.length - nearLimit);
-          more.onclick = moreNear;
-          rw.appendChild(more);
-        }
-      }
     }
 
     function tempNow() {
@@ -2124,3 +2193,6 @@ var ZH_BUILD = 1880;
   /* переприменить после restoreCar (localStorage может перекрыть диплинк) */
   setTimeout(function(){ try{ if(MODELS_ALL && MODELS_ALL.length) applyDeepLink(); }catch(e){} }, 1200);
 })();
+
+/* zh-mv init: подготовка мобильной оболочки */
+try{ mvStyle(); mvEnsure(); }catch(e){}
