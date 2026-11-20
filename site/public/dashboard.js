@@ -1,4 +1,4 @@
-var ZH_BUILD = 1868;
+var ZH_BUILD = 1869;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -1874,3 +1874,23 @@ var ZH_BUILD = 1868;
       document.head.appendChild(css);
     })();
 /* zh build: 2026-11-20 02:45 — deploy kick for uncut chip labels */
+
+/* zh-ui: плашка чипов прячется, когда открыта любая шторка (машина/список/меню/модалка/askCity) */
+(function(){
+  if (window.__zhHidePlate) return; window.__zhHidePlate = true;
+  var SELS = ['.hud-left.open','#carModal.open','#citySheet.open','#stationTable.open','#sideMenu.show','#sideOverlay.show','#shareModal.show','.cl-modal-overlay','.zh-ask'];
+  function zhPlateUpd(){
+    try{
+      if(!document.body) return;
+      var on = false;
+      for (var i=0;i<SELS.length;i++){ if (document.querySelector(SELS[i])) { on = true; break; } }
+      if (document.body.classList.contains('zh-plate-hidden') !== on)
+        document.body.classList.toggle('zh-plate-hidden', on);
+    }catch(e){}
+  }
+  try{
+    var mo = new MutationObserver(zhPlateUpd);
+    mo.observe(document.documentElement, {subtree:true, attributes:true, attributeFilter:['class','style'], childList:true});
+  }catch(e){}
+  zhPlateUpd();
+})();
