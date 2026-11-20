@@ -11,14 +11,14 @@ try {
 
 const groups = [];
 const byName = new Map();
-for (const s of stations) {
+stations.forEach((s) => {
   const a = (s.a || '').trim();
   let city = a ? a.split(',')[0].trim() : '';
   if (!city || /^адрес не указан$/i.test(city)) city = 'Адрес уточняется';
   if (city.length > 56) city = 'Другие адреса';
   if (!byName.has(city)) byName.set(city, []);
   byName.get(city).push(s);
-}
+});
 for (const [name, arr] of byName) groups.push({ name, items: arr, count: arr.length });
 groups.sort((x, y) => y.count - x.count);
 const total = stations.length;

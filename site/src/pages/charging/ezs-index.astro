@@ -46,47 +46,6 @@ const ld = {
   ]
 };
 ---
-import ZhLayout from '../../layouts/ZhLayout.astro';
-import citiesData from '../../data/charging/cities.json';
-import fs from 'node:fs';
-const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
-const stations = (raw.stations || []).filter((s) => s.lat && s.lon);
-const count = stations.length;
-const updated = raw.updated || '';
-const opCount = {};
-for (const s of stations) {
-  const op = (s.op && String(s.op).trim()) || 'Прочие';
-  opCount[op] = (opCount[op] || 0) + 1;
-}
-const opList = Object.entries(opCount).map(([n, c]) => ({ n, c })).sort((a, b) => b.c - a.c);
-const LABELS = { gb_dc: 'GB/T', type2_combo: 'CCS2', chademo: 'CHAdeMO', type2: 'Type 2', 'Type 2': 'Type 2', 'Type 1': 'Type 1', ccs2: 'CCS2', 'CCS2': 'CCS2', gb_ac: 'GB/T AC' };
-const sockCount = {};
-let dc = 0, ac = 0;
-for (const s of stations) {
-  const pw = s.pw || 0;
-  if (pw >= 50) dc++; else if (pw) ac++;
-  for (const k of s.s || []) sockCount[k] = (sockCount[k] || 0) + 1;
-}
-const sockList = Object.entries(sockCount).sort((a, b) => b[1] - a[1]);
-const cities = (citiesData.cities || []).slice().sort((a, b) => (b.c || 0) - (a.c || 0));
-const title = `Индекс зарядных станций России: ${count} ЭЗС с адресами и картами`;
-const desc = `Полный открытый индекс зарядных станций России: ${count} точек, ${opList.length} операторов, разъёмы ${topSocks}. Поиск по оператору и адресу, быстрые точки на карте.`;
-const ld = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    { '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
-      { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
-      { '@type': 'ListItem', position: 3, name: 'Индекс зарядных станций России' }
-    ]},
-    { '@type': 'Dataset', name: 'Индекс зарядных станций России', description: `Сводный индекс ${count} зарядных станций РФ: координаты, операторы, разъёмы, мощность.`, url: 'https://zapashoda-ev.ru/charging/ezs-index/', creator: { '@type': 'Organization', name: 'Запас хода EV' }, license: 'https://zapashoda-ev.ru/open-data' },
-    { '@type': 'FAQPage', mainEntity: [
-      { '@type': 'Question', name: 'Сколько зарядных станций в России?', acceptedAnswer: { '@type': 'Answer', text: `В сводном открытом индексе Zapashoda — ${count} точек от ${opList.length} операторов. Ориентир Яндекс.Карт — около 9 900, разница в том, что часть точек — дома и частные парковки, которые не публикуются как публичные станции.` } },
-      { '@type': 'Question', name: 'Как найти ближайшую зарядную станцию?', acceptedAnswer: { '@type': 'Answer', text: 'Откройте живую карту: она определит ваш город и покажет ближайшие точки с расстоянием и временем до 80%.' } },
-      { '@type': 'Question', name: 'Какие данные есть для каждой точки?', acceptedAnswer: { '@type': 'Answer', text: 'Оператор, адрес, координаты, разъёмы и максимальная мощность. Быстрые точки (50 кВт и выше) удобно искать на карте.' } }
-    ]}
-  ]
-};
 <ZhLayout title={title} description={desc} jsonld={ld}>
   <section class="sec zh-cockpit-page">
     <div class="wrap">
