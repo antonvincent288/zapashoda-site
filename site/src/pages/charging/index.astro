@@ -152,6 +152,16 @@
     }
     
     @media(max-width:820px){
-      .bottom-legend{bottom:calc(74px + env(safe-area-inset-bottom))!important}
+      .bottom-legend{bottom:calc(80px + env(safe-area-inset-bottom))!important}
+    }
+    /* zh-plate: плашку чипов прятать, когда открыта шторка (машина/список/меню/модалка) */
+    @media(max-width:820px){
+      body:has(.hud-left.open) .bottom-legend,
+      body:has(#carModal.open) .bottom-legend,
+      body:has(#citySheet.open) .bottom-legend,
+      body:has(#stationTable.open) .bottom-legend,
+      body:has(#sideMenu.show) .bottom-legend,
+      body:has(#sideOverlay.show) .bottom-legend,
+      body:has(.cl-modal-overlay) .bottom-legend{display:none!important}
     }
     </style>
