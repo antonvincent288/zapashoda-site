@@ -1,4 +1,4 @@
-var ZH_BUILD = 1888;
+var ZH_BUILD = 1889;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -17,7 +17,7 @@ var ZH_BUILD = 1888;
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
       ], attr: 'Esri · © OpenStreetMap' },
       { id: 'carto', layers: () => [
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', className: 'zh-osm-dark', updateWhenIdle: true, attribution: '© OpenStreetMap © CARTO' })
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, attribution: '© OpenStreetMap © CARTO' })
       ], attr: '© OpenStreetMap © CARTO' },
       { id: 'osm', layers: () => [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true })
@@ -26,6 +26,7 @@ var ZH_BUILD = 1888;
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
     const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
     if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
+        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
     function zhTileLoad(idx) {
       _zhSrcIdx = idx; _tileSeen = false;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
