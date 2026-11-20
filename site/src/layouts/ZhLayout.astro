@@ -326,7 +326,7 @@ footer a{display:inline-block;padding:7px 0}
 .share svg{width:18px;height:18px;flex:0 0 18px;color:var(--txt-muted,#8a92a6)}
 .share a:hover svg{color:var(--cyan,#00e5ff)}
 
-footer{background:var(--bg);color:rgba(229,236,246,.66);padding:56px 0 28px;font-size:14px}
+footer{background:linear-gradient(180deg, rgba(5,5,7,0) 0%, rgba(5,5,7,.5) 16%, rgba(5,5,7,.88) 34%, #050507 50%);color:rgba(229,236,246,.66);padding:76px 0 28px;font-size:14px;border-top:0}
 .fgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:36px;align-items:start}
 @media (max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
 @media (max-width:520px){.fgrid{grid-template-columns:1fr}}
@@ -547,7 +547,8 @@ details summary{max-width:var(--measure)}
 /* === ВОЗДУХ: единая шкала отступов === */
 .sec,.sec-alt{padding:96px 0}
 @media(max-width:960px){.sec,.sec-alt{padding:64px 0}}
-section+section,section+footer,footer+section{border-top:1px solid var(--line)}
+section+section,section+footer{border-top:0}
+footer+section{border-top:1px solid var(--line)}
 .sec h2{margin-bottom:18px}
 .sec .lead,.sec .lede{margin-bottom:30px}
 .duo{gap:28px}
