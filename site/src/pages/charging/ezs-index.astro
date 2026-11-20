@@ -3,6 +3,53 @@ import ZhLayout from '../../layouts/ZhLayout.astro';
 import citiesData from '../../data/charging/cities.json';
 import fs from 'node:fs';
 const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
+const stations = (raw.stations || []).filter((s) => Boolean(s.lat && s.lon));
+const count = stations.length;
+const updated = String(raw.updated || '').slice(0, 10);
+type OpCount = Record<string, number>;
+const opCount: OpCount = {};
+stations.forEach((s) => {
+  const op: string = (s.op && String(s.op).trim()) ? String(s.op).trim() : 'Прочие';
+  opCount[op] = (opCount[op] || 0) + 1;
+});
+const opList = Object.keys(opCount).map((n) => ({ n: n, c: opCount[n] })).sort((a, b) => b.c - a.c);
+type SockCount = Record<string, number>;
+const sockCount: SockCount = {};
+let dc = 0;
+let ac = 0;
+stations.forEach((s) => {
+  const pw: number = s.pw || 0;
+  if (pw >= 50) { dc = dc + 1; } else if (pw) { ac = ac + 1; }
+  (s.s || []).forEach((k: string) => { sockCount[k] = (sockCount[k] || 0) + 1; });
+});
+const sockList = Object.keys(sockCount).map((k) => [k, sockCount[k]] as [string, number]).sort((a, b) => b[1] - a[1]);
+const LABELS: Record<string, string> = { gb_dc: 'GB/T', type2_combo: 'CCS2', chademo: 'CHAdeMO', type2: 'Type 2', 'Type 2': 'Type 2', 'Type 1': 'Type 1', ccs2: 'CCS2', gb_ac: 'GB/T AC' };
+const cities = (citiesData.cities || []).slice().sort((a, b) => (b.count || 0) - (a.count || 0));
+const topOps = opList.slice(0, 4).map((b) => b.n).join(', ');
+const topSocks = sockList.slice(0, 3).map((x) => LABELS[x[0]] || x[0]).join(', ');
+const title = 'Индекс зарядных станций России: ' + count + ' ЭЗС с адресами и картами';
+const desc = 'Полный открытый индекс зарядных станций России: ' + count + ' точек, ' + opList.length + ' операторов, разъёмы ' + topSocks + '. Поиск по оператору и адресу, быстрые точки на карте.';
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://zapashoda-ev.ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Зарядные станции', item: 'https://zapashoda-ev.ru/charging/' },
+      { '@type': 'ListItem', position: 3, name: 'Индекс зарядных станций России' }
+    ]},
+    { '@type': 'Dataset', name: 'Индекс зарядных станций России', description: 'Сводный индекс ' + count + ' зарядных станций РФ: координаты, операторы, разъёмы, мощность.', url: 'https://zapashoda-ev.ru/charging/ezs-index/', creator: { '@type': 'Organization', name: 'Запас хода EV' }, license: 'https://zapashoda-ev.ru/open-data' },
+    { '@type': 'FAQPage', mainEntity: [
+      { '@type': 'Question', name: 'Сколько зарядных станций в России?', acceptedAnswer: { '@type': 'Answer', text: 'В сводном открытом индексе Zapashoda — ' + count + ' точек от ' + opList.length + ' операторов. Ориентир Яндекс.Карт — около 9 900: разница в том, что часть точек — частные, не публикуемые как публичные станции.' } },
+      { '@type': 'Question', name: 'Как найти ближайшую зарядную станцию?', acceptedAnswer: { '@type': 'Answer', text: 'Откройте живую карту: она определит ваш город и покажет ближайшие точки с расстоянием и временем до 80%.' } },
+      { '@type': 'Question', name: 'Какие данные есть для каждой точки?', acceptedAnswer: { '@type': 'Answer', text: 'Оператор, адрес, координаты, разъёмы и максимальная мощность. Быстрые точки (50 кВт и выше) удобно искать на карте.' } }
+    ]}
+  ]
+};
+---
+import ZhLayout from '../../layouts/ZhLayout.astro';
+import citiesData from '../../data/charging/cities.json';
+import fs from 'node:fs';
+const raw = JSON.parse(fs.readFileSync('public/charging/stations.json', 'utf-8'));
 const stations = (raw.stations || []).filter((s) => s.lat && s.lon);
 const count = stations.length;
 const updated = raw.updated || '';
@@ -23,7 +70,7 @@ for (const s of stations) {
 const sockList = Object.entries(sockCount).sort((a, b) => b[1] - a[1]);
 const cities = (citiesData.cities || []).slice().sort((a, b) => (b.c || 0) - (a.c || 0));
 const title = `Индекс зарядных станций России: ${count} ЭЗС с адресами и картами`;
-const desc = `Полный открытый индекс зарядных станций России: ${count} точек, ${opList.length} операторов, разъёмы ${sockList.slice(0, 3).map(([k]) => LABELS[k] || k).join(', ')}. Поиск по оператору и адресу, быстрые точки на карте.`;
+const desc = `Полный открытый индекс зарядных станций России: ${count} точек, ${opList.length} операторов, разъёмы ${topSocks}. Поиск по оператору и адресу, быстрые точки на карте.`;
 const ld = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -47,10 +94,10 @@ const ld = {
       <div class="zh-head">
         <div class="zh-head-l">
           <h1>Индекс зарядных станций России</h1>
-          <span class="zh-badge">{count} точек · {opList.length} операторов · обновлено {updated.slice(0, 10)}</span>
+          <span class="zh-badge">{count} точек · {opList.length} операторов · обновлено {updated}</span>
         </div>
       </div>
-      <p class="zh-lead-sub">Сводный открытый индекс ЭЗС России: <b>{count}</b> зарядных точек от {opList.slice(0, 4).map((b) => b.n).join(', ')} и ещё {Math.max(0, opList.length - 4)} операторов. Чаще всего встречаются разъёмы {sockList.slice(0, 3).map(([k]) => LABELS[k] || k).join(', ')}. Быстрых DC-точек (50 кВт и выше) — <b>{dc}</b>, медленных AC — <b>{ac}</b>. Ниже — сводка по операторам, поиск по всем точкам и ссылки на карты городов.</p>
+      <p class="zh-lead-sub">Сводный открытый индекс ЭЗС России: <b>{count}</b> зарядных точек от {topOps} и ещё {Math.max(0, opList.length - 4)} операторов. Чаще всего встречаются разъёмы {topSocks}. Быстрых DC-точек (50 кВт и выше) — <b>{dc}</b>, медленных AC — <b>{ac}</b>. Ниже — сводка по операторам, поиск по всем точкам и ссылки на карты городов.</p>
       <div class="zrc-grid">
         <div class="zrc-card">
           <h2 class="zrc-h2">Операторы: {opList.length} сетей</h2>
