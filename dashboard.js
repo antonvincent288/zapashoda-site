@@ -1,4 +1,4 @@
-var ZH_BUILD = 1878;
+var ZH_BUILD = 1879;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -982,6 +982,14 @@ var ZH_BUILD = 1878;
     let geoApplied = false;
     async function loadGeoCity() {
       if (geoApplied) return;
+      try {
+        const _u = new URLSearchParams(location.search);
+        const _cityQ = _u.get('city');
+        if (_cityQ) {
+          const _c = CITY_LIST.find(c => c.n === _cityQ || String(c.n).toLowerCase() === String(_cityQ).toLowerCase());
+          if (_c) { geoApplied = true; pickCity(_c); loadWeather(); return; }
+        }
+      } catch (e) {}
       let g = null;
       try {
         const r = await fetchTO('https://ipwho.is/', { cache: 'no-store' }, 4000);
