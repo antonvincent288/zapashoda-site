@@ -1,4 +1,4 @@
-var ZH_BUILD = 1889;
+var ZH_BUILD = 1890;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -17,10 +17,10 @@ var ZH_BUILD = 1889;
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
       ], attr: 'Esri · © OpenStreetMap' },
       { id: 'carto', layers: () => [
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, attribution: '© OpenStreetMap © CARTO' })
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', attribution: '© OpenStreetMap © CARTO' })
       ], attr: '© OpenStreetMap © CARTO' },
       { id: 'osm', layers: () => [
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true })
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true, crossOrigin: 'anonymous' })
       ], attr: '© OpenStreetMap contributors' }
     ];
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
@@ -38,7 +38,7 @@ var ZH_BUILD = 1889;
       const next = _zhSrcIdx + 1;
       if (next >= ZH_SOURCES.length) {
         // все источники мертвы: карта живёт на офлайн-кэше SW + маркерах
-        showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше');
+        setTimeout(() => { if (!_tileSeen) showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
         try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
         return;
       }
@@ -56,6 +56,25 @@ var ZH_BUILD = 1889;
       if (!_tileSeen) { const errs = (map._zhErrs = (map._zhErrs || 0) + 1); if (errs >= 6) zhTileNext('errors6'); }
     });
     zhTileLoad(_zhSrcIdx);
+
+    // ДЕТЕКТОР «СВЕТЛОЙ ЗАГЛУШКИ»: CDN отвечает 200, но рисует светлую заглушку
+    // (бот-защита) — считаем источник мёртвым и уходим дальше по цепочке
+    let _zhBrightOK = false, _zhBrightN = 0;
+    function zhCheckBrightness(img) {
+      if (_zhBrightOK) return;
+      try {
+        const c = document.createElement('canvas'); c.width = 16; c.height = 16;
+        const x = c.getContext('2d'); x.drawImage(img, 0, 0, 16, 16);
+        const d = x.getImageData(0, 0, 16, 16).data;
+        let s = 0; for (let i = 0; i < d.length; i += 4) s += (d[i] + d[i+1] + d[i+2]) / 3;
+        if (s / (d.length / 4) > 190) { _zhBrightOK = true; zhTileNext('light-blank'); return; }
+        if (++_zhBrightN >= 3) _zhBrightOK = true;
+      } catch (e) { _zhBrightOK = true; }
+    }
+    map.on('tileload', (ev) => {
+      const t = ev && ev.tile;
+      if (t && t.tagName === 'IMG' && /zh-(osm-inv|osm-dark)/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
+    });
 
     
 
