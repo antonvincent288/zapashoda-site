@@ -1,4 +1,4 @@
-var ZH_BUILD = 1884;
+var ZH_BUILD = 1885;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -29,8 +29,8 @@ var ZH_BUILD = 1884;
       map.eachLayer(l => {
         if (l instanceof L.TileLayer) map.removeLayer(l);
       });
-      if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
+      if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}'; document.head.appendChild(st); }
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', className: 'zh-osm-dark', updateWhenIdle: true }).addTo(map);
       showToast('Подложка карты переключена на резервный источник');
       try { if (window.plausible) plausible('tile-fallback', {props: {reason: reason}}); } catch (e) {}
     }
