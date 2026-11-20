@@ -31,8 +31,8 @@
  "models_cards": 154,
  "app_scripts": 3,
  "catalog_products": 0,
- "link_targets": 228,
- "links_ok": 228,
+ "link_targets": 226,
+ "links_ok": 226,
  "links_bad": [],
  "assets_count": 11,
  "assets_ok": 10,
@@ -43,7 +43,7 @@
   ]
  ],
  "gas_alive": true,
- "checked_at_msk": "20.11 16:40",
+ "checked_at_msk": "20.11 18:18",
  "failures": [
   {
    "where": "page /search.html",
