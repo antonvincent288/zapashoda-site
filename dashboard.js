@@ -1,4 +1,4 @@
-var ZH_BUILD = 1876;
+var ZH_BUILD = 1877;
 
     // Подложка: Esri Dark Gray — реальные тайлы на всех зумах (CARTO из РФ отдаёт заглушки на глубоких зумах).
     // Страховка: 4 ошибки подряд — авто-переход на резервный источник.
@@ -2027,7 +2027,7 @@ var ZH_BUILD = 1876;
       const q=new URLSearchParams(location.search);
       if(!q.has('car') && !q.has('soc') && !q.has('city') && !q.has('rt')) return;
       const car=q.get('car');
-      if(car && window.MODELS_ALL && MODELS_ALL.length){
+      if(car && MODELS_ALL && MODELS_ALL.length){
         const norm=(window.normStr?normStr(car):car.toLowerCase());
         const m=(MODELS_ALL||[]).find(function(mm){ return normStr(mm.name)===norm; });
         if(m && chooseModelModel){ chooseModelModel(m.name, (m.base!=null?m.base:null), (m.port||'—'), !!m.d, !!m.est); }
@@ -2042,13 +2042,15 @@ var ZH_BUILD = 1876;
       if(q.get('rt')==='1' && !state.roundTrip && window.toggleReturn){ toggleReturn(); }
     }catch(e){}
   }
-  if(window.MODELS_ALL && MODELS_ALL.length){ applyDeepLink(); }
+  if(MODELS_ALL && MODELS_ALL.length){ applyDeepLink(); }
   else{
     let tries=0;
     const tmr=setInterval(function(){
       tries++;
-      if(window.MODELS_ALL && MODELS_ALL.length){ clearInterval(tmr); applyDeepLink(); }
+      if(MODELS_ALL && MODELS_ALL.length){ clearInterval(tmr); applyDeepLink(); }
       else if(tries>50){ clearInterval(tmr); }
     },150);
   }
+  /* переприменить после restoreCar (localStorage может перекрыть диплинк) */
+  setTimeout(function(){ try{ if(MODELS_ALL && MODELS_ALL.length) applyDeepLink(); }catch(e){} }, 1200);
 })();
