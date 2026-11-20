@@ -120,6 +120,12 @@
       .city-sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}
       .toast{bottom:calc(74px + env(safe-area-inset-bottom))!important}
     }
+    /* zh-pwa2: крестик списка — в строке заголовка (flex static, не зависит от env), список под шапкой с учётом safe-area-top */
+    @media(max-width:820px){
+      .station-table-wrap{top:calc(76px + env(safe-area-inset-top))!important}
+      .station-table-wrap .st-close-btn{position:static!important;top:auto!important;right:auto!important;margin-left:auto}
+      .station-table-wrap .st-table-head{padding-top:16px!important;padding-bottom:12px!important}
+    }
     </style>
 
 
