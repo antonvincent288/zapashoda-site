@@ -113,7 +113,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <div><b>{BN_HOME}</b><span>материалов базы знаний</span></div>
 <div><b>36</b><span>городов с живым прогнозом</span></div>
 </div>
-<h2 class="sec"><span class="sn">01</span>Популярные модели в каталоге <span class="accent">— GB/T и CCS2</span><small>{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</small></h2>
+<h2 class="sec"><span class="sn">01</span> Популярные модели в каталоге <span class="accent">— GB/T и CCS2</span><small>{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</small></h2>
 <div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
 {['Все'].concat(POP_BRANDS).map((br) => (
 <button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
@@ -132,7 +132,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </div></section>
 
 <section class="sec sec-alt"><div class="wrap">
-<h2 class="sec"><span class="sn">02</span>Инструменты и трассы <span class="accent">— считаем честно</span><small>Считаем деньги и километры честно, без маркетинга</small></h2>
+<h2 class="sec"><span class="sn">02</span> Инструменты и трассы <span class="accent">— считаем честно</span><small>Считаем деньги и километры честно, без маркетинга</small></h2>
 <div class="hw-split">
  <div class="hw-calc">
   <h3>Цена 100 км: электричество vs бензин</h3>
@@ -167,7 +167,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </div></section>
 
 <section class="sec-blk"><div class="wrap">
-<h2 class="sec"><span class="sn">03</span>База знаний <span class="accent">— живые разборы</span><small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
+<h2 class="sec"><span class="sn">03</span> База знаний <span class="accent">— живые разборы</span><small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
 <div class="kbgrid">
 <a class="kbcard" href="/blog/"><span class="ktag">Разбор · 12 мин</span><h4>Не заряжается на морозе: 7 шагов за 3 минуты</h4><p>Пошагово: от «пин не защёлкнулся» до полной перезагрузки станции. Работает у Sitronics и «Энергии Москвы».</p></a>
 <a class="kbcard" href="/blog/"><span class="ktag">Зима · 9 мин</span><h4>−20°: сколько реально ест печка и обогрев</h4><p>Распад по потребителям: батарея, печь, руль. С цифрами из реальных поездок Zeekr 001.</p></a>
@@ -475,25 +475,25 @@ body h2.sec .accent{color:#FF8F33}
 @keyframes faqIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 /* Скорость на слабых устройствах: вне экрана секции не рендерим */
 .sec,.sec-alt,.sec-blk{content-visibility:auto;contain-intrinsic-size:auto 900px}
-/* === Фон v4 «тонкая огранка» — сдержанное затмение + зерно; единственный источник, без дублей === */
+/* === Фон v5 «тонкая огранка»: радиусы в px — свечение одинаково видно на любом экране === */
 .zh-bg-map::before{content:"";position:absolute;inset:0;background:
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
-  radial-gradient(34% 24% at 74% 400px, rgba(255,122,26,.14) 0%, rgba(214,74,10,.07) 38%, transparent 72%),
-  radial-gradient(15% 11% at 74% 398px, transparent 45%, rgba(255,143,51,.11) 49%, rgba(232,80,2,.14) 51%, transparent 57%),
-  radial-gradient(95% 55% at 72% 640px, rgba(120,28,4,.15) 0%, rgba(70,18,3,.06) 48%, transparent 75%),
-  linear-gradient(180deg, rgba(255,143,51,0) 700px, rgba(255,143,51,.075) 790px, rgba(255,143,51,0) 920px),
-  radial-gradient(62% 18% at 30% 2560px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
-  radial-gradient(95% 20% at 64% 3340px, rgba(232,80,2,.06) 0%, transparent 70%)}
+  radial-gradient(640px 420px at 74% 430px, rgba(255,122,26,.16) 0%, rgba(214,74,10,.08) 45%, transparent 72%),
+  radial-gradient(300px 240px at 74% 428px, transparent 46%, rgba(255,143,51,.13) 50%, rgba(232,80,2,.16) 52.5%, transparent 60%),
+  radial-gradient(1100px 800px at 72% 700px, rgba(120,28,4,.18) 0%, rgba(70,18,3,.07) 50%, transparent 76%),
+  linear-gradient(180deg, rgba(255,143,51,0) 700px, rgba(255,143,51,.07) 790px, rgba(255,143,51,0) 920px),
+  radial-gradient(700px 380px at 30% 2560px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
+  radial-gradient(1200px 300px at 64% 3340px, rgba(232,80,2,.07) 0%, transparent 70%)}
 .zh-bg-map img.zbg-img{display:none}
 @media(max-width:900px){
   .zh-bg-map::before{background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
-    radial-gradient(56% 16% at 50% 430px, rgba(255,122,26,.14) 0%, rgba(214,74,10,.07) 38%, transparent 72%),
-    radial-gradient(24% 9% at 50% 428px, transparent 45%, rgba(255,143,51,.11) 49%, rgba(232,80,2,.14) 51%, transparent 57%),
-    radial-gradient(100% 40% at 50% 640px, rgba(120,28,4,.15) 0%, rgba(70,18,3,.06) 48%, transparent 75%),
+    radial-gradient(380px 260px at 50% 430px, rgba(255,122,26,.16) 0%, rgba(214,74,10,.08) 45%, transparent 72%),
+    radial-gradient(170px 120px at 50% 428px, transparent 46%, rgba(255,143,51,.13) 50%, rgba(232,80,2,.16) 52.5%, transparent 60%),
+    radial-gradient(620px 420px at 50% 700px, rgba(120,28,4,.18) 0%, rgba(70,18,3,.07) 50%, transparent 76%),
     linear-gradient(180deg, rgba(255,143,51,0) 780px, rgba(255,143,51,.07) 860px, rgba(255,143,51,0) 990px),
-    radial-gradient(90% 14% at 50% 2650px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
-    radial-gradient(120% 16% at 50% 3500px, rgba(232,80,2,.06) 0%, transparent 70%)}
+    radial-gradient(340px 200px at 50% 2650px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
+    radial-gradient(380px 180px at 50% 3500px, rgba(232,80,2,.06) 0%, transparent 70%)}
 }
 /* Hero picker — как в макете */
 /* Ховер карточек: тёплый вместо синего свечения старой темы */
