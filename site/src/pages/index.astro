@@ -347,8 +347,8 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .hw-h1 em{font-style:normal;background:linear-gradient(92deg,#FF8F33,#FFD1A8 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hw-sub{font-size:16.5px;color:var(--dim,#8E99A8)!important;max-width:470px;margin:0 0 20px!important;text-shadow:none!important}
 .hw-sub b{color:#E9ECF2}
-.hw-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.hw-chip{font-size:13px;color:var(--dim,#8E99A8);border:1px solid rgba(148,163,184,.15);background:rgba(10,12,16,.6);border-radius:999px;padding:7px 13px;text-decoration:none;transition:.15s}
+.hw-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.hw-chip{font-size:12.5px;color:var(--dim,#8E99A8);border:1px solid rgba(148,163,184,.15);background:rgba(10,12,16,.6);border-radius:999px;padding:6px 11px;text-decoration:none;transition:.15s;white-space:nowrap}
 .hw-chip:hover,.hw-chip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
 .hw-note{font-size:12px;color:var(--dim2,#5C6673);margin-top:14px;max-width:430px}
 .hw-widget{background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.3);border-radius:20px;overflow:hidden;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
@@ -442,6 +442,8 @@ body .sec > .wrap > h2, body .sec-alt > .wrap > h2{font-size:30px;letter-spacing
 body .sec .wrap, body .sec-alt .wrap, body .sec-blk .wrap{max-width:1240px;padding:0 20px}
 body [data-mcards]{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 body [data-mcards] .card{padding:16px}
+.hw-big{white-space:nowrap}
+body [data-mcards] .card{display:flex;flex-direction:column}
 body .kbcard{padding:16px}
 @media (max-width:1020px){body [data-mcards]{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){body [data-mcards]{grid-template-columns:1fr}body .dw-body{grid-template-columns:auto 1fr;justify-items:stretch}
@@ -456,7 +458,7 @@ body .mfilter .fchip{font-size:13px;font-weight:500;padding:7px 13px;background:
 body .mfilter .fchip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
 
 /* === Уровень страницы модели: номера секций + акцентные хвосты === */
-body h2.sec .sn{font:800 11px/1 Inter,-apple-system,sans-serif;color:#E85002;letter-spacing:.14em;opacity:.9;display:inline-block;margin-right:10px;vertical-align:3px}
+body h2.sec .sn{font:800 11px/1 Inter,-apple-system,sans-serif;color:#E85002;letter-spacing:.14em;opacity:.55;display:inline-block;margin-right:14px;vertical-align:3px}
 body h2.sec .accent{color:#FF8F33}
 /* Плашка статистики под hero (как .statrow на странице модели) */
 .hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
