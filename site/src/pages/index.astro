@@ -82,7 +82,10 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <a class="hw-chip" href="/models/">XPeng</a>
 <a class="hw-chip" href="/models/">Tesla</a>
 </div>
-<div class="hw-note">Виджет справа — живой пример расчёта · Zeekr 001 · 100 кВт·ч · заряд 80%. Ваша модель и точный расход — в полном калькуляторе ниже.</div>
+<div class="picker">
+  <a class="pfield" href="/models/zeekr-001-001-fr/"><label>Автомобиль</label><div class="val">Zeekr 001</div></a>
+  <div class="pfield"><label>Батарея</label><div class="val">100 кВт·ч</div></div>
+</div>
 </div>
 <div class="hw-widget">
 <div class="dw-head"><div class="dw-title">Запас хода <span>Zeekr 001 · 100 кВт·ч</span></div><div class="dw-live"><i></i> пересчёт 0,4 с</div></div>
@@ -451,8 +454,18 @@ body [data-mcards] .card .badges-row{margin-top:auto;padding-top:4px}
 /* Чипы фильтра — как в макете (.chip): тёплая подложка вместо сплошного оранжевого */
 body .mfilter .fchip{font-size:13px;font-weight:500;padding:7px 13px;background:rgba(10,12,16,.6);color:#8E99A8;border-color:rgba(148,163,184,.15)}
 body .mfilter .fchip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
+/* Hero picker — как в макете */
+.picker{display:flex;gap:10px;max-width:440px}
+.picker .pfield{flex:1;background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.15);border-radius:12px;padding:11px 14px;cursor:pointer;text-decoration:none}
+.picker .pfield label{display:block;font-size:11px;color:#5C6673;margin-bottom:3px;font-weight:600;letter-spacing:.02em}
+.picker .pfield .val{font-weight:700;font-size:15px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.picker .pfield .val::after{content:'';width:7px;height:7px;border-right:1.5px solid #5C6673;border-bottom:1.5px solid #5C6673;transform:rotate(45deg) translateY(-2px)}
+.picker a.pfield:hover{border-color:rgba(232,80,2,.45)}
+/* Ховер карточек: тёплый вместо синего свечения старой темы */
+body [data-mcards] .card:hover{box-shadow:0 12px 30px rgba(0,0,0,.38),0 0 24px rgba(232,80,2,.12)}
 /* Мобильная сетка моделей — как в макете: столбец вместо карусели */
 @media(max-width:700px){
+  .picker{flex-direction:column}
   body [data-mcards].as-slider{display:grid;grid-template-columns:1fr;gap:12px;padding:0}
   body [data-mcards].as-slider>*{flex:0 0 auto;width:100%}
 }}
