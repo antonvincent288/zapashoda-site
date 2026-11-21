@@ -70,7 +70,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   function show(){
    if(shown)return;shown=true;
    var toast=document.createElement('div');toast.id='zs-ai-toast';
-   toast.style.cssText='position:fixed;left:14px;right:14px;max-width:340px;bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:rgba(24,27,33,.96);color:#f5f5f7;border:1px solid rgba(255,111,0,.45);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;box-shadow:0 8px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease';
+   toast.style.cssText='position:fixed;left:auto;right:14px;max-width:min(320px,calc(100vw - 40px));bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:rgba(24,27,33,.96);color:#f5f5f7;border:1px solid rgba(255,111,0,.45);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;box-shadow:0 8px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease';
    toast.innerHTML='<div style="font-size:10px;letter-spacing:.1em;color:#9aa0a6;font-weight:700">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
     +'<div style="margin:6px 0">'+t[0]+'</div>'
     +'<a href="'+t[1]+'" style="display:inline-flex;align-items:center;min-height:34px;background:linear-gradient(135deg,#FF8F33,#FF6F00);color:#0B1018;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none" id="zs-ai-go">Открыть</a>'
