@@ -108,54 +108,28 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <script is:inline>(function(){function boot(){var s=document.querySelector(".zh-strip"),t=document.querySelector(".zh-strip-track");if(!s||!t)return;var x=0,paused=false,dragging=false,half=t.getBoundingClientRect().width/2,last=null,lastX=0,startX=0;function apply(){t.style.transform="translateX("+x+"px)";}window.addEventListener("resize",function(){half=t.getBoundingClientRect().width/2;});function step(ts){if(last==null)last=ts;var dt=Math.min(ts-last,64);last=ts;if(!paused&&!dragging){x-=dt*0.045;if(-x>=half)x=0;apply();}requestAnimationFrame(step);}requestAnimationFrame(step);s.addEventListener("mouseenter",function(){paused=true;});s.addEventListener("mouseleave",function(){paused=false;});s.addEventListener("pointerdown",function(e){dragging=true;lastX=e.clientX;startX=x;paused=true;try{s.setPointerCapture(e.pointerId);}catch(_){}});s.addEventListener("pointermove",function(e){if(!dragging)return;x=startX+(e.clientX-lastX);if(x>0)x=0;if(-x>=half)x=0;apply();});["pointerup","pointercancel","touchend","touchcancel"].forEach(function(ev){s.addEventListener(ev,function(){dragging=false;setTimeout(function(){paused=false;},700);});});s.addEventListener("wheel",function(e){if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){e.preventDefault();x+=e.deltaX;if(x>0)x=0;if(-x>=half)x=0;apply();paused=true;clearTimeout(s._t);s._t=setTimeout(function(){paused=false;},900);}},{passive:false});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();})();</script>
 </div>
 
-<section class="sec sec-alt"><div class="wrap"><h2>Всё о твоей машине за 30 секунд</h2><p class="lead">Марка → модель → разъёмы, адаптеры и сценарий зарядки — результат сразу на экране.</p><div style="max-width:560px;margin:10px auto 0"><div class="zh-quiz" aria-label="Подбор комплекта за 30 секунд"><div class="zq-title">Всё о твоей машине</div><div class="zq-sub">Марка → модель → болячки и решения</div><div class="zq-field"><span class="zq-label">Марка</span><span class="zq-selwrap"><select id="zq-brand-sel" class="zq-select"><option value="">Выберите марку</option><optgroup label="Популярные">{POP_BRANDS.map((b) =>(<option value={b}>{b}</option>))}</optgroup><optgroup label="Все марки">{BRANDS.filter((b) => !POP_BRANDS.includes(b)).map((b) =>(<option value={b}>{b}</option>))}</optgroup></select></span></div><div class="zq-field" id="zq-model-wrap" style="display:none"><span class="zq-label">Модель</span><span class="zq-selwrap"><select id="zq-model-sel" class="zq-select"><option value="">Выберите модель</option></select></span></div><div id="zq-result" style="display:none"><div id="zq-out"></div><a id="zq-model-btn" class="btn btn-gold" style="text-decoration:none;display:inline-block;margin-top:14px" href="/models/">Карточка модели</a><button class="zq-back" type="button">← заново</button></div></div><script define:vars={{ ALL }}>(function(){var M=(ALL||[]).filter(function(m){return m&&m.slug;});var bSel=document.getElementById('zq-brand-sel'),mSel=document.getElementById('zq-model-sel');var mWrap=document.getElementById('zq-model-wrap'),res=document.getElementById('zq-result');bSel.addEventListener('change',function(){var v=bSel.value;if(!v){mWrap.style.display='none';mSel.innerHTML='';return;}mSel.innerHTML='<option value="">Выберите модель</option>';M.filter(function(m){return m.brand===v;}).forEach(function(m){var o=document.createElement('option');o.value=m.slug;o.textContent=m.name||m.slug;mSel.appendChild(o);});mWrap.style.display='';res.style.display='none';});mSel.addEventListener('change',function(){var slug=mSel.value;var m=null;for(var i=0;i<M.length;i++)if(M[i].slug===slug){m=M[i];break;}if(m)showResult(m);});function plugSlug(p){p=String(p||'');return p.indexOf('GB/T')>=0?'gbt':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));}function plugImg(p){p=String(p||'');var k=p.indexOf('GB/T')>=0?'gbt-dc':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));return '<img src="/assets/img/plugs/zsh-'+k+'.svg" width="18" height="18" alt="" style="vertical-align:-4px;margin-right:4px">';}function showResult(m){var port=String(m.port||'');var adapters=[];if(/GB\/T/i.test(port))adapters.push('Адаптер Type 2 → GB/T (AC, 22 кВт) — ваш основной переходник');if(/CCS/i.test(port))adapters.push('Прямое подключение CCS2 на быстрых станциях');if(!adapters.length)adapters.push('Прямое подключение Type 2 — переходник не нужен');document.getElementById('zq-out').innerHTML='<b>'+(m.name||'')+'</b>'+(m.years?'<div class="zq-y">'+m.years+'</div>':'')+'<div class="zq-ports"><b>Разъёмы:</b> '+(port?plugImg(port)+' '+port+' <a href="/razemy/'+plugSlug(port)+'/" style="color:var(--cyan,#00E5FF);font-size:14px;text-decoration:none">что за разъём →</a>':'—')+'</div>'+'<div style="margin-top:10px"><b>Что понадобится:</b><ul>'+adapters.map(function(a){return '<li>'+a+'</li>';}).join('')+'</ul></div>';document.getElementById('zq-model-btn').href='/models/'+m.slug+'/';document.getElementById('zq-model-btn').style.display='inline-block';res.style.display='';}Array.prototype.forEach.call(document.querySelectorAll('.zq-back'),function(btn){btn.addEventListener('click',function(){res.style.display='none';mWrap.style.display='none';mSel.innerHTML='';bSel.value='';});});})();</script></div></div></section>
 
-<section class="sec-blk"><div class="wrap">
-<h2 class="sec">База знаний<small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
-<div class="kbgrid">
-<a class="kbcard" href="/blog/"><span class="ktag">Разбор · 12 мин</span><h4>Не заряжается на морозе: 7 шагов за 3 минуты</h4><p>Пошагово: от «пин не защёлкнулся» до полной перезагрузки станции. Работает у Sitronics и «Энергии Москвы».</p></a>
-<a class="kbcard" href="/blog/"><span class="ktag">Зима · 9 мин</span><h4>−20°: сколько реально ест печка и обогрев</h4><p>Распад по потребителям: батарея, печь, руль. С цифрами из реальных поездок Zeekr 001.</p></a>
-<a class="kbcard" href="/blog/"><span class="ktag">12В · 6 мин</span><h4>АКБ 12В: кто садится и что делать</h4><p>Топ-3 сценария разряда и честная таблица восстановления на разных машинах.</p></a>
-</div>
-<div class="m-faq">
-{faq.map((f) => (
-<details><summary>{f.q}</summary><p>{f.a}</p></details>
+
+<section class="sec"><div class="wrap">
+<h2>Популярные модели в каталоге</h2>
+<p class="lead">{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</p>
+<div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
+{['Все'].concat(POP_BRANDS).map((br) => (
+<button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
 ))}
 </div>
-<p style="margin-top:14px"><a href="/blog/" style="color:var(--cyan,#00E5FF);font-size:14px;text-decoration:none">Все материалы базы знаний →</a></p>
+<div class="bgrid as-slider" style="margin-top:20px" data-mcards>
+{POP.map((mo) => (
+<a class="card" href={'/models/' + mo.slug + '/'} data-brand={mo.brand}>
+<span class="badges-row"><span class="bdg">{mo.port === 'EU' ? 'CCS2' : mo.port}</span><span class={'bdg' + (mo.port === 'EU' ? ' cool' : '')}>{mo.port === 'EU' ? 'CCS2 напрямую' : 'Нужен адаптер'}</span></span>
+<h3 class="bh" style="font-size:16px;margin:10px 0 6px">{mo.name}</h3>
+<p style="margin:0;font-size:14px;color:var(--txt-muted)">{mo.years}</p>
+</a>
+))}
+</div>
+<div style="margin-top:20px"><a class="btn btn-ghost" href="/models/">Все {MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')}</a></div>
 </div></section>
-<script is:inline>
-(function(){
-  Array.prototype.forEach.call(document.querySelectorAll('[data-mfilter] .fchip'),function(b){
-    b.addEventListener('click',function(){
-      Array.prototype.forEach.call(document.querySelectorAll('[data-mfilter] .fchip'),function(x){x.classList.remove('on')});
-      b.classList.add('on');
-      var br=b.getAttribute('data-brand');
-      Array.prototype.forEach.call(document.querySelectorAll('[data-mcards] .card'),function(c){
-        c.style.display=(br==='Все'||c.getAttribute('data-brand')===br)?'':'none';
-      });
-    });
-  });
-})();
-</script>
-<script is:inline>
-(function(){
-  var CIRC=477.5, BATT=100, CH=0.8, RMAX=Math.round(100*BATT/16);
-  function cons(t){ return 16 + Math.max(0,(15-t))*0.35; }
-  function upd(){
-    var r=document.getElementById('hw-trange'); if(!r) return;
-    var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
-    var a=document.getElementById('hw-arc'); if(a) a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
-    var e=document.getElementById('hw-rkm'); if(e) e.textContent=range;
-    e=document.getElementById('hw-cons'); if(e) e.innerHTML=(Math.round(c*10)/10).toString().replace('.',',')+' <small>кВт·ч/100</small>';
-    e=document.getElementById('hw-heat'); if(e) e.innerHTML=(t>=15?'0,8':(4.6-0.11*(t+20)).toFixed(1).replace('.0','').replace('.',',').replace('-','−'))+' <small>кВт·ч/ч</small>';
-    e=document.getElementById('hw-tval'); if(e) e.textContent=(t>0?'+':'−')+Math.abs(t)+'°';
-  }
-  var r=document.getElementById('hw-trange');
-  if(r) r.addEventListener('input',upd);
-  upd();
-})();
-</script>
+
 <section class="sec sec-alt"><div class="wrap">
 <h2>Инструменты и трассы</h2>
 <p class="lead">Считаем деньги и километры честно, без маркетинга</p>
@@ -192,26 +166,58 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </script>
 </div></section>
 
-
-<section class="sec"><div class="wrap">
-<h2>Популярные модели в каталоге</h2>
-<p class="lead">{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</p>
-<div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
-{['Все'].concat(POP_BRANDS).map((br) => (
-<button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
+<section class="sec-blk"><div class="wrap">
+<h2 class="sec">База знаний<small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
+<div class="kbgrid">
+<a class="kbcard" href="/blog/"><span class="ktag">Разбор · 12 мин</span><h4>Не заряжается на морозе: 7 шагов за 3 минуты</h4><p>Пошагово: от «пин не защёлкнулся» до полной перезагрузки станции. Работает у Sitronics и «Энергии Москвы».</p></a>
+<a class="kbcard" href="/blog/"><span class="ktag">Зима · 9 мин</span><h4>−20°: сколько реально ест печка и обогрев</h4><p>Распад по потребителям: батарея, печь, руль. С цифрами из реальных поездок Zeekr 001.</p></a>
+<a class="kbcard" href="/blog/"><span class="ktag">12В · 6 мин</span><h4>АКБ 12В: кто садится и что делать</h4><p>Топ-3 сценария разряда и честная таблица восстановления на разных машинах.</p></a>
+</div>
+<div class="m-faq">
+{faq.map((f) => (
+<details><summary>{f.q}</summary><p>{f.a}</p></details>
 ))}
 </div>
-<div class="bgrid as-slider" style="margin-top:20px" data-mcards>
-{POP.map((mo) => (
-<a class="card" href={'/models/' + mo.slug + '/'} data-brand={mo.brand}>
-<span class="badges-row"><span class="bdg">{mo.port === 'EU' ? 'CCS2' : mo.port}</span><span class={'bdg' + (mo.port === 'EU' ? ' cool' : '')}>{mo.port === 'EU' ? 'CCS2 напрямую' : 'Нужен адаптер'}</span></span>
-<h3 class="bh" style="font-size:16px;margin:10px 0 6px">{mo.name}</h3>
-<p style="margin:0;font-size:14px;color:var(--txt-muted)">{mo.years}</p>
-</a>
-))}
-</div>
-<div style="margin-top:20px"><a class="btn btn-ghost" href="/models/">Все {MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')}</a></div>
+<p style="margin-top:14px"><a href="/blog/" style="color:var(--cyan,#00E5FF);font-size:14px;text-decoration:none">Все материалы базы знаний →</a></p>
 </div></section>
+
+<script is:inline>
+(function(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mfilter] .fchip'),function(b){
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(document.querySelectorAll('[data-mfilter] .fchip'),function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var br=b.getAttribute('data-brand');
+      Array.prototype.forEach.call(document.querySelectorAll('[data-mcards] .card'),function(c){
+        c.style.display=(br==='Все'||c.getAttribute('data-brand')===br)?'':'none';
+      });
+    });
+  });
+})();
+</script>
+
+<section class="sec sec-alt"><div class="wrap"><h2>Всё о твоей машине за 30 секунд</h2><p class="lead">Марка → модель → разъёмы, адаптеры и сценарий зарядки — результат сразу на экране.</p><div style="max-width:560px;margin:10px auto 0"><div class="zh-quiz" aria-label="Подбор комплекта за 30 секунд"><div class="zq-title">Всё о твоей машине</div><div class="zq-sub">Марка → модель → болячки и решения</div><div class="zq-field"><span class="zq-label">Марка</span><span class="zq-selwrap"><select id="zq-brand-sel" class="zq-select"><option value="">Выберите марку</option><optgroup label="Популярные">{POP_BRANDS.map((b) =>(<option value={b}>{b}</option>))}</optgroup><optgroup label="Все марки">{BRANDS.filter((b) => !POP_BRANDS.includes(b)).map((b) =>(<option value={b}>{b}</option>))}</optgroup></select></span></div><div class="zq-field" id="zq-model-wrap" style="display:none"><span class="zq-label">Модель</span><span class="zq-selwrap"><select id="zq-model-sel" class="zq-select"><option value="">Выберите модель</option></select></span></div><div id="zq-result" style="display:none"><div id="zq-out"></div><a id="zq-model-btn" class="btn btn-gold" style="text-decoration:none;display:inline-block;margin-top:14px" href="/models/">Карточка модели</a><button class="zq-back" type="button">← заново</button></div></div><script define:vars={{ ALL }}>(function(){var M=(ALL||[]).filter(function(m){return m&&m.slug;});var bSel=document.getElementById('zq-brand-sel'),mSel=document.getElementById('zq-model-sel');var mWrap=document.getElementById('zq-model-wrap'),res=document.getElementById('zq-result');bSel.addEventListener('change',function(){var v=bSel.value;if(!v){mWrap.style.display='none';mSel.innerHTML='';return;}mSel.innerHTML='<option value="">Выберите модель</option>';M.filter(function(m){return m.brand===v;}).forEach(function(m){var o=document.createElement('option');o.value=m.slug;o.textContent=m.name||m.slug;mSel.appendChild(o);});mWrap.style.display='';res.style.display='none';});mSel.addEventListener('change',function(){var slug=mSel.value;var m=null;for(var i=0;i<M.length;i++)if(M[i].slug===slug){m=M[i];break;}if(m)showResult(m);});function plugSlug(p){p=String(p||'');return p.indexOf('GB/T')>=0?'gbt':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));}function plugImg(p){p=String(p||'');var k=p.indexOf('GB/T')>=0?'gbt-dc':(p.indexOf('CHAdeMO')>=0?'chademo':(p.indexOf('Type1')>=0?'type1':'type2'));return '<img src="/assets/img/plugs/zsh-'+k+'.svg" width="18" height="18" alt="" style="vertical-align:-4px;margin-right:4px">';}function showResult(m){var port=String(m.port||'');var adapters=[];if(/GB\/T/i.test(port))adapters.push('Адаптер Type 2 → GB/T (AC, 22 кВт) — ваш основной переходник');if(/CCS/i.test(port))adapters.push('Прямое подключение CCS2 на быстрых станциях');if(!adapters.length)adapters.push('Прямое подключение Type 2 — переходник не нужен');document.getElementById('zq-out').innerHTML='<b>'+(m.name||'')+'</b>'+(m.years?'<div class="zq-y">'+m.years+'</div>':'')+'<div class="zq-ports"><b>Разъёмы:</b> '+(port?plugImg(port)+' '+port+' <a href="/razemy/'+plugSlug(port)+'/" style="color:var(--cyan,#00E5FF);font-size:14px;text-decoration:none">что за разъём →</a>':'—')+'</div>'+'<div style="margin-top:10px"><b>Что понадобится:</b><ul>'+adapters.map(function(a){return '<li>'+a+'</li>';}).join('')+'</ul></div>';document.getElementById('zq-model-btn').href='/models/'+m.slug+'/';document.getElementById('zq-model-btn').style.display='inline-block';res.style.display='';}Array.prototype.forEach.call(document.querySelectorAll('.zq-back'),function(btn){btn.addEventListener('click',function(){res.style.display='none';mWrap.style.display='none';mSel.innerHTML='';bSel.value='';});});})();</script></div></div></section>
+<script is:inline>
+(function(){
+  var CIRC=477.5, BATT=100, CH=0.8, RMAX=Math.round(100*BATT/16);
+  function cons(t){ return 16 + Math.max(0,(15-t))*0.35; }
+  function upd(){
+    var r=document.getElementById('hw-trange'); if(!r) return;
+    var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
+    var a=document.getElementById('hw-arc'); if(a) a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
+    var e=document.getElementById('hw-rkm'); if(e) e.textContent=range;
+    e=document.getElementById('hw-cons'); if(e) e.innerHTML=(Math.round(c*10)/10).toString().replace('.',',')+' <small>кВт·ч/100</small>';
+    e=document.getElementById('hw-heat'); if(e) e.innerHTML=(t>=15?'0,8':(4.6-0.11*(t+20)).toFixed(1).replace('.0','').replace('.',',').replace('-','−'))+' <small>кВт·ч/ч</small>';
+    e=document.getElementById('hw-tval'); if(e) e.textContent=(t>0?'+':'−')+Math.abs(t)+'°';
+  }
+  var r=document.getElementById('hw-trange');
+  if(r) r.addEventListener('input',upd);
+  upd();
+})();
+</script>
+
+
+
 
 
 <style is:global>
