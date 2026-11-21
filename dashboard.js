@@ -1,4 +1,4 @@
-var ZH_BUILD = 1895;
+var ZH_BUILD = 1896;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -12,9 +12,6 @@ var ZH_BUILD = 1895;
 
     // ПОДЛОЖКА «РАЗ И НАВСЕГДА»: цепочка живых источников с быстрым (4 с) перебором и памятью
     const ZH_SOURCES = [
-      { id: 'carto', layers: () => [
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
-      ], attr: '© OpenStreetMap © CARTO' },
       { id: 'arcgis', layers: () => [
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, updateWhenIdle: true }),
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
@@ -22,7 +19,11 @@ var ZH_BUILD = 1895;
       { id: 'osm', layers: () => [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true, crossOrigin: 'anonymous' })
       ], attr: '© OpenStreetMap contributors' }
-    ];
+
+      { id: 'carto', layers: () => [
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
+      ], attr: '© OpenStreetMap © CARTO' },
+    ]
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
     const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
     if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
@@ -51,25 +52,26 @@ var ZH_BUILD = 1895;
           showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
         try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
         // авто-ретрай цепочки через 30 с: сеть может ожить в лифте/тоннеле/аэропорту
-        if (!map._zhRetry) map._zhRetry = setInterval(() => { try { zhTileLoad(0); } catch (e) {} }, 30000);
+        if (!map._zhRetry) map._zhRetry = setInterval(() => { try { zhTileLoad(window._zhLastGood || 0); } catch (e) {} }, 45000);
         return;
       }
       zhTileLoad(next);
       const firstFallback = !_zhSwitched;
       _zhSwitched = true;
       // первый переход — молча (пользователь ещё не заметил): не пугаем «опять не работает»
-      if (!firstFallback) showToast('Подложка карты переключена на резервный источник');
+      if (!firstFallback && (!map._zhToastAt || Date.now()-map._zhToastAt>180000)) { map._zhToastAt=Date.now(); showToast('Подложка карты переключена на резервный источник'); }
       try { if (window.plausible) plausible('tile-fallback', { props: { reason: reason, to: ZH_SOURCES[next].id } }); } catch (e) {}
     }
     map.on('tileload', () => {
       _tileSeen = true;
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
-      try { localStorage.setItem('zhTileSrc', ZH_SOURCES[_zhSrcIdx].id); } catch (e) {}
+      window._zhLastGood=_zhSrcIdx; try { localStorage.setItem('zhTileSrc', ZH_SOURCES[_zhSrcIdx].id); } catch (e) {}
     });
     map.on('tileerror', () => {
       if (!_tileSeen) { const errs = (map._zhErrs = (map._zhErrs || 0) + 1); if (errs >= 6) zhTileNext('errors6'); }
     });
-    zhTileLoad(_zhSrcIdx);
+    try { const lastSrc=localStorage.getItem('zhTileSrc'); const li=ZH_SOURCES.findIndex(s=>s.id===lastSrc); window._zhLastGood=li>=0?li:0; } catch(e) { window._zhLastGood=0; }
+    zhTileLoad(window._zhLastGood || 0);
 
     // ДЕТЕКТОР «СВЕТЛОЙ ЗАГЛУШКИ»: CDN отвечает 200, но рисует светлую заглушку
     // (бот-защита) — считаем источник мёртвым и уходим дальше по цепочке
