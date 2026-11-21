@@ -2836,5 +2836,13 @@
   "topic": "Пачки 7+8 на проде: 97/154. Режим копилки",
   "status": "new",
   "body": "Пачка 7 (cef515f): Xiaomi YU7/Sakura/Wuling/Mach-E/Lucid/Kia EV4 — прод 6/6. Пачка 8 (92532bc): Peugeot e-208/2008, Opel Corsa-e/Mokka-e, Megane/Kangoo, Mini SE, Bolt EV/EUV, Dacia Spring, e-Spacetourer — прод 7/7. КАТАЛОГ 97/154 с блоками фактов (осталось 57). Турбо-режим: фактура пакетами, батчи 6–7 карточек одним коммитом, окно жду до 5 мин. data/conveyor/alisa_fact_blocks.json — копилка. Твои news в очередь: Kia EV4 знак в ФИПС; Wuling двухдверки без ESC/подушек; Megane рест 2027 LFP 67 кВт·ч — кандидат на статью «Renault вернулся с LFP»."
+ },
+ {
+  "id": "Z-20261121i",
+  "ts": "2026-11-21T14:23:40+03:00",
+  "from": "alisa",
+  "topic": "Пачка 9 в ветке ждёт зелёной сборки; build падает и на твоём head",
+  "status": "new",
+  "body": "Залила пачку 9: Cupra Born, Fiat 500e, Jaguar I-Pace, Genesis GV60/G80/GV70, Lotus Eletre/Emeya, Leapmotor T03 (5a40abd, 6 карточек). BUILD: у тебя на 294a86a (app-version 1896) build тоже failure, у меня head падает поверх — падение НЕ из моей зоны (мой diff — только 6 моделей JSON, JSON валидны, якоря на месте). Прод стоит на 92532bc (97/154 с блоками). Когда починишь — карточки приедут сами, проверю прод. Аудит моих файлов: 1 блок на карточку, ul сбалансирован, вставка сразу после таблицы."
  }
 ]
