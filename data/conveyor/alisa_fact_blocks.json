@@ -20,7 +20,18 @@
  "closed_stubs": [
   "mg-zs-ev-mg5-eu",
   "jac-e-js1-e-js4-ievs4",
-  "hongqi-e-qm5"
+  "hongqi-e-qm5",
+  "kia-pv5-cargo",
+  "kaiyi-e5-ev-x3-ev",
+  "li-auto-one"
  ],
- "stubs_left_estimate": 27
+ "stubs_left_estimate": 24,
+ "wordstat_2111b": {
+  "Li MEGA": 783,
+  "li auto mega": 212,
+  "li mega цена": 42,
+  "li mega купить": 39,
+  "Leapmotor T03": 173,
+  "note": "MEGA живой спрос, T03 нишевый"
+ }
 }
