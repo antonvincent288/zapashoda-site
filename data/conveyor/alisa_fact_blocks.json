@@ -292,5 +292,11 @@
   "прод": "xpeng OK, dolphin OK, exlantix OK, mega OK; su7/deepal/geely-ex5 — render-кластер (данные в ветке верны)",
   "render-cluster": "9 slug: +xiaomi-su7-su7-ultra, +deepal-l07-s05-s09, +geely-ex5-monjaro-hi-p-phev",
   "next": "wordstat-замеры этих 7 моделей для строк спроса; Leapmotor/MG4 — след. волна"
+ },
+ "wave6_kak_kupit_2111": {
+  "коммит": "d01cd7e — «Как купить» волна 3: leapmotor-t03 (Китай 1,0–1,3 млн под ключ; 310/403 Comfort; утильсбор льготный 3 400 ₽; б/у от 644 тыс), leapmotor-c10-c11-c01-b10-a05 (C10/C11/C16 3,2–4,4 млн; A05/A10 1,65–2,0; D19/D99 от 6,4; комиссия EMC 150 тыс; A10 от 0,76–1,0/Revocars 1,64), mg-4-mulan (Китай от 1,33 млн; Revocars 1,698; СфераКар 1,465–2,065; MG 4X EncarRus 2,347–2,575; все 6 комплектаций — льготный утильсбор, 610 CATL — коммерческий)",
+  "прод": "все 3 slug ✓",
+  "итого волны": "154 карточки: «Как купить» уже в ~27 (17 лидеров + 7 волна 2 + 3 волна 3)",
+  "next": "wordstat-замеры 10 моделей (xpeng/su7/dolphin/deepal/geely/exlantix/mega/leapmotor/mg4) для строк спроса — приоритет по лидерам"
  }
 }
