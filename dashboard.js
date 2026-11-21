@@ -1,4 +1,4 @@
-var ZH_BUILD = 1897;
+var ZH_BUILD = 1898;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -35,9 +35,9 @@ var ZH_BUILD = 1897;
         }
         document.head.appendChild(st); }
     function zhTileLoad(idx) {
-      _zhSrcIdx = idx; _tileSeen = false;
+      _zhSrcIdx = idx; _tileSeen = false; map._zhErrs = 0;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
-      ZH_SOURCES[idx].layers().forEach(l => l.addTo(map));
+      ZH_SOURCES[idx].layers().forEach(l => { l.on('tileload', zhTileOK).on('tileerror', zhTileErr); l.addTo(map); });
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
       _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, _zhSrcIdx === 0 ? 12000 : 6000);
     }
@@ -62,15 +62,18 @@ var ZH_BUILD = 1897;
       if (!firstFallback && (!map._zhToastAt || Date.now()-map._zhToastAt>180000)) { map._zhToastAt=Date.now(); showToast('Сигнал слабый — включён резервный режим карты'); }
       try { if (window.plausible) plausible('tile-fallback', { props: { reason: reason, to: ZH_SOURCES[next].id } }); } catch (e) {}
     }
-    map.on('tileload', () => {
+    function zhTileOK(ev) {
       _tileSeen = true;
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
       window._zhLastGood=_zhSrcIdx; try { localStorage.setItem('zhTileSrc', ZH_SOURCES[_zhSrcIdx].id); } catch (e) {}
       try { if (map._zhRetry) { clearInterval(map._zhRetry); map._zhRetry=null; map._zhDeadLoops=0; } } catch (e) {}
-    });
-    map.on('tileerror', () => {
+      if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
+      const t = ev && ev.tile;
+      if (t && t.tagName === 'IMG' && /zh-carto-dark/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
+    }
+    function zhTileErr() {
       if (!_tileSeen) { const errs = (map._zhErrs = (map._zhErrs || 0) + 1); if (errs >= 6) zhTileNext('errors6'); }
-    });
+    }
     try { const lastSrc=localStorage.getItem('zhTileSrc'); const li=ZH_SOURCES.findIndex(s=>s.id===lastSrc); window._zhLastGood=li>=0?li:0; } catch(e) { window._zhLastGood=0; }
     zhTileLoad(window._zhLastGood || 0);
 
@@ -100,11 +103,7 @@ var ZH_BUILD = 1897;
         setTimeout(() => { if (window.__zhMl) { window.__zhMl.classList.add('zh-ml-done'); setTimeout(()=>{ const x=window.__zhMl; if(x) x.remove(); window.__zhMl=null; },480); } }, 12000);
       }
     } catch (e) {}
-map.on('tileload', (ev) => {
-      if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
-      const t = ev && ev.tile;
-      if (t && t.tagName === 'IMG' && /zh-carto-dark/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
-    });
+    // (tileload/tileerror слушаются на слоях — см. zhTileOK/zhTileErr; map.on не ловит события Leaflet-слоёв)
 
     
 
