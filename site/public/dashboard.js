@@ -1,4 +1,4 @@
-var ZH_BUILD = 1893;
+var ZH_BUILD = 1894;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -26,7 +26,7 @@ var ZH_BUILD = 1893;
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
     const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
     if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
-        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}.zh-carto-dark{filter:none}.zh-osm-inv{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
+        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}.zh-carto-dark{filter:none}.zh-osm-inv{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)} + '.zh-ml{position:absolute;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .45s ease}.zh-ml.zh-ml-done{opacity:0}.zh-ml-box{display:flex;align-items:center;gap:13px;background:rgba(13,15,20,.92);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:14px 20px;box-shadow:0 18px 50px rgba(0,0,0,.5)}.zh-ml-ic{width:30px;height:30px;fill:#FF8F33;position:relative;filter:drop-shadow(0 0 8px rgba(255,143,51,.65));animation:zh-ml-pulse 1.5s ease-in-out infinite}.zh-ml-ic::before{content:\'\';position:absolute;inset:-8px;border:2px solid rgba(255,143,51,.35);border-radius:50%;animation:zh-ml-ring 1.5s linear infinite}.zh-ml-txt{display:flex;flex-direction:column;gap:2px}.zh-ml-txt b{color:#fff;font-size:14px;letter-spacing:.01em}.zh-ml-txt span{color:#8E99A8;font-size:11.5px}.zh-ml-dots{display:flex;gap:5px;margin-left:2px}.zh-ml-dots i{width:6px;height:6px;border-radius:50%;background:#E85002;opacity:.35;animation:zh-ml-dot 1.2s infinite}.zh-ml-dots i:nth-child(2){animation-delay:.2s}.zh-ml-dots i:nth-child(3){animation-delay:.4s}@keyframes zh-ml-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.65;transform:scale(.92)}}@keyframes zh-ml-ring{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.5);opacity:0}}@keyframes zh-ml-dot{0%,100%{opacity:.35}50%{opacity:1;transform:translateY(-2px)}}@media (prefers-reduced-motion:reduce){.zh-ml-ic,.zh-ml-ic::before,.zh-ml-dots i{animation:none}'; document.head.appendChild(st); }
     function zhTileLoad(idx) {
       _zhSrcIdx = idx; _tileSeen = false;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
@@ -41,7 +41,8 @@ var ZH_BUILD = 1893;
         // (вечно крутится индикатор загрузки), карта живёт на офлайн-кэше SW + маркерах
         map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
         if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
-        setTimeout(() => { if (!_tileSeen) showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
+        setTimeout(() => { if (!_tileSeen) if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
+          showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
         try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
         // авто-ретрай цепочки через 30 с: сеть может ожить в лифте/тоннеле/аэропорту
         if (!map._zhRetry) map._zhRetry = setInterval(() => { try { zhTileLoad(0); } catch (e) {} }, 30000);
@@ -78,7 +79,20 @@ var ZH_BUILD = 1893;
         if (++_zhBrightN >= 3) _zhBrightOK = true;
       } catch (e) { _zhBrightOK = true; }
     }
-    map.on('tileload', (ev) => {
+    
+    // Лоадер «Загружаем карту» — стильная плашка, скрывается на первом тайле
+    try {
+      const zhMapEl = document.getElementById('map');
+      if (zhMapEl && !document.getElementById('zh-map-loader')) {
+        const ml = document.createElement('div'); ml.id='zh-map-loader'; ml.className='zh-ml';
+        ml.innerHTML = '<div class="zh-ml-box"><svg class="zh-ml-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg><div class="zh-ml-txt"><b>Загружаем карту</b><span>подложка и станции</span></div><div class="zh-ml-dots"><i></i><i></i><i></i></div></div>';
+        zhMapEl.appendChild(ml);
+        window.__zhMl = ml;
+        setTimeout(() => { if (window.__zhMl) { window.__zhMl.classList.add('zh-ml-done'); setTimeout(()=>{ const x=window.__zhMl; if(x) x.remove(); window.__zhMl=null; },480); } }, 12000);
+      }
+    } catch (e) {}
+map.on('tileload', (ev) => {
+      if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
       const t = ev && ev.tile;
       if (t && t.tagName === 'IMG' && /zh-carto-dark/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
     });
