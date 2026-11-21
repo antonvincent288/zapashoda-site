@@ -5,6 +5,7 @@ import ZhBar from '~/components/widgets/ZhBar.astro';
 import ZhBgMap from '~/components/widgets/ZhBgMap.astro';
 import fs from 'node:fs';
 import modelsLight from '../data/models_light.json';
+import ZhCockpit from '../components/ZhCockpit.astro';
 const ML = (modelsLight.models || []).filter((m) => m && m.slug);
 const blogModsZ = import.meta.glob('../data/articles/blog/*.json', { eager: true, import: 'default' });
 const BLOG_N = Object.values(blogModsZ).filter((a) => a && a.slug).length;
