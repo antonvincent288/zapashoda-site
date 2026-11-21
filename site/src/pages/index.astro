@@ -111,8 +111,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 
 
 <section class="sec"><div class="wrap">
-<h2>Популярные модели в каталоге</h2>
-<p class="lead">{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</p>
+<h2 class="sec">Популярные модели в каталоге<small>{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</small></h2>
 <div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
 {['Все'].concat(POP_BRANDS).map((br) => (
 <button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
@@ -131,8 +130,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </div></section>
 
 <section class="sec sec-alt"><div class="wrap">
-<h2>Инструменты и трассы</h2>
-<p class="lead">Считаем деньги и километры честно, без маркетинга</p>
+<h2 class="sec">Инструменты и трассы<small>Считаем деньги и километры честно, без маркетинга</small></h2>
 <div class="hw-split">
  <div class="hw-calc">
   <h3>Цена 100 км: электричество vs бензин</h3>
