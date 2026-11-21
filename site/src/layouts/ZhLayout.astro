@@ -97,6 +97,10 @@ html.dark a[href="/privacy/"]{color:#FF8F33 !important}
 html.dark .hero{background:linear-gradient(180deg,#0E141F,#04080D)}
 html.dark .hero{position:relative;overflow:hidden}
 html.dark .hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 55% at 70% 10%,rgba(255,111,0,.10),transparent 72%)}
+
+/* РАЗДЕЛ 3 ТЗ: навигация не наезжает на узких десктопах — меню сворачивается в «Меню» */
+@media(max-width:1340px){.zh-bar .menu-link{padding:0 8px;font-size:12.5px}.zh-bar .nav-tabs{gap:10px}.zh-bar .brand span{font-size:13px}}
+@media(max-width:1190px){.zh-bar .bar-mid{display:none!important}}
 </style>
 
 
