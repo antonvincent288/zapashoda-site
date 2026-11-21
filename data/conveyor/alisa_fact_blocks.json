@@ -34,9 +34,25 @@
   "lynk-co-08-900-cn",
   "wey-v9x",
   "wey-07",
-  "belgee-x80"
+  "belgee-x80",
+  "byd-yangwang-u7",
+  "gmc-hummer-ev",
+  "hiphi-x-z",
+  "lexus-ux300e-cn-versiya",
+  "livan-x3-pro-s6-pro",
+  "m-hero-917-ev-evr",
+  "mitsubishi-i-miev",
+  "mitsubishi-outlander-phev-jp-eu",
+  "rivian-r1t-r1s",
+  "roewe-d7-i-dr",
+  "seres-5-sf5",
+  "skywell-et5-el5",
+  "swm-g01-ev-i-dr",
+  "vw-id-6-cn-versiya",
+  "vw-tayron-l-cn-phev",
+  "faw-bestune-nat"
  ],
- "stubs_left_estimate": 22,
+ "stubs_left_estimate": 6,
  "wordstat_2111b": {
   "Li MEGA": 783,
   "li auto mega": 212,
@@ -44,5 +60,13 @@
   "li mega купить": 39,
   "Leapmotor T03": 173,
   "note": "MEGA живой спрос, T03 нишевый"
- }
+ },
+ "stubs_left": [
+  "amberauto-a5",
+  "bmw-ix3-cn-versiya",
+  "evolute-i-sky",
+  "exeed-rx-phev",
+  "luxeed-chery-huawei-r7",
+  "mg-hs-phev-mg-07-cn"
+ ]
 }
