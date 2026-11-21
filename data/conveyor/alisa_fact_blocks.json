@@ -50,9 +50,15 @@
   "swm-g01-ev-i-dr",
   "vw-id-6-cn-versiya",
   "vw-tayron-l-cn-phev",
-  "faw-bestune-nat"
+  "faw-bestune-nat",
+  "bmw-ix3-cn-versiya",
+  "luxeed-chery-huawei-r7",
+  "mg-hs-phev-mg-07-cn",
+  "exeed-rx-phev",
+  "evolute-i-sky",
+  "amberauto-a5"
  ],
- "stubs_left_estimate": 6,
+ "stubs_left_estimate": 0,
  "wordstat_2111b": {
   "Li MEGA": 783,
   "li auto mega": 212,
@@ -61,12 +67,6 @@
   "Leapmotor T03": 173,
   "note": "MEGA живой спрос, T03 нишевый"
  },
- "stubs_left": [
-  "amberauto-a5",
-  "bmw-ix3-cn-versiya",
-  "evolute-i-sky",
-  "exeed-rx-phev",
-  "luxeed-chery-huawei-r7",
-  "mg-hs-phev-mg-07-cn"
- ]
+ "stubs_left": [],
+ "catalog_complete": "154/154 с блоками фактов — каталог закрыт 21.11"
 }
