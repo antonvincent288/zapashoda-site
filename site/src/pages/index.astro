@@ -401,7 +401,6 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .hw-ra{margin-left:auto;color:#39D7FF;font-size:13px}
 .hw-btn{display:flex;width:100%;justify-content:center;border-radius:14px;padding:14px 18px;background:linear-gradient(135deg,#FF8F33,#E85002);color:#fff;font-weight:700;font-size:14.5px;box-shadow:0 10px 26px rgba(232,80,2,.4);text-decoration:none}
 @media(max-width:900px){.hw-split{grid-template-columns:1fr}}
-body .sec-alt{background:transparent}
 /* макет-стиль секций главной */
 body .sec .wrap > h2, body .sec-alt .wrap > h2{font-size:28px;font-weight:800;letter-spacing:-.02em;color:#fff;margin:0 0 4px}
 body .sec .wrap > p.lead, body .sec-alt .wrap > p.lead{color:#8E99A8;font-size:14.5px;margin:0 0 22px}
@@ -431,4 +430,13 @@ body .sec .wrap > p.lead, body .sec-alt .wrap > p.lead{color:#8E99A8;font-size:1
 .m-faq details[open] summary::after{content:'−'}
 .m-faq details p{padding:0 4px 14px;font-size:13.5px;color:#8E99A8;margin:0}
 @media(max-width:1020px){.kbgrid{grid-template-columns:1fr}}
+
+/* Точность по макету: сетка 1240, h2 30px, карточки 4 в ряд, виджет без растяжения */
+body .sec > .wrap > h2, body .sec-alt > .wrap > h2{font-size:30px;letter-spacing:-.03em}
+body .sec .wrap, body .sec-alt .wrap, body .sec-blk .wrap{max-width:1240px;padding:0 20px}
+body [data-mcards]{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+body [data-mcards] .card{padding:16px}
+body .kbcard{padding:16px}
+@media (max-width:1020px){body [data-mcards]{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){body [data-mcards]{grid-template-columns:1fr}body .dw-body{grid-template-columns:auto 1fr;justify-items:stretch}body .gauge{width:150px;height:150px}}
 </style></ZhLayout>
