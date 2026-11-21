@@ -1,4 +1,4 @@
-var ZH_BUILD = 1891;
+var ZH_BUILD = 1892;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -17,7 +17,7 @@ var ZH_BUILD = 1891;
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
       ], attr: 'Esri · © OpenStreetMap' },
       { id: 'carto', layers: () => [
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', attribution: '© OpenStreetMap © CARTO' })
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
       ], attr: '© OpenStreetMap © CARTO' },
       { id: 'osm', layers: () => [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true, crossOrigin: 'anonymous' })
@@ -26,7 +26,7 @@ var ZH_BUILD = 1891;
     let _zhSrcIdx = 0, _tileSeen = false, _zhProbeTimer = null, _zhSwitched = false;
     const _zhPref = (() => { try { return localStorage.getItem('zhTileSrc'); } catch (e) { return null; } })();
     if (_zhPref) { const i = ZH_SOURCES.findIndex(s => s.id === _zhPref); if (i > 0) { _zhSrcIdx = i; ZH_SOURCES.unshift(ZH_SOURCES.splice(i, 1)[0]); } }
-        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}.zh-osm-inv{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
+        if (!document.getElementById('zh-osm-dark')) { const st = document.createElement('style'); st.id = 'zh-osm-dark'; st.textContent = '.zh-osm-dark{filter:none}.zh-carto-dark{filter:none}.zh-osm-inv{filter:grayscale(1) invert(1) brightness(.92) contrast(.92)}'; document.head.appendChild(st); }
     function zhTileLoad(idx) {
       _zhSrcIdx = idx; _tileSeen = false;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
@@ -48,8 +48,10 @@ var ZH_BUILD = 1891;
         return;
       }
       zhTileLoad(next);
+      const firstFallback = !_zhSwitched;
       _zhSwitched = true;
-      showToast('Подложка карты переключена на резервный источник');
+      // первый переход — молча (пользователь ещё не заметил): не пугаем «опять не работает»
+      if (!firstFallback) showToast('Подложка карты переключена на резервный источник');
       try { if (window.plausible) plausible('tile-fallback', { props: { reason: reason, to: ZH_SOURCES[next].id } }); } catch (e) {}
     }
     map.on('tileload', () => {
@@ -78,7 +80,7 @@ var ZH_BUILD = 1891;
     }
     map.on('tileload', (ev) => {
       const t = ev && ev.tile;
-      if (t && t.tagName === 'IMG' && /zh-(osm-inv|osm-dark)/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
+      if (t && t.tagName === 'IMG' && /zh-carto-dark/.test(t.className || '')) setTimeout(() => zhCheckBrightness(t), 80);
     });
 
     
@@ -138,6 +140,17 @@ var ZH_BUILD = 1891;
 
     // Тап по карте — переставить центр зоны доезда (как на проде)
     map.on('click', (e) => {
+      // Режим «укажу точку»: приоритет над тач-зоной — тап даже по маркеру станции ставит старт
+      if (typeof zhNearestGo === 'function') {
+        const f = zhNearestGo; zhNearestGo = null;
+        userPos = [e.latlng.lat, e.latlng.lng]; userPosGeo = false;
+        rangeCircle.setLatLng(userPos);
+        if (typeof meMarker !== 'undefined') meMarker.setLatLng(userPos);
+        if (typeof isoLabel !== 'undefined') isoLabel.setLatLng(userPos);
+        recalc(false);
+        f([e.latlng.lat, e.latlng.lng]);
+        return;
+      }
       // Тач-зона: тап в радиусе ~48px от станции открывает её карточку, а не переставляет зону
       if (STATIONS_DB && STATIONS_DB.length) {
         try {
