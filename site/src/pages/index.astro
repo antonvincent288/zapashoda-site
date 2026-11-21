@@ -70,7 +70,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 ---
 <ZhLayout title="Запас хода — зарядка EV в России: разъёмы, адаптеры, станции" description={`Подберите зарядку и адаптеры для вашей модели в 3 шага. ${MT_HOME} ${plh(MT_HOME, 'модель', 'модели', 'моделей')}, ${BN_HOME} материалов, карта ${Math.floor(STN / 100) * 100}+ станций.`} jsonld={orgLd}><div class="hw-hero"><div class="wrap hw-wrap">
 <div class="hw-left">
-<div class="hw-badge"><i></i> {STN} станций на карте · {BN_HOME} материалов · обновлено 11.2026</div>
+<div class="hw-badge"><i></i> {STN.toLocaleString('ru-RU')} станций на карте · {BN_HOME} материалов · обновлено 11.2026</div>
 <h1 class="hw-h1">Зарядка и <em>реальный запас хода</em> EV в России</h1>
 <p class="hw-sub">Разъёмы, адаптеры, зимний расход и карта проверенных ЭЗС — под вашу модель и погоду. <b>Честные цифры</b> вместо паспортных сказок.</p>
 <div class="hw-chips">
@@ -118,9 +118,9 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <div class="bgrid as-slider" style="margin-top:20px" data-mcards>
 {POP.map((mo) => (
 <a class="card" href={'/models/' + mo.slug + '/'} data-brand={mo.brand}>
+<h3 class="mname">{mo.name}</h3>
+<p class="mspec">{mo.years}</p>
 <span class="badges-row"><span class="bdg">{mo.port === 'EU' ? 'CCS2' : mo.port}</span><span class={'bdg' + (mo.port === 'EU' ? ' cool' : '')}>{mo.port === 'EU' ? 'CCS2 напрямую' : 'Нужен адаптер'}</span></span>
-<h3 class="bh" style="font-size:16px;margin:10px 0 6px">{mo.name}</h3>
-<p style="margin:0;font-size:14px;color:var(--txt-muted)">{mo.years}</p>
 </a>
 ))}
 </div>
@@ -252,7 +252,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 .bgrid .bcard .tag{order:-1;margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){.zh-strip-track{animation:none}.zh-strip-track a[aria-hidden="true"]{display:none}}
 .zq-left{min-width:0}
-.zh-quiz{background:rgba(11,12,17,.92);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:28px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.45);align-self:start;margin-top:3px}
+.zh-quiz{background:rgba(11,12,17,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:28px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.45);align-self:start;margin-top:3px}
 .zq-title{font-weight:800;font-size:19px;color:#fff}
 .zq-sub{color:rgba(233,239,246,.6);font-size:14px;margin-top:6px}
 .zq-label{color:#00E5FF;font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin-top:20px;margin-bottom:8px;font-weight:600}
@@ -271,7 +271,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 #zq-result .zq-back{margin-top:14px}
 @media (max-width:900px){.zh-hero-big .wrap{grid-template-columns:1fr;gap:34px;align-items:start}}
 @media (max-width:640px){.zh-quiz{padding:20px 18px 16px}.zq-chips{max-height:190px}}
-.zcalc{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;margin:18px 0 6px;padding:26px 28px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 24px 80px rgba(0,229,255,.10),0 0 0 1px rgba(0,229,255,.12) inset;position:relative;overflow:hidden}
+.zcalc{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;margin:18px 0 6px;padding:26px 28px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 24px 80px rgba(0,229,255,.10),0 0 0 1px rgba(0,229,255,.12) inset;position:relative;overflow:hidden}
 .zcalc::before{content:'';position:absolute;inset:-45%;background:radial-gradient(48% 58% at 18% 18%,rgba(0,229,255,.18),transparent 62%),radial-gradient(44% 52% at 82% 82%,rgba(0,229,255,.18),transparent 62%);animation:zcGlow 8s ease-in-out infinite alternate;pointer-events:none}
 @keyframes zcGlow{0%{opacity:.45;transform:translate(-3%,-2%) scale(1)}100%{opacity:1;transform:translate(3%,2%) scale(1.06)}}
 .zcalc>*{position:relative;z-index:1}
@@ -348,7 +348,7 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .hw-chip{font-size:13px;color:var(--dim,#8E99A8);border:1px solid rgba(148,163,184,.15);background:rgba(10,12,16,.6);border-radius:999px;padding:7px 13px;text-decoration:none;transition:.15s}
 .hw-chip:hover,.hw-chip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
 .hw-note{font-size:12px;color:var(--dim2,#5C6673);margin-top:14px;max-width:430px}
-.hw-widget{background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.3);border-radius:20px;overflow:hidden}
+.hw-widget{background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.3);border-radius:20px;overflow:hidden;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .dw-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 10px;border-bottom:1px solid rgba(148,163,184,.15)}
 .dw-title{font-size:14px;font-weight:700;color:#fff}
 .dw-title span{color:var(--dim,#8E99A8);font-weight:500;font-size:12.5px;margin-left:6px}
@@ -374,7 +374,7 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .dw-cta{display:grid;grid-template-columns:1fr auto;gap:10px;padding:0 20px 18px}
 .hw-widget .btn{display:flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;padding:15px 18px;font-weight:700;font-size:15px;text-decoration:none}
 .hw-widget .btn.main{background:linear-gradient(135deg,#FF8F33,#E85002);color:#fff;box-shadow:0 10px 26px rgba(232,80,2,.4)}
-.hw-widget .btn.ghost{border:1px solid rgba(148,163,184,.3);color:#E9ECF2;background:rgba(255,255,255,.03);font-size:13px}
+.hw-widget .btn.ghost{border:1px solid rgba(148,163,184,.3);color:#E9ECF2;background:rgba(255,255,255,.03);font-size:14px}
 .badges-row{display:flex;gap:6px;flex-wrap:wrap}
 .bdg{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#FFB27A;border:1px solid rgba(232,80,2,.45);background:rgba(232,80,2,.1);border-radius:7px;padding:3px 7px}
 .bdg.cool{color:#39D7FF;border-color:rgba(57,215,255,.4);background:rgba(57,215,255,.08)}
@@ -441,6 +441,20 @@ body [data-mcards]{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 body [data-mcards] .card{padding:16px}
 body .kbcard{padding:16px}
 @media (max-width:1020px){body [data-mcards]{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:560px){body [data-mcards]{grid-template-columns:1fr}body .dw-body{grid-template-columns:auto 1fr;justify-items:stretch}}
+@media (max-width:560px){body [data-mcards]{grid-template-columns:1fr}body .dw-body{grid-template-columns:auto 1fr;justify-items:stretch}
+
+/* === Карточки моделей точь-в-точь макет (.mcard): имя → спецификация → бейджи внизу === */
+body [data-mcards] .card{gap:8px}
+body [data-mcards] a.card h3{font-size:15px;font-weight:700;color:#fff;margin:0;line-height:1.3;letter-spacing:-.01em}
+body [data-mcards] a.card p{font-size:12.5px;color:#8E99A8;margin:0;line-height:1.35}
+body [data-mcards] .card .badges-row{margin-top:auto;padding-top:4px}
+/* Чипы фильтра — как в макете (.chip): тёплая подложка вместо сплошного оранжевого */
+body .mfilter .fchip{font-size:13px;font-weight:500;padding:7px 13px;background:rgba(10,12,16,.6);color:#8E99A8;border-color:rgba(148,163,184,.15)}
+body .mfilter .fchip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
+/* Мобильная сетка моделей — как в макете: столбец вместо карусели */
+@media(max-width:700px){
+  body [data-mcards].as-slider{display:grid;grid-template-columns:1fr;gap:12px;padding:0}
+  body [data-mcards].as-slider>*{flex:0 0 auto;width:100%}
+}}
 </style>
 </ZhLayout>
