@@ -1,0 +1,133 @@
+---
+// ZhCockpit — сквозной кокпит (Итерация 1 ТЗ): единое состояние машины на всех страницах.
+// Показ: главная, каталог, модели, сравнение, калькуляторы, база знаний, блог, разъёмы, магазин.
+// Скрыт: /charging/ (собственный сайдбар), /b2b/, /services/, /dashboard/, юридические.
+---
+<script is:inline>
+(function () {
+  var p = location.pathname;
+  var hide = p.indexOf('/charging/') === 0 || p.indexOf('/b2b/') === 0 || p.indexOf('/services/') === 0 ||
+    p.indexOf('/dashboard/') === 0 || p.indexOf('/privacy') === 0 || p.indexOf('/terms') === 0 ||
+    p.indexOf('/legal') === 0 || p.indexOf('/oferta') === 0 || p.indexOf('/demo') === 0;
+  if (hide) { document.documentElement.classList.add('zh-ck-off'); return; }
+  document.documentElement.classList.add('zh-ck-on');
+})();
+</script>
+<div class="zh-ck" id="zhCockpit">
+  <button class="zh-ck-rail" id="zhCkRail" aria-label="Кокпит: ваш электромобиль">
+    <svg viewBox="0 0 24 24" class="zh-ck-rail-bolt"><path d="M13.2 2.2 5.4 13.1h4.9l-1.5 8.7 7.9-11.6h-4.9z"/></svg>
+    <span class="zh-ck-rail-km" id="zhCkRailKm">—</span>
+  </button>
+  <aside class="zh-ck-panel" id="zhCkPanel" hidden>
+    <div class="zh-ck-head"><span>Ваш электромобиль</span><button class="zh-ck-x" id="zhCkClose" aria-label="Скрыть панель">✕</button></div>
+    <div id="zhCkWidgets"></div>
+  </aside>
+  <button class="zh-ck-bar" id="zhCkBar" aria-label="Кокпит: открыть">
+    <span class="zh-ck-bar-bolt"><svg viewBox="0 0 24 24"><path d="M13.2 2.2 5.4 13.1h4.9l-1.5 8.7 7.9-11.6h-4.9z"/></svg></span>
+    <span class="zh-ck-bar-km" id="zhCkBarKm">—</span>
+    <span class="zh-ck-bar-car" id="zhCkBarCar">—</span>
+    <svg class="zh-ck-bar-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <aside class="zh-ck-sheet" id="zhCkSheet" hidden>
+    <div class="zh-ck-head"><span>Кокпит</span><button class="zh-ck-x" id="zhCkSheetX" aria-label="Скрыть">✕</button></div>
+    <div id="zhCkWidgetsM"></div>
+  </aside>
+  <div class="zh-ck-scrim" id="zhCkScrim" hidden></div>
+</div>
+<style is:global>
+.zh-ck{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif}
+.zh-ck-rail{position:fixed;left:8px;top:50%;transform:translateY(-50%);width:46px;padding:10px 0 8px;display:none;flex-direction:column;align-items:center;gap:6px;background:rgba(11,11,13,.88);border:1px solid rgba(255,255,255,.1);border-radius:999px;cursor:pointer;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+.zh-ck-rail-bolt{width:20px;height:20px;fill:#FF8F33}
+.zh-ck-rail-km{font-size:10.5px;font-weight:800;color:#fff;letter-spacing:.02em}
+.zh-ck-panel{position:fixed;left:12px;top:66px;width:322px;max-height:calc(100vh - 96px);overflow-y:auto;z-index:71;background:rgba(13,13,16,.96);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.55);backdrop-filter:blur(10px)}
+.zh-ck-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8B96A5}
+.zh-ck-x{background:none;border:1px solid rgba(255,255,255,.12);color:#8B96A5;border-radius:8px;width:24px;height:24px;cursor:pointer;font-size:11px;line-height:1}
+.zh-ck-w{padding:12px 12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;margin-bottom:10px}
+.zh-ck-km{font-size:34px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1}
+.zh-ck-km small{font-size:15px;color:#FF8F33;font-weight:700;margin-left:4px}
+.zh-ck-cap{font-size:11.5px;color:#8B96A5;margin-top:5px}
+.zh-ck-base{font-size:11px;color:#5f6a78;margin-top:4px}
+.zh-ck-name{font-size:16.5px;font-weight:700;color:#fff}
+.zh-ck-port{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:700;color:#FF8F33;background:rgba(232,80,2,.14);border:1px solid rgba(232,80,2,.3);padding:4px 9px;border-radius:999px}
+.zh-ck-link{display:inline-block;margin-top:9px;font-size:12.5px;color:#7FB5FF;text-decoration:none;font-weight:600}
+.zh-ck-row2{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.zh-ck-chip{font-size:11.5px;font-weight:600;color:#B8C1CC;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);padding:6px 10px;border-radius:999px;white-space:nowrap}
+.zh-ck-trip{width:100%;text-align:left;font-size:13px;font-weight:700;color:#B8C1CC;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.zh-ck-trip.on{color:#FFB27A;border-color:rgba(232,80,2,.45);background:rgba(232,80,2,.12)}
+.zh-ck-cta{display:flex;justify-content:center;align-items:center;height:44px;border-radius:12px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;background:linear-gradient(135deg,#ff8f33,#e85002);box-shadow:0 10px 26px rgba(232,80,2,.35)}
+.zh-ck-bar{position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:70;display:none;align-items:center;gap:9px;max-width:calc(100vw - 20px);background:rgba(11,11,13,.92);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:9px 14px 9px 10px;cursor:pointer;box-shadow:0 14px 34px rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+.zh-ck-bar-bolt svg{width:15px;height:15px;fill:#FF8F33;display:block}
+.zh-ck-bar-km{font-size:13.5px;font-weight:800;color:#fff}
+.zh-ck-bar-car{font-size:12px;color:#8B96A5;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zh-ck-bar-chev{width:14px;height:14px;stroke:#8B96A5;stroke-width:2.2;fill:none}
+.zh-ck-sheet{position:fixed;left:0;right:0;bottom:0;z-index:72;background:#0d0d10;border-top:1px solid rgba(255,255,255,.12);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:76vh;overflow-y:auto;box-shadow:0 -20px 60px rgba(0,0,0,.6)}
+.zh-ck-scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:69}
+html.zh-ck-on body{padding-bottom:0}
+@media(min-width:1320px){
+  html.zh-ck-on .zh-ck-rail{display:flex}
+  html.zh-ck-on .zh-ck-bar{display:none}
+}
+@media(min-width:768px) and (max-width:1319px){
+  html.zh-ck-on .zh-ck-bar{display:inline-flex}
+}
+@media(max-width:767px){
+  html.zh-ck-on .zh-ck-bar{display:flex;left:0;right:0;bottom:0;max-width:none;border-radius:18px 18px 0 0;padding:12px 16px}
+  html.zh-ck-on .zh-ck-bar-car{max-width:44vw}
+  html.zh-ck-on body{padding-bottom:58px}
+}
+</style>
+<script is:inline>
+(function () {
+  if (document.documentElement.classList.contains('zh-ck-off')) return;
+  function init(){
+    if (!window.ZS) return;
+    var panel = document.getElementById('zhCkPanel'), widgets = document.getElementById('zhCkWidgets'),
+        widgetsM = document.getElementById('zhCkWidgetsM'), sheet = document.getElementById('zhCkSheet'),
+        scrim = document.getElementById('zhCkScrim');
+    function widgetsHtml(s){
+      var t = (s.temp > 0 ? '+' : '') + s.temp;
+      var tp = Math.round(ZS.tempPct() * 100);
+      var km = ZS.range().toLocaleString('ru-RU');
+      return '<div class="zh-ck-w">'
+        + '<div class="zh-ck-km">' + km + '<small>км</small></div>'
+        + '<div class="zh-ck-cap">реальных · при ' + s.soc + '% · ' + t + '°C</div>'
+        + '<div class="zh-ck-base">' + (s.roundTrip ? 'С дорогой обратно · ' : '') + 'база расчёта ' + s.baseKm + ' км</div>'
+        + '</div>'
+        + '<div class="zh-ck-w">'
+        + '<div class="zh-ck-name">' + s.carName + '</div>'
+        + '<div><span class="zh-ck-port">' + s.portTag + '</span></div>'
+        + '<a class="zh-ck-link" href="/charging/">Сменить машину и заряд →</a>'
+        + '</div>'
+        + '<div class="zh-ck-row2">'
+        + '<span class="zh-ck-chip">' + s.city + '</span>'
+        + '<span class="zh-ck-chip">' + t + '°C · ' + tp + '% запаса</span>'
+        + '</div>'
+        + '<button class="zh-ck-trip' + (s.roundTrip ? ' on' : '') + '" data-trip="1">Дорога обратно: ' + (s.roundTrip ? 'вкл' : 'выкл') + '</button>'
+        + '<a class="zh-ck-cta" href="/charging/">Открыть живую карту</a>';
+    }
+    function render(s){
+      try {
+        var h = widgetsHtml(s);
+        widgets.innerHTML = h; widgetsM.innerHTML = h;
+        var km = ZS.range().toLocaleString('ru-RU');
+        var rk = document.getElementById('zhCkRailKm'); if (rk) rk.textContent = km;
+        var bk = document.getElementById('zhCkBarKm'); if (bk) bk.textContent = km + ' км';
+        var bc = document.getElementById('zhCkBarCar'); if (bc) bc.textContent = s.carName;
+      } catch(e){}
+    }
+    ZS.subscribe(render);
+    document.getElementById('zhCockpit').addEventListener('click', function(e){
+      var t = e.target;
+      if (t.closest && t.closest('[data-trip]')) { ZS.set({ roundTrip: !ZS.get().roundTrip }); return; }
+      if (t.closest && t.closest('#zhCkRail')) { panel.hidden = !panel.hidden; }
+      if (t.closest && t.closest('#zhCkClose')) { panel.hidden = true; }
+      if (t.closest && t.closest('#zhCkBar')) { sheet.hidden = false; scrim.hidden = false; }
+      if (t.closest && t.closest('#zhCkSheetX')) { sheet.hidden = true; scrim.hidden = true; }
+      if (t.closest && t.closest('#zhCkScrim')) { sheet.hidden = true; scrim.hidden = true; }
+      if (t.classList && t.classList.contains('zh-ck-scrim')) { sheet.hidden = true; scrim.hidden = true; }
+    });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { panel.hidden = true; sheet.hidden = true; scrim.hidden = true; } });
+  }
+  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
