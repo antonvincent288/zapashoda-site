@@ -1,4 +1,4 @@
-var ZH_BUILD = 1896;
+var ZH_BUILD = 1897;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -18,7 +18,7 @@ var ZH_BUILD = 1896;
       ], attr: 'Esri · © OpenStreetMap' },
       { id: 'osm', layers: () => [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true, crossOrigin: 'anonymous' })
-      ], attr: '© OpenStreetMap contributors' }
+      ], attr: '© OpenStreetMap contributors' },
 
       { id: 'carto', layers: () => [
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
@@ -39,7 +39,7 @@ var ZH_BUILD = 1896;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
       ZH_SOURCES[idx].layers().forEach(l => l.addTo(map));
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
-      _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, _zhSrcIdx === 0 ? 8000 : 4000);
+      _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, _zhSrcIdx === 0 ? 12000 : 6000);
     }
     function zhTileNext(reason) {
       const next = _zhSrcIdx + 1;
@@ -48,24 +48,25 @@ var ZH_BUILD = 1896;
         // (вечно крутится индикатор загрузки), карта живёт на офлайн-кэше SW + маркерах
         map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
         if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
-        setTimeout(() => { if (!_tileSeen) if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
-          showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
+        setTimeout(() => { if (!_tileSeen) { if (window.__zhMl) { const l=window.__zhMl; window.__zhMl=null; l.classList.add('zh-ml-done'); setTimeout(()=>l.remove(),480); }
+          const now=Date.now(); if (!map._zhOfflineAt || now-map._zhOfflineAt>300000) { map._zhOfflineAt=now; showToast('Сеть недоступна — карта работает на офлайн-кэше'); } } }, 6000);
         try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
         // авто-ретрай цепочки через 30 с: сеть может ожить в лифте/тоннеле/аэропорту
-        if (!map._zhRetry) map._zhRetry = setInterval(() => { try { zhTileLoad(window._zhLastGood || 0); } catch (e) {} }, 45000);
+        if (!map._zhRetry) { map._zhDeadLoops=(map._zhDeadLoops||0)+1; const iv=map._zhDeadLoops>=3?120000:45000; map._zhRetry=setInterval(() => { try { zhTileLoad(window._zhLastGood || 0); } catch (e) {} }, iv); }
         return;
       }
       zhTileLoad(next);
       const firstFallback = !_zhSwitched;
       _zhSwitched = true;
       // первый переход — молча (пользователь ещё не заметил): не пугаем «опять не работает»
-      if (!firstFallback && (!map._zhToastAt || Date.now()-map._zhToastAt>180000)) { map._zhToastAt=Date.now(); showToast('Подложка карты переключена на резервный источник'); }
+      if (!firstFallback && (!map._zhToastAt || Date.now()-map._zhToastAt>180000)) { map._zhToastAt=Date.now(); showToast('Сигнал слабый — включён резервный режим карты'); }
       try { if (window.plausible) plausible('tile-fallback', { props: { reason: reason, to: ZH_SOURCES[next].id } }); } catch (e) {}
     }
     map.on('tileload', () => {
       _tileSeen = true;
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
       window._zhLastGood=_zhSrcIdx; try { localStorage.setItem('zhTileSrc', ZH_SOURCES[_zhSrcIdx].id); } catch (e) {}
+      try { if (map._zhRetry) { clearInterval(map._zhRetry); map._zhRetry=null; map._zhDeadLoops=0; } } catch (e) {}
     });
     map.on('tileerror', () => {
       if (!_tileSeen) { const errs = (map._zhErrs = (map._zhErrs || 0) + 1); if (errs >= 6) zhTileNext('errors6'); }
