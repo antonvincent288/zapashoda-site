@@ -1,4 +1,4 @@
-var ZH_BUILD = 1890;
+var ZH_BUILD = 1891;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -37,9 +37,14 @@ var ZH_BUILD = 1890;
     function zhTileNext(reason) {
       const next = _zhSrcIdx + 1;
       if (next >= ZH_SOURCES.length) {
-        // все источники мертвы: карта живёт на офлайн-кэше SW + маркерах
+        // все источники мертвы: снимаем тайл-слои — прекращаем бесконечные запросы
+        // (вечно крутится индикатор загрузки), карта живёт на офлайн-кэше SW + маркерах
+        map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
+        if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
         setTimeout(() => { if (!_tileSeen) showToast('Сеть для подложки недоступна — карта работает на офлайн-кэше'); }, 6000);
         try { if (window.plausible) plausible('tile-fallback', { props: { reason: 'all-dead' } }); } catch (e) {}
+        // авто-ретрай цепочки через 30 с: сеть может ожить в лифте/тоннеле/аэропорту
+        if (!map._zhRetry) map._zhRetry = setInterval(() => { try { zhTileLoad(0); } catch (e) {} }, 30000);
         return;
       }
       zhTileLoad(next);
