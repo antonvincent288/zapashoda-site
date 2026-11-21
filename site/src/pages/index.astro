@@ -475,27 +475,30 @@ body h2.sec .accent{color:#FF8F33}
 @keyframes faqIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 /* Скорость на слабых устройствах: вне экрана секции не рендерим */
 .sec,.sec-alt,.sec-blk{content-visibility:auto;contain-intrinsic-size:auto 900px}
-/* === Фон v6 «раскалённая кромка»: чёткое кольцо света вокруг виджета + тонкий луч; радиусы в px === */
+/* === Фон v7: свет ВОКРУГ панели виджета (панель непрозрачна — свет внутри неё скрыт) ===
+   Геометрия взята с живого скрина: центр виджета 71% x, ~455px y. */
 .zh-bg-map::before{content:"";position:absolute;inset:0;background:
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
-  radial-gradient(700px 480px at 74% 470px, rgba(255,122,26,.20) 0%, rgba(214,74,10,.10) 45%, transparent 72%),
-  radial-gradient(500px 500px at 74% 430px, transparent 240px, rgba(255,143,51,.20) 247px, rgba(232,80,2,.24) 252px, transparent 262px),
-  radial-gradient(1100px 800px at 72% 760px, rgba(120,28,4,.20) 0%, rgba(70,18,3,.08) 50%, transparent 76%),
-  linear-gradient(180deg, rgba(255,143,51,0) 700px, rgba(255,143,51,.06) 790px, rgba(255,143,51,0) 920px),
+  radial-gradient(300px 220px at 78% 400px, rgba(255,170,80,.28) 0%, rgba(255,143,51,.14) 45%, transparent 74%),
+  radial-gradient(720px 500px at 71% 520px, rgba(255,122,26,.22) 0%, rgba(214,74,10,.11) 45%, transparent 72%),
+  radial-gradient(520px 520px at 71% 455px, transparent 248px, rgba(255,143,51,.20) 256px, rgba(232,80,2,.24) 262px, transparent 274px),
+  radial-gradient(1100px 800px at 71% 800px, rgba(120,28,4,.22) 0%, rgba(70,18,3,.09) 50%, transparent 76%),
+  linear-gradient(180deg, rgba(255,143,51,0) 720px, rgba(255,143,51,.06) 810px, rgba(255,143,51,0) 940px),
   radial-gradient(700px 380px at 30% 2560px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
   radial-gradient(1200px 300px at 64% 3340px, rgba(232,80,2,.08) 0%, transparent 70%)}
-.zh-bg-map::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23FF8F33' stop-opacity='0'/%3E%3Cstop offset='0.42' stop-color='%23FF8F33' stop-opacity='0.85'/%3E%3Cstop offset='0.62' stop-color='%23FFB27A' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23FF8F33' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='b' x='-10%25' y='-300%25' width='120%25' height='700%25'%3E%3CfeGaussianBlur stdDeviation='4'/%3E%3C/filter%3E%3C/defs%3E%3Cline x1='0' y1='12' x2='900' y2='12' stroke='url(%23g)' stroke-width='2.5' filter='url(%23b)'/%3E%3C/svg%3E") no-repeat 71% 428px / 900px 24px}
+.zh-bg-map::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23FF8F33' stop-opacity='0'/%3E%3Cstop offset='0.42' stop-color='%23FF8F33' stop-opacity='0.9'/%3E%3Cstop offset='0.62' stop-color='%23FFB27A' stop-opacity='0.55'/%3E%3Cstop offset='1' stop-color='%23FF8F33' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='b' x='-10%25' y='-300%25' width='120%25' height='700%25'%3E%3CfeGaussianBlur stdDeviation='4'/%3E%3C/filter%3E%3C/defs%3E%3Cline x1='0' y1='12' x2='900' y2='12' stroke='url(%23g)' stroke-width='2.5' filter='url(%23b)'/%3E%3C/svg%3E") no-repeat 71% 455px / 940px 24px}
 .zh-bg-map img.zbg-img{display:none}
 @media(max-width:900px){
   .zh-bg-map::before{background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
-    radial-gradient(340px 240px at 50% 460px, rgba(255,122,26,.18) 0%, rgba(214,74,10,.09) 45%, transparent 72%),
-    radial-gradient(330px 330px at 50% 430px, transparent 160px, rgba(255,143,51,.18) 165px, rgba(232,80,2,.22) 170px, transparent 180px),
-    radial-gradient(420px 300px at 50% 640px, rgba(120,28,4,.20) 0%, rgba(70,18,3,.08) 50%, transparent 76%),
+    radial-gradient(240px 180px at 62% 415px, rgba(255,170,80,.26) 0%, rgba(255,143,51,.13) 45%, transparent 74%),
+    radial-gradient(360px 260px at 50% 480px, rgba(255,122,26,.20) 0%, rgba(214,74,10,.10) 45%, transparent 72%),
+    radial-gradient(330px 330px at 50% 445px, transparent 158px, rgba(255,143,51,.18) 164px, rgba(232,80,2,.22) 170px, transparent 182px),
+    radial-gradient(420px 300px at 50% 680px, rgba(120,28,4,.20) 0%, rgba(70,18,3,.08) 50%, transparent 76%),
     linear-gradient(180deg, rgba(255,143,51,0) 780px, rgba(255,143,51,.06) 860px, rgba(255,143,51,0) 990px),
     radial-gradient(340px 200px at 50% 2650px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
     radial-gradient(380px 180px at 50% 3500px, rgba(232,80,2,.06) 0%, transparent 70%)}
-  .zh-bg-map::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23FF8F33' stop-opacity='0'/%3E%3Cstop offset='0.42' stop-color='%23FF8F33' stop-opacity='0.85'/%3E%3Cstop offset='0.62' stop-color='%23FFB27A' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23FF8F33' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='b' x='-10%25' y='-300%25' width='120%25' height='700%25'%3E%3CfeGaussianBlur stdDeviation='4'/%3E%3C/filter%3E%3C/defs%3E%3Cline x1='0' y1='12' x2='900' y2='12' stroke='url(%23g)' stroke-width='2.5' filter='url(%23b)'/%3E%3C/svg%3E") no-repeat 50% 428px / 320px 20px}
+  .zh-bg-map::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23FF8F33' stop-opacity='0'/%3E%3Cstop offset='0.42' stop-color='%23FF8F33' stop-opacity='0.9'/%3E%3Cstop offset='0.62' stop-color='%23FFB27A' stop-opacity='0.55'/%3E%3Cstop offset='1' stop-color='%23FF8F33' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='b' x='-10%25' y='-300%25' width='120%25' height='700%25'%3E%3CfeGaussianBlur stdDeviation='4'/%3E%3C/filter%3E%3C/defs%3E%3Cline x1='0' y1='12' x2='900' y2='12' stroke='url(%23g)' stroke-width='2.5' filter='url(%23b)'/%3E%3C/svg%3E") no-repeat 50% 445px / 320px 20px}
 }
 /* Hero picker — как в макете */
 /* Ховер карточек: тёплый вместо синего свечения старой темы */
