@@ -115,5 +115,20 @@
    "gbt-stancii-2026 (end)"
   ],
   "commit": "bf33611, прод 3/3"
+ },
+ "dense_sentences_2111": {
+  "filter": "счётчик плотных ложно ловил списки/таблицы/FAQ-JSON; фильтр: вырезаны ul/ol/table, осталось только сплошные <p>",
+  "edited": {
+   "elektromobil-7-mest-dlya-semi": 3,
+   "karta-elektrozapravok": 4,
+   "nastennaya-zaryadnaya-stanciya": 1,
+   "zaryadki-dlya-elektromobiley-v-spb": 1
+  },
+  "zeekr_009_card": "добавлена строка спроса: Wordstat 10 066/30д, «купить» ~500 — лидер спроса среди свежих карточек",
+  "commits": [
+   "249d366",
+   "d0616fa"
+  ],
+  "prod": "5/5"
  }
 }
