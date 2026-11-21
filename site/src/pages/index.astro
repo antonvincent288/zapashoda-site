@@ -111,7 +111,13 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 
 
 <section class="sec"><div class="wrap">
-<h2 class="sec">Популярные модели в каталоге<small>{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</small></h2>
+<div class="hstats">
+<div><b>{MT_HOME}</b><span>моделей в базе</span></div>
+<div><b>{STN.toLocaleString('ru-RU')}</b><span>станций на карте</span></div>
+<div><b>{BN_HOME}</b><span>материалов базы знаний</span></div>
+<div><b>36</b><span>городов с живым прогнозом</span></div>
+</div>
+<h2 class="sec"><span class="sn">01</span>Популярные модели в каталоге <span class="accent">— GB/T и CCS2</span><small>{MT_HOME} {plh(MT_HOME, 'модель', 'модели', 'моделей')} в базе: у каждой — разъём, годы, комплект зарядки и таблица совместимости.</small></h2>
 <div class="mfilter" role="group" aria-label="Фильтр по бренду" data-mfilter>
 {['Все'].concat(POP_BRANDS).map((br) => (
 <button class={br === 'Все' ? 'fchip on' : 'fchip'} type="button" data-brand={br}>{br}</button>
@@ -130,7 +136,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </div></section>
 
 <section class="sec sec-alt"><div class="wrap">
-<h2 class="sec">Инструменты и трассы<small>Считаем деньги и километры честно, без маркетинга</small></h2>
+<h2 class="sec"><span class="sn">02</span>Инструменты и трассы <span class="accent">— считаем честно</span><small>Считаем деньги и километры честно, без маркетинга</small></h2>
 <div class="hw-split">
  <div class="hw-calc">
   <h3>Цена 100 км: электричество vs бензин</h3>
@@ -165,7 +171,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 </div></section>
 
 <section class="sec-blk"><div class="wrap">
-<h2 class="sec">База знаний<small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
+<h2 class="sec"><span class="sn">03</span>База знаний <span class="accent">— живые разборы</span><small>Живые разборы из нашей практики — {BN_HOME} материалов</small></h2>
 <div class="kbgrid">
 <a class="kbcard" href="/blog/"><span class="ktag">Разбор · 12 мин</span><h4>Не заряжается на морозе: 7 шагов за 3 минуты</h4><p>Пошагово: от «пин не защёлкнулся» до полной перезагрузки станции. Работает у Sitronics и «Энергии Москвы».</p></a>
 <a class="kbcard" href="/blog/"><span class="ktag">Зима · 9 мин</span><h4>−20°: сколько реально ест печка и обогрев</h4><p>Распад по потребителям: батарея, печь, руль. С цифрами из реальных поездок Zeekr 001.</p></a>
@@ -176,7 +182,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <details><summary>{f.q}</summary><p>{f.a}</p></details>
 ))}
 </div>
-<p style="margin-top:14px"><a href="/blog/" style="color:var(--cyan,#00E5FF);font-size:14px;text-decoration:none">Все материалы базы знаний →</a></p>
+<p style="margin-top:14px"><a href="/blog/" style="color:#FF8F33;font-size:14px;text-decoration:none">Все материалы базы знаний →</a></p>
 </div></section>
 
 <script is:inline>
@@ -452,6 +458,21 @@ body [data-mcards] .card .badges-row{margin-top:auto;padding-top:4px}
 /* Чипы фильтра — как в макете (.chip): тёплая подложка вместо сплошного оранжевого */
 body .mfilter .fchip{font-size:13px;font-weight:500;padding:7px 13px;background:rgba(10,12,16,.6);color:#8E99A8;border-color:rgba(148,163,184,.15)}
 body .mfilter .fchip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
+
+/* === Уровень страницы модели: номера секций + акцентные хвосты === */
+body h2.sec .sn{font:800 11px/1 Inter,-apple-system,sans-serif;color:#E85002;letter-spacing:.14em;opacity:.9;display:inline-block;margin-right:10px;vertical-align:3px}
+body h2.sec .accent{color:#FF8F33}
+/* Плашка статистики под hero (как .statrow на странице модели) */
+.hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
+.hstats div{background:rgba(13,15,19,.66);border:1px solid rgba(148,163,184,.15);border-radius:14px;padding:13px 15px}
+.hstats b{display:block;font-size:21px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.hstats span{display:block;font-size:11.5px;color:#8E99A8;margin-top:3px;letter-spacing:.02em}
+@media(max-width:1020px){.hstats{grid-template-columns:repeat(2,1fr)}}
+/* Аккордеон: плавное открытие как на макетах Awwwards */
+.m-faq details[open] p{animation:faqIn .28s ease}
+@keyframes faqIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* Скорость на слабых устройствах: вне экрана секции не рендерим */
+.sec,.sec-alt,.sec-blk{content-visibility:auto;contain-intrinsic-size:auto 900px}
 /* Hero picker — как в макете */
 .picker{display:flex;gap:10px;max-width:440px}
 .picker .pfield{flex:1;background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.15);border-radius:12px;padding:11px 14px;cursor:pointer;text-decoration:none}
