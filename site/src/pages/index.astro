@@ -86,7 +86,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <div class="hw-widget">
 <div class="dw-head"><div class="dw-title">Запас хода <span>Zeekr 001 · 100 кВт·ч</span></div><div class="dw-live"><i></i> пересчёт 0,4 с</div></div>
 <div class="dw-body">
-<div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><circle cx="88" cy="88" r="76" fill="none" stroke="rgba(148,163,184,.15)" stroke-width="9"/><circle id="hw-arc" cx="88" cy="88" r="76" fill="none" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s"/><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8F33"/><stop offset="1" stop-color="#E85002"/></linearGradient></defs></svg><div class="g-val"><div class="g-num" id="hw-rkm">282</div><div class="g-cap">км реальных · при 80% заряда</div></div></div>
+<div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><circle cx="88" cy="88" r="76" fill="none" stroke="rgba(148,163,184,.15)" stroke-width="9"/><circle id="hw-arc" cx="88" cy="88" r="76" fill="none" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s"/><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8F33"/><stop offset="1" stop-color="#E85002"/></linearGradient></defs></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span><small>км</small></div></div></div><div class="g-cap">реальных · при 80% заряда</div></div>
 <div class="dw-rows">
 <div class="dw-row"><span class="k">Заряд сейчас</span><span class="v">80% <small>· 80 кВт·ч</small></span></div>
 <div class="dw-row"><span class="k">Расход</span><span class="v" id="hw-cons">28,4 <small>кВт·ч/100</small></span></div>
@@ -444,6 +444,10 @@ body [data-mcards]{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 body [data-mcards] .card{padding:16px}
 .hw-big{white-space:nowrap}
 body [data-mcards] .card{display:flex;flex-direction:column}
+.g-num span{font-size:30px;font-weight:800;letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums}
+.g-num small{font-size:14px;font-weight:700;color:#FFB27A;margin-left:3px}
+.g-col{display:flex;flex-direction:column;align-items:center;justify-content:center}
+body .g-col .g-cap{display:block;text-align:center;font-size:11px;color:#8E99A8;margin-top:6px;letter-spacing:.02em}
 body .kbcard{padding:16px}
 @media (max-width:1020px){body [data-mcards]{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){body [data-mcards]{grid-template-columns:1fr}body .dw-body{grid-template-columns:auto 1fr;justify-items:stretch}
