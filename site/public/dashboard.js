@@ -562,7 +562,21 @@ var ZH_BUILD = 1898;
           port: (m.direct ? 'GB/T DC' : (m.port || '') + ' (адаптер)').trim(),
           d: !!m.direct, est: m.base != null
         }));
-        restoreCar();
+        let _mApplied = false;
+        try {
+          const _mq = new URLSearchParams(location.search).get('model');
+          if (_mq) {
+            const _q = String(_mq).toLowerCase();
+            const _mm = (MODELS_ALL || []).find(function(x){ return String(x.slug||'').toLowerCase() === _q; })
+                     || (MODELS_ALL || []).find(function(x){ return normStr(x.name) === normStr(_q); });
+            if (_mm) {
+              chooseModelModel(_mm.name, _mm.base, _mm.port, _mm.d, _mm.est);
+              if (_mm.base != null) { introMode = false; recalc(false); }
+              _mApplied = true;
+            }
+          }
+        } catch (e) {}
+        if (!_mApplied) restoreCar();
       } catch (e) {}
     }
 
