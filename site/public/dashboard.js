@@ -1,4 +1,4 @@
-var ZH_BUILD = 1892;
+var ZH_BUILD = 1893;
     // Застрявшая вкладка/кэш: если на проде сборка новее — тихо обновляем страницу один раз
     (async () => { try {
       const r = await fetch('/app-version.json', { cache: 'no-store' });
@@ -12,13 +12,13 @@ var ZH_BUILD = 1892;
 
     // ПОДЛОЖКА «РАЗ И НАВСЕГДА»: цепочка живых источников с быстрым (4 с) перебором и памятью
     const ZH_SOURCES = [
+      { id: 'carto', layers: () => [
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
+      ], attr: '© OpenStreetMap © CARTO' },
       { id: 'arcgis', layers: () => [
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, updateWhenIdle: true }),
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19, opacity: 0.85, updateWhenIdle: true })
       ], attr: 'Esri · © OpenStreetMap' },
-      { id: 'carto', layers: () => [
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, maxNativeZoom: 19, subdomains: 'abcd', updateWhenIdle: true, crossOrigin: 'anonymous', className: 'zh-carto-dark', attribution: '© OpenStreetMap © CARTO' })
-      ], attr: '© OpenStreetMap © CARTO' },
       { id: 'osm', layers: () => [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', className: 'zh-osm-inv', updateWhenIdle: true, crossOrigin: 'anonymous' })
       ], attr: '© OpenStreetMap contributors' }
@@ -32,7 +32,7 @@ var ZH_BUILD = 1892;
       map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
       ZH_SOURCES[idx].layers().forEach(l => l.addTo(map));
       if (_zhProbeTimer) clearTimeout(_zhProbeTimer);
-      _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, 4000);
+      _zhProbeTimer = setTimeout(() => { if (!_tileSeen) zhTileNext('silent4s'); }, _zhSrcIdx === 0 ? 8000 : 4000);
     }
     function zhTileNext(reason) {
       const next = _zhSrcIdx + 1;
