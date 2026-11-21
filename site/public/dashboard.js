@@ -336,7 +336,7 @@ var ZH_BUILD = 1898;
     const CHART_PCTS = [45, 70, 84, 97, 100, 90];
     const CHART_TEMPS = ['-20°', '-10°', '0°', '+10°', '+20°', '+30°'];
     function updateChart(base) {
-      document.getElementById('passportLabel').textContent = 'Паспортный запас · ' + base + ' км';
+      document.getElementById('passportLabel').textContent = 'База расчёта · ' + base + ' км';
       CHART_PCTS.forEach((p, i) => {
         const el = document.getElementById('tval' + i);
         if (el) el.textContent = Math.round(base * p / 100) + ' км';
@@ -635,7 +635,7 @@ var ZH_BUILD = 1898;
       document.getElementById('modelList').innerHTML = list.map(m => {
         const base = m.base;
         const baseTxt = base
-          ? (m.est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'Паспортный запас: ' + base + ' км')
+          ? (m.est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'База расчёта: ' + base + ' км')
           : 'Паспортный запас не указан — расчёт по последней выбранной модели';
         const escN = (m.name || '').replace(/'/g, "\\'"), escP = (m.port || '').replace(/'/g, "\\'");
         const click = `chooseModelModel('${escN}', ${base || 'null'}, '${escP}', ${m.d ? 'true' : 'false'}, ${m.est ? 'true' : 'false'})`;
@@ -1757,7 +1757,7 @@ var ZH_BUILD = 1898;
       if (base == null) {
         document.getElementById('carModelTitle').textContent = name;
         document.getElementById('carPortTag').textContent = port || '—';
-        document.getElementById('carBaseKm').textContent = 'Паспортный запас не указан — расчёт по последней модели: ' + state.baseKm + ' км';
+        document.getElementById('carBaseKm').textContent = 'База расчёта не указана — расчёт по последней модели: ' + state.baseKm + ' км';
         document.getElementById('compatText').textContent = direct ? 'Напрямую DC' : 'Через адаптер';
         closeCarModal();
         showToast('Модель выбрана: ' + name);
@@ -1766,7 +1766,7 @@ var ZH_BUILD = 1898;
       state.baseKm = base;
       document.getElementById('carModelTitle').textContent = name;
       document.getElementById('carPortTag').textContent = port || '—';
-      document.getElementById('carBaseKm').textContent = est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'Паспортный запас: ' + base + ' км';
+      document.getElementById('carBaseKm').textContent = est ? '≈ ' + base + ' км (оценка по ёмкости)' : 'База расчёта: ' + base + ' км';
       document.getElementById('compatText').textContent = direct ? 'Напрямую DC' : 'Через адаптер';
       updateChart(base);
       closeCarModal();
@@ -2192,4 +2192,31 @@ var ZH_BUILD = 1898;
   }
   /* переприменить после restoreCar (localStorage может перекрыть диплинк) */
   setTimeout(function(){ try{ if(MODELS_ALL && MODELS_ALL.length) applyDeepLink(); }catch(e){} }, 1200);
+})();
+
+/* === Кокпит-синхронизация (zstore) — Итерация 1 ТЗ === */
+window.__zhSync = function () {
+  if (!window.ZS) return;
+  try {
+    var socEl = document.getElementById('socSlider');
+    var soc = socEl ? parseInt(socEl.value, 10) : (window.state ? state.pct : 80);
+    var cm = document.getElementById('carModelTitle');
+    var pt = document.getElementById('carPortTag');
+    window.ZS.set({
+      soc: soc,
+      temp: (window.state && typeof state.temp === 'number') ? state.temp : -20,
+      city: (window.state && state.city) || 'Москва',
+      roundTrip: !!(window.state && state.roundTrip),
+      scenMult: (window.state && state.scenMult) || 1,
+      baseKm: (window.state && state.baseKm) || 540,
+      carId: window.__zhModelSlug || window.ZS.get().carId,
+      carName: cm ? cm.textContent : window.ZS.get().carName,
+      portTag: pt ? pt.textContent : window.ZS.get().portTag
+    });
+  } catch (e) {}
+};
+(function () {
+  var r0 = window.recalc, a0 = window.applyWeatherTemp;
+  if (typeof r0 === 'function') { window.recalc = function (fit) { try { r0(fit); } finally { window.__zhSync(); } }; }
+  if (typeof a0 === 'function') { window.applyWeatherTemp = function (t, src) { try { a0(t, src); } finally { window.__zhSync(); } }; }
 })();
