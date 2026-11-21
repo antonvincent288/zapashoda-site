@@ -475,27 +475,25 @@ body h2.sec .accent{color:#FF8F33}
 @keyframes faqIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 /* Скорость на слабых устройствах: вне экрана секции не рендерим */
 .sec,.sec-alt,.sec-blk{content-visibility:auto;contain-intrinsic-size:auto 900px}
-/* === Фон «затмение» — инвариант к перезаписям компонента: слои живут здесь === */
+/* === Фон v4 «тонкая огранка» — сдержанное затмение + зерно; единственный источник, без дублей === */
 .zh-bg-map::before{content:"";position:absolute;inset:0;background:
-  radial-gradient(80% 10% at 50% -30px, rgba(255,143,51,.10), transparent 72%),
-  radial-gradient(13% 9% at 74% 398px, rgba(255,196,120,.44) 0%, rgba(255,143,51,.22) 55%, transparent 78%),
-  radial-gradient(22% 16% at 74% 400px, transparent 40%, rgba(255,143,51,.20) 47%, rgba(232,80,2,.28) 53%, transparent 63%),
-  radial-gradient(44% 30% at 74% 410px, rgba(255,143,51,.30) 0%, rgba(232,80,2,.17) 20%, rgba(150,45,8,.06) 46%, transparent 67%),
-  radial-gradient(78% 58% at 70% 660px, rgba(150,34,6,.34) 0%, rgba(96,24,5,.13) 42%, transparent 72%),
-  radial-gradient(130% 24% at 58% 1560px, rgba(232,80,2,.16) 0%, rgba(150,40,6,.05) 52%, transparent 79%),
-  radial-gradient(66% 20% at 28% 2560px, rgba(10,26,48,.55) 0%, rgba(6,18,36,.15) 52%, transparent 80%),
-  radial-gradient(96% 22% at 66% 3340px, rgba(232,80,2,.09) 0%, transparent 72%)}
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
+  radial-gradient(34% 24% at 74% 400px, rgba(255,122,26,.14) 0%, rgba(214,74,10,.07) 38%, transparent 72%),
+  radial-gradient(15% 11% at 74% 398px, transparent 45%, rgba(255,143,51,.11) 49%, rgba(232,80,2,.14) 51%, transparent 57%),
+  radial-gradient(95% 55% at 72% 640px, rgba(120,28,4,.15) 0%, rgba(70,18,3,.06) 48%, transparent 75%),
+  linear-gradient(180deg, rgba(255,143,51,0) 700px, rgba(255,143,51,.075) 790px, rgba(255,143,51,0) 920px),
+  radial-gradient(62% 18% at 30% 2560px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
+  radial-gradient(95% 20% at 64% 3340px, rgba(232,80,2,.06) 0%, transparent 70%)}
 .zh-bg-map img.zbg-img{display:none}
 @media(max-width:900px){
   .zh-bg-map::before{background:
-    radial-gradient(90% 9% at 50% -20px, rgba(255,143,51,.11), transparent 70%),
-    radial-gradient(17% 8% at 50% 425px, rgba(255,196,120,.40) 0%, rgba(255,143,51,.20) 55%, transparent 78%),
-    radial-gradient(30% 12% at 50% 430px, transparent 40%, rgba(255,143,51,.18) 47%, rgba(232,80,2,.26) 52%, transparent 63%),
-    radial-gradient(60% 22% at 50% 440px, rgba(255,143,51,.30) 0%, rgba(232,80,2,.18) 22%, rgba(150,45,8,.06) 48%, transparent 68%),
-    radial-gradient(100% 46% at 50% 700px, rgba(150,34,6,.32) 0%, rgba(96,24,5,.12) 44%, transparent 74%),
-    radial-gradient(130% 18% at 50% 1750px, rgba(232,80,2,.12) 0%, rgba(150,40,6,.04) 52%, transparent 78%),
-    radial-gradient(90% 16% at 50% 2650px, rgba(10,26,48,.5) 0%, rgba(6,18,36,.14) 50%, transparent 80%),
-    radial-gradient(120% 18% at 50% 3500px, rgba(232,80,2,.07) 0%, transparent 72%)}
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") repeat,
+    radial-gradient(56% 16% at 50% 430px, rgba(255,122,26,.14) 0%, rgba(214,74,10,.07) 38%, transparent 72%),
+    radial-gradient(24% 9% at 50% 428px, transparent 45%, rgba(255,143,51,.11) 49%, rgba(232,80,2,.14) 51%, transparent 57%),
+    radial-gradient(100% 40% at 50% 640px, rgba(120,28,4,.15) 0%, rgba(70,18,3,.06) 48%, transparent 75%),
+    linear-gradient(180deg, rgba(255,143,51,0) 780px, rgba(255,143,51,.07) 860px, rgba(255,143,51,0) 990px),
+    radial-gradient(90% 14% at 50% 2650px, rgba(9,22,42,.5) 0%, rgba(5,14,28,.14) 55%, transparent 80%),
+    radial-gradient(120% 16% at 50% 3500px, rgba(232,80,2,.06) 0%, transparent 70%)}
 }
 /* Hero picker — как в макете */
 /* Ховер карточек: тёплый вместо синего свечения старой темы */
