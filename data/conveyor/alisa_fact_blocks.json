@@ -68,5 +68,23 @@
   "note": "MEGA живой спрос, T03 нишевый"
  },
  "stubs_left": [],
- "catalog_complete": "154/154 с блоками фактов — каталог закрыт 21.11"
+ "catalog_complete": "154/154 с блоками фактов — каталог закрыт 21.11",
+ "docs_audit_2111": {
+  "cards": "154/154",
+  "docs_box": "145/154 -> 154/154 (добавлены 9: aito-m8, amberauto-a5, belgee-ex50/x80, byd-bao-3, byd-u7, evolute-i-sky, wey-07/v9x)",
+  "external_links": 170,
+  "real_broken": 2,
+  "fixed": [
+   "deepal-s07 auto.ru spec 404",
+   "skywell expocar PDF 403"
+  ],
+  "left_watching": "autoboom.co.il 403 (анти-бот, в браузере может работать); t.me — таймаут из РФ-песочницы, для пользователей ок",
+  "duplicates": "повторы PDF — легитимные общие источники (voyah-чат на 6 карточках, zeekr-зарядка на 5, li-auto mobileapp на 4, Kia PV5 на 2)",
+  "wordstat": {
+   "MG 07": 1614,
+   "mg 07 купить": 222,
+   "Luxeed R7": 278,
+   "luxeed r7 купить": 26
+  }
+ }
 }
