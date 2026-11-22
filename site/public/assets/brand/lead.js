@@ -6,7 +6,7 @@ var TG = CFG.token || '';
 var CHAT = CFG.chat || '';
 var GAS = CFG.gas || '';
 var lastSend = 0;
-var ACC = '#5AA9FF', ACC_H = '#7FB8FF', LINE = 'rgba(255,255,255,.16)', MUTED = '#9AA3B2';
+var ACC = '#FF8F33', ACC_H = '#FF8F51', LINE = 'rgba(249,249,249,.14)', MUTED = '#9AA3B2';
 
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function digits(s){return (s||'').replace(/\D/g,'');}
@@ -16,7 +16,7 @@ var ov = document.createElement('div');
 ov.id = 'zs-lead-ov';
 ov.style.cssText = 'position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)';
 var panel = document.createElement('div');
-panel.style.cssText = 'background:#15161C;color:#E9EDF4;width:100%;max-width:560px;max-height:100dvh;overflow-y:auto;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:zsIn .28s cubic-bezier(.4,0,.2,1)';
+panel.style.cssText = 'background:linear-gradient(180deg,#0e0e11,#0b0b0d);color:#F9F9F9;width:100%;max-width:560px;max-height:100dvh;overflow-y:auto;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:zsIn .28s cubic-bezier(.4,0,.2,1)';
 ov.appendChild(panel);
 if(!document.getElementById('zs-lead-style')){
   var st = document.createElement('style'); st.id = 'zs-lead-style';
@@ -24,7 +24,7 @@ if(!document.getElementById('zs-lead-style')){
     + '@keyframes zsFade{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}'
     + '.zs-fade{animation:zsFade .26s cubic-bezier(.4,0,.2,1)}'
     + '.lf-field input{width:100%;border:1.5px solid ' + LINE + ';background:#101116;color:#F2F5F9;border-radius:12px;padding:14px;font-size:16px;background:#1B1C23;color:#E9EDF4;transition:all .25s cubic-bezier(.4,0,.2,1)}'
-    + '.lf-field input:focus{outline:none;border-color:' + ACC + ';box-shadow:0 0 0 3px rgba(37,99,235,.14)}'
+    + '.lf-field input:focus{outline:none;border-color:' + ACC + ';box-shadow:0 0 0 3px rgba(232,80,2,.18)}'
     + '.zs-btn{width:100%;background:' + ACC + ';color:#0B1018;border:none;border-radius:12px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1)}'
     + '.zs-btn:hover{background:' + ACC_H + '}'
     + '.zs-btn:disabled{opacity:.6;cursor:not-allowed}'
