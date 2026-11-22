@@ -160,3 +160,6 @@
 ## 2026-11-21
 
 - [Llms.txt and MCP didn't move the needle](https://backpackforlaravel.com/articles/opinions/llms-txt-and-mcp-didn-t-move-the-needle-for-us-here-s-what-did) (star 30) — 
+## 2026-11-22
+
+Новых находок нет - все уже в базе.
