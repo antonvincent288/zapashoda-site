@@ -1,6 +1,6 @@
 {
- "sitemap_count": 519,
- "sitemap_ok": 519,
+ "sitemap_count": 521,
+ "sitemap_ok": 521,
  "sitemap_bad": [],
  "key_pages": {
   "/": 200,
@@ -31,14 +31,14 @@
  "models_cards": 154,
  "app_scripts": 3,
  "catalog_products": 0,
- "link_targets": 218,
- "links_ok": 218,
+ "link_targets": 219,
+ "links_ok": 219,
  "links_bad": [],
  "assets_count": 10,
  "assets_ok": 10,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "22.11 14:06",
+ "checked_at_msk": "22.11 16:24",
  "failures": [
   {
    "where": "page /search.html",
