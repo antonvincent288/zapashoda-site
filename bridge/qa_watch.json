@@ -38,17 +38,12 @@
  "assets_ok": 10,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "23.11 22:27",
+ "checked_at_msk": "24.11 00:14",
  "failures": [
   {
    "where": "page /search.html",
    "what": "HTTP 404",
    "crit": true
-  },
-  {
-   "where": "/",
-   "what": "нет счётчика 145 моделей",
-   "crit": false
   },
   {
    "where": "/models/",
@@ -71,6 +66,6 @@
    "crit": true
   }
  ],
- "failures_count": 6,
+ "failures_count": 5,
  "crit_count": 3
 }
