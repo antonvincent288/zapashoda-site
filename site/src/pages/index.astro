@@ -83,10 +83,10 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <a class="hw-chip" href="/models/">Tesla</a>
 </div>
 </div>
-<div class="hw-widget">
+<div class="hw-widget"><i class="hw-sheen" aria-hidden="true"></i>
 <div class="dw-head"><div class="dw-title">Запас хода <span>Zeekr 001 · 100 кВт·ч</span></div><div class="dw-live"><i></i> пересчёт 0,4 с</div></div>
 <div class="dw-body">
-<div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB366"/><stop offset=".55" stop-color="#FF8F33"/><stop offset="1" stop-color="#E85002"/></linearGradient><filter id="hw-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feComponentTransfer in="b" result="gl"><feFuncA type="linear" slope="2.2"/></feComponentTransfer><feMerge><feMergeNode in="gl"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>{Array.from({length:60}).map((_,i)=>{const ang=(i/60)*2*Math.PI-Math.PI/2;const r1=59,r2=66;const x1=88+r1*Math.cos(ang),y1=88+r1*Math.sin(ang),x2=88+r2*Math.cos(ang),y2=88+r2*Math.sin(ang);return (<line class={i<=26?'hw-tick on':'hw-tick'} x1={x1.toFixed(2)} y1={y1.toFixed(2)} x2={x2.toFixed(2)} y2={y2.toFixed(2)} />);})}<circle class="hw-track" cx="88" cy="88" fill="none" r="76" stroke="rgba(148,163,184,.15)" stroke-width="9"/><circle id="hw-arc" cx="88" cy="88" fill="none" r="76" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s" filter="url(#hw-glow)"/></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span></div><div class="g-cap">км реальных · из 540</div></div></div></div>
+<div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D00"/><stop offset=".55" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFD199"/></linearGradient><filter id="amber-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="14"/></filter></defs>{Array.from({length:60}).map((_,i)=>{const ang=(i/60)*2*Math.PI;const r1=59,r2=66;const x1=88+r1*Math.cos(ang),y1=88+r1*Math.sin(ang),x2=88+r2*Math.cos(ang),y2=88+r2*Math.sin(ang);return (<line class={i<=26?'hw-tick on':'hw-tick'} x1={x1.toFixed(2)} y1={y1.toFixed(2)} x2={x2.toFixed(2)} y2={y2.toFixed(2)} />);})}<circle class="hw-track" cx="88" cy="88" fill="none" r="76" stroke="rgba(255,255,255,.06)" stroke-width="9"/><circle id="hw-arc-glow" cx="88" cy="88" fill="none" r="76" stroke="#FF6D29" stroke-width="16" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" opacity=".55" filter="url(#amber-glow)"/><circle id="hw-arc" cx="88" cy="88" fill="none" r="76" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s"/><g id="hw-pointer"><line x1="156" y1="88" x2="167" y2="88" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></g></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span></div><div class="g-cap">км реальных · из 540</div></div></div></div>
 <div class="dw-rows">
 <div class="dw-row"><span class="k">Заряд сейчас</span><span class="v">80% <small>· 80 кВт·ч</small></span></div>
 <div class="dw-row"><span class="k">Расход</span><span class="v" id="hw-cons">28,4 <small>кВт·ч/100</small></span></div>
@@ -213,10 +213,19 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
     var r=document.getElementById('hw-trange'); if(!r) return;
     var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
     var frac=Math.min(1,range/RMAX);var ticks=document.querySelectorAll('.gauge .hw-tick');if(ticks.length)Array.prototype.forEach.call(ticks,function(el,i){ el.setAttribute('class', i/ticks.length<=frac?'hw-tick on':'hw-tick'); });
-    var a=document.getElementById('hw-arc');
+    var off=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
+    var a=document.getElementById('hw-arc'), ag=document.getElementById('hw-arc-glow'), pw=document.getElementById('hw-pointer');
+    var apply=function(v){ if(a) a.style.strokeDashoffset=v; if(ag) ag.style.strokeDashoffset=v; if(pw) pw.style.transform='rotate('+(frac*360).toFixed(1)+'deg)'; };
     if(a){
-      if(first&&!RM){ a.style.transition='none'; a.style.strokeDashoffset=CIRC.toFixed(1); requestAnimationFrame(function(){requestAnimationFrame(function(){ a.style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)'; a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1); setTimeout(function(){a.style.transition='stroke-dashoffset .4s';},980); }); }); }
-      else a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
+      if(first&&!RM){ if(ag){ ag.style.transition='none'; ag.style.opacity='0'; } a.style.transition='none'; a.style.strokeDashoffset=CIRC.toFixed(1); if(ag) ag.style.strokeDashoffset=CIRC.toFixed(1); if(pw) pw.style.opacity='0';
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          if(ag){ ag.style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1),opacity .9s ease'; ag.style.opacity='.55'; }
+          a.style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)';
+          if(pw){ pw.style.transition='transform .9s cubic-bezier(.22,1,.36,1),opacity .5s ease'; pw.style.opacity='1'; }
+          apply(off);
+          setTimeout(function(){ a.style.transition='stroke-dashoffset .4s'; if(ag) ag.style.transition='stroke-dashoffset .4s,opacity .4s ease'; if(pw) pw.style.transition='transform .4s cubic-bezier(.22,1,.36,1),opacity .3s ease'; },980);
+        }); });
+      } else apply(off);
     }
     var num=document.getElementById('hw-rkm');
     if(num){ if(first&&!RM){ num.textContent='0'; setTimeout(function(){ setNum(num,range,1100); },150); } else setNum(num,range,420); }
@@ -230,15 +239,25 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 })();
 </script>
 
+<script is:inline>
+(function(){
+  var w=document.querySelector('.hw-widget'); if(!w||!window.matchMedia('(hover: hover)').matches) return;
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches; if(rm) return;
+  w.addEventListener('mousemove',function(e){ var r=w.getBoundingClientRect(); w.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%'); w.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%'); },{passive:true});
+})();
+</script>
+
 
 
 
 
 <style is:global>
 /* HW gauge v3: ticks + glow [alisa 23.11] */
-.gauge .hw-tick{stroke:rgba(148,163,184,.28);stroke-width:2;transition:stroke .25s ease}
-.gauge .hw-tick.on{stroke:#FF8F33}
-.gauge .g-num span{text-shadow:0 0 22px rgba(255,143,51,.55)}
+.gauge .hw-tick{stroke:rgba(255,255,255,.15);stroke-width:2;transition:stroke .25s ease}
+.gauge .hw-tick.on{stroke:#FF6D29}
+#hw-pointer{transform-origin:88px 88px;transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .3s ease}
+#hw-pointer line{filter:drop-shadow(0 0 4px rgba(255,255,255,.55))}
+@media (prefers-reduced-motion:reduce){#hw-pointer{transition:none}}
 @media (prefers-reduced-motion:reduce){.gauge .hw-tick{transition:none}}
 
 /* === HERO v2: фото-фон, крупный текст, анимация (только главная) === */
@@ -372,7 +391,7 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .hw-chip{font-size:12.5px;color:var(--dim,#8E99A8);border:1px solid rgba(148,163,184,.15);background:rgba(10,12,16,.6);border-radius:999px;padding:6px 11px;text-decoration:none;transition:.15s;white-space:nowrap}
 .hw-chip:hover,.hw-chip.on{color:#FFB27A;border-color:rgba(232,80,2,.55);background:rgba(232,80,2,.13)}
 .hw-note{font-size:12px;color:var(--dim2,#5C6673);margin-top:14px;max-width:430px}
-.hw-widget{background:rgba(13,15,19,.88);border:1px solid rgba(148,163,184,.3);border-radius:20px;overflow:hidden;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.hw-widget{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(22,19,22,.92) 62%);border:none;border-radius:20px;overflow:hidden;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}.hw-widget::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(165deg,rgba(255,255,255,.28),rgba(255,255,255,.05) 38%,rgba(255,255,255,0) 58%,rgba(255,109,41,.45));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;pointer-events:none;z-index:3}.hw-widget::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.35;z-index:2;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}.hw-sheen{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(420px at var(--mx,30%) var(--my,0%),rgba(255,255,255,.07),transparent 60%)}.dw-head,.dw-body,.dw-cta{position:relative;z-index:2}
 .dw-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 10px;border-bottom:1px solid rgba(148,163,184,.15)}
 .dw-title{font-size:14px;font-weight:700;color:#fff}
 .dw-title span{color:var(--dim,#8E99A8);font-weight:500;font-size:12.5px;margin-left:6px}
@@ -383,8 +402,8 @@ section.sec .article h2{font-size:clamp(19px,2.6vw,24px)}
 .gauge{position:relative;width:176px;height:176px;flex-shrink:0}
 .gauge svg{transform:rotate(-90deg)}
 .g-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-.g-num{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:38px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(255,143,51,.3)}
-.g-cap{font-size:11px;color:#9AA5B4;text-align:center;margin-top:4px;letter-spacing:.04em}
+.g-num{font-family:'Inter','Neue Montreal',-apple-system,'Segoe UI',sans-serif;font-size:40px;font-weight:600;letter-spacing:-.04em;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 26px rgba(255,109,41,.5)}
+.g-cap{font-size:11px;color:#BABABA;text-align:center;margin-top:4px;letter-spacing:.04em}
 .dw-rows{display:grid;gap:9px;min-width:0}
 .dw-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed rgba(148,163,184,.14);padding-bottom:7px}
 .dw-row .k{font-size:12.5px;color:var(--dim,#8E99A8)}
