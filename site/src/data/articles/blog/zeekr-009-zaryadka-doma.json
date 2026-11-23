@@ -4,7 +4,7 @@
  "title": "Зарядка Zeekr 009 дома: розетка, станции 7 и 11 кВт, время по батареям",
  "desc": "Зарядка Zeekr 009 дома: от розетки ~120 км за ночь, от станции 7 кВт ~240 км, от 11 кВт ~385 км. Три версии батареи 108–140 кВт·ч, время DC 10–80% и правила эксплуатации.",
  "category": "Гайд",
- "read_min": "7",
+ "read_min": 3,
  "date": "2026-11-18",
  "og": "/assets/og/default.png",
  "extra_html": "<div class=\"lcard\" style=\"margin:18px 0 6px\"><h3 style=\"margin:0 0 10px;font-size:16px;color:var(--head)\">Читайте также</h3><ul style=\"margin:0;padding-left:18px;display:grid;gap:6px\"><li><a href=\"/blog/zeekr-001-zaryadka-doma/\">Зарядка Zeekr 001 дома</a></li><li><a href=\"/blog/zeekr-7x-zaryadka-doma/\">Зарядка Zeekr 7X дома</a></li><li><a href=\"/blog/zeekr-007-zaryadka/\">Зарядка Zeekr 007: розетка 220 В, станция 7 кВт и время</a></li></ul></div>",

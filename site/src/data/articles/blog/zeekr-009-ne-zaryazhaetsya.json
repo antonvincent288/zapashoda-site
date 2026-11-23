@@ -4,7 +4,7 @@
  "title": "Zeekr 009 не заряжается: 6 причин и что делать до сервиса",
  "desc": "Zeekr 009 не заряжается: блокировка пистолета режет ток вдвое, заземление станции, адаптер CCS2 → GB/T, просевший 12 В и правила прикуривания. Решения из практики сообщества.",
  "category": "Решение проблем",
- "read_min": "7",
+ "read_min": 2,
  "date": "2026-11-18",
  "og": "/assets/og/default.png",
  "extra_html": "<div class=\"lcard\" style=\"margin:18px 0 6px\"><h3 style=\"margin:0 0 10px;font-size:16px;color:var(--head)\">Читайте также</h3><ul style=\"margin:0;padding-left:18px;display:grid;gap:6px\"><li><a href=\"/blog/zeekr-009-zaryadka-doma/\">Зарядка Zeekr 009 дома</a></li><li><a href=\"/blog/zeekr-009-trassa-dc/\">Zeekr 009 на трассе</a></li><li><a href=\"/blog/zeekr-001-ne-zaryazhaetsya/\">Zeekr 001 не заряжается</a></li></ul></div>",

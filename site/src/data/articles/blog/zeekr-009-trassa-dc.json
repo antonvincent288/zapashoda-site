@@ -4,7 +4,7 @@
  "title": "Zeekr 009 на трассе: реальный расход 24–40 кВт·ч и честные сессии",
  "desc": "Zeekr 009 на трассе: реальный расход от 23,7 кВт·ч/100 км владельца до ~40 в замерах Авторевю, время 20–80% по трём батареям и правила дальних поездок на минивэне.",
  "category": "Гайд",
- "read_min": "7",
+ "read_min": 3,
  "date": "2026-11-18",
  "og": "/assets/og/default.png",
  "extra_html": "<div class=\"lcard\" style=\"margin:18px 0 6px\"><h3 style=\"margin:0 0 10px;font-size:16px;color:var(--head)\">Читайте также</h3><ul style=\"margin:0;padding-left:18px;display:grid;gap:6px\"><li><a href=\"/blog/zeekr-009-zaryadka-doma/\">Зарядка Zeekr 009 дома</a></li><li><a href=\"/blog/zeekr-001-zaryadka-doma/\">Зарядка Zeekr 001 дома</a></li><li><a href=\"/blog/zeekr-7x-trassa-dc-800v/\">Zeekr 7X на трассе</a></li></ul></div>",
