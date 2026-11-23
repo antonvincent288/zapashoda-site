@@ -199,19 +199,33 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <script is:inline>
 (function(){
   var CIRC=477.5, BATT=100, CH=0.8, RMAX=Math.round(100*BATT/16);
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function cons(t){ return 16 + Math.max(0,(15-t))*0.35; }
-  function upd(){
+  function setNum(el,to,dur){
+    if(!el) return;
+    var from=parseInt(String(el.textContent).replace(/[^0-9]/g,''),10)||0;
+    if(RM||from===to){ el.textContent=to; return; }
+    var st=null;
+    function step(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); p=1-Math.pow(1-p,3); el.textContent=Math.round(from+(to-from)*p); if(p<1)requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  function upd(first){
     var r=document.getElementById('hw-trange'); if(!r) return;
     var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
-    var a=document.getElementById('hw-arc'); if(a) a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
-    var e=document.getElementById('hw-rkm'); if(e) e.textContent=range;
+    var a=document.getElementById('hw-arc');
+    if(a){
+      if(first&&!RM){ a.style.transition='none'; a.style.strokeDashoffset=CIRC.toFixed(1); requestAnimationFrame(function(){requestAnimationFrame(function(){ a.style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)'; a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1); setTimeout(function(){a.style.transition='stroke-dashoffset .4s';},980); }); }); }
+      else a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
+    }
+    var e=document.getElementById('hw-rkm');
+    if(e){ if(first&&!RM){ e.textContent='0'; setTimeout(function(){ setNum(e,range,1100); },150); } else setNum(e,range,420); }
     e=document.getElementById('hw-cons'); if(e) e.innerHTML=(Math.round(c*10)/10).toString().replace('.',',')+' <small>кВт·ч/100</small>';
     e=document.getElementById('hw-heat'); if(e) e.innerHTML=(t>=15?'0,8':(4.6-0.11*(t+20)).toFixed(1).replace('.0','').replace('.',',').replace('-','−'))+' <small>кВт·ч/ч</small>';
     e=document.getElementById('hw-tval'); if(e) e.textContent=(t>0?'+':'−')+Math.abs(t)+'°';
   }
   var r=document.getElementById('hw-trange');
-  if(r) r.addEventListener('input',upd);
-  upd();
+  if(r) r.addEventListener('input',function(){upd(false);});
+  upd(true);
 })();
 </script>
 
