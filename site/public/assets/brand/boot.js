@@ -68,7 +68,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var shown=false;
   function dismiss(){var el=document.getElementById('zs-ai-toast');if(el)el.remove();sessionStorage.setItem('zsai','1');}
   function show(){
-   if(shown)return;shown=true;
+   if(shown||sessionStorage.getItem('zsai')==='1')return;shown=true;sessionStorage.setItem('zsai','1');
    var toast=document.createElement('div');toast.id='zs-ai-toast';
    toast.style.cssText='position:fixed;left:auto;right:14px;max-width:min(320px,calc(100vw - 40px));bottom:'+(window.innerWidth<1024?92:14)+'px;z-index:190;background:rgba(24,27,33,.96);color:#f5f5f7;border:1px solid rgba(255,111,0,.45);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;box-shadow:0 8px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease';
    toast.innerHTML='<div style="font-size:10px;letter-spacing:.1em;color:#9aa0a6;font-weight:700">БОРТОВОЙ ИИ · ЗАПАС ХОДА</div>'
@@ -82,7 +82,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
    document.getElementById('zs-ai-x').addEventListener('click',function(){dismiss();});
    setTimeout(function(){dismiss();},16000);
   }
-  /* новые правила: не вылезает сразу — ждёт вовлечения (скролл >600px) либо 7с, показ 1 раз за сессию, автоудаление через 16с (remove, не opacity) */
+  /* правила: не вылезает сразу — ждёт вовлечения (скролл >600px) либо 7с; показ РОВНО 1 раз за сессию (флаг zsai ставится при первом показе), автоудаление через 16с [alisa 23.11] */
   var timer=setTimeout(show,7000);
   var onScroll=function(){ if(window.scrollY>600){clearTimeout(timer);show();} };
   window.addEventListener('scroll',onScroll,{passive:true});
