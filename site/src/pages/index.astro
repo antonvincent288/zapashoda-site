@@ -83,7 +83,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <a class="hw-chip" href="/models/">Tesla</a>
 </div>
 </div>
-<div class="hw-widget"><i class="hw-sheen" aria-hidden="true"></i>
+<div class="hw-widget"><i class="hw-sheen" aria-hidden="true"></i><i class="hw-ember" aria-hidden="true"></i>
 <div class="dw-head"><div class="dw-title">Запас хода <span>Zeekr 001 · 100 кВт·ч</span></div><div class="dw-live"><i></i> пересчёт 0,4 с</div></div>
 <div class="dw-body">
 <div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D00"/><stop offset=".55" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFD199"/></linearGradient><filter id="amber-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="14"/></filter></defs>{Array.from({length:60}).map((_,i)=>{const ang=(i/60)*2*Math.PI;const r1=59,r2=66;const x1=88+r1*Math.cos(ang),y1=88+r1*Math.sin(ang),x2=88+r2*Math.cos(ang),y2=88+r2*Math.sin(ang);return (<line class={i<=26?'hw-tick on':'hw-tick'} x1={x1.toFixed(2)} y1={y1.toFixed(2)} x2={x2.toFixed(2)} y2={y2.toFixed(2)} />);})}<circle class="hw-track" cx="88" cy="88" fill="none" r="76" stroke="rgba(255,255,255,.06)" stroke-width="9"/><circle id="hw-arc-glow" cx="88" cy="88" fill="none" r="76" stroke="#FF6D29" stroke-width="16" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" opacity=".55" filter="url(#amber-glow)"/><circle id="hw-arc" cx="88" cy="88" fill="none" r="76" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s"/><g id="hw-pointer"><line x1="156" y1="88" x2="167" y2="88" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></g></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span></div><div class="g-cap">км реальных · из 540</div></div></div></div>
@@ -212,7 +212,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
   function upd(first){
     var r=document.getElementById('hw-trange'); if(!r) return;
     var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
-    var frac=Math.min(1,range/RMAX);var ticks=document.querySelectorAll('.gauge .hw-tick');if(ticks.length)Array.prototype.forEach.call(ticks,function(el,i){ el.setAttribute('class', i/ticks.length<=frac?'hw-tick on':'hw-tick'); });
+    var frac=Math.min(1,range/RMAX);try{ r.style.setProperty('--p',(((t-(+r.min))/((+r.max)-(+r.min)))*100).toFixed(1)+'%'); }catch(e){}var ticks=document.querySelectorAll('.gauge .hw-tick');if(ticks.length)Array.prototype.forEach.call(ticks,function(el,i){ el.setAttribute('class', i/ticks.length<=frac?'hw-tick on':'hw-tick'); });
     var off=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1);
     var a=document.getElementById('hw-arc'), ag=document.getElementById('hw-arc-glow'), pw=document.getElementById('hw-pointer');
     var apply=function(v){ if(a) a.style.strokeDashoffset=v; if(ag) ag.style.strokeDashoffset=v; if(pw) pw.style.transform='rotate('+(frac*360).toFixed(1)+'deg)'; };
@@ -259,6 +259,13 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 #hw-pointer line{filter:drop-shadow(0 0 4px rgba(255,255,255,.55))}
 @media (prefers-reduced-motion:reduce){#hw-pointer{transition:none}}
 @media (prefers-reduced-motion:reduce){.gauge .hw-tick{transition:none}}
+/* HW TZ: ambient lamp-glow + instrument slider [alisa 23.11] */
+.hw-ember{position:absolute;left:50%;bottom:-46px;width:230px;height:150px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(255,109,41,.5),rgba(255,109,41,0) 72%);filter:blur(32px);pointer-events:none;z-index:1}
+.hw-sl{margin-top:2px}
+#hw-trange{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(90deg,#FF4D00 0%,#FF8A00 var(--p,50%),rgba(255,255,255,.14) var(--p,50%))}
+#hw-trange::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,109,41,.3),0 0 16px rgba(255,109,41,.55);cursor:grab}
+#hw-trange::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,109,41,.3),0 0 16px rgba(255,109,41,.55);cursor:grab}
+@media (prefers-reduced-motion:reduce){#hw-trange{transition:none}}
 
 /* === HERO v2: фото-фон, крупный текст, анимация (только главная) === */
 .zh-hero-big{position:relative;background:#0b0b0d;padding:96px 0 0;overflow:hidden}
