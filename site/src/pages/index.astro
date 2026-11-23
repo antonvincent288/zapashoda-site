@@ -86,7 +86,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 <div class="hw-widget">
 <div class="dw-head"><div class="dw-title">Запас хода <span>Zeekr 001 · 100 кВт·ч</span></div><div class="dw-live"><i></i> пересчёт 0,4 с</div></div>
 <div class="dw-body">
-<div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><circle cx="88" cy="88" r="76" fill="none" stroke="rgba(148,163,184,.15)" stroke-width="9"/><circle id="hw-arc" cx="88" cy="88" r="76" fill="none" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s"/><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8F33"/><stop offset="1" stop-color="#E85002"/></linearGradient></defs></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span></div><div class="g-cap">км реальных · из 540</div></div></div></div>
+<div class="g-col"><div class="gauge"><svg viewBox="0 0 176 176" aria-hidden="true"><defs><linearGradient id="hw-ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB366"/><stop offset=".55" stop-color="#FF8F33"/><stop offset="1" stop-color="#E85002"/></linearGradient><filter id="hw-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feComponentTransfer in="b" result="gl"><feFuncA type="linear" slope="2.2"/></feComponentTransfer><feMerge><feMergeNode in="gl"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>{Array.from({length:60}).map((_,i)=>{const ang=(i/60)*2*Math.PI-Math.PI/2;const r1=59,r2=66;const x1=88+r1*Math.cos(ang),y1=88+r1*Math.sin(ang),x2=88+r2*Math.cos(ang),y2=88+r2*Math.sin(ang);return (<line class={i<=26?'hw-tick on':'hw-tick'} x1={x1.toFixed(2)} y1={y1.toFixed(2)} x2={x2.toFixed(2)} y2={y2.toFixed(2)} />);})}<circle class="hw-track" cx="88" cy="88" fill="none" r="76" stroke="rgba(148,163,184,.15)" stroke-width="9"/><circle id="hw-arc" cx="88" cy="88" fill="none" r="76" stroke="url(#hw-ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="262.6" style="transition:stroke-dashoffset .4s" filter="url(#hw-glow)"/></svg><div class="g-val"><div class="g-num"><span id="hw-rkm">282</span></div><div class="g-cap">км реальных · из 540</div></div></div></div>
 <div class="dw-rows">
 <div class="dw-row"><span class="k">Заряд сейчас</span><span class="v">80% <small>· 80 кВт·ч</small></span></div>
 <div class="dw-row"><span class="k">Расход</span><span class="v" id="hw-cons">28,4 <small>кВт·ч/100</small></span></div>
@@ -212,6 +212,7 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
   function upd(first){
     var r=document.getElementById('hw-trange'); if(!r) return;
     var t=+r.value, c=cons(t), range=Math.round(100*BATT*CH/c);
+    var frac=Math.min(1,range/RMAX);var ticks=document.querySelectorAll('.gauge .hw-tick');if(ticks.length)Array.prototype.forEach.call(ticks,function(el,i){ el.setAttribute('class', i/ticks.length<=frac?'hw-tick on':'hw-tick'); });
     var a=document.getElementById('hw-arc');
     if(a){
       if(first&&!RM){ a.style.transition='none'; a.style.strokeDashoffset=CIRC.toFixed(1); requestAnimationFrame(function(){requestAnimationFrame(function(){ a.style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)'; a.style.strokeDashoffset=(CIRC*(1-Math.min(1,range/RMAX))).toFixed(1); setTimeout(function(){a.style.transition='stroke-dashoffset .4s';},980); }); }); }
@@ -234,6 +235,12 @@ const POP_BRANDS = ['Zeekr','Li Auto','BYD','AITO','Voyah','XPeng','Tesla','Niss
 
 
 <style is:global>
+/* HW gauge v3: ticks + glow [alisa 23.11] */
+.gauge .hw-tick{stroke:rgba(148,163,184,.28);stroke-width:2;transition:stroke .25s ease}
+.gauge .hw-tick.on{stroke:#FF8F33}
+.gauge .g-num span{text-shadow:0 0 22px rgba(255,143,51,.55)}
+@media (prefers-reduced-motion:reduce){.gauge .hw-tick{transition:none}}
+
 /* === HERO v2: фото-фон, крупный текст, анимация (только главная) === */
 .zh-hero-big{position:relative;background:#0b0b0d;padding:96px 0 0;overflow:hidden}
 .zh-hero-big::before{content:'';position:absolute;inset:0;background-image:linear-gradient(0deg,rgba(6,10,14,.94) 0%,rgba(6,10,14,.55) 16%,rgba(6,10,14,0) 34%),linear-gradient(100deg,rgba(6,9,12,.92) 0%,rgba(6,9,12,.78) 42%,rgba(6,9,12,.38) 100%),url('/assets/img/hero-ev.webp');background-size:cover;background-position:center 30%;opacity:.92;z-index:0}
