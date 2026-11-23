@@ -4,7 +4,7 @@
  "title": "Зарядка BYD Seal дома: розетка, станция 7 кВт и DC до 150 кВт",
  "desc": "Зарядка BYD Seal: розетка 3,5 кВт (~145 км за ночь), станция 7 кВт — предел по AC, DC до 150 кВт, адаптер CCS2 → GB/T и LFP Blade, который любит 100%.",
  "category": "Гайд",
- "read_min": "6",
+ "read_min": 2,
  "date": "2026-11-18",
  "og": "/assets/og/default.png",
  "extra_html": "<div class=\"lcard\" style=\"margin:18px 0 6px\"><h3 style=\"margin:0 0 10px;font-size:16px;color:var(--head)\">Читайте также</h3><ul style=\"margin:0;padding-left:18px;display:grid;gap:6px\"><li><a href=\"/blog/byd-dolphin-zaryadka-doma/\">Зарядка BYD Dolphin дома</a></li><li><a href=\"/blog/zaryadka-dlya-byd/\">Зарядка для BYD</a></li><li><a href=\"/blog/domashnyaya-zaryadka-elektromobilya/\">Домашняя зарядка</a></li></ul></div>",

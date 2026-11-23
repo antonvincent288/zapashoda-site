@@ -4,7 +4,7 @@
  "title": "Зарядка Kia EV9: разъём Type 1/CCS1, домашняя станция и быстрые сессии",
  "desc": "Зарядка Kia EV9 (KR/US ввоз): порт Type 1/CCS1 вместо CCS2, бортовой заряд 7 кВт, паспортные 240 кВт на 800 В и адаптер CCS2 → CCS1 для трассы.",
  "category": "Гайд",
- "read_min": "6",
+ "read_min": 2,
  "date": "2026-11-18",
  "og": "/assets/og/default.png",
  "extra_html": "<div class=\"lcard\" style=\"margin:18px 0 6px\"><h3 style=\"margin:0 0 10px;font-size:16px;color:var(--head)\">Читайте также</h3><ul style=\"margin:0;padding-left:18px;display:grid;gap:6px\"><li><a href=\"/blog/kia-ev6-ioniq5-iccu-12v-problema/\">Kia EV6/Ioniq 5: проблема ICCU</a></li><li><a href=\"/blog/zeekr-009-trassa-dc/\">Zeekr 009 на трассе</a></li><li><a href=\"/blog/ustanovka-zaryadnoy-stancii-elektromobilya/\">Установка зарядной станции</a></li></ul></div>",
