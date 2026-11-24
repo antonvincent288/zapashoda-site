@@ -1,0 +1,56 @@
+{
+  "section": "blog",
+  "slug": "kody-oshibok-elektromobilya",
+  "title": "Коды ошибок электромобиля: 12В, зарядка и изоляция — что значат",
+  "desc": "Коды ошибок электромобиля: B15C1, U3003, P0A08 (12В и DC-DC), Ground Fault, Battery Fault, ошибки Tesla UMC/CC/CP. Что значит каждый код, что делать самому и когда к сервису.",
+  "category": "Руководство",
+  "read_min": 4,
+  "date": "2026-11-24",
+  "og": "/assets/og/default.png",
+  "body_html": "<div class=\"art-body\"><h2 id=\"s1\">Коротко</h2>\n<p>Правило работы с кодами: сфотографировать, не удалять, сверить с этой страницей. Ошибки делятся на три группы: низковольтный контур (12 В), переменный ток (AC-зарядка) и высоковольтная часть (DC, BMS, изоляция). Большинство кодов первой группы решается дома, третьей — требует сервиса.</p>\n<h2 id=\"s2\">Низковольтный контур: 12 В</h2>\n<table class=\"zh-table\"><thead><tr><th>Код</th><th>Что значит</th><th>Что делать</th></tr></thead><tbody>\n<tr><td>B15C1</td><td>undervoltage detected — просадка 12 В</td><td>Замер мультиметром: покой ≥ 12,4 В, в работе 13,5–14,5 В. Ниже — менять АКБ или чинить DC-DC</td></tr>\n<tr><td>U3003</td><td>communication fault — сбой связи модулей по низковольтной шине</td><td>Перезагрузка (12 В на 10 минут), потом диагностика</td></tr>\n<tr><td>P0A08</td><td>DC-DC converter performance — преобразователь не держит напряжение</td><td>Если 12 В старый — сначала батарея; не помогло — сервис</td></tr>\n<tr><td>Красная лампа 12 В (Leaf/Ariya)</td><td>DC/DC не работает: 12-вольтовая батарея не заряжается</td><td>НЕ ехать, НЕ заряжать 12 В с горящей лампой — остановитесь, вызывайте помощь</td></tr>\n</tbody></table>\n<p>Ловушка после замены 12 В: поставили LiFePO4 вместо штатной AGM — через неделю ошибки B15C1/P0A08 при нормальном новом АКБ. Причина в профиле заряда: AGM требует 13,8–14,4 В, LiFePO4 — 14,2–14,6 В без пульсаций. Если DC-DC не адаптирован, батарея либо недозаряжается, либо ловит защиту BMS. Менять тип 12 В без проверки совместимости — не апгрейд, а источник отказов.</p>\n<h2 id=\"s3\">AC-зарядка: розетка, портативка, стена</h2>\n<ul>\n<li><b>Ground Fault / утечка</b> — нет или оборвано заземление, либо вода в порту. Сушка, тестер розетки, монтаж PE.</li>\n<li><b>Tesla UMC_a001, CC_a001</b> — «плохое заземление» розетки или стены: то же, что выше.</li>\n<li><b>Tesla UMC_a002</b> — сработала защита от утечки: ищите воду/повреждение кабеля.</li>\n<li><b>Tesla UMC_a008</b> — перегрев вилки в розетке: плохой контакт, сечение меньше 2,5 мм². Дать остыть, перетянуть контакты, снизить ток.</li>\n<li><b>PCS_a054</b> — зарядка остановлена из-за сильной просадки напряжения: сеть «не тянет». Стабилизатор или меньший ток.</li>\n</ul>\n<h2 id=\"s4\">DC и высоковольтная часть</h2>\n<ul>\n<li><b>Ошибка handshake</b> (машина и стойка не «договорились») — адаптер, прошивка, грязные контакты. Попробовать другую стойку; у Zeekr решилось обновлением ПО.</li>\n<li><b>Ошибка изоляции</b> — вода после мойки или повреждение изоляции. Просушка порта; не уходит — диагностика мегаомметром.</li>\n<li><b>Battery Fault, High Voltage System Error</b> — BMS заблокировала зарядку намеренно: сервис, без самодеятельности.</li>\n<li><b>CP_a078 (Tesla)</b> — защёлка порта примерзла: прогрев порта (Inlet Heater до 2 часов), трос в багажнике. <b>CP_a043</b> — датчик лючка: сервис.</li>\n<li><b>«Shift to P to charge» (Kia EV6)</b> — не ошибка: машина просит Park для старта сессии.</li>\n</ul>\n<h2 id=\"s5\">Общий порядок</h2>\n<ol>\n<li>Фото ошибки (экран машины + экран станции).</li>\n<li>Проверить группу кода: 12 В — мультиметр; AC — розетка/кабель; DC — попробовать другую стойку.</li>\n<li>Перезагрузить сессию (12 В на 10 минут — крайний вариант дома).</li>\n<li>Не удалять ошибки до визита в сервис — стоп-кадры экономят часы диагностики.</li>\n</ol>\n<h2 id=\"s6\">Связанное</h2>\n<p>Почему всё это «валится» в одну кучу — <a href=\"/blog/elektromobil-ne-zaryazhaetsya/\">12 причин, почему не заряжается</a>. Живой 12-вольтовый аккумулятор — <a href=\"/blog/akkumulyator-12v-elektromobilya/\">сколько живёт и почему умирает</a>. Дефект ICCU у Kia EV6/Ioniq 5 — <a href=\"/blog/kia-ev6-ioniq5-iccu-12v-problema/\">отдельный разбор</a>. Разъём не отпускает кабель — <a href=\"/blog/kabel-ne-vynimaetsya-ili-primerz/\">замок vs наледь</a>.</p></div>",
+  "extra_html": "</div></div><section class=\"comments\" id=\"comments\" data-thread=\"blog/kody-oshibok-elektromobilya\"><h2>Обсуждение</h2><div id=\"c-list\"></div><form id=\"c-form\"><input name=\"name\" maxlength=\"40\" placeholder=\"Ваше имя\" required><input name=\"tg\" maxlength=\"32\" placeholder=\"Telegram @ (необязательно)\"><textarea name=\"text\" maxlength=\"2000\" placeholder=\"Вопрос, опыт, уточнение — напишите…\" required></textarea><button class=\"btn lime\" type=\"submit\">Отправить</button><p id=\"c-note\">Комментарий появится после проверки модератором.</p></form><script>(function(){\nvar G='https://script.google.com/macros/s/AKfycby_Zx4ahWRuCX2Jq--yf6FqVpAOBqb9bEvj0rbGPJyFIr45WPcuZ4EKci-n-B2d3VzKQw/exec';\nfunction esc(s){return String(s||'').replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c];});}\nvar box=document.getElementById('comments');if(!box)return;var tid=box.getAttribute('data-thread');\nvar list=document.getElementById('c-list');\ntry{fetch(G+'?action=posts&thread='+encodeURIComponent(tid)).then(function(r){return r.json();}).then(function(d){\n if(!d||!d.ok){list.innerHTML='';return;}\n if(!d.posts||!d.posts.length){list.innerHTML='<p class=\"c-empty\">Пока никто не написал — задайте вопрос первым.</p>';return;}\n list.innerHTML=d.posts.map(function(p){var t=new Date(p.ts).toLocaleDateString('ru-RU');\n  return '<div class=\"c-item\"><b>'+esc(p.name)+'</b><span class=\"c-date\">'+t+'</span><p>'+esc(p.text)+'</p></div>';}).join('');\n}).catch(function(){list.innerHTML='';});}catch(e){}\nvar fm=document.getElementById('c-form');if(!fm)return;\nfm.addEventListener('submit',function(ev){ev.preventDefault();\n var fd=new FormData(fm),btn=fm.querySelector('button'),note=document.getElementById('c-note');\n btn.disabled=true;btn.textContent='Отправляем…';\n fetch(G,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({thread:tid,name:fd.get('name'),tg:fd.get('tg'),text:fd.get('text')})})\n .then(function(r){return r.json();}).then(function(d){\n  btn.disabled=false;btn.textContent='Отправить';\n  if(d&&d.ok){fm.reset();note.textContent='Спасибо! Комментарий появится после проверки модератором.';}\n  else{note.textContent='Ошибка: '+((d&&d.error)||'повторите позже');}\n }).catch(function(){btn.disabled=false;btn.textContent='Отправить';note.textContent='Не удалось отправить, попробуйте ещё раз.';});\n});\n})();</script></section>",
+  "headings": [
+    {
+      "id": "s1",
+      "text": "Коротко"
+    },
+    {
+      "id": "s2",
+      "text": "Низковольтный контур: 12 В"
+    },
+    {
+      "id": "s3",
+      "text": "AC-зарядка: розетка, портативка, стена"
+    },
+    {
+      "id": "s4",
+      "text": "DC и высоковольтная часть"
+    },
+    {
+      "id": "s5",
+      "text": "Общий порядок"
+    },
+    {
+      "id": "s6",
+      "text": "Связанное"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Что значит код B15C1?",
+      "a": "Просадка напряжения в 12-вольтовой сети. Замерьте АКБ: покой ≥ 12,4 В, при работе 13,5–14,5 В. Если ниже — батарея умирает или DC-DC не дорабатывает."
+    },
+    {
+      "q": "Можно ли ехать с горящей лампой 12 В у Leaf?",
+      "a": "Нет: DC/DC не заряжает малый АКБ, машина скоро заглохнет полностью. Остановитесь в безопасном месте, включите стояночный тормоз и вызывайте помощь."
+    },
+    {
+      "q": "Ошибка изоляции на DC-станции — это страшно?",
+      "a": "Машина защищает вас: при утечке сессия блокируется. Чаще всего это вода после мойки — сушка решает. Повторяется — диагностика изоляции в сервисе."
+    },
+    {
+      "q": "После замены 12 В появились ошибки — почему?",
+      "a": "Вероятно, поставили LiFePO4 вместо AGM: профили заряда не совпадают (14,2–14,6 В против 13,8–14,4 В). Проверьте совместимость с DC-DC вашей модели — иначе новые ошибки будут возвращаться."
+    }
+  ]
+}
