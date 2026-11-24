@@ -166,3 +166,6 @@
 ## 2026-11-23
 
 Новых находок нет - все уже в базе.
+## 2026-11-24
+
+- [Dszae/Personal-Website-SEO-Crawler](https://github.com/Dszae/Personal-Website-SEO-Crawler) (star 3) — Evidence-based technical SEO crawler for personal websites — audit pages, sitemaps, JSON-LD, internal links and images w
