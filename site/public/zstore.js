@@ -44,3 +44,14 @@
   window.addEventListener('storage', function(e){ if (e.key === KEY && e.newValue) { try { var fresh = JSON.parse(e.newValue); var w=0; for (var k in fresh) w++; Object.assign(s, fresh); for (var j=0;j<subs.length;j++){ try { subs[j](s); } catch(e2){} } window.dispatchEvent(new CustomEvent('zs:change', { detail: s })); } catch(e3){} } });
   window.ZS = ZS;
 })();
+
+/* ---- ZH HOME KIT v1 (24.11.2026): подключение унификации плиток/эффектов + фикс overflow-x + баннер «сайт наполняется».
+   Файл /zh_home_kit.js, показывает баннер 1 раз в 7 дней (localStorage zh_wip_dismiss), ничего не ломает на проде. ---- */
+(function () {
+  try {
+    var s = document.createElement('script');
+    s.src = '/zh_home_kit.js?v=1';
+    s.defer = true;
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
