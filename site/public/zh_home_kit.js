@@ -28,6 +28,9 @@
 '.m-faq details{padding:16px 0!important}.m-faq summary{min-height:48px!important;cursor:pointer}',
 '.hw-btn{padding:15px 30px!important;border-radius:12px!important;letter-spacing:.01em!important;display:inline-flex;align-items:center;gap:8px}',
 '@media(max-width:760px){.zh-nav-col{border-top:1px solid rgba(255,255,255,.09);padding-top:20px;margin-top:8px}.zh-nav-cols p{line-height:1.55}.m-faq summary{font-size:15.5px;line-height:1.45}}',
+'.sec small{white-space:normal!important;overflow:visible!important;word-break:break-word!important;max-width:100%}',
+'.sec .sn,.sec .accent{white-space:nowrap;overflow:visible}',
+'@media(min-width:1441px){main .sec{padding-left:calc(432px + (100vw - 432px - min(1152px,100vw - 472px))/2)!important}main>.wrap{margin-left:calc(432px + (100vw - 432px - min(1152px,100vw - 472px))/2)!important}footer{padding-left:calc(432px + (100vw - 432px - min(1152px,100vw - 472px))/2)!important}}',
       ].join('');
       var st=document.createElement('style');st.id='zh-unify-css';st.textContent=css;
       (document.head||document.documentElement).appendChild(st);
