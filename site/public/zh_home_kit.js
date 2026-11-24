@@ -1,10 +1,11 @@
-/*! zh_home_kit.js — унификация плиток/эффектов + фикс горизонтального вылезания + баннер «сайт наполняется»
- * Добавляет: единый радиус/бордер/hover (оранжевая палитра), выравнивание карточек по высоте,
- * читаемые бейджи, overflow-x fix, ненавязчивый banner (dismiss хранится в localStorage, не чаще 1 раза в 7 дней).
- * Не меняет прод-разметку и прод-JS: только CSS-инжект с высокой специфичностью и собственные классы zh-wip-*. */
+/*! zh_home_kit.js v3 — унификация плиток/эффектов + фикс overflow-x + центральное модальное окно «СКОРО БУДЕТ КРУТО!»
+ * Стиль = наш HMI-виджет (Dark Glassmorphism, rim light, Ambient Glow #FF6D29/#FF9E44, ease cubic-bezier(.22,1,.36,1)).
+ * Показ: 1 раз в 7 дней (localStorage zh_wip_dismiss). Esc/клик по фону/крестик — закрыть. a11y: role=dialog, фокус-управление.
+ * Не меняет прод-разметку и прод-JS: только собственные элементы zh-wip-*. */
 (function(){
   try{
     if(window.__zhHomeKit)return; window.__zhHomeKit=1;
+    var EASE='cubic-bezier(.22,1,.36,1)';
     function injectCss(){
       var css=[
         'html,body{overflow-x:hidden!important}',
@@ -21,27 +22,65 @@
       var st=document.createElement('style');st.id='zh-unify-css';st.textContent=css;
       (document.head||document.documentElement).appendChild(st);
     }
-    function banner(){
+    function closeModal(box,overlay){
+      if(!box)return;
+      try{localStorage.setItem('zh_wip_dismiss',String(Date.now()));}catch(e){}
+      box.style.opacity='0';box.style.transform='translateY(10px) scale(.98)';
+      if(overlay)overlay.style.opacity='0';
+      setTimeout(function(){if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
+        if(box&&box.parentNode)box.parentNode.removeChild(box);},380);
+      document.removeEventListener('keydown',onKey,true);
+    }
+    function onKey(e){ if(e.key==='Escape'){ var b=document.getElementById('zh-wip-box'); var o=document.getElementById('zh-wip-overlay'); if(b)closeModal(b,o);} }
+    function modal(){
       try{
-        var ds=localStorage.getItem('zh_wip_dismiss');
-        var ts=Number(ds||0);
-        var now=Date.now();
-        if(ts && (now-ts) < 7*24*3600*1000) return;
-        var b=document.createElement('div'); b.id='zh-wip-banner';
-        b.innerHTML='<div class="zh-wip-inner"><b>Сайт наполняется</b><span>Материалы и карточки обновляются каждый день. Нашли неточность — напишите в бот, учтём.</span><button type="button" aria-label="Закрыть">\u00d7</button></div>';
-        document.body.appendChild(b);
-        var s2=document.createElement('style'); s2.id='zh-wip-css';
-        s2.textContent='#zh-wip-banner{position:fixed;left:50%;transform:translateX(-50%) translateY(14px);bottom:18px;z-index:2147483000;max-width:560px;width:calc(100% - 32px);background:rgba(20,17,22,.94);border:1px solid rgba(255,111,0,.4);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 44px rgba(255,111,0,.14);color:#EDF0F5;opacity:0;transition:opacity .45s ease,transform .45s ease;backdrop-filter:blur(10px)}#zh-wip-banner.zh-wip-show{opacity:1;transform:translateX(-50%)}#zh-wip-inner{display:flex;align-items:center;gap:12px;padding:14px 16px;font:500 14px/1.5 Inter,system-ui,-apple-system,sans-serif}#zh-wip-inner b{color:#FF6F00;white-space:nowrap;font-weight:700}#zh-wip-inner span{flex:1;color:#C6CEDC}#zh-wip-inner button{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#C6CEDC;font-size:17px;cursor:pointer;line-height:1}#zh-wip-inner button:hover{color:#FF8F33;border-color:rgba(255,143,51,.5)}@media(max-width:640px){#zh-wip-inner{padding:12px;gap:10px}#zh-wip-inner b{font-size:13px}#zh-wip-inner span{font-size:12.5px}}';
-        (document.head||document.documentElement).appendChild(s2);
-        setTimeout(function(){b.classList.add('zh-wip-show');},1200);
-        b.querySelector('button').addEventListener('click',function(){
-          b.classList.remove('zh-wip-show');
-          try{localStorage.setItem('zh_wip_dismiss',String(Date.now()));}catch(e){}
-          setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);},480);
-        });
+        var ts=Number(localStorage.getItem('zh_wip_dismiss')||0);
+        if(ts && (Date.now()-ts) < 7*24*3600*1000) return;
+        var o=document.createElement('div'); o.id='zh-wip-overlay';
+        o.setAttribute('style','position:fixed;inset:0;z-index:2147483000;background:radial-gradient(1100px 640px at 50% 38%,rgba(255,109,41,.10),transparent 62%),rgba(9,9,11,.74);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;transition:opacity .32s ease');
+        var b=document.createElement('div'); b.id='zh-wip-box'; b.setAttribute('role','dialog'); b.setAttribute('aria-modal','true'); b.setAttribute('aria-label','Сайт в разработке');
+        b.style.cssText='position:relative;z-index:1;width:100%;max-width:620px;max-height:calc(100dvh - 48px);overflow:auto;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(22,19,22,.93) 34%);border:1px solid rgba(255,255,255,.09);border-radius:20px;box-shadow:0 48px 140px rgba(0,0,0,.62),0 0 90px rgba(255,109,41,.13);padding:44px 44px 34px;color:#EDF0F5;font:500 15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;opacity:0;transform:translateY(14px) scale(.97);transition:opacity .5s '+EASE+',transform .5s '+EASE+';text-align:center';
+        b.innerHTML=
+          '<style id="zh-wip-inner-css">'+
+          '#zh-wip-box::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75) 30%,rgba(255,255,255,.15) 60%,transparent)}'+
+          '#zh-wip-box::after{content:"";position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,109,41,.55) 40%,rgba(255,158,68,.28) 60%,transparent)}'+
+          '.zh-wip-kicker{font-size:11px;letter-spacing:.22em;font-weight:700;color:#FF8F33;text-transform:uppercase}'+
+          '.zh-wip-title{margin:14px 0 0;font-weight:700;font-size:clamp(28px,5vw,42px);line-height:1.04;letter-spacing:-.03em;background:linear-gradient(92deg,#FFD199 0%,#FF9E44 38%,#FF6D29 78%);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}'+
+          '.zh-wip-text{margin:16px auto 0;max-width:44ch;color:#C6CEDC;font-size:16px;line-height:1.6}'+
+          '.zh-wip-cta{margin-top:26px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}'+
+          '.zh-wip-btn{display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:0 24px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;transition:transform .2s '+EASE+',box-shadow .2s '+EASE+',border-color .2s '+EASE+'}'+
+          '.zh-wip-btn-primary{background:linear-gradient(135deg,#FF9E44,#FF6D29);color:#0B1018;border:1px solid rgba(255,158,68,.6);box-shadow:0 10px 34px rgba(255,109,41,.35)}'+
+          '.zh-wip-btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(255,109,41,.45)}'+
+          '.zh-wip-btn-ghost{background:rgba(255,255,255,.05);color:#C6CEDC;border:1px solid rgba(255,255,255,.14)}'+
+          '.zh-wip-btn-ghost:hover{color:#EDF0F5;border-color:rgba(255,143,51,.5)}'+
+          '.zh-wip-x{position:absolute;top:14px;right:14px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#C6CEDC;font-size:17px;cursor:pointer;line-height:1;transition:color .2s ease,border-color .2s ease}'+
+          '.zh-wip-x:hover{color:#FF8F33;border-color:rgba(255,143,51,.5)}'+
+          '.zh-wip-foot{margin-top:22px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E7686}'+
+          '@media(max-width:640px){#zh-wip-box{padding:30px 22px 24px;border-radius:18px;max-height:calc(100dvh - 176px)} .zh-wip-cta{flex-direction:column} .zh-wip-btn{width:100%;justify-content:center}}'+
+          '@media(prefers-reduced-motion:reduce){#zh-wip-box,#zh-wip-overlay{transition:none}}'+
+          '</style>'+
+          '<button type="button" class="zh-wip-x" id="zh-wip-close" aria-label="Закрыть">\u00d7</button>'+
+          '<div class="zh-wip-kicker">\u0421\u0430\u0439\u0442 \u0437\u0430\u043f\u0430\u0441\u0445\u043e\u0434\u0430 \u00b7 \u0441\u0442\u0430\u0442\u0443\u0441: \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435</div>'+
+          '<h2 class="zh-wip-title">\u0421\u041a\u041e\u0420\u041e \u0411\u0423\u0414\u0415\u0422 \u041a\u0420\u0423\u0422\u041e<span style="color:#FF8F33;-webkit-text-fill-color:#FF8F33">!</span></h2>'+
+          '<p class="zh-wip-text">\u0421\u0430\u0439\u0442 \u043d\u0430\u043f\u043e\u043b\u043d\u044f\u0435\u0442\u0441\u044f \u0438 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435. \u041f\u043e\u0434\u043e\u0436\u0434\u0438\u0442\u0435 \u0447\u0443\u0442\u044c-\u0447\u0443\u0442\u044c \u2014 \u0438 \u0432\u043e\u0437\u0432\u0440\u0430\u0449\u0430\u0439\u0442\u0435\u0441\u044c: \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b \u043e\u0431\u043d\u043e\u0432\u043b\u044f\u0435\u043c \u043a\u0430\u0436\u0434\u044b\u0439 \u0434\u0435\u043d\u044c.</p>'+
+          '<div class="zh-wip-cta"><a class="zh-wip-btn zh-wip-btn-primary" href="/charging/" id="zh-wip-go">\u041f\u043e\u0442\u0435\u0441\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043a\u0430\u0440\u0442\u0443 \u042d\u0417\u0421 <span aria-hidden="true">\u2192</span></a>'+
+          '<button type="button" class="zh-wip-btn zh-wip-btn-ghost" id="zh-wip-later">\u041f\u043e\u043a\u0430 \u043f\u043e\u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0441\u0430\u0439\u0442</button></div>'+
+          '<div class="zh-wip-foot">\u0417\u0430\u043f\u0430\u0441 \u0445\u043e\u0434\u0430 \u00b7 \u043e\u0431\u043d\u043e\u0432\u043b\u044f\u0435\u043c \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u043e</div>';
+        o.appendChild(b);
+        document.body.appendChild(o);
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          o.style.opacity='1'; b.style.opacity='1'; b.style.transform='none';
+        });});
+        o.addEventListener('click',function(e){ if(e.target===o) closeModal(b,o); });
+        document.getElementById('zh-wip-close').addEventListener('click',function(){ closeModal(b,o); });
+        document.getElementById('zh-wip-later').addEventListener('click',function(){ closeModal(b,o); });
+        document.getElementById('zh-wip-go').addEventListener('click',function(){ try{localStorage.setItem('zh_wip_dismiss',String(Date.now()));}catch(e2){} });
+        document.addEventListener('keydown',onKey,true);
+        var btn=document.getElementById('zh-wip-later');
+        if(btn&&btn.focus) setTimeout(function(){try{btn.focus({preventScroll:true});}catch(e3){}},560);
       }catch(e){}
     }
-    function boot(){ injectCss(); banner(); }
+    function boot(){ injectCss(); setTimeout(modal,900); }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
   }catch(e){}
 })();
