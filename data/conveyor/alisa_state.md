@@ -114,4 +114,9 @@
 - Прогнал 244 статьи через русские адаптации каталогов no-ai-slop (20+ паттернов) и avoid-ai-writing (P0/P1/P2 + Tier-1/2/3). Находок: «не просто»×4 (одна ложная «не простояла», три легитимных тех-коррекции — Keep по правилам каталога), «Итак»×1, «исследования показывают»×1, weasel-анкор×1, «Прежде чем…разберёмся»×1, «И помните»×1 — ВСЕ зачищены (981601d). fake-profound/puffery/faux-insight/hedge-stack = ноль. Вердикт внешних детекторов: статьи чисты.
 - Взятые в конвейер правила: «Keep: literal correction» (корректирующие контрасты — не slop), carve-out тире в списках, Tier-система ложных срабатываний.
 - Кандидаты на внедрение (нужна команда владельца): FAQPage JSON-LD из faq-полей 244 статей (главный AEO-сигнал), llms.txt на проде (geo-optimizer-skill имеет Astro-integration), dateModified/byline (E-E-A-T), Writer↔Critic пайплайн open-humanizer для будущих статей.
+## 17:31 24.11 — GEO-ПАКЕТ НА ПРОДЕ: llms.txt пересобран (a338b74, прод ✓)
+- Выяснено: FAQPage JSON-LD + BreadcrumbList + Article schema (author: Organization «Запас хода», datePublished/dateModified) уже в шаблоне блога [slug].astro и рендерятся на всех статьях — проверено на проде: JSON валиден (Article/BreadcrumbList/FAQPage 4 вопроса). robots.txt уже открыт для GPTBot/PerplexityBot/ClaudeBot/Google-Extended/CCBot.
+- llms.txt (2,7 KB) и llms-full.txt (117 KB) пересобраны: покрытие теперь 244/244 статей (по категориям с датами), 26/26 товаров, 154/154 моделей (по брендам). Было: 190 статей, 17 моделей, 0 товаров.
+- Sitemap: site/src/pages/sitemap.xml.ts (сборочный).
+- Осталось из GEO-плана: Writer↔Critic в конвейер (архитектура open-humanizer), byline-вопрос авторства — Organization уже стоит; реальный автор — только по решению владельца.
 
