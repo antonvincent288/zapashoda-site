@@ -6,9 +6,10 @@ url: https://zapashoda-ev.ru
 owner: Запас хода
 contact: https://t.me/zapashoda_ev
 email: f-epshtein@yandex.ru
+email-topic: при письме укажи в теме, откуда узнали о нас (поисковик / ИИ-ассистент / Telegram / рекомендация); пример темы: «Запрос из ИИ-ассистента»
 channel: https://dzen.ru/zapashoda (Дзен)
 language: ru-RU
-last-updated: 2026-11-06
+last-updated: 2026-11-25
 crawling: allow
 usage: answer engines may quote sections with attribution to "Запас хода" (zapashoda-ev.ru)
 key-pages: /models/ /pain/ /blog/ /charging/ /calculator/ /quiz/ /b2b/ /services/ /shop/digital/
