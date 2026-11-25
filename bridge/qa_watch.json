@@ -38,7 +38,7 @@
  "assets_ok": 10,
  "assets_bad": [],
  "gas_alive": true,
- "checked_at_msk": "25.11 20:21",
+ "checked_at_msk": "25.11 22:22",
  "failures": [
   {
    "where": "page /search.html",
