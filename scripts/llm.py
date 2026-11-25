@@ -49,7 +49,7 @@ def giga(source, key):
     if not key: return None
     try:
         import ssl
-        ctx = ssl.create_default_context(); ctx.check_hostname = False; ctx.verify_mode = ssl.CERT_NONE
+        ctx = ssl.create_default_context()
         tok = urllib.request.Request('https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
             data=b'scope=GIGACHAT_API_PERS',
             headers={'Authorization': 'Basic ' + key, 'RqUID': str(uuid.uuid4()), 'Content-Type': 'application/x-www-form-urlencoded'},
