@@ -131,6 +131,7 @@
       '.sec .sn,.sec .accent{white-space:nowrap;overflow:visible}',
       'main .sec .sec,main h2.sec{padding-left:0!important;margin-left:0!important}',
       '@media(min-width:821px){body.zh-ovl-on main .sec,html.zh-o-on main .sec{padding-left:448px!important;margin-left:0!important}body.zh-ovl-on main .sec .wrap,html.zh-o-on main .sec .wrap{margin-left:0!important;padding-left:0!important}body.zh-ovl-on main h2.sec,html.zh-o-on main h2.sec{padding-left:0!important;margin-left:0!important}body.zh-ovl-on main>.wrap,body.zh-ovl-on main>.hw-hero>.wrap,html.zh-o-on main>.wrap,html.zh-o-on main>.hw-hero>.wrap{margin-left:448px!important;margin-right:16px!important;max-width:none!important}body.zh-ovl-on main .sec-blk,html.zh-o-on main .sec-blk{padding-left:448px!important}body.zh-ovl-on footer,html.zh-o-on footer{padding-left:448px!important}}'
+    ,'.zh-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;padding-bottom:6px}','.zh-tbl-hint{display:none;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E7686;padding:2px 0 4px;text-align:right}','@media(max-width:760px){.zh-tbl-hint{display:block}}'
     ].join('');
       var st=document.createElement('style');st.id='zh-unify-css';st.textContent=css;
       (document.head||document.documentElement).appendChild(st);
@@ -193,7 +194,22 @@
         if(btn&&btn.focus) setTimeout(function(){try{btn.focus({preventScroll:true});}catch(e3){}},560);
       }catch(e){}
     }
-    function boot(){ injectCss(); setTimeout(modal,900); }
+    function wrapTables(){
+      try{
+        document.querySelectorAll('main table').forEach(function(t){
+          if(t.closest('.zhw')||t.closest('.zh-tbl-wrap'))return;
+          var p=t.parentElement;
+          if(t.scrollWidth>p.clientWidth+2){
+            var w=document.createElement('div');w.className='zh-tbl-wrap';
+            t.parentNode.insertBefore(w,t);w.appendChild(t);
+            var h=document.createElement('div');h.className='zh-tbl-hint';h.textContent='Свайп влево → вся таблица';
+            w.insertBefore(h,t);
+          }
+        });
+      }catch(e2){}
+    }
+    function boot(){ injectCss(); try{wrapTables(); setTimeout(wrapTables,800);}catch(e){} setTimeout(modal,900); }
+
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
   }catch(e){}
 })();
