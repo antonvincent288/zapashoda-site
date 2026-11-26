@@ -117,7 +117,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if diff -r --quiet "$GITHUB_WORKSPACE/prev" dist --exclude .git --exclude CNAME --exclude .nojekyll --exclude AI_BRIDGE.json; then
+          if diff -r -q "$GITHUB_WORKSPACE/prev" dist --exclude .git --exclude CNAME --exclude .nojekyll --exclude AI_BRIDGE.json; then
             echo "dist identical to deployed"
           else
             echo "dist differs from deployed"
