@@ -31,11 +31,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 1
           path: main
 
       - uses: actions/checkout@v4
         with:
           ref: astrowind-migration
+          fetch-depth: 1
           path: astro
 
       - uses: actions/setup-node@v4
@@ -99,14 +101,48 @@ jobs:
           [ "$NART" -ge 20 ] || { echo "MISSING blog pages: only $NART"; exit 1; }
           echo "SMOKE OK (models/blog/pain/safety/shop/map/quiz/b2b/rss/catalog/services/cost/news/about)"
 
+      - name: Fetch deployed gh-pages (1 commit)
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: prev
+          fetch-depth: 1
+
+      - name: Detect changes vs deployed
+        id: sitediff
+        working-directory: astro/site
+        run: |
+          if [ ! -d "$GITHUB_WORKSPACE/prev" ] || [ -z "$(ls -A "$GITHUB_WORKSPACE/prev")" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if diff -r --quiet "$GITHUB_WORKSPACE/prev" dist --exclude .git --exclude CNAME --exclude .nojekyll; then
+            echo "dist identical to deployed"
+          else
+            echo "dist differs from deployed"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          HIST="$(curl -sf -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits?sha=gh-pages&per_page=1&page=2" || echo '[]')"
+          if [ -n "$HIST" ] && [ "$HIST" != "[]" ]; then
+            echo "gh-pages history pending collapse (force_orphan)"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to GitHub Pages
+        if: ${{ steps.sitediff.outputs.changed == 'true' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./astro/site/dist
           cname: zapashoda-ev.ru
+          force_orphan: true
 
       - name: Ping IndexNow (Yandex/Bing)
+        if: ${{ steps.sitediff.outputs.changed == 'true' }}
         run: python3 main/scripts/indexnow_ping.py
 
   lighthouse:
