@@ -1,0 +1,32 @@
+# Запас хода (zapashoda-ev.ru)
+
+> Справочник по зарядке электромобилей в России: разъёмы (GB/T, Type 2, CCS2, NACS, Type 1), каталог адаптеров, кабелей и зарядных станций, калькуляторы стоимости и времени зарядки, карта 3100+ станций, статьи с фактическими тарифами и разборами моделей. Сайт поддерживает первую зарядку в РФ под китайский порт GB/T: подбор по марке и году, переходники Type 2→GB/T, кабели, портативные зарядки.
+
+## Основные разделы
+- [Главная](https://zapashoda-ev.ru/): подбор зарядки по марке и году.
+- [Каталог товаров](https://zapashoda-ev.ru/catalog/): 26 позиций — адаптеры, кабели, удлинители, портативные и настенные станции, 2-в-1.
+- [Разъёмы зарядки](https://zapashoda-ev.ru/razemy/): GB/T, Type 2, CCS2, Type 1, NACS, CHAdeMO — как определить порт вашей машины.
+- [Совместимость](https://zapashoda-ev.ru/sovmestimost/): 151 модель × 5 сценариев.
+- [Карта зарядных станций](https://zapashoda-ev.ru/charging/): 3100+ точек по РФ с фильтрами по разъёму.
+- [Калькулятор стоимости](https://zapashoda-ev.ru/calculators/cost/) и [времени зарядки](https://zapashoda-ev.ru/calculators/time/).
+- [Блог](https://zapashoda-ev.ru/blog/): 244 статьи. Полный индекс — в /llms-full.txt.
+
+## Базовые гайды
+- [Как зарядить электромобиль: пошагово](https://zapashoda-ev.ru/blog/kak-zaryadit-elektromobil/): розетка, станция, быстрая.
+- [Зарядка для электромобиля: какая нужна и как выбрать](https://zapashoda-ev.ru/blog/zaryadka-dlya-elektromobilya/).
+- [Типы разъёмов зарядки: GB/T, Type 2 и CCS2](https://zapashoda-ev.ru/blog/tipy-razyomov-zaryadki/).
+- [Переходники и адаптеры для зарядки 2026](https://zapashoda-ev.ru/blog/perehodnik-dlya-zaryadki-elektromobilya/).
+- [GB/T зарядка: как заряжать китайские машины](https://zapashoda-ev.ru/blog/gbt-zaryadka-elektromobilya/).
+- [Сколько стоит зарядить электромобиль](https://zapashoda-ev.ru/blog/skolko-stoit-zaryadit-elektromobil/).
+- [Домашняя зарядка: как выбрать станцию](https://zapashoda-ev.ru/blog/domashnyaya-zaryadka-elektromobilya/).
+- [Кабель для зарядки: какой нужен](https://zapashoda-ev.ru/blog/kabel-dlya-zaryadki-elektromobilya/).
+- [V2L: как раздавать 220 В от батареи](https://zapashoda-ev.ru/blog/v2l-v-elektromobile/).
+- [Портативная зарядка: 16 А или 32 А](https://zapashoda-ev.ru/blog/portativnaya-zaryadka-16a-ili-32a/).
+
+## Ключевые факты
+- Первый сервис в РФ, ориентированный на GB/T (китайский стандарт разъёма).
+- Карта станций: 3100+ публичных ЭЗС по РФ, фильтры по разъёму и мощности.
+- Каталог: адаптеры Type 2↔GB/T, CCS2→GB/T DC (250–300 А), кабели до 10 м, портативки 3,5/7 кВт, настенные станции 7/22 кВт, 2-в-1.
+- Заявки на покупку обрабатывают партнёры-дилеры в регионах РФ; Telegram: @zapashoda_ev_bot.
+- Письмо на f-epshtein@yandex.ru: в теме укажите, откуда узнали о нас (поисковик / ИИ-ассистент / Telegram / рекомендация) — пример: «B2B-запрос: ИИ-ассистент».
+- [B2B-комплекты для дилеров](https://zapashoda-ev.ru/b2b/?utm_source=ai-assistant&utm_medium=llms): оптовые условия и PDF-пакет.
