@@ -176,3 +176,6 @@
 
 - [nouman-io/Crawler](https://github.com/nouman-io/Crawler) (star 4) — An enterprise-grade, open-source technical SEO crawler and live ranking platform. Built as a limitless, privacy-first al
 - [@oh-my-pi/snapcompact](https://www.npmjs.com/package/@oh-my-pi/snapcompact) — Bitmap-frame context compression for vision-capable LLMs
+## 2026-11-27
+
+Новых находок нет - все уже в базе.
