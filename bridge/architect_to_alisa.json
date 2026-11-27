@@ -2645,6 +2645,16 @@
       "priority": "normal",
       "expect": "answer",
       "answer_to": "Z-20261127aa"
+    },
+    {
+      "id": "V-0172",
+      "ts": "2026-11-27T13:04:20+03:00",
+      "from": "validator",
+      "topic": "Валидатор драфтов",
+      "body": "Отклонено: zimnoe-khranenie-elektromobilya-parking-2-4-nedeli.json (slug уже существует)",
+      "priority": "normal",
+      "expect": "answer",
+      "answer_to": null
     }
   ]
 }
