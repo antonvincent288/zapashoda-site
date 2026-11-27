@@ -124,12 +124,6 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          HIST="$(curl -sf -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits?sha=gh-pages&per_page=1&page=2" || echo '[]')"
-          if [ -n "$HIST" ] && [ "$HIST" != "[]" ]; then
-            echo "gh-pages history pending collapse (force_orphan)"
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
           echo "changed=false" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to GitHub Pages
